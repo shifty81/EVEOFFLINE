@@ -33,7 +33,18 @@ pip install -r requirements.txt
 
 ### Running the Game
 
-**🎮 Interactive Gameplay Demo (Recommended for beginners):**
+**🎨 NEW! GUI Demo (Visual gameplay - Recommended to see visuals!):**
+```bash
+python gui_demo.py
+```
+Graphical demo with pygame showing:
+- 2D space visualization with star field
+- Visual ship representations with health bars
+- Real-time combat with weapon effects
+- Interactive camera controls (pan, zoom)
+- **No server required** - runs standalone!
+
+**🎮 Interactive Gameplay Demo (Text-based, feature-complete):**
 ```bash
 python interactive_demo.py
 ```
@@ -58,15 +69,20 @@ Demonstrates all features in a scripted format (great for screenshots/videos).
 python server/server.py
 ```
 
-**Start a client (in a new terminal):**
+**Start a text client (in a new terminal):**
 ```bash
 python client/client.py "YourCharacterName"
+```
+
+**Or start a GUI client (with visuals):**
+```bash
+python client/gui_client.py "YourCharacterName"
 ```
 
 **Start multiple clients for multiplayer:**
 ```bash
 python client/client.py "Pilot1"
-python client/client.py "Pilot2"
+python client/gui_client.py "Pilot2"
 python client/client.py "Pilot3"
 ```
 
@@ -122,11 +138,24 @@ python client/client.py "Pilot3"
 - [x] **Combat Enhancements** - Full resistance system (EM/Thermal/Kinetic/Explosive)
 - [x] **10 New Components** - Module, Drone, DroneBay, Mission, WarpDrive, and more
 
+### 🎨 NEW! Visual/GUI Features
+- [x] **Pygame-based GUI** - 2D graphical rendering system
+- [x] **Visual Space Representation** - Star field, ships, and entities
+- [x] **Health Bar Overlays** - Shield/Armor/Hull visualization
+- [x] **Weapon Effects** - Visual feedback for combat
+- [x] **Interactive Camera** - Pan, zoom, and follow controls
+- [x] **HUD/UI Overlay** - Status information and combat log
+- [x] **Standalone GUI Demo** - No server required to see visuals
+- [x] **GUI Multiplayer Client** - Connect to server with graphics
+
 **See [NEW_FEATURES.md](NEW_FEATURES.md) for complete feature documentation!**
+**See [VISUAL_CAPABILITIES.md](VISUAL_CAPABILITIES.md) for GUI/visual documentation!**
 
 ### 📋 Planned (Phase 3+)
-- [ ] 2D/3D rendering (Pygame or Pyglet)
-- [ ] User interface (HUD, overview, target locks)
+- [x] ~~2D rendering (Pygame)~~ **IMPLEMENTED!**
+- [x] ~~Basic user interface (HUD, overview)~~ **IMPLEMENTED!**
+- [ ] 3D rendering (advanced graphics)
+- [ ] Advanced UI (clickable targeting, modules)
 - [ ] Active EWAR modules (webs, scrams, painters)
 - [ ] Market and economy system
 - [ ] Loot drops and inventory management
