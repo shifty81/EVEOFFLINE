@@ -171,6 +171,10 @@ class Module(Component):
     capacitor_usage: float = 0.0  # cap per cycle
     
     # Effect parameters (type-specific)
+    # Examples: {'damage_multiplier': 1.2, 'range_bonus': 0.15, 'repair_amount': 100}
+    # For shield boosters: {'shield_boost_amount': 200}
+    # For damage mods: {'damage_multiplier': 1.1}
+    # For prop mods: {'velocity_bonus': 500}
     effect_params: Dict[str, float] = field(default_factory=dict)
 
 

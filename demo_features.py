@@ -7,8 +7,8 @@ Showcases all newly implemented features
 import sys
 import os
 
-# Add parent directory to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add project root to path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from engine.core.ecs import World
 from engine.core.engine import Engine

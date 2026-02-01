@@ -4,7 +4,7 @@ Handles warp travel, docking, and stargate jumps
 """
 
 import math
-from typing import Optional, List
+from typing import Optional, List, Dict
 from engine.core.ecs import System
 from engine.components.game_components import (
     Position, Velocity, Ship, WarpDrive, Celestial, Docking
@@ -184,20 +184,25 @@ class NavigationSystem(System):
         
         return True
     
-    def jump_stargate(self, ship_entity, gate_entity) -> bool:
-        """Jump through a stargate"""
+    def jump_stargate(self, ship_entity, gate_entity) -> Dict[str, any]:
+        """
+        Jump through a stargate
+        
+        Returns:
+            dict: {'success': bool, 'destination_system': str, 'destination_gate': str, 'error': str}
+        """
         ship_pos = ship_entity.get_component(Position)
         gate_pos = gate_entity.get_component(Position)
         gate = gate_entity.get_component(Celestial)
         
         if not ship_pos or not gate_pos or not gate:
-            return False
+            return {'success': False, 'error': 'Missing required components'}
         
         if gate.celestial_type != "stargate":
-            return False
+            return {'success': False, 'error': 'Not a stargate'}
         
         if not gate.destination_system:
-            return False
+            return {'success': False, 'error': 'No destination configured'}
         
         # Check distance
         dx = gate_pos.x - ship_pos.x
@@ -206,13 +211,12 @@ class NavigationSystem(System):
         distance = math.sqrt(dx**2 + dy**2 + dz**2)
         
         if distance > 2500:  # Must be within 2.5km
-            return False
+            return {'success': False, 'error': 'Too far from gate'}
         
         # In a full implementation, this would:
         # 1. Load the destination system
         # 2. Move the ship to the destination gate
         # 3. Update all clients
-        # For now, we'll just record the intent
         
         return {
             'success': True,
