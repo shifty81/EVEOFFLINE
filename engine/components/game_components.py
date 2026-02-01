@@ -155,3 +155,128 @@ class NPC(Component):
     faction: str = "Serpentis"
     bounty: float = 10000.0  # ISK reward for killing
     loot_table: List[str] = field(default_factory=list)  # possible loot items
+
+
+@dataclass
+class Module(Component):
+    """Active module component for fitted modules"""
+    module_id: str = ""
+    module_type: str = "weapon"  # weapon, shield_booster, armor_repairer, etc.
+    slot_type: str = "high"  # high, mid, low, rig
+    active: bool = False
+    cycle_time: float = 5.0  # seconds
+    current_cycle: float = 0.0
+    cpu_usage: float = 0.0
+    powergrid_usage: float = 0.0
+    capacitor_usage: float = 0.0  # cap per cycle
+    
+    # Effect parameters (type-specific)
+    # Examples: {'damage_multiplier': 1.2, 'range_bonus': 0.15, 'repair_amount': 100}
+    # For shield boosters: {'shield_boost_amount': 200}
+    # For damage mods: {'damage_multiplier': 1.1}
+    # For prop mods: {'velocity_bonus': 500}
+    effect_params: Dict[str, float] = field(default_factory=dict)
+
+
+@dataclass  
+class Drone(Component):
+    """Drone component"""
+    drone_type: str = "Light Scout Drone"
+    size: str = "light"  # light, medium, heavy, sentry
+    bandwidth: float = 5.0  # Mbit/s
+    damage: float = 5.0
+    damage_type: str = "thermal"
+    optimal_range: float = 10000.0
+    tracking: float = 1.0
+    speed: float = 3000.0  # m/s
+    hp: float = 50.0
+    hp_max: float = 50.0
+    owner_entity_id: Optional[str] = None
+    target_entity_id: Optional[str] = None
+    state: str = "in_bay"  # in_bay, launching, active, returning
+
+
+@dataclass
+class DroneBay(Component):
+    """Drone bay for ships"""
+    drones: List[str] = field(default_factory=list)  # entity IDs of drones
+    drone_bay_capacity: float = 50.0  # m3
+    drone_bandwidth: float = 25.0  # Mbit/s
+    active_drones: List[str] = field(default_factory=list)  # currently deployed
+    bandwidth_used: float = 0.0
+
+
+@dataclass
+class SkillTraining(Component):
+    """Skill training queue and progress"""
+    current_skill: Optional[str] = None
+    current_target_level: int = 0
+    current_sp: int = 0  # SP in current skill
+    training_queue: List[Tuple[str, int]] = field(default_factory=list)  # (skill_name, level)
+    sp_per_minute: float = 30.0  # Based on attributes
+
+
+@dataclass
+class EWAREffect(Component):
+    """Electronic warfare effects on a ship"""
+    webbed_velocity_reduction: float = 0.0  # 0.0 to 1.0
+    scrambled: bool = False
+    disrupted: bool = False
+    signature_multiplier: float = 1.0  # From target painters
+    tracking_reduction: float = 0.0  # From tracking disruptors
+
+
+@dataclass
+class Mission(Component):
+    """Active mission tracking"""
+    mission_id: str = ""
+    mission_type: str = "combat"  # combat, courier, mining, exploration
+    objectives: List[Dict[str, any]] = field(default_factory=list)
+    completed_objectives: List[int] = field(default_factory=list)
+    rewards: Dict[str, float] = field(default_factory=dict)  # isk, lp, items
+    status: str = "active"  # active, completed, failed
+
+
+@dataclass
+class Inventory(Component):
+    """Ship/station inventory"""
+    items: Dict[str, int] = field(default_factory=dict)  # item_id: quantity
+    cargo_capacity: float = 100.0  # m3
+    cargo_used: float = 0.0  # m3
+
+
+@dataclass
+class WarpDrive(Component):
+    """Warp drive component"""
+    warp_speed: float = 3.0  # AU per second
+    max_warp_distance: float = 100.0  # AU
+    align_time: float = 5.0  # seconds to align
+    is_warping: bool = False
+    warp_destination: Optional[Tuple[float, float, float]] = None  # (x, y, z)
+    warp_progress: float = 0.0
+    is_aligning: bool = False
+    align_progress: float = 0.0
+
+
+@dataclass
+class Celestial(Component):
+    """Celestial object (station, gate, asteroid belt, etc.)"""
+    celestial_type: str = "station"  # station, stargate, asteroid_belt, planet, moon
+    celestial_name: str = "Jita IV - Moon 4"
+    system_id: str = "jita"
+    
+    # For stargates
+    destination_system: Optional[str] = None
+    destination_gate: Optional[str] = None
+    
+    # For stations
+    dockable: bool = False
+    services: List[str] = field(default_factory=list)  # repair, market, fitting, etc.
+
+
+@dataclass
+class Docking(Component):
+    """Docking status"""
+    is_docked: bool = False
+    docked_at: Optional[str] = None  # celestial entity ID
+    can_undock: bool = True
