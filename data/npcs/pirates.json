@@ -125,5 +125,301 @@
       "energy_neutralizer": true,
       "cap_drain": 15
     }
+  },
+  "serpentis_destroyer": {
+    "id": "serpentis_destroyer",
+    "name": "Serpentis Eliminator",
+    "type": "destroyer",
+    "faction": "Serpentis",
+    "hull_hp": 550,
+    "armor_hp": 500,
+    "shield_hp": 600,
+    "max_velocity": 280,
+    "orbit_distance": 3000,
+    "signature_radius": 48,
+    "bounty": 65000,
+    "behavior": "aggressive",
+    "awareness_range": 70000,
+    "weapons": [
+      {
+        "type": "small_hybrid",
+        "damage": 68,
+        "damage_type": "kinetic",
+        "optimal_range": 6000,
+        "falloff_range": 4000,
+        "rate_of_fire": 3.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["serpentis_components", "hybrid_charges", "serpentis_dogtag"]
+  },
+  "guristas_destroyer": {
+    "id": "guristas_destroyer",
+    "name": "Guristas Destroyer",
+    "type": "destroyer",
+    "faction": "Guristas",
+    "hull_hp": 520,
+    "armor_hp": 420,
+    "shield_hp": 750,
+    "max_velocity": 275,
+    "orbit_distance": 4000,
+    "signature_radius": 45,
+    "bounty": 70000,
+    "behavior": "aggressive",
+    "awareness_range": 72000,
+    "weapons": [
+      {
+        "type": "light_missile",
+        "damage": 72,
+        "damage_type": "kinetic",
+        "range": 22000,
+        "rate_of_fire": 5.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["guristas_components", "light_missiles", "guristas_dogtag"]
+  },
+  "blood_raiders_cruiser": {
+    "id": "blood_raiders_cruiser",
+    "name": "Blood Raiders Apostle",
+    "type": "cruiser",
+    "faction": "Blood Raiders",
+    "hull_hp": 1400,
+    "armor_hp": 1600,
+    "shield_hp": 1100,
+    "max_velocity": 195,
+    "orbit_distance": 6000,
+    "signature_radius": 110,
+    "bounty": 180000,
+    "behavior": "aggressive",
+    "awareness_range": 80000,
+    "weapons": [
+      {
+        "type": "medium_energy",
+        "damage": 95,
+        "damage_type": "em",
+        "optimal_range": 10000,
+        "falloff_range": 6000,
+        "rate_of_fire": 5.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["blood_raiders_components", "frequency_crystals", "blood_raiders_dogtag_advanced"],
+    "special": {
+      "energy_neutralizer": true,
+      "cap_drain": 45
+    }
+  },
+  "sansha_frigate": {
+    "id": "sansha_frigate",
+    "name": "Sansha's Centii Enslaver",
+    "type": "frigate",
+    "faction": "Sansha's Nation",
+    "hull_hp": 290,
+    "armor_hp": 380,
+    "shield_hp": 280,
+    "max_velocity": 350,
+    "orbit_distance": 1500,
+    "signature_radius": 36,
+    "bounty": 28000,
+    "behavior": "aggressive",
+    "awareness_range": 58000,
+    "weapons": [
+      {
+        "type": "small_energy",
+        "damage": 32,
+        "damage_type": "em",
+        "optimal_range": 5000,
+        "falloff_range": 3500,
+        "rate_of_fire": 3.8
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 25, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 45, "kinetic": 35, "explosive": 20},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sansha_components", "frequency_crystals", "sansha_dogtag"]
+  },
+  "sansha_cruiser": {
+    "id": "sansha_cruiser",
+    "name": "Sansha's Centii Butcher",
+    "type": "cruiser",
+    "faction": "Sansha's Nation",
+    "hull_hp": 1500,
+    "armor_hp": 1800,
+    "shield_hp": 1200,
+    "max_velocity": 185,
+    "orbit_distance": 7000,
+    "signature_radius": 115,
+    "bounty": 195000,
+    "behavior": "aggressive",
+    "awareness_range": 85000,
+    "weapons": [
+      {
+        "type": "medium_energy",
+        "damage": 105,
+        "damage_type": "em",
+        "optimal_range": 12000,
+        "falloff_range": 7000,
+        "rate_of_fire": 5.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 25, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 45, "kinetic": 35, "explosive": 20},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sansha_components_advanced", "frequency_crystals", "sansha_dogtag_advanced"],
+    "special": {
+      "tracking_disruptor": true,
+      "energy_neutralizer": true,
+      "cap_drain": 40
+    }
+  },
+  "angel_frigate": {
+    "id": "angel_frigate",
+    "name": "Angel Cartel Gistii Thug",
+    "type": "frigate",
+    "faction": "Angel Cartel",
+    "hull_hp": 310,
+    "armor_hp": 360,
+    "shield_hp": 300,
+    "max_velocity": 395,
+    "orbit_distance": 900,
+    "signature_radius": 35,
+    "bounty": 30000,
+    "behavior": "aggressive",
+    "awareness_range": 62000,
+    "weapons": [
+      {
+        "type": "small_projectile",
+        "damage": 34,
+        "damage_type": "explosive",
+        "optimal_range": 3500,
+        "falloff_range": 4500,
+        "rate_of_fire": 4.2
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
+      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["angel_components", "projectile_ammo", "angel_dogtag"]
+  },
+  "angel_cruiser": {
+    "id": "angel_cruiser",
+    "name": "Angel Cartel Gistii Raider",
+    "type": "cruiser",
+    "faction": "Angel Cartel",
+    "hull_hp": 1450,
+    "armor_hp": 1500,
+    "shield_hp": 1350,
+    "max_velocity": 225,
+    "orbit_distance": 5000,
+    "signature_radius": 108,
+    "bounty": 205000,
+    "behavior": "aggressive",
+    "awareness_range": 78000,
+    "weapons": [
+      {
+        "type": "medium_projectile",
+        "damage": 110,
+        "damage_type": "explosive",
+        "optimal_range": 8000,
+        "falloff_range": 8000,
+        "rate_of_fire": 5.8
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
+      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["angel_components_advanced", "projectile_weapons", "angel_dogtag_advanced"]
+  },
+  "rogue_drone_frigate": {
+    "id": "rogue_drone_frigate",
+    "name": "Rogue Drone Hivemind Alvi",
+    "type": "frigate",
+    "faction": "Rogue Drones",
+    "hull_hp": 340,
+    "armor_hp": 340,
+    "shield_hp": 340,
+    "max_velocity": 320,
+    "orbit_distance": 2000,
+    "signature_radius": 40,
+    "bounty": 22000,
+    "behavior": "aggressive",
+    "awareness_range": 65000,
+    "weapons": [
+      {
+        "type": "drone_weapon",
+        "damage": 26,
+        "damage_type": "thermal",
+        "optimal_range": 6000,
+        "falloff_range": 4000,
+        "rate_of_fire": 4.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33},
+      "armor": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["drone_compounds", "drone_alloys", "salvaged_materials"],
+    "special": {
+      "self_repair": true,
+      "repair_rate": 8
+    }
+  },
+  "rogue_drone_cruiser": {
+    "id": "rogue_drone_cruiser",
+    "name": "Rogue Drone Mother Alvatis",
+    "type": "cruiser",
+    "faction": "Rogue Drones",
+    "hull_hp": 1600,
+    "armor_hp": 1600,
+    "shield_hp": 1600,
+    "max_velocity": 180,
+    "orbit_distance": 8000,
+    "signature_radius": 120,
+    "bounty": 215000,
+    "behavior": "aggressive",
+    "awareness_range": 90000,
+    "weapons": [
+      {
+        "type": "drone_weapon",
+        "damage": 88,
+        "damage_type": "thermal",
+        "optimal_range": 10000,
+        "falloff_range": 6000,
+        "rate_of_fire": 6.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33},
+      "armor": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["drone_compounds_advanced", "drone_alloys", "augmented_drone", "salvaged_materials"],
+    "special": {
+      "self_repair": true,
+      "spawn_drones": true,
+      "repair_rate": 25
+    }
   }
 }
