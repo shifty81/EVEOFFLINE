@@ -239,3 +239,40 @@ class Inventory(Component):
     items: Dict[str, int] = field(default_factory=dict)  # item_id: quantity
     cargo_capacity: float = 100.0  # m3
     cargo_used: float = 0.0  # m3
+
+
+@dataclass
+class WarpDrive(Component):
+    """Warp drive component"""
+    warp_speed: float = 3.0  # AU per second
+    max_warp_distance: float = 100.0  # AU
+    align_time: float = 5.0  # seconds to align
+    is_warping: bool = False
+    warp_destination: Optional[Tuple[float, float, float]] = None  # (x, y, z)
+    warp_progress: float = 0.0
+    is_aligning: bool = False
+    align_progress: float = 0.0
+
+
+@dataclass
+class Celestial(Component):
+    """Celestial object (station, gate, asteroid belt, etc.)"""
+    celestial_type: str = "station"  # station, stargate, asteroid_belt, planet, moon
+    celestial_name: str = "Jita IV - Moon 4"
+    system_id: str = "jita"
+    
+    # For stargates
+    destination_system: Optional[str] = None
+    destination_gate: Optional[str] = None
+    
+    # For stations
+    dockable: bool = False
+    services: List[str] = field(default_factory=list)  # repair, market, fitting, etc.
+
+
+@dataclass
+class Docking(Component):
+    """Docking status"""
+    is_docked: bool = False
+    docked_at: Optional[str] = None  # celestial entity ID
+    can_undock: bool = True
