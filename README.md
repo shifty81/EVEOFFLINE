@@ -151,16 +151,17 @@ python client/client.py "Pilot3"
 **See [NEW_FEATURES.md](NEW_FEATURES.md) for complete feature documentation!**
 **See [VISUAL_CAPABILITIES.md](VISUAL_CAPABILITIES.md) for GUI/visual documentation!**
 
-### 📋 Planned (Phase 3+)
-- [x] ~~2D rendering (Pygame)~~ **IMPLEMENTED!**
-- [x] ~~Basic user interface (HUD, overview)~~ **IMPLEMENTED!**
-- [ ] 3D rendering (advanced graphics)
+### 🎯 NEW! Phase 3 Features (In Progress)
+- [x] **Manufacturing System** - Blueprint research, manufacturing, copying
+- [x] **Market System** - Buy/sell orders, instant trading, ISK wallet
+- [x] **Exploration System** - Probe scanning, cosmic signatures, sites
+- [x] **Inventory System** - Item storage with capacity management
+- [ ] Loot drops (planned)
+- [ ] Fleet mechanics (planned)
+- [ ] 3D rendering (see LANGUAGE_AND_3D_OPTIONS.md)
 - [ ] Advanced UI (clickable targeting, modules)
 - [ ] Active EWAR modules (webs, scrams, painters)
-- [ ] Market and economy system
-- [ ] Loot drops and inventory management
-- [ ] Mining and resource gathering
-- [ ] Fleet mechanics
+- [ ] Mining enhancements
 - [ ] Modding tools
 
 ## 🎮 Game Mechanics
