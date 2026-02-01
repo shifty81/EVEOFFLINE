@@ -1,0 +1,167 @@
+{
+  "gunnery": {
+    "id": "gunnery",
+    "name": "Gunnery",
+    "description": "Basic skill for operating weapon turrets. 2% bonus to turret damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "small_projectile": {
+    "id": "small_projectile",
+    "name": "Small Projectile Turret",
+    "description": "Skill at using small projectile weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {"gunnery": 1}
+  },
+  "small_energy": {
+    "id": "small_energy",
+    "name": "Small Energy Turret",
+    "description": "Skill at using small energy weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {"gunnery": 2}
+  },
+  "missiles": {
+    "id": "missiles",
+    "name": "Missiles",
+    "description": "Basic skill for missile launcher operation. 2% bonus to missile damage per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "light_missiles": {
+    "id": "light_missiles",
+    "name": "Light Missiles",
+    "description": "Operation of light missile launchers. 5% bonus to flight time per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {"missiles": 1}
+  },
+  "spaceship_command": {
+    "id": "spaceship_command",
+    "name": "Spaceship Command",
+    "description": "Basic skill for flying spaceships. 2% bonus to ship agility per level.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "minmatar_frigate": {
+    "id": "minmatar_frigate",
+    "name": "Minmatar Frigate",
+    "description": "Skill at flying Minmatar frigates. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {"spaceship_command": 1}
+  },
+  "caldari_frigate": {
+    "id": "caldari_frigate",
+    "name": "Caldari Frigate",
+    "description": "Skill at flying Caldari frigates. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {"spaceship_command": 1}
+  },
+  "shield_operation": {
+    "id": "shield_operation",
+    "name": "Shield Operation",
+    "description": "Skill at operating shield systems. 5% bonus to shield recharge per level.",
+    "category": "Shields",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "shield_management": {
+    "id": "shield_management",
+    "name": "Shield Management",
+    "description": "Skill at managing shield systems. 5% bonus to shield HP per level.",
+    "category": "Shields",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {"shield_operation": 3}
+  },
+  "hull_upgrades": {
+    "id": "hull_upgrades",
+    "name": "Hull Upgrades",
+    "description": "Skill at installing armor upgrades. 5% bonus to armor HP per level.",
+    "category": "Armor",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "navigation": {
+    "id": "navigation",
+    "name": "Navigation",
+    "description": "Skill at maneuvering ships. 5% bonus to ship velocity per level.",
+    "category": "Navigation",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "afterburner": {
+    "id": "afterburner",
+    "name": "Afterburner",
+    "description": "Skill at using afterburner modules. 10% reduction in capacitor use per level.",
+    "category": "Navigation",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {"navigation": 1}
+  },
+  "targeting": {
+    "id": "targeting",
+    "name": "Targeting",
+    "description": "Basic targeting skill. One additional target per level.",
+    "category": "Targeting",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "long_range_targeting": {
+    "id": "long_range_targeting",
+    "name": "Long Range Targeting",
+    "description": "Advanced targeting skill. 5% bonus to targeting range per level.",
+    "category": "Targeting",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {"targeting": 2}
+  }
+}

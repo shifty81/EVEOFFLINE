@@ -1,0 +1,129 @@
+{
+  "serpentis_scout": {
+    "id": "serpentis_scout",
+    "name": "Serpentis Scout",
+    "type": "frigate",
+    "faction": "Serpentis",
+    "hull_hp": 300,
+    "armor_hp": 250,
+    "shield_hp": 350,
+    "max_velocity": 400,
+    "orbit_distance": 800,
+    "signature_radius": 32,
+    "bounty": 12500,
+    "behavior": "aggressive",
+    "awareness_range": 60000,
+    "weapons": [
+      {
+        "type": "small_hybrid",
+        "damage": 28,
+        "damage_type": "kinetic",
+        "optimal_range": 3500,
+        "falloff_range": 2000,
+        "rate_of_fire": 4.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["scrap_metal", "hybrid_charges", "serpentis_dogtag"]
+  },
+  "serpentis_soldier": {
+    "id": "serpentis_soldier",
+    "name": "Serpentis Soldier",
+    "type": "cruiser",
+    "faction": "Serpentis",
+    "hull_hp": 1200,
+    "armor_hp": 950,
+    "shield_hp": 1400,
+    "max_velocity": 240,
+    "orbit_distance": 5000,
+    "signature_radius": 105,
+    "bounty": 85000,
+    "behavior": "aggressive",
+    "awareness_range": 80000,
+    "weapons": [
+      {
+        "type": "medium_hybrid",
+        "damage": 95,
+        "damage_type": "kinetic",
+        "optimal_range": 8500,
+        "falloff_range": 5000,
+        "rate_of_fire": 6.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["serpentis_components", "hybrid_weapons", "serpentis_dogtag_advanced"]
+  },
+  "guristas_thrasher": {
+    "id": "guristas_thrasher",
+    "name": "Guristas Thrasher",
+    "type": "frigate",
+    "faction": "Guristas",
+    "hull_hp": 320,
+    "armor_hp": 220,
+    "shield_hp": 450,
+    "max_velocity": 380,
+    "orbit_distance": 1200,
+    "signature_radius": 35,
+    "bounty": 15000,
+    "behavior": "aggressive",
+    "awareness_range": 65000,
+    "weapons": [
+      {
+        "type": "light_missile",
+        "damage": 42,
+        "damage_type": "kinetic",
+        "range": 18000,
+        "rate_of_fire": 8.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["scrap_metal", "light_missiles", "guristas_dogtag"]
+  },
+  "blood_raiders_corpse": {
+    "id": "blood_raiders_corpse",
+    "name": "Blood Raiders Corpse",
+    "type": "frigate",
+    "faction": "Blood Raiders",
+    "hull_hp": 280,
+    "armor_hp": 400,
+    "shield_hp": 280,
+    "max_velocity": 360,
+    "orbit_distance": 1000,
+    "signature_radius": 38,
+    "bounty": 14000,
+    "behavior": "aggressive",
+    "awareness_range": 55000,
+    "weapons": [
+      {
+        "type": "small_energy",
+        "damage": 35,
+        "damage_type": "em",
+        "optimal_range": 4000,
+        "falloff_range": 2500,
+        "rate_of_fire": 3.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["scrap_metal", "frequency_crystals", "blood_raiders_dogtag"],
+    "special": {
+      "energy_neutralizer": true,
+      "cap_drain": 15
+    }
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "destroy_serpentis_rats": {
+    "id": "destroy_serpentis_rats",
+    "name": "Serpentis Infestation",
+    "level": 1,
+    "type": "combat",
+    "agent": "Commander Jorak",
+    "faction": "Caldari Navy",
+    "description": "Serpentis pirates have been raiding our supply convoys. Eliminate the threat.",
+    "briefing": "Pilot, we've identified a Serpentis presence in the nearby asteroid belt. Your mission is to eliminate all hostile ships. We're counting on you.",
+    "objectives": [
+      {
+        "type": "destroy",
+        "target": "serpentis_scout",
+        "count": 5
+      }
+    ],
+    "rewards": {
+      "isk": 50000,
+      "loyalty_points": 150,
+      "standing_gain": 0.01,
+      "items": []
+    },
+    "location": "perimeter",
+    "spawn_distance": 15000,
+    "time_limit": 3600
+  },
+  "mine_veldspar": {
+    "id": "mine_veldspar",
+    "name": "Mining Operation",
+    "level": 1,
+    "type": "mining",
+    "agent": "Mining Foreman Kara",
+    "faction": "Caldari Provisions",
+    "description": "We need raw materials for our manufacturing operations. Mine some veldspar ore.",
+    "briefing": "We're running low on veldspar. Head to the asteroid belts and bring back 1000 units.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "veldspar",
+        "quantity": 1000
+      }
+    ],
+    "rewards": {
+      "isk": 35000,
+      "loyalty_points": 100,
+      "standing_gain": 0.005,
+      "items": []
+    },
+    "location": "perimeter",
+    "time_limit": 7200
+  },
+  "courier_delivery": {
+    "id": "courier_delivery",
+    "name": "Urgent Delivery",
+    "level": 1,
+    "type": "courier",
+    "agent": "Logistics Officer Tanaka",
+    "faction": "Caldari Navy",
+    "description": "Transport important documents to our station in Hek.",
+    "briefing": "These documents contain sensitive intelligence. Deliver them to Hek station safely.",
+    "objectives": [
+      {
+        "type": "transport",
+        "item": "classified_documents",
+        "from": "jita",
+        "to": "hek",
+        "volume": 10
+      }
+    ],
+    "rewards": {
+      "isk": 80000,
+      "loyalty_points": 200,
+      "standing_gain": 0.015,
+      "items": []
+    },
+    "cargo_provided": {"classified_documents": 1},
+    "time_limit": 5400
+  },
+  "eliminate_blood_raiders": {
+    "id": "eliminate_blood_raiders",
+    "name": "Blood Raider Menace",
+    "level": 2,
+    "type": "combat",
+    "agent": "Commander Jorak",
+    "faction": "Caldari Navy",
+    "description": "Blood Raiders have established a forward base. Clear it out.",
+    "briefing": "Intel suggests Blood Raiders are operating from a nearby deadspace pocket. Eliminate all hostile forces. Be careful, pilot.",
+    "objectives": [
+      {
+        "type": "destroy",
+        "target": "blood_raiders_corpse",
+        "count": 8
+      }
+    ],
+    "rewards": {
+      "isk": 125000,
+      "loyalty_points": 400,
+      "standing_gain": 0.02,
+      "items": ["small_shield_booster"]
+    },
+    "location": "rancer",
+    "spawn_distance": 25000,
+    "time_limit": 4800,
+    "difficulty": "medium"
+  },
+  "multi_target_operation": {
+    "id": "multi_target_operation",
+    "name": "Multi-Target Operation",
+    "level": 3,
+    "type": "combat",
+    "agent": "Commander Jorak",
+    "faction": "Caldari Navy",
+    "description": "Multiple pirate factions are collaborating. This is unusual and concerning.",
+    "briefing": "We've detected Serpentis and Guristas forces working together. This can't stand. Eliminate both groups.",
+    "objectives": [
+      {
+        "type": "destroy",
+        "target": "serpentis_scout",
+        "count": 6
+      },
+      {
+        "type": "destroy",
+        "target": "serpentis_soldier",
+        "count": 2
+      },
+      {
+        "type": "destroy",
+        "target": "guristas_thrasher",
+        "count": 4
+      }
+    ],
+    "rewards": {
+      "isk": 350000,
+      "loyalty_points": 800,
+      "standing_gain": 0.03,
+      "items": ["gyrostabilizer", "damage_control"]
+    },
+    "location": "rancer",
+    "spawn_distance": 40000,
+    "time_limit": 6000,
+    "difficulty": "hard"
+  }
+}
