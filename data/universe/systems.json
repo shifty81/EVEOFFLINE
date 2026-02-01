@@ -68,27 +68,25 @@
       "gates": ["perimeter", "osvestmunnur"]
     },
     {
-      "id": "hek": {
-        "id": "hek",
-        "name": "Hek",
-        "security": 0.5,
-        "faction": "Minmatar",
-        "type": "highsec",
-        "description": "Regional trade hub in Minmatar space",
-        "coordinates": {"x": -80000, "y": 120000, "z": 0},
-        "stations": [
-          {
-            "id": "hek_8_12",
-            "name": "Hek VIII - Moon 12 - Boundless Creation Factory",
-            "type": "station",
-            "services": ["market", "repair", "fitting", "missions"]
-          }
-        ],
-        "asteroid_belts": [
-          {"id": "belt_1", "ore_types": ["veldspar", "scordite", "pyroxeres"], "spawn_rate": 0.2}
-        ],
-        "gates": ["rancer", "frarn"]
-      }
+      "id": "hek",
+      "name": "Hek",
+      "security": 0.5,
+      "faction": "Minmatar",
+      "type": "highsec",
+      "description": "Regional trade hub in Minmatar space",
+      "coordinates": {"x": -80000, "y": 120000, "z": 0},
+      "stations": [
+        {
+          "id": "hek_8_12",
+          "name": "Hek VIII - Moon 12 - Boundless Creation Factory",
+          "type": "station",
+          "services": ["market", "repair", "fitting", "missions"]
+        }
+      ],
+      "asteroid_belts": [
+        {"id": "belt_1", "ore_types": ["veldspar", "scordite", "pyroxeres"], "spawn_rate": 0.2}
+      ],
+      "gates": ["rancer", "frarn"]
     }
   ],
   "generation_config": {
