@@ -55,6 +55,8 @@ python client/client.py "Pilot3"
 - [DESIGN.md](DESIGN.md) - Game design document with EVE ONLINE mechanics
 - [ASTROX_RESEARCH.md](ASTROX_RESEARCH.md) - Research on Astrox Imperium's approach
 - [DOCUMENTATION.md](DOCUMENTATION.md) - Developer documentation and API reference
+- [CONTENT_GUIDE.md](CONTENT_GUIDE.md) - **NEW!** Complete guide to all ships, modules, drones, and content
+- [EVE_MECHANICS.md](EVE_MECHANICS.md) - **NEW!** EVE Online mechanics reference for implementation
 
 ## 🎯 Current Status
 
@@ -63,11 +65,30 @@ python client/client.py "Pilot3"
 - [x] Game components (Position, Health, Ship, Weapons, etc.)
 - [x] Game systems (Movement, Combat, AI, Targeting)
 - [x] Data-driven architecture with JSON files
-- [x] Sample game data (ships, modules, skills, NPCs, missions)
+- [x] Extensive game data (14 ships, 70 modules, 47 skills, 13 NPCs, 15 missions)
 - [x] Network protocol and messaging
 - [x] Dedicated game server
 - [x] Basic game client
 - [x] Server-client state synchronization
+
+### 🚀 New in Extended Content Pack
+- [x] **10 new ships**: Destroyers and Cruisers across all 4 races
+  - 4 Tech I Destroyers (Thrasher, Cormorant, Catalyst, Coercer)
+  - 6 Tech I Cruisers (Stabber, Caracal, Vexor, Maller, Rupture, Moa)
+- [x] **61 new modules**: Expanded from 9 to 70 modules total
+  - 10 new weapons (medium turrets, blasters, railguns, beam lasers)
+  - 18 defensive modules (shield extenders, armor repairers, hardeners)
+  - 18 utility modules (EWAR, propulsion, tracking, engineering)
+  - 14 drones (light, medium, heavy combat drones + utility drones)
+- [x] **32 new skills**: Expanded from 15 to 47 skills
+  - Complete drone skill tree (6 skills)
+  - Medium weapon skills for all types
+  - Destroyer and Cruiser piloting for all races
+  - Electronic warfare and engineering skills
+- [x] **9 new NPCs**: Added Sansha's Nation, Angel Cartel, and Rogue Drones
+  - Destroyer and Cruiser class NPCs for existing factions
+- [x] **10 new missions**: Level 2-4 missions with varied objectives
+  - Combat, exploration, courier, and mining missions
 
 ### 🔨 In Progress (Phase 2)
 - [ ] Combat system implementation

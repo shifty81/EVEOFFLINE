@@ -1,0 +1,236 @@
+{
+  "angel_threat": {
+    "id": "angel_threat",
+    "name": "Angel Cartel Threat",
+    "level": 2,
+    "type": "combat",
+    "agent": "Security Chief Anderson",
+    "faction": "Republic Fleet",
+    "description": "Angel Cartel forces have been spotted near our trade routes. Remove them.",
+    "briefing": "Angel Cartel has become emboldened. Show them we won't tolerate their presence here.",
+    "objectives": [
+      {"type": "destroy", "target": "angel_frigate", "count": 6}
+    ],
+    "rewards": {
+      "isk": 180000,
+      "loyalty_points": 450,
+      "standing_gain": 0.02,
+      "items": ["projectile_ammo"]
+    },
+    "location": "hek",
+    "spawn_distance": 22000,
+    "time_limit": 5400,
+    "difficulty": "medium"
+  },
+  "sansha_incursion": {
+    "id": "sansha_incursion",
+    "name": "Sansha's Nation Scouts",
+    "level": 2,
+    "type": "combat",
+    "agent": "Admiral Winters",
+    "faction": "Imperial Navy",
+    "description": "Sansha's Nation has sent scouts into our territory. Eliminate them before they report back.",
+    "briefing": "Sansha's Nation is probing our defenses. We must respond decisively.",
+    "objectives": [
+      {"type": "destroy", "target": "sansha_frigate", "count": 5}
+    ],
+    "rewards": {
+      "isk": 190000,
+      "loyalty_points": 470,
+      "standing_gain": 0.025,
+      "items": ["frequency_crystals", "armor_plate"]
+    },
+    "location": "jita",
+    "spawn_distance": 20000,
+    "time_limit": 5400,
+    "difficulty": "medium"
+  },
+  "rogue_drone_cleanup": {
+    "id": "rogue_drone_cleanup",
+    "name": "Rogue Drone Cleanup",
+    "level": 2,
+    "type": "combat",
+    "agent": "Drone Control Officer",
+    "faction": "Federation Navy",
+    "description": "Rogue drones have infested a nearby sector. Clear them out.",
+    "briefing": "These rogue drones are a menace to navigation. Exterminate them all.",
+    "objectives": [
+      {"type": "destroy", "target": "rogue_drone_frigate", "count": 8}
+    ],
+    "rewards": {
+      "isk": 160000,
+      "loyalty_points": 420,
+      "standing_gain": 0.02,
+      "items": ["drone_compounds", "salvaged_materials"]
+    },
+    "location": "perimeter",
+    "spawn_distance": 18000,
+    "time_limit": 5400,
+    "difficulty": "medium"
+  },
+  "destroyer_patrol": {
+    "id": "destroyer_patrol",
+    "name": "Destroyer Patrol",
+    "level": 3,
+    "type": "combat",
+    "agent": "Fleet Commander Hayes",
+    "faction": "Caldari Navy",
+    "description": "Enemy destroyers have been detected. We need a skilled pilot to eliminate them.",
+    "briefing": "These destroyer-class vessels pose a significant threat. Engage with caution.",
+    "objectives": [
+      {"type": "destroy", "target": "serpentis_destroyer", "count": 3},
+      {"type": "destroy", "target": "guristas_destroyer", "count": 2}
+    ],
+    "rewards": {
+      "isk": 320000,
+      "loyalty_points": 750,
+      "standing_gain": 0.035,
+      "items": ["medium_hybrid_turret", "medium_shield_booster"]
+    },
+    "location": "rancer",
+    "spawn_distance": 35000,
+    "time_limit": 7200,
+    "difficulty": "hard"
+  },
+  "cruiser_showdown": {
+    "id": "cruiser_showdown",
+    "name": "Cruiser Showdown",
+    "level": 4,
+    "type": "combat",
+    "agent": "Admiral Blackwood",
+    "faction": "Caldari Navy",
+    "description": "High-threat cruiser-class targets detected. Only experienced pilots should accept this mission.",
+    "briefing": "These cruisers are commanded by veteran pirates. You'll need a well-fitted ship to succeed.",
+    "objectives": [
+      {"type": "destroy", "target": "serpentis_soldier", "count": 2},
+      {"type": "destroy", "target": "blood_raiders_cruiser", "count": 1}
+    ],
+    "rewards": {
+      "isk": 550000,
+      "loyalty_points": 1200,
+      "standing_gain": 0.05,
+      "items": ["medium_armor_repairer", "damage_control", "gyrostabilizer"]
+    },
+    "location": "rancer",
+    "spawn_distance": 45000,
+    "time_limit": 9000,
+    "difficulty": "very_hard"
+  },
+  "exploration_site": {
+    "id": "exploration_site",
+    "name": "Exploration Site",
+    "level": 2,
+    "type": "exploration",
+    "agent": "Research Director Kim",
+    "faction": "Federation Navy",
+    "description": "We've located an ancient site. Scan the area and retrieve any valuable artifacts.",
+    "briefing": "These archaeological sites often contain valuable technology. Be thorough in your scan.",
+    "objectives": [
+      {"type": "scan", "target": "exploration_site", "count": 1},
+      {"type": "retrieve", "item": "ancient_artifact", "count": 3}
+    ],
+    "rewards": {
+      "isk": 200000,
+      "loyalty_points": 500,
+      "standing_gain": 0.025,
+      "items": ["salvaged_materials", "rare_ore"]
+    },
+    "location": "perimeter",
+    "time_limit": 6000,
+    "difficulty": "medium"
+  },
+  "supply_run": {
+    "id": "supply_run",
+    "name": "Emergency Supply Run",
+    "level": 1,
+    "type": "courier",
+    "agent": "Logistics Officer Chen",
+    "faction": "Caldari Provisions",
+    "description": "Our outpost needs emergency supplies. Deliver these materials quickly.",
+    "briefing": "Time is of the essence. These supplies are urgently needed at our Hek station.",
+    "objectives": [
+      {"type": "transport", "item": "medical_supplies", "count": 50, "destination": "hek"}
+    ],
+    "rewards": {
+      "isk": 120000,
+      "loyalty_points": 300,
+      "standing_gain": 0.015
+    },
+    "location": "jita",
+    "cargo_provided": {"medical_supplies": 50},
+    "time_limit": 4800,
+    "difficulty": "easy"
+  },
+  "rare_ore_collection": {
+    "id": "rare_ore_collection",
+    "name": "Rare Ore Collection",
+    "level": 2,
+    "type": "mining",
+    "agent": "Mining Operations Manager",
+    "faction": "ORE",
+    "description": "We need rare ores for a special project. Mine the specified ore from the designated asteroid belt.",
+    "briefing": "These ores are essential for our new manufacturing process. Mine carefully.",
+    "objectives": [
+      {"type": "mine", "resource": "kernite", "amount": 1000},
+      {"type": "mine", "resource": "plagioclase", "amount": 500}
+    ],
+    "rewards": {
+      "isk": 210000,
+      "loyalty_points": 480,
+      "standing_gain": 0.02,
+      "items": ["mining_drone"]
+    },
+    "location": "perimeter",
+    "time_limit": 7200,
+    "difficulty": "medium"
+  },
+  "faction_warfare": {
+    "id": "faction_warfare",
+    "name": "Faction Warfare Sortie",
+    "level": 4,
+    "type": "combat",
+    "agent": "Grand Admiral Vance",
+    "faction": "Republic Fleet",
+    "description": "A major pirate operation is underway. We need all available pilots to engage.",
+    "briefing": "This is a coordinated strike. Expect heavy resistance from multiple factions.",
+    "objectives": [
+      {"type": "destroy", "target": "angel_frigate", "count": 4},
+      {"type": "destroy", "target": "angel_cruiser", "count": 2},
+      {"type": "destroy", "target": "sansha_cruiser", "count": 1}
+    ],
+    "rewards": {
+      "isk": 680000,
+      "loyalty_points": 1500,
+      "standing_gain": 0.06,
+      "items": ["medium_projectile_turret", "large_shield_extender", "tracking_computer"]
+    },
+    "location": "rancer",
+    "spawn_distance": 50000,
+    "time_limit": 10800,
+    "difficulty": "very_hard"
+  },
+  "drone_hive_assault": {
+    "id": "drone_hive_assault",
+    "name": "Drone Hive Assault",
+    "level": 3,
+    "type": "combat",
+    "agent": "Drone Defense Coordinator",
+    "faction": "Federation Navy",
+    "description": "A rogue drone hive has been discovered. Destroy the Mother drone to collapse the hive.",
+    "briefing": "The Mother drone coordinates the entire hive. Once destroyed, the others should scatter.",
+    "objectives": [
+      {"type": "destroy", "target": "rogue_drone_frigate", "count": 6},
+      {"type": "destroy", "target": "rogue_drone_cruiser", "count": 1}
+    ],
+    "rewards": {
+      "isk": 420000,
+      "loyalty_points": 900,
+      "standing_gain": 0.04,
+      "items": ["drone_damage_amplifier", "drone_compounds_advanced"]
+    },
+    "location": "perimeter",
+    "spawn_distance": 38000,
+    "time_limit": 7800,
+    "difficulty": "hard"
+  }
+}
