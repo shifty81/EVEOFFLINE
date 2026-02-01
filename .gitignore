@@ -46,6 +46,8 @@ logs/
 saves/
 screenshots/
 replays/
+screenshot_*.png
+test_gui.py
 
 # Temporary files
 tmp/

@@ -29,6 +29,9 @@ class GUIClient:
     Provides visual representation of game state
     """
     
+    # Camera constants
+    BASE_CAMERA_SPEED = 10
+    
     def __init__(self, player_id: str, character_name: str):
         self.player_id = player_id
         self.character_name = character_name
@@ -83,7 +86,8 @@ class GUIClient:
         try:
             self.font = pygame.font.Font(None, 24)
             self.font_small = pygame.font.Font(None, 18)
-        except:
+        except (pygame.error, OSError) as e:
+            print(f"Warning: Could not load default font, using system font: {e}")
             self.font = pygame.font.SysFont('monospace', 24)
             self.font_small = pygame.font.SysFont('monospace', 18)
         
@@ -379,7 +383,7 @@ class GUIClient:
         
         # Camera controls
         keys = pygame.key.get_pressed()
-        camera_speed = 10 / self.zoom
+        camera_speed = self.BASE_CAMERA_SPEED / self.zoom
         
         if keys[pygame.K_LEFT]:
             self.camera_x -= camera_speed

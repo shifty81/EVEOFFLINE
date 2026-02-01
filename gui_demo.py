@@ -37,6 +37,13 @@ import time
 class GUIDemo:
     """Standalone GUI demonstration"""
     
+    # Visual constants
+    STAR_COUNT = 300
+    WEAPON_EFFECT_DURATION = 0.3  # seconds
+    LOG_FADE_DURATION = 5.0  # seconds
+    CAMERA_SMOOTH_FACTOR = 0.95
+    CAMERA_FOLLOW_FACTOR = 0.05
+    
     def __init__(self):
         # Game engine
         self.world = World()
@@ -100,7 +107,7 @@ class GUIDemo:
         self.font_small = pygame.font.Font(None, 18)
         
         # Generate star field
-        for _ in range(300):
+        for _ in range(self.STAR_COUNT):
             x = random.randint(0, self.width)
             y = random.randint(0, self.height)
             brightness = random.randint(100, 255)
@@ -138,9 +145,7 @@ class GUIDemo:
             character_name="Demo Pilot"
         ))
         self.player.add_component(Target(
-            locked_targets=[],
-            max_targets=5,
-            lock_time=2.0
+            locked_targets=[]
         ))
         self.player.add_component(Weapon(
             weapon_type="Light Ion Blaster",
@@ -148,7 +153,7 @@ class GUIDemo:
             damage_type="thermal",
             optimal_range=5000,
             falloff_range=2500,
-            cycle_time=2.0
+            rate_of_fire=2.0
         ))
     
     def create_enemies(self):
@@ -295,12 +300,12 @@ class GUIDemo:
         
         for i, (start_x, start_y, end_x, end_y, effect_time) in enumerate(self.weapon_effects):
             age = current_time - effect_time
-            if age > 0.3:  # Effect lasts 0.3 seconds
+            if age > self.WEAPON_EFFECT_DURATION:
                 effects_to_remove.append(i)
                 continue
             
             # Fade out
-            alpha = int(255 * (1 - age / 0.3))
+            alpha = int(255 * (1 - age / self.WEAPON_EFFECT_DURATION))
             color = (255, 100, 100, alpha)
             
             # Draw laser line
@@ -355,7 +360,7 @@ class GUIDemo:
         current_time = time.time()
         for message, msg_time in self.combat_log:
             age = current_time - msg_time
-            alpha = int(255 * max(0, 1 - age / 5))  # Fade over 5 seconds
+            alpha = int(255 * max(0, 1 - age / self.LOG_FADE_DURATION))
             if alpha > 0:
                 text = self.font_small.render(message, True, self.COLOR_TEXT)
                 self.screen.blit(text, (20, y))
@@ -564,8 +569,8 @@ class GUIDemo:
         if self.player:
             pos = self.player.get_component(Position)
             # Smoothly follow player
-            self.camera_x = self.camera_x * 0.95 + pos.x * 0.05
-            self.camera_y = self.camera_y * 0.95 + pos.y * 0.05
+            self.camera_x = self.camera_x * self.CAMERA_SMOOTH_FACTOR + pos.x * self.CAMERA_FOLLOW_FACTOR
+            self.camera_y = self.camera_y * self.CAMERA_SMOOTH_FACTOR + pos.y * self.CAMERA_FOLLOW_FACTOR
     
     def run(self):
         """Main game loop"""
