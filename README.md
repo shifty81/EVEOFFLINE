@@ -33,6 +33,26 @@ pip install -r requirements.txt
 
 ### Running the Game
 
+**🎮 Interactive Gameplay Demo (Recommended for beginners):**
+```bash
+python interactive_demo.py
+```
+This provides a menu-driven interface to explore all game features:
+- Ship status and fitting
+- Drone operations
+- Combat and targeting
+- Skills and progression
+- Navigation and warp
+- Missions and scanning
+
+**📺 Automated Gameplay Showcase:**
+```bash
+python showcase_gameplay.py
+```
+Demonstrates all features in a scripted format (great for screenshots/videos).
+
+**🌐 Multiplayer Server Mode:**
+
 **Start the server:**
 ```bash
 python server/server.py
