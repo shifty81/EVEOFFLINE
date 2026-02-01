@@ -1,0 +1,100 @@
+{
+  "systems": [
+    {
+      "id": "jita",
+      "name": "Jita",
+      "security": 1.0,
+      "faction": "Caldari",
+      "type": "highsec",
+      "description": "Major trade hub in Caldari space",
+      "coordinates": {"x": 0, "y": 0, "z": 0},
+      "stations": [
+        {
+          "id": "jita_4_4",
+          "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
+          "type": "station",
+          "services": ["market", "repair", "fitting", "missions", "cloning"]
+        }
+      ],
+      "asteroid_belts": [],
+      "gates": ["perimeter", "maurasi"]
+    },
+    {
+      "id": "perimeter",
+      "name": "Perimeter",
+      "security": 0.9,
+      "faction": "Caldari",
+      "type": "highsec",
+      "description": "System adjacent to Jita",
+      "coordinates": {"x": 100000, "y": 0, "z": 0},
+      "stations": [
+        {
+          "id": "perimeter_station",
+          "name": "Perimeter II - Caldari Provisions Warehouse",
+          "type": "station",
+          "services": ["market", "repair", "fitting"]
+        }
+      ],
+      "asteroid_belts": [
+        {"id": "belt_1", "ore_types": ["veldspar", "scordite"], "spawn_rate": 0.1}
+      ],
+      "gates": ["jita", "sobaseki"]
+    },
+    {
+      "id": "rancer",
+      "name": "Rancer",
+      "security": 0.4,
+      "faction": "Minmatar",
+      "type": "lowsec",
+      "description": "Notorious lowsec chokepoint - heavy NPC activity",
+      "coordinates": {"x": 0, "y": 150000, "z": 50000},
+      "stations": [
+        {
+          "id": "rancer_station",
+          "name": "Rancer V - Minmatar Mining Station",
+          "type": "station",
+          "services": ["repair", "fitting"]
+        }
+      ],
+      "asteroid_belts": [
+        {"id": "belt_1", "ore_types": ["kernite", "plagioclase"], "spawn_rate": 0.3}
+      ],
+      "npc_spawns": {
+        "enabled": true,
+        "types": ["serpentis_scout", "serpentis_soldier"],
+        "spawn_rate": 0.5,
+        "max_npcs": 10
+      },
+      "gates": ["perimeter", "osvestmunnur"]
+    },
+    {
+      "id": "hek",
+      "name": "Hek",
+      "security": 0.5,
+      "faction": "Minmatar",
+      "type": "highsec",
+      "description": "Regional trade hub in Minmatar space",
+      "coordinates": {"x": -80000, "y": 120000, "z": 0},
+      "stations": [
+        {
+          "id": "hek_8_12",
+          "name": "Hek VIII - Moon 12 - Boundless Creation Factory",
+          "type": "station",
+          "services": ["market", "repair", "fitting", "missions"]
+        }
+      ],
+      "asteroid_belts": [
+        {"id": "belt_1", "ore_types": ["veldspar", "scordite", "pyroxeres"], "spawn_rate": 0.2}
+      ],
+      "gates": ["rancer", "frarn"]
+    }
+  ],
+  "generation_config": {
+    "universe_seed": 12345,
+    "min_systems": 10,
+    "max_systems": 50,
+    "highsec_ratio": 0.4,
+    "lowsec_ratio": 0.3,
+    "nullsec_ratio": 0.3
+  }
+}

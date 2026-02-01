@@ -1,0 +1,10 @@
+# EVE OFFLINE Requirements
+
+# Core dependencies
+# No external dependencies needed for basic functionality
+# Python standard library is sufficient for MVP
+
+# Optional dependencies for future enhancements
+# pygame>=2.5.0  # For 2D graphics
+# numpy>=1.24.0  # For vector math
+# pyglet>=2.0.0  # Alternative graphics library
