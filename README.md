@@ -91,8 +91,10 @@ python client/client.py "Pilot3"
 - [DESIGN.md](DESIGN.md) - Game design document with EVE ONLINE mechanics
 - [ASTROX_RESEARCH.md](ASTROX_RESEARCH.md) - Research on Astrox Imperium's approach
 - [DOCUMENTATION.md](DOCUMENTATION.md) - Developer documentation and API reference
-- [CONTENT_GUIDE.md](CONTENT_GUIDE.md) - **NEW!** Complete guide to all ships, modules, drones, and content
-- [EVE_MECHANICS.md](EVE_MECHANICS.md) - **NEW!** EVE Online mechanics reference for implementation
+- [CONTENT_GUIDE.md](CONTENT_GUIDE.md) - Complete guide to all ships, modules, drones, and content
+- [EVE_MECHANICS.md](EVE_MECHANICS.md) - EVE Online mechanics reference for implementation
+- [PHASE3_SYSTEMS.md](PHASE3_SYSTEMS.md) - **NEW!** Complete guide to Phase 3 gameplay systems
+- [LANGUAGE_AND_3D_OPTIONS.md](LANGUAGE_AND_3D_OPTIONS.md) - **NEW!** Python vs C++20, 3D graphics options
 
 ## 🎯 Current Status
 
@@ -151,17 +153,17 @@ python client/client.py "Pilot3"
 **See [NEW_FEATURES.md](NEW_FEATURES.md) for complete feature documentation!**
 **See [VISUAL_CAPABILITIES.md](VISUAL_CAPABILITIES.md) for GUI/visual documentation!**
 
-### 📋 Planned (Phase 3+)
-- [x] ~~2D rendering (Pygame)~~ **IMPLEMENTED!**
-- [x] ~~Basic user interface (HUD, overview)~~ **IMPLEMENTED!**
-- [ ] 3D rendering (advanced graphics)
-- [ ] Advanced UI (clickable targeting, modules)
-- [ ] Active EWAR modules (webs, scrams, painters)
-- [ ] Market and economy system
-- [ ] Loot drops and inventory management
-- [ ] Mining and resource gathering
-- [ ] Fleet mechanics
-- [ ] Modding tools
+### 🎯 NEW! Phase 3 Features - Complete!
+- [x] **Manufacturing System** - Blueprint research, manufacturing, copying
+- [x] **Market System** - Buy/sell orders, instant trading, ISK wallet
+- [x] **Exploration System** - Probe scanning, cosmic signatures, sites
+- [x] **Loot System** - NPC drops, loot containers, salvaging
+- [x] **Fleet System** - Fleet bonuses, organization, coordination
+- [x] **Inventory System** - Item storage with capacity management
+- [ ] 3D rendering (see LANGUAGE_AND_3D_OPTIONS.md for options)
+- [ ] Advanced UI enhancements
+- [ ] Corporation management
+- [ ] More content (ships, modules, missions)
 
 ## 🎮 Game Mechanics
 

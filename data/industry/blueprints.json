@@ -1,0 +1,148 @@
+{
+  "blueprints": {
+    "rifter_blueprint": {
+      "blueprint_id": "rifter_blueprint",
+      "item_type": "ship",
+      "item_id": "rifter",
+      "material_efficiency": 0,
+      "time_efficiency": 0,
+      "runs": -1,
+      "materials": {
+        "tritanium": 30000,
+        "pyerite": 8000,
+        "mexallon": 2000,
+        "isogen": 500,
+        "nocxium": 100,
+        "zydrine": 20,
+        "megacyte": 5
+      },
+      "manufacturing_time": 7200
+    },
+    "merlin_blueprint": {
+      "blueprint_id": "merlin_blueprint",
+      "item_type": "ship",
+      "item_id": "merlin",
+      "material_efficiency": 0,
+      "time_efficiency": 0,
+      "runs": -1,
+      "materials": {
+        "tritanium": 32000,
+        "pyerite": 9000,
+        "mexallon": 2500,
+        "isogen": 600,
+        "nocxium": 120,
+        "zydrine": 25,
+        "megacyte": 8
+      },
+      "manufacturing_time": 7200
+    },
+    "autocannon_blueprint": {
+      "blueprint_id": "autocannon_blueprint",
+      "item_type": "module",
+      "item_id": "150mm_autocannon_i",
+      "material_efficiency": 0,
+      "time_efficiency": 0,
+      "runs": -1,
+      "materials": {
+        "tritanium": 500,
+        "pyerite": 200,
+        "mexallon": 50
+      },
+      "manufacturing_time": 600
+    },
+    "shield_extender_blueprint": {
+      "blueprint_id": "shield_extender_blueprint",
+      "item_type": "module",
+      "item_id": "medium_shield_extender_i",
+      "material_efficiency": 0,
+      "time_efficiency": 0,
+      "runs": -1,
+      "materials": {
+        "tritanium": 300,
+        "pyerite": 150,
+        "mexallon": 100,
+        "isogen": 50
+      },
+      "manufacturing_time": 600
+    },
+    "drone_blueprint": {
+      "blueprint_id": "drone_blueprint",
+      "item_type": "drone",
+      "item_id": "hobgoblin_i",
+      "material_efficiency": 0,
+      "time_efficiency": 0,
+      "runs": -1,
+      "materials": {
+        "tritanium": 200,
+        "pyerite": 100,
+        "mexallon": 50,
+        "isogen": 25
+      },
+      "manufacturing_time": 300
+    },
+    "ammo_blueprint": {
+      "blueprint_id": "ammo_blueprint",
+      "item_type": "ammo",
+      "item_id": "emp_s",
+      "material_efficiency": 0,
+      "time_efficiency": 0,
+      "runs": -1,
+      "materials": {
+        "tritanium": 10,
+        "pyerite": 5
+      },
+      "manufacturing_time": 60
+    }
+  },
+  "materials": {
+    "tritanium": {
+      "item_id": "tritanium",
+      "name": "Tritanium",
+      "volume": 0.01,
+      "base_price": 5.0,
+      "description": "The most common ore mineral"
+    },
+    "pyerite": {
+      "item_id": "pyerite",
+      "name": "Pyerite",
+      "volume": 0.01,
+      "base_price": 10.0,
+      "description": "Common ore mineral used in manufacturing"
+    },
+    "mexallon": {
+      "item_id": "mexallon",
+      "name": "Mexallon",
+      "volume": 0.01,
+      "base_price": 50.0,
+      "description": "Mid-tier ore mineral"
+    },
+    "isogen": {
+      "item_id": "isogen",
+      "name": "Isogen",
+      "volume": 0.01,
+      "base_price": 100.0,
+      "description": "Mid-tier ore mineral"
+    },
+    "nocxium": {
+      "item_id": "nocxium",
+      "name": "Nocxium",
+      "volume": 0.01,
+      "base_price": 500.0,
+      "description": "High-tier ore mineral"
+    },
+    "zydrine": {
+      "item_id": "zydrine",
+      "name": "Zydrine",
+      "volume": 0.01,
+      "base_price": 1000.0,
+      "description": "High-tier ore mineral"
+    },
+    "megacyte": {
+      "item_id": "megacyte",
+      "name": "Megacyte",
+      "volume": 0.01,
+      "base_price": 2000.0,
+      "description": "Rare ore mineral"
+    }
+  }
+}

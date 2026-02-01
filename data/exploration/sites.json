@@ -1,0 +1,131 @@
+{
+  "signature_templates": {
+    "combat_guristas_hideout": {
+      "signature_type": "combat",
+      "name_prefix": "Guristas",
+      "name_suffix": "Hideout",
+      "difficulty": 2,
+      "npc_spawns": [
+        "guristas_frigate",
+        "guristas_frigate",
+        "guristas_destroyer",
+        "guristas_cruiser"
+      ],
+      "loot_table": {
+        "salvage_material": 20,
+        "datacores": 2
+      },
+      "isk_reward": 500000
+    },
+    "combat_serpentis_base": {
+      "signature_type": "combat",
+      "name_prefix": "Serpentis",
+      "name_suffix": "Base",
+      "difficulty": 3,
+      "npc_spawns": [
+        "serpentis_destroyer",
+        "serpentis_destroyer",
+        "serpentis_cruiser",
+        "serpentis_cruiser"
+      ],
+      "loot_table": {
+        "salvage_material": 30,
+        "datacores": 3,
+        "blueprint_copy": 1
+      },
+      "isk_reward": 1000000
+    },
+    "relic_ancient_ruins": {
+      "signature_type": "relic",
+      "name_prefix": "Ancient",
+      "name_suffix": "Ruins",
+      "difficulty": 2,
+      "npc_spawns": [],
+      "loot_table": {
+        "ancient_artifacts": 5,
+        "salvage_material": 15,
+        "datacores": 3
+      },
+      "isk_reward": 750000
+    },
+    "data_research_facility": {
+      "signature_type": "data",
+      "name_prefix": "Abandoned",
+      "name_suffix": "Research Facility",
+      "difficulty": 3,
+      "npc_spawns": [
+        "rogue_drone_frigate",
+        "rogue_drone_cruiser"
+      ],
+      "loot_table": {
+        "datacores": 8,
+        "salvage_material": 10,
+        "blueprint_copy": 1
+      },
+      "isk_reward": 1200000
+    },
+    "gas_cloud_small": {
+      "signature_type": "gas",
+      "name_prefix": "Bountiful",
+      "name_suffix": "Gas Cloud",
+      "difficulty": 1,
+      "npc_spawns": [],
+      "loot_table": {
+        "fullerite_c28": 100
+      },
+      "isk_reward": 300000
+    },
+    "gas_cloud_large": {
+      "signature_type": "gas",
+      "name_prefix": "Vast",
+      "name_suffix": "Gas Reservoir",
+      "difficulty": 2,
+      "npc_spawns": [
+        "pirate_frigate"
+      ],
+      "loot_table": {
+        "fullerite_c28": 250,
+        "fullerite_c32": 50
+      },
+      "isk_reward": 800000
+    }
+  },
+  "loot_items": {
+    "salvage_material": {
+      "item_id": "salvage_material",
+      "name": "Salvaged Materials",
+      "volume": 5.0,
+      "base_value": 10000
+    },
+    "datacores": {
+      "item_id": "datacores",
+      "name": "Datacore",
+      "volume": 1.0,
+      "base_value": 50000
+    },
+    "ancient_artifacts": {
+      "item_id": "ancient_artifacts",
+      "name": "Ancient Artifacts",
+      "volume": 2.0,
+      "base_value": 100000
+    },
+    "blueprint_copy": {
+      "item_id": "blueprint_copy",
+      "name": "Blueprint Copy (Random)",
+      "volume": 0.1,
+      "base_value": 500000
+    },
+    "fullerite_c28": {
+      "item_id": "fullerite_c28",
+      "name": "Fullerite-C28",
+      "volume": 10.0,
+      "base_value": 2000
+    },
+    "fullerite_c32": {
+      "item_id": "fullerite_c32",
+      "name": "Fullerite-C32",
+      "volume": 10.0,
+      "base_value": 5000
+    }
+  }
+}
