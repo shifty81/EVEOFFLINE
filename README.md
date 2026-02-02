@@ -237,6 +237,10 @@ See [docs/testing/TEST_SUMMARY.md](docs/testing/TEST_SUMMARY.md) for detailed te
 - [x] **Basic Renderer** - Entity rendering (placeholder shapes)
 - [x] **Star Field** - Beautiful space background with 1500+ stars
 - [x] **Standalone Test** - Test 3D client without server (`test_3d_client.py`)
+- [x] **Automated Testing** - Comprehensive test suite
+- [x] **Error Logging** - Full debugging support
+- [x] **Easy Launcher** - User-friendly menu interface
+- [x] **Asteroid Fields** - EVE-style mining mechanics (NEW!)
 - [ ] **Ship Models** - 3D models for all ships
 - [ ] **Visual Effects** - Weapons, explosions, particles
 - [ ] **HUD/UI** - Ship status, target info, combat log

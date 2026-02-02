@@ -1,0 +1,32 @@
+{
+  "ore_types": {
+    "veldspar": {
+      "name": "Veldspar",
+      "tier": "common",
+      "security_min": 0.5,
+      "base_value": 10,
+      "minerals": {"tritanium": 400}
+    },
+    "scordite": {
+      "name": "Scordite",
+      "tier": "common", 
+      "security_min": 0.7,
+      "base_value": 25,
+      "minerals": {"tritanium": 300, "pyerite": 150}
+    },
+    "plagioclase": {
+      "name": "Plagioclase",
+      "tier": "uncommon",
+      "security_min": 0.9,
+      "base_value": 50,
+      "minerals": {"tritanium": 175, "pyerite": 70, "mexallon": 35}
+    },
+    "arkonor": {
+      "name": "Arkonor",
+      "tier": "ultra_rare",
+      "security_max": 0.0,
+      "base_value": 500,
+      "minerals": {"tritanium": 300, "mexallon": 100, "megacyte": 60}
+    }
+  }
+}
