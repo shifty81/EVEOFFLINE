@@ -5,6 +5,7 @@
 # Python standard library is sufficient for MVP
 
 # Optional dependencies for enhanced features
-pygame>=2.5.0  # For 2D graphics and visual rendering
-# numpy>=1.24.0  # For vector math
-# pyglet>=2.0.0  # Alternative graphics library
+pygame>=2.5.0     # For 2D graphics and visual rendering
+panda3d>=1.10.13  # For 3D graphics (Phase 5)
+# numpy>=1.24.0   # For vector math
+# pyglet>=2.0.0   # Alternative graphics library
