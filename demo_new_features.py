@@ -356,7 +356,7 @@ def main():
         print("  1. 🏭 Manufacturing System - Blueprint research, manufacturing, copying")
         print("  2. 💰 Market System - Buy/sell orders, instant trading, ISK wallet")
         print("  3. 🔍 Exploration System - Probe scanning, cosmic signatures, sites")
-        print("\nSee LANGUAGE_AND_3D_OPTIONS.md for information about:")
+        print("\nSee docs/features/LANGUAGE_AND_3D_OPTIONS.md for information about:")
         print("  - Python vs C++20 implementation")
         print("  - 3D graphics support options")
         print("  - EVE Online and Astrox Imperium visual style")

@@ -419,7 +419,7 @@ def main():
     print_header("DEMONSTRATION COMPLETE")
     print("✅ All core EVE Online features demonstrated!")
     print("\n📚 For more information:")
-    print("   • See NEW_FEATURES.md for complete feature documentation")
+    print("   • See docs/features/NEW_FEATURES.md for complete feature documentation")
     print("   • Run tests/test_engine.py for core system tests")
     print("   • Run tests/test_advanced_systems.py for advanced tests")
     print("\n🚀 EVE OFFLINE is ready for the full experience!")

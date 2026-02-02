@@ -101,17 +101,22 @@ python tests/test_manufacturing.py       # Manufacturing/industry tests
 python tests/test_market.py              # Market/economy tests
 ```
 
-See [TEST_SUMMARY.md](TEST_SUMMARY.md) for detailed test coverage information.
+See [docs/testing/TEST_SUMMARY.md](docs/testing/TEST_SUMMARY.md) for detailed test coverage information.
 
 ## 📚 Documentation
 
-- [DESIGN.md](DESIGN.md) - Game design document with EVE ONLINE mechanics
-- [ASTROX_RESEARCH.md](ASTROX_RESEARCH.md) - Research on Astrox Imperium's approach
-- [DOCUMENTATION.md](DOCUMENTATION.md) - Developer documentation and API reference
-- [CONTENT_GUIDE.md](CONTENT_GUIDE.md) - Complete guide to all ships, modules, drones, and content
-- [EVE_MECHANICS.md](EVE_MECHANICS.md) - EVE Online mechanics reference for implementation
-- [PHASE3_SYSTEMS.md](PHASE3_SYSTEMS.md) - **NEW!** Complete guide to Phase 3 gameplay systems
-- [LANGUAGE_AND_3D_OPTIONS.md](LANGUAGE_AND_3D_OPTIONS.md) - **NEW!** Python vs C++20, 3D graphics options
+**All documentation is now organized in the [docs/](docs/) folder!**
+
+### Quick Links
+- 📋 [**Project Roadmap**](docs/ROADMAP.md) - What's done and what's planned
+- 🚀 [**Getting Started Guide**](docs/getting-started/GETTING_STARTED.md) - Installation and quick start
+- 📖 [**Content Guide**](docs/guides/CONTENT_GUIDE.md) - Complete guide to ships, modules, and content
+- 👨‍💻 [**Developer Documentation**](docs/development/DOCUMENTATION.md) - API reference and development guide
+- 🎨 [**Design Document**](docs/design/DESIGN.md) - Game design and EVE mechanics
+- ✨ [**Feature Documentation**](docs/features/NEW_FEATURES.md) - Complete feature list
+- 🧪 [**Test Coverage**](docs/testing/TEST_SUMMARY.md) - Testing documentation
+
+**For a complete documentation index, see [docs/README.md](docs/README.md)**
 
 ## 🎯 Current Status
 
@@ -167,8 +172,8 @@ See [TEST_SUMMARY.md](TEST_SUMMARY.md) for detailed test coverage information.
 - [x] **Standalone GUI Demo** - No server required to see visuals
 - [x] **GUI Multiplayer Client** - Connect to server with graphics
 
-**See [NEW_FEATURES.md](NEW_FEATURES.md) for complete feature documentation!**
-**See [VISUAL_CAPABILITIES.md](VISUAL_CAPABILITIES.md) for GUI/visual documentation!**
+**See [docs/features/NEW_FEATURES.md](docs/features/NEW_FEATURES.md) for complete feature documentation!**
+**See [docs/features/VISUAL_CAPABILITIES.md](docs/features/VISUAL_CAPABILITIES.md) for GUI/visual documentation!**
 
 ### 🎯 NEW! Phase 3 Features - Complete!
 - [x] **Manufacturing System** - Blueprint research, manufacturing, copying
@@ -177,10 +182,12 @@ See [TEST_SUMMARY.md](TEST_SUMMARY.md) for detailed test coverage information.
 - [x] **Loot System** - NPC drops, loot containers, salvaging
 - [x] **Fleet System** - Fleet bonuses, organization, coordination
 - [x] **Inventory System** - Item storage with capacity management
-- [ ] 3D rendering (see LANGUAGE_AND_3D_OPTIONS.md for options)
+- [ ] 3D rendering (see [docs/features/LANGUAGE_AND_3D_OPTIONS.md](docs/features/LANGUAGE_AND_3D_OPTIONS.md) for options)
 - [ ] Advanced UI enhancements
 - [ ] Corporation management
 - [ ] More content (ships, modules, missions)
+
+**See [docs/ROADMAP.md](docs/ROADMAP.md) for complete status and planned features!**
 
 ## 🎮 Game Mechanics
 
@@ -207,7 +214,7 @@ data/
 └── universe/       # Solar system data
 ```
 
-See [DOCUMENTATION.md](DOCUMENTATION.md) for modding guides.
+See [docs/development/DOCUMENTATION.md](docs/development/DOCUMENTATION.md) for modding guides.
 
 ## 🏗️ Architecture
 
