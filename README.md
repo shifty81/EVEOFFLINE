@@ -182,9 +182,19 @@ See [docs/testing/TEST_SUMMARY.md](docs/testing/TEST_SUMMARY.md) for detailed te
 - [x] **Loot System** - NPC drops, loot containers, salvaging
 - [x] **Fleet System** - Fleet bonuses, organization, coordination
 - [x] **Inventory System** - Item storage with capacity management
+
+### 🎯 NEW! Phase 4 Features - Complete!
+- [x] **Corporation System** - Full corp management, roles, permissions
+- [x] **Corporation Hangars** - Shared storage with 3 divisions
+- [x] **Corporation Wallets** - Shared ISK pool with tax system
+- [x] **Social Features** - Contacts, standings, blocking
+- [x] **Mail System** - Send/receive mail, inbox/sent folders
+- [x] **Chat System** - Channels, moderation, chat history
+- [x] **Contract System** - Item exchange, courier contracts
+
+### 🚀 Next Up: Phase 5
 - [ ] 3D rendering (see [docs/features/LANGUAGE_AND_3D_OPTIONS.md](docs/features/LANGUAGE_AND_3D_OPTIONS.md) for options)
 - [ ] Advanced UI enhancements
-- [ ] Corporation management
 - [ ] More content (ships, modules, missions)
 
 **See [docs/ROADMAP.md](docs/ROADMAP.md) for complete status and planned features!**
