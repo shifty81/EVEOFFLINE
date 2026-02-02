@@ -43,18 +43,25 @@ class EntityRenderer:
         """Setup scene lighting"""
         # Ambient light (very low - space is dark!)
         ambient = AmbientLight('ambient')
-        ambient.setColor(Vec4(0.1, 0.1, 0.15, 1.0))  # Very dark blue
+        ambient.setColor(Vec4(0.15, 0.15, 0.2, 1.0))  # Slightly brighter dark blue
         ambient_np = self.render.attachNewNode(ambient)
         self.render.setLight(ambient_np)
         
-        # Directional light (sun)
-        dlight = DirectionalLight('dlight')
-        dlight.setColor(Vec4(0.8, 0.8, 0.9, 1.0))  # Slightly blue white
+        # Main directional light (sun/star)
+        dlight = DirectionalLight('sun')
+        dlight.setColor(Vec4(1.0, 0.95, 0.9, 1.0))  # Warm white light
         dlnp = self.render.attachNewNode(dlight)
         dlnp.setHpr(45, -45, 0)  # Angle the light
         self.render.setLight(dlnp)
         
-        print("[Renderer] Lighting setup complete")
+        # Secondary fill light (softer, from opposite side)
+        fill_light = DirectionalLight('fill')
+        fill_light.setColor(Vec4(0.3, 0.35, 0.4, 1.0))  # Cool blue fill
+        fill_np = self.render.attachNewNode(fill_light)
+        fill_np.setHpr(-135, -30, 0)  # Opposite angle
+        self.render.setLight(fill_np)
+        
+        print("[Renderer] Enhanced lighting setup complete")
     
     def _get_model_path(self, ship_type: str) -> str:
         """Get model file path for a ship type"""
@@ -163,6 +170,10 @@ class EntityRenderer:
         color = self.FACTION_COLORS.get(faction, self.FACTION_COLORS['default'])
         placeholder.setColor(color)
         
+        # Add some visual interest with shader attributes
+        # Make it slightly metallic looking
+        placeholder.setShaderAuto()  # Enable automatic shader generation
+        
         return placeholder
     
     def render_entity(self, entity):
@@ -196,6 +207,9 @@ class EntityRenderer:
             # Set initial position
             pos = entity.get_position()
             node.setPos(pos[0], pos[1], pos[2])
+            
+            # Enable automatic shader generation for better lighting
+            node.setShaderAuto()
             
             # Store node
             self.entity_nodes[entity_id] = node

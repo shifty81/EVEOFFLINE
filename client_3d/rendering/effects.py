@@ -5,7 +5,7 @@ Handles weapon fire effects, explosions, and other visual feedback
 
 from panda3d.core import Vec3, Vec4, Point3, NodePath, LineSegs
 from panda3d.core import BillboardEffect
-from direct.interval.IntervalGlobal import Sequence, Func, LerpScaleInterval, LerpColorScaleInterval
+from direct.interval.IntervalGlobal import Sequence, Func, LerpScaleInterval, LerpColorScaleInterval, LerpPosInterval
 import random
 
 
@@ -169,6 +169,105 @@ class EffectsManager:
             except Exception as e:
                 # Fallback if models unavailable
                 pass
+    
+    def create_explosion_effect(self, position: Vec3, size: float = 5.0):
+        """
+        Create an explosion effect at position
+        
+        Args:
+            position: Explosion position
+            size: Size multiplier for the explosion
+        """
+        # Create expanding sphere for explosion
+        try:
+            explosion = self.loader.loadModel("models/sphere")
+            if explosion:
+                explosion.reparentTo(self.render)
+                explosion.setPos(position)
+                explosion.setScale(size * 0.5)
+                explosion.setColor(1, 0.5, 0, 1)  # Orange
+                explosion.setTransparency(True)
+                explosion.setBillboardPointEye()
+                
+                # Animate: expand quickly and fade
+                explosion_seq = Sequence(
+                    LerpScaleInterval(explosion, 0.4, Vec3(size * 3, size * 3, size * 3)),
+                    LerpColorScaleInterval(explosion, 0.3, Vec4(0.3, 0.1, 0, 0)),
+                    Func(self._remove_effect, explosion)
+                )
+                explosion_seq.start()
+                
+                self.active_effects.append(explosion)
+        except Exception as e:
+            print(f"[Effects] Could not create explosion: {e}")
+        
+        # Create debris particles
+        num_particles = int(size * 2)
+        for i in range(num_particles):
+            try:
+                particle = self.loader.loadModel("models/sphere")
+                if particle:
+                    # Random direction
+                    direction = Vec3(
+                        random.uniform(-1, 1),
+                        random.uniform(-1, 1),
+                        random.uniform(-1, 1)
+                    ).normalized()
+                    
+                    particle.reparentTo(self.render)
+                    particle.setPos(position)
+                    particle.setScale(0.3)
+                    
+                    # Random debris color (orange to dark gray)
+                    brightness = random.uniform(0.3, 1.0)
+                    particle.setColor(brightness, brightness * 0.5, 0, 1)
+                    particle.setTransparency(True)
+                    particle.setBillboardPointEye()
+                    
+                    # Animate: fly out and fade
+                    end_pos = position + direction * size * random.uniform(3, 8)
+                    particle_seq = Sequence(
+                        LerpPosInterval(particle, 0.6, end_pos),
+                        LerpColorScaleInterval(particle, 0.2, Vec4(1, 1, 1, 0)),
+                        Func(self._remove_effect, particle)
+                    )
+                    particle_seq.start()
+                    
+                    self.active_effects.append(particle)
+            except Exception as e:
+                pass
+    
+    def create_shield_hit_effect(self, position: Vec3, normal: Vec3 = Vec3(0, 0, 1)):
+        """
+        Create a shield hit effect at position
+        Shows the shield absorbing damage with a blue ripple
+        
+        Args:
+            position: Hit position
+            normal: Normal vector at hit point (direction)
+        """
+        try:
+            # Create shield ripple
+            ripple = self.loader.loadModel("models/sphere")
+            if ripple:
+                ripple.reparentTo(self.render)
+                ripple.setPos(position)
+                ripple.setScale(2)
+                ripple.setColor(0.3, 0.5, 1, 0.6)  # Blue shield color
+                ripple.setTransparency(True)
+                ripple.setBillboardPointEye()
+                
+                # Animate: expand and fade quickly
+                ripple_seq = Sequence(
+                    LerpScaleInterval(ripple, 0.3, Vec3(6, 6, 6)),
+                    LerpColorScaleInterval(ripple, 0.2, Vec4(1, 1, 1, 0)),
+                    Func(self._remove_effect, ripple)
+                )
+                ripple_seq.start()
+                
+                self.active_effects.append(ripple)
+        except Exception as e:
+            print(f"[Effects] Could not create shield hit: {e}")
     
     def create_weapon_fire_effect(self, shooter_pos: Vec3, target_pos: Vec3, weapon_type: str = "laser"):
         """
