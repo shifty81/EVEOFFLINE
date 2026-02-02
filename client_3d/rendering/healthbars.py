@@ -5,7 +5,7 @@ Displays health bars above ships in 3D space
 
 from panda3d.core import Vec3, Vec4, NodePath, CardMaker, TextNode
 from direct.gui.OnscreenText import OnscreenText
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 
 class HealthBarManager:
@@ -143,7 +143,7 @@ class HealthBarManager:
             bar_root.removeNode()
             del self.health_bars[entity_id]
     
-    def update_all_health_bars(self, entities: Dict[str, any]):
+    def update_all_health_bars(self, entities: Dict[str, Any]):
         """
         Update all health bars based on entity data
         
