@@ -13,6 +13,7 @@ from client_3d.core import NetworkClient, EntityManager
 from client_3d.rendering.camera import CameraSystem
 from client_3d.rendering.renderer import EntityRenderer
 from client_3d.rendering.starfield import StarField
+from client_3d.rendering.effects import EffectsManager
 
 
 class GameClient3D(ShowBase):
@@ -49,6 +50,9 @@ class GameClient3D(ShowBase):
         # Initialize rendering
         self.entity_renderer = EntityRenderer(self.render, self.loader)
         
+        # Initialize effects manager
+        self.effects = EffectsManager(self.render, self.loader)
+        
         # Initialize star field
         self.star_field = StarField(self.render, self.camera)
         self.star_field.create(num_stars=1500)
@@ -79,22 +83,18 @@ class GameClient3D(ShowBase):
         self.accept("f", self.toggle_follow_camera)
         self.accept("r", self.camera_system.reset)
         
-        # Mouse controls
+        # Mouse controls for camera (EVE-style)
         self.accept("mouse1", self.on_mouse_down, [0])  # Left click
         self.accept("mouse1-up", self.on_mouse_up, [0])
-        self.accept("mouse2", self.on_mouse_down, [1])  # Right click
+        self.accept("mouse2", self.on_mouse_down, [1])  # Right click (future: context menu)
         self.accept("mouse2-up", self.on_mouse_up, [1])
         self.accept("mouse3", self.on_mouse_down, [2])  # Middle click
         self.accept("mouse3-up", self.on_mouse_up, [2])
         self.accept("wheel_up", self.on_mouse_wheel, [1])
         self.accept("wheel_down", self.on_mouse_wheel, [-1])
         
-        # Movement keys (for future implementation)
-        self.accept("w", self.on_key_press, ["forward"])
-        self.accept("s", self.on_key_press, ["backward"])
-        self.accept("a", self.on_key_press, ["left"])
-        self.accept("d", self.on_key_press, ["right"])
-        self.accept("space", self.on_key_press, ["fire"])
+        # Tactical keys (for testing effects)
+        self.accept("space", self.on_key_press, ["fire"])  # Test weapon fire effect
         
         # Mouse state
         self.mouse_down = [False, False, False]
@@ -104,17 +104,20 @@ class GameClient3D(ShowBase):
     def _print_controls(self):
         """Print control instructions"""
         print("\n" + "="*60)
-        print("EVE OFFLINE - 3D Client Controls")
+        print("EVE OFFLINE - 3D Client Controls (EVE-Style)")
         print("="*60)
-        print("Camera:")
-        print("  Left Mouse Drag  - Rotate camera")
+        print("Camera (EVE-Style):")
+        print("  Left Mouse Drag  - Rotate camera around target")
         print("  Mouse Wheel      - Zoom in/out")
         print("  Middle Mouse     - Pan camera")
-        print("  F                - Toggle follow mode")
+        print("  F                - Toggle camera follow mode")
         print("  R                - Reset camera")
-        print("\nMovement:")
-        print("  W/A/S/D          - Move ship")
-        print("  Space            - Fire weapons")
+        print("\nTactical Commands (Future - via UI):")
+        print("  Right Click      - Context menu (planned)")
+        print("  Click in Space   - Navigate to (planned)")
+        print("  Target Entity    - Approach/Orbit/Keep at Range (planned)")
+        print("\nTest Commands:")
+        print("  Space            - Test weapon fire effect")
         print("\nUtility:")
         print("  H                - Toggle help")
         print("  ESC              - Quit")
@@ -139,22 +142,11 @@ class GameClient3D(ShowBase):
         """Handle key press"""
         print(f"[Input] Key pressed: {key}")
         
-        # Map keys to movement vectors
-        if key == "forward":
-            # Move forward (+Y in game coordinates)
-            asyncio.create_task(self.network.send_move_input({'x': 0.0, 'y': 1.0, 'z': 0.0}))
-        elif key == "backward":
-            # Move backward (-Y in game coordinates)
-            asyncio.create_task(self.network.send_move_input({'x': 0.0, 'y': -1.0, 'z': 0.0}))
-        elif key == "left":
-            # Move left (-X in game coordinates)
-            asyncio.create_task(self.network.send_move_input({'x': -1.0, 'y': 0.0, 'z': 0.0}))
-        elif key == "right":
-            # Move right (+X in game coordinates)
-            asyncio.create_task(self.network.send_move_input({'x': 1.0, 'y': 0.0, 'z': 0.0}))
-        elif key == "fire":
-            # Fire weapons
-            asyncio.create_task(self.network.send_fire_input())
+        # Only handle test commands for now
+        # Real EVE-style commands will come from UI (right-click menus, buttons, etc.)
+        if key == "fire":
+            # Test weapon fire effect (not a real game command)
+            self._create_test_weapon_effect()
         
     def toggle_help(self):
         """Toggle help display"""
@@ -182,6 +174,8 @@ class GameClient3D(ShowBase):
             self.network.register_handler('state_update', self.on_state_update)
             self.network.register_handler('spawn_entity', self.on_spawn_entity)
             self.network.register_handler('destroy_entity', self.on_destroy_entity)
+            self.network.register_handler('damage', self.on_damage)
+            self.network.register_handler('input_fire', self.on_weapon_fire)
             
             # Start receive loop
             self.network_task = asyncio.create_task(self.network.receive_loop())
@@ -205,6 +199,46 @@ class GameClient3D(ShowBase):
         if entity_id:
             self.entity_renderer.remove_entity(entity_id)
             print(f"[GameClient3D] Entity destroyed: {entity_id}")
+    
+    def on_damage(self, message):
+        """Handle damage event - create visual effects"""
+        data = message['data']
+        shooter_id = data.get('shooter_id')
+        target_id = data.get('target_id')
+        
+        # Get entity positions
+        shooter = self.entities.get_entity(shooter_id)
+        target = self.entities.get_entity(target_id)
+        
+        if shooter and target:
+            shooter_pos = Vec3(*shooter.get_position())
+            target_pos = Vec3(*target.get_position())
+            
+            # Create weapon fire effect
+            weapon_type = data.get('weapon_type', 'laser')
+            self.effects.create_weapon_fire_effect(shooter_pos, target_pos, weapon_type)
+            print(f"[GameClient3D] Damage effect: {shooter_id} -> {target_id}")
+    
+    def on_weapon_fire(self, message):
+        """Handle weapon fire event"""
+        data = message['data']
+        shooter_id = data.get('shooter_id')
+        target_id = data.get('target_id')
+        
+        if shooter_id and target_id:
+            self.on_damage(message)
+    
+    def _create_test_weapon_effect(self):
+        """Create a test weapon effect for immediate visual feedback"""
+        # Get player entity
+        player_entity = self.entities.get_player_entity()
+        if player_entity:
+            player_pos = Vec3(*player_entity.get_position())
+            
+            # Create effect shooting forward
+            target_pos = player_pos + Vec3(0, 50, 0)
+            self.effects.create_weapon_fire_effect(player_pos, target_pos, "laser")
+            print(f"[GameClient3D] Test weapon effect created")
     
     def update_task(self, task):
         """Main update task (called every frame)"""
