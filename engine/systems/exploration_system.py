@@ -4,11 +4,15 @@ Handles probe scanning, anomalies, and signatures
 Based on EVE Online's exploration mechanics
 """
 
+import math
 from typing import Optional, Dict, List, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 from engine.core.ecs import World, Entity
 from engine.components.game_components import Position
+
+# Constant for scanner initialization
+SCAN_NOT_PERFORMED = -float('inf')  # Represents time in distant past
 
 
 class SignatureType(Enum):
@@ -64,7 +68,7 @@ class ShipScanner:
     scan_resolution: float = 1.0  # Lower is better
     
     # Last scan results
-    last_scan_time: float = -999.0  # Initialize to past so first scan always works
+    last_scan_time: float = SCAN_NOT_PERFORMED  # Initialize so first scan always works
     scan_cooldown: float = 5.0  # seconds between scans
     detected_entities: List[Entity] = field(default_factory=list)
 
@@ -408,8 +412,6 @@ class ExplorationSystem:
                 # Check angle if scan_angle < 360 (cone scanning)
                 if ship_scanner.scan_angle < 360.0:
                     # Calculate angle between ship facing and target
-                    import math
-                    
                     # Skip if target is at same position (avoid division by zero)
                     if distance < 0.001:
                         continue
