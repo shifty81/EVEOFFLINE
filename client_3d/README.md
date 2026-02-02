@@ -29,7 +29,17 @@ Or install all requirements:
 pip install -r requirements.txt
 ```
 
-### 2. Start the Server
+### 2. Test the 3D Client (Standalone)
+
+Before connecting to a server, test the 3D client standalone:
+
+```bash
+python test_3d_client.py
+```
+
+This creates a simple scene with mock entities to verify the 3D client works. Use mouse to rotate camera and mouse wheel to zoom.
+
+### 3. Start the Server
 
 In one terminal:
 
@@ -37,7 +47,7 @@ In one terminal:
 python server/server.py
 ```
 
-### 3. Start the 3D Client
+### 4. Start the 3D Client
 
 In another terminal:
 

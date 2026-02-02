@@ -12,6 +12,7 @@ import sys
 from client_3d.core import NetworkClient, EntityManager
 from client_3d.rendering.camera import CameraSystem
 from client_3d.rendering.renderer import EntityRenderer
+from client_3d.rendering.starfield import StarField
 
 
 class GameClient3D(ShowBase):
@@ -38,7 +39,7 @@ class GameClient3D(ShowBase):
         self.running = True
         
         # Setup background color (dark space)
-        self.setBackgroundColor(0.01, 0.01, 0.05, 1)  # Very dark blue
+        self.setBackgroundColor(0.0, 0.0, 0.02, 1)  # Very dark blue-black
         
         # Initialize systems
         self.network = NetworkClient(server_host, server_port)
@@ -47,6 +48,10 @@ class GameClient3D(ShowBase):
         
         # Initialize rendering
         self.entity_renderer = EntityRenderer(self.render, self.loader)
+        
+        # Initialize star field
+        self.star_field = StarField(self.render, self.camera)
+        self.star_field.create(num_stars=1500)
         
         # Initialize camera
         self.camera_system = CameraSystem(self.camera, self.render)
@@ -204,6 +209,9 @@ class GameClient3D(ShowBase):
                 self.camera_system.set_target_entity(player_entity)
         
         self.camera_system.update(dt)
+        
+        # Update star field to follow camera
+        self.star_field.update(self.camera.getPos())
         
         # Handle mouse input for camera
         if self.mouseWatcherNode.hasMouse():
