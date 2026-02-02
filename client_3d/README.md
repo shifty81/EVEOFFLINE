@@ -11,9 +11,12 @@ The 3D client is a modern Panda3D-based graphical interface for EVE OFFLINE. It 
 - ✅ **Entity interpolation** for smooth movement
 - ✅ **Dark space theme** matching EVE's aesthetic
 - ✅ **Real-time networking** via TCP/JSON protocol
+- ✅ **HUD System** - Ship status, target info, speed, combat log
+- ✅ **3D Health Bars** - Visual health above ships
+- ✅ **Enhanced Visual Effects** - Weapon beams, explosions, shield hits
+- ✅ **Improved Lighting** - Multi-light setup for better visuals
 - 🚧 **Ship models** (using placeholders for now)
-- 🚧 **Visual effects** (in development)
-- 🚧 **HUD/UI** (in development)
+- 🚧 **Advanced particle effects** (in development)
 
 ## Quick Start
 
@@ -64,12 +67,14 @@ python client_3d.py "YourCharacterName"
 - **F**: Toggle camera follow mode
 - **R**: Reset camera to default position
 
-### Movement (Coming Soon)
-- **W/A/S/D**: Move ship
-- **Space**: Fire weapons
+### UI
+- **H**: Toggle HUD visibility
+- **B**: Toggle health bars visibility
+
+### Test Commands
+- **Space**: Test weapon fire effect
 
 ### Utility
-- **H**: Toggle help
 - **ESC**: Exit game
 
 ## Architecture
@@ -101,27 +106,28 @@ See `engine/network/protocol.py` for full protocol details.
 
 ## Development Status
 
-### ✅ Complete (Phase 5.1)
+### ✅ Complete (Phase 5.1-5.3)
 - Network client implementation
 - Entity manager with interpolation
 - Camera system (orbit, zoom, pan)
-- Basic entity rendering (placeholders)
+- Entity rendering (placeholders)
 - Panda3D integration
 - Main game loop
-
-### 🚧 In Progress (Phase 5.2-5.3)
-- Ship 3D models
-- Visual effects (weapons, explosions)
-- Lighting and materials (PBR)
 - Star field background
+- HUD system (ship status, target info, speed, combat log)
+- 3D health bars above ships
+- Visual effects system (weapon beams, explosions, shield hits)
+- Enhanced lighting (multi-light setup)
 
-### 📋 Planned (Phase 5.4-5.5)
-- HUD/UI overlay
-- Ship status panels
-- Target information
-- Combat log
-- Audio system
+### 🚧 In Progress (Phase 5.4)
+- Ship 3D models
+- Advanced particle systems
+- More visual polish
+
+### 📋 Planned (Phase 5.5)
 - Performance optimization
+- Audio system
+- Additional UI panels
 
 ## Configuration
 
