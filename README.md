@@ -31,6 +31,35 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+### 🎯 Easy Launcher (NEW!)
+
+The easiest way to run and test everything:
+
+```bash
+python launcher.py
+```
+
+This interactive menu lets you:
+- Run automated tests
+- Launch demos
+- Start server and clients
+- Check dependencies
+- View logs
+
+### 🧪 Automated Testing (NEW!)
+
+Verify everything works:
+
+```bash
+python automated_tests.py
+```
+
+Or run quick tests:
+
+```bash
+python automated_tests.py --quick
+```
+
 ### Running the Game
 
 **🎨 NEW! GUI Demo (Visual gameplay - Recommended to see visuals!):**
