@@ -14,6 +14,7 @@ from client_3d.rendering.camera import CameraSystem
 from client_3d.rendering.renderer import EntityRenderer
 from client_3d.rendering.starfield import StarField
 from client_3d.rendering.effects import EffectsManager
+from client_3d.ui.hud import HUDSystem
 
 
 class GameClient3D(ShowBase):
@@ -60,6 +61,9 @@ class GameClient3D(ShowBase):
         # Initialize camera
         self.camera_system = CameraSystem(self.camera, self.render)
         
+        # Initialize HUD
+        self.hud = HUDSystem(self.aspect2d)
+        
         # Network task
         self.network_task = None
         
@@ -79,7 +83,7 @@ class GameClient3D(ShowBase):
         """Setup keyboard and mouse input"""
         # Keyboard controls
         self.accept("escape", self.quit)
-        self.accept("h", self.toggle_help)
+        self.accept("h", self.toggle_hud)
         self.accept("f", self.toggle_follow_camera)
         self.accept("r", self.camera_system.reset)
         
@@ -119,7 +123,7 @@ class GameClient3D(ShowBase):
         print("\nTest Commands:")
         print("  Space            - Test weapon fire effect")
         print("\nUtility:")
-        print("  H                - Toggle help")
+        print("  H                - Toggle HUD visibility")
         print("  ESC              - Quit")
         print("="*60 + "\n")
         
@@ -148,9 +152,10 @@ class GameClient3D(ShowBase):
             # Test weapon fire effect (not a real game command)
             self._create_test_weapon_effect()
         
-    def toggle_help(self):
-        """Toggle help display"""
-        print("[GameClient3D] Help toggle (UI not implemented yet)")
+    def toggle_hud(self):
+        """Toggle HUD visibility"""
+        self.hud.toggle_visibility()
+        print("[GameClient3D] HUD visibility toggled")
         
     def toggle_follow_camera(self):
         """Toggle camera follow mode"""
@@ -189,6 +194,9 @@ class GameClient3D(ShowBase):
         """Handle state update from server"""
         self.entities.update_from_state(message['data'])
         
+        # Update HUD with player entity data
+        self._update_hud_from_entities()
+        
     def on_spawn_entity(self, message):
         """Handle entity spawn"""
         print(f"[GameClient3D] Entity spawned: {message['data']}")
@@ -217,6 +225,14 @@ class GameClient3D(ShowBase):
             # Create weapon fire effect
             weapon_type = data.get('weapon_type', 'laser')
             self.effects.create_weapon_fire_effect(shooter_pos, target_pos, weapon_type)
+            
+            # Add combat message to HUD
+            damage = data.get('damage', 0)
+            if target_id == self.player_id:
+                self.hud.add_combat_message(f"Taking {damage:.0f} damage!", Vec4(1, 0.3, 0.3, 1))
+            else:
+                self.hud.add_combat_message(f"Hit for {damage:.0f} damage", Vec4(0.3, 1, 0.3, 1))
+            
             print(f"[GameClient3D] Damage effect: {shooter_id} -> {target_id}")
     
     def on_weapon_fire(self, message):
@@ -238,7 +254,31 @@ class GameClient3D(ShowBase):
             # Create effect shooting forward
             target_pos = player_pos + Vec3(0, 50, 0)
             self.effects.create_weapon_fire_effect(player_pos, target_pos, "laser")
+            self.hud.add_combat_message("Test weapon fired!", Vec4(1, 0.8, 0.3, 1))
             print(f"[GameClient3D] Test weapon effect created")
+    
+    def _update_hud_from_entities(self):
+        """Update HUD with current entity data"""
+        # Get player entity
+        player_entity = self.entities.get_player_entity()
+        if player_entity:
+            # Extract ship data
+            ship_data = {
+                'name': getattr(player_entity, 'ship_type', 'Unknown'),
+                'shield_current': getattr(player_entity, 'shield', 0),
+                'shield_max': getattr(player_entity, 'max_shield', 1),
+                'armor_current': getattr(player_entity, 'armor', 0),
+                'armor_max': getattr(player_entity, 'max_armor', 1),
+                'hull_current': getattr(player_entity, 'hull', 0),
+                'hull_max': getattr(player_entity, 'max_hull', 1),
+            }
+            self.hud.update_ship_status(ship_data)
+            
+            # Update speed (calculate from velocity if available)
+            velocity = getattr(player_entity, 'velocity', (0, 0, 0))
+            speed = (velocity[0]**2 + velocity[1]**2 + velocity[2]**2) ** 0.5
+            position = Vec3(*player_entity.get_position())
+            self.hud.update_speed(speed, position)
     
     def update_task(self, task):
         """Main update task (called every frame)"""
@@ -283,6 +323,9 @@ class GameClient3D(ShowBase):
         
         # Update renderer
         self.entity_renderer.update_entities(self.entities.get_all_entities())
+        
+        # Update HUD
+        self._update_hud_from_entities()
         
         return task.cont
     
