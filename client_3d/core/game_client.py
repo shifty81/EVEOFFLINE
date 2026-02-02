@@ -112,7 +112,7 @@ class GameClient3D(ShowBase):
         print("  Middle Mouse     - Pan camera")
         print("  F                - Toggle follow mode")
         print("  R                - Reset camera")
-        print("\nMovement (Future):")
+        print("\nMovement:")
         print("  W/A/S/D          - Move ship")
         print("  Space            - Fire weapons")
         print("\nUtility:")
@@ -138,7 +138,23 @@ class GameClient3D(ShowBase):
     def on_key_press(self, key):
         """Handle key press"""
         print(f"[Input] Key pressed: {key}")
-        # TODO: Send input to server
+        
+        # Map keys to movement vectors
+        if key == "forward":
+            # Move forward (+Y in game coordinates)
+            asyncio.create_task(self.network.send_move_input({'x': 0.0, 'y': 1.0, 'z': 0.0}))
+        elif key == "backward":
+            # Move backward (-Y in game coordinates)
+            asyncio.create_task(self.network.send_move_input({'x': 0.0, 'y': -1.0, 'z': 0.0}))
+        elif key == "left":
+            # Move left (-X in game coordinates)
+            asyncio.create_task(self.network.send_move_input({'x': -1.0, 'y': 0.0, 'z': 0.0}))
+        elif key == "right":
+            # Move right (+X in game coordinates)
+            asyncio.create_task(self.network.send_move_input({'x': 1.0, 'y': 0.0, 'z': 0.0}))
+        elif key == "fire":
+            # Fire weapons
+            asyncio.create_task(self.network.send_fire_input())
         
     def toggle_help(self):
         """Toggle help display"""
