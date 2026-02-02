@@ -280,3 +280,44 @@ class Docking(Component):
     is_docked: bool = False
     docked_at: Optional[str] = None  # celestial entity ID
     can_undock: bool = True
+
+
+@dataclass
+class CorporationMembership(Component):
+    """Player's corporation membership"""
+    corporation_id: str = "NPC_Corp"
+    corporation_name: str = "NPC Corporation"
+    role: str = "member"  # member, director, ceo
+    joined_date: float = 0.0  # timestamp
+    title: str = ""
+
+
+@dataclass
+class Contacts(Component):
+    """Player contacts and standings"""
+    contacts: Dict[str, float] = field(default_factory=dict)  # {character_id: standing (-10 to +10)}
+    blocked: List[str] = field(default_factory=list)  # blocked character IDs
+    
+    
+@dataclass
+class Mail(Component):
+    """In-game mail system"""
+    inbox: List[Dict[str, any]] = field(default_factory=list)  # List of mail messages
+    sent: List[Dict[str, any]] = field(default_factory=list)  # Sent mail messages
+    unread_count: int = 0
+    
+
+@dataclass
+class Chat(Component):
+    """Chat channels and messages"""
+    channels: Dict[str, List[Dict[str, any]]] = field(default_factory=dict)  # {channel_id: [messages]}
+    active_channels: List[str] = field(default_factory=list)  # Currently subscribed channels
+    muted_characters: List[str] = field(default_factory=list)  # Muted character IDs
+
+
+@dataclass
+class Contract(Component):
+    """Player contracts"""
+    active_contracts: List[str] = field(default_factory=list)  # Contract IDs
+    completed_contracts: List[str] = field(default_factory=list)
+    failed_contracts: List[str] = field(default_factory=list)
