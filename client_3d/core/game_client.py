@@ -14,6 +14,7 @@ from client_3d.rendering.camera import CameraSystem
 from client_3d.rendering.renderer import EntityRenderer
 from client_3d.rendering.starfield import StarField
 from client_3d.rendering.effects import EffectsManager
+from client_3d.rendering.healthbars import HealthBarManager
 from client_3d.ui.hud import HUDSystem
 
 
@@ -54,6 +55,9 @@ class GameClient3D(ShowBase):
         # Initialize effects manager
         self.effects = EffectsManager(self.render, self.loader)
         
+        # Initialize health bars
+        self.health_bars = HealthBarManager(self.render)
+        
         # Initialize star field
         self.star_field = StarField(self.render, self.camera)
         self.star_field.create(num_stars=1500)
@@ -84,6 +88,7 @@ class GameClient3D(ShowBase):
         # Keyboard controls
         self.accept("escape", self.quit)
         self.accept("h", self.toggle_hud)
+        self.accept("b", self.toggle_health_bars)
         self.accept("f", self.toggle_follow_camera)
         self.accept("r", self.camera_system.reset)
         
@@ -124,6 +129,7 @@ class GameClient3D(ShowBase):
         print("  Space            - Test weapon fire effect")
         print("\nUtility:")
         print("  H                - Toggle HUD visibility")
+        print("  B                - Toggle health bars visibility")
         print("  ESC              - Quit")
         print("="*60 + "\n")
         
@@ -156,6 +162,20 @@ class GameClient3D(ShowBase):
         """Toggle HUD visibility"""
         self.hud.toggle_visibility()
         print("[GameClient3D] HUD visibility toggled")
+    
+    def toggle_health_bars(self):
+        """Toggle health bars visibility"""
+        # Check if any bars are visible
+        if self.health_bars.health_bars:
+            first_bar = next(iter(self.health_bars.health_bars.values()))
+            if first_bar.isHidden():
+                self.health_bars.show_all()
+                print("[GameClient3D] Health bars shown")
+            else:
+                self.health_bars.hide_all()
+                print("[GameClient3D] Health bars hidden")
+        else:
+            print("[GameClient3D] No health bars to toggle")
         
     def toggle_follow_camera(self):
         """Toggle camera follow mode"""
@@ -205,8 +225,17 @@ class GameClient3D(ShowBase):
         """Handle entity destruction"""
         entity_id = message['data'].get('entity_id')
         if entity_id:
+            # Get entity position before destroying for explosion effect
+            entity = self.entities.get_entity(entity_id)
+            if entity:
+                pos = Vec3(*entity.get_position())
+                # Create explosion effect at entity position
+                self.effects.create_explosion_effect(pos, size=5.0)
+                print(f"[GameClient3D] Entity destroyed with explosion: {entity_id}")
+            
+            # Remove entity visuals
             self.entity_renderer.remove_entity(entity_id)
-            print(f"[GameClient3D] Entity destroyed: {entity_id}")
+            self.health_bars.remove_health_bar(entity_id)
     
     def on_damage(self, message):
         """Handle damage event - create visual effects"""
@@ -225,6 +254,12 @@ class GameClient3D(ShowBase):
             # Create weapon fire effect
             weapon_type = data.get('weapon_type', 'laser')
             self.effects.create_weapon_fire_effect(shooter_pos, target_pos, weapon_type)
+            
+            # Check if shield hit or armor/hull hit for appropriate effect
+            target_shield = getattr(target, 'shield', 0)
+            if target_shield > 0:
+                # Shield hit - create shield effect
+                self.effects.create_shield_hit_effect(target_pos)
             
             # Add combat message to HUD
             damage = data.get('damage', 0)
@@ -323,6 +358,9 @@ class GameClient3D(ShowBase):
         
         # Update renderer
         self.entity_renderer.update_entities(self.entities.get_all_entities())
+        
+        # Update health bars
+        self.health_bars.update_all_health_bars(self.entities.get_all_entities())
         
         # Update HUD
         self._update_hud_from_entities()
