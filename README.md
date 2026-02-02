@@ -86,6 +86,23 @@ python client/gui_client.py "Pilot2"
 python client/client.py "Pilot3"
 ```
 
+## 🧪 Testing
+
+Run the comprehensive test suite:
+```bash
+python run_tests.py
+```
+
+Or run individual test files:
+```bash
+python tests/test_engine.py              # Core engine tests
+python tests/test_exploration_angle.py   # Exploration scanning tests
+python tests/test_manufacturing.py       # Manufacturing/industry tests
+python tests/test_market.py              # Market/economy tests
+```
+
+See [TEST_SUMMARY.md](TEST_SUMMARY.md) for detailed test coverage information.
+
 ## 📚 Documentation
 
 - [DESIGN.md](DESIGN.md) - Game design document with EVE ONLINE mechanics

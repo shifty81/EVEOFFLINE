@@ -4,11 +4,15 @@ Handles probe scanning, anomalies, and signatures
 Based on EVE Online's exploration mechanics
 """
 
+import math
 from typing import Optional, Dict, List, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 from engine.core.ecs import World, Entity
 from engine.components.game_components import Position
+
+# Constant for scanner initialization
+SCAN_NOT_PERFORMED = -float('inf')  # Represents time in distant past
 
 
 class SignatureType(Enum):
@@ -64,7 +68,7 @@ class ShipScanner:
     scan_resolution: float = 1.0  # Lower is better
     
     # Last scan results
-    last_scan_time: float = 0.0
+    last_scan_time: float = SCAN_NOT_PERFORMED  # Initialize so first scan always works
     scan_cooldown: float = 5.0  # seconds between scans
     detected_entities: List[Entity] = field(default_factory=list)
 
@@ -405,8 +409,35 @@ class ExplorationSystem:
             
             # Check if in range
             if distance <= ship_scanner.max_range:
-                # TODO: Check angle if scan_angle < 360
-                detected.append(other_entity)
+                # Check angle if scan_angle < 360 (cone scanning)
+                if ship_scanner.scan_angle < 360.0:
+                    # Calculate angle between ship facing and target
+                    # Skip if target is at same position (avoid division by zero)
+                    if distance < 0.001:
+                        continue
+                    
+                    # Get ship's facing direction (2D for simplicity)
+                    ship_dir_x = math.cos(position.rotation)
+                    ship_dir_y = math.sin(position.rotation)
+                    
+                    # Normalize direction to target (2D)
+                    target_dir_x = dx / distance
+                    target_dir_y = dy / distance
+                    
+                    # Calculate angle between vectors using dot product
+                    # cos(angle) = dot product of normalized vectors
+                    dot = ship_dir_x * target_dir_x + ship_dir_y * target_dir_y
+                    # Clamp to [-1, 1] to avoid domain errors from floating point
+                    dot = max(-1.0, min(1.0, dot))
+                    angle_rad = math.acos(dot)
+                    angle_deg = math.degrees(angle_rad)
+                    
+                    # Check if within scan cone (half-angle on each side)
+                    if angle_deg <= ship_scanner.scan_angle / 2.0:
+                        detected.append(other_entity)
+                else:
+                    # Full sphere scan (360 degrees)
+                    detected.append(other_entity)
         
         ship_scanner.detected_entities = detected
         ship_scanner.last_scan_time = current_time

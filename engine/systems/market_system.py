@@ -360,10 +360,7 @@ class MarketSystem:
             order.remaining -= qty
             
             if order.owner_id:
-                buyer_inventory = self.world.get_component(
-                    order.owner_id, 
-                    Inventory
-                )
+                buyer_inventory = order.owner_id.get_component(Inventory)
                 if buyer_inventory:
                     buyer_inventory.add_item(item_id, qty)
             
@@ -412,9 +409,11 @@ class MarketSystem:
         inventory = entity.get_component(Inventory)
         
         if order.order_type == OrderType.BUY:
-            # Refund ISK
+            # Refund ISK (including broker fee for remaining amount)
             if wallet:
-                wallet.deposit(order.remaining * order.price)
+                # Broker fee is 3% of order value
+                refund_amount = order.remaining * order.price * 1.03
+                wallet.deposit(refund_amount)
         else:
             # Return items
             if inventory:
