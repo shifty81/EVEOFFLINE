@@ -74,16 +74,23 @@ python server/server.py
 python client/client.py "YourCharacterName"
 ```
 
-**Or start a GUI client (with visuals):**
+**Or start a 2D GUI client (with visuals):**
 ```bash
 python client/gui_client.py "YourCharacterName"
 ```
+
+**🆕 Or start the 3D client (Phase 5 - Early Development):**
+```bash
+# Requires: pip install panda3d
+python client_3d.py "YourCharacterName"
+```
+Features full 3D rendering with EVE-style camera controls. See [3D Client README](client_3d/README.md) for details.
 
 **Start multiple clients for multiplayer:**
 ```bash
 python client/client.py "Pilot1"
 python client/gui_client.py "Pilot2"
-python client/client.py "Pilot3"
+python client_3d.py "Pilot3"
 ```
 
 ## 🧪 Testing
@@ -191,6 +198,19 @@ See [docs/testing/TEST_SUMMARY.md](docs/testing/TEST_SUMMARY.md) for detailed te
 - [x] **Mail System** - Send/receive mail, inbox/sent folders
 - [x] **Chat System** - Channels, moderation, chat history
 - [x] **Contract System** - Item exchange, courier contracts
+
+### 🚀 NEW! Phase 5: 3D Graphics & Polish - In Development!
+- [x] **Technical Specification** - Complete architecture design
+- [x] **Panda3D Integration** - 3D engine integrated
+- [x] **Network Client** - TCP/JSON protocol implementation
+- [x] **Entity Management** - State sync with interpolation
+- [x] **Camera System** - EVE-style orbit, zoom, pan controls
+- [x] **Basic Renderer** - Entity rendering (placeholder shapes)
+- [ ] **Ship Models** - 3D models for all ships
+- [ ] **Visual Effects** - Weapons, explosions, particles
+- [ ] **HUD/UI** - Ship status, target info, combat log
+- [ ] **Lighting & Materials** - PBR rendering, bloom effects
+- [ ] **Performance Optimization** - 60+ FPS target
 
 ### 🚀 Next Up: Phase 5
 - [ ] 3D rendering (see [docs/features/LANGUAGE_AND_3D_OPTIONS.md](docs/features/LANGUAGE_AND_3D_OPTIONS.md) for options)
