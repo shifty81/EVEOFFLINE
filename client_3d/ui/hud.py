@@ -1,6 +1,8 @@
 """
 HUD (Heads-Up Display) for 3D Client
 Displays ship status, target info, navigation, and combat log
+
+This module provides both legacy and EVE-styled HUD options
 """
 
 from direct.gui.OnscreenText import OnscreenText
@@ -8,6 +10,14 @@ from direct.gui.OnscreenImage import OnscreenImage
 from direct.gui.DirectGui import DirectFrame
 from panda3d.core import TextNode, Vec3, Vec4, TransparencyAttrib
 from typing import Optional, Dict, Any
+
+# Import EVE-styled HUD
+try:
+    from .eve_hud import EVEStyledHUD
+    EVE_HUD_AVAILABLE = True
+except ImportError as e:
+    print(f"[HUD] Warning: EVE-styled HUD not available: {e}")
+    EVE_HUD_AVAILABLE = False
 
 
 class HUDSystem:
@@ -390,3 +400,28 @@ class HUDSystem:
         self.combat_message_texts.clear()
         
         print("[HUD] HUD system cleaned up")
+
+
+def create_hud(aspect2d, render2d=None, style='eve'):
+    """
+    Factory function to create HUD with specified style
+    
+    Args:
+        aspect2d: Panda3D aspect2d node
+        render2d: Panda3D render2d node (optional, for EVE style)
+        style: HUD style - 'eve' for EVE Online style, 'legacy' for original
+        
+    Returns:
+        HUD instance (EVEStyledHUD or HUDSystem)
+    """
+    if style == 'eve' and EVE_HUD_AVAILABLE:
+        print("[HUD] Creating EVE-styled HUD")
+        return EVEStyledHUD(aspect2d, render2d)
+    else:
+        if style == 'eve' and not EVE_HUD_AVAILABLE:
+            print("[HUD] EVE-styled HUD not available, falling back to legacy")
+        print("[HUD] Creating legacy HUD")
+        return HUDSystem(aspect2d)
+
+
+__all__ = ['HUDSystem', 'create_hud']

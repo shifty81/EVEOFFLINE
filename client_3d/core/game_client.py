@@ -15,7 +15,7 @@ from client_3d.rendering.renderer import EntityRenderer
 from client_3d.rendering.starfield import StarField
 from client_3d.rendering.effects import EffectsManager
 from client_3d.rendering.healthbars import HealthBarManager
-from client_3d.ui.hud import HUDSystem
+from client_3d.ui.hud import create_hud
 
 
 class GameClient3D(ShowBase):
@@ -65,8 +65,8 @@ class GameClient3D(ShowBase):
         # Initialize camera
         self.camera_system = CameraSystem(self.camera, self.render)
         
-        # Initialize HUD
-        self.hud = HUDSystem(self.aspect2d)
+        # Initialize HUD (EVE-styled by default)
+        self.hud = create_hud(self.aspect2d, self.render2d, style='eve')
         
         # Network task
         self.network_task = None
