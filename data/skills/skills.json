@@ -658,6 +658,94 @@
     "training_multiplier": 8,
     "max_level": 5,
     "prerequisites": {"amarr_battlecruiser": 4, "spaceship_command": 5}
+  },
+  "mining": {
+    "id": "mining",
+    "name": "Mining",
+    "description": "Skill for the operation of mining lasers. 5% bonus to mining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "astrogeology": {
+    "id": "astrogeology",
+    "name": "Astrogeology",
+    "description": "Advanced mining laser operation. 5% bonus to mining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {"mining": 3}
+  },
+  "mining_upgrades": {
+    "id": "mining_upgrades",
+    "name": "Mining Upgrades",
+    "description": "Skill for operation of mining upgrade modules. Reduces CPU usage of mining upgrades by 5% per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "mining_barge": {
+    "id": "mining_barge",
+    "name": "Mining Barge",
+    "description": "Skill for operation of mining barges. 5% bonus to ore hold capacity per level.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 4,
+    "max_level": 5,
+    "prerequisites": {"mining": 4, "science": 4, "spaceship_command": 3}
+  },
+  "exhumers": {
+    "id": "exhumers",
+    "name": "Exhumers",
+    "description": "Skill for operation of exhumer-class mining vessels. 3% bonus to mining yield per level.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {"mining_barge": 5, "astrogeology": 4}
+  },
+  "reprocessing": {
+    "id": "reprocessing",
+    "name": "Reprocessing",
+    "description": "Basic ore processing skill. 3% increase in refining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "reprocessing_efficiency": {
+    "id": "reprocessing_efficiency",
+    "name": "Reprocessing Efficiency",
+    "description": "Advanced refining skill. 2% increase in refining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {"reprocessing": 4}
+  },
+  "science": {
+    "id": "science",
+    "name": "Science",
+    "description": "Basic knowledge of scientific principles. Required for various advanced operations.",
+    "category": "Science",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
   }
 }
 
