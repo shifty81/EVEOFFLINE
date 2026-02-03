@@ -8,6 +8,7 @@ from panda3d.core import AmbientLight, DirectionalLight
 from panda3d.core import GeomNode
 import os
 from .ship_models import ShipModelGenerator
+from .asset_loader import AssetLoader
 
 
 class EntityRenderer:
@@ -36,6 +37,9 @@ class EntityRenderer:
         
         # Model paths
         self.model_dir = "client_3d/models/ships"
+        
+        # Asset loader for external models
+        self.asset_loader = AssetLoader(loader)
         
         # Procedural ship model generator
         self.ship_generator = ShipModelGenerator()
@@ -86,7 +90,16 @@ class EntityRenderer:
         if ship_type in self.models_cache:
             return self.models_cache[ship_type]
         
-        # Try to load model
+        # Try to load model using asset loader first
+        base_name = ship_type.lower().replace(' ', '_')
+        model = self.asset_loader.load_model(f"ships/{base_name}")
+        
+        if model:
+            self.models_cache[ship_type] = model
+            print(f"[Renderer] Loaded model via AssetLoader: {ship_type}")
+            return model
+        
+        # Fallback to old method
         model_path = self._get_model_path(ship_type)
         if model_path:
             try:

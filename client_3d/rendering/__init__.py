@@ -7,6 +7,7 @@ from .effects import EffectsManager
 from .ship_models import ShipModelGenerator
 from .performance import PerformanceOptimizer
 from .particles import ParticleSystem
+from .asset_loader import AssetLoader
 
 __all__ = [
     'CameraSystem',
@@ -14,4 +15,5 @@ __all__ = [
     'ShipModelGenerator',
     'PerformanceOptimizer',
     'ParticleSystem',
+    'AssetLoader',
 ]
