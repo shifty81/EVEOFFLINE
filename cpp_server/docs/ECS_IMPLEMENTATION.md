@@ -57,4 +57,4 @@ npc->addComponent(std::make_unique<AI>());
 world->update(delta_time);
 ```
 
-See full documentation in cpp_server/docs/ECS_IMPLEMENTATION.md
+For more details on components and systems, see the header files in `include/components/` and `include/systems/`.

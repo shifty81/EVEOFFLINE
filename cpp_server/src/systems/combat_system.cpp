@@ -67,8 +67,9 @@ bool CombatSystem::applyDamage(const std::string& target_id, float damage, const
         
         if (health->shield_hp < 0.0f) {
             // Overflow damage goes to armor
-            damage = -health->shield_hp;
+            float overflow_damage = -health->shield_hp;
             health->shield_hp = 0.0f;
+            damage = overflow_damage;
         } else {
             return true;  // All damage absorbed by shields
         }
@@ -88,8 +89,9 @@ bool CombatSystem::applyDamage(const std::string& target_id, float damage, const
         
         if (health->armor_hp < 0.0f) {
             // Overflow damage goes to hull
-            damage = -health->armor_hp;
+            float overflow_damage = -health->armor_hp;
             health->armor_hp = 0.0f;
+            damage = overflow_damage;
         } else {
             return true;  // All damage absorbed by armor
         }
