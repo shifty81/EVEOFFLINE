@@ -6,6 +6,8 @@ Manages sound effects and music playback with 3D positioning
 from panda3d.core import AudioManager, AudioSound, Vec3
 from typing import Optional, Dict
 import os
+import time
+import threading
 
 
 class AudioSystem:
@@ -53,6 +55,10 @@ class AudioSystem:
         
         # Current playing music
         self.current_music: Optional[AudioSound] = None
+        
+        # Fade state
+        self.fade_thread: Optional[threading.Thread] = None
+        self.fade_stop_flag = threading.Event()
         
         # Create audio directory
         self._ensure_directories()
@@ -286,12 +292,67 @@ class AudioSystem:
         """
         if self.current_music and self.current_music.status() == AudioSound.PLAYING:
             if fade_out > 0:
-                # TODO: Implement fade out
-                self.current_music.stop()
+                # Cancel any ongoing fade
+                self._cancel_fade()
+                
+                # Start fade out in separate thread
+                self.fade_stop_flag.clear()
+                self.fade_thread = threading.Thread(
+                    target=self._fade_out_music,
+                    args=(self.current_music, fade_out),
+                    daemon=True
+                )
+                self.fade_thread.start()
             else:
                 self.current_music.stop()
             
             print("[AudioSystem] Stopped music")
+    
+    def _fade_out_music(self, music: AudioSound, duration: float):
+        """
+        Fade out music over specified duration
+        
+        Args:
+            music: Music to fade out
+            duration: Fade duration in seconds
+        """
+        if not music or music.status() != AudioSound.PLAYING:
+            return
+        
+        # Get initial volume
+        initial_volume = music.getVolume()
+        
+        # Fade steps (60 fps for smooth fade)
+        steps = int(duration * 60)
+        step_duration = duration / steps
+        
+        for i in range(steps):
+            if self.fade_stop_flag.is_set():
+                # Fade was cancelled
+                return
+            
+            if music.status() != AudioSound.PLAYING:
+                # Music stopped playing
+                return
+            
+            # Calculate new volume (linear fade)
+            progress = (i + 1) / steps
+            new_volume = initial_volume * (1.0 - progress)
+            music.setVolume(new_volume)
+            
+            # Sleep for step duration
+            time.sleep(step_duration)
+        
+        # Stop music after fade completes
+        if music.status() == AudioSound.PLAYING:
+            music.stop()
+    
+    def _cancel_fade(self):
+        """Cancel any ongoing fade operation"""
+        if self.fade_thread and self.fade_thread.is_alive():
+            self.fade_stop_flag.set()
+            # Give thread a moment to finish
+            self.fade_thread.join(timeout=0.1)
     
     def set_master_volume(self, volume: float):
         """Set master volume (0.0 - 1.0)"""
