@@ -447,81 +447,56 @@ Phase 5 core development is complete with procedural ship models, performance op
 
 ## Planned Features
 
-### 📋 Phase 5: 3D Graphics (Planned)
+### 📋 Phase 5 Polish: 3D Graphics Enhancements (Planned)
 **Timeline**: Q2-Q3 2026  
-**Priority**: High
+**Priority**: Medium
 
-See [LANGUAGE_AND_3D_OPTIONS.md](features/LANGUAGE_AND_3D_OPTIONS.md) for detailed analysis.
+Phase 5 core features (Panda3D client, ship models, performance optimization, particles) are complete. Remaining polish items for future work:
 
-#### Recommended Approach: Hybrid Architecture
-- [ ] **Keep Python for game server** (current implementation)
-  - Server-authoritative gameplay
-  - Easy modding with JSON
-  - Flexible content updates
-- [ ] **Build C++20 3D Client**
-  - Modern C++20 features
-  - High-performance 3D rendering
-  - EVE Online-quality graphics
-  - Separate from game logic
+#### Asset Pipeline
+- [ ] Import external 3D model formats
+  - .obj file support
+  - .gltf/.glb support
+  - .fbx support (if feasible with Panda3D)
+- [ ] Model validation and optimization
+- [ ] Texture loading and management
+- [ ] Asset caching system
 
-#### 3D Client Options (Choose One)
-**Option A: Unreal Engine 5** ⭐ Recommended
-- [ ] UE5 project setup
-- [ ] Network client implementation
-- [ ] Connect to Python server
-- [ ] EVE-style visual effects
-- [ ] PBR ship rendering
-- [ ] UI/HUD system
-- Pros: Best graphics quality, professional tools, Blueprint + C++
-- Cons: Larger project size, steeper learning curve
+#### PBR Materials & Lighting
+- [ ] Physically-based rendering (PBR) shader system
+  - Metallic/roughness workflow
+  - Normal mapping
+  - Emission maps
+- [ ] Enhanced lighting
+  - Dynamic shadows
+  - Ambient occlusion
+  - Bloom and HDR
+- [ ] Realistic material properties for ships
 
-**Option B: Custom OpenGL/Vulkan**
-- [ ] Rendering engine architecture
-- [ ] 3D model loading
-- [ ] Shader system (PBR)
-- [ ] Camera system
-- [ ] UI rendering
-- Pros: Full control, lightweight, educational
-- Cons: More development time, more expertise required
+#### Audio System
+- [ ] Sound effects engine integration
+  - Weapon fire sounds
+  - Explosion sounds
+  - Ship engine sounds
+  - UI interaction sounds
+- [ ] Music system
+  - Background music tracks
+  - Dynamic music based on game state
+  - Volume controls
+- [ ] 3D audio positioning
 
-**Option C: Unity** (Used by Astrox Imperium)
-- [ ] Unity project setup
-- [ ] Network client implementation
-- [ ] Connect to Python server
-- [ ] 3D space rendering
-- [ ] UI/HUD system
-- Pros: Good balance, proven for space games, easier than UE5
-- Cons: C# instead of C++, licensing considerations
+#### Additional UI/UX
+- [ ] More interactive UI panels
+  - Inventory management UI
+  - Fitting window
+  - Market interface
+  - Station services
+- [ ] Minimap/radar display
+- [ ] Enhanced targeting interface
+- [ ] Visual feedback improvements
 
-**Option D: Python 3D (Panda3D)**
-- [ ] Panda3D integration
-- [ ] 3D scene setup
-- [ ] Model loading and rendering
-- [ ] Shader system
-- [ ] UI overlay
-- Pros: Stay in Python, simpler integration
-- Cons: Less performance, less professional appearance
-
-#### Visual Style Implementation
-- [ ] EVE Online aesthetic
-  - Dark space themes
-  - Semi-transparent UI
-  - Gold/blue accents
-  - PBR materials
-  - Glowing effects
-- [ ] Astrox Imperium aesthetic
-  - 3D cockpit view
-  - Clean, readable UI
-  - Good lighting
-  - Simplified but beautiful
-- [ ] Asset creation pipeline
-  - Ship models
-  - Station models
-  - Effect particles
-  - UI elements
-
-**Estimated Effort**: 8-12 weeks  
-**Blockers**: Technology choice decision
+**Estimated Effort**: 6-8 weeks  
+**Blockers**: None (core 3D features complete)
 
 ---
 
