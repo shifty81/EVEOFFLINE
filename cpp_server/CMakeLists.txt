@@ -45,6 +45,8 @@ set(SERVER_SOURCES
     src/ecs/world.cpp
     src/systems/movement_system.cpp
     src/systems/combat_system.cpp
+    src/systems/ai_system.cpp
+    src/systems/targeting_system.cpp
 )
 
 set(SERVER_HEADERS
@@ -62,6 +64,8 @@ set(SERVER_HEADERS
     include/components/game_components.h
     include/systems/movement_system.h
     include/systems/combat_system.h
+    include/systems/ai_system.h
+    include/systems/targeting_system.h
 )
 
 # Steam SDK configuration

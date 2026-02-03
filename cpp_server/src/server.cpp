@@ -1,6 +1,8 @@
 #include "server.h"
 #include "systems/movement_system.h"
 #include "systems/combat_system.h"
+#include "systems/ai_system.h"
+#include "systems/targeting_system.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -25,11 +27,14 @@ Server::~Server() {
 }
 
 void Server::initializeGameWorld() {
-    // Initialize game systems
+    // Initialize game systems in order
+    game_world_->addSystem(std::make_unique<systems::AISystem>(game_world_.get()));
+    game_world_->addSystem(std::make_unique<systems::TargetingSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::MovementSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::CombatSystem>(game_world_.get()));
     
     std::cout << "Game world initialized with " << game_world_->getEntityCount() << " entities" << std::endl;
+    std::cout << "Systems: AI, Targeting, Movement, Combat" << std::endl;
 }
 
 bool Server::initialize() {
