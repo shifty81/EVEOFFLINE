@@ -10,6 +10,8 @@ from client_3d.ui.inventory_panel import InventoryPanel
 from client_3d.ui.fitting_window import FittingWindow
 from client_3d.ui.market_window import MarketWindow
 from client_3d.ui.station_services import StationServicesWindow
+from client_3d.ui.minimap_radar import MinimapRadar
+from client_3d.ui.targeting_interface import EnhancedTargetingInterface, TargetLockDisplay
 
 __all__ = [
     "SelectionSystem",
@@ -21,4 +23,7 @@ __all__ = [
     "FittingWindow",
     "MarketWindow",
     "StationServicesWindow",
+    "MinimapRadar",
+    "EnhancedTargetingInterface",
+    "TargetLockDisplay",
 ]
