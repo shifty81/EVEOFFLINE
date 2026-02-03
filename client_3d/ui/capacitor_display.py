@@ -12,7 +12,7 @@ from panda3d.core import Vec3, Vec4
 import math
 from typing import Optional
 
-from .eve_style import EVEColorScheme, get_capacitor_color
+from .eve_style import EVEColorScheme, get_capacitor_color, get_health_color
 
 
 class CapacitorDisplay:
@@ -377,7 +377,6 @@ class ShipHealthRings:
         hull_radius = self.base_radius
         armor_radius = hull_radius + self.ring_thickness + self.spacing
         shield_radius = armor_radius + self.ring_thickness + self.spacing
-        from .eve_style import get_health_color
         shield_color = get_health_color(self.shield_current, self.shield_max, 'shield')
         self.shield_ring = self._create_ring_geometry(
             "shield", shield_radius, self.ring_thickness, 40,

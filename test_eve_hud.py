@@ -140,7 +140,7 @@ class HUDDemo(ShowBase):
     
     def update_task(self, task):
         """Update task - animates the demo"""
-        dt = globalClock.getDt()
+        dt = self.globalClock.getDt()
         self.time += dt
         
         # Animate capacitor (depletes and regenerates)
