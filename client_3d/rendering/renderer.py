@@ -9,6 +9,7 @@ from panda3d.core import GeomNode
 import os
 from .ship_models import ShipModelGenerator
 from .asset_loader import AssetLoader
+from .pbr_materials import PBRMaterialLibrary
 
 
 class EntityRenderer:
@@ -40,6 +41,9 @@ class EntityRenderer:
         
         # Asset loader for external models
         self.asset_loader = AssetLoader(loader)
+        
+        # PBR material library
+        self.material_library = PBRMaterialLibrary(loader)
         
         # Procedural ship model generator
         self.ship_generator = ShipModelGenerator()
@@ -152,6 +156,11 @@ class EntityRenderer:
                 # Use placeholder
                 node = self._create_placeholder(entity.faction, entity.ship_type)
                 node.reparentTo(self.render)
+                
+                # Apply PBR material if available
+                material = self.material_library.get_faction_material(entity.faction)
+                if material:
+                    material.apply_to_node(node)
             
             # Set initial position
             pos = entity.get_position()

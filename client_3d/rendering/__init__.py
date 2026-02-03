@@ -8,6 +8,7 @@ from .ship_models import ShipModelGenerator
 from .performance import PerformanceOptimizer
 from .particles import ParticleSystem
 from .asset_loader import AssetLoader
+from .pbr_materials import PBRMaterial, PBRMaterialLibrary, PBRShaderManager
 
 __all__ = [
     'CameraSystem',
@@ -16,4 +17,7 @@ __all__ = [
     'PerformanceOptimizer',
     'ParticleSystem',
     'AssetLoader',
+    'PBRMaterial',
+    'PBRMaterialLibrary',
+    'PBRShaderManager',
 ]
