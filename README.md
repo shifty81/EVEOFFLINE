@@ -93,10 +93,24 @@ Demonstrates all features in a scripted format (great for screenshots/videos).
 
 **🌐 Multiplayer Server Mode:**
 
-**Start the server:**
+**Start the server (Python):**
 ```bash
 python server/server.py
 ```
+
+**Or start the C++ dedicated server:**
+```bash
+# Build first (requires CMake and C++ compiler)
+cd cpp_server
+./build.sh  # Linux/macOS
+# or
+build.bat   # Windows
+
+# Run
+cd build/bin
+./eve_dedicated_server
+```
+See [cpp_server/README.md](cpp_server/README.md) for detailed C++ server documentation.
 
 **Start a text client (in a new terminal):**
 ```bash
@@ -301,7 +315,25 @@ See [docs/testing/TEST_SUMMARY.md](docs/testing/TEST_SUMMARY.md) for detailed te
 - [x] Advanced Audio - Sound effects and music integration with 3D positioning
 - [x] UI Enhancements - EVE Online Photon UI styling with circular displays
 
-### 🎯 Future: Phase 6
+#### 🎯 NEW! Phase 6: C++ Dedicated Server & Enhanced Features - In Progress!
+- [x] **C++ Dedicated Server** - High-performance server for 24/7 uptime
+  - Cross-platform support (Windows, Linux, macOS)
+  - Steam integration (authentication, server browser)
+  - Whitelist support (Steam names/IDs)
+  - Persistent world with auto-save
+  - JSON-based configuration
+  - Protocol compatible with Python clients
+- [x] **Random Name Generator** - EVE-style procedural naming
+  - Character names (100+ combinations)
+  - Ship names (4 styles: Heroic, Celestial, Mythic, Descriptive)
+  - Corporation names
+  - System and station names
+  - Mission names
+  - Exploration site names
+  - NPC/pirate names
+  - Pilot callsigns
+  - Asteroid designations
+- [x] **EVE Feature Gap Analysis** - Documentation of missing EVE Online features
 - [ ] More content (ships, modules, missions)
 - [ ] Advanced game mechanics
 - [ ] Enhanced multiplayer features
