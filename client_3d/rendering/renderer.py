@@ -7,6 +7,7 @@ from panda3d.core import Vec3, Vec4, Point3, NodePath
 from panda3d.core import AmbientLight, DirectionalLight
 from panda3d.core import GeomNode
 import os
+from .ship_models import ShipModelGenerator
 
 
 class EntityRenderer:
@@ -35,6 +36,9 @@ class EntityRenderer:
         
         # Model paths
         self.model_dir = "client_3d/models/ships"
+        
+        # Procedural ship model generator
+        self.ship_generator = ShipModelGenerator()
         
         # Setup lighting
         self._setup_lighting()
@@ -99,82 +103,14 @@ class EntityRenderer:
     
     def _create_placeholder(self, faction: str, ship_type: str) -> NodePath:
         """
-        Create a placeholder shape for a ship
-        Uses Panda3D's built-in geometric shapes
+        Create a procedural ship model
+        Uses the ShipModelGenerator for detailed ship models
         """
-        # Determine size based on ship type
-        if 'Frigate' in ship_type or 'Rifter' in ship_type or 'Merlin' in ship_type or 'Tristan' in ship_type or 'Punisher' in ship_type:
-            scale = 3.0
-            shape = 'box'  # Frigate = box
-        elif 'Destroyer' in ship_type or 'Thrasher' in ship_type or 'Cormorant' in ship_type:
-            scale = 4.0
-            shape = 'box'  # Destroyer = elongated box
-        elif 'Cruiser' in ship_type or 'Stabber' in ship_type or 'Caracal' in ship_type:
-            scale = 5.0
-            shape = 'sphere'  # Cruiser = sphere
-        else:
-            scale = 3.0
-            shape = 'box'
+        # Use procedural ship generator
+        model = self.ship_generator.generate_ship_model(ship_type, faction)
         
-        # Create geometric shape
-        if shape == 'box':
-            from panda3d.core import CardMaker
-            # Use a simple box shape
-            placeholder = self.loader.loadModel("models/box")
-            if not placeholder:
-                # Fallback: create a very simple geometric node
-                placeholder = NodePath("placeholder")
-        elif shape == 'sphere':
-            placeholder = self.loader.loadModel("models/sphere")
-            if not placeholder:
-                placeholder = NodePath("placeholder")
-        else:
-            placeholder = NodePath("placeholder")
-        
-        # If models not available, create simple geometry
-        if not placeholder.getChildren():
-            # Use Panda3D's built-in shapes as last resort
-            from panda3d.core import GeomVertexFormat, GeomVertexData, Geom, GeomNode
-            from panda3d.core import GeomTriangles, GeomVertexWriter
-            
-            # Create a simple cube
-            format = GeomVertexFormat.getV3()
-            vdata = GeomVertexData('cube', format, Geom.UHStatic)
-            vertex = GeomVertexWriter(vdata, 'vertex')
-            
-            # Add 8 vertices of a cube
-            for x in [-1, 1]:
-                for y in [-1, 1]:
-                    for z in [-1, 1]:
-                        vertex.addData3(x, y, z)
-            
-            # Create triangles (simplified - just a few faces)
-            tris = GeomTriangles(Geom.UHStatic)
-            tris.addVertices(0, 1, 2)
-            tris.addVertices(1, 2, 3)
-            tris.addVertices(4, 5, 6)
-            tris.addVertices(5, 6, 7)
-            
-            geom = Geom(vdata)
-            geom.addPrimitive(tris)
-            
-            node = GeomNode('cube')
-            node.addGeom(geom)
-            
-            placeholder = NodePath(node)
-        
-        # Scale
-        placeholder.setScale(scale, scale, scale)
-        
-        # Set color based on faction
-        color = self.FACTION_COLORS.get(faction, self.FACTION_COLORS['default'])
-        placeholder.setColor(color)
-        
-        # Add some visual interest with shader attributes
-        # Make it slightly metallic looking
-        placeholder.setShaderAuto()  # Enable automatic shader generation
-        
-        return placeholder
+        print(f"[Renderer] Generated procedural model for {faction} {ship_type}")
+        return model
     
     def render_entity(self, entity):
         """
