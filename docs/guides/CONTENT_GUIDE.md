@@ -332,28 +332,51 @@ Medium-class ships offering versatility and staying power.
 
 ## 🎯 Missions
 
-### Level 1 Missions (50k-80k ISK)
-1. **Serpentis Infestation** - Destroy 5 Serpentis Scouts
-2. **Mining Operation** - Mine 1000 units of Veldspar
-3. **Urgent Delivery** - Courier mission to Hek
+### Level 1 Missions (35k-120k ISK)
+**Recommended Ships**: Frigates
 
-### Level 2 Missions (125k-210k ISK)
-1. **Blood Raider Menace** - Clear Blood Raiders base
-2. **Angel Cartel Threat** - Eliminate 6 Angel frigates
-3. **Sansha's Nation Scouts** - Destroy 5 Sansha frigates
-4. **Rogue Drone Cleanup** - Exterminate 8 rogue drones
-5. **Emergency Supply Run** - Deliver medical supplies
-6. **Rare Ore Collection** - Mine Kernite and Plagioclase
-7. **Exploration Site** - Scan and retrieve artifacts
+1. **Serpentis Infestation** - Destroy 5 Serpentis Scouts (50k ISK)
+2. **Mining Operation** - Mine 1000 units of Veldspar (35k ISK)
+3. **Urgent Delivery** - Courier mission to Hek (80k ISK)
+4. **Emergency Supply Run** - Deliver medical supplies (120k ISK)
+5. **Blood Raider Patrol** - Destroy 4 Blood Raiders frigates (65k ISK)
+6. **Guristas Reconnaissance** - Eliminate 5 Guristas scouts (55k ISK)
 
-### Level 3 Missions (250k-420k ISK)
-1. **Multi-Target Operation** - Mixed pirate forces
-2. **Destroyer Patrol** - Eliminate 5 destroyers
-3. **Drone Hive Assault** - Destroy drone hive with Mother ship
+### Level 2 Missions (160k-280k ISK)
+**Recommended Ships**: Destroyers, Cruisers
 
-### Level 4 Missions (550k-680k ISK)
-1. **Cruiser Showdown** - High-threat cruiser targets
-2. **Faction Warfare Sortie** - Major multi-faction operation
+1. **Angel Cartel Threat** - Eliminate 6 Angel frigates (180k ISK)
+2. **Sansha's Nation Scouts** - Destroy 5 Sansha frigates (190k ISK)
+3. **Rogue Drone Cleanup** - Exterminate 8 rogue drones (160k ISK)
+4. **Exploration Site** - Scan and retrieve artifacts (200k ISK)
+5. **Rare Ore Collection** - Mine Kernite and Plagioclase (210k ISK)
+6. **Destroyer Ambush** - 2 Serpentis destroyers + 3 frigates (240k ISK)
+7. **Cruiser Patrol** - 1 Angel cruiser + 4 frigates (280k ISK)
+
+### Level 3 Missions (320k-650k ISK) - NEW!
+**Recommended Ships**: Battlecruisers, Tech II Cruisers
+
+1. **Destroyer Patrol** - 3 Serpentis + 2 Guristas destroyers (320k ISK)
+2. **Drone Hive Assault** - 6 frigates + 1 Mother drone cruiser (420k ISK)
+3. **Battlecruiser Ambush** - 2 Serpentis battlecruisers + 3 destroyers (580k ISK)
+4. **Blood Raiders Stronghold** - 1 battlecruiser + 2 cruisers + 4 frigates (540k ISK)
+5. **Angel Cartel Raid** - 2 Angel battlecruisers + 5 frigates (620k ISK)
+6. **Guristas Command Ship** - 1 battlecruiser + 2 destroyers + 4 frigates (590k ISK)
+7. **Sansha's Invasion Force** - 2 Sansha battlecruisers + 1 cruiser (650k ISK)
+
+### Level 4 Missions (550k-2,850k ISK) - NEW!
+**Recommended Ships**: Battleships, Command Ships
+
+1. **Elite Cruiser Squadron** - 2 Serpentis + 1 Blood Raiders cruisers (550k ISK)
+2. **Faction Warfare Sortie** - 4 frigates + 2 Angel + 1 Sansha cruisers (680k ISK)
+3. **Battleship Interdiction** - 1 Serpentis battleship + 2 battlecruisers + 3 destroyers (1,250k ISK)
+4. **Guristas Dreadnought Strike** - 1 Guristas battleship + 3 battlecruisers (1,480k ISK)
+5. **Blood Raiders Flagship** - 1 Blood Raiders battleship + 2 battlecruisers + 2 cruisers (1,650k ISK)
+6. **Sansha's Incursion Capital** - 1 Sansha battleship + 3 battlecruisers + 2 cruisers (1,850k ISK)
+7. **Hunt for the Machariel** - 1 Angel battleship + 2 battlecruisers + 3 cruisers (2,100k ISK)
+8. **Pirate Armada** - 2 battleships + 4 battlecruisers (2,850k ISK) 🔥
+
+**See [PHASE6_CONTENT_EXPANSION.md](../development/PHASE6_CONTENT_EXPANSION.md) for detailed mission information.**
 
 ---
 
@@ -402,5 +425,5 @@ See [DOCUMENTATION.md](DOCUMENTATION.md) for detailed modding guides.
 
 ---
 
-*Last updated: 2026-02-01*
-*Game version: Phase 1 - Extended Content Pack*
+*Last updated: 2026-02-03*
+*Game version: Phase 6 - Content Expansion*
