@@ -39,6 +39,31 @@ def test_ship_generator():
         "Caracal",
         "Vexor",
         "Maller",
+        # Tech II Heavy Assault Cruisers
+        "Vagabond",
+        "Cerberus",
+        "Ishtar",
+        "Zealot",
+        # Tech II Heavy Interdiction Cruisers
+        "Broadsword",
+        "Onyx",
+        "Phobos",
+        "Devoter",
+        # Tech II Force Recon Ships
+        "Huginn",
+        "Rapier",
+        "Falcon",
+        "Arazu",
+        "Pilgrim",
+        # Tech II Combat Recon Ships
+        "Rook",
+        "Lachesis",
+        "Curse",
+        # Tech II Logistics Cruisers
+        "Scimitar",
+        "Basilisk",
+        "Oneiros",
+        "Guardian",
         # Battlecruisers
         "Cyclone",
         "Ferox",

@@ -85,6 +85,9 @@ class ShipModelGenerator:
             model = self._create_frigate_model(faction)
         elif self._is_destroyer(ship_type):
             model = self._create_destroyer_model(faction)
+        elif self._is_tech2_cruiser(ship_type):
+            # Tech II cruisers use enhanced cruiser model
+            model = self._create_tech2_cruiser_model(faction)
         elif self._is_cruiser(ship_type):
             model = self._create_cruiser_model(faction)
         elif self._is_battlecruiser(ship_type):
@@ -115,9 +118,29 @@ class ShipModelGenerator:
         return any(name in ship_type for name in destroyer_names)
     
     def _is_cruiser(self, ship_type: str) -> bool:
-        """Check if ship is a cruiser class"""
+        """Check if ship is a Tech I cruiser class (excludes Tech II cruisers)"""
+        # Check if it's a Tech II cruiser first (these should NOT match)
+        if self._is_tech2_cruiser(ship_type):
+            return False
+        # Then check for Tech I cruiser names
         cruiser_names = ['Cruiser', 'Stabber', 'Caracal', 'Vexor', 'Maller', 'Rupture', 'Moa']
         return any(name in ship_type for name in cruiser_names)
+    
+    def _is_tech2_cruiser(self, ship_type: str) -> bool:
+        """Check if ship is a Tech II cruiser (HAC, HIC, Recon, Logistics)"""
+        tech2_cruiser_names = [
+            # Heavy Assault Cruisers
+            'Heavy Assault Cruiser', 'Vagabond', 'Cerberus', 'Ishtar', 'Zealot',
+            # Heavy Interdiction Cruisers
+            'Heavy Interdiction Cruiser', 'Broadsword', 'Onyx', 'Phobos', 'Devoter',
+            # Force Recon Ships
+            'Force Recon Ship', 'Huginn', 'Rapier', 'Falcon', 'Arazu', 'Pilgrim',
+            # Combat Recon Ships
+            'Combat Recon Ship', 'Rook', 'Lachesis', 'Curse',
+            # Logistics Cruisers
+            'Logistics Cruiser', 'Scimitar', 'Basilisk', 'Oneiros', 'Guardian'
+        ]
+        return any(name in ship_type for name in tech2_cruiser_names)
     
     def _is_battlecruiser(self, ship_type: str) -> bool:
         """Check if ship is a battlecruiser class"""
@@ -280,6 +303,80 @@ class ShipModelGenerator:
                 color=Vec4(0.3, 0.5, 1.0, 1.0)
             )
             glow.setPos(x, y - 1.5, 0)
+            glow.setHpr(0, 0, 90)
+            glow.reparentTo(root)
+        
+        return root
+    
+    def _create_tech2_cruiser_model(self, faction: str) -> NodePath:
+        """
+        Create a Tech II cruiser model (HAC, HIC, Recon, Logistics)
+        Enhanced cruiser design with more advanced features
+        """
+        colors = self._get_faction_colors(faction)
+        root = NodePath(f"tech2_cruiser_{faction}")
+        
+        # Main hull - sleeker, more advanced ellipsoid
+        hull = self._create_ellipsoid(
+            length=8.5, width=4.2, height=3.2,
+            color=colors['primary']
+        )
+        hull.reparentTo(root)
+        
+        # Advanced wing structures (more pronounced)
+        for side in [-1, 1]:
+            wing = self._create_wedge_shape(
+                length=6.5, width=2.2, height=1.2,
+                color=colors['secondary']
+            )
+            wing.setPos(side * 2.7, -1.2, 0)
+            wing.setHpr(side * 35, 0, side * 12)
+            wing.reparentTo(root)
+            
+            # Additional armor plating (Tech II feature)
+            armor = self._create_box(
+                width=0.8, length=4.0, height=1.5,
+                color=colors['accent']
+            )
+            armor.setPos(side * 3.2, -0.5, 0)
+            armor.reparentTo(root)
+        
+        # Advanced bridge/command section
+        bridge = self._create_box(
+            width=2.8, length=3.5, height=2.3,
+            color=colors['accent']
+        )
+        bridge.setPos(0, 2.2, 1.8)
+        bridge.reparentTo(root)
+        
+        # Tech II sensor array
+        sensor = self._create_box(
+            width=1.0, length=1.5, height=1.0,
+            color=Vec4(0.2, 0.4, 0.8, 1.0)  # Blue tech glow
+        )
+        sensor.setPos(0, 3.5, 2.5)
+        sensor.reparentTo(root)
+        
+        # Enhanced engine nacelles (6x for Tech II)
+        engine_positions = [
+            (-2.0, -3.8), (-1.0, -3.8), (0, -3.8),
+            (1.0, -3.8), (2.0, -3.8), (0, -4.2)
+        ]
+        for x, y in engine_positions:
+            engine = self._create_cylinder(
+                radius=0.45, length=2.2,
+                color=colors['secondary']
+            )
+            engine.setPos(x, y, 0)
+            engine.setHpr(0, 0, 90)
+            engine.reparentTo(root)
+            
+            # Advanced engine glow (brighter for Tech II)
+            glow = self._create_cylinder(
+                radius=0.35, length=0.6,
+                color=Vec4(0.4, 0.6, 1.0, 1.0)  # Brighter blue glow
+            )
+            glow.setPos(x, y - 1.7, 0)
             glow.setHpr(0, 0, 90)
             glow.reparentTo(root)
         
