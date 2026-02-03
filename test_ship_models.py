@@ -17,18 +17,38 @@ def test_ship_generator():
     
     # Test ship types
     ship_types = [
+        # Tech I Frigates
         "Rifter",
         "Merlin",
         "Tristan",
         "Punisher",
+        # Tech II Assault Frigates
+        "Jaguar",
+        "Hawk",
+        "Enyo",
+        "Retribution",
+        "Wolf",
+        "Harpy",
+        # Destroyers
         "Thrasher",
         "Cormorant",
         "Catalyst",
         "Coercer",
+        # Cruisers
         "Stabber",
         "Caracal",
         "Vexor",
-        "Maller"
+        "Maller",
+        # Battlecruisers
+        "Cyclone",
+        "Ferox",
+        "Brutix",
+        "Harbinger",
+        # Battleships
+        "Tempest",
+        "Raven",
+        "Dominix",
+        "Apocalypse"
     ]
     
     # Test factions

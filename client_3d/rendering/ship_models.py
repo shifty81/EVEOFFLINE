@@ -87,6 +87,10 @@ class ShipModelGenerator:
             model = self._create_destroyer_model(faction)
         elif self._is_cruiser(ship_type):
             model = self._create_cruiser_model(faction)
+        elif self._is_battlecruiser(ship_type):
+            model = self._create_battlecruiser_model(faction)
+        elif self._is_battleship(ship_type):
+            model = self._create_battleship_model(faction)
         else:
             model = self._create_generic_model(faction)
         
@@ -97,8 +101,12 @@ class ShipModelGenerator:
         return model.copyTo(NodePath())
     
     def _is_frigate(self, ship_type: str) -> bool:
-        """Check if ship is a frigate class"""
-        frigate_names = ['Frigate', 'Rifter', 'Merlin', 'Tristan', 'Punisher']
+        """Check if ship is a frigate class (including Tech II Assault Frigates)"""
+        frigate_names = [
+            'Frigate', 'Rifter', 'Merlin', 'Tristan', 'Punisher',
+            # Tech II Assault Frigates
+            'Assault Frigate', 'Jaguar', 'Hawk', 'Enyo', 'Retribution', 'Wolf', 'Harpy'
+        ]
         return any(name in ship_type for name in frigate_names)
     
     def _is_destroyer(self, ship_type: str) -> bool:
@@ -110,6 +118,16 @@ class ShipModelGenerator:
         """Check if ship is a cruiser class"""
         cruiser_names = ['Cruiser', 'Stabber', 'Caracal', 'Vexor', 'Maller', 'Rupture', 'Moa']
         return any(name in ship_type for name in cruiser_names)
+    
+    def _is_battlecruiser(self, ship_type: str) -> bool:
+        """Check if ship is a battlecruiser class"""
+        battlecruiser_names = ['Battlecruiser', 'Cyclone', 'Ferox', 'Brutix', 'Harbinger']
+        return any(name in ship_type for name in battlecruiser_names)
+    
+    def _is_battleship(self, ship_type: str) -> bool:
+        """Check if ship is a battleship class"""
+        battleship_names = ['Battleship', 'Tempest', 'Raven', 'Dominix', 'Apocalypse']
+        return any(name in ship_type for name in battleship_names)
     
     def _get_faction_colors(self, faction: str) -> dict:
         """Get color scheme for a faction"""
@@ -262,6 +280,147 @@ class ShipModelGenerator:
                 color=Vec4(0.3, 0.5, 1.0, 1.0)
             )
             glow.setPos(x, y - 1.5, 0)
+            glow.setHpr(0, 0, 90)
+            glow.reparentTo(root)
+        
+        return root
+    
+    def _create_battlecruiser_model(self, faction: str) -> NodePath:
+        """
+        Create a battlecruiser-class ship model
+        Medium-large ships with heavy firepower, between cruiser and battleship
+        """
+        colors = self._get_faction_colors(faction)
+        root = NodePath(f"battlecruiser_{faction}")
+        
+        # Main hull - larger angular body
+        hull = self._create_box(
+            width=5.0, length=10.0, height=3.5,
+            color=colors['primary']
+        )
+        hull.reparentTo(root)
+        
+        # Forward command section
+        command = self._create_wedge_shape(
+            length=4.0, width=4.0, height=2.5,
+            color=colors['accent']
+        )
+        command.setPos(0, 4.0, 0.5)
+        command.reparentTo(root)
+        
+        # Side armor plates
+        for side in [-1, 1]:
+            armor = self._create_box(
+                width=1.5, length=8.0, height=2.5,
+                color=colors['secondary']
+            )
+            armor.setPos(side * 3.0, 0, 0)
+            armor.reparentTo(root)
+        
+        # Weapon hardpoints (6 total - 3 per side)
+        for side in [-1, 1]:
+            for i in range(3):
+                turret = self._create_cylinder(
+                    radius=0.4, length=1.2,
+                    color=colors['accent']
+                )
+                turret.setPos(side * 2.0, 2.0 - i * 2.0, 2.0)
+                turret.setHpr(0, 90, 0)
+                turret.reparentTo(root)
+        
+        # Engine cluster (4 large engines)
+        engine_positions = [(-2.0, -4.5), (-0.7, -4.5), (0.7, -4.5), (2.0, -4.5)]
+        for x, y in engine_positions:
+            engine = self._create_cylinder(
+                radius=0.7, length=3.0,
+                color=colors['secondary']
+            )
+            engine.setPos(x, y, 0)
+            engine.setHpr(0, 0, 90)
+            engine.reparentTo(root)
+            
+            # Engine glow
+            glow = self._create_cylinder(
+                radius=0.6, length=0.8,
+                color=Vec4(0.4, 0.6, 1.0, 1.0)
+            )
+            glow.setPos(x, y - 2.0, 0)
+            glow.setHpr(0, 0, 90)
+            glow.reparentTo(root)
+        
+        return root
+    
+    def _create_battleship_model(self, faction: str) -> NodePath:
+        """
+        Create a battleship-class ship model
+        Massive capital-class ships with devastating firepower
+        """
+        colors = self._get_faction_colors(faction)
+        root = NodePath(f"battleship_{faction}")
+        
+        # Main hull - massive central body
+        hull = self._create_box(
+            width=7.0, length=15.0, height=5.0,
+            color=colors['primary']
+        )
+        hull.reparentTo(root)
+        
+        # Forward citadel section
+        citadel = self._create_box(
+            width=5.0, length=5.0, height=4.0,
+            color=colors['accent']
+        )
+        citadel.setPos(0, 5.0, 1.0)
+        citadel.reparentTo(root)
+        
+        # Command tower
+        tower = self._create_box(
+            width=2.5, length=3.0, height=3.0,
+            color=colors['accent']
+        )
+        tower.setPos(0, 6.0, 4.0)
+        tower.reparentTo(root)
+        
+        # Heavy armor plates
+        for side in [-1, 1]:
+            armor = self._create_box(
+                width=2.0, length=12.0, height=4.0,
+                color=colors['secondary']
+            )
+            armor.setPos(side * 4.0, 0, 0)
+            armor.reparentTo(root)
+        
+        # Weapon batteries (8 large turrets - 4 per side)
+        for side in [-1, 1]:
+            for i in range(4):
+                turret = self._create_cylinder(
+                    radius=0.6, length=2.0,
+                    color=colors['accent']
+                )
+                turret.setPos(side * 3.0, 4.0 - i * 3.0, 3.0)
+                turret.setHpr(0, 90, 0)
+                turret.reparentTo(root)
+        
+        # Massive engine array (6 engines)
+        engine_positions = [
+            (-2.5, -6.5), (-1.5, -7.0), (-0.5, -7.0),
+            (0.5, -7.0), (1.5, -7.0), (2.5, -6.5)
+        ]
+        for x, y in engine_positions:
+            engine = self._create_cylinder(
+                radius=1.0, length=4.0,
+                color=colors['secondary']
+            )
+            engine.setPos(x, y, 0)
+            engine.setHpr(0, 0, 90)
+            engine.reparentTo(root)
+            
+            # Engine glow (larger for battleship)
+            glow = self._create_cylinder(
+                radius=0.9, length=1.2,
+                color=Vec4(0.5, 0.7, 1.0, 1.0)
+            )
+            glow.setPos(x, y - 2.5, 0)
             glow.setHpr(0, 0, 90)
             glow.reparentTo(root)
         
