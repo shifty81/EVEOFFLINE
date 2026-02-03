@@ -105,7 +105,9 @@ class ClientConfig:
         """
         try:
             # Create directory if it doesn't exist
-            os.makedirs(os.path.dirname(self.config_path), exist_ok=True)
+            dir_path = os.path.dirname(self.config_path)
+            if dir_path:  # Only create if there's a directory component
+                os.makedirs(dir_path, exist_ok=True)
             
             with open(self.config_path, 'w') as f:
                 json.dump(self.config, f, indent=2)

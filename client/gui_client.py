@@ -563,9 +563,9 @@ class GUIClient:
 
 
 async def run_gui_client(player_id: str, character_name: str, 
-                        host: str = "localhost", port: int = 8765):
+                        host: Optional[str] = None, port: Optional[int] = None, config: Optional[ClientConfig] = None):
     """Run a GUI game client"""
-    client = GUIClient(player_id, character_name)
+    client = GUIClient(player_id, character_name, config)
     await client.run(host, port)
 
 
@@ -614,4 +614,4 @@ if __name__ == "__main__":
     print()
     
     # Run client
-    asyncio.run(run_gui_client(player_id, character_name, host, port))
+    asyncio.run(run_gui_client(player_id, character_name, host, port, config))

@@ -242,9 +242,9 @@ class GameClient:
                 await self.disconnect()
 
 
-async def run_client(player_id: str, character_name: str, host: str = "localhost", port: int = 8765):
+async def run_client(player_id: str, character_name: str, host: Optional[str] = None, port: Optional[int] = None, config: Optional[ClientConfig] = None):
     """Run a game client"""
-    client = GameClient(player_id, character_name)
+    client = GameClient(player_id, character_name, config)
     await client.run(host, port)
 
 
@@ -288,4 +288,4 @@ if __name__ == "__main__":
     print()
     
     # Run client
-    asyncio.run(run_client(player_id, character_name, host, port))
+    asyncio.run(run_client(player_id, character_name, host, port, config))
