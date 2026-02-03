@@ -227,13 +227,15 @@ class BuildSystem:
             if failed_packages:
                 self.print_warning(f"Some packages failed to install: {', '.join(failed_packages)}")
                 # Don't fail the build for optional dependencies
-                if any('pygame' in pkg for pkg in failed_packages):
-                    print("  Note: pygame installation failed - GUI client will not be available")
-                if any('panda3d' in pkg for pkg in failed_packages):
-                    print("  Note: panda3d installation failed - 3D client will not be available")
-                if any('pylint' in pkg or 'flake8' in pkg for pkg in failed_packages):
-                    print("  Note: linting tools not installed - code quality checks will be skipped")
-                # Consider it a partial success if core dependencies installed
+                for pkg in failed_packages:
+                    pkg_lower = pkg.lower()
+                    if 'pygame' in pkg_lower and not pkg_lower.startswith('panda'):
+                        print("  Note: pygame installation failed - GUI client will not be available")
+                    elif pkg_lower.startswith('panda3d'):
+                        print("  Note: panda3d installation failed - 3D client will not be available")
+                    elif pkg_lower.startswith('pylint') or pkg_lower.startswith('flake8'):
+                        print(f"  Note: {pkg} not installed - code quality checks may be limited")
+                # All dependencies in requirements.txt are optional, so don't fail
                 return True
             else:
                 success = True
@@ -282,12 +284,21 @@ class BuildSystem:
                 capture=True
             )
             # Check if flake8 found any issues (output will contain error messages)
-            if success and (not output or output.strip() == ""):
+            # Flake8 output format: filename:line:column: error_code message
+            issue_count = 0
+            if output:
+                for line in output.strip().splitlines():
+                    # Count lines that match flake8's error format
+                    if ':' in line and any(char.isdigit() for char in line):
+                        # Basic check for error line format
+                        issue_count += 1
+            
+            if success and issue_count == 0:
                 self.print_success("Flake8 checks passed - no issues found")
             else:
                 self.print_success("Flake8 checks completed")
-                if output and output.strip():
-                    self.print_warning(f"Flake8 found {len(output.strip().splitlines())} issue(s)")
+                if issue_count > 0:
+                    self.print_warning(f"Flake8 found {issue_count} issue(s)")
         else:
             print("  Flake8 not available (skipping)")
         
