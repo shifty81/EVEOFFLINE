@@ -262,10 +262,11 @@ class BuildSystem:
                 check=False,
                 capture=True
             )
-            if success or "Your code has been rated" in output:
+            # Pylint returns output even on success
+            if output and ("Your code has been rated" in output or success):
                 self.print_success("Pylint checks completed")
             else:
-                self.print_warning("Pylint found issues")
+                self.print_warning("Pylint encountered issues")
         else:
             print("  Pylint not available (skipping)")
         
@@ -280,10 +281,13 @@ class BuildSystem:
                 check=False,
                 capture=True
             )
-            if success:
-                self.print_success("Flake8 checks completed")
+            # Check if flake8 found any issues (output will contain error messages)
+            if success and (not output or output.strip() == ""):
+                self.print_success("Flake8 checks passed - no issues found")
             else:
-                self.print_warning("Flake8 found issues")
+                self.print_success("Flake8 checks completed")
+                if output and output.strip():
+                    self.print_warning(f"Flake8 found {len(output.strip().splitlines())} issue(s)")
         else:
             print("  Flake8 not available (skipping)")
         
