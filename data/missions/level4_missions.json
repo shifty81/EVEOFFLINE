@@ -1,6 +1,6 @@
 {
-  "cruiser_showdown": {
-    "id": "cruiser_showdown",
+  "elite_cruiser_squadron": {
+    "id": "elite_cruiser_squadron",
     "name": "Elite Cruiser Squadron",
     "level": 4,
     "type": "combat",
