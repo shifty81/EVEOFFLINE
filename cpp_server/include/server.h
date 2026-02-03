@@ -8,6 +8,7 @@
 #include "config/server_config.h"
 #include "auth/steam_auth.h"
 #include "auth/whitelist.h"
+#include "ecs/world.h"
 
 namespace eve {
 
@@ -32,17 +33,22 @@ public:
     bool isRunning() const { return running_; }
     int getPlayerCount() const;
     
+    // Get game world
+    ecs::World* getWorld() { return game_world_.get(); }
+    
 private:
     std::unique_ptr<ServerConfig> config_;
     std::unique_ptr<network::TCPServer> tcp_server_;
     std::unique_ptr<auth::SteamAuth> steam_auth_;
     std::unique_ptr<auth::Whitelist> whitelist_;
+    std::unique_ptr<ecs::World> game_world_;
     
     std::atomic<bool> running_;
     
     // Internal methods
     void mainLoop();
     void updateSteam();
+    void initializeGameWorld();
 };
 
 } // namespace eve

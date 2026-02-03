@@ -40,6 +40,13 @@ set(SERVER_SOURCES
     src/config/server_config.cpp
     src/auth/steam_auth.cpp
     src/auth/whitelist.cpp
+    src/utils/name_generator.cpp
+    src/ecs/entity.cpp
+    src/ecs/world.cpp
+    src/systems/movement_system.cpp
+    src/systems/combat_system.cpp
+    src/systems/ai_system.cpp
+    src/systems/targeting_system.cpp
 )
 
 set(SERVER_HEADERS
@@ -49,6 +56,16 @@ set(SERVER_HEADERS
     include/config/server_config.h
     include/auth/steam_auth.h
     include/auth/whitelist.h
+    include/utils/name_generator.h
+    include/ecs/component.h
+    include/ecs/entity.h
+    include/ecs/system.h
+    include/ecs/world.h
+    include/components/game_components.h
+    include/systems/movement_system.h
+    include/systems/combat_system.h
+    include/systems/ai_system.h
+    include/systems/targeting_system.h
 )
 
 # Steam SDK configuration

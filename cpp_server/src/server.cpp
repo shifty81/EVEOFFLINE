@@ -1,4 +1,8 @@
 #include "server.h"
+#include "systems/movement_system.h"
+#include "systems/combat_system.h"
+#include "systems/ai_system.h"
+#include "systems/targeting_system.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -13,10 +17,24 @@ Server::Server(const std::string& config_path)
         std::cerr << "Warning: Could not load config from " << config_path 
                   << ", using defaults" << std::endl;
     }
+    
+    // Initialize game world
+    game_world_ = std::make_unique<ecs::World>();
 }
 
 Server::~Server() {
     stop();
+}
+
+void Server::initializeGameWorld() {
+    // Initialize game systems in order
+    game_world_->addSystem(std::make_unique<systems::AISystem>(game_world_.get()));
+    game_world_->addSystem(std::make_unique<systems::TargetingSystem>(game_world_.get()));
+    game_world_->addSystem(std::make_unique<systems::MovementSystem>(game_world_.get()));
+    game_world_->addSystem(std::make_unique<systems::CombatSystem>(game_world_.get()));
+    
+    std::cout << "Game world initialized with " << game_world_->getEntityCount() << " entities" << std::endl;
+    std::cout << "Systems: AI, Targeting, Movement, Combat" << std::endl;
 }
 
 bool Server::initialize() {
@@ -81,6 +99,9 @@ bool Server::initialize() {
     std::cout << "  Tick Rate: " << config_->tick_rate << " Hz" << std::endl;
     std::cout << std::endl;
     
+    // Initialize game world and systems
+    initializeGameWorld();
+    
     return true;
 }
 
@@ -131,6 +152,9 @@ void Server::mainLoop() {
     
     while (running_) {
         auto frame_start = std::chrono::steady_clock::now();
+        
+        // Update game world (ECS systems)
+        game_world_->update(tick_duration);
         
         // Update Steam callbacks
         if (config_->use_steam && steam_auth_) {
