@@ -93,19 +93,50 @@ Demonstrates all features in a scripted format (great for screenshots/videos).
 
 **🌐 Multiplayer Server Mode:**
 
-**Start the server:**
+**Start the server (Python):**
 ```bash
 python server/server.py
 ```
 
+**Or start the C++ dedicated server:**
+```bash
+# Build first (requires CMake and C++ compiler)
+cd cpp_server
+./build.sh  # Linux/macOS
+# or
+build.bat   # Windows
+
+# Run
+cd build/bin
+./eve_dedicated_server
+```
+See [cpp_server/README.md](cpp_server/README.md) for detailed C++ server documentation.
+
 **Start a text client (in a new terminal):**
 ```bash
+# Basic usage
 python client/client.py "YourCharacterName"
+
+# With auto-generated name
+python client/client.py --generate-name
+
+# With specific name style
+python client/client.py --generate-name --name-style male
+
+# Connect to remote server
+python client/client.py "YourName" --host server.example.com --port 8765
 ```
 
 **Or start a 2D GUI client (with visuals):**
 ```bash
+# Basic usage
 python client/gui_client.py "YourCharacterName"
+
+# With auto-generated name and fullscreen
+python client/gui_client.py --generate-name --fullscreen
+
+# Connect to remote server
+python client/gui_client.py "YourName" --host server.example.com
 ```
 
 **🆕 Or start the 3D client (Phase 5 - Early Development):**
@@ -301,11 +332,39 @@ See [docs/testing/TEST_SUMMARY.md](docs/testing/TEST_SUMMARY.md) for detailed te
 - [x] Advanced Audio - Sound effects and music integration with 3D positioning
 - [x] UI Enhancements - EVE Online Photon UI styling with circular displays
 
-### 🎯 Future: Phase 6
+#### 🎯 NEW! Phase 6: C++ Dedicated Server & Enhanced Features - COMPLETE ✅
+- [x] **C++ Dedicated Server** - High-performance server for 24/7 uptime
+  - Cross-platform support (Windows, Linux, macOS)
+  - Steam integration (authentication, server browser)
+  - Whitelist support (Steam names/IDs)
+  - Persistent world with auto-save
+  - JSON-based configuration
+  - Protocol compatible with Python clients
+- [x] **Random Name Generator** - EVE-style procedural naming
+  - Character names (100+ combinations)
+  - Ship names (4 styles: Heroic, Celestial, Mythic, Descriptive)
+  - Corporation names
+  - System and station names
+  - Mission names
+  - Exploration site names
+  - NPC/pirate names
+  - Pilot callsigns
+  - Asteroid designations
+- [x] **Enhanced Python Clients** - Updated with C++ server features
+  - Configuration system (JSON-based settings)
+  - Name generator integration (CLI options)
+  - Auto-reconnect on disconnect
+  - Connection timeout handling
+  - Improved error reporting
+  - GUI connection status indicator
+  - FPS counter (configurable)
+  - Comprehensive CLI arguments
+- [x] **EVE Feature Gap Analysis** - Documentation of missing EVE Online features
 - [ ] More content (ships, modules, missions)
 - [ ] Advanced game mechanics
 - [ ] Enhanced multiplayer features
 
+**See [docs/development/CLIENT_UPDATES.md](docs/development/CLIENT_UPDATES.md) for client documentation!**
 **See [docs/ROADMAP.md](docs/ROADMAP.md) for complete status and planned features!**
 
 ## 🎮 Game Mechanics
