@@ -1,13 +1,13 @@
 {
   "cruiser_showdown": {
     "id": "cruiser_showdown",
-    "name": "Cruiser Showdown",
+    "name": "Elite Cruiser Squadron",
     "level": 4,
     "type": "combat",
     "agent": "Admiral Blackwood",
     "faction": "Caldari Navy",
-    "description": "High-threat cruiser-class targets detected. Only experienced pilots should accept this mission.",
-    "briefing": "These cruisers are commanded by veteran pirates. You'll need a well-fitted ship to succeed.",
+    "description": "High-threat elite cruiser squadron detected. Only experienced pilots should accept this mission.",
+    "briefing": "These cruisers are commanded by veteran pirates with heavy modifications. You'll need a battlecruiser or battleship to succeed.",
     "objectives": [
       {"type": "destroy", "target": "serpentis_soldier", "count": 2},
       {"type": "destroy", "target": "blood_raiders_cruiser", "count": 1}

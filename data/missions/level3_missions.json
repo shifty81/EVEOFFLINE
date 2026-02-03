@@ -83,7 +83,7 @@
     "objectives": [
       {"type": "destroy", "target": "blood_raiders_battlecruiser", "count": 1},
       {"type": "destroy", "target": "blood_raiders_cruiser", "count": 2},
-      {"type": "destroy", "target": "blood_raiders_corpse", "count": 4}
+      {"type": "destroy", "target": "blood_raiders_frigate", "count": 4}
     ],
     "rewards": {
       "isk": 540000,
@@ -132,7 +132,7 @@
     "objectives": [
       {"type": "destroy", "target": "guristas_battlecruiser", "count": 1},
       {"type": "destroy", "target": "guristas_destroyer", "count": 2},
-      {"type": "destroy", "target": "guristas_thrasher", "count": 4}
+      {"type": "destroy", "target": "guristas_frigate", "count": 4}
     ],
     "rewards": {
       "isk": 590000,
