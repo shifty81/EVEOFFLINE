@@ -68,54 +68,6 @@
     "time_limit": 5400,
     "difficulty": "medium"
   },
-  "destroyer_patrol": {
-    "id": "destroyer_patrol",
-    "name": "Destroyer Patrol",
-    "level": 3,
-    "type": "combat",
-    "agent": "Fleet Commander Hayes",
-    "faction": "Caldari Navy",
-    "description": "Enemy destroyers have been detected. We need a skilled pilot to eliminate them.",
-    "briefing": "These destroyer-class vessels pose a significant threat. Engage with caution.",
-    "objectives": [
-      {"type": "destroy", "target": "serpentis_destroyer", "count": 3},
-      {"type": "destroy", "target": "guristas_destroyer", "count": 2}
-    ],
-    "rewards": {
-      "isk": 320000,
-      "loyalty_points": 750,
-      "standing_gain": 0.035,
-      "items": ["medium_hybrid_turret", "medium_shield_booster"]
-    },
-    "location": "rancer",
-    "spawn_distance": 35000,
-    "time_limit": 7200,
-    "difficulty": "hard"
-  },
-  "cruiser_showdown": {
-    "id": "cruiser_showdown",
-    "name": "Cruiser Showdown",
-    "level": 4,
-    "type": "combat",
-    "agent": "Admiral Blackwood",
-    "faction": "Caldari Navy",
-    "description": "High-threat cruiser-class targets detected. Only experienced pilots should accept this mission.",
-    "briefing": "These cruisers are commanded by veteran pirates. You'll need a well-fitted ship to succeed.",
-    "objectives": [
-      {"type": "destroy", "target": "serpentis_soldier", "count": 2},
-      {"type": "destroy", "target": "blood_raiders_cruiser", "count": 1}
-    ],
-    "rewards": {
-      "isk": 550000,
-      "loyalty_points": 1200,
-      "standing_gain": 0.05,
-      "items": ["medium_armor_repairer", "damage_control", "gyrostabilizer"]
-    },
-    "location": "rancer",
-    "spawn_distance": 45000,
-    "time_limit": 9000,
-    "difficulty": "very_hard"
-  },
   "exploration_site": {
     "id": "exploration_site",
     "name": "Exploration Site",
@@ -138,28 +90,6 @@
     "location": "perimeter",
     "time_limit": 6000,
     "difficulty": "medium"
-  },
-  "supply_run": {
-    "id": "supply_run",
-    "name": "Emergency Supply Run",
-    "level": 1,
-    "type": "courier",
-    "agent": "Logistics Officer Chen",
-    "faction": "Caldari Provisions",
-    "description": "Our outpost needs emergency supplies. Deliver these materials quickly.",
-    "briefing": "Time is of the essence. These supplies are urgently needed at our Hek station.",
-    "objectives": [
-      {"type": "transport", "item": "medical_supplies", "count": 50, "destination": "hek"}
-    ],
-    "rewards": {
-      "isk": 120000,
-      "loyalty_points": 300,
-      "standing_gain": 0.015
-    },
-    "location": "jita",
-    "cargo_provided": {"medical_supplies": 50},
-    "time_limit": 4800,
-    "difficulty": "easy"
   },
   "rare_ore_collection": {
     "id": "rare_ore_collection",
@@ -184,53 +114,52 @@
     "time_limit": 7200,
     "difficulty": "medium"
   },
-  "faction_warfare": {
-    "id": "faction_warfare",
-    "name": "Faction Warfare Sortie",
-    "level": 4,
+  "destroyer_ambush": {
+    "id": "destroyer_ambush",
+    "name": "Destroyer Ambush",
+    "level": 2,
     "type": "combat",
-    "agent": "Grand Admiral Vance",
-    "faction": "Republic Fleet",
-    "description": "A major pirate operation is underway. We need all available pilots to engage.",
-    "briefing": "This is a coordinated strike. Expect heavy resistance from multiple factions.",
-    "objectives": [
-      {"type": "destroy", "target": "angel_frigate", "count": 4},
-      {"type": "destroy", "target": "angel_cruiser", "count": 2},
-      {"type": "destroy", "target": "sansha_cruiser", "count": 1}
-    ],
-    "rewards": {
-      "isk": 680000,
-      "loyalty_points": 1500,
-      "standing_gain": 0.06,
-      "items": ["medium_projectile_turret", "large_shield_extender", "tracking_computer"]
-    },
-    "location": "rancer",
-    "spawn_distance": 50000,
-    "time_limit": 10800,
-    "difficulty": "very_hard"
-  },
-  "drone_hive_assault": {
-    "id": "drone_hive_assault",
-    "name": "Drone Hive Assault",
-    "level": 3,
-    "type": "combat",
-    "agent": "Drone Defense Coordinator",
+    "agent": "Lieutenant Commander Silva",
     "faction": "Federation Navy",
-    "description": "A rogue drone hive has been discovered. Destroy the Mother drone to collapse the hive.",
-    "briefing": "The Mother drone coordinates the entire hive. Once destroyed, the others should scatter.",
+    "description": "Serpentis destroyers have been ambushing our mining operations. Put a stop to it.",
+    "briefing": "These destroyers are faster and better armed than frigates. You'll need a cruiser or well-fitted destroyer.",
     "objectives": [
-      {"type": "destroy", "target": "rogue_drone_frigate", "count": 6},
-      {"type": "destroy", "target": "rogue_drone_cruiser", "count": 1}
+      {"type": "destroy", "target": "serpentis_destroyer", "count": 2},
+      {"type": "destroy", "target": "serpentis_scout", "count": 3}
     ],
     "rewards": {
-      "isk": 420000,
-      "loyalty_points": 900,
-      "standing_gain": 0.04,
-      "items": ["drone_damage_amplifier", "drone_compounds_advanced"]
+      "isk": 240000,
+      "loyalty_points": 580,
+      "standing_gain": 0.028,
+      "items": ["hybrid_charges", "medium_shield_booster"]
     },
     "location": "perimeter",
-    "spawn_distance": 38000,
-    "time_limit": 7800,
+    "spawn_distance": 25000,
+    "time_limit": 6000,
+    "difficulty": "medium"
+  },
+  "cruiser_patrol": {
+    "id": "cruiser_patrol",
+    "name": "Cruiser Patrol",
+    "level": 2,
+    "type": "combat",
+    "agent": "Commander Rodriguez",
+    "faction": "Caldari Navy",
+    "description": "We've detected enemy cruisers in the area. Engage and destroy.",
+    "briefing": "Cruisers are tough opponents. Make sure your ship is properly fitted before engaging.",
+    "objectives": [
+      {"type": "destroy", "target": "angel_cruiser", "count": 1},
+      {"type": "destroy", "target": "angel_frigate", "count": 4}
+    ],
+    "rewards": {
+      "isk": 280000,
+      "loyalty_points": 650,
+      "standing_gain": 0.032,
+      "items": ["projectile_ammo", "tracking_enhancer"]
+    },
+    "location": "perimeter",
+    "spawn_distance": 28000,
+    "time_limit": 6300,
     "difficulty": "hard"
   }
 }

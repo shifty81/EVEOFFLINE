@@ -1,0 +1,172 @@
+{
+  "destroyer_patrol": {
+    "id": "destroyer_patrol",
+    "name": "Destroyer Patrol",
+    "level": 3,
+    "type": "combat",
+    "agent": "Fleet Commander Hayes",
+    "faction": "Caldari Navy",
+    "description": "Enemy destroyers have been detected. We need a skilled pilot to eliminate them.",
+    "briefing": "These destroyer-class vessels pose a significant threat. Engage with caution.",
+    "objectives": [
+      {"type": "destroy", "target": "serpentis_destroyer", "count": 3},
+      {"type": "destroy", "target": "guristas_destroyer", "count": 2}
+    ],
+    "rewards": {
+      "isk": 320000,
+      "loyalty_points": 750,
+      "standing_gain": 0.035,
+      "items": ["medium_hybrid_turret", "medium_shield_booster"]
+    },
+    "location": "rancer",
+    "spawn_distance": 35000,
+    "time_limit": 7200,
+    "difficulty": "hard"
+  },
+  "drone_hive_assault": {
+    "id": "drone_hive_assault",
+    "name": "Drone Hive Assault",
+    "level": 3,
+    "type": "combat",
+    "agent": "Drone Defense Coordinator",
+    "faction": "Federation Navy",
+    "description": "A rogue drone hive has been discovered. Destroy the Mother drone to collapse the hive.",
+    "briefing": "The Mother drone coordinates the entire hive. Once destroyed, the others should scatter.",
+    "objectives": [
+      {"type": "destroy", "target": "rogue_drone_frigate", "count": 6},
+      {"type": "destroy", "target": "rogue_drone_cruiser", "count": 1}
+    ],
+    "rewards": {
+      "isk": 420000,
+      "loyalty_points": 900,
+      "standing_gain": 0.04,
+      "items": ["drone_damage_amplifier", "drone_compounds_advanced"]
+    },
+    "location": "perimeter",
+    "spawn_distance": 38000,
+    "time_limit": 7800,
+    "difficulty": "hard"
+  },
+  "battlecruiser_ambush": {
+    "id": "battlecruiser_ambush",
+    "name": "Battlecruiser Ambush",
+    "level": 3,
+    "type": "combat",
+    "agent": "Admiral Chen",
+    "faction": "Caldari Navy",
+    "description": "Intelligence reports a Serpentis battlecruiser group in the area. Eliminate them before they can raid our convoys.",
+    "briefing": "Battlecruisers are heavily armed and armored. You'll need a well-fitted ship and good tactics to succeed.",
+    "objectives": [
+      {"type": "destroy", "target": "serpentis_battlecruiser", "count": 2},
+      {"type": "destroy", "target": "serpentis_destroyer", "count": 3}
+    ],
+    "rewards": {
+      "isk": 580000,
+      "loyalty_points": 1200,
+      "standing_gain": 0.045,
+      "items": ["medium_hybrid_turret", "magnetic_field_stabilizer", "shield_hardener"]
+    },
+    "location": "rancer",
+    "spawn_distance": 42000,
+    "time_limit": 8400,
+    "difficulty": "very_hard"
+  },
+  "blood_raiders_stronghold": {
+    "id": "blood_raiders_stronghold",
+    "name": "Blood Raiders Stronghold",
+    "level": 3,
+    "type": "combat",
+    "agent": "Inquisitor Valdez",
+    "faction": "Imperial Navy",
+    "description": "Blood Raiders have established a forward operating base. Clear it out.",
+    "briefing": "Watch out for their energy neutralizers. Bring plenty of cap boosters.",
+    "objectives": [
+      {"type": "destroy", "target": "blood_raiders_battlecruiser", "count": 1},
+      {"type": "destroy", "target": "blood_raiders_cruiser", "count": 2},
+      {"type": "destroy", "target": "blood_raiders_corpse", "count": 4}
+    ],
+    "rewards": {
+      "isk": 540000,
+      "loyalty_points": 1150,
+      "standing_gain": 0.042,
+      "items": ["medium_energy_turret", "armor_plate", "capacitor_booster"]
+    },
+    "location": "jita",
+    "spawn_distance": 40000,
+    "time_limit": 8100,
+    "difficulty": "very_hard"
+  },
+  "angel_cartel_raid": {
+    "id": "angel_cartel_raid",
+    "name": "Angel Cartel Raid",
+    "level": 3,
+    "type": "combat",
+    "agent": "Fleet Admiral Stansfield",
+    "faction": "Republic Fleet",
+    "description": "Angel Cartel forces are massing for a raid. Stop them before they can launch their attack.",
+    "briefing": "These are veteran pirates. They're fast and hit hard. Don't underestimate them.",
+    "objectives": [
+      {"type": "destroy", "target": "angel_battlecruiser", "count": 2},
+      {"type": "destroy", "target": "angel_frigate", "count": 5}
+    ],
+    "rewards": {
+      "isk": 620000,
+      "loyalty_points": 1300,
+      "standing_gain": 0.048,
+      "items": ["medium_projectile_turret", "gyrostabilizer", "tracking_enhancer"]
+    },
+    "location": "hek",
+    "spawn_distance": 45000,
+    "time_limit": 8400,
+    "difficulty": "very_hard"
+  },
+  "guristas_command_ship": {
+    "id": "guristas_command_ship",
+    "name": "Guristas Command Ship",
+    "level": 3,
+    "type": "combat",
+    "agent": "Security Director Yamamoto",
+    "faction": "Caldari Navy",
+    "description": "We've located a Guristas command battlecruiser coordinating attacks in the region. Take it down.",
+    "briefing": "The command ship will be protected by escort vessels. Clear the escorts first or you'll be overwhelmed.",
+    "objectives": [
+      {"type": "destroy", "target": "guristas_battlecruiser", "count": 1},
+      {"type": "destroy", "target": "guristas_destroyer", "count": 2},
+      {"type": "destroy", "target": "guristas_thrasher", "count": 4}
+    ],
+    "rewards": {
+      "isk": 590000,
+      "loyalty_points": 1250,
+      "standing_gain": 0.046,
+      "items": ["heavy_missile_launcher", "missile_guidance_computer", "ballistic_control_system"]
+    },
+    "location": "perimeter",
+    "spawn_distance": 43000,
+    "time_limit": 8200,
+    "difficulty": "very_hard"
+  },
+  "sansha_invasion_force": {
+    "id": "sansha_invasion_force",
+    "name": "Sansha's Invasion Force",
+    "level": 3,
+    "type": "combat",
+    "agent": "Commander Duval",
+    "faction": "Imperial Navy",
+    "description": "Sansha's Nation is probing our borders with a major force. Repel them.",
+    "briefing": "Sansha ships use sophisticated EWAR. Be prepared for tracking disruption and energy neutralization.",
+    "objectives": [
+      {"type": "destroy", "target": "sansha_battlecruiser", "count": 2},
+      {"type": "destroy", "target": "sansha_cruiser", "count": 1}
+    ],
+    "rewards": {
+      "isk": 650000,
+      "loyalty_points": 1400,
+      "standing_gain": 0.05,
+      "items": ["medium_energy_turret", "armor_repairer", "tracking_computer"]
+    },
+    "location": "jita",
+    "spawn_distance": 46000,
+    "time_limit": 8600,
+    "difficulty": "very_hard"
+  }
+}
