@@ -1,4 +1,5 @@
 #include "server.h"
+#include <iostream>
 #include <csignal>
 #include <memory>
 
