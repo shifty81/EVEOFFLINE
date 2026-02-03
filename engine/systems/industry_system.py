@@ -341,3 +341,129 @@ class IndustrySystem:
                 return True
         
         return False
+    
+    def reprocess_ore(
+        self,
+        entity: Union[Entity, str],
+        ore_type: str,
+        quantity: float,
+        ore_data: Dict,
+        station_efficiency: float = 0.50,
+        skills_bonus: float = 0.0
+    ) -> Optional[Dict[str, int]]:
+        """
+        Reprocess ore into minerals
+        
+        Args:
+            entity: Entity with Inventory or OreHold
+            ore_type: Type of ore to reprocess (e.g., 'veldspar')
+            quantity: Amount of ore in m3 to reprocess
+            ore_data: Ore type data dict with mineral yields
+            station_efficiency: Base station efficiency (0.0-1.0, default 0.50)
+            skills_bonus: Bonus from Reprocessing skills (0.0-0.20+)
+            
+        Returns:
+            Dict of {mineral_id: quantity} if successful, None otherwise
+        """
+        entity = self._get_entity(entity)
+        if not entity:
+            return None
+        
+        from engine.components.game_components import OreHold, Inventory as InvComponent
+        
+        # Check for ore in ore hold first, then inventory
+        ore_hold = entity.get_component(OreHold)
+        inventory = entity.get_component(InvComponent)
+        
+        ore_available = 0.0
+        source = None
+        
+        if ore_hold and ore_type in ore_hold.ore:
+            ore_available = ore_hold.ore[ore_type]
+            source = "ore_hold"
+        elif inventory and ore_type in inventory.items:
+            ore_available = float(inventory.items[ore_type])
+            source = "inventory"
+        
+        if ore_available < quantity:
+            return None
+        
+        # Calculate reprocessing yield
+        # Base efficiency + Skills bonus
+        total_efficiency = min(station_efficiency + skills_bonus, 1.0)
+        
+        # Get mineral yields from ore data
+        if 'minerals' not in ore_data:
+            return None
+        
+        # Calculate reprocessed units
+        # In EVE, ore is reprocessed in batches based on reprocessing_base
+        reprocessing_base = ore_data.get('reprocessing_base', 100)
+        units_to_process = int(quantity / reprocessing_base)
+        
+        if units_to_process <= 0:
+            return None
+        
+        # Calculate minerals gained
+        minerals = {}
+        for mineral_id, base_yield in ore_data['minerals'].items():
+            mineral_amount = int(base_yield * units_to_process * total_efficiency)
+            if mineral_amount > 0:
+                minerals[mineral_id] = mineral_amount
+        
+        # Consume ore
+        actual_ore_used = units_to_process * reprocessing_base
+        if source == "ore_hold":
+            ore_hold.ore[ore_type] -= actual_ore_used
+            ore_hold.ore_hold_used -= actual_ore_used
+            if ore_hold.ore[ore_type] <= 0:
+                del ore_hold.ore[ore_type]
+        else:
+            inventory.items[ore_type] -= int(actual_ore_used)
+            if inventory.items[ore_type] <= 0:
+                del inventory.items[ore_type]
+        
+        # Add minerals to inventory
+        if inventory:
+            for mineral_id, qty in minerals.items():
+                inventory.items[mineral_id] = inventory.items.get(mineral_id, 0) + qty
+        
+        print(f"[IndustrySystem] Reprocessed {actual_ore_used} {ore_type} into {minerals}")
+        return minerals
+    
+    def calculate_reprocessing_efficiency(
+        self,
+        entity: Union[Entity, str],
+        station_base: float = 0.50
+    ) -> float:
+        """
+        Calculate total reprocessing efficiency from station and skills
+        
+        Args:
+            entity: Entity with Skills component
+            station_base: Base station efficiency (0.50 = 50%)
+            
+        Returns:
+            Total efficiency from 0.0 to 1.0
+        """
+        entity = self._get_entity(entity)
+        if not entity:
+            return station_base
+        
+        from engine.components.game_components import Skills
+        
+        skills = entity.get_component(Skills)
+        if not skills:
+            return station_base
+        
+        # Reprocessing skill: 3% per level
+        reprocessing_level = skills.skills.get("reprocessing", 0)
+        reprocessing_bonus = reprocessing_level * 0.03
+        
+        # Reprocessing Efficiency: 2% per level
+        efficiency_level = skills.skills.get("reprocessing_efficiency", 0)
+        efficiency_bonus = efficiency_level * 0.02
+        
+        total_efficiency = min(station_base + reprocessing_bonus + efficiency_bonus, 1.0)
+        return total_efficiency
+
