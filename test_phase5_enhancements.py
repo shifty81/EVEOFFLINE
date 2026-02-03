@@ -155,7 +155,7 @@ def test_performance_optimizer():
         print(f"  ✓ Low LOD update rate: {updates}/30 updates")
         success_count += 1
     else:
-        print(f"  ✗ Low LOD update rate incorrect: {updates}/30 updates")
+        print(f"  ✗ Low LOD update rate incorrect: {updates}/30 updates (expected ~5)")
     
     print("\n" + "="*70)
     print(f"PerformanceOptimizer Tests: {success_count} passed")

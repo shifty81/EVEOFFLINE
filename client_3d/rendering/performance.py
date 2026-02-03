@@ -75,7 +75,7 @@ class PerformanceOptimizer:
         else:
             return 'cull'
     
-    def calculate_distance(self, entity_pos: tuple) -> float:
+    def calculate_distance(self, entity_pos: tuple[float, float, float]) -> float:
         """
         Calculate distance between camera and entity
         
@@ -129,7 +129,7 @@ class PerformanceOptimizer:
             self.entity_update_timers[entity_id] = timer
             return False
     
-    def update_entity_lod(self, entity_id: str, entity_pos: tuple) -> str:
+    def update_entity_lod(self, entity_id: str, entity_pos: tuple[float, float, float]) -> str:
         """
         Update LOD state for an entity based on distance
         
@@ -153,7 +153,7 @@ class PerformanceOptimizer:
         
         return lod_level
     
-    def is_entity_visible(self, entity_id: str, entity_pos: tuple) -> bool:
+    def is_entity_visible(self, entity_id: str, entity_pos: tuple[float, float, float]) -> bool:
         """
         Check if entity should be rendered based on LOD and culling
         

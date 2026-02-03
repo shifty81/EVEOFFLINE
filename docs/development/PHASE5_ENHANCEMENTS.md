@@ -12,8 +12,9 @@ This document summarizes the Phase 5 enhancements made to the EVE OFFLINE 3D cli
 
 #### Features
 - **84 Unique Ship Models**: Generates procedurally-created 3D models for all ship classes
-  - 12 ship types (Frigates, Destroyers, Cruisers)
+  - 14 ship types (Frigates, Destroyers, Cruisers)
   - 7 faction variations (Minmatar, Caldari, Gallente, Amarr, Serpentis, Guristas, Blood Raiders)
+  - Note: The generator creates 12 base variations but supports all 14 ships in the game
   
 #### Ship Classes
 
