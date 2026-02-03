@@ -91,9 +91,74 @@
     },
     "loot_table": ["scrap_metal", "light_missiles", "guristas_dogtag"]
   },
+  "guristas_frigate": {
+    "id": "guristas_frigate",
+    "name": "Guristas Pithii Assaulter",
+    "type": "frigate",
+    "faction": "Guristas",
+    "hull_hp": 320,
+    "armor_hp": 220,
+    "shield_hp": 450,
+    "max_velocity": 380,
+    "orbit_distance": 1200,
+    "signature_radius": 35,
+    "bounty": 15000,
+    "behavior": "aggressive",
+    "awareness_range": 65000,
+    "weapons": [
+      {
+        "type": "light_missile",
+        "damage": 42,
+        "damage_type": "kinetic",
+        "range": 18000,
+        "rate_of_fire": 8.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["scrap_metal", "light_missiles", "guristas_dogtag"]
+  },
   "blood_raiders_corpse": {
     "id": "blood_raiders_corpse",
     "name": "Blood Raiders Corpse",
+    "type": "frigate",
+    "faction": "Blood Raiders",
+    "hull_hp": 280,
+    "armor_hp": 400,
+    "shield_hp": 280,
+    "max_velocity": 360,
+    "orbit_distance": 1000,
+    "signature_radius": 38,
+    "bounty": 14000,
+    "behavior": "aggressive",
+    "awareness_range": 55000,
+    "weapons": [
+      {
+        "type": "small_energy",
+        "damage": 35,
+        "damage_type": "em",
+        "optimal_range": 4000,
+        "falloff_range": 2500,
+        "rate_of_fire": 3.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["scrap_metal", "frequency_crystals", "blood_raiders_dogtag"],
+    "special": {
+      "energy_neutralizer": true,
+      "cap_drain": 15
+    }
+  },
+  "blood_raiders_frigate": {
+    "id": "blood_raiders_frigate",
+    "name": "Blood Raiders Corpii Seeker",
     "type": "frigate",
     "faction": "Blood Raiders",
     "hull_hp": 280,
@@ -420,6 +485,337 @@
       "self_repair": true,
       "spawn_drones": true,
       "repair_rate": 25
+    }
+  },
+  "serpentis_battlecruiser": {
+    "id": "serpentis_battlecruiser",
+    "name": "Serpentis Supremacy",
+    "type": "battlecruiser",
+    "faction": "Serpentis",
+    "hull_hp": 2800,
+    "armor_hp": 2400,
+    "shield_hp": 3200,
+    "max_velocity": 160,
+    "orbit_distance": 8000,
+    "signature_radius": 245,
+    "bounty": 380000,
+    "behavior": "aggressive",
+    "awareness_range": 95000,
+    "weapons": [
+      {
+        "type": "medium_hybrid",
+        "damage": 165,
+        "damage_type": "kinetic",
+        "optimal_range": 12000,
+        "falloff_range": 8000,
+        "rate_of_fire": 7.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["serpentis_components_rare", "medium_hybrid_weapons", "serpentis_officer_dogtag"]
+  },
+  "guristas_battlecruiser": {
+    "id": "guristas_battlecruiser",
+    "name": "Guristas Warlord",
+    "type": "battlecruiser",
+    "faction": "Guristas",
+    "hull_hp": 2650,
+    "armor_hp": 2200,
+    "shield_hp": 3500,
+    "max_velocity": 155,
+    "orbit_distance": 9000,
+    "signature_radius": 250,
+    "bounty": 400000,
+    "behavior": "aggressive",
+    "awareness_range": 98000,
+    "weapons": [
+      {
+        "type": "heavy_missile",
+        "damage": 185,
+        "damage_type": "kinetic",
+        "range": 35000,
+        "rate_of_fire": 12.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["guristas_components_rare", "heavy_missiles", "guristas_officer_dogtag"]
+  },
+  "blood_raiders_battlecruiser": {
+    "id": "blood_raiders_battlecruiser",
+    "name": "Blood Raiders Prophet",
+    "type": "battlecruiser",
+    "faction": "Blood Raiders",
+    "hull_hp": 2900,
+    "armor_hp": 3400,
+    "shield_hp": 2600,
+    "max_velocity": 145,
+    "orbit_distance": 10000,
+    "signature_radius": 255,
+    "bounty": 420000,
+    "behavior": "aggressive",
+    "awareness_range": 92000,
+    "weapons": [
+      {
+        "type": "medium_energy",
+        "damage": 175,
+        "damage_type": "em",
+        "optimal_range": 15000,
+        "falloff_range": 9000,
+        "rate_of_fire": 6.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["blood_raiders_components_rare", "medium_energy_weapons", "blood_raiders_officer_dogtag"],
+    "special": {
+      "energy_neutralizer": true,
+      "cap_drain": 75
+    }
+  },
+  "sansha_battlecruiser": {
+    "id": "sansha_battlecruiser",
+    "name": "Sansha's Centii Manslayer",
+    "type": "battlecruiser",
+    "faction": "Sansha's Nation",
+    "hull_hp": 3100,
+    "armor_hp": 3600,
+    "shield_hp": 2800,
+    "max_velocity": 150,
+    "orbit_distance": 11000,
+    "signature_radius": 260,
+    "bounty": 450000,
+    "behavior": "aggressive",
+    "awareness_range": 100000,
+    "weapons": [
+      {
+        "type": "medium_energy",
+        "damage": 190,
+        "damage_type": "em",
+        "optimal_range": 18000,
+        "falloff_range": 10000,
+        "rate_of_fire": 6.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 25, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 45, "kinetic": 35, "explosive": 20},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sansha_components_rare", "medium_energy_weapons", "sansha_officer_dogtag"],
+    "special": {
+      "tracking_disruptor": true,
+      "energy_neutralizer": true,
+      "cap_drain": 70
+    }
+  },
+  "angel_battlecruiser": {
+    "id": "angel_battlecruiser",
+    "name": "Angel Cartel Gistum Centurion",
+    "type": "battlecruiser",
+    "faction": "Angel Cartel",
+    "hull_hp": 3000,
+    "armor_hp": 3200,
+    "shield_hp": 3000,
+    "max_velocity": 170,
+    "orbit_distance": 7500,
+    "signature_radius": 248,
+    "bounty": 475000,
+    "behavior": "aggressive",
+    "awareness_range": 93000,
+    "weapons": [
+      {
+        "type": "medium_projectile",
+        "damage": 195,
+        "damage_type": "explosive",
+        "optimal_range": 11000,
+        "falloff_range": 11000,
+        "rate_of_fire": 7.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
+      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["angel_components_rare", "medium_projectile_weapons", "angel_officer_dogtag"]
+  },
+  "serpentis_battleship": {
+    "id": "serpentis_battleship",
+    "name": "Serpentis Dominator",
+    "type": "battleship",
+    "faction": "Serpentis",
+    "hull_hp": 5800,
+    "armor_hp": 5200,
+    "shield_hp": 6500,
+    "max_velocity": 95,
+    "orbit_distance": 15000,
+    "signature_radius": 410,
+    "bounty": 850000,
+    "behavior": "aggressive",
+    "awareness_range": 110000,
+    "weapons": [
+      {
+        "type": "large_hybrid",
+        "damage": 385,
+        "damage_type": "kinetic",
+        "optimal_range": 25000,
+        "falloff_range": 15000,
+        "rate_of_fire": 10.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["serpentis_components_faction", "large_hybrid_weapons", "serpentis_faction_dogtag"]
+  },
+  "guristas_battleship": {
+    "id": "guristas_battleship",
+    "name": "Guristas Dreadnought",
+    "type": "battleship",
+    "faction": "Guristas",
+    "hull_hp": 5500,
+    "armor_hp": 4800,
+    "shield_hp": 7200,
+    "max_velocity": 90,
+    "orbit_distance": 18000,
+    "signature_radius": 425,
+    "bounty": 920000,
+    "behavior": "aggressive",
+    "awareness_range": 115000,
+    "weapons": [
+      {
+        "type": "cruise_missile",
+        "damage": 445,
+        "damage_type": "kinetic",
+        "range": 80000,
+        "rate_of_fire": 18.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["guristas_components_faction", "cruise_missiles", "guristas_faction_dogtag"]
+  },
+  "blood_raiders_battleship": {
+    "id": "blood_raiders_battleship",
+    "name": "Blood Raiders Bhaalgorn",
+    "type": "battleship",
+    "faction": "Blood Raiders",
+    "hull_hp": 6200,
+    "armor_hp": 7400,
+    "shield_hp": 5600,
+    "max_velocity": 85,
+    "orbit_distance": 20000,
+    "signature_radius": 435,
+    "bounty": 1050000,
+    "behavior": "aggressive",
+    "awareness_range": 105000,
+    "weapons": [
+      {
+        "type": "large_energy",
+        "damage": 410,
+        "damage_type": "em",
+        "optimal_range": 30000,
+        "falloff_range": 18000,
+        "rate_of_fire": 9.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["blood_raiders_components_faction", "large_energy_weapons", "blood_raiders_faction_dogtag"],
+    "special": {
+      "energy_neutralizer": true,
+      "cap_drain": 150,
+      "web": true
+    }
+  },
+  "sansha_battleship": {
+    "id": "sansha_battleship",
+    "name": "Sansha's True Nightmare",
+    "type": "battleship",
+    "faction": "Sansha's Nation",
+    "hull_hp": 6600,
+    "armor_hp": 7800,
+    "shield_hp": 6000,
+    "max_velocity": 88,
+    "orbit_distance": 22000,
+    "signature_radius": 445,
+    "bounty": 1150000,
+    "behavior": "aggressive",
+    "awareness_range": 120000,
+    "weapons": [
+      {
+        "type": "large_energy",
+        "damage": 450,
+        "damage_type": "em",
+        "optimal_range": 35000,
+        "falloff_range": 20000,
+        "rate_of_fire": 8.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 25, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 45, "kinetic": 35, "explosive": 20},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sansha_components_faction", "large_energy_weapons", "sansha_faction_dogtag"],
+    "special": {
+      "tracking_disruptor": true,
+      "energy_neutralizer": true,
+      "cap_drain": 140,
+      "warp_scrambler": true
+    }
+  },
+  "angel_battleship": {
+    "id": "angel_battleship",
+    "name": "Angel Cartel Machariel",
+    "type": "battleship",
+    "faction": "Angel Cartel",
+    "hull_hp": 6400,
+    "armor_hp": 6800,
+    "shield_hp": 6600,
+    "max_velocity": 105,
+    "orbit_distance": 16000,
+    "signature_radius": 420,
+    "bounty": 1250000,
+    "behavior": "aggressive",
+    "awareness_range": 108000,
+    "weapons": [
+      {
+        "type": "large_projectile",
+        "damage": 465,
+        "damage_type": "explosive",
+        "optimal_range": 22000,
+        "falloff_range": 22000,
+        "rate_of_fire": 9.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
+      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["angel_components_faction", "large_projectile_weapons", "angel_faction_dogtag"],
+    "special": {
+      "web": true
     }
   }
 }

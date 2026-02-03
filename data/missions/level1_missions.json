@@ -77,68 +77,80 @@
     "cargo_provided": {"classified_documents": 1},
     "time_limit": 5400
   },
-  "eliminate_blood_raiders": {
-    "id": "eliminate_blood_raiders",
-    "name": "Blood Raider Menace",
-    "level": 2,
+  "supply_run": {
+    "id": "supply_run",
+    "name": "Emergency Supply Run",
+    "level": 1,
+    "type": "courier",
+    "agent": "Logistics Officer Chen",
+    "faction": "Caldari Provisions",
+    "description": "Our outpost needs emergency supplies. Deliver these materials quickly.",
+    "briefing": "Time is of the essence. These supplies are urgently needed at our Hek station.",
+    "objectives": [
+      {"type": "transport", "item": "medical_supplies", "count": 50, "destination": "hek"}
+    ],
+    "rewards": {
+      "isk": 120000,
+      "loyalty_points": 300,
+      "standing_gain": 0.015
+    },
+    "location": "jita",
+    "cargo_provided": {"medical_supplies": 50},
+    "time_limit": 4800,
+    "difficulty": "easy"
+  },
+  "blood_raider_patrol": {
+    "id": "blood_raider_patrol",
+    "name": "Blood Raider Patrol",
+    "level": 1,
     "type": "combat",
-    "agent": "Commander Jorak",
-    "faction": "Caldari Navy",
-    "description": "Blood Raiders have established a forward base. Clear it out.",
-    "briefing": "Intel suggests Blood Raiders are operating from a nearby deadspace pocket. Eliminate all hostile forces. Be careful, pilot.",
+    "agent": "Security Officer Martinez",
+    "faction": "Imperial Navy",
+    "description": "Blood Raiders have been spotted near our mining operations. Drive them off.",
+    "briefing": "A small Blood Raider patrol is harassing our miners. Show them we won't tolerate their presence.",
     "objectives": [
       {
         "type": "destroy",
         "target": "blood_raiders_corpse",
-        "count": 8
-      }
-    ],
-    "rewards": {
-      "isk": 125000,
-      "loyalty_points": 400,
-      "standing_gain": 0.02,
-      "items": ["small_shield_booster"]
-    },
-    "location": "rancer",
-    "spawn_distance": 25000,
-    "time_limit": 4800,
-    "difficulty": "medium"
-  },
-  "multi_target_operation": {
-    "id": "multi_target_operation",
-    "name": "Multi-Target Operation",
-    "level": 3,
-    "type": "combat",
-    "agent": "Commander Jorak",
-    "faction": "Caldari Navy",
-    "description": "Multiple pirate factions are collaborating. This is unusual and concerning.",
-    "briefing": "We've detected Serpentis and Guristas forces working together. This can't stand. Eliminate both groups.",
-    "objectives": [
-      {
-        "type": "destroy",
-        "target": "serpentis_scout",
-        "count": 6
-      },
-      {
-        "type": "destroy",
-        "target": "serpentis_soldier",
-        "count": 2
-      },
-      {
-        "type": "destroy",
-        "target": "guristas_thrasher",
         "count": 4
       }
     ],
     "rewards": {
-      "isk": 350000,
-      "loyalty_points": 800,
-      "standing_gain": 0.03,
-      "items": ["gyrostabilizer", "damage_control"]
+      "isk": 65000,
+      "loyalty_points": 180,
+      "standing_gain": 0.012,
+      "items": ["frequency_crystals"]
     },
-    "location": "rancer",
-    "spawn_distance": 40000,
-    "time_limit": 6000,
-    "difficulty": "hard"
+    "location": "jita",
+    "spawn_distance": 16000,
+    "time_limit": 3800,
+    "difficulty": "easy"
+  },
+  "guristas_scouts": {
+    "id": "guristas_scouts",
+    "name": "Guristas Reconnaissance",
+    "level": 1,
+    "type": "combat",
+    "agent": "Patrol Commander Sato",
+    "faction": "Caldari Navy",
+    "description": "Guristas scouts are probing our defenses. Eliminate them.",
+    "briefing": "These scouts are gathering intelligence for a larger force. Take them out before they can report back.",
+    "objectives": [
+      {
+        "type": "destroy",
+        "target": "guristas_thrasher",
+        "count": 5
+      }
+    ],
+    "rewards": {
+      "isk": 55000,
+      "loyalty_points": 165,
+      "standing_gain": 0.011,
+      "items": ["light_missiles"]
+    },
+    "location": "perimeter",
+    "spawn_distance": 17000,
+    "time_limit": 3900,
+    "difficulty": "easy"
   }
 }
