@@ -515,6 +515,149 @@
     "training_multiplier": 3,
     "max_level": 5,
     "prerequisites": {}
+  },
+  "large_projectile": {
+    "id": "large_projectile",
+    "name": "Large Projectile Turret",
+    "description": "Skill at using large projectile weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {"medium_projectile": 4, "gunnery": 4}
+  },
+  "large_energy": {
+    "id": "large_energy",
+    "name": "Large Energy Turret",
+    "description": "Skill at using large energy weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {"medium_energy": 4, "gunnery": 4}
+  },
+  "large_hybrid": {
+    "id": "large_hybrid",
+    "name": "Large Hybrid Turret",
+    "description": "Skill at using large hybrid weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {"medium_hybrid": 4, "gunnery": 4}
+  },
+  "cruise_missiles": {
+    "id": "cruise_missiles",
+    "name": "Cruise Missiles",
+    "description": "Operation of cruise missile launchers. 5% bonus to flight time per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {"heavy_missiles": 4, "missiles": 4}
+  },
+  "torpedoes": {
+    "id": "torpedoes",
+    "name": "Torpedoes",
+    "description": "Operation of torpedo launchers. 5% bonus to damage per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {"heavy_missiles": 4, "missiles": 4}
+  },
+  "minmatar_battlecruiser": {
+    "id": "minmatar_battlecruiser",
+    "name": "Minmatar Battlecruiser",
+    "description": "Skill at flying Minmatar battlecruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {"minmatar_cruiser": 4, "spaceship_command": 4}
+  },
+  "caldari_battlecruiser": {
+    "id": "caldari_battlecruiser",
+    "name": "Caldari Battlecruiser",
+    "description": "Skill at flying Caldari battlecruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {"caldari_cruiser": 4, "spaceship_command": 4}
+  },
+  "gallente_battlecruiser": {
+    "id": "gallente_battlecruiser",
+    "name": "Gallente Battlecruiser",
+    "description": "Skill at flying Gallente battlecruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {"gallente_cruiser": 4, "spaceship_command": 4}
+  },
+  "amarr_battlecruiser": {
+    "id": "amarr_battlecruiser",
+    "name": "Amarr Battlecruiser",
+    "description": "Skill at flying Amarr battlecruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {"amarr_cruiser": 4, "spaceship_command": 4}
+  },
+  "minmatar_battleship": {
+    "id": "minmatar_battleship",
+    "name": "Minmatar Battleship",
+    "description": "Skill at flying Minmatar battleships. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {"minmatar_battlecruiser": 4, "spaceship_command": 5}
+  },
+  "caldari_battleship": {
+    "id": "caldari_battleship",
+    "name": "Caldari Battleship",
+    "description": "Skill at flying Caldari battleships. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {"caldari_battlecruiser": 4, "spaceship_command": 5}
+  },
+  "gallente_battleship": {
+    "id": "gallente_battleship",
+    "name": "Gallente Battleship",
+    "description": "Skill at flying Gallente battleships. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {"gallente_battlecruiser": 4, "spaceship_command": 5}
+  },
+  "amarr_battleship": {
+    "id": "amarr_battleship",
+    "name": "Amarr Battleship",
+    "description": "Skill at flying Amarr battleships. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {"amarr_battlecruiser": 4, "spaceship_command": 5}
   }
 }
 
