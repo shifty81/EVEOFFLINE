@@ -21,6 +21,15 @@ except ImportError:
     print("Falling back to text mode...")
 
 from engine.network.protocol import NetworkMessage, MessageType, create_message
+from engine.utils.name_generator import NameGenerator
+
+# Import client config from same directory
+import importlib.util
+spec = importlib.util.spec_from_file_location("client_config", 
+    os.path.join(os.path.dirname(__file__), "client_config.py"))
+client_config_module = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(client_config_module)
+ClientConfig = client_config_module.ClientConfig
 
 
 class GUIClient:
@@ -32,21 +41,31 @@ class GUIClient:
     # Camera constants
     BASE_CAMERA_SPEED = 10
     
-    def __init__(self, player_id: str, character_name: str):
+    def __init__(self, player_id: str, character_name: str, config: Optional[ClientConfig] = None):
         self.player_id = player_id
         self.character_name = character_name
         self.reader: Optional[asyncio.StreamReader] = None
         self.writer: Optional[asyncio.StreamWriter] = None
         self.running = False
         self.entities: Dict[str, Dict] = {}
+        self.config = config or ClientConfig()
         
-        # Pygame settings
-        self.width = 1280
-        self.height = 720
+        # Pygame settings from config
+        width, height = self.config.get_display_size()
+        self.width = width
+        self.height = height
         self.screen = None
         self.clock = None
         self.font = None
         self.font_small = None
+        self.fullscreen = self.config.get_fullscreen()
+        self.show_fps = self.config.get_show_fps()
+        self.fps_limit = self.config.get_fps_limit()
+        
+        # Connection state
+        self.reconnect_attempts = 0
+        self.max_reconnect_attempts = 5
+        self.connection_status = "Disconnected"
         
         # Colors
         self.COLOR_BG = (0, 0, 20)  # Dark blue space
@@ -76,9 +95,15 @@ class GUIClient:
         """Initialize Pygame"""
         if not PYGAME_AVAILABLE:
             return False
-            
+        
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
+        
+        # Use fullscreen if configured
+        flags = pygame.FULLSCREEN if self.fullscreen else 0
+        if self.config.get('display', 'vsync', default=True):
+            flags |= pygame.SCALED
+        
+        self.screen = pygame.display.set_mode((self.width, self.height), flags)
         pygame.display.set_caption(f"EVE OFFLINE - {self.character_name}")
         self.clock = pygame.time.Clock()
         
@@ -101,32 +126,61 @@ class GUIClient:
         
         return True
     
-    async def connect(self, host: str = "localhost", port: int = 8765):
+    async def connect(self, host: Optional[str] = None, port: Optional[int] = None):
         """Connect to game server"""
+        # Use config values if not specified
+        if host is None:
+            host = self.config.get_host()
+        if port is None:
+            port = self.config.get_port()
+        
         print(f"[GUI Client] Connecting to {host}:{port}...")
+        self.connection_status = "Connecting..."
         
-        self.reader, self.writer = await asyncio.open_connection(host, port)
-        
-        # Send connection message
-        connect_msg = create_message(MessageType.CONNECT, {
-            'player_id': self.player_id,
-            'character_name': self.character_name,
-            'version': '0.1.0'
-        })
-        
-        self.writer.write(connect_msg.to_json().encode())
-        await self.writer.drain()
-        
-        # Wait for acknowledgment
-        data = await self.reader.read(4096)
-        message = NetworkMessage.from_json(data.decode())
-        
-        if message.message_type == MessageType.CONNECT_ACK.value:
-            print(f"[GUI Client] Connected! {message.data.get('message')}")
-            self.running = True
-            return True
-        else:
-            print(f"[GUI Client] Connection failed")
+        try:
+            # Use connection timeout from config
+            timeout = self.config.get_connection_timeout()
+            self.reader, self.writer = await asyncio.wait_for(
+                asyncio.open_connection(host, port),
+                timeout=timeout
+            )
+            
+            # Send connection message
+            connect_msg = create_message(MessageType.CONNECT, {
+                'player_id': self.player_id,
+                'character_name': self.character_name,
+                'version': '0.1.0'
+            })
+            
+            self.writer.write(connect_msg.to_json().encode())
+            await self.writer.drain()
+            
+            # Wait for acknowledgment
+            buffer_size = self.config.get_buffer_size()
+            data = await asyncio.wait_for(
+                self.reader.read(buffer_size),
+                timeout=timeout
+            )
+            message = NetworkMessage.from_json(data.decode())
+            
+            if message.message_type == MessageType.CONNECT_ACK.value:
+                print(f"[GUI Client] Connected! {message.data.get('message')}")
+                self.running = True
+                self.reconnect_attempts = 0
+                self.connection_status = "Connected"
+                return True
+            else:
+                print(f"[GUI Client] Connection failed: Invalid response")
+                self.connection_status = "Failed"
+                return False
+                
+        except asyncio.TimeoutError:
+            print(f"[GUI Client] Connection timeout after {timeout}s")
+            self.connection_status = "Timeout"
+            return False
+        except Exception as e:
+            print(f"[GUI Client] Connection error: {e}")
+            self.connection_status = f"Error: {e}"
             return False
     
     async def disconnect(self):
@@ -144,10 +198,14 @@ class GUIClient:
     
     async def receive_loop(self):
         """Receive messages from server"""
+        buffer_size = self.config.get_buffer_size()
+        
         while self.running:
             try:
-                data = await self.reader.read(4096)
+                data = await self.reader.read(buffer_size)
                 if not data:
+                    print("[GUI Client] Connection closed by server")
+                    self.connection_status = "Disconnected"
                     break
                 
                 message = NetworkMessage.from_json(data.decode())
@@ -160,10 +218,25 @@ class GUIClient:
                     self.handle_spawn(message)
                 elif message.message_type == MessageType.DESTROY_ENTITY.value:
                     self.handle_destroy(message)
+                elif message.message_type == MessageType.ERROR.value:
+                    self.handle_error(message)
                     
             except Exception as e:
                 print(f"[GUI Client] Error receiving: {e}")
+                self.running = False
+                self.connection_status = "Error"
                 break
+        
+        # Attempt reconnection if enabled
+        if self.config.get_auto_reconnect() and self.reconnect_attempts < self.max_reconnect_attempts:
+            self.reconnect_attempts += 1
+            delay = self.config.get_reconnect_delay()
+            print(f"[GUI Client] Reconnecting in {delay}s (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})...")
+            self.connection_status = f"Reconnecting ({self.reconnect_attempts}/{self.max_reconnect_attempts})"
+            await asyncio.sleep(delay)
+            if await self.connect():
+                # Restart receive loop
+                await self.receive_loop()
     
     def handle_state_update(self, message: NetworkMessage):
         """Handle state update from server"""
@@ -187,9 +260,15 @@ class GUIClient:
     
     def handle_chat(self, message: NetworkMessage):
         """Handle chat message"""
-        sender = message.data['sender']
-        text = message.data['message']
+        sender = message.data.get('sender', 'Unknown')
+        text = message.data.get('message', '')
         print(f"[Chat] {sender}: {text}")
+    
+    def handle_error(self, message: NetworkMessage):
+        """Handle error message from server"""
+        error = message.data.get('error', 'Unknown error')
+        print(f"[Error] Server error: {error}")
+        self.connection_status = f"Error: {error}"
     
     def world_to_screen(self, x: float, y: float) -> Tuple[int, int]:
         """Convert world coordinates to screen coordinates"""
@@ -292,9 +371,14 @@ class GUIClient:
         # Draw status info
         y = self.height - 110
         
-        # Title
+        # Title with connection status
+        status_color = (0, 255, 0) if self.connection_status == "Connected" else (255, 100, 100)
         text = self.font.render(f"EVE OFFLINE - {self.character_name}", True, self.COLOR_TEXT_BRIGHT)
         self.screen.blit(text, (10, y))
+        
+        # Connection status indicator
+        status_text = self.font_small.render(f"[{self.connection_status}]", True, status_color)
+        self.screen.blit(status_text, (10 + text.get_width() + 10, y + 5))
         y += 30
         
         # Entity count
@@ -312,6 +396,12 @@ class GUIClient:
         text = self.font_small.render("Controls: Arrow Keys=Move Camera | +/-=Zoom | H=Help | ESC=Quit", 
                                      True, self.COLOR_TEXT)
         self.screen.blit(text, (10, y))
+        
+        # FPS counter if enabled
+        if self.show_fps:
+            fps = self.clock.get_fps()
+            fps_text = self.font_small.render(f"FPS: {fps:.1f}", True, self.COLOR_TEXT_BRIGHT)
+            self.screen.blit(fps_text, (self.width - 80, 10))
         
         # Draw help overlay if enabled
         if self.show_help:
@@ -423,7 +513,7 @@ class GUIClient:
         
         # Update display
         pygame.display.flip()
-        self.clock.tick(60)  # 60 FPS
+        self.clock.tick(self.fps_limit)
     
     def render_text(self):
         """Fallback text rendering"""
@@ -481,8 +571,47 @@ async def run_gui_client(player_id: str, character_name: str,
 
 if __name__ == "__main__":
     import uuid
+    import argparse
     
+    # Parse arguments
+    parser = argparse.ArgumentParser(description='EVE OFFLINE GUI Client')
+    parser.add_argument('character_name', nargs='?', help='Character name')
+    parser.add_argument('--host', help='Server host (overrides config)')
+    parser.add_argument('--port', type=int, help='Server port (overrides config)')
+    parser.add_argument('--config', help='Path to config file')
+    parser.add_argument('--generate-name', action='store_true', help='Generate random character name')
+    parser.add_argument('--name-style', choices=['random', 'male', 'female'], default='random',
+                       help='Name generation style')
+    parser.add_argument('--fullscreen', action='store_true', help='Run in fullscreen mode')
+    args = parser.parse_args()
+    
+    # Load configuration
+    config = ClientConfig(args.config) if args.config else ClientConfig()
+    
+    # Override fullscreen if specified
+    if args.fullscreen:
+        config.set('display', 'fullscreen', value=True)
+    
+    # Generate or use character name
+    if args.generate_name or (not args.character_name and config.get_auto_generate_name()):
+        style = args.name_style if args.name_style != 'random' else None
+        character_name = NameGenerator.generate_character_name(style)
+        print(f"[GUI Client] Generated character name: {character_name}")
+    else:
+        character_name = args.character_name or "TestPilot"
+    
+    # Generate player ID
     player_id = str(uuid.uuid4())
-    character_name = sys.argv[1] if len(sys.argv) > 1 else "TestPilot"
     
-    asyncio.run(run_gui_client(player_id, character_name))
+    # Get connection settings
+    host = args.host or config.get_host()
+    port = args.port or config.get_port()
+    
+    print(f"[GUI Client] Starting EVE OFFLINE GUI Client")
+    print(f"[GUI Client] Character: {character_name}")
+    print(f"[GUI Client] Player ID: {player_id}")
+    print(f"[GUI Client] Server: {host}:{port}")
+    print()
+    
+    # Run client
+    asyncio.run(run_gui_client(player_id, character_name, host, port))

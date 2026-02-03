@@ -1,0 +1,38 @@
+{
+  "connection": {
+    "host": "localhost",
+    "port": 8765,
+    "auto_reconnect": true,
+    "reconnect_delay": 5,
+    "connection_timeout": 10
+  },
+  "client": {
+    "auto_generate_name": false,
+    "name_style": "random",
+    "log_level": "INFO",
+    "save_credentials": false
+  },
+  "display": {
+    "width": 1280,
+    "height": 720,
+    "fullscreen": false,
+    "vsync": true,
+    "fps_limit": 60,
+    "show_fps": true
+  },
+  "steam": {
+    "enabled": false,
+    "auto_login": false,
+    "overlay": true
+  },
+  "audio": {
+    "master_volume": 1.0,
+    "music_volume": 0.7,
+    "sfx_volume": 0.8
+  },
+  "network": {
+    "compression": false,
+    "encryption": false,
+    "buffer_size": 4096
+  }
+}
