@@ -62,6 +62,8 @@ temp/
 # C++ build artifacts
 cpp_server/build/
 cpp_server/external/steamworks_sdk/
+cpp_client/build/
+cpp_client/external/
 *.o
 *.obj
 *.out
