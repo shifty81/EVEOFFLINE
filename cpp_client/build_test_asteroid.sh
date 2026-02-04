@@ -18,4 +18,4 @@ cmake .. \
 cmake --build . --target test_asteroid_field -j$(nproc)
 
 echo "Build complete!"
-echo "Run with: ./cpp_client/build_test_asteroid/test_asteroid_field"
+echo "Run with: ./cpp_client/build_test_asteroid/bin/test_asteroid_field"

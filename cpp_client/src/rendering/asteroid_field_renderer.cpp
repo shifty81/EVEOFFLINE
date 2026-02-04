@@ -361,9 +361,11 @@ void AsteroidFieldRenderer::clearField() {
         m_renderer->removeInstance(asteroid.meshType, asteroid.instanceId);
     }
     
+    bool hadAsteroids = !m_asteroids.empty();
     m_asteroids.clear();
     
-    if (!m_asteroids.empty()) {
+    // Update buffers if we removed asteroids
+    if (hadAsteroids) {
         m_renderer->updateBuffers();
     }
 }
