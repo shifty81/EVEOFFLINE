@@ -203,7 +203,7 @@ bool Application::hostMultiplayerGame(const std::string& sessionName, int maxPla
     // Give server a moment to start
     std::this_thread::sleep_for(std::chrono::milliseconds(500));
     
-    if (!m_gameClient->connect(localAddress, port, "Host")) {
+    if (!m_gameClient->connect(localAddress, port)) {
         std::cerr << "Failed to connect to own server!" << std::endl;
         m_sessionManager->leaveSession();
         m_embeddedServer->stop();
@@ -220,7 +220,7 @@ bool Application::joinMultiplayerGame(const std::string& host, int port) {
     std::cout << "Joining multiplayer game at " << host << ":" << port << std::endl;
     
     // Connect to remote server
-    if (!m_gameClient->connect(host, port, "Player")) {
+    if (!m_gameClient->connect(host, port)) {
         std::cerr << "Failed to connect to server!" << std::endl;
         return false;
     }
