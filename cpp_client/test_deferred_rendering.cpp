@@ -267,8 +267,9 @@ int main() {
                 );
                 geometryShader.setVec3("material_albedo", color);
                 geometryShader.setFloat("material_specular", 0.5f);
-                geometryShader.setFloat("material_metallic", 0.3f);
-                geometryShader.setFloat("material_roughness", 0.5f);
+                // Note: metallic and roughness reserved for future PBR implementation
+                // geometryShader.setFloat("material_metallic", 0.3f);
+                // geometryShader.setFloat("material_roughness", 0.5f);
                 
                 cube->draw();
             }

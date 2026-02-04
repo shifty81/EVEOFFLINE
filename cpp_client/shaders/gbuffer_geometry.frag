@@ -13,8 +13,9 @@ in vec2 TexCoord;
 // Material properties
 uniform vec3 material_albedo;
 uniform float material_specular;
-uniform float material_metallic;
-uniform float material_roughness;
+// Note: metallic and roughness reserved for future PBR implementation
+// uniform float material_metallic;
+// uniform float material_roughness;
 
 void main() {
     // Store world position
