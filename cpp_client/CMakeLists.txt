@@ -12,7 +12,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Options
 option(BUILD_TESTS "Build test suite" ON)
-option(USE_SYSTEM_LIBS "Use system libraries instead of bundled" OFF)
+option(USE_SYSTEM_LIBS "Use system libraries instead of bundled" ON)  # Default to ON since they're available
 
 # Platform-specific settings
 if(WIN32)
@@ -48,12 +48,29 @@ else()
 endif()
 
 # GLAD (OpenGL loader)
-set(GLAD_SOURCES
-    external/glad/src/glad.c
-)
+if(USE_SYSTEM_LIBS)
+    message(STATUS "Using system OpenGL (no GLAD needed)")
+    set(GLAD_SOURCES "")
+else()
+    message(STATUS "Using bundled GLAD")
+    set(GLAD_SOURCES
+        external/glad/src/glad.c
+    )
+endif()
 
 # nlohmann/json (header-only JSON library)
-include_directories(external/json/include)
+if(USE_SYSTEM_LIBS)
+    find_package(nlohmann_json QUIET)
+    if(nlohmann_json_FOUND)
+        message(STATUS "Using system nlohmann/json")
+    else()
+        message(STATUS "System nlohmann/json not found, using bundled version")
+        include_directories(external/json/include)
+    endif()
+else()
+    message(STATUS "Using bundled nlohmann/json")
+    include_directories(external/json/include)
+endif()
 
 # STB (header-only image loading library)
 include_directories(external/stb)
@@ -89,6 +106,7 @@ set(CLIENT_SOURCES
     src/rendering/instanced_renderer.cpp
     src/rendering/asteroid_field_renderer.cpp
     src/rendering/lighting.cpp
+    src/rendering/shadow_map.cpp
     src/network/tcp_client.cpp
     src/network/protocol_handler.cpp
     src/ui/hud.cpp
@@ -117,6 +135,7 @@ set(CLIENT_HEADERS
     include/rendering/instanced_renderer.h
     include/rendering/asteroid_field_renderer.h
     include/rendering/lighting.h
+    include/rendering/shadow_map.h
     include/network/tcp_client.h
     include/network/protocol_handler.h
     include/ui/hud.h
@@ -223,6 +242,34 @@ if(BUILD_TESTS)
     elseif(APPLE)
         target_link_libraries(test_lighting dl)
         target_link_libraries(test_lighting "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
+    
+    # Test: Shadow Mapping
+    add_executable(test_shadow_mapping
+        test_shadow_mapping.cpp
+        src/rendering/window.cpp
+        src/rendering/shader.cpp
+        src/rendering/camera.cpp
+        src/rendering/mesh.cpp
+        src/rendering/shadow_map.cpp
+        src/rendering/lighting.cpp
+        src/ui/input_handler.cpp
+        ${GLAD_SOURCES}
+    )
+    
+    target_link_libraries(test_shadow_mapping
+        Threads::Threads
+        OpenGL::GL
+        glfw
+    )
+    
+    if(WIN32)
+        target_link_libraries(test_shadow_mapping ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_shadow_mapping dl X11)
+    elseif(APPLE)
+        target_link_libraries(test_shadow_mapping dl)
+        target_link_libraries(test_shadow_mapping "-framework Cocoa -framework IOKit -framework CoreVideo")
     endif()
 endif()
 
