@@ -12,30 +12,33 @@
 #include "rendering/mesh.h"
 #include "rendering/shadow_map.h"
 #include "rendering/lighting.h"
+#include "ui/input_handler.h"
+
+using namespace eve;
 
 // Window dimensions
 const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
 // Camera
-Camera camera(glm::vec3(0.0f, 50.0f, 150.0f));
+Camera camera;
+InputHandler inputHandler;
+
+// Mouse state
+bool firstMouse = true;
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
 
 // Timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
-
-// Mouse state
-bool rightMousePressed = false;
-bool middleMousePressed = false;
 
 // Forward declarations
 void processInput(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 
 /**
  * Create a simple cube mesh
@@ -134,22 +137,35 @@ std::unique_ptr<Mesh> createGroundPlane(float size, const glm::vec3& color) {
 
 int main() {
     // Initialize window
-    Window window(SCR_WIDTH, SCR_HEIGHT, "EVE OFFLINE - Shadow Mapping Test");
-    if (!window.isInitialized()) {
-        return -1;
-    }
+    Window window("EVE OFFLINE - Shadow Mapping Test", SCR_WIDTH, SCR_HEIGHT);
     
-    GLFWwindow* glfwWindow = window.getGLFWWindow();
+    GLFWwindow* glfwWindow = window.getHandle();
     glfwSetCursorPosCallback(glfwWindow, mouse_callback);
     glfwSetMouseButtonCallback(glfwWindow, mouse_button_callback);
     glfwSetScrollCallback(glfwWindow, scroll_callback);
+    glfwSetKeyCallback(glfwWindow, key_callback);
+    
+    // Initialize GLAD
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+        std::cerr << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
     
     // Enable depth testing
     glEnable(GL_DEPTH_TEST);
     
     // Load shaders
-    Shader lightingShader("shaders/multi_light_shadow.vert", "shaders/multi_light_shadow.frag");
-    Shader shadowShader("shaders/shadow_map.vert", "shaders/shadow_map.frag");
+    Shader lightingShader;
+    if (!lightingShader.loadFromFiles("cpp_client/shaders/multi_light_shadow.vert", "cpp_client/shaders/multi_light_shadow.frag")) {
+        std::cerr << "Failed to load lighting shaders" << std::endl;
+        return -1;
+    }
+    
+    Shader shadowShader;
+    if (!shadowShader.loadFromFiles("cpp_client/shaders/shadow_map.vert", "cpp_client/shaders/shadow_map.frag")) {
+        std::cerr << "Failed to load shadow shaders" << std::endl;
+        return -1;
+    }
     
     // Create meshes
     auto cubeMesh = createCube(glm::vec3(0.8f, 0.3f, 0.2f));
@@ -173,6 +189,11 @@ int main() {
     // Set ambient light
     lightManager.setAmbientLight(glm::vec3(0.15f, 0.15f, 0.2f), 1.0f);
     
+    // Setup camera
+    camera.setTarget(glm::vec3(0.0f, 10.0f, 0.0f));
+    camera.setDistance(150.0f);
+    camera.setAspectRatio((float)SCR_WIDTH / (float)SCR_HEIGHT);
+    
     std::cout << "=== Shadow Mapping Test ===" << std::endl;
     std::cout << "Controls:" << std::endl;
     std::cout << "  Right Mouse: Rotate camera" << std::endl;
@@ -190,6 +211,9 @@ int main() {
         
         // Input
         processInput(glfwWindow);
+        
+        // Update camera
+        camera.update(deltaTime);
         
         // Get light direction
         Lighting::Light* sunLight = lightManager.getLight(0);
@@ -240,9 +264,7 @@ int main() {
         lightingShader.use();
         
         // Set view/projection matrices
-        glm::mat4 projection = glm::perspective(glm::radians(camera.getZoom()), 
-                                               (float)SCR_WIDTH / (float)SCR_HEIGHT, 
-                                               0.1f, 1000.0f);
+        glm::mat4 projection = camera.getProjectionMatrix();
         glm::mat4 view = camera.getViewMatrix();
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
@@ -276,8 +298,8 @@ int main() {
         }
         
         // Swap buffers and poll events
-        window.swapBuffers();
-        window.pollEvents();
+        glfwSwapBuffers(glfwWindow);
+        glfwPollEvents();
     }
     
     return 0;
@@ -286,18 +308,11 @@ int main() {
 void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
-    
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.processKeyboard(CameraMovement::FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.processKeyboard(CameraMovement::BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.processKeyboard(CameraMovement::LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.processKeyboard(CameraMovement::RIGHT, deltaTime);
 }
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    inputHandler.handleMouse(xpos, ypos);
+    
     if (firstMouse) {
         lastX = xpos;
         lastY = ypos;
@@ -310,23 +325,26 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     lastX = xpos;
     lastY = ypos;
     
-    if (rightMousePressed) {
-        camera.processMouseMovement(xoffset, yoffset);
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        camera.rotate(xoffset * 0.5f, yoffset * 0.5f);
     }
-    else if (middleMousePressed) {
-        camera.processPan(xoffset, yoffset, deltaTime);
+    else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+        camera.pan(xoffset * 2.0f, yoffset * 2.0f);
     }
 }
 
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
-    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        rightMousePressed = (action == GLFW_PRESS);
-    }
-    else if (button == GLFW_MOUSE_BUTTON_MIDDLE) {
-        middleMousePressed = (action == GLFW_PRESS);
-    }
+    // Mouse button handling is done in mouse_callback
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    camera.processMouseScroll(yoffset);
+    camera.zoom(-yoffset * 50.0f);
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    inputHandler.handleKey(key, action);
+    
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
 }

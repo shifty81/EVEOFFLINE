@@ -113,7 +113,7 @@ public:
     /**
      * Upload all light data to shader
      */
-    void uploadToShader(Shader* shader) const;
+    void uploadToShader(eve::Shader* shader) const;
     
     /**
      * Set ambient lighting
