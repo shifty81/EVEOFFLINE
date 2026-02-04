@@ -1,10 +1,13 @@
 #include "rendering/lod_manager.h"
+#include "rendering/frustum_culler.h"
 #include <iostream>
 #include <algorithm>
 
 namespace eve {
 
-LODManager::LODManager() {
+LODManager::LODManager() 
+    : m_frustumCuller(std::make_unique<FrustumCuller>())
+{
 }
 
 LODManager::~LODManager() {
@@ -33,15 +36,31 @@ void LODManager::updateEntityPosition(unsigned int id, const glm::vec3& position
     }
 }
 
-void LODManager::update(const glm::vec3& cameraPosition, float deltaTime) {
+void LODManager::update(const glm::vec3& cameraPosition, float deltaTime, const glm::mat4* viewProjection) {
+    // Update frustum culler if view-projection matrix provided
+    if (viewProjection && m_frustumCuller) {
+        m_frustumCuller->update(*viewProjection);
+    }
+    
     for (auto& pair : m_entities) {
         LODEntity& entity = pair.second;
         
         // Calculate distance from camera
         float distance = glm::length(entity.position - cameraPosition);
         
-        // Determine LOD level
+        // Determine LOD level based on distance
         LODLevel newLOD = calculateLOD(distance);
+        
+        // Apply frustum culling if enabled
+        bool visibleInFrustum = true;
+        if (viewProjection && m_frustumCuller && m_frustumCuller->isEnabled()) {
+            visibleInFrustum = m_frustumCuller->isVisible(entity.position, entity.boundingRadius);
+            
+            // If not in frustum, force to CULLED
+            if (!visibleInFrustum) {
+                newLOD = LODLevel::CULLED;
+            }
+        }
         
         // Update LOD if changed
         if (newLOD != entity.currentLOD) {
@@ -109,6 +128,7 @@ std::vector<unsigned int> LODManager::getEntitiesByLOD(LODLevel lod) const {
 LODManager::Stats LODManager::getStats() const {
     Stats stats = {};
     stats.totalEntities = static_cast<unsigned int>(m_entities.size());
+    stats.frustumCulled = 0;
     
     for (const auto& pair : m_entities) {
         const LODEntity& entity = pair.second;
@@ -131,6 +151,11 @@ LODManager::Stats LODManager::getStats() const {
         if (entity.isVisible) {
             stats.visible++;
         }
+    }
+    
+    // Get frustum culler stats if available
+    if (m_frustumCuller && m_frustumCuller->isEnabled()) {
+        stats.frustumCulled = m_frustumCuller->getStats().culledEntities;
     }
     
     return stats;
@@ -166,6 +191,20 @@ float LODManager::getUpdateInterval(LODLevel lod) const {
         default:
             return 0.0f;
     }
+}
+
+void LODManager::setFrustumCullingEnabled(bool enabled) {
+    if (m_frustumCuller) {
+        m_frustumCuller->setEnabled(enabled);
+    }
+}
+
+bool LODManager::isFrustumCullingEnabled() const {
+    return m_frustumCuller && m_frustumCuller->isEnabled();
+}
+
+const FrustumCuller* LODManager::getFrustumCuller() const {
+    return m_frustumCuller.get();
 }
 
 } // namespace eve

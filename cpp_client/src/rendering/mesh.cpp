@@ -25,6 +25,12 @@ void Mesh::draw() const {
     glBindVertexArray(0);
 }
 
+void Mesh::drawInstanced(unsigned int instanceCount) const {
+    glBindVertexArray(m_VAO);
+    glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_indices.size()), GL_UNSIGNED_INT, 0, instanceCount);
+    glBindVertexArray(0);
+}
+
 void Mesh::setup() {
     glGenVertexArrays(1, &m_VAO);
     glGenBuffers(1, &m_VBO);

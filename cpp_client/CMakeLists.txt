@@ -55,6 +55,9 @@ set(GLAD_SOURCES
 # nlohmann/json (header-only JSON library)
 include_directories(external/json/include)
 
+# STB (header-only image loading library)
+include_directories(external/stb)
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -82,6 +85,8 @@ set(CLIENT_SOURCES
     src/rendering/visual_effects.cpp
     src/rendering/pbr_materials.cpp
     src/rendering/lod_manager.cpp
+    src/rendering/frustum_culler.cpp
+    src/rendering/instanced_renderer.cpp
     src/network/tcp_client.cpp
     src/network/protocol_handler.cpp
     src/ui/hud.cpp
@@ -106,6 +111,8 @@ set(CLIENT_HEADERS
     include/rendering/visual_effects.h
     include/rendering/pbr_materials.h
     include/rendering/lod_manager.h
+    include/rendering/frustum_culler.h
+    include/rendering/instanced_renderer.h
     include/network/tcp_client.h
     include/network/protocol_handler.h
     include/ui/hud.h

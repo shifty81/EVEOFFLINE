@@ -3,8 +3,12 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <map>
+#include <memory>
 
 namespace eve {
+
+// Forward declaration
+class FrustumCuller;
 
 /**
  * Level of Detail enum
@@ -88,8 +92,11 @@ public:
 
     /**
      * Update LOD levels based on camera position
+     * @param cameraPosition Current camera position
+     * @param deltaTime Time since last update
+     * @param viewProjection Optional view-projection matrix for frustum culling
      */
-    void update(const glm::vec3& cameraPosition, float deltaTime);
+    void update(const glm::vec3& cameraPosition, float deltaTime, const glm::mat4* viewProjection = nullptr);
 
     /**
      * Get LOD level for an entity
@@ -126,6 +133,7 @@ public:
         unsigned int lowLOD;
         unsigned int culled;
         unsigned int visible;
+        unsigned int frustumCulled; // Entities culled by frustum
     };
     
     Stats getStats() const;
@@ -134,10 +142,26 @@ public:
      * Clear all entities
      */
     void clear();
+    
+    /**
+     * Enable or disable frustum culling
+     */
+    void setFrustumCullingEnabled(bool enabled);
+    
+    /**
+     * Check if frustum culling is enabled
+     */
+    bool isFrustumCullingEnabled() const;
+    
+    /**
+     * Get the frustum culler (for debugging/visualization)
+     */
+    const FrustumCuller* getFrustumCuller() const;
 
 private:
     LODConfig m_config;
     std::map<unsigned int, LODEntity> m_entities;
+    std::unique_ptr<FrustumCuller> m_frustumCuller;
     
     // Helper methods
     LODLevel calculateLOD(float distance) const;
