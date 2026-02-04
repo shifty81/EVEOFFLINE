@@ -107,6 +107,7 @@ set(CLIENT_SOURCES
     src/rendering/asteroid_field_renderer.cpp
     src/rendering/lighting.cpp
     src/rendering/shadow_map.cpp
+    src/rendering/gbuffer.cpp
     src/network/tcp_client.cpp
     src/network/protocol_handler.cpp
     src/ui/hud.cpp
@@ -136,6 +137,7 @@ set(CLIENT_HEADERS
     include/rendering/asteroid_field_renderer.h
     include/rendering/lighting.h
     include/rendering/shadow_map.h
+    include/rendering/gbuffer.h
     include/network/tcp_client.h
     include/network/protocol_handler.h
     include/ui/hud.h
@@ -270,6 +272,34 @@ if(BUILD_TESTS)
     elseif(APPLE)
         target_link_libraries(test_shadow_mapping dl)
         target_link_libraries(test_shadow_mapping "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
+    
+    # Test: Deferred Rendering
+    add_executable(test_deferred_rendering
+        test_deferred_rendering.cpp
+        src/rendering/window.cpp
+        src/rendering/shader.cpp
+        src/rendering/camera.cpp
+        src/rendering/mesh.cpp
+        src/rendering/gbuffer.cpp
+        src/rendering/lighting.cpp
+        src/ui/input_handler.cpp
+        ${GLAD_SOURCES}
+    )
+    
+    target_link_libraries(test_deferred_rendering
+        Threads::Threads
+        OpenGL::GL
+        glfw
+    )
+    
+    if(WIN32)
+        target_link_libraries(test_deferred_rendering ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_deferred_rendering dl X11)
+    elseif(APPLE)
+        target_link_libraries(test_deferred_rendering dl)
+        target_link_libraries(test_deferred_rendering "-framework Cocoa -framework IOKit -framework CoreVideo")
     endif()
 endif()
 
