@@ -21,6 +21,23 @@ public:
     ~Mesh();
 
     void draw() const;
+    
+    /**
+     * Draw with instancing
+     * @param instanceCount Number of instances to draw
+     */
+    void drawInstanced(unsigned int instanceCount) const;
+    
+    /**
+     * Get VAO for instanced rendering setup
+     * Allows external setup of instance attribute pointers
+     */
+    unsigned int getVAO() const { return m_VAO; }
+    
+    /**
+     * Get index count
+     */
+    size_t getIndexCount() const { return m_indices.size(); }
 
 private:
     void setup();
