@@ -55,6 +55,9 @@ set(GLAD_SOURCES
 # nlohmann/json (header-only JSON library)
 include_directories(external/json/include)
 
+# STB (header-only image loading library)
+include_directories(external/stb)
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
