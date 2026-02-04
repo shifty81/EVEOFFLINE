@@ -3,9 +3,13 @@
 #include "rendering/renderer.h"
 #include "rendering/camera.h"
 #include "core/game_client.h"
+#include "core/embedded_server.h"
+#include "core/session_manager.h"
 #include "ui/input_handler.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 namespace eve {
 
@@ -30,6 +34,8 @@ Application::Application(const std::string& title, int width, int height)
     m_gameClient = std::make_unique<GameClient>();
     m_inputHandler = std::make_unique<InputHandler>();
     m_camera = std::make_unique<Camera>(45.0f, static_cast<float>(width) / height, 0.1f, 10000.0f);
+    m_embeddedServer = std::make_unique<EmbeddedServer>();
+    m_sessionManager = std::make_unique<SessionManager>();
     
     // Initialize
     initialize();
@@ -105,6 +111,16 @@ void Application::initialize() {
 }
 
 void Application::update(float deltaTime) {
+    // Update embedded server if running
+    if (m_embeddedServer) {
+        m_embeddedServer->update(deltaTime);
+    }
+    
+    // Update session manager
+    if (m_sessionManager) {
+        m_sessionManager->update(deltaTime);
+    }
+    
     // Update game client
     m_gameClient->update(deltaTime);
     
@@ -132,12 +148,96 @@ void Application::render() {
 void Application::cleanup() {
     std::cout << "Cleaning up application..." << std::endl;
     
+    // Leave session and stop server if hosting
+    if (m_sessionManager) {
+        m_sessionManager->leaveSession();
+    }
+    
+    if (m_embeddedServer && m_embeddedServer->isRunning()) {
+        m_embeddedServer->stop();
+    }
+    
     // Disconnect from server if connected
     if (m_gameClient) {
         m_gameClient->disconnect();
     }
     
     std::cout << "Cleanup complete" << std::endl;
+}
+
+bool Application::hostMultiplayerGame(const std::string& sessionName, int maxPlayers) {
+    std::cout << "Hosting multiplayer game: " << sessionName << std::endl;
+    
+    // Configure embedded server
+    EmbeddedServer::Config serverConfig;
+    serverConfig.server_name = sessionName;
+    serverConfig.description = "EVE OFFLINE Hosted Game";
+    serverConfig.port = 8765;
+    serverConfig.max_players = maxPlayers;
+    serverConfig.lan_only = true;
+    serverConfig.persistent_world = false;
+    
+    // Start embedded server
+    if (!m_embeddedServer->start(serverConfig)) {
+        std::cerr << "Failed to start embedded server!" << std::endl;
+        return false;
+    }
+    
+    // Configure session
+    SessionManager::SessionConfig sessionConfig;
+    sessionConfig.session_name = sessionName;
+    sessionConfig.max_players = maxPlayers;
+    sessionConfig.lan_only = true;
+    
+    // Host session
+    if (!m_sessionManager->hostSession(sessionConfig, m_embeddedServer.get())) {
+        std::cerr << "Failed to host session!" << std::endl;
+        m_embeddedServer->stop();
+        return false;
+    }
+    
+    // Auto-connect to own server
+    std::string localAddress = m_embeddedServer->getLocalAddress();
+    int port = m_embeddedServer->getPort();
+    
+    // Give server a moment to start
+    std::this_thread::sleep_for(std::chrono::milliseconds(500));
+    
+    if (!m_gameClient->connect(localAddress, port, "Host")) {
+        std::cerr << "Failed to connect to own server!" << std::endl;
+        m_sessionManager->leaveSession();
+        m_embeddedServer->stop();
+        return false;
+    }
+    
+    std::cout << "Successfully hosting multiplayer game!" << std::endl;
+    std::cout << "Other players can connect to: " << localAddress << ":" << port << std::endl;
+    
+    return true;
+}
+
+bool Application::joinMultiplayerGame(const std::string& host, int port) {
+    std::cout << "Joining multiplayer game at " << host << ":" << port << std::endl;
+    
+    // Connect to remote server
+    if (!m_gameClient->connect(host, port, "Player")) {
+        std::cerr << "Failed to connect to server!" << std::endl;
+        return false;
+    }
+    
+    // Join session
+    if (!m_sessionManager->joinSession(host, port)) {
+        std::cerr << "Failed to join session!" << std::endl;
+        m_gameClient->disconnect();
+        return false;
+    }
+    
+    std::cout << "Successfully joined multiplayer game!" << std::endl;
+    return true;
+}
+
+bool Application::isHosting() const {
+    return m_embeddedServer && m_embeddedServer->isRunning();
 }
 
 } // namespace eve

@@ -68,6 +68,8 @@ set(CLIENT_SOURCES
     src/main.cpp
     src/core/application.cpp
     src/core/game_client.cpp
+    src/core/embedded_server.cpp
+    src/core/session_manager.cpp
     src/rendering/window.cpp
     src/rendering/shader.cpp
     src/rendering/camera.cpp
@@ -85,6 +87,8 @@ set(CLIENT_SOURCES
 set(CLIENT_HEADERS
     include/core/application.h
     include/core/game_client.h
+    include/core/embedded_server.h
+    include/core/session_manager.h
     include/rendering/window.h
     include/rendering/shader.h
     include/rendering/camera.h

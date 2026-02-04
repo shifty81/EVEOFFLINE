@@ -11,6 +11,8 @@ class GameClient;
 class Renderer;
 class InputHandler;
 class Camera;
+class EmbeddedServer;
+class SessionManager;
 
 /**
  * Main application class
@@ -40,6 +42,31 @@ public:
      */
     static Application* getInstance() { return s_instance; }
 
+    /**
+     * Get embedded server (nullptr if not hosting)
+     */
+    EmbeddedServer* getEmbeddedServer() { return m_embeddedServer.get(); }
+
+    /**
+     * Get session manager
+     */
+    SessionManager* getSessionManager() { return m_sessionManager.get(); }
+
+    /**
+     * Host a multiplayer game
+     */
+    bool hostMultiplayerGame(const std::string& sessionName, int maxPlayers = 20);
+
+    /**
+     * Join a multiplayer game
+     */
+    bool joinMultiplayerGame(const std::string& host, int port);
+
+    /**
+     * Check if hosting a game
+     */
+    bool isHosting() const;
+
 private:
     void initialize();
     void update(float deltaTime);
@@ -53,6 +80,8 @@ private:
     std::unique_ptr<Renderer> m_renderer;
     std::unique_ptr<InputHandler> m_inputHandler;
     std::unique_ptr<Camera> m_camera;
+    std::unique_ptr<EmbeddedServer> m_embeddedServer;
+    std::unique_ptr<SessionManager> m_sessionManager;
 
     bool m_running;
     float m_lastFrameTime;
