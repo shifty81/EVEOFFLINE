@@ -425,6 +425,7 @@ class TestMiningBarges(unittest.TestCase):
         
         ore_hold = retriever.get_component(OreHold)
         # Should have mined ~5400 m3 (540 * 10), but may be slightly less due to cycle timing
+        # Wide range accounts for timing precision and partial cycles
         self.assertGreater(ore_hold.ore_hold_used, 4500)
         self.assertLess(ore_hold.ore_hold_used, 5500)
         # Should still have room in ore hold
