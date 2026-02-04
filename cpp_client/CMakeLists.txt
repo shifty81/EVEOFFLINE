@@ -77,6 +77,8 @@ set(CLIENT_SOURCES
     src/rendering/mesh.cpp
     src/rendering/model.cpp
     src/rendering/texture.cpp
+    src/rendering/particle_system.cpp
+    src/rendering/healthbar_renderer.cpp
     src/network/tcp_client.cpp
     src/network/protocol_handler.cpp
     src/ui/hud.cpp
@@ -96,6 +98,8 @@ set(CLIENT_HEADERS
     include/rendering/mesh.h
     include/rendering/model.h
     include/rendering/texture.h
+    include/rendering/particle_system.h
+    include/rendering/healthbar_renderer.h
     include/network/tcp_client.h
     include/network/protocol_handler.h
     include/ui/hud.h
