@@ -59,7 +59,13 @@ This is a cross-platform 3D client built with:
   - Efficient multi-light support: O(lights) instead of O(lights × objects)
   - Full integration with existing LightManager
   - Complete documentation (DEFERRED_RENDERING.md)
-- [ ] Post-processing effects (bloom, HDR)
+- [x] Post-processing effects (bloom, HDR) ✅
+  - PostProcessingBuffer class with HDR-capable framebuffers
+  - HDR rendering with RGB16F textures
+  - Bloom effect with multi-pass gaussian blur
+  - Tone mapping (Reinhard, ACES, Uncharted 2)
+  - Exposure and gamma correction
+  - Complete documentation (POST_PROCESSING.md)
 - [ ] UI system integration
 - [ ] Audio system (OpenAL)
 
