@@ -1,0 +1,102 @@
+{
+  "station_types": {
+    "industrial": {
+      "name": "Industrial Station",
+      "description": "Manufacturing and production facilities",
+      "services": ["market", "repair", "fitting", "manufacturing", "research"],
+      "common_in": ["all"],
+      "examples": {
+        "gallente": "Duvolle Laboratories Manufacturing Plant",
+        "caldari": "Caldari Provisions Warehouse",
+        "minmatar": "Boundless Creation Factory",
+        "amarr": "Carthum Conglomerate Factory"
+      }
+    },
+    "military": {
+      "name": "Military Station",
+      "description": "Naval and defense installations",
+      "services": ["repair", "fitting", "missions", "cloning", "insurance"],
+      "common_in": ["all"],
+      "examples": {
+        "gallente": "Federation Navy Assembly Plant",
+        "caldari": "Caldari Navy Assembly Plant",
+        "minmatar": "Republic Fleet Assembly Plant",
+        "amarr": "Imperial Navy Assembly Plant"
+      }
+    },
+    "commercial": {
+      "name": "Commercial Hub",
+      "description": "Major trade and commerce centers",
+      "services": ["market", "contracts", "courier", "cloning"],
+      "common_in": ["highsec"],
+      "examples": {
+        "gallente": "Material Acquisition Trade Post",
+        "caldari": "Caldari Business Tribunal",
+        "minmatar": "Tribal Liberation Distribution Center",
+        "amarr": "Emperor Family Academy Station"
+      }
+    },
+    "research": {
+      "name": "Research Facility",
+      "description": "Scientific research and development",
+      "services": ["research", "invention", "manufacturing", "fitting"],
+      "common_in": ["highsec"],
+      "examples": {
+        "gallente": "CreoDron Research Center",
+        "caldari": "Ishukone Corporation R&D Center",
+        "minmatar": "Core Complexion Inc. Research Facility",
+        "amarr": "Viziam Research Station"
+      }
+    },
+    "university": {
+      "name": "University Station",
+      "description": "Educational institutions and training facilities",
+      "services": ["missions", "market", "cloning", "repair"],
+      "common_in": ["highsec"],
+      "examples": {
+        "gallente": "University of Caille Campus",
+        "caldari": "State War Academy Station",
+        "minmatar": "Republic University Campus",
+        "amarr": "Imperial Academy Station"
+      }
+    },
+    "mining": {
+      "name": "Mining Station",
+      "description": "Ore refinement and mining support",
+      "services": ["refining", "reprocessing", "market", "repair"],
+      "common_in": ["lowsec", "highsec"],
+      "examples": {
+        "gallente": "Astral Mining Inc. Refinery",
+        "caldari": "Deep Core Mining Inc. Station",
+        "minmatar": "Minmatar Mining Corporation Station",
+        "amarr": "Imperial Mining Station"
+      }
+    }
+  },
+  "station_layouts": {
+    "gallente": {
+      "style": "organic_domes",
+      "colors": ["green", "white", "silver"],
+      "features": ["flowing curves", "eco-friendly design", "luxurious interior", "nature integration"],
+      "size_scale": 1.2
+    },
+    "caldari": {
+      "style": "utilitarian_blocks",
+      "colors": ["steel_blue", "gray", "white"],
+      "features": ["angular design", "functional efficiency", "minimalist", "stark lighting"],
+      "size_scale": 1.0
+    },
+    "minmatar": {
+      "style": "rusted_patchwork",
+      "colors": ["rust_brown", "orange", "dark_gray"],
+      "features": ["asymmetric", "salvaged parts", "industrial", "rough edges"],
+      "size_scale": 0.9
+    },
+    "amarr": {
+      "style": "golden_cathedral",
+      "colors": ["gold", "brass", "bronze", "white"],
+      "features": ["ornate design", "religious symbolism", "grand scale", "elegant curves"],
+      "size_scale": 1.4
+    }
+  }
+}

@@ -1,0 +1,159 @@
+{
+  "distance_units": {
+    "astronomical_unit": {
+      "abbreviation": "AU",
+      "meters": 149597870700,
+      "description": "Standard distance unit in space, approximately the distance from Earth to the Sun"
+    },
+    "kilometer": {
+      "abbreviation": "km",
+      "meters": 1000,
+      "description": "Used for short-range distances within grids"
+    }
+  },
+  "warp_speeds": {
+    "frigate": {
+      "base_au_per_second": 5.0,
+      "description": "Fast warp speed for small, agile ships",
+      "examples": ["Rifter", "Merlin", "Tristan", "Punisher"]
+    },
+    "destroyer": {
+      "base_au_per_second": 4.0,
+      "description": "Moderate warp speed for medium ships",
+      "examples": ["Thrasher", "Cormorant", "Catalyst", "Coercer"]
+    },
+    "cruiser": {
+      "base_au_per_second": 3.0,
+      "description": "Standard warp speed for cruiser-class",
+      "examples": ["Stabber", "Caracal", "Vexor", "Maller"]
+    },
+    "battlecruiser": {
+      "base_au_per_second": 2.5,
+      "description": "Slower warp for heavy ships",
+      "examples": ["Cyclone", "Ferox", "Brutix", "Harbinger"]
+    },
+    "battleship": {
+      "base_au_per_second": 2.0,
+      "description": "Slowest warp speed for massive ships",
+      "examples": ["Tempest", "Raven", "Dominix", "Apocalypse"]
+    },
+    "mining_barge": {
+      "venture": {
+        "au_per_second": 8.0,
+        "description": "Exceptionally fast warp for a mining frigate"
+      },
+      "procurer": {
+        "au_per_second": 3.0,
+        "description": "Standard mining barge speed"
+      },
+      "hulk": {
+        "au_per_second": 1.35,
+        "description": "Very slow, heavily specialized mining ship"
+      }
+    }
+  },
+  "travel_times": {
+    "alignment": {
+      "frigate": {
+        "seconds": 2.5,
+        "description": "Time to align for warp"
+      },
+      "destroyer": {
+        "seconds": 4.0,
+        "description": "Time to align for warp"
+      },
+      "cruiser": {
+        "seconds": 6.0,
+        "description": "Time to align for warp"
+      },
+      "battlecruiser": {
+        "seconds": 8.0,
+        "description": "Time to align for warp"
+      },
+      "battleship": {
+        "seconds": 10.0,
+        "description": "Time to align for warp"
+      },
+      "hulk": {
+        "seconds": 12.0,
+        "description": "Very slow alignment for mining barges"
+      }
+    },
+    "examples": {
+      "1_au_warp": {
+        "frigate": "0.2 seconds in warp",
+        "cruiser": "0.33 seconds in warp",
+        "battleship": "0.5 seconds in warp",
+        "hulk": "0.74 seconds in warp"
+      },
+      "10_au_warp": {
+        "frigate": "2 seconds in warp",
+        "cruiser": "3.3 seconds in warp",
+        "battleship": "5 seconds in warp",
+        "hulk": "7.4 seconds in warp"
+      },
+      "100_au_warp": {
+        "frigate": "20 seconds in warp",
+        "cruiser": "33 seconds in warp",
+        "battleship": "50 seconds in warp",
+        "hulk": "74 seconds in warp"
+      },
+      "gate_to_gate": {
+        "average_distance_au": 15,
+        "frigate_total": "5.5 seconds (2.5 align + 3 warp)",
+        "cruiser_total": "11 seconds (6 align + 5 warp)",
+        "battleship_total": "13 seconds (10 align + 3 warp)",
+        "typical_range": "30-60 seconds including gate activation"
+      },
+      "belt_to_station": {
+        "venture": {
+          "distance_au": 10,
+          "align": 3,
+          "warp": 1.25,
+          "total": "~5 seconds",
+          "with_docking": "~15 seconds total"
+        },
+        "hulk": {
+          "distance_au": 10,
+          "align": 12,
+          "warp": 7.4,
+          "total": "~20 seconds",
+          "with_docking": "~30 seconds total"
+        },
+        "full_mining_trip": {
+          "venture": "1 minute round trip",
+          "hulk": "1.5-2 minutes round trip"
+        }
+      }
+    }
+  },
+  "system_scale": {
+    "typical_system_radius_au": 100,
+    "gate_spacing_au": {
+      "min": 10,
+      "max": 150,
+      "average": 30
+    },
+    "belt_distance_from_sun_au": {
+      "inner": 5,
+      "mid": 20,
+      "outer": 50
+    },
+    "station_distance_au": {
+      "near_gate": 5,
+      "mid_system": 30,
+      "far": 80
+    }
+  },
+  "acceleration_curve": {
+    "description": "Ships accelerate to max warp speed, then decelerate at destination",
+    "phases": {
+      "acceleration": "First 33% of distance",
+      "max_speed": "Middle 34% of distance",
+      "deceleration": "Final 33% of distance"
+    },
+    "min_warp_distance_au": 0.1,
+    "warp_bubble_entry": "Ship enters warp tunnel effect",
+    "warp_bubble_exit": "Ship exits warp tunnel and decelerates"
+  }
+}

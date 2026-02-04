@@ -1,0 +1,180 @@
+{
+  "belt_sizes": {
+    "small": {
+      "name": "Small Asteroid Cluster",
+      "asteroid_count_range": [5, 10],
+      "radius_km": 30,
+      "typical_yield": "low",
+      "spawn_locations": ["inner_system", "near_planets"]
+    },
+    "medium": {
+      "name": "Medium Asteroid Field",
+      "asteroid_count_range": [10, 20],
+      "radius_km": 50,
+      "typical_yield": "moderate",
+      "spawn_locations": ["mid_system", "asteroid_belts"]
+    },
+    "large": {
+      "name": "Large Asteroid Belt",
+      "asteroid_count_range": [20, 40],
+      "radius_km": 80,
+      "typical_yield": "high",
+      "spawn_locations": ["outer_system", "dedicated_belts"]
+    },
+    "colossal": {
+      "name": "Colossal Asteroid Belt",
+      "asteroid_count_range": [40, 80],
+      "radius_km": 150,
+      "typical_yield": "very_high",
+      "spawn_locations": ["prime_mining_locations"]
+    }
+  },
+  "layout_patterns": {
+    "cluster": {
+      "description": "5-10 large asteroids clustered together",
+      "formation": "tight_group",
+      "spacing_km": 2
+    },
+    "semicircle": {
+      "description": "Asteroids arranged in a curved arc",
+      "formation": "arc_pattern",
+      "spacing_km": 5
+    },
+    "scattered": {
+      "description": "Asteroids spread across the field",
+      "formation": "random_distribution",
+      "spacing_km": 10
+    },
+    "ring": {
+      "description": "Circular ring of asteroids",
+      "formation": "circular",
+      "spacing_km": 8
+    }
+  },
+  "respawn_mechanics": {
+    "daily_downtime": {
+      "time_utc": "11:00",
+      "description": "All asteroid belts fully respawn during daily server maintenance",
+      "full_respawn": true
+    },
+    "depletion_system": {
+      "description": "If a belt is completely mined out, it respawns 10% smaller the next day",
+      "min_reduction_percent": 10,
+      "recovery_days": 7,
+      "min_belt_size_percent": 50
+    },
+    "partial_mining": {
+      "description": "Partially mined asteroids remain until downtime",
+      "individual_asteroid_respawn": false
+    }
+  },
+  "ore_distribution_by_security": {
+    "highsec_1.0": {
+      "ore_types": ["veldspar", "scordite"],
+      "richness": "abundant",
+      "competition": "high_player_traffic"
+    },
+    "highsec_0.9": {
+      "ore_types": ["veldspar", "scordite", "pyroxeres"],
+      "richness": "abundant",
+      "competition": "high_player_traffic"
+    },
+    "highsec_0.8": {
+      "ore_types": ["veldspar", "scordite", "pyroxeres", "plagioclase"],
+      "richness": "good",
+      "competition": "moderate_traffic"
+    },
+    "highsec_0.7": {
+      "ore_types": ["veldspar", "scordite", "pyroxeres", "plagioclase", "omber"],
+      "richness": "good",
+      "competition": "moderate_traffic"
+    },
+    "highsec_0.6": {
+      "ore_types": ["veldspar", "plagioclase", "omber", "kernite"],
+      "richness": "moderate",
+      "competition": "low_traffic"
+    },
+    "highsec_0.5": {
+      "ore_types": ["plagioclase", "omber", "kernite"],
+      "richness": "moderate",
+      "competition": "low_traffic"
+    },
+    "lowsec_0.4": {
+      "ore_types": ["kernite", "jaspet", "hemorphite"],
+      "richness": "high",
+      "competition": "dangerous",
+      "npc_presence": true
+    },
+    "lowsec_0.1-0.3": {
+      "ore_types": ["jaspet", "hemorphite", "hedbergite"],
+      "richness": "very_high",
+      "competition": "very_dangerous",
+      "npc_presence": true
+    },
+    "nullsec_0.0": {
+      "ore_types": ["hemorphite", "hedbergite", "gneiss", "dark_ochre"],
+      "richness": "extremely_high",
+      "competition": "player_controlled",
+      "npc_presence": true
+    },
+    "nullsec_deep": {
+      "ore_types": ["gneiss", "dark_ochre", "crokite", "bistot", "arkonor"],
+      "richness": "legendary",
+      "competition": "alliance_controlled",
+      "special": "mercoxit_in_special_locations"
+    }
+  },
+  "npc_miners": {
+    "presence": {
+      "highsec": true,
+      "lowsec": false,
+      "nullsec": false
+    },
+    "behavior": {
+      "mine_rate": 0,
+      "description": "Visual only, do not consume ore resources",
+      "purpose": "atmosphere"
+    },
+    "types": [
+      "ORE Mining Barge",
+      "Independent Miner",
+      "Corporate Mining Vessel"
+    ]
+  },
+  "gallente_mining_example": {
+    "location": "Essence region, 0.5 security system",
+    "typical_day_11_00_utc": {
+      "event": "Downtime ends, belts fully respawned",
+      "belt_status": "100% capacity"
+    },
+    "typical_day_12_00_utc": {
+      "event": "Prime mining time, many players active",
+      "popular_belts": "depleted or contested",
+      "lesser_belts": "still available"
+    },
+    "typical_day_13_00_utc": {
+      "event": "Mid-day, moderate activity",
+      "belt_status": "many partially mined"
+    },
+    "belt_types_in_system": [
+      {
+        "name": "Colossal Asteroid Belt",
+        "ore": ["veldspar", "scordite", "pyroxeres"],
+        "asteroids": 60,
+        "competition": "high"
+      },
+      {
+        "name": "Large Asteroid Belt I",
+        "ore": ["veldspar", "plagioclase"],
+        "asteroids": 30,
+        "competition": "moderate"
+      },
+      {
+        "name": "Medium Asteroid Cluster II",
+        "ore": ["scordite", "pyroxeres"],
+        "asteroids": 15,
+        "competition": "low"
+      }
+    ]
+  }
+}

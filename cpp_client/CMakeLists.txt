@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(EVEOfflineClient VERSION 1.0.0 LANGUAGES CXX)
+project(EVEOfflineClient VERSION 1.0.0 LANGUAGES C CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -68,6 +68,8 @@ set(CLIENT_SOURCES
     src/main.cpp
     src/core/application.cpp
     src/core/game_client.cpp
+    src/core/embedded_server.cpp
+    src/core/session_manager.cpp
     src/rendering/window.cpp
     src/rendering/shader.cpp
     src/rendering/camera.cpp
@@ -85,6 +87,8 @@ set(CLIENT_SOURCES
 set(CLIENT_HEADERS
     include/core/application.h
     include/core/game_client.h
+    include/core/embedded_server.h
+    include/core/session_manager.h
     include/rendering/window.h
     include/rendering/shader.h
     include/rendering/camera.h
