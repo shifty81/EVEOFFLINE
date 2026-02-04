@@ -28,6 +28,25 @@ endif()
 find_package(Threads REQUIRED)
 find_package(OpenGL REQUIRED)
 
+# OpenAL (optional audio support)
+find_package(OpenAL QUIET)
+if(OpenAL_FOUND)
+    message(STATUS "OpenAL found - audio support enabled")
+    add_definitions(-DUSE_OPENAL)
+    set(AUDIO_SOURCES
+        src/audio/audio_manager.cpp
+        src/audio/audio_generator.cpp
+    )
+    set(AUDIO_HEADERS
+        include/audio/audio_manager.h
+        include/audio/audio_generator.h
+    )
+else()
+    message(STATUS "OpenAL not found - audio support disabled")
+    set(AUDIO_SOURCES "")
+    set(AUDIO_HEADERS "")
+endif()
+
 # GLEW (OpenGL extension wrangler)
 if(USE_SYSTEM_LIBS)
     find_package(GLEW REQUIRED)
@@ -132,6 +151,7 @@ set(CLIENT_SOURCES
     src/ui/eve_panels.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
+    ${AUDIO_SOURCES}
 )
 
 set(CLIENT_HEADERS
@@ -164,6 +184,7 @@ set(CLIENT_HEADERS
     include/ui/input_handler.h
     include/ui/ui_manager.h
     include/ui/eve_panels.h
+    ${AUDIO_HEADERS}
 )
 
 # Main executable
@@ -176,6 +197,12 @@ target_link_libraries(eve_client
     GLEW::GLEW
     glfw
 )
+
+# Link OpenAL if available
+if(OpenAL_FOUND)
+    target_link_libraries(eve_client ${OPENAL_LIBRARY})
+    target_include_directories(eve_client PRIVATE ${OPENAL_INCLUDE_DIR})
+endif()
 
 # Platform-specific libraries
 if(WIN32)
@@ -374,6 +401,27 @@ if(BUILD_TESTS)
     elseif(APPLE)
         target_link_libraries(test_post_processing dl)
         target_link_libraries(test_post_processing "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
+    
+    # Test: Audio System (if OpenAL is available)
+    if(OpenAL_FOUND)
+        add_executable(test_audio_system
+            test_audio_system.cpp
+            ${AUDIO_SOURCES}
+        )
+        target_link_libraries(test_audio_system
+            Threads::Threads
+            ${OPENAL_LIBRARY}
+        )
+        target_include_directories(test_audio_system PRIVATE ${OPENAL_INCLUDE_DIR})
+        
+        if(WIN32)
+            target_link_libraries(test_audio_system ws2_32)
+        elseif(UNIX AND NOT APPLE)
+            target_link_libraries(test_audio_system dl)
+        elseif(APPLE)
+            target_link_libraries(test_audio_system dl)
+        endif()
     endif()
 endif()
 
