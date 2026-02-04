@@ -13,26 +13,59 @@ This is a cross-platform 3D client built with:
 
 ## Features
 
-### Current Status: 🚧 In Development
+### Current Status: 🚀 Phase 2 - Advanced Rendering (In Progress)
 
+**Phase 1: Core Rendering (Complete) ✅**
 - [x] Project structure created
 - [x] Build system configured (CMake)
-- [x] Header files defined
-- [ ] Core implementation
-- [ ] OpenGL rendering
-- [ ] Network client
-- [ ] Ship models
-- [ ] HUD/UI
+- [x] Window management (GLFW)
+- [x] OpenGL 3.3+ rendering pipeline
+- [x] Shader system
+- [x] Camera system (EVE-style orbit)
+- [x] Mesh and model system
+- [x] Procedural ship models (46 ships × 7 factions)
+- [x] PBR materials system
+- [x] Particle system (10,000 particles)
+- [x] Visual effects (weapons, explosions)
+- [x] Health bar rendering
+- [x] LOD manager (4 levels)
+- [x] Frustum culling
+- [x] Instanced rendering
+- [x] Texture loading (STB_image)
+
+**Phase 2: Advanced Rendering (In Progress) 🔨**
+- [x] Asteroid field rendering
+  - Procedural icosphere-based meshes
+  - 4 asteroid sizes (SMALL, MEDIUM, LARGE, HUGE)
+  - 2 layout patterns (SEMICIRCLE, SPHERICAL)
+  - Efficient instanced rendering
+- [x] Dynamic lighting system
+  - Multiple light types (directional, point, spot)
+  - Up to 16 lights total
+  - EVE-style preset lighting
+  - Real-time light management
+- [ ] Shadow mapping
+- [ ] Deferred rendering pipeline
+
+**Phase 3+: Gameplay Integration (Planned)**
+- [ ] Network client integration
+- [ ] Entity state synchronization
+- [ ] HUD/UI system
+- [ ] Full gameplay mechanics
 
 ### Planned Features
 
 **Graphics**:
 - Modern OpenGL 3.3+ rendering
-- EVE-style orbit camera
-- Procedural ship models
-- Starfield background
-- Particle effects (weapons, explosions)
-- Physically-based rendering (PBR)
+- EVE-style orbit camera ✅
+- Procedural ship models ✅
+- Procedural asteroid fields ✅
+- Starfield background ✅
+- Particle effects (weapons, explosions) ✅
+- Physically-based rendering (PBR) ✅
+- Dynamic multi-light system ✅
+- Shadow mapping (planned)
+- Deferred rendering (planned)
 
 **Networking**:
 - TCP connection to dedicated server
@@ -97,6 +130,56 @@ mingw32-make
 ```
 
 ### Build Options
+
+```bash
+cmake .. \
+  -DCMAKE_BUILD_TYPE=Release \     # Debug or Release
+  -DBUILD_TESTS=ON \                # Build test suite (default: ON)
+  -DUSE_SYSTEM_LIBS=OFF            # Use system libraries instead of bundled (default: OFF)
+```
+
+### Running Tests
+
+The project includes several test programs to verify functionality:
+
+#### Asteroid Field Rendering Test
+```bash
+./cpp_client/build_test_asteroid.sh
+./cpp_client/build_test_asteroid/bin/test_asteroid_field
+```
+
+Features tested:
+- Procedural asteroid generation
+- Instanced rendering performance
+- Different field layouts (semicircle, spherical)
+- Multiple asteroid sizes
+
+#### Dynamic Lighting Test
+```bash
+./cpp_client/build_test_lighting.sh
+./cpp_client/build_test_lighting/bin/test_lighting
+```
+
+Features tested:
+- Directional lights (sun/star)
+- Point lights (omnidirectional)
+- Spot lights (cone-shaped)
+- Multiple light configurations
+- EVE-style lighting preset
+
+Controls:
+- `Right Mouse`: Rotate camera
+- `Middle Mouse`: Pan camera
+- `Mouse Wheel`: Zoom in/out
+- `1-5`: Switch between lighting tests
+- `ESC`: Exit
+
+#### Other Tests
+```bash
+./test_frustum_culling      # Frustum culling system
+./test_instanced_rendering  # Instanced rendering performance
+./test_texture_loading      # Texture loading with STB_image
+```
 
 ```bash
 # Use system libraries instead of bundled

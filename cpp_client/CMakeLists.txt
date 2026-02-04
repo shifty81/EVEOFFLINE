@@ -88,6 +88,7 @@ set(CLIENT_SOURCES
     src/rendering/frustum_culler.cpp
     src/rendering/instanced_renderer.cpp
     src/rendering/asteroid_field_renderer.cpp
+    src/rendering/lighting.cpp
     src/network/tcp_client.cpp
     src/network/protocol_handler.cpp
     src/ui/hud.cpp
@@ -115,6 +116,7 @@ set(CLIENT_HEADERS
     include/rendering/frustum_culler.h
     include/rendering/instanced_renderer.h
     include/rendering/asteroid_field_renderer.h
+    include/rendering/lighting.h
     include/network/tcp_client.h
     include/network/protocol_handler.h
     include/ui/hud.h
@@ -193,6 +195,34 @@ if(BUILD_TESTS)
     elseif(APPLE)
         target_link_libraries(test_asteroid_field dl)
         target_link_libraries(test_asteroid_field "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
+    
+    # Test: Dynamic Lighting System
+    add_executable(test_lighting
+        test_lighting.cpp
+        src/rendering/window.cpp
+        src/rendering/shader.cpp
+        src/rendering/camera.cpp
+        src/rendering/mesh.cpp
+        src/rendering/model.cpp
+        src/rendering/lighting.cpp
+        src/ui/input_handler.cpp
+        ${GLAD_SOURCES}
+    )
+    
+    target_link_libraries(test_lighting
+        Threads::Threads
+        OpenGL::GL
+        glfw
+    )
+    
+    if(WIN32)
+        target_link_libraries(test_lighting ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_lighting dl X11)
+    elseif(APPLE)
+        target_link_libraries(test_lighting dl)
+        target_link_libraries(test_lighting "-framework Cocoa -framework IOKit -framework CoreVideo")
     endif()
 endif()
 
