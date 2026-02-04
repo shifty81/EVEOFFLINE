@@ -23,7 +23,7 @@ int main() {
         // Initialize UI Manager
         auto uiManager = std::make_unique<UI::UIManager>();
         if (!uiManager->Initialize(window.getHandle())) {
-            std::cerr << "Failed to initialize UI Manager" << std::endl;
+            std::cerr << "Failed to initialize UI Manager. Ensure GLFW window is valid and OpenGL context is current." << std::endl;
             return -1;
         }
         

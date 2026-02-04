@@ -207,10 +207,8 @@ void RenderCombatLog(const std::vector<std::string>& messages) {
             ImGui::TextWrapped("%s", message.c_str());
         }
         
-        // Auto-scroll to bottom
-        if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY()) {
-            ImGui::SetScrollHereY(1.0f);
-        }
+        // Auto-scroll to bottom for new messages
+        ImGui::SetScrollHereY(1.0f);
     }
     
     ImGui::EndChild();

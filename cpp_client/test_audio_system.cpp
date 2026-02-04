@@ -252,7 +252,8 @@ void test_combat_scenario(AudioManager& audio) {
         wait(0.3f);
         
         // Some impacts
-        audio.play_explosion_sound("small", glm::vec3(random() % 10 - 5, 0.0f, random() % 10));
+        std::uniform_int_distribution<int> impact_dist(-5, 5);
+        audio.play_explosion_sound("small", glm::vec3(impact_dist(rng), 0.0f, impact_dist(rng) + 5));
         wait(0.4f);
     }
     
