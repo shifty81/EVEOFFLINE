@@ -321,3 +321,34 @@ class Contract(Component):
     active_contracts: List[str] = field(default_factory=list)  # Contract IDs
     completed_contracts: List[str] = field(default_factory=list)
     failed_contracts: List[str] = field(default_factory=list)
+
+
+@dataclass
+class MiningLaser(Component):
+    """Mining laser component for mining operations"""
+    laser_type: str = "Miner I"  # Miner I, Miner II, Strip Miner I, etc.
+    cycle_time: float = 60.0  # seconds per cycle
+    yield_amount: float = 40.0  # m3 per cycle
+    optimal_range: float = 10000.0  # meters
+    capacitor_usage: float = 60.0  # GJ per cycle
+    is_active: bool = False
+    current_cycle: float = 0.0  # current cycle progress
+    target_asteroid_id: Optional[str] = None
+
+
+@dataclass
+class MiningYield(Component):
+    """Tracks active mining operations and yields"""
+    total_ore_mined: Dict[str, float] = field(default_factory=dict)  # {ore_type: m3}
+    active_mining: bool = False
+    target_asteroid_id: Optional[str] = None
+    mining_start_time: float = 0.0
+    yield_multiplier: float = 1.0  # From skills and modules
+
+
+@dataclass
+class OreHold(Component):
+    """Specialized cargo hold for ore (mining barges/exhumers)"""
+    ore: Dict[str, float] = field(default_factory=dict)  # {ore_type: m3}
+    ore_hold_capacity: float = 5000.0  # m3
+    ore_hold_used: float = 0.0  # m3

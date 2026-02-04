@@ -389,6 +389,24 @@ See [docs/testing/TEST_SUMMARY.md](docs/testing/TEST_SUMMARY.md) for detailed te
 **See [docs/development/PHASE6_TECH2_CRUISERS.md](docs/development/PHASE6_TECH2_CRUISERS.md) for Tech II cruiser documentation!**
 **See [docs/ROADMAP.md](docs/ROADMAP.md) for complete status and planned features!**
 
+#### 🎯 NEW! Phase 7: Mining & Resource Gathering - IN PROGRESS! 🚀
+- [x] **Mining System** - Complete asteroid mining mechanics
+  - Cycle-based ore extraction with capacitor management
+  - 15 ore types (Veldspar to Mercoxit)
+  - Mining lasers (Miner I/II, Strip Miner I)
+  - Mining skills (Mining, Astrogeology, +50% max yield)
+  - Mining Laser Upgrades (+5-9% yield)
+  - Ore holds for mining barges
+- [x] **Ore Reprocessing** - Refine ore into minerals
+  - Station-based refining mechanics
+  - Reprocessing skills (+25% max efficiency)
+  - 8 mineral types (Tritanium to Morphite)
+  - Batch-based processing system
+- [x] **Comprehensive Testing** - 25 tests, 100% pass rate
+- [x] **Complete Documentation** - Full mining system guide
+
+**See [docs/development/PHASE7_MINING.md](docs/development/PHASE7_MINING.md) for complete mining documentation!**
+
 ## 🎮 Game Mechanics
 
 Based on EVE ONLINE with simplified mechanics for small-group PVE:

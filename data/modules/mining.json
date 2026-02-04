@@ -1,0 +1,155 @@
+{
+  "mining_lasers": {
+    "miner_i": {
+      "id": "miner_i",
+      "name": "Miner I",
+      "type": "mining_laser",
+      "tech_level": 1,
+      "meta_level": 0,
+      "slot": "high",
+      "cpu": 12,
+      "powergrid": 4,
+      "capacitor_usage": 60,
+      "cycle_time": 60,
+      "optimal_range": 10000,
+      "mining_yield": 40,
+      "volume": 5,
+      "base_price": 10000,
+      "description": "Basic mining laser for extracting ore from asteroids."
+    },
+    "miner_ii": {
+      "id": "miner_ii",
+      "name": "Miner II",
+      "type": "mining_laser",
+      "tech_level": 2,
+      "meta_level": 5,
+      "slot": "high",
+      "cpu": 18,
+      "powergrid": 6,
+      "capacitor_usage": 72,
+      "cycle_time": 60,
+      "optimal_range": 12000,
+      "mining_yield": 60,
+      "volume": 5,
+      "base_price": 500000,
+      "description": "Advanced Tech II mining laser with improved yield."
+    },
+    "modulated_miner_ii": {
+      "id": "modulated_miner_ii",
+      "name": "Modulated Deep Core Miner II",
+      "type": "mining_laser",
+      "tech_level": 2,
+      "meta_level": 5,
+      "slot": "high",
+      "cpu": 20,
+      "powergrid": 8,
+      "capacitor_usage": 80,
+      "cycle_time": 60,
+      "optimal_range": 15000,
+      "mining_yield": 80,
+      "volume": 5,
+      "base_price": 750000,
+      "description": "Specialized mining laser for deep core mining operations."
+    },
+    "strip_miner_i": {
+      "id": "strip_miner_i",
+      "name": "Strip Miner I",
+      "type": "mining_laser",
+      "tech_level": 1,
+      "meta_level": 0,
+      "slot": "high",
+      "cpu": 60,
+      "powergrid": 1100,
+      "capacitor_usage": 360,
+      "cycle_time": 180,
+      "optimal_range": 15000,
+      "mining_yield": 540,
+      "volume": 1000,
+      "base_price": 3500000,
+      "description": "Capital-sized mining laser for barges and exhumers. Requires large amounts of power.",
+      "requirements": {
+        "skills": {
+          "Mining": 4,
+          "Astrogeology": 3
+        }
+      }
+    }
+  },
+  "mining_upgrades": {
+    "mining_laser_upgrade_i": {
+      "id": "mining_laser_upgrade_i",
+      "name": "Mining Laser Upgrade I",
+      "type": "mining_upgrade",
+      "tech_level": 1,
+      "meta_level": 0,
+      "slot": "low",
+      "cpu": 30,
+      "powergrid": 1,
+      "stacking_penalty": true,
+      "bonuses": {
+        "mining_yield": 0.05
+      },
+      "volume": 5,
+      "base_price": 75000,
+      "description": "Increases mining laser yield by 5%."
+    },
+    "mining_laser_upgrade_ii": {
+      "id": "mining_laser_upgrade_ii",
+      "name": "Mining Laser Upgrade II",
+      "type": "mining_upgrade",
+      "tech_level": 2,
+      "meta_level": 5,
+      "slot": "low",
+      "cpu": 36,
+      "powergrid": 1,
+      "stacking_penalty": true,
+      "bonuses": {
+        "mining_yield": 0.09
+      },
+      "volume": 5,
+      "base_price": 850000,
+      "description": "Increases mining laser yield by 9%.",
+      "requirements": {
+        "skills": {
+          "Mining": 5,
+          "Science": 5
+        }
+      }
+    },
+    "ice_harvester_upgrade_i": {
+      "id": "ice_harvester_upgrade_i",
+      "name": "Ice Harvester Upgrade I",
+      "type": "mining_upgrade",
+      "tech_level": 1,
+      "meta_level": 0,
+      "slot": "low",
+      "cpu": 25,
+      "powergrid": 1,
+      "stacking_penalty": true,
+      "bonuses": {
+        "ice_harvesting_cycle_time": -0.05
+      },
+      "volume": 5,
+      "base_price": 125000,
+      "description": "Reduces ice harvester cycle time by 5%."
+    }
+  },
+  "survey_scanners": {
+    "survey_scanner_i": {
+      "id": "survey_scanner_i",
+      "name": "Survey Scanner I",
+      "type": "survey_scanner",
+      "tech_level": 1,
+      "meta_level": 0,
+      "slot": "high",
+      "cpu": 20,
+      "powergrid": 1,
+      "capacitor_usage": 5,
+      "cycle_time": 5,
+      "range": 25000,
+      "volume": 5,
+      "base_price": 25000,
+      "description": "Scans nearby asteroids to determine ore type and remaining quantity."
+    }
+  }
+}
