@@ -73,7 +73,11 @@ def test_ship_generator():
         "Tempest",
         "Raven",
         "Dominix",
-        "Apocalypse"
+        "Apocalypse",
+        # Mining Barges
+        "Procurer",
+        "Retriever",
+        "Covetor"
     ]
     
     # Test factions

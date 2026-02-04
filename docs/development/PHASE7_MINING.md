@@ -1,8 +1,8 @@
 # Phase 7: Mining & Resource Gathering System
 
-**Status**: Core Implementation Complete ✅  
-**Date**: February 3, 2026  
-**Version**: 1.0
+**Status**: Core Implementation Complete with Mining Barges ✅  
+**Date**: February 4, 2026  
+**Version**: 1.1
 
 ---
 
@@ -19,6 +19,8 @@ The Mining & Resource Gathering system implements EVE Online-style asteroid mini
 - **Ore Reprocessing**: Refine ore into minerals at stations
 - **Refining Skills**: Reprocessing and Reprocessing Efficiency increase mineral yields
 - **Ore Holds**: Specialized cargo for mining barges and exhumers
+- **Mining Barges**: Procurer, Retriever, and Covetor (3 specialized mining ships)
+- **3D Ship Models**: Industrial mining barge models with faction variants
 - **Asteroid Belt System**: Pre-existing system for asteroid generation and management
 
 ---
@@ -373,6 +375,12 @@ print(f"Gained minerals: {minerals}")
 - Multiple cycles
 - Statistics tracking
 
+**Mining Barge Tests** (4 tests):
+- Procurer ore hold (16K m³)
+- Retriever large ore hold (27.5K m³)
+- Covetor strip miner operations
+- Ore hold priority over cargo
+
 **Reprocessing Tests** (10 tests):
 - Basic reprocessing
 - Skill bonuses
@@ -383,13 +391,16 @@ print(f"Gained minerals: {minerals}")
 - Efficiency calculations
 - Efficiency cap
 
-**Total**: 25 tests, 100% pass rate
+**Total**: 29 tests, 100% pass rate
 
 ### Running Tests
 
 ```bash
 # Run all mining tests
 python -m unittest test_mining_system test_ore_reprocessing -v
+
+# Run specific test suite
+python test_mining_system.py TestMiningBarges -v
 
 # Run specific test
 python test_mining_system.py TestMiningSystem.test_mining_cycle_completion -v
@@ -411,14 +422,167 @@ python test_mining_system.py TestMiningSystem.test_mining_cycle_completion -v
 
 ---
 
+## Mining Barges
+
+### Overview
+
+Mining barges are specialized industrial ships designed for ore extraction. Each barge fills a specific role in mining operations:
+
+- **Procurer**: Tank-focused barge for dangerous space
+- **Retriever**: Cargo-focused barge for solo mining
+- **Covetor**: Yield-focused barge for fleet operations
+
+All mining barges are manufactured by ORE (Outer Ring Excavations) and are available to pilots of all races.
+
+### Ship Specifications
+
+#### Procurer
+**Role**: Survivability  
+**Description**: The most heavily armored mining barge, ideal for solo mining in hostile environments.
+
+**Hull Stats:**
+- Shield HP: 6,000
+- Armor HP: 3,000
+- Hull HP: 4,000
+- Capacitor: 3,500 GJ
+- Ore Hold: 16,000 m³
+- Cargo: 350 m³
+
+**Bonuses per Mining Barge level:**
+- +6% shield hit points
+- +2% strip miner yield
+- -2% ice/gas harvester duration
+
+**Role Bonuses:**
+- +50% drone damage and hitpoints
+
+**Use Case**: Best for mining in lowsec, nullsec, or high-risk highsec where gankers are a threat.
+
+#### Retriever
+**Role**: Cargo Capacity  
+**Description**: Features the largest ore hold of all mining barges, minimizing trips to station.
+
+**Hull Stats:**
+- Shield HP: 2,300
+- Armor HP: 3,000
+- Hull HP: 4,000
+- Capacitor: 3,500 GJ
+- Ore Hold: 27,500 m³ (largest)
+- Cargo: 425 m³
+
+**Bonuses per Mining Barge level:**
+- +5% ore hold capacity
+
+**Role Bonuses:**
+- +50% strip miner yield
+- -33.33% ice harvester duration
+- -33.33% ice harvester capacitor use
+
+**Use Case**: Ideal for AFK mining in safe highsec, long mining sessions without hauler support.
+
+#### Covetor
+**Role**: Mining Yield  
+**Description**: Delivers the highest mining yield but requires frequent offloading or hauler support.
+
+**Hull Stats:**
+- Shield HP: 3,000
+- Armor HP: 2,000
+- Hull HP: 2,000
+- Capacitor: 3,200 GJ
+- Ore Hold: 7,000 m³ (smallest)
+- Cargo: 300 m³
+
+**Bonuses per Mining Barge level:**
+- +3% strip miner yield
+- +6% strip miner and ice harvester range
+- -3% ice and gas harvester duration
+
+**Role Bonuses:**
+- -25% strip miner duration
+- -25% strip miner activation cost
+- -30% ice and gas harvester duration
+
+**Use Case**: Best for fleet mining with Orca/Rorqual support or when a dedicated hauler is available.
+
+### 3D Models
+
+Mining barges feature distinctive industrial designs:
+- Bulky, utilitarian hull design
+- Large ore hold sections visible
+- Mining laser hardpoints at the front
+- Industrial ORE color scheme (tan/gold)
+- Dual engine configuration
+- 21 total models (3 ships × 7 faction variants)
+
+### Fitting Recommendations
+
+**Procurer (Survivability)**
+```
+High Slots (2):
+- 2x Strip Miner I
+
+Mid Slots (3):
+- 2x Shield Extender
+- 1x Survey Scanner I
+
+Low Slots (2):
+- 2x Mining Laser Upgrade I
+
+Drones:
+- 5x Light Combat Drones (defense)
+```
+
+**Retriever (AFK Mining)**
+```
+High Slots (2):
+- 2x Strip Miner I
+
+Mid Slots (2):
+- 1x Survey Scanner I
+- 1x Shield Boost
+
+Low Slots (3):
+- 3x Mining Laser Upgrade I
+
+Drones:
+- 5x Light Combat Drones
+```
+
+**Covetor (Maximum Yield)**
+```
+High Slots (3):
+- 3x Strip Miner I (highest yield)
+
+Mid Slots (2):
+- 1x Survey Scanner I
+- 1x Capacitor Battery
+
+Low Slots (2):
+- 2x Mining Laser Upgrade II
+
+Drones:
+- 5x Light Combat Drones
+```
+
+### Mining Barge Comparison
+
+| Ship      | Ore Hold | Yield | Tank | Use Case |
+|-----------|----------|-------|------|----------|
+| Procurer  | Medium (16K) | Medium | Highest | Dangerous space |
+| Retriever | Largest (27.5K) | Medium | Medium | Solo/AFK mining |
+| Covetor   | Smallest (7K) | Highest | Lowest | Fleet operations |
+
+---
+
 ## Future Enhancements
 
 ### Phase 7 Expansion (Optional)
 
-1. **Mining Ships**
-   - Procurer, Retriever, Covetor (Barges)
-   - Skiff, Mackinaw, Hulk (Exhumers)
-   - Ship bonuses to yield and capacity
+1. **Exhumer Ships** (Tech II Mining Barges)
+   - Skiff (upgraded Procurer)
+   - Mackinaw (upgraded Retriever)
+   - Hulk (upgraded Covetor)
+   - Enhanced bonuses and specialization
 
 2. **Ice Mining**
    - Ice Harvester modules

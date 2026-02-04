@@ -85,6 +85,8 @@ class ShipModelGenerator:
             model = self._create_frigate_model(faction)
         elif self._is_destroyer(ship_type):
             model = self._create_destroyer_model(faction)
+        elif self._is_mining_barge(ship_type):
+            model = self._create_mining_barge_model(faction)
         elif self._is_tech2_cruiser(ship_type):
             # Tech II cruisers use enhanced cruiser model
             model = self._create_tech2_cruiser_model(faction)
@@ -151,6 +153,11 @@ class ShipModelGenerator:
         """Check if ship is a battleship class"""
         battleship_names = ['Battleship', 'Tempest', 'Raven', 'Dominix', 'Apocalypse']
         return any(name in ship_type for name in battleship_names)
+    
+    def _is_mining_barge(self, ship_type: str) -> bool:
+        """Check if ship is a mining barge class"""
+        mining_barge_names = ['Mining Barge', 'Procurer', 'Retriever', 'Covetor']
+        return any(name in ship_type for name in mining_barge_names)
     
     def _get_faction_colors(self, faction: str) -> dict:
         """Get color scheme for a faction"""
@@ -520,6 +527,94 @@ class ShipModelGenerator:
             glow.setPos(x, y - 2.5, 0)
             glow.setHpr(0, 0, 90)
             glow.reparentTo(root)
+        
+        return root
+    
+    def _create_mining_barge_model(self, faction: str) -> NodePath:
+        """
+        Create a mining barge-class ship model
+        Industrial ships with large cargo holds and mining equipment
+        Bulky, utilitarian design focused on resource extraction
+        """
+        colors = self._get_faction_colors(faction)
+        # Use ORE colors if faction is ORE or default
+        if faction == 'ORE' or faction not in self.FACTION_COLORS:
+            colors = {
+                'primary': Vec4(0.6, 0.5, 0.3, 1.0),  # Industrial tan/gold
+                'secondary': Vec4(0.4, 0.35, 0.25, 1.0),  # Dark industrial
+                'accent': Vec4(0.8, 0.7, 0.4, 1.0)  # Bright gold accent
+            }
+        
+        root = NodePath(f"mining_barge_{faction}")
+        
+        # Main hull - large blocky industrial design
+        hull = self._create_box(
+            width=5.0, length=8.0, height=4.0,
+            color=colors['primary']
+        )
+        hull.reparentTo(root)
+        
+        # Ore hold section (large cargo area at front)
+        ore_hold = self._create_box(
+            width=5.5, length=5.0, height=3.5,
+            color=colors['secondary']
+        )
+        ore_hold.setPos(0, 3.5, 0.5)
+        ore_hold.reparentTo(root)
+        
+        # Mining equipment bay (underneath front)
+        mining_bay = self._create_box(
+            width=4.0, length=3.0, height=2.0,
+            color=colors['accent']
+        )
+        mining_bay.setPos(0, 3.0, -2.5)
+        mining_bay.reparentTo(root)
+        
+        # Mining laser hardpoints (2-3 visible mounts)
+        for i, x_pos in enumerate([-1.5, 0, 1.5]):
+            laser_mount = self._create_cylinder(
+                radius=0.4, length=2.0,
+                color=colors['accent']
+            )
+            laser_mount.setPos(x_pos, 5.0, -1.5)
+            laser_mount.setHpr(0, 90, 0)
+            laser_mount.reparentTo(root)
+        
+        # Command bridge/cockpit (small compared to ship size)
+        bridge = self._create_box(
+            width=2.0, length=2.5, height=2.0,
+            color=colors['accent']
+        )
+        bridge.setPos(0, 1.0, 3.0)
+        bridge.reparentTo(root)
+        
+        # Industrial engine array (2 large engines)
+        for side in [-1, 1]:
+            engine = self._create_cylinder(
+                radius=1.2, length=3.0,
+                color=colors['secondary']
+            )
+            engine.setPos(side * 2.0, -3.5, 0)
+            engine.setHpr(0, 0, 90)
+            engine.reparentTo(root)
+            
+            # Engine glow (industrial blue-white)
+            glow = self._create_cylinder(
+                radius=1.0, length=0.8,
+                color=Vec4(0.4, 0.6, 1.0, 1.0)
+            )
+            glow.setPos(side * 2.0, -5.0, 0)
+            glow.setHpr(0, 0, 90)
+            glow.reparentTo(root)
+        
+        # Support struts (industrial framework)
+        for side in [-1, 1]:
+            strut = self._create_box(
+                width=0.5, length=6.0, height=0.5,
+                color=colors['secondary']
+            )
+            strut.setPos(side * 2.5, 0, 2.5)
+            strut.reparentTo(root)
         
         return root
     

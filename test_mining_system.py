@@ -329,5 +329,174 @@ class TestMiningSystem(unittest.TestCase):
         self.assertLessEqual(inventory.cargo_used, inventory.cargo_capacity + 50)
 
 
+class TestMiningBarges(unittest.TestCase):
+    """Test mining barge specific functionality"""
+    
+    def setUp(self):
+        """Set up test world and entities"""
+        self.world = World()
+        self.asteroid_manager = AsteroidFieldManager()
+        self.mining_system = MiningSystem(self.world, self.asteroid_manager)
+        
+        # Create test asteroid belt
+        self.test_belt = AsteroidBelt(
+            belt_id="test_belt_1",
+            name="Test Belt",
+            system="test_system",
+            security=1.0,
+            layout=BeltLayout.SEMICIRCLE,
+            radius_km=50.0
+        )
+        
+        # Add test asteroid
+        self.test_asteroid = Asteroid(
+            id="test_ast_1",
+            ore_type="veldspar",
+            variant="standard",
+            position=(1000.0, 0.0, 0.0),
+            size=AsteroidSize.MEDIUM,
+            ore_remaining=35000,
+            ore_total=35000
+        )
+        self.test_belt.asteroids[self.test_asteroid.id] = self.test_asteroid
+        self.asteroid_manager.belts[self.test_belt.id] = self.test_belt
+    
+    def test_procurer_ore_hold(self):
+        """Test Procurer with ore hold capacity"""
+        procurer = self.world.create_entity()
+        procurer.add_component(Position(x=0.0, y=0.0, z=0.0))
+        procurer.add_component(Capacitor(capacitor=3500.0, capacitor_max=3500.0))
+        procurer.add_component(MiningLaser(
+            laser_type="Strip Miner I",
+            cycle_time=180.0,
+            yield_amount=540.0,
+            optimal_range=15000.0,
+            capacitor_usage=360.0
+        ))
+        procurer.add_component(MiningYield())
+        procurer.add_component(OreHold(ore_hold_capacity=16000.0))  # Procurer base
+        procurer.add_component(Inventory(cargo_capacity=350.0))
+        procurer.add_component(Skills())
+        
+        # Start mining
+        result = self.mining_system.start_mining(
+            procurer,
+            self.test_asteroid.id,
+            self.test_belt.id
+        )
+        
+        self.assertTrue(result)
+        
+        # Complete one mining cycle
+        self.mining_system.update(180.0)
+        
+        # Check ore was stored in ore hold
+        ore_hold = procurer.get_component(OreHold)
+        self.assertGreater(ore_hold.ore_hold_used, 0)
+        self.assertLessEqual(ore_hold.ore_hold_used, ore_hold.ore_hold_capacity)
+    
+    def test_retriever_large_ore_hold(self):
+        """Test Retriever with largest ore hold"""
+        retriever = self.world.create_entity()
+        retriever.add_component(Position(x=0.0, y=0.0, z=0.0))
+        retriever.add_component(Capacitor(capacitor=3500.0, capacitor_max=3500.0))
+        retriever.add_component(MiningLaser(
+            laser_type="Strip Miner I",
+            cycle_time=180.0,
+            yield_amount=540.0,
+            optimal_range=15000.0,
+            capacitor_usage=360.0
+        ))
+        retriever.add_component(MiningYield())
+        retriever.add_component(OreHold(ore_hold_capacity=27500.0))  # Retriever base
+        retriever.add_component(Inventory(cargo_capacity=425.0))
+        retriever.add_component(Skills())
+        
+        # Mine multiple cycles
+        self.mining_system.start_mining(
+            retriever,
+            self.test_asteroid.id,
+            self.test_belt.id
+        )
+        
+        # Complete 10 cycles (5400 m3 mined)
+        for _ in range(10):
+            self.mining_system.update(180.0)
+        
+        ore_hold = retriever.get_component(OreHold)
+        # Should have mined ~5400 m3 (540 * 10), but may be slightly less due to cycle timing
+        # Wide range accounts for timing precision and partial cycles
+        self.assertGreater(ore_hold.ore_hold_used, 4500)
+        self.assertLess(ore_hold.ore_hold_used, 5500)
+        # Should still have room in ore hold
+        self.assertLess(ore_hold.ore_hold_used, ore_hold.ore_hold_capacity)
+    
+    def test_covetor_high_yield(self):
+        """Test Covetor with multiple high slots for strip miners"""
+        covetor = self.world.create_entity()
+        covetor.add_component(Position(x=0.0, y=0.0, z=0.0))
+        covetor.add_component(Capacitor(capacitor=3200.0, capacitor_max=3200.0))
+        covetor.add_component(MiningLaser(
+            laser_type="Strip Miner I",
+            cycle_time=180.0,
+            yield_amount=540.0,
+            optimal_range=15000.0,
+            capacitor_usage=360.0
+        ))
+        covetor.add_component(MiningYield())
+        covetor.add_component(OreHold(ore_hold_capacity=7000.0))  # Covetor base
+        covetor.add_component(Inventory(cargo_capacity=300.0))
+        covetor.add_component(Skills())
+        
+        # Start mining
+        self.mining_system.start_mining(
+            covetor,
+            self.test_asteroid.id,
+            self.test_belt.id
+        )
+        
+        # Complete one cycle
+        self.mining_system.update(180.0)
+        
+        ore_hold = covetor.get_component(OreHold)
+        # Should mine 540 m3 per cycle (base yield)
+        self.assertGreater(ore_hold.ore_hold_used, 500)
+        self.assertLess(ore_hold.ore_hold_used, 600)
+    
+    def test_ore_hold_priority_over_cargo(self):
+        """Test that ore hold is used for mining barge storage"""
+        barge = self.world.create_entity()
+        barge.add_component(Position(x=0.0, y=0.0, z=0.0))
+        barge.add_component(Capacitor(capacitor=5000.0, capacitor_max=5000.0))
+        barge.add_component(MiningLaser(
+            laser_type="Strip Miner I",
+            cycle_time=180.0,
+            yield_amount=540.0,
+            optimal_range=15000.0,
+            capacitor_usage=360.0
+        ))
+        barge.add_component(MiningYield())
+        barge.add_component(OreHold(ore_hold_capacity=1000.0))  # Small for testing
+        barge.add_component(Inventory(cargo_capacity=5000.0))
+        barge.add_component(Skills())
+        
+        # Start mining
+        self.mining_system.start_mining(
+            barge,
+            self.test_asteroid.id,
+            self.test_belt.id
+        )
+        
+        # Complete one mining cycle
+        self.mining_system.update(180.0)
+        
+        ore_hold = barge.get_component(OreHold)
+        
+        # Ore should go into ore hold (not regular cargo)
+        self.assertGreater(ore_hold.ore_hold_used, 500.0)
+        # Verify ore hold is being used
+        self.assertGreater(len(ore_hold.ore), 0)
+
+
 if __name__ == "__main__":
     unittest.main()

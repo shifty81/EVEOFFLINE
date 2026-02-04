@@ -567,13 +567,14 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Refining Skills** - Reprocessing and Reprocessing Efficiency
 - [x] **Skill-Based Yields** - Up to +50% from skills
 - [x] **Module Bonuses** - Mining Laser Upgrades with stacking penalties
-- [x] **Comprehensive Testing** - 25 tests, 100% pass rate
+- [x] **Mining Barges** - Procurer, Retriever, Covetor (3 ships)
+- [x] **3D Mining Barge Models** - Industrial design with 21 models (3 ships × 7 factions)
+- [x] **Comprehensive Testing** - 29 tests (25 mining + 4 barge), 100% pass rate
 - [x] **Complete Documentation** - PHASE7_MINING.md created
 
 **See [docs/development/PHASE7_MINING.md](docs/development/PHASE7_MINING.md) for complete mining documentation!**
 
 #### Mining & Resource Gathering (Optional Enhancements)
-- [ ] Mining barge ships (Procurer, Retriever, Covetor)
 - [ ] Exhumer ships (Skiff, Mackinaw, Hulk)
 - [ ] Ice mining mechanics
 - [ ] Gas harvesting
@@ -715,8 +716,8 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 ## Success Metrics
 
 ### Current Achievement
-- ✅ **91+ test functions** - All passing across 7 test suites
-- ✅ **46 ships** - Tech I and Tech II across all classes (Frigates to Battleships)
+- ✅ **95+ test functions** - All passing across 8 test suites
+- ✅ **49 ships** - Tech I, Tech II, and Mining Barges across all classes
 - ✅ **70 modules** - Full fitting options
 - ✅ **47 skills** - Complete skill tree
 - ✅ **8 major gameplay systems** - Manufacturing, Market, Exploration, Loot, Fleet, Corporation, Social, Contracts
@@ -725,22 +726,22 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - ✅ **Corporation system functional** - Full corp management
 - ✅ **Social features working** - Corp chat, mail, contacts, contracts
 - ✅ **3D client functional** - Panda3D-based 3D client with full networking
-- ✅ **322 procedural ship models** - Faction-specific designs (46 ships × 7 factions)
+- ✅ **343 procedural ship models** - Faction-specific designs (49 ships × 7 factions)
 - ✅ **60+ FPS performance** - Achieved with LOD and culling
 - ✅ **Advanced particle effects** - 5 effect types, 1000+ particles
 - ✅ **Asset Pipeline** - Import external 3D models (.obj, .gltf, .fbx)
 - ✅ **PBR Materials** - Physically-based rendering with metallic/roughness
 - ✅ **Audio System** - Sound effects and music with 3D positioning
 - ✅ **Tech II Cruisers** - HAC, HIC, Recon, Logistics (20 ships)
-- ✅ **Phase 7 Mining System** - Complete mining & resource gathering
+- ✅ **Phase 7 Mining System** - Complete mining & resource gathering with barges
 
 ### Phase 7 Goals (IN PROGRESS)
 - [x] **Mining & Resource Gathering** - Core system complete ✅
 - [x] **15 ore types** with complete mineral data ✅
 - [x] **Mining skills** (8 new skills) ✅
 - [x] **Ore reprocessing** with efficiency system ✅
-- [x] **25 mining tests** (100% pass rate) ✅
-- [ ] Mining barge ships (optional)
+- [x] **29 mining tests** (100% pass rate) ✅
+- [x] **Mining barge ships** - Procurer, Retriever, Covetor ✅
 - [ ] Other Phase 7 systems (PI, R&D, WH space, etc.)
 
 ---
