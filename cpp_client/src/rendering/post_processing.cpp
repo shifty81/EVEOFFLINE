@@ -236,16 +236,30 @@ void PostProcessing::process(GLuint inputTexture, GLuint outputFBO) {
     }
     
     // Apply HDR tone mapping and output to screen/target
-    if (m_hdrEnabled) {
+    // Note: This system requires HDR to be enabled
+    // If HDR is disabled, the system will still apply tone mapping but with exposure=1.0
+    if (m_hdrEnabled || m_bloomEnabled) {
         toneMap(inputTexture, bloomTexture, outputFBO);
     } else {
-        // Simple copy if HDR disabled
+        // Simple pass-through when all effects disabled
+        // Bind output and copy input texture directly
         glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
-        // TODO: Use simple blit shader
-        // For now, just indicate this path isn't implemented
-        std::cerr << "Warning: Non-HDR path not fully implemented" << std::endl;
+        // Use tone map shader but with neutral settings
+        g_toneMapShader->use();
+        g_toneMapShader->setInt("hdrTexture", 0);
+        g_toneMapShader->setBool("useBloom", false);
+        g_toneMapShader->setFloat("exposure", 1.0f);
+        g_toneMapShader->setFloat("gamma", 1.0f);  // No gamma correction
+        g_toneMapShader->setInt("toneMapMode", 0);  // Reinhard (simplest)
+        
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, inputTexture);
+        
+        renderQuad();
+        
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 }
 
@@ -301,33 +315,48 @@ GLuint PostProcessing::applyBloom(GLuint inputTexture) {
     // 1. Extract bright pixels
     GLuint brightTexture = brightPass(inputTexture);
     
-    // 2. Downsample to create mip chain
+    // 2. Downsample and blur each mip level
     GLuint currentTexture = brightTexture;
     for (size_t i = 0; i < m_mipBuffers.size(); i++) {
+        // Downsample to this mip level
         downsample(currentTexture, m_mipBuffers[i].get());
-        currentTexture = m_mipBuffers[i]->getTexture();
         
-        // Blur this mip level
-        GLuint blurredH = gaussianBlur(currentTexture, true);
+        // Blur this mip level (horizontal then vertical)
+        GLuint blurredH = gaussianBlur(m_mipBuffers[i]->getTexture(), true);
         GLuint blurredV = gaussianBlur(blurredH, false);
         
-        // Store back (blurredV is in blur buffer, we need to copy to mip buffer)
-        // For simplicity, we'll use the blurred result directly in next steps
+        // Copy blurred result back to mip buffer for next iteration
+        // The blurred result is in blur buffer, we'll use it directly in upsampling
+        // For the cascade, we store the blur buffer result
+        if (i < m_mipBuffers.size() - 1) {
+            // For intermediate levels, copy blur result to mip buffer
+            m_mipBuffers[i]->bind();
+            g_downsampleShader->use();  // Reuse downsample shader as simple copy
+            g_downsampleShader->setInt("inputTexture", 0);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, blurredV);
+            renderQuad();
+            m_mipBuffers[i]->unbind();
+        }
+        
+        currentTexture = m_mipBuffers[i]->getTexture();
     }
     
     // 3. Upsample and combine with additive blending
+    // Start from smallest mip and work upward
     GLuint result = m_mipBuffers[m_mipBuffers.size() - 1]->getTexture();
     
     for (int i = m_mipBuffers.size() - 2; i >= 0; i--) {
         // Bind target buffer
         m_blurBuffers[0]->bind();
         
-        // Enable additive blending
+        // Clear and enable additive blending
+        glClear(GL_COLOR_BUFFER_BIT);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         glBlendEquation(GL_FUNC_ADD);
         
-        // Upsample current result
+        // First, upsample the current result
         g_upsampleShader->use();
         g_upsampleShader->setInt("inputTexture", 0);
         g_upsampleShader->setFloat("filterRadius", 1.0f);
@@ -337,7 +366,7 @@ GLuint PostProcessing::applyBloom(GLuint inputTexture) {
         
         renderQuad();
         
-        // Add the current mip level
+        // Then add the current mip level
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_mipBuffers[i]->getTexture());
         
