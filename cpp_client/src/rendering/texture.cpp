@@ -1,5 +1,5 @@
 #include "rendering/texture.h"
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <iostream>
 #include <vector>
 

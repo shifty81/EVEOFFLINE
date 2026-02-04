@@ -1,4 +1,5 @@
 #include "rendering/window.h"
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <stdexcept>
@@ -47,6 +48,18 @@ Window::Window(const std::string& title, int width, int height)
 
     // Make OpenGL context current
     glfwMakeContextCurrent(m_window);
+    
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    GLenum glewError = glewInit();
+    if (glewError != GLEW_OK) {
+        glfwDestroyWindow(m_window);
+        glfwTerminate();
+        throw std::runtime_error(std::string("Failed to initialize GLEW: ") + 
+                                reinterpret_cast<const char*>(glewGetErrorString(glewError)));
+    }
+    
+    std::cout << "GLEW initialized successfully" << std::endl;
 
     // Enable VSync
     glfwSwapInterval(1);

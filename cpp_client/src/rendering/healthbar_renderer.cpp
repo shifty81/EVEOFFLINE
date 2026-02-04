@@ -1,6 +1,6 @@
 #include "rendering/healthbar_renderer.h"
 #include "rendering/shader.h"
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
