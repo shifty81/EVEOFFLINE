@@ -28,6 +28,30 @@ endif()
 find_package(Threads REQUIRED)
 find_package(OpenGL REQUIRED)
 
+# OpenAL (optional audio support)
+find_package(OpenAL QUIET)
+if(OpenAL_FOUND)
+    message(STATUS "OpenAL found - audio support enabled")
+    add_definitions(-DUSE_OPENAL)
+    set(AUDIO_SOURCES
+        src/audio/audio_manager.cpp
+        src/audio/audio_generator.cpp
+    )
+    set(AUDIO_HEADERS
+        include/audio/audio_manager.h
+        include/audio/audio_generator.h
+    )
+else()
+    message(STATUS "OpenAL not found - audio support disabled")
+    set(AUDIO_SOURCES "")
+    set(AUDIO_HEADERS "")
+endif()
+
+# GLEW (OpenGL extension wrangler)
+if(USE_SYSTEM_LIBS)
+    find_package(GLEW REQUIRED)
+endif()
+
 # GLFW
 if(USE_SYSTEM_LIBS)
     find_package(glfw3 3.3 REQUIRED)
@@ -75,6 +99,16 @@ endif()
 # STB (header-only image loading library)
 include_directories(external/stb)
 
+# ImGui (UI library)
+set(IMGUI_SOURCES
+    external/imgui/imgui.cpp
+    external/imgui/imgui_draw.cpp
+    external/imgui/imgui_widgets.cpp
+    external/imgui/imgui_tables.cpp
+    external/imgui/imgui_impl_glfw.cpp
+    external/imgui/imgui_impl_opengl3.cpp
+)
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -113,7 +147,11 @@ set(CLIENT_SOURCES
     src/network/protocol_handler.cpp
     src/ui/hud.cpp
     src/ui/input_handler.cpp
+    src/ui/ui_manager.cpp
+    src/ui/eve_panels.cpp
     ${GLAD_SOURCES}
+    ${IMGUI_SOURCES}
+    ${AUDIO_SOURCES}
 )
 
 set(CLIENT_HEADERS
@@ -144,6 +182,9 @@ set(CLIENT_HEADERS
     include/network/protocol_handler.h
     include/ui/hud.h
     include/ui/input_handler.h
+    include/ui/ui_manager.h
+    include/ui/eve_panels.h
+    ${AUDIO_HEADERS}
 )
 
 # Main executable
@@ -153,8 +194,15 @@ add_executable(eve_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
 target_link_libraries(eve_client 
     Threads::Threads
     OpenGL::GL
+    GLEW::GLEW
     glfw
 )
+
+# Link OpenAL if available
+if(OpenAL_FOUND)
+    target_link_libraries(eve_client ${OPENAL_LIBRARY})
+    target_include_directories(eve_client PRIVATE ${OPENAL_INCLUDE_DIR})
+endif()
 
 # Platform-specific libraries
 if(WIN32)
@@ -230,12 +278,16 @@ if(BUILD_TESTS)
         src/rendering/model.cpp
         src/rendering/lighting.cpp
         src/ui/input_handler.cpp
+        src/ui/ui_manager.cpp
+        src/ui/eve_panels.cpp
         ${GLAD_SOURCES}
+        ${IMGUI_SOURCES}
     )
     
     target_link_libraries(test_lighting
         Threads::Threads
         OpenGL::GL
+        GLEW::GLEW
         glfw
     )
     
@@ -304,6 +356,29 @@ if(BUILD_TESTS)
         target_link_libraries(test_deferred_rendering "-framework Cocoa -framework IOKit -framework CoreVideo")
     endif()
     
+    # Test: UI System
+    add_executable(test_ui_system
+        test_ui_system.cpp
+        src/rendering/window.cpp
+        src/ui/ui_manager.cpp
+        src/ui/eve_panels.cpp
+        ${IMGUI_SOURCES}
+    )
+    target_link_libraries(test_ui_system
+        Threads::Threads
+        OpenGL::GL
+        GLEW::GLEW
+        glfw
+    )
+    if(WIN32)
+        target_link_libraries(test_ui_system ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_ui_system dl X11)
+    elseif(APPLE)
+        target_link_libraries(test_ui_system dl)
+        target_link_libraries(test_ui_system "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
+    
     # Test: Post-Processing Effects
     add_executable(test_post_processing
         test_post_processing.cpp
@@ -326,6 +401,27 @@ if(BUILD_TESTS)
     elseif(APPLE)
         target_link_libraries(test_post_processing dl)
         target_link_libraries(test_post_processing "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
+    
+    # Test: Audio System (if OpenAL is available)
+    if(OpenAL_FOUND)
+        add_executable(test_audio_system
+            test_audio_system.cpp
+            ${AUDIO_SOURCES}
+        )
+        target_link_libraries(test_audio_system
+            Threads::Threads
+            ${OPENAL_LIBRARY}
+        )
+        target_include_directories(test_audio_system PRIVATE ${OPENAL_INCLUDE_DIR})
+        
+        if(WIN32)
+            target_link_libraries(test_audio_system ws2_32)
+        elseif(UNIX AND NOT APPLE)
+            target_link_libraries(test_audio_system dl)
+        elseif(APPLE)
+            target_link_libraries(test_audio_system dl)
+        endif()
     endif()
 endif()
 

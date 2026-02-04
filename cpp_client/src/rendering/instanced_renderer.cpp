@@ -1,7 +1,7 @@
 #include "rendering/instanced_renderer.h"
 #include "rendering/mesh.h"
 #include "rendering/shader.h"
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <iostream>
 
 namespace eve {

@@ -1,5 +1,5 @@
 #include "rendering/mesh.h"
-#include <glad/glad.h>
+#include <GL/glew.h>
 
 namespace eve {
 

@@ -1,7 +1,7 @@
 #include "rendering/visual_effects.h"
 #include "rendering/particle_system.h"
 #include "rendering/shader.h"
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <algorithm>

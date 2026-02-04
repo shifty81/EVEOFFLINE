@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <memory>
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -17,12 +16,14 @@
 #include "rendering/mesh.h"
 #include "rendering/model.h"
 #include "ui/input_handler.h"
+#include "ui/ui_manager.h"
 
 // Window dimensions
 const int WINDOW_WIDTH = 1280;
 const int WINDOW_HEIGHT = 720;
 
 // Camera settings
+using namespace eve;
 Camera camera;
 InputHandler inputHandler;
 
@@ -82,12 +83,6 @@ int main() {
     glfwSetScrollCallback(window.getHandle(), scrollCallback);
     glfwSetKeyCallback(window.getHandle(), keyCallback);
     
-    // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-    
     // OpenGL settings
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
@@ -107,6 +102,47 @@ int main() {
     
     // Create light manager
     auto lightManager = std::make_unique<Lighting::LightManager>();
+    
+    // Initialize UI Manager
+    auto uiManager = std::make_unique<UI::UIManager>();
+    if (!uiManager->Initialize(window.getHandle())) {
+        std::cerr << "Failed to initialize UI Manager" << std::endl;
+        return -1;
+    }
+    
+    // Setup initial ship status with demo values
+    UI::ShipStatus shipStatus;
+    shipStatus.shields = 85.0f;
+    shipStatus.shields_max = 100.0f;
+    shipStatus.armor = 65.0f;
+    shipStatus.armor_max = 100.0f;
+    shipStatus.hull = 95.0f;
+    shipStatus.hull_max = 100.0f;
+    shipStatus.capacitor = 70.0f;
+    shipStatus.capacitor_max = 100.0f;
+    shipStatus.velocity = 45.5f;
+    shipStatus.max_velocity = 120.0f;
+    uiManager->SetShipStatus(shipStatus);
+    
+    // Setup target info
+    UI::TargetInfo targetInfo;
+    targetInfo.name = "Hostile Frigate";
+    targetInfo.shields = 30.0f;
+    targetInfo.shields_max = 100.0f;
+    targetInfo.armor = 50.0f;
+    targetInfo.armor_max = 100.0f;
+    targetInfo.hull = 80.0f;
+    targetInfo.hull_max = 100.0f;
+    targetInfo.distance = 2450.0f;
+    targetInfo.is_hostile = true;
+    targetInfo.is_locked = true;
+    uiManager->SetTargetInfo(targetInfo);
+    
+    // Add some combat log messages
+    uiManager->AddCombatLogMessage("[12:34:56] Locked target: Hostile Frigate");
+    uiManager->AddCombatLogMessage("[12:34:58] Activated weapons");
+    uiManager->AddCombatLogMessage("[12:35:00] Hit! 250 damage dealt");
+    uiManager->AddCombatLogMessage("[12:35:02] Target shields depleted");
     
     // Test 1: EVE-style lighting (3 directional lights)
     std::cout << "\n=== Test 1: EVE-Style Lighting ===" << std::endl;
@@ -297,9 +333,26 @@ int main() {
             testObjects[i]->draw();
         }
         
+        // Render UI on top
+        uiManager->BeginFrame();
+        uiManager->Render();
+        uiManager->EndFrame();
+        
+        // Animate ship values for demo (slowly change shields)
+        shipStatus.shields = 50.0f + 50.0f * std::sin(currentTime * 0.5f);
+        shipStatus.velocity = 45.5f + 20.0f * std::sin(currentTime * 0.3f);
+        uiManager->SetShipStatus(shipStatus);
+        
+        // Animate target health
+        targetInfo.shields = 30.0f * std::max(0.0f, std::sin(currentTime * 0.4f));
+        uiManager->SetTargetInfo(targetInfo);
+        
         // Swap buffers
         window.swapBuffers();
     }
+    
+    // Cleanup UI
+    uiManager->Shutdown();
     
     std::cout << "\n=== Test Complete ===" << std::endl;
     
