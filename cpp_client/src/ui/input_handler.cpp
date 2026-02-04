@@ -21,7 +21,12 @@ void InputHandler::handleMouse(double xpos, double ypos) {
         m_lastMouseX = xpos;
         m_lastMouseY = ypos;
         m_firstMouse = false;
+        return;
     }
+    
+    // Calculate delta for future use
+    double deltaX = xpos - m_lastMouseX;
+    double deltaY = ypos - m_lastMouseY;
     
     m_lastMouseX = xpos;
     m_lastMouseY = ypos;

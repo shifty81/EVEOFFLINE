@@ -10,6 +10,7 @@ class Window;
 class GameClient;
 class Renderer;
 class InputHandler;
+class Camera;
 
 /**
  * Main application class
@@ -51,6 +52,7 @@ private:
     std::unique_ptr<GameClient> m_gameClient;
     std::unique_ptr<Renderer> m_renderer;
     std::unique_ptr<InputHandler> m_inputHandler;
+    std::unique_ptr<Camera> m_camera;
 
     bool m_running;
     float m_lastFrameTime;

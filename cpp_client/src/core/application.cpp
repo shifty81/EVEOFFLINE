@@ -29,6 +29,7 @@ Application::Application(const std::string& title, int width, int height)
     m_renderer = std::make_unique<Renderer>();
     m_gameClient = std::make_unique<GameClient>();
     m_inputHandler = std::make_unique<InputHandler>();
+    m_camera = std::make_unique<Camera>(45.0f, static_cast<float>(width) / height, 0.1f, 10000.0f);
     
     // Initialize
     initialize();
@@ -117,13 +118,12 @@ void Application::render() {
     // Begin rendering
     m_renderer->beginFrame();
     
-    // Create a camera for rendering
-    static Camera camera(45.0f, m_window->getAspectRatio(), 0.1f, 10000.0f);
-    camera.setAspectRatio(m_window->getAspectRatio());
-    camera.update(0.016f);
+    // Update camera aspect ratio
+    m_camera->setAspectRatio(m_window->getAspectRatio());
+    m_camera->update(0.016f);
     
     // Render scene
-    m_renderer->renderScene(camera);
+    m_renderer->renderScene(*m_camera);
     
     // End rendering
     m_renderer->endFrame();

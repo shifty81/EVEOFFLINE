@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 namespace eve {
 
@@ -109,9 +110,11 @@ bool Shader::compileShader(const std::string& source, unsigned int type, unsigne
     int success;
     glGetShaderiv(shaderId, GL_COMPILE_STATUS, &success);
     if (!success) {
-        char infoLog[512];
-        glGetShaderInfoLog(shaderId, 512, nullptr, infoLog);
-        std::cerr << "Shader compilation error: " << infoLog << std::endl;
+        int logLength;
+        glGetShaderiv(shaderId, GL_INFO_LOG_LENGTH, &logLength);
+        std::vector<char> infoLog(logLength);
+        glGetShaderInfoLog(shaderId, logLength, nullptr, infoLog.data());
+        std::cerr << "Shader compilation error: " << infoLog.data() << std::endl;
         return false;
     }
     
@@ -128,9 +131,11 @@ bool Shader::linkProgram(unsigned int vertexShader, unsigned int fragmentShader)
     int success;
     glGetProgramiv(m_programID, GL_LINK_STATUS, &success);
     if (!success) {
-        char infoLog[512];
-        glGetProgramInfoLog(m_programID, 512, nullptr, infoLog);
-        std::cerr << "Shader program linking error: " << infoLog << std::endl;
+        int logLength;
+        glGetProgramiv(m_programID, GL_INFO_LOG_LENGTH, &logLength);
+        std::vector<char> infoLog(logLength);
+        glGetProgramInfoLog(m_programID, logLength, nullptr, infoLog.data());
+        std::cerr << "Shader program linking error: " << infoLog.data() << std::endl;
         m_programID = 0;
         return false;
     }
