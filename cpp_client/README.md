@@ -13,7 +13,7 @@ This is a cross-platform 3D client built with:
 
 ## Features
 
-### Current Status: 🚀 Phase 2 - Advanced Rendering (In Progress)
+### Current Status: 🚀 Phase 3 - Shadow Mapping & Post-Processing (In Progress)
 
 **Phase 1: Core Rendering (Complete) ✅**
 - [x] Project structure created
@@ -33,7 +33,7 @@ This is a cross-platform 3D client built with:
 - [x] Instanced rendering
 - [x] Texture loading (STB_image)
 
-**Phase 2: Advanced Rendering (In Progress) 🔨**
+**Phase 2: Advanced Rendering (Complete) ✅**
 - [x] Asteroid field rendering
   - Procedural icosphere-based meshes
   - 4 asteroid sizes (SMALL, MEDIUM, LARGE, HUGE)
@@ -44,10 +44,21 @@ This is a cross-platform 3D client built with:
   - Up to 16 lights total
   - EVE-style preset lighting
   - Real-time light management
-- [ ] Shadow mapping
-- [ ] Deferred rendering pipeline
 
-**Phase 3+: Gameplay Integration (Planned)**
+**Phase 3: Shadow Mapping & Post-Processing (In Progress) 🔨**
+- [x] Shadow mapping for directional lights
+  - ShadowMap class with configurable resolution (2048x2048)
+  - Depth texture framebuffer management
+  - Light space matrix calculation
+  - PCF (Percentage Closer Filtering) for soft shadows
+  - Shadow bias for preventing shadow acne
+  - Enhanced shaders (multi_light_shadow.vert/frag)
+- [ ] Deferred rendering pipeline
+- [ ] Post-processing effects (bloom, HDR)
+- [ ] UI system integration
+- [ ] Audio system (OpenAL)
+
+**Phase 4+: Gameplay Integration (Planned)**
 - [ ] Network client integration
 - [ ] Entity state synchronization
 - [ ] HUD/UI system
