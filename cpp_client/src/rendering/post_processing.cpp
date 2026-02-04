@@ -6,11 +6,11 @@
 namespace Rendering {
 
 // Static shader storage
-static std::unique_ptr<Shader> g_brightPassShader;
-static std::unique_ptr<Shader> g_blurShader;
-static std::unique_ptr<Shader> g_downsampleShader;
-static std::unique_ptr<Shader> g_upsampleShader;
-static std::unique_ptr<Shader> g_toneMapShader;
+static std::unique_ptr<eve::Shader> g_brightPassShader;
+static std::unique_ptr<eve::Shader> g_blurShader;
+static std::unique_ptr<eve::Shader> g_downsampleShader;
+static std::unique_ptr<eve::Shader> g_upsampleShader;
+static std::unique_ptr<eve::Shader> g_toneMapShader;
 
 // =============================================================================
 // PostProcessingBuffer Implementation
@@ -127,29 +127,33 @@ bool PostProcessing::initialize() {
     setupQuad();
     
     // Load shaders
-    try {
-        g_brightPassShader = std::make_unique<Shader>(
-            "shaders/post_processing.vert",
-            "shaders/bright_pass.frag"
-        );
-        g_blurShader = std::make_unique<Shader>(
-            "shaders/post_processing.vert",
-            "shaders/gaussian_blur.frag"
-        );
-        g_downsampleShader = std::make_unique<Shader>(
-            "shaders/post_processing.vert",
-            "shaders/downsample.frag"
-        );
-        g_upsampleShader = std::make_unique<Shader>(
-            "shaders/post_processing.vert",
-            "shaders/upsample.frag"
-        );
-        g_toneMapShader = std::make_unique<Shader>(
-            "shaders/post_processing.vert",
-            "shaders/tone_mapping.frag"
-        );
-    } catch (const std::exception& e) {
-        std::cerr << "Failed to load post-processing shaders: " << e.what() << std::endl;
+    g_brightPassShader = std::make_unique<eve::Shader>();
+    if (!g_brightPassShader->loadFromFiles("shaders/post_processing.vert", "shaders/bright_pass.frag")) {
+        std::cerr << "Failed to load bright pass shader" << std::endl;
+        return false;
+    }
+    
+    g_blurShader = std::make_unique<eve::Shader>();
+    if (!g_blurShader->loadFromFiles("shaders/post_processing.vert", "shaders/gaussian_blur.frag")) {
+        std::cerr << "Failed to load blur shader" << std::endl;
+        return false;
+    }
+    
+    g_downsampleShader = std::make_unique<eve::Shader>();
+    if (!g_downsampleShader->loadFromFiles("shaders/post_processing.vert", "shaders/downsample.frag")) {
+        std::cerr << "Failed to load downsample shader" << std::endl;
+        return false;
+    }
+    
+    g_upsampleShader = std::make_unique<eve::Shader>();
+    if (!g_upsampleShader->loadFromFiles("shaders/post_processing.vert", "shaders/upsample.frag")) {
+        std::cerr << "Failed to load upsample shader" << std::endl;
+        return false;
+    }
+    
+    g_toneMapShader = std::make_unique<eve::Shader>();
+    if (!g_toneMapShader->loadFromFiles("shaders/post_processing.vert", "shaders/tone_mapping.frag")) {
+        std::cerr << "Failed to load tone mapping shader" << std::endl;
         return false;
     }
     

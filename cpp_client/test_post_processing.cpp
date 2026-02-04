@@ -30,10 +30,7 @@ const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
 // Camera
-Camera camera(glm::vec3(0.0f, 5.0f, 15.0f));
-float lastX = SCR_WIDTH / 2.0f;
-float lastY = SCR_HEIGHT / 2.0f;
-bool firstMouse = true;
+std::unique_ptr<eve::Camera> camera;
 
 // Timing
 float deltaTime = 0.0f;
@@ -52,9 +49,6 @@ struct Settings {
 
 // Function declarations
 void processInput(GLFWwindow* window);
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-void renderScene(Shader& shader, const std::vector<std::unique_ptr<Mesh>>& cubes);
 void renderCube();
 void printControls();
 
@@ -70,10 +64,10 @@ int main() {
         return -1;
     }
     
-    // Set callbacks
-    glfwSetCursorPosCallback(window.getWindow(), mouse_callback);
-    glfwSetScrollCallback(window.getWindow(), scroll_callback);
-    glfwSetInputMode(window.getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    // Create camera
+    camera = std::make_unique<eve::Camera>(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT);
+    camera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
+    camera->zoom(-20.0f);  // Move camera back
     
     // OpenGL configuration
     glEnable(GL_DEPTH_TEST);
@@ -165,11 +159,11 @@ int main() {
         lightingShader.use();
         
         // Set view/projection
-        glm::mat4 projection = camera.getProjectionMatrix((float)SCR_WIDTH / (float)SCR_HEIGHT);
-        glm::mat4 view = camera.getViewMatrix();
+        glm::mat4 projection = camera->getProjectionMatrix();
+        glm::mat4 view = camera->getViewMatrix();
         lightingShader.setMat4("projection", projection);
         lightingShader.setMat4("view", view);
-        lightingShader.setVec3("viewPos", camera.getPosition());
+        lightingShader.setVec3("viewPos", camera->getPosition());
         
         // Upload lights
         lightManager.uploadToShader(&lightingShader);
@@ -235,16 +229,6 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
     
-    // Camera movement
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.processKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.processKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.processKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.processKeyboard(RIGHT, deltaTime);
-    
     // Bloom toggle
     static bool bKeyPressed = false;
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS && !bKeyPressed) {
@@ -275,25 +259,6 @@ void processInput(GLFWwindow* window) {
         settings.bloomThreshold += 0.5f * deltaTime;
         if (settings.bloomThreshold > 5.0f) settings.bloomThreshold = 5.0f;
     }
-}
-
-void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
-    if (firstMouse) {
-        lastX = xpos;
-        lastY = ypos;
-        firstMouse = false;
-    }
-    
-    float xoffset = xpos - lastX;
-    float yoffset = lastY - ypos;
-    lastX = xpos;
-    lastY = ypos;
-    
-    camera.processMouseMovement(xoffset, yoffset);
-}
-
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    camera.processMouseScroll(yoffset);
 }
 
 void renderCube() {
@@ -365,8 +330,6 @@ void renderCube() {
 
 void printControls() {
     std::cout << "\n=== Post-Processing Test Controls ===" << std::endl;
-    std::cout << "WASD - Move camera" << std::endl;
-    std::cout << "Mouse - Look around" << std::endl;
     std::cout << "B - Toggle bloom effect" << std::endl;
     std::cout << "Q/E - Decrease/Increase exposure" << std::endl;
     std::cout << "Z/X - Decrease/Increase bloom threshold" << std::endl;
