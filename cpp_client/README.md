@@ -53,7 +53,12 @@ This is a cross-platform 3D client built with:
   - PCF (Percentage Closer Filtering) for soft shadows
   - Shadow bias for preventing shadow acne
   - Enhanced shaders (multi_light_shadow.vert/frag)
-- [ ] Deferred rendering pipeline
+- [x] Deferred rendering pipeline ✅
+  - GBuffer class with 3 color attachments + depth
+  - Two-pass rendering (geometry + lighting)
+  - Efficient multi-light support: O(lights) instead of O(lights × objects)
+  - Full integration with existing LightManager
+  - Complete documentation (DEFERRED_RENDERING.md)
 - [ ] Post-processing effects (bloom, HDR)
 - [ ] UI system integration
 - [ ] Audio system (OpenAL)
