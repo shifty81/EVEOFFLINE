@@ -54,7 +54,7 @@ private:
     void receiveThread();
 
 #ifdef _WIN32
-    void* m_socket; // SOCKET on Windows
+    void* m_socket; // SOCKET on Windows (stored as void* to avoid including winsock2.h in header)
 #else
     int m_socket;
 #endif

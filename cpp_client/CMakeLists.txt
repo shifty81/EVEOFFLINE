@@ -145,6 +145,7 @@ set(CLIENT_SOURCES
     src/rendering/post_processing.cpp
     src/network/tcp_client.cpp
     src/network/protocol_handler.cpp
+    src/network/network_manager.cpp
     src/ui/hud.cpp
     src/ui/input_handler.cpp
     src/ui/ui_manager.cpp
@@ -180,6 +181,7 @@ set(CLIENT_HEADERS
     include/rendering/post_processing.h
     include/network/tcp_client.h
     include/network/protocol_handler.h
+    include/network/network_manager.h
     include/ui/hud.h
     include/ui/input_handler.h
     include/ui/ui_manager.h
@@ -422,6 +424,24 @@ if(BUILD_TESTS)
         elseif(APPLE)
             target_link_libraries(test_audio_system dl)
         endif()
+    endif()
+    
+    # Test: Network System
+    add_executable(test_network
+        test_network.cpp
+        src/network/tcp_client.cpp
+        src/network/protocol_handler.cpp
+        src/network/network_manager.cpp
+    )
+    target_link_libraries(test_network
+        Threads::Threads
+    )
+    if(WIN32)
+        target_link_libraries(test_network ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_network)
+    elseif(APPLE)
+        target_link_libraries(test_network)
     endif()
 endif()
 
