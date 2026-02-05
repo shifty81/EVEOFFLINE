@@ -155,6 +155,29 @@ Only owners or corporation directors can unanchor structures. Unanchoring takes 
 structures = structure_system.get_structures_in_system("jita")
 ```
 
+### Structure Destruction
+
+```python
+# Destroy structure with loot dropping (combat scenario)
+structure_system.destroy_structure(
+    structure_entity_id=structure_id,
+    drop_loot=True  # Creates loot container with hangar contents
+)
+
+# Destroy structure without loot (safe unanchoring completion)
+structure_system.destroy_structure(
+    structure_entity_id=structure_id,
+    drop_loot=False  # Items are safely recovered, no loot dropped
+)
+```
+
+When `drop_loot=True`:
+- Creates a "secure" loot container at the structure's position (offset by 10 units)
+- Transfers all items from structure's hangar (Inventory component) to the container
+- Container is owned by the structure's owner corporation
+- Container despawns after 1 hour if not looted
+- ISK in structure wallet is not dropped (handled separately by corp wallet system)
+
 ## Lifecycle
 
 ### 1. Deployment
@@ -187,8 +210,24 @@ structures = structure_system.get_structures_in_system("jita")
 ### 6. Destruction
 - Structure takes damage beyond hull HP
 - Structure explodes
-- Hangar contents drop as loot
+- **Loot Dropping**:
+  - If structure has items in its hangar (Inventory component), a secure loot container is created
+  - Container type: "secure" (only owner corporation can access initially)
+  - Container position: Offset 10 units from structure location
+  - Container despawn time: 1 hour (3600 seconds)
+  - All hangar items are transferred to the container
+  - ISK is stored separately in corporation wallet (not dropped)
+  - Loot dropping can be disabled for safe unanchoring scenarios
 - Entity removed from world
+
+Example of destroying a structure with loot:
+```python
+# Destroy structure and drop loot (combat scenario)
+structure_system.destroy_structure(structure_id, drop_loot=True)
+
+# Destroy structure without dropping loot (safe unanchoring completion)
+structure_system.destroy_structure(structure_id, drop_loot=False)
+```
 
 ## Permissions
 

@@ -397,6 +397,106 @@ class TestStructureSystem(unittest.TestCase):
         self.assertEqual(structure_comp.fuel_bay["helium_isotopes"], 500)
         self.assertEqual(structure_comp.fuel_bay["nitrogen_isotopes"], 300)
         self.assertEqual(len(structure_comp.fuel_bay), 2)
+    
+    def test_destroy_structure_with_loot(self):
+        """Test destroying a structure with items in hangar drops loot"""
+        structure_id = self.structure_system.deploy_structure(self.player_id,
+            "astrahus",
+            "Loot Drop Test",
+            "jita",
+            100.0, 200.0, 300.0
+        )
+        
+        # Add inventory component with items to the structure
+        structure_entity = self.world.get_entity(structure_id)
+        inventory_comp = Inventory(cargo_capacity=100000.0)
+        inventory_comp.items = {
+            "tritanium": 10000,
+            "pyerite": 5000,
+            "megacyte": 100
+        }
+        structure_entity.add_component(inventory_comp)
+        
+        # Count entities before destruction
+        entities_before = len(self.world.entities)
+        
+        # Destroy structure with loot dropping enabled
+        self.structure_system.destroy_structure(structure_id, drop_loot=True)
+        
+        # Verify structure is gone
+        entity = self.world.get_entity(structure_id)
+        self.assertIsNone(entity)
+        
+        # Verify a new entity was created for the loot container
+        entities_after = len(self.world.entities)
+        # Should be same count (structure removed, container added)
+        self.assertEqual(entities_before, entities_after)
+        
+        # Find the loot container entity
+        from engine.systems.loot_system import LootContainers
+        loot_container_entity = None
+        for entity_id, entity in self.world.entities.items():
+            if entity.has_component(LootContainers):
+                loot_container_entity = entity
+                break
+        
+        # Verify loot container was created
+        self.assertIsNotNone(loot_container_entity, "Loot container should have been created")
+        
+        # Verify loot container has the right contents
+        loot_containers = loot_container_entity.get_component(LootContainers)
+        self.assertIsNotNone(loot_containers)
+        self.assertGreater(len(loot_containers.containers), 0)
+        
+        # Get the first container
+        container = list(loot_containers.containers.values())[0]
+        self.assertEqual(container.container_type, "secure")
+        self.assertEqual(container.owner_id, "test_corp")
+        
+        # Verify items are in the container
+        self.assertEqual(container.contents["tritanium"], 10000)
+        self.assertEqual(container.contents["pyerite"], 5000)
+        self.assertEqual(container.contents["megacyte"], 100)
+        
+        # Verify loot container has position near the structure
+        pos_comp = loot_container_entity.get_component(Position)
+        self.assertIsNotNone(pos_comp)
+        self.assertEqual(pos_comp.x, 110.0)  # Structure x (100) + offset (10)
+        self.assertEqual(pos_comp.y, 200.0)
+        self.assertEqual(pos_comp.z, 300.0)
+    
+    def test_destroy_structure_without_loot(self):
+        """Test destroying a structure with drop_loot=False does not create containers"""
+        structure_id = self.structure_system.deploy_structure(self.player_id,
+            "astrahus",
+            "No Loot Test",
+            "jita",
+            100.0, 200.0, 300.0
+        )
+        
+        # Add inventory component with items to the structure
+        structure_entity = self.world.get_entity(structure_id)
+        inventory_comp = Inventory(cargo_capacity=100000.0)
+        inventory_comp.items = {
+            "tritanium": 10000
+        }
+        structure_entity.add_component(inventory_comp)
+        
+        # Destroy structure with loot dropping disabled (safe unanchoring)
+        self.structure_system.destroy_structure(structure_id, drop_loot=False)
+        
+        # Verify structure is gone
+        entity = self.world.get_entity(structure_id)
+        self.assertIsNone(entity)
+        
+        # Verify no loot container was created
+        from engine.systems.loot_system import LootContainers
+        loot_container_count = 0
+        for entity_id, entity in self.world.entities.items():
+            if entity.has_component(LootContainers):
+                loot_container_count += 1
+        
+        self.assertEqual(loot_container_count, 0, "No loot container should be created when drop_loot=False")
 
 
 def run_tests():
