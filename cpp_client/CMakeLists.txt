@@ -124,6 +124,9 @@ set(CLIENT_SOURCES
     src/core/game_client.cpp
     src/core/embedded_server.cpp
     src/core/session_manager.cpp
+    src/core/entity.cpp
+    src/core/entity_manager.cpp
+    src/core/entity_message_parser.cpp
     src/rendering/window.cpp
     src/rendering/shader.cpp
     src/rendering/camera.cpp
@@ -160,6 +163,9 @@ set(CLIENT_HEADERS
     include/core/game_client.h
     include/core/embedded_server.h
     include/core/session_manager.h
+    include/core/entity.h
+    include/core/entity_manager.h
+    include/core/entity_message_parser.h
     include/rendering/window.h
     include/rendering/shader.h
     include/rendering/camera.h
@@ -442,6 +448,24 @@ if(BUILD_TESTS)
         target_link_libraries(test_network)
     elseif(APPLE)
         target_link_libraries(test_network)
+    endif()
+    
+    # Test: Entity Synchronization
+    add_executable(test_entity_sync
+        test_entity_sync.cpp
+        src/core/entity.cpp
+        src/core/entity_manager.cpp
+        src/core/entity_message_parser.cpp
+    )
+    target_link_libraries(test_entity_sync
+        Threads::Threads
+    )
+    if(WIN32)
+        target_link_libraries(test_entity_sync ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_entity_sync)
+    elseif(APPLE)
+        target_link_libraries(test_entity_sync)
     endif()
 endif()
 

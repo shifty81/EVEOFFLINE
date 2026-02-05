@@ -1,17 +1,16 @@
 #pragma once
 
+#include "core/entity_manager.h"
+#include "network/network_manager.h"
 #include <string>
 #include <memory>
 #include <functional>
 
 namespace eve {
 
-// Forward declarations
-class TCPClient;
-class ProtocolHandler;
-
 /**
  * Game client - manages connection to server and game state
+ * Integrates networking and entity management
  */
 class GameClient {
 public:
@@ -20,8 +19,11 @@ public:
 
     /**
      * Connect to game server
+     * @param host Server hostname or IP
+     * @param port Server port
+     * @param characterName Character name for login
      */
-    bool connect(const std::string& host, int port);
+    bool connect(const std::string& host, int port, const std::string& characterName);
 
     /**
      * Disconnect from server
@@ -35,28 +37,54 @@ public:
 
     /**
      * Update game state (call each frame)
+     * @param deltaTime Time since last frame in seconds
      */
     void update(float deltaTime);
 
     /**
-     * Send player input to server
+     * Send movement command to server
      */
-    void sendInput(const std::string& command);
+    void sendMove(float vx, float vy, float vz);
+
+    /**
+     * Send chat message to server
+     */
+    void sendChat(const std::string& message);
+
+    /**
+     * Get entity manager (for rendering integration)
+     */
+    EntityManager& getEntityManager() { return m_entityManager; }
+    const EntityManager& getEntityManager() const { return m_entityManager; }
 
     /**
      * Get player entity ID
      */
-    uint32_t getPlayerEntityId() const { return m_playerEntityId; }
+    const std::string& getPlayerEntityId() const { return m_playerEntityId; }
+
+    /**
+     * Set callbacks for entity events
+     */
+    void setOnEntitySpawned(EntityManager::EntityCallback callback) {
+        m_entityManager.setOnEntitySpawned(callback);
+    }
+    
+    void setOnEntityDestroyed(EntityManager::EntityCallback callback) {
+        m_entityManager.setOnEntityDestroyed(callback);
+    }
 
 private:
-    void handleServerMessage(const std::string& message);
+    void setupMessageHandlers();
+    void handleSpawnEntity(const std::string& dataJson);
+    void handleDestroyEntity(const std::string& dataJson);
+    void handleStateUpdate(const std::string& dataJson);
+    void handleConnectAck(const std::string& dataJson);
 
-    std::unique_ptr<TCPClient> m_client;
-    std::unique_ptr<ProtocolHandler> m_protocolHandler;
+    NetworkManager m_networkManager;
+    EntityManager m_entityManager;
 
-    uint32_t m_playerEntityId;
+    std::string m_playerEntityId;
     std::string m_characterName;
-    bool m_connected;
 };
 
 } // namespace eve
