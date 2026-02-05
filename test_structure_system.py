@@ -461,9 +461,9 @@ class TestStructureSystem(unittest.TestCase):
         # Verify loot container has position near the structure
         pos_comp = loot_container_entity.get_component(Position)
         self.assertIsNotNone(pos_comp)
-        self.assertAlmostEqual(pos_comp.x, 110.0, places=0)  # Structure x + 10
-        self.assertAlmostEqual(pos_comp.y, 200.0, places=0)
-        self.assertAlmostEqual(pos_comp.z, 300.0, places=0)
+        self.assertEqual(pos_comp.x, 110.0)  # Structure x (100) + offset (10)
+        self.assertEqual(pos_comp.y, 200.0)
+        self.assertEqual(pos_comp.z, 300.0)
     
     def test_destroy_structure_without_loot(self):
         """Test destroying a structure with drop_loot=False does not create containers"""

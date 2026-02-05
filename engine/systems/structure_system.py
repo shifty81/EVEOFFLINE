@@ -454,7 +454,7 @@ class StructureSystem:
                 loot_table_id="structure_wreck",  # Would need to create this table
                 container_type="secure",
                 owner_id=structure_comp.owner_corporation_id,
-                current_time=time.time()
+                current_time=time.time()  # Use module-level time import
             )
             
             if container_id:
