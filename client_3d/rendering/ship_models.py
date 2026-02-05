@@ -85,6 +85,8 @@ class ShipModelGenerator:
             model = self._create_frigate_model(faction)
         elif self._is_destroyer(ship_type):
             model = self._create_destroyer_model(faction)
+        elif self._is_exhumer(ship_type):
+            model = self._create_exhumer_model(faction)
         elif self._is_mining_barge(ship_type):
             model = self._create_mining_barge_model(faction)
         elif self._is_tech2_cruiser(ship_type):
@@ -158,6 +160,11 @@ class ShipModelGenerator:
         """Check if ship is a mining barge class"""
         mining_barge_names = ['Mining Barge', 'Procurer', 'Retriever', 'Covetor']
         return any(name in ship_type for name in mining_barge_names)
+    
+    def _is_exhumer(self, ship_type: str) -> bool:
+        """Check if ship is an exhumer class (Tech II mining barge)"""
+        exhumer_names = ['Exhumer', 'Skiff', 'Mackinaw', 'Hulk']
+        return any(name in ship_type for name in exhumer_names)
     
     def _get_faction_colors(self, faction: str) -> dict:
         """Get color scheme for a faction"""
@@ -615,6 +622,123 @@ class ShipModelGenerator:
             )
             strut.setPos(side * 2.5, 0, 2.5)
             strut.reparentTo(root)
+        
+        return root
+    
+    def _create_exhumer_model(self, faction: str) -> NodePath:
+        """
+        Create an exhumer-class ship model (Tech II mining barge)
+        Enhanced industrial ships with advanced mining capabilities
+        More refined and technologically advanced than basic mining barges
+        """
+        colors = self._get_faction_colors(faction)
+        # Use ORE colors with Tech II styling
+        if faction == 'ORE' or faction not in self.FACTION_COLORS:
+            colors = {
+                'primary': Vec4(0.5, 0.45, 0.35, 1.0),  # Darker industrial
+                'secondary': Vec4(0.3, 0.25, 0.2, 1.0),  # Tech II dark
+                'accent': Vec4(0.9, 0.8, 0.5, 1.0)  # Bright tech highlights
+            }
+        
+        root = NodePath(f"exhumer_{faction}")
+        
+        # Main hull - refined industrial design (larger than mining barge)
+        hull = self._create_box(
+            width=6.0, length=10.0, height=4.5,
+            color=colors['primary']
+        )
+        hull.reparentTo(root)
+        
+        # Advanced ore processing unit (larger, more prominent)
+        ore_processor = self._create_box(
+            width=6.5, length=6.0, height=4.0,
+            color=colors['secondary']
+        )
+        ore_processor.setPos(0, 4.0, 0.7)
+        ore_processor.reparentTo(root)
+        
+        # Tech II mining equipment bay (sleeker design)
+        tech_mining_bay = self._create_box(
+            width=5.0, length=4.0, height=2.5,
+            color=colors['accent']
+        )
+        tech_mining_bay.setPos(0, 4.0, -2.8)
+        tech_mining_bay.reparentTo(root)
+        
+        # Advanced mining laser arrays (3 hardpoints, more refined)
+        for i, x_pos in enumerate([-2.0, 0, 2.0]):
+            # Laser turret housing
+            turret_base = self._create_cylinder(
+                radius=0.6, length=0.8,
+                color=colors['secondary']
+            )
+            turret_base.setPos(x_pos, 6.0, -1.8)
+            turret_base.setHpr(0, 0, 90)
+            turret_base.reparentTo(root)
+            
+            # Laser barrel
+            laser_barrel = self._create_cylinder(
+                radius=0.35, length=2.5,
+                color=colors['accent']
+            )
+            laser_barrel.setPos(x_pos, 7.0, -1.8)
+            laser_barrel.setHpr(0, 90, 0)
+            laser_barrel.reparentTo(root)
+        
+        # Enhanced command bridge (larger, more prominent)
+        bridge = self._create_box(
+            width=2.5, length=3.0, height=2.5,
+            color=colors['accent']
+        )
+        bridge.setPos(0, 1.5, 3.5)
+        bridge.reparentTo(root)
+        
+        # Sensor arrays (Tech II feature)
+        for side in [-1, 1]:
+            sensor = self._create_cylinder(
+                radius=0.4, length=1.5,
+                color=colors['accent']
+            )
+            sensor.setPos(side * 2.5, 2.0, 4.0)
+            sensor.setHpr(0, 45, 0)
+            sensor.reparentTo(root)
+        
+        # Tech II engine array (3 engines for more power)
+        engine_positions = [(-2.2, -4.5, 0), (0, -5.0, 0.5), (2.2, -4.5, 0)]
+        for x, y, z in engine_positions:
+            engine = self._create_cylinder(
+                radius=1.3, length=3.5,
+                color=colors['secondary']
+            )
+            engine.setPos(x, y, z)
+            engine.setHpr(0, 0, 90)
+            engine.reparentTo(root)
+            
+            # Enhanced engine glow (brighter for Tech II)
+            glow = self._create_cylinder(
+                radius=1.1, length=1.0,
+                color=Vec4(0.5, 0.7, 1.0, 1.0)  # Brighter blue-white
+            )
+            glow.setPos(x, y - 1.8, z)
+            glow.setHpr(0, 0, 90)
+            glow.reparentTo(root)
+        
+        # Tech II armor plating (reinforced sections)
+        for side in [-1, 1]:
+            armor_plate = self._create_box(
+                width=0.8, length=8.0, height=0.8,
+                color=colors['secondary']
+            )
+            armor_plate.setPos(side * 3.0, 0, 2.8)
+            armor_plate.reparentTo(root)
+            
+            # Lower armor struts
+            lower_strut = self._create_box(
+                width=0.6, length=7.0, height=0.6,
+                color=colors['secondary']
+            )
+            lower_strut.setPos(side * 2.8, 0, -2.0)
+            lower_strut.reparentTo(root)
         
         return root
     
