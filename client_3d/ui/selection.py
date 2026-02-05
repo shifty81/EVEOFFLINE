@@ -40,6 +40,9 @@ class SelectionSystem:
         # Selection visual feedback
         self.selection_highlight = None
         
+        # Track registered entities to avoid duplicates
+        self.registered_entities = set()
+        
         print("[Selection] Selection system initialized")
     
     def add_pickable_entity(self, entity_id: str, node: NodePath, radius: float = 5.0):
@@ -51,6 +54,10 @@ class SelectionSystem:
             node: Entity's NodePath
             radius: Collision sphere radius
         """
+        # Skip if already registered
+        if entity_id in self.registered_entities:
+            return
+        
         # Create collision sphere for this entity
         collision_sphere = CollisionSphere(0, 0, 0, radius)
         collision_node = CollisionNode(f'entity_{entity_id}')
@@ -62,6 +69,9 @@ class SelectionSystem:
         
         # Store entity ID in the node's tag for retrieval
         collision_np.setTag('entity_id', entity_id)
+        
+        # Track registered entity
+        self.registered_entities.add(entity_id)
     
     def pick_entity(self, mouse_x: float, mouse_y: float) -> Optional[str]:
         """

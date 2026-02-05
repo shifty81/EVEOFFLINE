@@ -26,6 +26,20 @@ class GameClient3D(ShowBase):
     Uses Panda3D for rendering and asyncio for networking
     """
     
+    # UI Constants
+    CLICK_THRESHOLD = 0.02  # Threshold to distinguish click from drag
+    
+    # Entity collision radius by ship type (meters)
+    COLLISION_RADII = {
+        'default': 5.0,
+        'frigate': 5.0,
+        'destroyer': 6.0,
+        'cruiser': 8.0,
+        'battlecruiser': 10.0,
+        'battleship': 12.0,
+        'barge': 10.0,
+    }
+    
     def __init__(self, player_id: str, character_name: str, server_host: str = "localhost", server_port: int = 8765):
         # Configure Panda3D before initialization
         loadPrcFileData("", "window-title EVE OFFLINE - " + character_name)
@@ -169,13 +183,13 @@ class GameClient3D(ShowBase):
             if button == 0:  # Left click
                 dx = abs(mouse_x - getattr(self, 'left_click_start_x', mouse_x))
                 dy = abs(mouse_y - getattr(self, 'left_click_start_y', mouse_y))
-                if dx < 0.02 and dy < 0.02:  # Small threshold for click
+                if dx < self.CLICK_THRESHOLD and dy < self.CLICK_THRESHOLD:
                     self._handle_left_click(mouse_x, mouse_y)
                     
             elif button == 1:  # Right click
                 dx = abs(mouse_x - getattr(self, 'right_click_start_x', mouse_x))
                 dy = abs(mouse_y - getattr(self, 'right_click_start_y', mouse_y))
-                if dx < 0.02 and dy < 0.02:  # Small threshold for click
+                if dx < self.CLICK_THRESHOLD and dy < self.CLICK_THRESHOLD:
                     self._handle_right_click(mouse_x, mouse_y)
     
     def on_mouse_wheel(self, direction):
@@ -488,25 +502,20 @@ class GameClient3D(ShowBase):
         # Update renderer
         for entity_id, entity in self.entities.get_all_entities().items():
             node = self.entity_renderer.render_entity(entity)
-            # Register entity with selection system if not already registered
-            if node and entity_id not in getattr(self.selection, '_registered_entities', set()):
-                # Estimate radius based on ship type
-                radius = 5.0  # Default
-                ship_type = getattr(entity, 'ship_type', '')
-                if 'Cruiser' in ship_type or 'cruiser' in ship_type.lower():
-                    radius = 8.0
-                elif 'Destroyer' in ship_type or 'destroyer' in ship_type.lower():
-                    radius = 6.0
-                elif 'Battleship' in ship_type or 'battleship' in ship_type.lower():
-                    radius = 12.0
-                elif 'Barge' in ship_type or 'barge' in ship_type.lower():
-                    radius = 10.0
+            # Register entity with selection system
+            if node:
+                # Determine collision radius based on ship type
+                ship_type = getattr(entity, 'ship_type', '').lower()
+                radius = self.COLLISION_RADII['default']
                 
+                # Check for ship class keywords
+                for ship_class, ship_radius in self.COLLISION_RADII.items():
+                    if ship_class in ship_type:
+                        radius = ship_radius
+                        break
+                
+                # Add to selection system (it handles duplicate checking)
                 self.selection.add_pickable_entity(entity_id, node, radius)
-                # Track registered entities
-                if not hasattr(self.selection, '_registered_entities'):
-                    self.selection._registered_entities = set()
-                self.selection._registered_entities.add(entity_id)
         
         # Update health bars
         self.health_bars.update_all_health_bars(self.entities.get_all_entities())
