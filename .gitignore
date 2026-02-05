@@ -69,6 +69,10 @@ cpp_client/external/
 *.obj
 *.out
 *.dll
+*.a
+*.lib
+*.so
+*.dylib
 
 # CMake
 CMakeCache.txt
@@ -77,3 +81,18 @@ cmake_install.cmake
 !CMakeLists.txt
 cpp_server/saves/
 cpp_server/logs/
+compile_commands.json
+Makefile
+*.cmake
+
+# Visual Studio
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.user
+*.pdb
+*.ilk
+*.idb

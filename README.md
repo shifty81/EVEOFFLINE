@@ -112,6 +112,38 @@ cd build/bin
 ```
 See [cpp_server/README.md](cpp_server/README.md) for detailed C++ server documentation.
 
+**🆕 Or start the C++ OpenGL client:**
+```bash
+# Quick build with automated script (all platforms)
+python3 build_cpp_client.py
+
+# Or manual build
+cd cpp_client
+mkdir build && cd build
+cmake .. -DCMAKE_BUILD_TYPE=Release
+make -j$(nproc)  # Linux/macOS
+# or
+cmake --build . --config Release  # Windows
+
+# Run
+cd bin
+./eve_client "YourName"  # Linux/macOS
+# or
+bin\Release\eve_client.exe "YourName"  # Windows
+```
+
+**Windows Visual Studio Users:**
+```bash
+# Generate Visual Studio solution and build
+build_vs.bat
+
+# Or open in Visual Studio
+build_vs.bat --open
+```
+
+See [docs/development/VISUAL_STUDIO_BUILD.md](docs/development/VISUAL_STUDIO_BUILD.md) for detailed Visual Studio setup.
+See [cpp_client/README.md](cpp_client/README.md) for C++ client documentation.
+
 **Start a text client (in a new terminal):**
 ```bash
 # Basic usage
