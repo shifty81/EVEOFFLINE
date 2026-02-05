@@ -158,6 +158,8 @@ set(CLIENT_SOURCES
     src/ui/inventory_panel.cpp
     src/ui/fitting_panel.cpp
     src/ui/mission_panel.cpp
+    src/ui/module_browser_panel.cpp
+    src/ui/market_panel.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}
@@ -202,6 +204,8 @@ set(CLIENT_HEADERS
     include/ui/inventory_panel.h
     include/ui/fitting_panel.h
     include/ui/mission_panel.h
+    include/ui/module_browser_panel.h
+    include/ui/market_panel.h
     ${AUDIO_HEADERS}
 )
 
@@ -485,6 +489,14 @@ if(BUILD_TESTS)
         ${CLIENT_HEADERS}
     )
     target_link_libraries(test_enhanced_ui ${LINK_LIBS})
+    
+    # Test: Phase 4.6 Advanced Features
+    add_executable(test_phase46_advanced
+        test_phase46_advanced.cpp
+        ${CLIENT_SOURCES}
+        ${CLIENT_HEADERS}
+    )
+    target_link_libraries(test_phase46_advanced ${LINK_LIBS})
 endif()
 
 message(STATUS "")

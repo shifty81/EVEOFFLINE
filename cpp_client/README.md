@@ -135,9 +135,14 @@ Phase 3 is now 100% complete with all advanced rendering features implemented!
   - Ship fitting window (module slots, CPU/PG management)
   - Mission tracker panel (objectives, rewards, completion)
   - See [PHASE4.5_ENHANCED_UI.md](PHASE4.5_ENHANCED_UI.md) for details
-- [ ] **Phase 4.6: Advanced Features** (Next)
-  - Drag-and-drop item management
-  - Module browser and marketplace
+- [x] **Phase 4.6: Advanced Features** ✅
+  - Drag-and-drop item management (cargo ↔ hangar, jettison)
+  - Module browser with search/filter/sort
+  - Market interface (browse, order book, quick trade)
+  - See [PHASE4.6_ADVANCED_FEATURES.md](PHASE4.6_ADVANCED_FEATURES.md) for details
+- [ ] **Phase 4.7: Network & Gameplay Integration** (Next)
+  - Connect UI to server
+  - Advanced features (stack splitting, confirmations)
   - Advanced gameplay integration
 
 ### Planned Features
