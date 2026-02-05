@@ -7,6 +7,7 @@ namespace eve {
 
 /**
  * Protocol handler for game messages (JSON-based)
+ * Compatible with Python server protocol
  */
 class ProtocolHandler {
 public:
@@ -21,8 +22,17 @@ public:
 
     /**
      * Create outgoing message
+     * @param type Message type
+     * @param dataJson JSON string for data field (empty for no data)
      */
-    std::string createMessage(const std::string& type, const std::string& data);
+    std::string createMessage(const std::string& type, const std::string& dataJson);
+
+    /**
+     * Helper methods for common messages
+     */
+    std::string createConnectMessage(const std::string& playerId, const std::string& characterName);
+    std::string createMoveMessage(float vx, float vy, float vz);
+    std::string createChatMessage(const std::string& message);
 
     /**
      * Set message handler
