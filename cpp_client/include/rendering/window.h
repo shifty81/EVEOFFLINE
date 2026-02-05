@@ -14,6 +14,8 @@ class Window {
 public:
     using KeyCallback = std::function<void(int key, int action)>;
     using MouseCallback = std::function<void(double xpos, double ypos)>;
+    using MouseButtonCallback = std::function<void(int button, int action, int mods)>;
+    using ScrollCallback = std::function<void(double xoffset, double yoffset)>;
     using ResizeCallback = std::function<void(int width, int height)>;
 
     Window(const std::string& title, int width, int height);
@@ -45,6 +47,8 @@ public:
      */
     void setKeyCallback(KeyCallback callback) { m_keyCallback = callback; }
     void setMouseCallback(MouseCallback callback) { m_mouseCallback = callback; }
+    void setMouseButtonCallback(MouseButtonCallback callback) { m_mouseButtonCallback = callback; }
+    void setScrollCallback(ScrollCallback callback) { m_scrollCallback = callback; }
     void setResizeCallback(ResizeCallback callback) { m_resizeCallback = callback; }
 
     /**
@@ -55,6 +59,8 @@ public:
 private:
     static void keyCallbackStatic(GLFWwindow* window, int key, int scancode, int action, int mods);
     static void cursorPosCallbackStatic(GLFWwindow* window, double xpos, double ypos);
+    static void mouseButtonCallbackStatic(GLFWwindow* window, int button, int action, int mods);
+    static void scrollCallbackStatic(GLFWwindow* window, double xoffset, double yoffset);
     static void framebufferSizeCallbackStatic(GLFWwindow* window, int width, int height);
 
     GLFWwindow* m_window;
@@ -64,6 +70,8 @@ private:
 
     KeyCallback m_keyCallback;
     MouseCallback m_mouseCallback;
+    MouseButtonCallback m_mouseButtonCallback;
+    ScrollCallback m_scrollCallback;
     ResizeCallback m_resizeCallback;
 };
 

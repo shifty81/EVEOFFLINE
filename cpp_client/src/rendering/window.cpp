@@ -13,6 +13,8 @@ Window::Window(const std::string& title, int width, int height)
     , m_height(height)
     , m_keyCallback(nullptr)
     , m_mouseCallback(nullptr)
+    , m_mouseButtonCallback(nullptr)
+    , m_scrollCallback(nullptr)
     , m_resizeCallback(nullptr)
 {
     // Initialize GLFW
@@ -67,6 +69,8 @@ Window::Window(const std::string& title, int width, int height)
     // Set callbacks
     glfwSetKeyCallback(m_window, keyCallbackStatic);
     glfwSetCursorPosCallback(m_window, cursorPosCallbackStatic);
+    glfwSetMouseButtonCallback(m_window, mouseButtonCallbackStatic);
+    glfwSetScrollCallback(m_window, scrollCallbackStatic);
     glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallbackStatic);
 
     std::cout << "Window initialization complete" << std::endl;
@@ -112,6 +116,20 @@ void Window::framebufferSizeCallbackStatic(GLFWwindow* window, int width, int he
         if (instance->m_resizeCallback) {
             instance->m_resizeCallback(width, height);
         }
+    }
+}
+
+void Window::mouseButtonCallbackStatic(GLFWwindow* window, int button, int action, int mods) {
+    Window* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (instance && instance->m_mouseButtonCallback) {
+        instance->m_mouseButtonCallback(button, action, mods);
+    }
+}
+
+void Window::scrollCallbackStatic(GLFWwindow* window, double xoffset, double yoffset) {
+    Window* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (instance && instance->m_scrollCallback) {
+        instance->m_scrollCallback(xoffset, yoffset);
     }
 }
 
