@@ -174,36 +174,33 @@ int main() {
         }
         
         // Toggle panels with F-keys
+        static bool f1_pressed = false;
         if (glfwGetKey(window.getHandle(), GLFW_KEY_F1) == GLFW_PRESS) {
-            static bool f1_pressed = false;
             if (!f1_pressed) {
                 inventoryPanel->SetVisible(!inventoryPanel->IsVisible());
                 f1_pressed = true;
             }
         } else {
-            static bool f1_pressed = false;
             f1_pressed = false;
         }
         
+        static bool f2_pressed = false;
         if (glfwGetKey(window.getHandle(), GLFW_KEY_F2) == GLFW_PRESS) {
-            static bool f2_pressed = false;
             if (!f2_pressed) {
                 fittingPanel->SetVisible(!fittingPanel->IsVisible());
                 f2_pressed = true;
             }
         } else {
-            static bool f2_pressed = false;
             f2_pressed = false;
         }
         
+        static bool f3_pressed = false;
         if (glfwGetKey(window.getHandle(), GLFW_KEY_F3) == GLFW_PRESS) {
-            static bool f3_pressed = false;
             if (!f3_pressed) {
                 missionPanel->SetVisible(!missionPanel->IsVisible());
                 f3_pressed = true;
             }
         } else {
-            static bool f3_pressed = false;
             f3_pressed = false;
         }
     }

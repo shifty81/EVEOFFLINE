@@ -99,8 +99,8 @@ void FittingPanel::RenderSlotSection(const char* title, const std::array<std::op
     for (int i = 0; i < max_slots; ++i) {
         RenderModuleSlot(slots[i], slot_type, i, true);
         
-        // Move to next column
-        if (i % 2 == 0) {
+        // Move to next column after odd-indexed items (1, 3, 5, 7)
+        if (i % 2 == 1) {
             ImGui::NextColumn();
         }
     }
