@@ -331,7 +331,7 @@ When adding new features:
 
 ## See Also
 
-- [Build Automation](../cpp_client/README.md#building)
+- [Build Automation](../../cpp_client/README.md#building)
 - [Visual Studio Build](VISUAL_STUDIO_BUILD.md)
-- [CMake Configuration](../cpp_client/CMakeLists.txt)
+- [CMake Configuration](../../cpp_client/CMakeLists.txt)
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)

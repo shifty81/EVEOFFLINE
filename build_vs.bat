@@ -73,7 +73,7 @@ if %ERRORLEVEL% NEQ 0 (
     echo ERROR: CMake configuration failed!
     echo.
     echo Possible issues:
-    echo   1. Missing dependencies - run: vcpkg install glfw3 glm glew nlohmann-json openal-soft
+    echo   1. Missing dependencies - run: vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows openal-soft:x64-windows
     echo   2. Visual Studio version mismatch - try using "Visual Studio 16 2019" generator
     echo   3. Missing Visual Studio C++ tools
     echo.

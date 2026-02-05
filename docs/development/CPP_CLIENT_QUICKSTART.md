@@ -225,8 +225,8 @@ python server/server.py
 
 ## Next Steps
 
-1. **Read the README**: [cpp_client/README.md](../cpp_client/README.md)
-2. **Learn about features**: [cpp_client/README.md#features](../cpp_client/README.md#features)
+1. **Read the README**: [../../cpp_client/README.md](../../cpp_client/README.md)
+2. **Learn about features**: [../../cpp_client/README.md#features](../../cpp_client/README.md#features)
 3. **Visual Studio setup**: [VISUAL_STUDIO_BUILD.md](VISUAL_STUDIO_BUILD.md)
 4. **Development guide**: [DOCUMENTATION.md](DOCUMENTATION.md)
 
@@ -245,7 +245,7 @@ See [CI_CD.md](CI_CD.md) for details.
 If you encounter issues:
 
 1. Check this guide's troubleshooting section
-2. Read [cpp_client/SETUP.md](../cpp_client/SETUP.md)
+2. Read [../../cpp_client/SETUP.md](../../cpp_client/SETUP.md)
 3. Check GitHub Issues
 4. Create a new issue with:
    - Your platform and version

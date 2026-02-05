@@ -296,7 +296,7 @@ This gives you:
 
 After building successfully:
 
-1. **Run the client**: See [cpp_client/README.md](../cpp_client/README.md) for usage
+1. **Run the client**: See [../../cpp_client/README.md](../../cpp_client/README.md) for usage
 2. **Connect to server**: Start Python server first, then run client
 3. **Try tests**: Run individual test programs to see features
 4. **Modify code**: Edit in Visual Studio and rebuild
@@ -305,8 +305,8 @@ After building successfully:
 
 If you encounter issues:
 
-1. Check [cpp_client/DEPENDENCIES.md](../cpp_client/DEPENDENCIES.md) for dependency info
-2. Review [cpp_client/SETUP.md](../cpp_client/SETUP.md) for general setup
+1. Check [../../cpp_client/DEPENDENCIES.md](../../cpp_client/DEPENDENCIES.md) for dependency info
+2. Review [../../cpp_client/SETUP.md](../../cpp_client/SETUP.md) for general setup
 3. Search GitHub Issues for similar problems
 4. Create a new issue with:
    - Visual Studio version
@@ -316,7 +316,7 @@ If you encounter issues:
 
 ## See Also
 
-- [CMakeLists.txt](../cpp_client/CMakeLists.txt) - Build configuration
-- [README.md](../cpp_client/README.md) - C++ client overview
-- [SETUP.md](../cpp_client/SETUP.md) - General setup guide
-- [docs/development/](../docs/development/) - Development documentation
+- [CMakeLists.txt](../../cpp_client/CMakeLists.txt) - Build configuration
+- [README.md](../../cpp_client/README.md) - C++ client overview
+- [SETUP.md](../../cpp_client/SETUP.md) - General setup guide
+- [Development Documentation](./DOCUMENTATION.md) - Development documentation
