@@ -5,11 +5,18 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 // Forward declarations for ImGui types
 struct ImGuiContext;
 
+namespace eve {
+    class Entity;
+}
+
 namespace UI {
+
+class EVETargetList;
 
 struct EVEColors {
     // Background colors (RGB 0-1)
@@ -93,10 +100,18 @@ public:
     void SetTargetInfo(const TargetInfo& target);
     void AddCombatLogMessage(const std::string& message);
     
+    // Target list management
+    void UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities);
+    void AddTarget(const std::string& entityId);
+    void RemoveTarget(const std::string& entityId);
+    
     // Panel visibility toggles
     void SetPanelVisible(const std::string& panel_name, bool visible);
     bool IsPanelVisible(const std::string& panel_name) const;
     
+    // Get target list
+    EVETargetList* GetTargetList() { return m_targetList.get(); }
+
 private:
     ImGuiContext* context_;
     GLFWwindow* window_;
@@ -107,11 +122,15 @@ private:
     std::vector<std::string> combat_log_;
     static constexpr size_t MAX_COMBAT_LOG_MESSAGES = 10;
     
+    // EVE-style target list
+    std::unique_ptr<EVETargetList> m_targetList;
+    
     // Panel visibility
     bool show_ship_status_;
     bool show_target_info_;
     bool show_speed_panel_;
     bool show_combat_log_;
+    bool show_target_list_;
     
     // Helper functions for rendering panels
     void RenderShipStatusPanel();
