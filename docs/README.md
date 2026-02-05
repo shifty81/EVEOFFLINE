@@ -29,6 +29,12 @@ Game design documents, architecture, and mechanics documentation.
 - [**DESIGN.md**](design/DESIGN.md) - Game design document with EVE ONLINE mechanics
 - [**EVE_MECHANICS.md**](design/EVE_MECHANICS.md) - EVE Online mechanics reference for implementation
 
+### 🏗️ [Game Mechanics](game_mechanics/)
+Detailed documentation of EVE Online game mechanics and systems.
+
+- [**STRUCTURES_2026.md**](game_mechanics/STRUCTURES_2026.md) - Comprehensive guide to EVE 2026 player-owned structures
+- [**DOCKING_MECHANICS.md**](game_mechanics/DOCKING_MECHANICS.md) - Station docking interface and hangar mechanics
+
 ### ✨ [Features](features/)
 Feature documentation, new systems, and capabilities.
 
