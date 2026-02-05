@@ -33,6 +33,27 @@ public:
     std::string createConnectMessage(const std::string& playerId, const std::string& characterName);
     std::string createMoveMessage(float vx, float vy, float vz);
     std::string createChatMessage(const std::string& message);
+    
+    /**
+     * Inventory management messages
+     */
+    std::string createInventoryTransferMessage(const std::string& itemId, int quantity, 
+                                               bool fromCargo, bool toCargo);
+    std::string createInventoryJettisonMessage(const std::string& itemId, int quantity);
+    
+    /**
+     * Module fitting messages
+     */
+    std::string createModuleFitMessage(const std::string& moduleId, const std::string& slotType, int slotIndex);
+    std::string createModuleUnfitMessage(const std::string& slotType, int slotIndex);
+    std::string createModuleActivateMessage(int slotIndex);
+    
+    /**
+     * Market messages
+     */
+    std::string createMarketBuyMessage(const std::string& itemId, int quantity, double price);
+    std::string createMarketSellMessage(const std::string& itemId, int quantity, double price);
+    std::string createMarketQueryMessage(const std::string& itemId);
 
     /**
      * Set message handler

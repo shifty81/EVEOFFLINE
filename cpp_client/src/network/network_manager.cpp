@@ -94,6 +94,77 @@ void NetworkManager::sendChat(const std::string& message) {
     m_tcpClient->send(msg);
 }
 
+// Inventory management
+void NetworkManager::sendInventoryTransfer(const std::string& itemId, int quantity, 
+                                          bool fromCargo, bool toCargo) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createInventoryTransferMessage(itemId, quantity, fromCargo, toCargo);
+    m_tcpClient->send(msg);
+    std::cout << "Sent inventory transfer: " << itemId << " x" << quantity 
+              << " from " << (fromCargo ? "cargo" : "hangar") 
+              << " to " << (toCargo ? "cargo" : "hangar") << std::endl;
+}
+
+void NetworkManager::sendInventoryJettison(const std::string& itemId, int quantity) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createInventoryJettisonMessage(itemId, quantity);
+    m_tcpClient->send(msg);
+    std::cout << "Sent jettison request: " << itemId << " x" << quantity << std::endl;
+}
+
+// Module fitting
+void NetworkManager::sendModuleFit(const std::string& moduleId, const std::string& slotType, int slotIndex) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createModuleFitMessage(moduleId, slotType, slotIndex);
+    m_tcpClient->send(msg);
+    std::cout << "Sent module fit request: " << moduleId 
+              << " to " << slotType << "[" << slotIndex << "]" << std::endl;
+}
+
+void NetworkManager::sendModuleUnfit(const std::string& slotType, int slotIndex) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createModuleUnfitMessage(slotType, slotIndex);
+    m_tcpClient->send(msg);
+    std::cout << "Sent module unfit request: " << slotType << "[" << slotIndex << "]" << std::endl;
+}
+
+void NetworkManager::sendModuleActivate(int slotIndex) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createModuleActivateMessage(slotIndex);
+    m_tcpClient->send(msg);
+}
+
+// Market operations
+void NetworkManager::sendMarketBuy(const std::string& itemId, int quantity, double price) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createMarketBuyMessage(itemId, quantity, price);
+    m_tcpClient->send(msg);
+    std::cout << "Sent market buy: " << itemId << " x" << quantity 
+              << " @ " << price << " ISK" << std::endl;
+}
+
+void NetworkManager::sendMarketSell(const std::string& itemId, int quantity, double price) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createMarketSellMessage(itemId, quantity, price);
+    m_tcpClient->send(msg);
+    std::cout << "Sent market sell: " << itemId << " x" << quantity 
+              << " @ " << price << " ISK" << std::endl;
+}
+
+void NetworkManager::sendMarketQuery(const std::string& itemId) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createMarketQueryMessage(itemId);
+    m_tcpClient->send(msg);
+}
+
 std::string NetworkManager::getConnectionState() const {
     switch (m_state) {
         case State::DISCONNECTED: return "Disconnected";

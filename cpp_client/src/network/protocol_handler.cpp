@@ -85,4 +85,72 @@ std::string ProtocolHandler::createChatMessage(const std::string& message) {
     return createMessage("chat", data.dump());
 }
 
+// Inventory management messages
+std::string ProtocolHandler::createInventoryTransferMessage(const std::string& itemId, int quantity,
+                                                           bool fromCargo, bool toCargo) {
+    json data;
+    data["item_id"] = itemId;
+    data["quantity"] = quantity;
+    data["from_location"] = fromCargo ? "cargo" : "hangar";
+    data["to_location"] = toCargo ? "cargo" : "hangar";
+    return createMessage("inventory_transfer", data.dump());
+}
+
+std::string ProtocolHandler::createInventoryJettisonMessage(const std::string& itemId, int quantity) {
+    json data;
+    data["item_id"] = itemId;
+    data["quantity"] = quantity;
+    data["from_location"] = "cargo";
+    data["to_location"] = "space";
+    return createMessage("inventory_jettison", data.dump());
+}
+
+// Module fitting messages
+std::string ProtocolHandler::createModuleFitMessage(const std::string& moduleId, 
+                                                   const std::string& slotType, int slotIndex) {
+    json data;
+    data["module_id"] = moduleId;
+    data["slot_type"] = slotType;
+    data["slot_index"] = slotIndex;
+    return createMessage("module_fit", data.dump());
+}
+
+std::string ProtocolHandler::createModuleUnfitMessage(const std::string& slotType, int slotIndex) {
+    json data;
+    data["slot_type"] = slotType;
+    data["slot_index"] = slotIndex;
+    return createMessage("module_unfit", data.dump());
+}
+
+std::string ProtocolHandler::createModuleActivateMessage(int slotIndex) {
+    json data;
+    data["slot_index"] = slotIndex;
+    return createMessage("module_activate", data.dump());
+}
+
+// Market messages
+std::string ProtocolHandler::createMarketBuyMessage(const std::string& itemId, int quantity, double price) {
+    json data;
+    data["item_id"] = itemId;
+    data["quantity"] = quantity;
+    data["price"] = price;
+    data["action"] = "buy";
+    return createMessage("market_transaction", data.dump());
+}
+
+std::string ProtocolHandler::createMarketSellMessage(const std::string& itemId, int quantity, double price) {
+    json data;
+    data["item_id"] = itemId;
+    data["quantity"] = quantity;
+    data["price"] = price;
+    data["action"] = "sell";
+    return createMessage("market_transaction", data.dump());
+}
+
+std::string ProtocolHandler::createMarketQueryMessage(const std::string& itemId) {
+    json data;
+    data["item_id"] = itemId;
+    return createMessage("market_query", data.dump());
+}
+
 } // namespace eve

@@ -64,6 +64,26 @@ public:
      * Send chat message
      */
     void sendChat(const std::string& message);
+    
+    /**
+     * Inventory management
+     */
+    void sendInventoryTransfer(const std::string& itemId, int quantity, bool fromCargo, bool toCargo);
+    void sendInventoryJettison(const std::string& itemId, int quantity);
+    
+    /**
+     * Module fitting
+     */
+    void sendModuleFit(const std::string& moduleId, const std::string& slotType, int slotIndex);
+    void sendModuleUnfit(const std::string& slotType, int slotIndex);
+    void sendModuleActivate(int slotIndex);
+    
+    /**
+     * Market operations
+     */
+    void sendMarketBuy(const std::string& itemId, int quantity, double price);
+    void sendMarketSell(const std::string& itemId, int quantity, double price);
+    void sendMarketQuery(const std::string& itemId);
 
     /**
      * Get connection state string
