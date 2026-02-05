@@ -135,6 +135,9 @@ class EntityRenderer:
         
         Args:
             entity: Entity object to render
+            
+        Returns:
+            NodePath: The entity's node (for selection system registration)
         """
         entity_id = entity.id
         
@@ -144,6 +147,7 @@ class EntityRenderer:
             node = self.entity_nodes[entity_id]
             pos = entity.get_position()
             node.setPos(pos[0], pos[1], pos[2])
+            return node
         else:
             # Create new node for entity
             # Try to load model
@@ -169,10 +173,15 @@ class EntityRenderer:
             # Enable automatic shader generation for better lighting
             node.setShaderAuto()
             
+            # Tag the node with entity ID for identification
+            node.setTag('entity_id', str(entity_id))
+            
             # Store node
             self.entity_nodes[entity_id] = node
             
             print(f"[Renderer] Created entity node: {entity_id} ({entity.ship_type})")
+            
+            return node
     
     def remove_entity(self, entity_id: str):
         """Remove entity from scene"""

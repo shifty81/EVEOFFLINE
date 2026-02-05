@@ -16,6 +16,8 @@ from client_3d.rendering.starfield import StarField
 from client_3d.rendering.effects import EffectsManager
 from client_3d.rendering.healthbars import HealthBarManager
 from client_3d.ui.hud import create_hud
+from client_3d.ui.selection import SelectionSystem
+from client_3d.ui.context_menu import ContextMenu
 
 
 class GameClient3D(ShowBase):
@@ -67,6 +69,12 @@ class GameClient3D(ShowBase):
         
         # Initialize HUD (EVE-styled by default)
         self.hud = create_hud(self.aspect2d, self.render2d, style='eve')
+        
+        # Initialize selection system
+        self.selection = SelectionSystem(self.camera, self.render, self.mouseWatcherNode)
+        
+        # Initialize context menu
+        self.context_menu = ContextMenu(self.aspect2d)
         
         # Network task
         self.network_task = None
@@ -121,10 +129,10 @@ class GameClient3D(ShowBase):
         print("  Middle Mouse     - Pan camera")
         print("  F                - Toggle camera follow mode")
         print("  R                - Reset camera")
-        print("\nTactical Commands (Future - via UI):")
-        print("  Right Click      - Context menu (planned)")
-        print("  Click in Space   - Navigate to (planned)")
-        print("  Target Entity    - Approach/Orbit/Keep at Range (planned)")
+        print("\nEntity Interaction:")
+        print("  Left Click       - Select entity")
+        print("  Right Click      - Context menu (Approach, Orbit, etc.)")
+        print("  Click in Space   - Deselect / Space menu")
         print("\nTest Commands:")
         print("  Space            - Test weapon fire effect")
         print("\nUtility:")
@@ -139,14 +147,135 @@ class GameClient3D(ShowBase):
         if self.mouseWatcherNode.hasMouse():
             self.last_mouse_x = self.mouseWatcherNode.getMouseX()
             self.last_mouse_y = self.mouseWatcherNode.getMouseY()
+            
+            # Store mouse position for click detection (not drag)
+            if button == 0:  # Left click
+                self.left_click_start_x = self.last_mouse_x
+                self.left_click_start_y = self.last_mouse_y
+            elif button == 1:  # Right click
+                self.right_click_start_x = self.last_mouse_x
+                self.right_click_start_y = self.last_mouse_y
     
     def on_mouse_up(self, button):
         """Handle mouse button release"""
         self.mouse_down[button] = False
+        
+        # Handle click (not drag)
+        if self.mouseWatcherNode.hasMouse():
+            mouse_x = self.mouseWatcherNode.getMouseX()
+            mouse_y = self.mouseWatcherNode.getMouseY()
+            
+            # Check if mouse moved significantly (drag vs click)
+            if button == 0:  # Left click
+                dx = abs(mouse_x - getattr(self, 'left_click_start_x', mouse_x))
+                dy = abs(mouse_y - getattr(self, 'left_click_start_y', mouse_y))
+                if dx < 0.02 and dy < 0.02:  # Small threshold for click
+                    self._handle_left_click(mouse_x, mouse_y)
+                    
+            elif button == 1:  # Right click
+                dx = abs(mouse_x - getattr(self, 'right_click_start_x', mouse_x))
+                dy = abs(mouse_y - getattr(self, 'right_click_start_y', mouse_y))
+                if dx < 0.02 and dy < 0.02:  # Small threshold for click
+                    self._handle_right_click(mouse_x, mouse_y)
     
     def on_mouse_wheel(self, direction):
         """Handle mouse wheel"""
         self.camera_system.zoom(direction)
+    
+    def _handle_left_click(self, mouse_x, mouse_y):
+        """Handle left click - entity selection"""
+        entity_id = self.selection.pick_entity(mouse_x, mouse_y)
+        if entity_id:
+            print(f"[GameClient3D] Selected entity: {entity_id}")
+            # Update HUD with selected entity info
+            entity = self.entities.get_entity(entity_id)
+            if entity:
+                target_data = {
+                    'name': getattr(entity, 'ship_type', 'Unknown'),
+                    'distance': 0,  # Will be calculated
+                    'shield_current': getattr(entity, 'shield', 0),
+                    'shield_max': getattr(entity, 'max_shield', 1),
+                    'armor_current': getattr(entity, 'armor', 0),
+                    'armor_max': getattr(entity, 'max_armor', 1),
+                    'hull_current': getattr(entity, 'hull', 0),
+                    'hull_max': getattr(entity, 'max_hull', 1),
+                }
+                # Calculate distance to player
+                player_entity = self.entities.get_player_entity()
+                if player_entity:
+                    player_pos = Vec3(*player_entity.get_position())
+                    target_pos = Vec3(*entity.get_position())
+                    distance = (target_pos - player_pos).length()
+                    target_data['distance'] = distance
+                
+                self.hud.update_target_info(target_data)
+        else:
+            # Clicked on empty space - deselect
+            self.selection.deselect()
+            print(f"[GameClient3D] Deselected entity")
+    
+    def _handle_right_click(self, mouse_x, mouse_y):
+        """Handle right click - context menu"""
+        entity_id = self.selection.pick_entity(mouse_x, mouse_y)
+        
+        # Convert mouse coords to screen coords for menu positioning
+        # Panda3D mouse coords are -1 to 1, need to convert to aspect2d coords
+        menu_x = mouse_x
+        menu_y = mouse_y
+        
+        if entity_id:
+            # Show entity context menu
+            entity = self.entities.get_entity(entity_id)
+            entity_name = getattr(entity, 'ship_type', 'Unknown')
+            self.context_menu.show_entity_menu(entity_id, entity_name, menu_x, menu_y, 
+                                               self._on_menu_action)
+            print(f"[GameClient3D] Showing context menu for: {entity_id}")
+        else:
+            # Show space context menu
+            self.context_menu.show_space_menu(menu_x, menu_y, self._on_menu_action)
+            print(f"[GameClient3D] Showing space context menu")
+    
+    def _on_menu_action(self, action, entity_id=None, **kwargs):
+        """Handle context menu action"""
+        print(f"[GameClient3D] Menu action: {action} on entity: {entity_id}, kwargs: {kwargs}")
+        
+        # Handle different actions
+        if action == "approach":
+            self._send_command("approach", target=entity_id)
+        elif action == "orbit":
+            distance = kwargs.get('distance', 5000)
+            self._send_command("orbit", target=entity_id, distance=distance)
+        elif action == "keep_at_range":
+            distance = kwargs.get('distance', 10000)
+            self._send_command("keep_at_range", target=entity_id, distance=distance)
+        elif action == "lock":
+            self._send_command("lock_target", target=entity_id)
+        elif action == "warp_to":
+            self._send_command("warp_to", target=entity_id)
+        elif action == "look_at":
+            # Local camera action
+            entity = self.entities.get_entity(entity_id)
+            if entity:
+                self.camera_system.look_at(Vec3(*entity.get_position()))
+        elif action == "navigate_to":
+            # Navigate to clicked position in space
+            # For now, just log it
+            print(f"[GameClient3D] Navigate to position (not implemented)")
+        
+        # Add combat log message
+        self.hud.add_combat_message(f"Command: {action}", Vec4(0.7, 0.7, 1, 1))
+    
+    def _send_command(self, command, **kwargs):
+        """Send command to server"""
+        if self.network.connected:
+            message = {
+                'type': command,
+                'data': kwargs
+            }
+            asyncio.create_task(self.network.send_message(message))
+            print(f"[GameClient3D] Sent command: {command} with data: {kwargs}")
+        else:
+            print(f"[GameClient3D] Not connected to server, cannot send command: {command}")
     
     def on_key_press(self, key):
         """Handle key press"""
@@ -357,7 +486,27 @@ class GameClient3D(ShowBase):
             self.last_mouse_y = mouse_y
         
         # Update renderer
-        self.entity_renderer.update_entities(self.entities.get_all_entities())
+        for entity_id, entity in self.entities.get_all_entities().items():
+            node = self.entity_renderer.render_entity(entity)
+            # Register entity with selection system if not already registered
+            if node and entity_id not in getattr(self.selection, '_registered_entities', set()):
+                # Estimate radius based on ship type
+                radius = 5.0  # Default
+                ship_type = getattr(entity, 'ship_type', '')
+                if 'Cruiser' in ship_type or 'cruiser' in ship_type.lower():
+                    radius = 8.0
+                elif 'Destroyer' in ship_type or 'destroyer' in ship_type.lower():
+                    radius = 6.0
+                elif 'Battleship' in ship_type or 'battleship' in ship_type.lower():
+                    radius = 12.0
+                elif 'Barge' in ship_type or 'barge' in ship_type.lower():
+                    radius = 10.0
+                
+                self.selection.add_pickable_entity(entity_id, node, radius)
+                # Track registered entities
+                if not hasattr(self.selection, '_registered_entities'):
+                    self.selection._registered_entities = set()
+                self.selection._registered_entities.add(entity_id)
         
         # Update health bars
         self.health_bars.update_all_health_bars(self.entities.get_all_entities())
@@ -382,6 +531,9 @@ class GameClient3D(ShowBase):
     def cleanup(self):
         """Cleanup on exit"""
         print("[GameClient3D] Cleaning up...")
+        
+        # Hide context menu
+        self.context_menu.hide()
         
         # Disconnect from server
         if self.network.connected:
