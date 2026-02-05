@@ -1,4 +1,5 @@
 #include "network/network_manager.h"
+#include <nlohmann/json.hpp>
 #include <iostream>
 
 namespace eve {
@@ -187,13 +188,98 @@ void NetworkManager::onProtocolMessage(const std::string& type, const std::strin
         m_authenticated = true;
         std::cout << "Connection acknowledged by server" << std::endl;
     } else if (type == "error") {
-        std::cerr << "Server error: " << dataJson << std::endl;
+        handleErrorResponse(dataJson);
+    }
+    // Handle response messages
+    else if (ProtocolHandler::isInventoryResponse(type)) {
+        handleInventoryResponse(type, dataJson);
+    } else if (ProtocolHandler::isFittingResponse(type)) {
+        handleFittingResponse(type, dataJson);
+    } else if (ProtocolHandler::isMarketResponse(type)) {
+        handleMarketResponse(type, dataJson);
     }
 
     // Dispatch to registered handlers
     auto it = m_handlers.find(type);
     if (it != m_handlers.end()) {
         it->second(dataJson);
+    }
+}
+
+void NetworkManager::handleInventoryResponse(const std::string& type, const std::string& dataJson) {
+    if (!m_inventoryCallback) return;
+    
+    try {
+        auto j = nlohmann::json::parse(dataJson);
+        
+        InventoryResponse response;
+        response.success = ProtocolHandler::isSuccessResponse(type);
+        response.message = j.value("message", response.success ? "Operation completed" : "Operation failed");
+        response.itemId = j.value("item_id", "");
+        response.quantity = j.value("quantity", 0);
+        
+        m_inventoryCallback(response);
+        
+    } catch (const nlohmann::json::exception& e) {
+        std::cerr << "Failed to parse inventory response: " << e.what() << std::endl;
+    }
+}
+
+void NetworkManager::handleFittingResponse(const std::string& type, const std::string& dataJson) {
+    if (!m_fittingCallback) return;
+    
+    try {
+        auto j = nlohmann::json::parse(dataJson);
+        
+        FittingResponse response;
+        response.success = ProtocolHandler::isSuccessResponse(type);
+        response.message = j.value("message", response.success ? "Operation completed" : "Operation failed");
+        response.moduleId = j.value("module_id", "");
+        response.slotType = j.value("slot_type", "");
+        response.slotIndex = j.value("slot_index", -1);
+        
+        m_fittingCallback(response);
+        
+    } catch (const nlohmann::json::exception& e) {
+        std::cerr << "Failed to parse fitting response: " << e.what() << std::endl;
+    }
+}
+
+void NetworkManager::handleMarketResponse(const std::string& type, const std::string& dataJson) {
+    if (!m_marketCallback) return;
+    
+    try {
+        auto j = nlohmann::json::parse(dataJson);
+        
+        MarketResponse response;
+        response.success = ProtocolHandler::isSuccessResponse(type);
+        response.message = j.value("message", response.success ? "Transaction completed" : "Transaction failed");
+        response.itemId = j.value("item_id", "");
+        response.quantity = j.value("quantity", 0);
+        response.price = j.value("price", 0.0);
+        response.totalCost = j.value("total_cost", response.price * response.quantity);
+        
+        m_marketCallback(response);
+        
+    } catch (const nlohmann::json::exception& e) {
+        std::cerr << "Failed to parse market response: " << e.what() << std::endl;
+    }
+}
+
+void NetworkManager::handleErrorResponse(const std::string& dataJson) {
+    if (!m_errorCallback) {
+        std::cerr << "Server error: " << dataJson << std::endl;
+        return;
+    }
+    
+    try {
+        auto j = nlohmann::json::parse(dataJson);
+        std::string message = j.value("message", "Unknown error");
+        m_errorCallback(message);
+        
+    } catch (const nlohmann::json::exception& e) {
+        std::cerr << "Failed to parse error response: " << e.what() << std::endl;
+        m_errorCallback("Unknown error");
     }
 }
 

@@ -153,4 +153,32 @@ std::string ProtocolHandler::createMarketQueryMessage(const std::string& itemId)
     return createMessage("market_query", data.dump());
 }
 
+// Response message type helpers
+bool ProtocolHandler::isSuccessResponse(const std::string& type) {
+    return type.find("_success") != std::string::npos ||
+           type.find("_ack") != std::string::npos ||
+           type.find("_result") != std::string::npos;
+}
+
+bool ProtocolHandler::isErrorResponse(const std::string& type) {
+    return type.find("_error") != std::string::npos ||
+           type.find("_failed") != std::string::npos ||
+           type == "error";
+}
+
+bool ProtocolHandler::isInventoryResponse(const std::string& type) {
+    return type.find("inventory_") == 0 &&
+           (isSuccessResponse(type) || isErrorResponse(type));
+}
+
+bool ProtocolHandler::isFittingResponse(const std::string& type) {
+    return type.find("module_") == 0 &&
+           (isSuccessResponse(type) || isErrorResponse(type));
+}
+
+bool ProtocolHandler::isMarketResponse(const std::string& type) {
+    return type.find("market_") == 0 &&
+           (isSuccessResponse(type) || isErrorResponse(type));
+}
+
 } // namespace eve
