@@ -35,6 +35,7 @@ struct InventoryData {
 // Callback types
 using TransferItemCallback = std::function<void(const std::string& item_id, bool to_hangar)>;
 using JettisonItemCallback = std::function<void(const std::string& item_id, int quantity)>;
+using DragDropCallback = std::function<void(const std::string& item_id, int quantity, bool from_cargo, bool to_cargo, bool to_space)>;
 
 class InventoryPanel {
 public:
@@ -54,6 +55,10 @@ public:
     // Callbacks
     void SetTransferCallback(TransferItemCallback callback) { m_onTransfer = callback; }
     void SetJettisonCallback(JettisonItemCallback callback) { m_onJettison = callback; }
+    void SetDragDropCallback(DragDropCallback callback) { m_onDragDrop = callback; }
+    
+    // Drag-and-drop settings
+    void SetDragDropEnabled(bool enabled) { m_dragDropEnabled = enabled; }
     
 private:
     bool m_visible;
@@ -68,6 +73,12 @@ private:
     // Callbacks
     TransferItemCallback m_onTransfer;
     JettisonItemCallback m_onJettison;
+    DragDropCallback m_onDragDrop;
+    
+    // Drag-and-drop state
+    bool m_dragDropEnabled;
+    int m_draggedItemIndex;
+    bool m_dragFromCargo;
     
     // Helper functions
     void RenderViewButtons();
@@ -75,6 +86,9 @@ private:
     void RenderItemList();
     void RenderActionButtons();
     void RenderItemRow(const InventoryItem& item, int index, bool selected);
+    void HandleDragSource(const InventoryItem& item, int index);
+    void HandleDropTarget(bool is_cargo_view);
+    void RenderJettisonDropZone();
     
     const std::vector<InventoryItem>& GetCurrentItems() const;
     float GetCurrentCapacity() const;

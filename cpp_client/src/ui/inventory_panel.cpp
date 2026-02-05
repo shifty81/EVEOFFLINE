@@ -1,6 +1,7 @@
 #include "ui/inventory_panel.h"
 #include <imgui.h>
 #include <algorithm>
+#include <cstring>  // for strncpy
 
 namespace UI {
 
@@ -8,6 +9,9 @@ InventoryPanel::InventoryPanel()
     : m_visible(false)
     , m_viewMode(0)  // 0 = cargo
     , m_selectedItem(-1)
+    , m_dragDropEnabled(true)
+    , m_draggedItemIndex(-1)
+    , m_dragFromCargo(false)
 {
 }
 
@@ -32,6 +36,12 @@ void InventoryPanel::Render() {
     RenderCapacityDisplay();
     ImGui::Separator();
     ImGui::Spacing();
+    
+    // Jettison drop zone (only for cargo view and when drag-drop enabled)
+    if (m_dragDropEnabled && m_viewMode == 0) {
+        RenderJettisonDropZone();
+    }
+    
     RenderItemList();
     ImGui::Spacing();
     ImGui::Separator();
@@ -110,6 +120,12 @@ void InventoryPanel::RenderItemList() {
     }
     
     ImGui::Columns(1);
+    
+    // Handle drop target for the list area
+    if (m_dragDropEnabled) {
+        HandleDropTarget(m_viewMode == 0);
+    }
+    
     ImGui::EndChild();
 }
 
@@ -119,6 +135,11 @@ void InventoryPanel::RenderItemRow(const InventoryItem& item, int index, bool se
     
     if (ImGui::Selectable(("##item" + std::to_string(index)).c_str(), selected, flags)) {
         m_selectedItem = index;
+    }
+    
+    // Add drag-and-drop source
+    if (m_dragDropEnabled) {
+        HandleDragSource(item, index);
     }
     
     ImGui::SameLine();
@@ -175,6 +196,92 @@ float InventoryPanel::GetCurrentCapacity() const {
 
 float InventoryPanel::GetCurrentUsed() const {
     return m_viewMode == 0 ? m_data.cargo_used : m_data.hangar_used;
+}
+
+void InventoryPanel::HandleDragSource(const InventoryItem& item, int index) {
+    if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+        // Store drag data
+        m_draggedItemIndex = index;
+        m_dragFromCargo = (m_viewMode == 0);
+        
+        // Set payload (item_id and quantity)
+        struct DragPayload {
+            char item_id[64];
+            int quantity;
+            bool from_cargo;
+        };
+        
+        DragPayload payload;
+        strncpy(payload.item_id, item.item_id.c_str(), sizeof(payload.item_id) - 1);
+        payload.item_id[sizeof(payload.item_id) - 1] = '\0';
+        payload.quantity = item.quantity;
+        payload.from_cargo = m_dragFromCargo;
+        
+        ImGui::SetDragDropPayload("INVENTORY_ITEM", &payload, sizeof(payload));
+        
+        // Drag preview
+        ImGui::Text("🔹 %s (x%d)", item.name.c_str(), item.quantity);
+        ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "%.2f m³", item.volume * item.quantity);
+        
+        ImGui::EndDragDropSource();
+    }
+}
+
+void InventoryPanel::HandleDropTarget(bool is_cargo_view) {
+    if (ImGui::BeginDragDropTarget()) {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("INVENTORY_ITEM")) {
+            struct DragPayload {
+                char item_id[64];
+                int quantity;
+                bool from_cargo;
+            };
+            
+            if (payload->DataSize == sizeof(DragPayload)) {
+                const DragPayload* data = static_cast<const DragPayload*>(payload->Data);
+                
+                // Only transfer if dropping to different view
+                if (data->from_cargo != is_cargo_view) {
+                    if (m_onDragDrop) {
+                        m_onDragDrop(data->item_id, data->quantity, data->from_cargo, is_cargo_view, false);
+                    }
+                }
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+}
+
+void InventoryPanel::RenderJettisonDropZone() {
+    // Create a colored drop zone for jettisoning items
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.2f, 0.1f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.6f, 0.3f, 0.2f, 0.5f));
+    ImGui::Button("⚠️ Jettison Zone - Drop items here to jettison into space", ImVec2(-1, 40));
+    ImGui::PopStyleColor(2);
+    
+    // Handle drop target
+    if (ImGui::BeginDragDropTarget()) {
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("INVENTORY_ITEM")) {
+            struct DragPayload {
+                char item_id[64];
+                int quantity;
+                bool from_cargo;
+            };
+            
+            if (payload->DataSize == sizeof(DragPayload)) {
+                const DragPayload* data = static_cast<const DragPayload*>(payload->Data);
+                
+                // Only jettison from cargo
+                if (data->from_cargo) {
+                    if (m_onDragDrop) {
+                        m_onDragDrop(data->item_id, data->quantity, true, false, true);
+                    }
+                }
+            }
+        }
+        ImGui::EndDragDropTarget();
+    }
+    
+    ImGui::Spacing();
 }
 
 } // namespace UI
