@@ -56,6 +56,11 @@ public:
      */
     EntityManager& getEntityManager() { return m_entityManager; }
     const EntityManager& getEntityManager() const { return m_entityManager; }
+    
+    /**
+     * Get network manager (for UI integration)
+     */
+    NetworkManager* getNetworkManager() { return &m_networkManager; }
 
     /**
      * Get player entity ID
