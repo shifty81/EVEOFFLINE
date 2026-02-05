@@ -257,7 +257,15 @@ void NetworkManager::handleMarketResponse(const std::string& type, const std::st
         response.itemId = j.value("item_id", "");
         response.quantity = j.value("quantity", 0);
         response.price = j.value("price", 0.0);
-        response.totalCost = j.value("total_cost", response.price * response.quantity);
+        
+        // Calculate total cost: prefer server value, calculate if both price and quantity are present
+        if (j.contains("total_cost")) {
+            response.totalCost = j["total_cost"];
+        } else if (response.price > 0.0 && response.quantity > 0) {
+            response.totalCost = response.price * response.quantity;
+        } else {
+            response.totalCost = 0.0;
+        }
         
         m_marketCallback(response);
         
