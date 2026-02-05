@@ -155,6 +155,9 @@ set(CLIENT_SOURCES
     src/ui/eve_panels.cpp
     src/ui/eve_target_list.cpp
     src/ui/entity_picker.cpp
+    src/ui/inventory_panel.cpp
+    src/ui/fitting_panel.cpp
+    src/ui/mission_panel.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}
@@ -196,6 +199,9 @@ set(CLIENT_HEADERS
     include/ui/eve_panels.h
     include/ui/eve_target_list.h
     include/ui/entity_picker.h
+    include/ui/inventory_panel.h
+    include/ui/fitting_panel.h
+    include/ui/mission_panel.h
     ${AUDIO_HEADERS}
 )
 
@@ -471,6 +477,14 @@ if(BUILD_TESTS)
     elseif(APPLE)
         target_link_libraries(test_entity_sync)
     endif()
+    
+    # Test: Enhanced UI (Phase 4.5)
+    add_executable(test_enhanced_ui
+        test_enhanced_ui.cpp
+        ${CLIENT_SOURCES}
+        ${CLIENT_HEADERS}
+    )
+    target_link_libraries(test_enhanced_ui ${LINK_LIBS})
 endif()
 
 message(STATUS "")

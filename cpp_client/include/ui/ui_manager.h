@@ -17,6 +17,9 @@ namespace eve {
 namespace UI {
 
 class EVETargetList;
+class InventoryPanel;
+class FittingPanel;
+class MissionPanel;
 
 struct EVEColors {
     // Background colors (RGB 0-1)
@@ -111,6 +114,16 @@ public:
     
     // Get target list
     EVETargetList* GetTargetList() { return m_targetList.get(); }
+    
+    // Get new panels (Phase 4.5)
+    InventoryPanel* GetInventoryPanel() { return m_inventoryPanel.get(); }
+    FittingPanel* GetFittingPanel() { return m_fittingPanel.get(); }
+    MissionPanel* GetMissionPanel() { return m_missionPanel.get(); }
+    
+    // Panel visibility shortcuts (Phase 4.5)
+    void ToggleInventory();
+    void ToggleFitting();
+    void ToggleMission();
 
 private:
     ImGuiContext* context_;
@@ -124,6 +137,11 @@ private:
     
     // EVE-style target list
     std::unique_ptr<EVETargetList> m_targetList;
+    
+    // Phase 4.5 panels
+    std::unique_ptr<InventoryPanel> m_inventoryPanel;
+    std::unique_ptr<FittingPanel> m_fittingPanel;
+    std::unique_ptr<MissionPanel> m_missionPanel;
     
     // Panel visibility
     bool show_ship_status_;

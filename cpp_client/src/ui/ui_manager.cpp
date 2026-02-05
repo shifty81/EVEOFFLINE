@@ -1,6 +1,9 @@
 #include "ui/ui_manager.h"
 #include "ui/eve_panels.h"
 #include "ui/eve_target_list.h"
+#include "ui/inventory_panel.h"
+#include "ui/fitting_panel.h"
+#include "ui/mission_panel.h"
 #include "core/entity.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -20,6 +23,9 @@ UIManager::UIManager()
     , show_target_list_(true)
 {
     m_targetList = std::make_unique<EVETargetList>();
+    m_inventoryPanel = std::make_unique<InventoryPanel>();
+    m_fittingPanel = std::make_unique<FittingPanel>();
+    m_missionPanel = std::make_unique<MissionPanel>();
 }
 
 UIManager::~UIManager() {
@@ -109,6 +115,17 @@ void UIManager::Render() {
     // Render EVE-style target list
     if (show_target_list_ && m_targetList) {
         m_targetList->render();
+    }
+    
+    // Render Phase 4.5 panels
+    if (m_inventoryPanel) {
+        m_inventoryPanel->Render();
+    }
+    if (m_fittingPanel) {
+        m_fittingPanel->Render();
+    }
+    if (m_missionPanel) {
+        m_missionPanel->Render();
     }
 }
 
@@ -371,6 +388,25 @@ void UIManager::AddTarget(const std::string& entityId) {
 void UIManager::RemoveTarget(const std::string& entityId) {
     if (m_targetList) {
         m_targetList->removeTarget(entityId);
+    }
+}
+
+// Phase 4.5 panel visibility toggles
+void UIManager::ToggleInventory() {
+    if (m_inventoryPanel) {
+        m_inventoryPanel->SetVisible(!m_inventoryPanel->IsVisible());
+    }
+}
+
+void UIManager::ToggleFitting() {
+    if (m_fittingPanel) {
+        m_fittingPanel->SetVisible(!m_fittingPanel->IsVisible());
+    }
+}
+
+void UIManager::ToggleMission() {
+    if (m_missionPanel) {
+        m_missionPanel->SetVisible(!m_missionPanel->IsVisible());
     }
 }
 
