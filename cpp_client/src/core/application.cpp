@@ -149,7 +149,50 @@ void Application::initialize() {
         m_renderer->removeEntityVisual(entity->getId());
     });
     
+    // Setup UI callbacks for network integration
+    setupUICallbacks();
+    
     std::cout << "Application initialized successfully" << std::endl;
+}
+
+void Application::setupUICallbacks() {
+    std::cout << "Setting up UI callbacks for network integration..." << std::endl;
+    
+    // Get network manager from game client
+    auto* networkMgr = m_gameClient->getNetworkManager();
+    if (!networkMgr) {
+        std::cout << "NetworkManager not available yet, skipping UI callback setup" << std::endl;
+        return;
+    }
+    
+    // Setup inventory panel callbacks
+    auto* inventoryPanel = m_uiManager->GetInventoryPanel();
+    if (inventoryPanel) {
+        inventoryPanel->SetDragDropCallback([networkMgr](
+            const std::string& item_id, int quantity,
+            bool from_cargo, bool to_cargo, bool to_space) {
+            
+            if (to_space) {
+                // Jettison operation
+                networkMgr->sendInventoryJettison(item_id, quantity);
+            } else {
+                // Transfer operation
+                networkMgr->sendInventoryTransfer(item_id, quantity, from_cargo, to_cargo);
+            }
+        });
+        
+        std::cout << "  - Inventory panel callbacks wired" << std::endl;
+    }
+    
+    // Setup fitting panel callbacks
+    auto* fittingPanel = m_uiManager->GetFittingPanel();
+    if (fittingPanel) {
+        // Note: FittingPanel would need callback methods added similar to inventory
+        // This is a placeholder for future integration
+        std::cout << "  - Fitting panel callbacks (ready for wiring)" << std::endl;
+    }
+    
+    std::cout << "UI callbacks setup complete" << std::endl;
 }
 
 void Application::update(float deltaTime) {
@@ -428,8 +471,13 @@ void Application::activateModule(int slotNumber) {
     }
     std::cout << std::endl;
     
-    // TODO: Send module activation command to server
-    // For now, just log the action
+    // Send module activation command to server
+    auto* networkMgr = m_gameClient->getNetworkManager();
+    if (networkMgr && networkMgr->isConnected()) {
+        networkMgr->sendModuleActivate(slotNumber - 1);  // Convert to 0-based index
+    } else {
+        std::cout << "[Modules] Not connected to server, activation not sent" << std::endl;
+    }
 }
 
 } // namespace eve

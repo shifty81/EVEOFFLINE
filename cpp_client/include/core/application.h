@@ -98,6 +98,7 @@ public:
 
 private:
     void initialize();
+    void setupUICallbacks();  // New method for wiring UI to network
     void update(float deltaTime);
     void render();
     void cleanup();
