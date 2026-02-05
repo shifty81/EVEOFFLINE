@@ -3,6 +3,7 @@
 #include "rendering/renderer.h"
 #include "rendering/camera.h"
 #include "core/game_client.h"
+#include "core/entity.h"
 #include "core/embedded_server.h"
 #include "core/session_manager.h"
 #include "ui/input_handler.h"
@@ -107,6 +108,17 @@ void Application::initialize() {
     // Set initial viewport
     m_renderer->setViewport(0, 0, m_window->getWidth(), m_window->getHeight());
     
+    // Set up entity event callbacks
+    m_gameClient->setOnEntitySpawned([this](const std::shared_ptr<Entity>& entity) {
+        std::cout << "Application: Entity spawned event received" << std::endl;
+        m_renderer->createEntityVisual(entity);
+    });
+    
+    m_gameClient->setOnEntityDestroyed([this](const std::shared_ptr<Entity>& entity) {
+        std::cout << "Application: Entity destroyed event received" << std::endl;
+        m_renderer->removeEntityVisual(entity->getId());
+    });
+    
     std::cout << "Application initialized successfully" << std::endl;
 }
 
@@ -137,6 +149,9 @@ void Application::render() {
     // Update camera aspect ratio
     m_camera->setAspectRatio(m_window->getAspectRatio());
     m_camera->update(0.016f);
+    
+    // Update entity visuals from game client
+    m_renderer->updateEntityVisuals(m_gameClient->getEntityManager().getAllEntities());
     
     // Render scene
     m_renderer->renderScene(*m_camera);
