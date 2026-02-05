@@ -97,8 +97,8 @@ void Renderer::renderScene(Camera& camera) {
     // Render entities
     renderEntities(camera);
     
-    // Render health bars
-    renderHealthBars(camera);
+    // Note: Health bars are NOT rendered in 3D space in EVE Online
+    // They are displayed in the target list UI panel instead
 }
 
 void Renderer::clear(const glm::vec4& color) {

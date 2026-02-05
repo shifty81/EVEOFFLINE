@@ -1,5 +1,7 @@
 #include "ui/ui_manager.h"
 #include "ui/eve_panels.h"
+#include "ui/eve_target_list.h"
+#include "core/entity.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -15,7 +17,9 @@ UIManager::UIManager()
     , show_target_info_(true)
     , show_speed_panel_(true)
     , show_combat_log_(true)
+    , show_target_list_(true)
 {
+    m_targetList = std::make_unique<EVETargetList>();
 }
 
 UIManager::~UIManager() {
@@ -100,6 +104,11 @@ void UIManager::Render() {
     
     if (show_combat_log_) {
         RenderCombatLogPanel();
+    }
+    
+    // Render EVE-style target list
+    if (show_target_list_ && m_targetList) {
+        m_targetList->render();
     }
 }
 
@@ -345,6 +354,24 @@ void UIManager::RenderCombatLogPanel() {
 
 void UIManager::RenderHealthBar(const char* label, float current, float max, const float color[4]) {
     EVEPanels::RenderHealthBar(label, current, max, color);
+}
+
+void UIManager::UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities) {
+    if (m_targetList) {
+        m_targetList->updateTargets(entities);
+    }
+}
+
+void UIManager::AddTarget(const std::string& entityId) {
+    if (m_targetList) {
+        m_targetList->addTarget(entityId);
+    }
+}
+
+void UIManager::RemoveTarget(const std::string& entityId) {
+    if (m_targetList) {
+        m_targetList->removeTarget(entityId);
+    }
 }
 
 } // namespace UI
