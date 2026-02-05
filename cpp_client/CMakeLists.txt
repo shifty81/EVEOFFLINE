@@ -477,6 +477,14 @@ if(BUILD_TESTS)
     elseif(APPLE)
         target_link_libraries(test_entity_sync)
     endif()
+    
+    # Test: Enhanced UI (Phase 4.5)
+    add_executable(test_enhanced_ui
+        test_enhanced_ui.cpp
+        ${CLIENT_SOURCES}
+        ${CLIENT_HEADERS}
+    )
+    target_link_libraries(test_enhanced_ui ${LINK_LIBS})
 endif()
 
 message(STATUS "")
