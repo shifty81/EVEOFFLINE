@@ -4,7 +4,7 @@ Manages player-owned structures including deployment, maintenance, and services.
 """
 
 import time
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Any
 from engine.core.ecs import World
 from engine.components.game_components import (
     Structure, StructureService, Position, Player, 
@@ -17,7 +17,7 @@ class StructureSystem:
     
     def __init__(self, world: World):
         self.world = world
-        self.structures: Dict[str, any] = {}  # structure_id: structure_data
+        self.structures: Dict[str, Any] = {}  # structure_id: structure_data
         self.structure_locations: Dict[str, List[str]] = {}  # system_id: [structure_ids]
         
     def update(self, dt: float):

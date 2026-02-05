@@ -4,7 +4,7 @@ Components represent data for entities (ships, NPCs, projectiles, etc.)
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from engine.core.ecs import Component
 
 
@@ -382,7 +382,7 @@ class Structure(Component):
     armor_max: float = 750000.0
     
     reinforcement_cycles: int = 3  # Number of reinforcement timers
-    vulnerability_windows: List[Dict[str, any]] = field(default_factory=list)  # Configurable vulnerability times
+    vulnerability_windows: List[Dict[str, Any]] = field(default_factory=list)  # Configurable vulnerability times
     is_vulnerable: bool = True
     
     # Fitting (structures can be fitted like ships in 2026)

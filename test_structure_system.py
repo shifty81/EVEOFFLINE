@@ -145,14 +145,14 @@ class TestStructureSystem(unittest.TestCase):
         )
         
         # Add fuel
-        success = self.structure_system.add_fuel( structure_id, "fuel_blocks", 1000)
+        success = self.structure_system.add_fuel(structure_id, "fuel_blocks", 1000)
         self.assertTrue(success)
         
         structure_comp = self.world.get_entity(structure_id).get_component(Structure)
         self.assertEqual(structure_comp.fuel_bay["fuel_blocks"], 1000)
         
         # Add more fuel
-        success = self.structure_system.add_fuel( structure_id, "fuel_blocks", 500)
+        success = self.structure_system.add_fuel(structure_id, "fuel_blocks", 500)
         self.assertTrue(success)
         self.assertEqual(structure_comp.fuel_bay["fuel_blocks"], 1500)
     
@@ -169,7 +169,7 @@ class TestStructureSystem(unittest.TestCase):
         capacity = structure_comp.fuel_bay_capacity
         
         # Try to overfill
-        success = self.structure_system.add_fuel( structure_id, "fuel_blocks", int(capacity) + 1000)
+        success = self.structure_system.add_fuel(structure_id, "fuel_blocks", int(capacity) + 1000)
         self.assertFalse(success)
     
     def test_fuel_consumption(self):
@@ -186,7 +186,7 @@ class TestStructureSystem(unittest.TestCase):
         self.structure_system.update(structure_comp.anchoring_time_remaining + 1.0)
         
         # Add fuel
-        self.structure_system.add_fuel( structure_id, "fuel_blocks", 1000)
+        self.structure_system.add_fuel(structure_id, "fuel_blocks", 1000)
         
         # Set initial fuel check time
         structure_comp.last_fuel_check = time.time()
@@ -215,14 +215,14 @@ class TestStructureSystem(unittest.TestCase):
         self.structure_system.update(structure_comp.anchoring_time_remaining + 1.0)
         
         # Activate market service
-        success = self.structure_system.activate_service( structure_id, "market")
+        success = self.structure_system.activate_service(structure_id, "market")
         self.assertTrue(success)
         
         structure_comp = self.world.get_entity(structure_id).get_component(Structure)
         self.assertTrue(structure_comp.services.get("market", False))
         
         # Activate manufacturing service
-        success = self.structure_system.activate_service( structure_id, "manufacturing")
+        success = self.structure_system.activate_service(structure_id, "manufacturing")
         self.assertTrue(success)
         self.assertTrue(structure_comp.services.get("manufacturing", False))
     
@@ -236,7 +236,7 @@ class TestStructureSystem(unittest.TestCase):
         )
         
         # Try to activate service while anchoring
-        success = self.structure_system.activate_service( structure_id, "market")
+        success = self.structure_system.activate_service(structure_id, "market")
         self.assertFalse(success)
     
     def test_get_structures_in_system(self):
@@ -390,8 +390,8 @@ class TestStructureSystem(unittest.TestCase):
         )
         
         # Add different fuel types
-        self.structure_system.add_fuel( structure_id, "helium_isotopes", 500)
-        self.structure_system.add_fuel( structure_id, "nitrogen_isotopes", 300)
+        self.structure_system.add_fuel(structure_id, "helium_isotopes", 500)
+        self.structure_system.add_fuel(structure_id, "nitrogen_isotopes", 300)
         
         structure_comp = self.world.get_entity(structure_id).get_component(Structure)
         self.assertEqual(structure_comp.fuel_bay["helium_isotopes"], 500)
