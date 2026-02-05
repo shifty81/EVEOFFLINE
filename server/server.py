@@ -91,9 +91,20 @@ class GameServer:
                     
                 elif message.message_type == MessageType.INPUT_MOVE.value:
                     await self.handle_player_input(player_id, message)
-                    
+                
                 elif message.message_type == MessageType.CHAT.value:
                     await self.broadcast_chat(message.data)
+                
+                # Strategic commands
+                elif message.message_type in [
+                    MessageType.COMMAND_APPROACH.value,
+                    MessageType.COMMAND_ORBIT.value,
+                    MessageType.COMMAND_KEEP_AT_RANGE.value,
+                    MessageType.COMMAND_LOCK_TARGET.value,
+                    MessageType.COMMAND_WARP_TO.value,
+                    MessageType.COMMAND_STOP.value
+                ]:
+                    await self.handle_strategic_command(player_id, message.message_type, message.data)
                     
         except Exception as e:
             print(f"[Server] Error handling client {addr}: {e}")
@@ -156,6 +167,120 @@ class GameServer:
         velocity.vx = input_data.get('vx', 0)
         velocity.vy = input_data.get('vy', 0)
         velocity.vz = input_data.get('vz', 0)
+    
+    async def handle_strategic_command(self, player_id: str, command: str, data: Dict):
+        """Handle strategic movement commands from client"""
+        from engine.components.game_components import Position, Velocity, Target
+        
+        # Movement tuning constants
+        APPROACH_SPEED_FACTOR = 0.5
+        RANGE_APPROACH_FACTOR = 0.3
+        RANGE_RETREAT_FACTOR = 0.3
+        RANGE_CLOSE_THRESHOLD = 0.8
+        
+        entity = self.engine.world.get_entity(player_id)
+        if not entity:
+            print(f"[Server] Entity not found for player {player_id}")
+            return
+        
+        target_id = data.get('target')
+        
+        print(f"[Server] Player {player_id} command: {command} on target {target_id}")
+        
+        if command == MessageType.COMMAND_APPROACH.value:
+            # Approach command - move towards target
+            if target_id:
+                target_entity = self.engine.world.get_entity(target_id)
+                if target_entity:
+                    # Get positions
+                    player_pos = entity.get_component(Position)
+                    target_pos = target_entity.get_component(Position)
+                    
+                    if player_pos and target_pos:
+                        # Calculate direction vector
+                        dx = target_pos.x - player_pos.x
+                        dy = target_pos.y - player_pos.y
+                        dz = target_pos.z - player_pos.z
+                        
+                        # Normalize and set velocity
+                        distance = (dx*dx + dy*dy + dz*dz) ** 0.5
+                        if distance > 0:
+                            velocity = entity.get_component(Velocity)
+                            if velocity:
+                                speed = min(velocity.max_speed, distance * APPROACH_SPEED_FACTOR)
+                                velocity.vx = (dx / distance) * speed
+                                velocity.vy = (dy / distance) * speed
+                                velocity.vz = (dz / distance) * speed
+                                print(f"[Server] Approaching {target_id} at speed {speed:.1f}")
+        
+        elif command == MessageType.COMMAND_ORBIT.value:
+            # Orbit command - circular motion around target
+            distance_param = data.get('distance', 5000)
+            if target_id:
+                # For now, just implement as approach
+                # A full orbit system would require tracking orbit state
+                print(f"[Server] Orbit command (simplified as approach) at {distance_param}m")
+                await self.handle_strategic_command(player_id, MessageType.COMMAND_APPROACH.value, {'target': target_id})
+        
+        elif command == MessageType.COMMAND_KEEP_AT_RANGE.value:
+            # Keep at range command - maintain distance from target
+            distance_param = data.get('distance', 10000)
+            if target_id:
+                target_entity = self.engine.world.get_entity(target_id)
+                if target_entity:
+                    player_pos = entity.get_component(Position)
+                    target_pos = target_entity.get_component(Position)
+                    
+                    if player_pos and target_pos:
+                        # Calculate distance
+                        dx = target_pos.x - player_pos.x
+                        dy = target_pos.y - player_pos.y
+                        dz = target_pos.z - player_pos.z
+                        current_distance = (dx*dx + dy*dy + dz*dz) ** 0.5
+                        
+                        # Move towards or away to maintain range
+                        velocity = entity.get_component(Velocity)
+                        if velocity:
+                            if current_distance > distance_param:
+                                # Too far, approach
+                                speed = min(velocity.max_speed, (current_distance - distance_param) * RANGE_APPROACH_FACTOR)
+                                velocity.vx = (dx / current_distance) * speed
+                                velocity.vy = (dy / current_distance) * speed
+                                velocity.vz = (dz / current_distance) * speed
+                            elif current_distance < distance_param * RANGE_CLOSE_THRESHOLD:
+                                # Too close, back away
+                                speed = min(velocity.max_speed, (distance_param - current_distance) * RANGE_RETREAT_FACTOR)
+                                velocity.vx = -(dx / current_distance) * speed
+                                velocity.vy = -(dy / current_distance) * speed
+                                velocity.vz = -(dz / current_distance) * speed
+                            else:
+                                # In range, stop
+                                velocity.vx = 0
+                                velocity.vy = 0
+                                velocity.vz = 0
+                            print(f"[Server] Keep at range {distance_param}m (current: {current_distance:.1f}m)")
+        
+        elif command == MessageType.COMMAND_LOCK_TARGET.value:
+            # Lock target command
+            if target_id:
+                target_comp = entity.get_component(Target)
+                if target_comp:
+                    if target_id not in target_comp.targets:
+                        target_comp.targets.append(target_id)
+                        print(f"[Server] Target locked: {target_id}")
+        
+        elif command == MessageType.COMMAND_WARP_TO.value:
+            # Warp command - for now just log it
+            print(f"[Server] Warp to {target_id} (not yet implemented)")
+        
+        elif command == MessageType.COMMAND_STOP.value:
+            # Stop command
+            velocity = entity.get_component(Velocity)
+            if velocity:
+                velocity.vx = 0
+                velocity.vy = 0
+                velocity.vz = 0
+                print(f"[Server] Ship stopped")
         
     async def broadcast_spawn(self, entity):
         """Broadcast entity spawn to all clients"""
