@@ -7,10 +7,13 @@
 #include "core/embedded_server.h"
 #include "core/session_manager.h"
 #include "ui/input_handler.h"
+#include "ui/ui_manager.h"
+#include "ui/entity_picker.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <algorithm>
 
 namespace eve {
 
@@ -19,6 +22,7 @@ Application* Application::s_instance = nullptr;
 Application::Application(const std::string& title, int width, int height)
     : m_running(false)
     , m_lastFrameTime(0.0f)
+    , m_currentTargetIndex(-1)
 {
     if (s_instance != nullptr) {
         throw std::runtime_error("Application already exists");
@@ -37,6 +41,8 @@ Application::Application(const std::string& title, int width, int height)
     m_camera = std::make_unique<Camera>(45.0f, static_cast<float>(width) / height, 0.1f, 10000.0f);
     m_embeddedServer = std::make_unique<EmbeddedServer>();
     m_sessionManager = std::make_unique<SessionManager>();
+    m_uiManager = std::make_unique<UI::UIManager>();
+    m_entityPicker = std::make_unique<UI::EntityPicker>();
     
     // Initialize
     initialize();
@@ -86,23 +92,47 @@ void Application::initialize() {
         throw std::runtime_error("Failed to initialize renderer");
     }
     
-    // Set up input callbacks
+    // Initialize UI manager
+    if (!m_uiManager->Initialize(m_window->getHandle())) {
+        throw std::runtime_error("Failed to initialize UI manager");
+    }
+    
+    // Set up input callbacks using lambdas to bind to member functions
     m_window->setKeyCallback([this](int key, int action) {
         // Handle ESC key to exit
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             shutdown();
         }
         
-        // Forward to input handler
-        m_inputHandler->handleKey(key, action);
+        // Forward to input handler (will be updated to handle mods)
+        m_inputHandler->handleKey(key, action, 0);
     });
     
     m_window->setMouseCallback([this](double xpos, double ypos) {
         m_inputHandler->handleMouse(xpos, ypos);
     });
     
+    m_window->setMouseButtonCallback([this](int button, int action, int mods) {
+        double x = m_inputHandler->getMouseX();
+        double y = m_inputHandler->getMouseY();
+        m_inputHandler->handleMouseButton(button, action, mods, x, y);
+    });
+    
     m_window->setResizeCallback([this](int width, int height) {
         m_renderer->setViewport(0, 0, width, height);
+    });
+    
+    // Register input handler callbacks
+    m_inputHandler->setKeyCallback([this](int key, int action, int mods) {
+        handleKeyInput(key, action, mods);
+    });
+    
+    m_inputHandler->setMouseButtonCallback([this](int button, int action, int mods, double x, double y) {
+        handleMouseButton(button, action, mods, x, y);
+    });
+    
+    m_inputHandler->setMouseMoveCallback([this](double x, double y, double deltaX, double deltaY) {
+        handleMouseMove(x, y, deltaX, deltaY);
     });
     
     // Set initial viewport
@@ -155,6 +185,12 @@ void Application::render() {
     
     // Render scene
     m_renderer->renderScene(*m_camera);
+    
+    // Render UI
+    m_uiManager->BeginFrame();
+    m_uiManager->UpdateTargets(m_gameClient->getEntityManager().getAllEntities());
+    m_uiManager->Render();
+    m_uiManager->EndFrame();
     
     // End rendering
     m_renderer->endFrame();
@@ -253,6 +289,147 @@ bool Application::joinMultiplayerGame(const std::string& host, int port) {
 
 bool Application::isHosting() const {
     return m_embeddedServer && m_embeddedServer->isRunning();
+}
+
+void Application::handleKeyInput(int key, int action, int mods) {
+    // Only handle PRESS events for most keys
+    if (action != GLFW_PRESS) {
+        return;
+    }
+    
+    // Module activation (F1-F8)
+    if (key >= GLFW_KEY_F1 && key <= GLFW_KEY_F8) {
+        int slot = key - GLFW_KEY_F1 + 1;  // F1 = slot 1
+        activateModule(slot);
+        return;
+    }
+    
+    // Target cycling
+    if (key == GLFW_KEY_TAB) {
+        cycleTarget();
+        return;
+    }
+    
+    // Clear target
+    if (key == GLFW_KEY_ESCAPE) {
+        clearTarget();
+        return;
+    }
+    
+    // Movement keys (placeholder for future implementation)
+    if (key == GLFW_KEY_W) {
+        std::cout << "[Input] W pressed - Approach" << std::endl;
+    } else if (key == GLFW_KEY_A) {
+        std::cout << "[Input] A pressed - Orbit left" << std::endl;
+    } else if (key == GLFW_KEY_D) {
+        std::cout << "[Input] D pressed - Orbit right" << std::endl;
+    } else if (key == GLFW_KEY_S) {
+        std::cout << "[Input] S pressed - Stop ship" << std::endl;
+    }
+}
+
+void Application::handleMouseButton(int button, int action, int mods, double x, double y) {
+    // Only handle left click press
+    if (button != GLFW_MOUSE_BUTTON_LEFT || action != GLFW_PRESS) {
+        return;
+    }
+    
+    // Get all entities
+    auto entities = m_gameClient->getEntityManager().getAllEntities();
+    std::vector<std::shared_ptr<Entity>> entityList;
+    for (const auto& pair : entities) {
+        entityList.push_back(pair.second);
+    }
+    
+    // Pick entity at mouse position
+    std::string pickedEntityId = m_entityPicker->pickEntity(
+        x, y,
+        m_window->getWidth(), m_window->getHeight(),
+        *m_camera,
+        entityList
+    );
+    
+    if (!pickedEntityId.empty()) {
+        // Check if CTRL is pressed for multi-target
+        bool addToTargets = (mods & GLFW_MOD_CONTROL) != 0;
+        targetEntity(pickedEntityId, addToTargets);
+    }
+}
+
+void Application::handleMouseMove(double x, double y, double deltaX, double deltaY) {
+    // Camera control could be added here
+    // For now, just track mouse position (already done by InputHandler)
+}
+
+void Application::targetEntity(const std::string& entityId, bool addToTargets) {
+    if (entityId.empty()) {
+        return;
+    }
+    
+    std::cout << "[Targeting] Target entity: " << entityId;
+    if (addToTargets) {
+        std::cout << " (add to targets)";
+    }
+    std::cout << std::endl;
+    
+    if (addToTargets) {
+        // Add to target list if not already present
+        auto it = std::find(m_targetList.begin(), m_targetList.end(), entityId);
+        if (it == m_targetList.end()) {
+            m_targetList.push_back(entityId);
+            m_uiManager->AddTarget(entityId);
+        }
+    } else {
+        // Replace current target
+        m_currentTargetId = entityId;
+        m_targetList.clear();
+        m_targetList.push_back(entityId);
+        m_currentTargetIndex = 0;
+        
+        // Update UI
+        m_uiManager->RemoveTarget("");  // Clear all (empty string)
+        m_uiManager->AddTarget(entityId);
+    }
+}
+
+void Application::clearTarget() {
+    std::cout << "[Targeting] Clear target" << std::endl;
+    
+    m_currentTargetId.clear();
+    m_targetList.clear();
+    m_currentTargetIndex = -1;
+    
+    // Update UI
+    m_uiManager->RemoveTarget("");  // Clear all
+}
+
+void Application::cycleTarget() {
+    if (m_targetList.empty()) {
+        std::cout << "[Targeting] No targets to cycle" << std::endl;
+        return;
+    }
+    
+    // Move to next target
+    m_currentTargetIndex = (m_currentTargetIndex + 1) % m_targetList.size();
+    m_currentTargetId = m_targetList[m_currentTargetIndex];
+    
+    std::cout << "[Targeting] Cycle to target: " << m_currentTargetId 
+              << " (" << (m_currentTargetIndex + 1) << "/" << m_targetList.size() << ")" << std::endl;
+}
+
+void Application::activateModule(int slotNumber) {
+    if (slotNumber < 1 || slotNumber > 8) {
+        return;
+    }
+    
+    std::cout << "[Modules] Activate module in slot " << slotNumber;
+    if (!m_currentTargetId.empty()) {
+        std::cout << " on target: " << m_currentTargetId;
+    }
+    std::cout << std::endl;
+    
+    // TODO: Send module activation command to server
+    // For now, just log the action
 }
 
 } // namespace eve

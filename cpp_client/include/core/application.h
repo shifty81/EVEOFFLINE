@@ -14,6 +14,15 @@ class Camera;
 class EmbeddedServer;
 class SessionManager;
 
+} // namespace eve
+
+namespace UI {
+    class UIManager;
+    class EntityPicker;
+}
+
+namespace eve {
+
 /**
  * Main application class
  * Manages the game loop, window, and core systems
@@ -66,12 +75,37 @@ public:
      * Check if hosting a game
      */
     bool isHosting() const;
+    
+    /**
+     * Target an entity by ID
+     */
+    void targetEntity(const std::string& entityId, bool addToTargets = false);
+    
+    /**
+     * Clear current target
+     */
+    void clearTarget();
+    
+    /**
+     * Cycle to next target
+     */
+    void cycleTarget();
+    
+    /**
+     * Activate module by slot (F1-F8)
+     */
+    void activateModule(int slotNumber);
 
 private:
     void initialize();
     void update(float deltaTime);
     void render();
     void cleanup();
+    
+    // Input handlers
+    void handleKeyInput(int key, int action, int mods);
+    void handleMouseButton(int button, int action, int mods, double x, double y);
+    void handleMouseMove(double x, double y, double deltaX, double deltaY);
 
     static Application* s_instance;
 
@@ -82,9 +116,16 @@ private:
     std::unique_ptr<Camera> m_camera;
     std::unique_ptr<EmbeddedServer> m_embeddedServer;
     std::unique_ptr<SessionManager> m_sessionManager;
+    std::unique_ptr<UI::UIManager> m_uiManager;
+    std::unique_ptr<UI::EntityPicker> m_entityPicker;
 
     bool m_running;
     float m_lastFrameTime;
+    
+    // Targeting state
+    std::string m_currentTargetId;
+    std::vector<std::string> m_targetList;
+    int m_currentTargetIndex;
 };
 
 } // namespace eve

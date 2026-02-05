@@ -153,6 +153,8 @@ set(CLIENT_SOURCES
     src/ui/input_handler.cpp
     src/ui/ui_manager.cpp
     src/ui/eve_panels.cpp
+    src/ui/eve_target_list.cpp
+    src/ui/entity_picker.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}
@@ -192,6 +194,8 @@ set(CLIENT_HEADERS
     include/ui/input_handler.h
     include/ui/ui_manager.h
     include/ui/eve_panels.h
+    include/ui/eve_target_list.h
+    include/ui/entity_picker.h
     ${AUDIO_HEADERS}
 )
 
