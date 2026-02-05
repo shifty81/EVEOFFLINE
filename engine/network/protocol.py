@@ -28,6 +28,14 @@ class MessageType(Enum):
     INPUT_DOCK = "input_dock"
     INPUT_UNDOCK = "input_undock"
     
+    # Strategic commands
+    COMMAND_APPROACH = "approach"
+    COMMAND_ORBIT = "orbit"
+    COMMAND_KEEP_AT_RANGE = "keep_at_range"
+    COMMAND_LOCK_TARGET = "lock_target"
+    COMMAND_WARP_TO = "warp_to"
+    COMMAND_STOP = "stop"
+    
     # Combat
     DAMAGE = "damage"
     TARGET_LOCK = "target_lock"
