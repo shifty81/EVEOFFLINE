@@ -67,15 +67,16 @@ bool TCPClient::connect(const std::string& host, int port) {
     bool connected = false;
     for (struct addrinfo* rp = result; rp != nullptr; rp = rp->ai_next) {
 #ifdef _WIN32
-        m_socket = static_cast<void*>(reinterpret_cast<SOCKET*>(socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol)));
-        if (reinterpret_cast<SOCKET>(m_socket) == INVALID_SOCKET) continue;
+        SOCKET sock = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+        if (sock == INVALID_SOCKET) continue;
+        m_socket = reinterpret_cast<void*>(static_cast<uintptr_t>(sock));
 #else
         m_socket = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
         if (m_socket == INVALID_SOCKET) continue;
 #endif
 
 #ifdef _WIN32
-        if (::connect(reinterpret_cast<SOCKET>(m_socket), rp->ai_addr, static_cast<int>(rp->ai_addrlen)) == 0) {
+        if (::connect(static_cast<SOCKET>(reinterpret_cast<uintptr_t>(m_socket)), rp->ai_addr, static_cast<int>(rp->ai_addrlen)) == 0) {
 #else
         if (::connect(m_socket, rp->ai_addr, rp->ai_addrlen) == 0) {
 #endif
@@ -84,7 +85,7 @@ bool TCPClient::connect(const std::string& host, int port) {
         }
 
 #ifdef _WIN32
-        closesocket(reinterpret_cast<SOCKET>(m_socket));
+        closesocket(static_cast<SOCKET>(reinterpret_cast<uintptr_t>(m_socket)));
 #else
         ::close(m_socket);
 #endif
@@ -101,7 +102,7 @@ bool TCPClient::connect(const std::string& host, int port) {
     // Set non-blocking mode for receive
 #ifdef _WIN32
     u_long mode = 1;
-    ioctlsocket(reinterpret_cast<SOCKET>(m_socket), FIONBIO, &mode);
+    ioctlsocket(static_cast<SOCKET>(reinterpret_cast<uintptr_t>(m_socket)), FIONBIO, &mode);
 #else
     int flags = fcntl(m_socket, F_GETFL, 0);
     fcntl(m_socket, F_SETFL, flags | O_NONBLOCK);
@@ -120,8 +121,8 @@ void TCPClient::disconnect() {
 
         // Close socket first to break receive loop
 #ifdef _WIN32
-        if (reinterpret_cast<SOCKET>(m_socket) != INVALID_SOCKET) {
-            closesocket(reinterpret_cast<SOCKET>(m_socket));
+        if (m_socket != nullptr) {
+            closesocket(static_cast<SOCKET>(reinterpret_cast<uintptr_t>(m_socket)));
         }
 #else
         if (m_socket != INVALID_SOCKET) {
@@ -149,7 +150,7 @@ bool TCPClient::send(const std::string& message) {
     std::cout << "[DEBUG] Sending: " << message << std::endl;
 
 #ifdef _WIN32
-    int result = ::send(reinterpret_cast<SOCKET>(m_socket), msg.c_str(), static_cast<int>(msg.length()), 0);
+    int result = ::send(static_cast<SOCKET>(reinterpret_cast<uintptr_t>(m_socket)), msg.c_str(), static_cast<int>(msg.length()), 0);
 #else
     ssize_t result = ::send(m_socket, msg.c_str(), msg.length(), 0);
 #endif
@@ -178,7 +179,7 @@ void TCPClient::receiveThread() {
 
     while (m_connected) {
 #ifdef _WIN32
-        int bytesReceived = recv(reinterpret_cast<SOCKET>(m_socket), buffer, sizeof(buffer) - 1, 0);
+        int bytesReceived = recv(static_cast<SOCKET>(reinterpret_cast<uintptr_t>(m_socket)), buffer, sizeof(buffer) - 1, 0);
 #else
         ssize_t bytesReceived = recv(m_socket, buffer, sizeof(buffer) - 1, 0);
 #endif
