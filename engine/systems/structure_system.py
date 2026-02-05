@@ -358,15 +358,23 @@ class StructureSystem:
         print(f"Unanchoring {structure_comp.structure_name}...")
         return True
     
-    def destroy_structure(self, structure_entity_id: str):
-        """Destroy a structure (combat or unanchoring complete)"""
+    def destroy_structure(self, structure_entity_id: str, drop_loot: bool = True):
+        """Destroy a structure (combat or unanchoring complete)
+        
+        Args:
+            structure_entity_id: ID of the structure to destroy
+            drop_loot: Whether to drop loot from hangar (True for combat destruction, False for safe unanchoring)
+        """
         entity = self.world.get_entity(structure_entity_id)
         if entity:
             structure_comp = entity.get_component(Structure)
-            if structure_comp:
-                # Drop loot from hangar
-                # TODO: Implement loot dropping
+            pos_comp = entity.get_component(Position)
+            
+            if structure_comp and drop_loot and pos_comp:
+                # Drop loot container at structure's position
+                self._drop_structure_loot(structure_entity_id, structure_comp, pos_comp)
                 
+            if structure_comp:
                 # Remove from tracking
                 for system_id, structures in self.structure_locations.items():
                     if structure_entity_id in structures:
@@ -379,3 +387,75 @@ class StructureSystem:
         # Remove entity
         self.world.destroy_entity(structure_entity_id)
         print(f"Structure destroyed")
+    
+    def _drop_structure_loot(self, structure_entity_id: str, structure_comp: Structure, pos_comp: Position):
+        """Drop loot from a destroyed structure's hangar
+        
+        Args:
+            structure_entity_id: ID of the structure
+            structure_comp: Structure component
+            pos_comp: Position component for loot drop location
+        """
+        # Check if structure has inventory with items
+        entity = self.world.get_entity(structure_entity_id)
+        if not entity:
+            return
+            
+        inventory_comp = entity.get_component(Inventory)
+        if not inventory_comp or not inventory_comp.items:
+            print("Structure hangar was empty, no loot dropped")
+            return
+        
+        # Import loot system
+        from engine.systems.loot_system import LootSystem, LootContainer, LootContainers
+        
+        # Try to get loot system from world, or create a temporary one
+        loot_system = None
+        for system in getattr(self.world, 'systems', []):
+            if isinstance(system, LootSystem):
+                loot_system = system
+                break
+        
+        if not loot_system:
+            # Create a loot container manually without the loot system
+            import time as time_module
+            
+            # Create container entity
+            container_entity = self.world.create_entity()
+            drop_pos = Position(
+                x=pos_comp.x + 10,  # Offset slightly from structure
+                y=pos_comp.y,
+                z=pos_comp.z
+            )
+            container_entity.add_component(drop_pos)
+            
+            # Create loot container with structure's inventory contents
+            container = LootContainer(
+                container_id=f"structure_wreck_{structure_entity_id}",
+                container_type="secure",  # Secure container - only owner corp can access initially
+                contents=inventory_comp.items.copy(),
+                isk_contents=0.0,  # ISK stored separately in corp wallet
+                owner_id=structure_comp.owner_corporation_id,
+                created_at=time_module.time(),
+                despawn_time=3600.0  # 1 hour for structure loot
+            )
+            
+            # Add container to entity
+            loot_containers_comp = LootContainers()
+            loot_containers_comp.containers[container.container_id] = container
+            container_entity.add_component(loot_containers_comp)
+            
+            print(f"Structure loot dropped: {len(inventory_comp.items)} item types in secure container")
+            print(f"Container ID: {container.container_id} (owner: {structure_comp.owner_corporation_id})")
+        else:
+            # Use the loot system if available
+            container_id = loot_system.create_loot_container(
+                position=(pos_comp.x + 10, pos_comp.y, pos_comp.z),
+                loot_table_id="structure_wreck",  # Would need to create this table
+                container_type="secure",
+                owner_id=structure_comp.owner_corporation_id,
+                current_time=time.time()
+            )
+            
+            if container_id:
+                print(f"Structure loot dropped in container {container_id}")
