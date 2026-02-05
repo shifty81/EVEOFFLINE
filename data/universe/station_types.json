@@ -98,5 +98,107 @@
       "features": ["ornate design", "religious symbolism", "grand scale", "elegant curves"],
       "size_scale": 1.4
     }
+  },
+  "upwell_structures": {
+    "description": "Player-owned Upwell structures introduced 2016-2026",
+    "citadels": {
+      "astrahus": {
+        "name": "Astrahus",
+        "size": "medium",
+        "primary_role": "Command center, market hub",
+        "services": ["market", "repair", "fitting", "cloning", "contracts"],
+        "docking_capacity": "subcapitals_only",
+        "visual_style": "modular_industrial",
+        "customizable": true
+      },
+      "fortizar": {
+        "name": "Fortizar",
+        "size": "large",
+        "primary_role": "Staging citadel, fleet operations",
+        "services": ["market", "repair", "fitting", "cloning", "contracts"],
+        "docking_capacity": "up_to_capitals",
+        "visual_style": "military_fortress",
+        "customizable": true
+      },
+      "keepstar": {
+        "name": "Keepstar",
+        "size": "extra_large",
+        "primary_role": "Supercapital staging, alliance headquarters",
+        "services": ["market", "repair", "fitting", "cloning", "contracts", "supercapital_construction"],
+        "docking_capacity": "all_ships_including_titans",
+        "visual_style": "massive_citadel",
+        "special_features": ["supercapital_docking", "immense_hangar_bays"],
+        "customizable": true
+      }
+    },
+    "engineering_complexes": {
+      "raitaru": {
+        "name": "Raitaru",
+        "size": "medium",
+        "primary_role": "Manufacturing and invention",
+        "services": ["manufacturing", "research", "invention", "repair", "fitting"],
+        "bonuses": ["manufacturing_cost_reduction", "manufacturing_time_reduction"],
+        "visual_style": "industrial_complex"
+      },
+      "azbel": {
+        "name": "Azbel",
+        "size": "large",
+        "primary_role": "Large-scale manufacturing",
+        "services": ["manufacturing", "research", "invention", "repair", "fitting"],
+        "bonuses": ["significant_manufacturing_bonuses", "capital_construction"],
+        "visual_style": "large_factory"
+      },
+      "sotiyo": {
+        "name": "Sotiyo",
+        "size": "extra_large",
+        "primary_role": "Supercapital construction",
+        "services": ["manufacturing", "research", "invention", "repair", "fitting", "supercapital_construction"],
+        "bonuses": ["maximum_manufacturing_bonuses", "titan_construction"],
+        "visual_style": "mega_shipyard"
+      }
+    },
+    "refineries": {
+      "athanor": {
+        "name": "Athanor",
+        "size": "medium",
+        "primary_role": "Moon mining and refining",
+        "services": ["refining", "reprocessing", "compression", "moon_drilling"],
+        "bonuses": ["reprocessing_efficiency", "compression_bonuses"],
+        "visual_style": "mining_refinery",
+        "updates_2026": ["new_ore_support", "faster_cycles", "fitting_system"]
+      },
+      "tatara": {
+        "name": "Tatara",
+        "size": "large",
+        "primary_role": "Large-scale moon mining",
+        "services": ["refining", "reprocessing", "compression", "moon_drilling", "capital_component_construction"],
+        "bonuses": ["maximum_reprocessing_efficiency", "enhanced_compression"],
+        "visual_style": "mega_refinery",
+        "updates_2026": ["new_ore_support", "faster_cycles", "fitting_system", "enhanced_capacity"]
+      }
+    },
+    "structure_features": {
+      "asset_safety": {
+        "description": "If structure destroyed, assets moved to asset safety",
+        "recovery_location": "nearest_lowsec_npc_station",
+        "recovery_cost": "15_percent_of_value",
+        "exceptions": "wormhole_space_c4_c6_no_asset_safety"
+      },
+      "access_control": {
+        "description": "Owner can set access lists",
+        "options": ["public", "alliance_only", "corporation_only", "whitelist", "blacklist"]
+      },
+      "tax_rates": {
+        "description": "Owner sets service tax rates",
+        "typical_range": "0_to_10_percent",
+        "competition": "often_lower_than_npc_stations"
+      },
+      "fitting_system_2026": {
+        "description": "2026 update - structures can be fitted like ships",
+        "slots": ["high", "mid", "low", "rig"],
+        "modules": ["offensive", "defensive", "utility", "industrial"],
+        "customization": "tailor_for_specific_roles"
+      }
+    }
   }
 }

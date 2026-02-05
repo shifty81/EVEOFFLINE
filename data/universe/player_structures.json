@@ -1,0 +1,382 @@
+{
+  "player_structures_2026": {
+    "description": "EVE Online 2026 player-owned structures following Equinox and Catalyst expansions",
+    "nullsec_strategic": {
+      "orbital_skyhook": {
+        "name": "Orbital Skyhook",
+        "type": "nullsec_structure",
+        "category": "resource_harvesting",
+        "description": "Major structure acting as a 'space elevator' that harvests planetary resources directly from planets",
+        "deployment": {
+          "location": "nullsec_orbit",
+          "anchoring_time": "24_hours",
+          "fuel_required": true,
+          "vulnerability_windows": true
+        },
+        "functionality": {
+          "primary_role": "Passive PI harvesting",
+          "income_stream": "Replaces older, less efficient planetary interaction methods",
+          "resources_produced": ["planetary_commodities", "raw_materials"],
+          "harvest_cycle": "continuous",
+          "management_required": "active"
+        },
+        "defense": {
+          "active_management": true,
+          "can_be_stolen": true,
+          "raiding_mechanics": "Enemies can siphon harvested resources",
+          "defense_options": ["reinforcement_timers", "defensive_modules", "fleet_defense"],
+          "risk_level": "high"
+        },
+        "strategic_value": {
+          "sovereignty_impact": "medium",
+          "economic_value": "high",
+          "logistics_importance": "medium"
+        }
+      },
+      "sovereignty_hub": {
+        "name": "Sovereignty Hub (Sov Hub)",
+        "type": "nullsec_structure",
+        "category": "sovereignty_control",
+        "description": "Central nerve center for nullsec system control, replacing older deprecated mechanics",
+        "deployment": {
+          "location": "nullsec_system_center",
+          "anchoring_time": "48_hours",
+          "fuel_required": true,
+          "requires_sov": true
+        },
+        "functionality": {
+          "primary_role": "Controls system upgrades and resources",
+          "system_control": "Determines anomalies, sites, and resource spawns",
+          "upgrade_slots": 7,
+          "customization_focus": "Balance between industrial output and defensive capabilities"
+        },
+        "upgrades": {
+          "industrial": ["mining_anomalies", "gas_sites", "ore_prospecting"],
+          "military": ["combat_anomalies", "defensive_bonuses", "cyno_jammer"],
+          "economic": ["ratting_sites", "exploration_signatures", "manufacturing_bonuses"]
+        },
+        "defense": {
+          "reinforcement_cycles": 3,
+          "vulnerability_windows": "configurable",
+          "hull_hp": "very_high",
+          "requires_entosis": true
+        },
+        "strategic_value": {
+          "sovereignty_impact": "critical",
+          "economic_value": "very_high",
+          "logistics_importance": "critical"
+        }
+      },
+      "metenox_moon_drill": {
+        "name": "Metenox Moon Drill",
+        "type": "nullsec_structure",
+        "category": "moon_mining",
+        "description": "Specialized, automated moon mining structure for smaller, less-populated, or 'dead end' systems",
+        "deployment": {
+          "location": "moon_orbit",
+          "anchoring_time": "12_hours",
+          "fuel_required": true,
+          "population_requirement": "low"
+        },
+        "functionality": {
+          "primary_role": "Small-scale automatic moon mining",
+          "automation_level": "high",
+          "mining_cycle": "automated_extraction",
+          "ore_storage": "integrated_hold",
+          "comparison": "More accessible than Tatara, less output than full industrial complex"
+        },
+        "advantages": {
+          "lower_cost": "Cheaper than Tatara",
+          "reduced_manning": "Requires fewer operators",
+          "automated_operation": "Can run with minimal supervision",
+          "ideal_for": ["remote_systems", "dead_end_pockets", "small_corporations"]
+        },
+        "defense": {
+          "reinforcement_cycles": 2,
+          "hull_hp": "medium",
+          "defensive_capabilities": "basic"
+        },
+        "strategic_value": {
+          "sovereignty_impact": "low",
+          "economic_value": "medium",
+          "logistics_importance": "low"
+        }
+      }
+    },
+    "mining_industrial": {
+      "athanor_2026": {
+        "name": "Athanor (2026 Updated)",
+        "type": "refinery",
+        "category": "moon_mining",
+        "description": "Medium-sized refinery with 2026 updates supporting new ore types and faster mining cycles",
+        "updates_2026": {
+          "new_ore_support": ["prismaticite", "enhanced_moon_ores"],
+          "faster_cycles": "20% reduction in extraction time",
+          "enhanced_yield": "Improved ore processing efficiency",
+          "compression_modules": "New specialized compression for asteroid, ice, and gas"
+        },
+        "functionality": {
+          "moon_drilling": true,
+          "ore_refining": true,
+          "compression": true,
+          "fitting_system": "Modular structure fitting similar to ships"
+        },
+        "fitting_modules": {
+          "reprocessing_efficiency": ["basic_reprocessing", "advanced_reprocessing", "perfect_reprocessing"],
+          "compression_modules": ["asteroid_compression", "ice_compression", "gas_compression"],
+          "defensive_modules": ["shield_hardeners", "armor_repairers", "point_defense"],
+          "utility_modules": ["mining_survey_chipset", "yield_enhancement", "cycle_acceleration"]
+        }
+      },
+      "tatara_2026": {
+        "name": "Tatara (2026 Updated)",
+        "type": "refinery",
+        "category": "large_scale_mining",
+        "description": "Large refinery with significant 2026 updates for industrial-scale operations",
+        "updates_2026": {
+          "new_ore_support": ["prismaticite", "enhanced_moon_ores", "rare_minerals"],
+          "faster_cycles": "30% reduction in extraction time",
+          "enhanced_yield": "Maximum ore processing efficiency",
+          "compression_modules": "Advanced compression with bonus yields"
+        },
+        "functionality": {
+          "moon_drilling": "large_scale",
+          "ore_refining": "industrial_capacity",
+          "compression": "maximum_efficiency",
+          "fitting_system": "Advanced modular fitting"
+        },
+        "advantages": {
+          "higher_yield": "50% more output than Athanor",
+          "faster_processing": "Multiple simultaneous operations",
+          "larger_capacity": "Extended ore and fuel storage",
+          "industrial_focus": "Designed for fully manned industrial complexes"
+        }
+      },
+      "mining_survey_chipset": {
+        "name": "Mining Survey Chipset Module",
+        "type": "structure_module",
+        "category": "utility",
+        "description": "Advanced module fitted to structures to enhance resource analysis and yield estimation",
+        "slot_type": "utility",
+        "effects": {
+          "resource_analysis": "+15% to ore composition scanning",
+          "yield_estimation": "Provides accurate yield predictions",
+          "optimal_extraction": "Highlights best extraction timing",
+          "survey_range": "+25% to survey scanner range"
+        },
+        "cpu_cost": 150,
+        "powergrid_cost": 250,
+        "fitting_requirements": ["athanor", "tatara", "metenox_drill"]
+      },
+      "industry_fitting_system": {
+        "name": "Industry Fitting System",
+        "type": "game_mechanic",
+        "description": "2026 update allowing structures to be fitted similar to ships",
+        "features": {
+          "fitting_slots": ["high_slots", "mid_slots", "low_slots", "rig_slots"],
+          "cpu_powergrid": "Structures have CPU and PowerGrid like ships",
+          "specialized_modules": ["compression", "refining", "defensive", "utility"],
+          "customization": "Tailor structure efficiency for specific operations"
+        },
+        "example_fits": {
+          "mining_focus": {
+            "high": ["moon_drill", "mining_survey_chipset"],
+            "mid": ["ore_scanner", "yield_enhancer"],
+            "low": ["reprocessing_efficiency", "compression_module"],
+            "rig": ["mining_optimization_rig", "refining_efficiency_rig"]
+          },
+          "defensive_focus": {
+            "high": ["point_defense_battery", "missile_launcher"],
+            "mid": ["shield_hardeners", "remote_shield_boosters"],
+            "low": ["damage_control", "reinforced_bulkheads"],
+            "rig": ["defense_optimization_rig", "armor_resistance_rig"]
+          }
+        }
+      }
+    },
+    "wormhole_structures": {
+      "communal_granary": {
+        "name": "Communal Granary",
+        "type": "wormhole_structure",
+        "category": "resource_boost",
+        "description": "Wormhole-exclusive structure for storing 'Grain' to provide system-wide harvesting bonuses",
+        "deployment": {
+          "location": "wormhole_systems_only",
+          "excluded_from": ["shattered_wormholes", "drifter_wormholes"],
+          "anchoring_time": "6_hours",
+          "fuel_required": false
+        },
+        "unique_properties": {
+          "indestructible": true,
+          "description_indestructible": "Cannot be destroyed by any means, but must be fed constantly",
+          "requires_feeding": "Constant grain supply needed to maintain bonuses",
+          "cooperation_required": "Designed for collaborative gameplay"
+        },
+        "functionality": {
+          "resource_stored": "Grain (J-space exclusive)",
+          "buff_mechanism": "Flat bonus to asteroid and gas harvesting yields",
+          "bonus_range": {
+            "minimum": "+0.1%",
+            "maximum": "+1.0%",
+            "duration": "24_hours",
+            "scaling": "Based on grain stored"
+          },
+          "system_wide": "Affects all mining in the system"
+        },
+        "gameplay_impact": {
+          "encourages": ["collaboration", "high_risk_high_reward", "active_participation"],
+          "risk_level": "high",
+          "reward_potential": "significant_for_dedicated_groups"
+        }
+      },
+      "upwell_wormhole_adjustments": {
+        "name": "Upwell Structure Adjustments (Wormhole)",
+        "type": "game_mechanic",
+        "description": "2026 updates to Upwell structures in wormhole space",
+        "fuel_reduction": {
+          "affected_wormholes": ["C1", "C2", "C3"],
+          "reduction_amount": "30% lower fuel costs",
+          "rationale": "Encourage new player habitation in lower-class wormholes"
+        },
+        "asset_safety_partial": {
+          "affected_wormholes": ["C1", "C2", "C3"],
+          "description": "Major change - partial asset safety now available",
+          "mechanics": {
+            "structure_destruction": "Assets moved to nearest low-sec NPC station",
+            "recovery_cost": "15% of asset value",
+            "alternative": "Can still be dropped as loot if container destroyed"
+          },
+          "impact": "Reduces penalty for losing structure, encourages habitation"
+        },
+        "higher_class_unchanged": {
+          "affected_wormholes": ["C4", "C5", "C6"],
+          "asset_safety": false,
+          "description": "No asset safety - full loot drop on structure destruction",
+          "rationale": "Maintains high-stakes environment for experienced players"
+        }
+      }
+    },
+    "other_deployables": {
+      "concord_rogue_analysis_beacon": {
+        "name": "CONCORD Rogue Analysis Beacon (CRAB)",
+        "type": "deployable",
+        "category": "combat",
+        "description": "Used in nullsec to bait and fight NPCs for high-tier loot",
+        "deployment": {
+          "location": "nullsec_only",
+          "duration": "temporary",
+          "deployment_time": "instant"
+        },
+        "functionality": {
+          "primary_use": "Bait high-value NPCs",
+          "spawn_trigger": "Activates special NPC encounters",
+          "loot_quality": "high_tier",
+          "risk_level": "high"
+        },
+        "mechanics": {
+          "activation": "Deploy in space and activate",
+          "npc_waves": "Multiple waves of increasing difficulty",
+          "rewards": "Escalating loot quality with each wave",
+          "vulnerability": "Other players can contest the site"
+        }
+      },
+      "advertising_centers": {
+        "name": "Advertising Centers",
+        "type": "structure",
+        "category": "cosmetic",
+        "description": "Massive billboards allowing alliances to brand space with logos and messages",
+        "deployment": {
+          "location": "player_owned_systems",
+          "size": "massive",
+          "visibility": "system_wide"
+        },
+        "functionality": {
+          "branding": "Display alliance logos and messages",
+          "visibility": "Visible to all passing through system",
+          "customization": "Upload custom images and text",
+          "propaganda": "Psychological warfare tool"
+        },
+        "cost": {
+          "deployment": "high",
+          "maintenance": "moderate",
+          "fuel_required": true
+        }
+      },
+      "small_personal_structures": {
+        "name": "Small Personal Structures",
+        "type": "deployable",
+        "category": "habitation",
+        "status": "testing_phase",
+        "description": "Very small, single-user or small-group structures in early 2026 testing",
+        "target_audience": "nomadic_players",
+        "features": {
+          "size": "minimal",
+          "services": "basic_only",
+          "profile": "low_detection",
+          "ideal_for": ["solo_players", "small_gangs", "nomadic_lifestyle"]
+        },
+        "testing_status": {
+          "phase": "early_2026",
+          "availability": "limited_testing",
+          "feedback": "ongoing"
+        }
+      }
+    },
+    "structure_summary_table": {
+      "columns": ["Structure", "Type", "Primary Role"],
+      "rows": [
+        {
+          "structure": "Orbital Skyhook",
+          "type": "Nullsec",
+          "primary_role": "Passive PI harvesting, Siphonable (Risky)"
+        },
+        {
+          "structure": "Sovereignty Hub",
+          "type": "Nullsec",
+          "primary_role": "Controls system upgrades/resources"
+        },
+        {
+          "structure": "Metenox Moon Drill",
+          "type": "Nullsec",
+          "primary_role": "Small-scale automatic moon mining"
+        },
+        {
+          "structure": "Communal Granary",
+          "type": "Wormhole",
+          "primary_role": "Boosts mining yield (Non-destructible)"
+        },
+        {
+          "structure": "Upwell Structures (All)",
+          "type": "All Space",
+          "primary_role": "Fitted with specialized mining/industry modules"
+        },
+        {
+          "structure": "CONCORD CRAB",
+          "type": "Nullsec Deployable",
+          "primary_role": "Bait NPCs for high-tier loot"
+        },
+        {
+          "structure": "Advertising Center",
+          "type": "Nullsec Structure",
+          "primary_role": "Alliance branding and propaganda"
+        }
+      ]
+    },
+    "design_philosophy_2026": {
+      "overview": "2026 EVE structures are about high-stakes, specialized functionality",
+      "key_changes": [
+        "One-size-fits-all passive mining is gone",
+        "Replaced by systems requiring active defense",
+        "Strategic choices and specialization required",
+        "Wormholes require cooperative, group-focused gameplay",
+        "High-stakes industry with meaningful risk"
+      ],
+      "player_impact": {
+        "corporations": "Must make strategic choices about structure focus",
+        "alliances": "Need coordinated defense and logistics",
+        "solo_players": "Small personal structures in testing for nomadic gameplay",
+        "wormhole_groups": "Collaborative, high-risk, high-reward mechanics"
+      }
+    }
+  }
+}
