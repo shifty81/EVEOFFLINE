@@ -65,8 +65,8 @@ std::string ProtocolHandler::createConnectMessage(const std::string& playerId, c
     json data;
     data["player_id"] = playerId;
     data["character_name"] = characterName;
-    data["version"] = "1.0";
-    return createMessage("CONNECT", data.dump());
+    data["version"] = "0.1.0";
+    return createMessage("connect", data.dump());
 }
 
 std::string ProtocolHandler::createMoveMessage(float vx, float vy, float vz) {
@@ -76,13 +76,13 @@ std::string ProtocolHandler::createMoveMessage(float vx, float vy, float vz) {
         {"y", vy},
         {"z", vz}
     };
-    return createMessage("INPUT_MOVE", data.dump());
+    return createMessage("input_move", data.dump());
 }
 
 std::string ProtocolHandler::createChatMessage(const std::string& message) {
     json data;
     data["message"] = message;
-    return createMessage("CHAT", data.dump());
+    return createMessage("chat", data.dump());
 }
 
 } // namespace eve

@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     int entityCount = 0;
     int updateCount = 0;
 
-    network.registerHandler("STATE_UPDATE", [&](const std::string& dataJson) {
+    network.registerHandler("state_update", [&](const std::string& dataJson) {
         try {
             auto data = json::parse(dataJson);
             if (data.contains("entities")) {
@@ -67,27 +67,27 @@ int main(int argc, char* argv[]) {
         }
     });
 
-    network.registerHandler("SPAWN_ENTITY", [](const std::string& dataJson) {
+    network.registerHandler("spawn_entity", [](const std::string& dataJson) {
         try {
             auto data = json::parse(dataJson);
             int entityId = data.value("entity_id", -1);
             std::cout << "Entity spawned: " << entityId << std::endl;
         } catch (const std::exception& e) {
-            std::cerr << "Failed to parse SPAWN_ENTITY: " << e.what() << std::endl;
+            std::cerr << "Failed to parse spawn_entity: " << e.what() << std::endl;
         }
     });
 
-    network.registerHandler("DESTROY_ENTITY", [](const std::string& dataJson) {
+    network.registerHandler("destroy_entity", [](const std::string& dataJson) {
         try {
             auto data = json::parse(dataJson);
             int entityId = data.value("entity_id", -1);
             std::cout << "Entity destroyed: " << entityId << std::endl;
         } catch (const std::exception& e) {
-            std::cerr << "Failed to parse DESTROY_ENTITY: " << e.what() << std::endl;
+            std::cerr << "Failed to parse destroy_entity: " << e.what() << std::endl;
         }
     });
 
-    network.registerHandler("CHAT", [](const std::string& dataJson) {
+    network.registerHandler("chat", [](const std::string& dataJson) {
         try {
             auto data = json::parse(dataJson);
             std::string msg = data.value("message", "");

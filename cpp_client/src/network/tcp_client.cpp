@@ -41,7 +41,9 @@ TCPClient::TCPClient()
 }
 
 TCPClient::~TCPClient() {
-    disconnect();
+    if (m_connected.load()) {
+        disconnect();
+    }
 }
 
 bool TCPClient::connect(const std::string& host, int port) {
@@ -144,6 +146,8 @@ bool TCPClient::send(const std::string& message) {
     // Add newline delimiter (Python server expects line-delimited JSON)
     std::string msg = message + "\n";
 
+    std::cout << "[DEBUG] Sending: " << message << std::endl;
+
 #ifdef _WIN32
     int result = ::send(reinterpret_cast<SOCKET>(m_socket), msg.c_str(), static_cast<int>(msg.length()), 0);
 #else
@@ -190,6 +194,7 @@ void TCPClient::receiveThread() {
                 incompleteMessage = incompleteMessage.substr(pos + 1);
 
                 if (!message.empty()) {
+                    std::cout << "[DEBUG] Received: " << message << std::endl;
                     std::lock_guard<std::mutex> lock(m_queueMutex);
                     m_messageQueue.push(message);
                 }

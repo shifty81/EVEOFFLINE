@@ -111,11 +111,11 @@ void NetworkManager::onRawMessage(const std::string& message) {
 
 void NetworkManager::onProtocolMessage(const std::string& type, const std::string& dataJson) {
     // Handle connection acknowledgment
-    if (type == "CONNECT_ACK") {
+    if (type == "connect_ack") {
         m_state = State::AUTHENTICATED;
         m_authenticated = true;
         std::cout << "Connection acknowledged by server" << std::endl;
-    } else if (type == "ERROR") {
+    } else if (type == "error") {
         std::cerr << "Server error: " << dataJson << std::endl;
     }
 
