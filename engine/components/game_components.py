@@ -4,7 +4,7 @@ Components represent data for entities (ships, NPCs, projectiles, etc.)
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from engine.core.ecs import Component
 
 
@@ -352,3 +352,60 @@ class OreHold(Component):
     ore: Dict[str, float] = field(default_factory=dict)  # {ore_type: m3}
     ore_hold_capacity: float = 5000.0  # m3
     ore_hold_used: float = 0.0  # m3
+
+
+@dataclass
+class Structure(Component):
+    """Player-owned structure (Citadels, Engineering Complexes, Refineries, etc.)"""
+    structure_type: str = "astrahus"  # astrahus, fortizar, keepstar, orbital_skyhook, etc.
+    structure_name: str = "Player Structure"
+    owner_corporation_id: Optional[str] = None
+    owner_player_id: Optional[str] = None
+    
+    # State
+    state: str = "anchoring"  # anchoring, online, reinforced, destroyed
+    anchoring_time_remaining: float = 86400.0  # seconds (24 hours default)
+    online_time: float = 0.0  # timestamp when structure went online
+    
+    # Resources
+    fuel_bay: Dict[str, int] = field(default_factory=dict)  # {item_id: quantity}
+    fuel_bay_capacity: float = 10000.0  # m3
+    fuel_usage_rate: float = 1.0  # units per hour
+    last_fuel_check: float = 0.0
+    
+    # Defense and vulnerability
+    hull_hp: float = 1000000.0
+    hull_max: float = 1000000.0
+    shield_hp: float = 500000.0
+    shield_max: float = 500000.0
+    armor_hp: float = 750000.0
+    armor_max: float = 750000.0
+    
+    reinforcement_cycles: int = 3  # Number of reinforcement timers
+    vulnerability_windows: List[Dict[str, Any]] = field(default_factory=list)  # Configurable vulnerability times
+    is_vulnerable: bool = True
+    
+    # Fitting (structures can be fitted like ships in 2026)
+    high_slots: List[Optional[str]] = field(default_factory=list)
+    mid_slots: List[Optional[str]] = field(default_factory=list)
+    low_slots: List[Optional[str]] = field(default_factory=list)
+    rig_slots: List[Optional[str]] = field(default_factory=list)
+    cpu: float = 0.0
+    cpu_max: float = 1000.0
+    powergrid: float = 0.0
+    powergrid_max: float = 500.0
+    
+    # Services
+    services: Dict[str, bool] = field(default_factory=dict)  # {service_name: is_active}
+    hangar: Dict[str, int] = field(default_factory=dict)  # Shared storage
+    hangar_capacity: float = 50000.0  # m3
+
+
+@dataclass
+class StructureService(Component):
+    """Active service on a structure (market, manufacturing, reprocessing, etc.)"""
+    service_type: str = "market"  # market, manufacturing, reprocessing, research, cloning
+    is_online: bool = True
+    fuel_cost_per_hour: float = 10.0
+    access_list: List[str] = field(default_factory=list)  # Player IDs with access
+    service_bonus: float = 0.0  # Service-specific bonus percentage
