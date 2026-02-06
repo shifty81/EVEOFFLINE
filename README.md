@@ -468,15 +468,28 @@ See [docs/testing/TEST_SUMMARY.md](docs/testing/TEST_SUMMARY.md) for detailed te
   - 8 mineral types (Tritanium to Morphite)
   - Batch-based processing system
 - [x] **Mining Barges** - 3 specialized mining ships (Procurer, Retriever, Covetor)
-- [x] **Ice Mining** - NEW! Complete ice harvesting system ✅
+- [x] **Ice Mining** - Complete ice harvesting system ✅
   - 12 ice types (Clear Icicle to Enriched Clear Icicle)
   - Ice Harvester I/II modules
   - Ice Harvesting and Ice Processing skills
   - Isotope production (Helium, Nitrogen, Oxygen, etc.)
   - Ice fields with persistent state
   - Ice reprocessing at stations
-- [x] **Comprehensive Testing** - 29+ tests (25 ore + 4 barge + 25 ice), 100% pass rate
-- [x] **Complete Documentation** - Full mining and ice mining guides
+- [x] **Ore Compression** - NEW! Compress ore and ice for transport ✅
+  - 15 ore types and 12 ice types supported
+  - Batch-based compression with significant volume reduction
+  - Ore Compression skill (+2% yield per level)
+  - Station/structure requirement for compression
+- [x] **Moon Mining** - NEW! Group-based moon resource extraction ✅
+  - Refinery-based moon drill extraction operations
+  - Full lifecycle: extraction → fracturing → belt mining
+  - 10 moon ore types across 5 rarity tiers (R4 to R64)
+  - Security-based moon composition (highsec/lowsec/nullsec)
+  - Moon Mining and Moon Ore Processing skills
+  - Configurable extraction duration and yield multipliers
+  - Belt expiration mechanics (48-hour lifetime)
+- [x] **Comprehensive Testing** - 148+ tests, 100% pass rate
+- [x] **Complete Documentation** - Full mining, ice, compression, and moon mining guides
 
 **See [docs/development/PHASE7_MINING.md](docs/development/PHASE7_MINING.md) for complete mining documentation!**
 **See [docs/development/PHASE7_ICE_MINING.md](docs/development/PHASE7_ICE_MINING.md) for ice mining documentation!**

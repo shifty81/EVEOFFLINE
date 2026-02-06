@@ -551,3 +551,49 @@ class ExtractorQueue(Component):
     # Resource tracking
     resource_id: str = ""
     extraction_yield_per_cycle: int = 0
+
+
+@dataclass
+class MoonMiningOperation(Component):
+    """Moon mining operation state for a refinery structure"""
+    moon_id: str = ""  # ID of the moon being mined
+    system_id: str = ""  # Solar system containing the moon
+    refinery_id: str = ""  # ID of the refinery structure
+    
+    # Extraction state
+    state: str = "idle"  # idle, extracting, ready, fracturing, belt_active
+    extraction_start_time: float = 0.0  # When extraction started
+    extraction_duration: float = 21600.0  # Default 6 hours (configurable)
+    extraction_progress: float = 0.0  # 0.0 to 1.0
+    
+    # Moon composition (ore types and their proportions)
+    moon_composition: Dict[str, float] = field(default_factory=dict)  # {ore_type: proportion}
+    
+    # Belt state (after fracturing)
+    belt_ores: Dict[str, float] = field(default_factory=dict)  # {ore_type: m3_remaining}
+    belt_creation_time: float = 0.0
+    belt_lifetime: float = 172800.0  # Belt lasts 48 hours
+    
+    # Operation tracking
+    total_extractions: int = 0
+    total_ore_generated: float = 0.0
+    fuel_consumption_rate: float = 5.0  # Fuel blocks per hour during extraction
+
+
+@dataclass
+class MoonResource(Component):
+    """A moon's natural resource composition"""
+    moon_id: str = ""
+    moon_name: str = ""
+    planet_id: str = ""  # Parent planet
+    system_id: str = ""
+    security: float = 0.5
+    
+    # Resource composition (percentages must sum to 1.0)
+    composition: Dict[str, float] = field(default_factory=dict)  # {ore_type: proportion}
+    
+    # Yield multiplier (varies by moon quality)
+    yield_multiplier: float = 1.0  # 0.5 (poor) to 2.0 (exceptional)
+    
+    # Base chunk size per extraction
+    base_ore_volume: float = 20000.0  # m3 of ore generated per extraction cycle
