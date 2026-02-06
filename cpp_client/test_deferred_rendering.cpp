@@ -236,7 +236,7 @@ int main() {
         lastFrame = currentFrame;
         
         // Process input
-        window.processInput();
+        glfwPollEvents();
         
         // Update camera
         camera.update(deltaTime);
