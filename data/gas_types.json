@@ -1,0 +1,110 @@
+{
+  "fullerite_c50": {
+    "id": "fullerite_c50",
+    "name": "Fullerite-C50",
+    "description": "The most common gas found in wormhole space. Used in Tech III component production.",
+    "volume": 1,
+    "base_price": 200,
+    "rarity": "common",
+    "location": "wormhole",
+    "products": {
+      "polymer_reaction_materials": 10
+    }
+  },
+  "fullerite_c60": {
+    "id": "fullerite_c60",
+    "name": "Fullerite-C60",
+    "description": "A common fullerite gas found in Class 1-3 wormhole sites.",
+    "volume": 1,
+    "base_price": 350,
+    "rarity": "common",
+    "location": "wormhole",
+    "products": {
+      "polymer_reaction_materials": 15
+    }
+  },
+  "fullerite_c70": {
+    "id": "fullerite_c70",
+    "name": "Fullerite-C70",
+    "description": "An uncommon gas found in various wormhole classes.",
+    "volume": 1,
+    "base_price": 800,
+    "rarity": "uncommon",
+    "location": "wormhole",
+    "products": {
+      "polymer_reaction_materials": 20
+    }
+  },
+  "fullerite_c72": {
+    "id": "fullerite_c72",
+    "name": "Fullerite-C72",
+    "description": "A moderately rare gas used in advanced polymer reactions.",
+    "volume": 1,
+    "base_price": 1500,
+    "rarity": "uncommon",
+    "location": "wormhole",
+    "products": {
+      "polymer_reaction_materials": 25
+    }
+  },
+  "fullerite_c84": {
+    "id": "fullerite_c84",
+    "name": "Fullerite-C84",
+    "description": "A rare gas found in higher-class wormhole sites.",
+    "volume": 1,
+    "base_price": 3000,
+    "rarity": "rare",
+    "location": "wormhole",
+    "products": {
+      "polymer_reaction_materials": 30
+    }
+  },
+  "fullerite_c320": {
+    "id": "fullerite_c320",
+    "name": "Fullerite-C320",
+    "description": "A very rare gas found only in dangerous wormhole sites.",
+    "volume": 1,
+    "base_price": 8000,
+    "rarity": "rare",
+    "location": "wormhole",
+    "products": {
+      "polymer_reaction_materials": 50
+    }
+  },
+  "fullerite_c540": {
+    "id": "fullerite_c540",
+    "name": "Fullerite-C540",
+    "description": "An extremely rare fullerite gas. Highly valued for Tech III production.",
+    "volume": 1,
+    "base_price": 15000,
+    "rarity": "very_rare",
+    "location": "wormhole",
+    "products": {
+      "polymer_reaction_materials": 75
+    }
+  },
+  "cytoserocin": {
+    "id": "cytoserocin",
+    "name": "Cytoserocin",
+    "description": "A booster gas found in nullsec nebulae. Used in combat booster production.",
+    "volume": 1,
+    "base_price": 5000,
+    "rarity": "uncommon",
+    "location": "nullsec",
+    "products": {
+      "booster_materials": 1
+    }
+  },
+  "mykoserocin": {
+    "id": "mykoserocin",
+    "name": "Mykoserocin",
+    "description": "A booster gas found in lowsec nebulae. Used in synth booster production.",
+    "volume": 1,
+    "base_price": 2000,
+    "rarity": "common",
+    "location": "lowsec",
+    "products": {
+      "synth_booster_materials": 1
+    }
+  }
+}

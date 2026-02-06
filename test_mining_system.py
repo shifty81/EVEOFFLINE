@@ -498,5 +498,144 @@ class TestMiningBarges(unittest.TestCase):
         self.assertGreater(len(ore_hold.ore), 0)
 
 
+class TestExhumers(unittest.TestCase):
+    """Test exhumer ship specific functionality"""
+    
+    def setUp(self):
+        """Set up test world and entities"""
+        self.world = World()
+        self.asteroid_manager = AsteroidFieldManager()
+        self.mining_system = MiningSystem(self.world, self.asteroid_manager)
+        
+        # Create test asteroid belt
+        self.test_belt = AsteroidBelt(
+            belt_id="test_belt_1",
+            name="Test Belt",
+            system="test_system",
+            security=1.0,
+            layout=BeltLayout.SEMICIRCLE,
+            radius_km=50.0
+        )
+        
+        # Add test asteroid with lots of ore
+        self.test_asteroid = Asteroid(
+            id="test_ast_1",
+            ore_type="veldspar",
+            variant="standard",
+            position=(1000.0, 0.0, 0.0),
+            size=AsteroidSize.MEDIUM,
+            ore_remaining=100000,
+            ore_total=100000
+        )
+        self.test_belt.asteroids[self.test_asteroid.id] = self.test_asteroid
+        self.asteroid_manager.belts[self.test_belt.id] = self.test_belt
+    
+    def _create_exhumer(self, ore_hold_capacity, yield_amount=720.0, cap=5000.0):
+        """Helper to create an exhumer entity"""
+        exhumer = self.world.create_entity()
+        exhumer.add_component(Position(x=0.0, y=0.0, z=0.0))
+        exhumer.add_component(Capacitor(capacitor=cap, capacitor_max=cap))
+        exhumer.add_component(MiningLaser(
+            laser_type="Strip Miner II",
+            cycle_time=180.0,
+            yield_amount=yield_amount,
+            optimal_range=15000.0,
+            capacitor_usage=432.0
+        ))
+        exhumer.add_component(MiningYield())
+        exhumer.add_component(OreHold(ore_hold_capacity=ore_hold_capacity))
+        exhumer.add_component(Inventory(cargo_capacity=400.0))
+        exhumer.add_component(Skills())
+        return exhumer
+    
+    def test_skiff_ore_hold(self):
+        """Test Skiff with defensive ore hold (15000 m3)"""
+        skiff = self._create_exhumer(ore_hold_capacity=15000.0)
+        
+        result = self.mining_system.start_mining(
+            skiff, self.test_asteroid.id, self.test_belt.id
+        )
+        self.assertTrue(result)
+        
+        # Complete one cycle
+        self.mining_system.update(180.0)
+        
+        ore_hold = skiff.get_component(OreHold)
+        self.assertGreater(ore_hold.ore_hold_used, 0)
+        self.assertLessEqual(ore_hold.ore_hold_used, ore_hold.ore_hold_capacity)
+    
+    def test_mackinaw_large_ore_hold(self):
+        """Test Mackinaw with largest ore hold (35000 m3)"""
+        mackinaw = self._create_exhumer(ore_hold_capacity=35000.0)
+        
+        self.mining_system.start_mining(
+            mackinaw, self.test_asteroid.id, self.test_belt.id
+        )
+        
+        # Complete 10 cycles
+        for _ in range(10):
+            self.mining_system.update(180.0)
+        
+        ore_hold = mackinaw.get_component(OreHold)
+        # Strip Miner II yields 720 per cycle * 10 = 7200
+        self.assertGreater(ore_hold.ore_hold_used, 6500)
+        self.assertLess(ore_hold.ore_hold_used, 7500)
+        # Still plenty of room in the 35000 m3 hold
+        self.assertLess(ore_hold.ore_hold_used, ore_hold.ore_hold_capacity)
+    
+    def test_hulk_high_yield(self):
+        """Test Hulk with highest yield but smaller ore hold (8500 m3)"""
+        hulk = self._create_exhumer(ore_hold_capacity=8500.0, yield_amount=720.0)
+        
+        self.mining_system.start_mining(
+            hulk, self.test_asteroid.id, self.test_belt.id
+        )
+        
+        # Complete one cycle
+        self.mining_system.update(180.0)
+        
+        ore_hold = hulk.get_component(OreHold)
+        # Strip Miner II yields 720 per cycle
+        self.assertGreater(ore_hold.ore_hold_used, 680)
+        self.assertLess(ore_hold.ore_hold_used, 760)
+    
+    def test_exhumer_skill_bonus(self):
+        """Test exhumer skill gives 3% yield bonus per level"""
+        exhumer = self._create_exhumer(ore_hold_capacity=35000.0)
+        skills = exhumer.get_component(Skills)
+        skills.skills["exhumers"] = 5  # 3% per level = 15% bonus
+        
+        self.mining_system.start_mining(
+            exhumer, self.test_asteroid.id, self.test_belt.id
+        )
+        self.mining_system.update(180.0)
+        
+        ore_hold = exhumer.get_component(OreHold)
+        # Base 720 * 1.15 = 828
+        mined = ore_hold.ore_hold_used
+        self.assertGreater(mined, 800)
+        self.assertLess(mined, 860)
+    
+    def test_exhumer_combined_skills(self):
+        """Test exhumer with mining + astrogeology + exhumer skills"""
+        exhumer = self._create_exhumer(ore_hold_capacity=35000.0)
+        skills = exhumer.get_component(Skills)
+        skills.skills["mining"] = 5       # 25% bonus
+        skills.skills["astrogeology"] = 5  # 25% bonus
+        skills.skills["exhumers"] = 5      # 15% bonus
+        # Total: 1.25 * 1.25 * 1.15 = 1.796875
+        
+        self.mining_system.start_mining(
+            exhumer, self.test_asteroid.id, self.test_belt.id
+        )
+        self.mining_system.update(180.0)
+        
+        ore_hold = exhumer.get_component(OreHold)
+        # Base 720 * 1.796875 ~= 1293.75
+        mined = ore_hold.ore_hold_used
+        self.assertGreater(mined, 1250)
+        self.assertLess(mined, 1350)
+
+
 if __name__ == "__main__":
     unittest.main()

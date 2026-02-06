@@ -354,9 +354,11 @@ class MiningYield(Component):
     """Tracks active mining operations and yields"""
     total_ore_mined: Dict[str, float] = field(default_factory=dict)  # {ore_type: m3}
     total_ice_mined: Dict[str, int] = field(default_factory=dict)  # {ice_type: units}
+    total_gas_harvested: Dict[str, float] = field(default_factory=dict)  # {gas_type: m3}
     active_mining: bool = False
     target_asteroid_id: Optional[str] = None
     target_ice_id: Optional[str] = None
+    target_gas_cloud_id: Optional[str] = None
     mining_start_time: float = 0.0
     yield_multiplier: float = 1.0  # From skills and modules
 
@@ -366,8 +368,22 @@ class OreHold(Component):
     """Specialized cargo hold for ore (mining barges/exhumers)"""
     ore: Dict[str, float] = field(default_factory=dict)  # {ore_type: m3}
     ice: Dict[str, int] = field(default_factory=dict)  # {ice_type: units}
+    gas: Dict[str, float] = field(default_factory=dict)  # {gas_type: m3}
     ore_hold_capacity: float = 5000.0  # m3
     ore_hold_used: float = 0.0  # m3
+
+
+@dataclass
+class GasHarvester(Component):
+    """Gas cloud harvester component for gas harvesting operations"""
+    harvester_type: str = "Gas Cloud Harvester I"
+    cycle_time: float = 30.0  # seconds per cycle
+    yield_amount: float = 10.0  # m3 per cycle
+    optimal_range: float = 1500.0  # meters
+    capacitor_usage: float = 200.0  # GJ per cycle
+    is_active: bool = False
+    current_cycle: float = 0.0  # current cycle progress
+    target_gas_cloud_id: Optional[str] = None
 
 
 @dataclass

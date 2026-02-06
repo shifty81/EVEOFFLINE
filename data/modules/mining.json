@@ -73,6 +73,30 @@
           "Astrogeology": 3
         }
       }
+    },
+    "strip_miner_ii": {
+      "id": "strip_miner_ii",
+      "name": "Strip Miner II",
+      "type": "mining_laser",
+      "tech_level": 2,
+      "meta_level": 5,
+      "slot": "high",
+      "cpu": 72,
+      "powergrid": 1320,
+      "capacitor_usage": 432,
+      "cycle_time": 180,
+      "optimal_range": 15000,
+      "mining_yield": 720,
+      "volume": 1000,
+      "base_price": 8500000,
+      "description": "Tech II strip mining laser with improved yield. Supports mining crystals for specialized ore extraction.",
+      "requirements": {
+        "skills": {
+          "Mining": 5,
+          "Astrogeology": 5,
+          "Exhumers": 1
+        }
+      }
     }
   },
   "mining_upgrades": {
@@ -198,6 +222,54 @@
       "volume": 5,
       "base_price": 25000,
       "description": "Scans nearby asteroids to determine ore type and remaining quantity."
+    }
+  },
+  "gas_harvesters": {
+    "gas_cloud_harvester_i": {
+      "id": "gas_cloud_harvester_i",
+      "name": "Gas Cloud Harvester I",
+      "type": "gas_harvester",
+      "tech_level": 1,
+      "meta_level": 0,
+      "slot": "high",
+      "cpu": 40,
+      "powergrid": 5,
+      "capacitor_usage": 200,
+      "cycle_time": 30,
+      "optimal_range": 1500,
+      "gas_yield": 10,
+      "volume": 5,
+      "base_price": 500000,
+      "description": "Specialized module for harvesting gas from nebula clouds. Used in wormhole gas sites and nullsec nebulae.",
+      "requirements": {
+        "skills": {
+          "Mining": 4,
+          "Gas_Cloud_Harvesting": 1
+        }
+      }
+    },
+    "gas_cloud_harvester_ii": {
+      "id": "gas_cloud_harvester_ii",
+      "name": "Gas Cloud Harvester II",
+      "type": "gas_harvester",
+      "tech_level": 2,
+      "meta_level": 5,
+      "slot": "high",
+      "cpu": 50,
+      "powergrid": 8,
+      "capacitor_usage": 240,
+      "cycle_time": 30,
+      "optimal_range": 1500,
+      "gas_yield": 20,
+      "volume": 5,
+      "base_price": 2000000,
+      "description": "Tech II gas harvester with doubled yield. Essential for efficient fullerite extraction.",
+      "requirements": {
+        "skills": {
+          "Mining": 5,
+          "Gas_Cloud_Harvesting": 5
+        }
+      }
     }
   }
 }
