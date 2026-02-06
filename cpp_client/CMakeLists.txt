@@ -93,9 +93,17 @@ if(USE_GLEW)
     set(GLAD_SOURCES "")
 else()
     message(STATUS "Using bundled GLAD for OpenGL loading")
-    set(GLAD_SOURCES
-        external/glad/src/glad.c
-    )
+    # Check if GLAD source exists
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/glad/src/glad.c")
+        set(GLAD_SOURCES external/glad/src/glad.c)
+    else()
+        message(FATAL_ERROR 
+            "GLAD source not found at external/glad/src/glad.c\n"
+            "Either:\n"
+            "  1. Install GLEW via vcpkg: vcpkg install glew:x64-windows\n"
+            "     Then reconfigure with -DUSE_SYSTEM_LIBS=ON\n"
+            "  2. Or ensure external/glad directory is populated")
+    endif()
 endif()
 
 # nlohmann/json (header-only JSON library)
@@ -105,33 +113,80 @@ if(USE_SYSTEM_LIBS)
         message(STATUS "Using system nlohmann/json")
     else()
         message(STATUS "System nlohmann/json not found, using bundled version")
-        include_directories(external/json/include)
+        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/json/include")
+            include_directories(external/json/include)
+        else()
+            message(WARNING "nlohmann/json not found. Install via: vcpkg install nlohmann-json:x64-windows")
+        endif()
     endif()
 else()
     message(STATUS "Using bundled nlohmann/json")
-    include_directories(external/json/include)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/json/include")
+        include_directories(external/json/include)
+    else()
+        message(FATAL_ERROR "Bundled nlohmann/json not found at external/json/include")
+    endif()
 endif()
 
 # STB (header-only image loading library)
-include_directories(external/stb)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/stb")
+    include_directories(external/stb)
+    message(STATUS "Using bundled STB image loader")
+else()
+    message(WARNING "STB image loader not found at external/stb - texture loading may fail")
+endif()
 
 # ImGui (UI library)
-set(IMGUI_SOURCES
-    external/imgui/imgui.cpp
-    external/imgui/imgui_draw.cpp
-    external/imgui/imgui_widgets.cpp
-    external/imgui/imgui_tables.cpp
-    external/imgui/imgui_impl_glfw.cpp
-    external/imgui/imgui_impl_opengl3.cpp
-)
+# Try to use vcpkg ImGui first, fall back to bundled
+set(USE_VCPKG_IMGUI OFF)
+if(USE_SYSTEM_LIBS)
+    find_package(imgui CONFIG QUIET)
+    if(imgui_FOUND)
+        message(STATUS "Using system ImGui from vcpkg")
+        set(USE_VCPKG_IMGUI ON)
+        set(IMGUI_SOURCES "")
+    endif()
+endif()
+
+if(NOT USE_VCPKG_IMGUI)
+    # Check if bundled ImGui exists
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui/imgui.cpp")
+        message(STATUS "Using bundled ImGui")
+        set(IMGUI_SOURCES
+            external/imgui/imgui.cpp
+            external/imgui/imgui_draw.cpp
+            external/imgui/imgui_widgets.cpp
+            external/imgui/imgui_tables.cpp
+            external/imgui/imgui_impl_glfw.cpp
+            external/imgui/imgui_impl_opengl3.cpp
+        )
+    else()
+        message(FATAL_ERROR 
+            "ImGui not found!\n"
+            "\n"
+            "Solution: Install ImGui via vcpkg with GLFW and OpenGL3 bindings:\n"
+            "  vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows\n"
+            "\n"
+            "Then reconfigure CMake with the vcpkg toolchain:\n"
+            "  cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake\n"
+            "\n"
+            "Or ensure external/imgui directory contains the ImGui source files.")
+    endif()
+endif()
 
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/external
-    ${CMAKE_CURRENT_SOURCE_DIR}/external/glad/include
     ${OPENGL_INCLUDE_DIR}
 )
+
+# Only include GLAD headers if not using GLEW
+if(NOT USE_GLEW)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/glad/include")
+        include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/glad/include)
+    endif()
+endif()
 
 # Source files
 set(CLIENT_SOURCES
@@ -241,6 +296,11 @@ if(USE_GLEW)
     target_link_libraries(eve_client GLEW::GLEW)
 endif()
 
+# Link ImGui if using vcpkg
+if(USE_VCPKG_IMGUI)
+    target_link_libraries(eve_client imgui::imgui)
+endif()
+
 # Link OpenAL if available
 if(OpenAL_FOUND)
     target_link_libraries(eve_client ${OPENAL_LIBRARY})
@@ -337,6 +397,10 @@ if(BUILD_TESTS)
         target_link_libraries(test_lighting GLEW::GLEW)
     endif()
     
+    if(USE_VCPKG_IMGUI)
+        target_link_libraries(test_lighting imgui::imgui)
+    endif()
+    
     if(WIN32)
         target_link_libraries(test_lighting ws2_32)
     elseif(UNIX AND NOT APPLE)
@@ -417,6 +481,9 @@ if(BUILD_TESTS)
     )
     if(USE_GLEW)
         target_link_libraries(test_ui_system GLEW::GLEW)
+    endif()
+    if(USE_VCPKG_IMGUI)
+        target_link_libraries(test_ui_system imgui::imgui)
     endif()
     if(WIN32)
         target_link_libraries(test_ui_system ws2_32)
@@ -514,7 +581,28 @@ if(BUILD_TESTS)
         ${CLIENT_SOURCES}
         ${CLIENT_HEADERS}
     )
-    target_link_libraries(test_enhanced_ui ${LINK_LIBS})
+    target_link_libraries(test_enhanced_ui
+        Threads::Threads
+        OpenGL::GL
+        glfw
+    )
+    if(USE_GLEW)
+        target_link_libraries(test_enhanced_ui GLEW::GLEW)
+    endif()
+    if(USE_VCPKG_IMGUI)
+        target_link_libraries(test_enhanced_ui imgui::imgui)
+    endif()
+    if(OpenAL_FOUND)
+        target_link_libraries(test_enhanced_ui ${OPENAL_LIBRARY})
+    endif()
+    if(WIN32)
+        target_link_libraries(test_enhanced_ui ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_enhanced_ui dl X11)
+    elseif(APPLE)
+        target_link_libraries(test_enhanced_ui dl)
+        target_link_libraries(test_enhanced_ui "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
     
     # Test: Phase 4.6 Advanced Features
     add_executable(test_phase46_advanced
@@ -522,7 +610,28 @@ if(BUILD_TESTS)
         ${CLIENT_SOURCES}
         ${CLIENT_HEADERS}
     )
-    target_link_libraries(test_phase46_advanced ${LINK_LIBS})
+    target_link_libraries(test_phase46_advanced
+        Threads::Threads
+        OpenGL::GL
+        glfw
+    )
+    if(USE_GLEW)
+        target_link_libraries(test_phase46_advanced GLEW::GLEW)
+    endif()
+    if(USE_VCPKG_IMGUI)
+        target_link_libraries(test_phase46_advanced imgui::imgui)
+    endif()
+    if(OpenAL_FOUND)
+        target_link_libraries(test_phase46_advanced ${OPENAL_LIBRARY})
+    endif()
+    if(WIN32)
+        target_link_libraries(test_phase46_advanced ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_phase46_advanced dl X11)
+    elseif(APPLE)
+        target_link_libraries(test_phase46_advanced dl)
+        target_link_libraries(test_phase46_advanced "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
     
     # Test: Phase 4.8 Server Response Handling
     add_executable(test_server_responses
