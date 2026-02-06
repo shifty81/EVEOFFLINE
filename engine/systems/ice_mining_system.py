@@ -264,8 +264,8 @@ class IceMiningSystem(System):
         
         # Ice Harvesting skill: -5% cycle time per level
         skills = entity.get_component(Skills)
-        if skills and 'ice_harvesting' in skills.trained_skills:
-            level = skills.trained_skills['ice_harvesting']['level']
+        if skills and 'ice_harvesting' in skills.skills:
+            level = skills.skills['ice_harvesting']
             multiplier -= (level * 0.05)
         
         # Ice Harvester Upgrade modules (apply stacking penalty)
@@ -318,13 +318,13 @@ class IceMiningSystem(System):
         inventory = entity.get_component(Inventory)
         if inventory:
             volume_needed = units * 1000.0
-            available = inventory.capacity - inventory.used_capacity
+            available = inventory.cargo_capacity - inventory.cargo_used
             
             if available >= volume_needed:
                 if ice_type not in inventory.items:
                     inventory.items[ice_type] = 0
                 inventory.items[ice_type] += units
-                inventory.used_capacity += volume_needed
+                inventory.cargo_used += volume_needed
                 return True
         
         return False
@@ -439,13 +439,13 @@ class IceMiningSystem(System):
         yield_multiplier = 1.0
         
         # Ice Processing skill: +2% yield per level
-        if skills and 'ice_processing' in skills.trained_skills:
-            level = skills.trained_skills['ice_processing']['level']
+        if skills and 'ice_processing' in skills.skills:
+            level = skills.skills['ice_processing']
             yield_multiplier += (level * 0.02)
         
         # Base reprocessing skill: +3% yield per level
-        if skills and 'reprocessing' in skills.trained_skills:
-            level = skills.trained_skills['reprocessing']['level']
+        if skills and 'reprocessing' in skills.skills:
+            level = skills.skills['reprocessing']
             yield_multiplier += (level * 0.03)
         
         # Calculate products
@@ -468,6 +468,6 @@ class IceMiningSystem(System):
         if units_removed < units and inventory and ice_type in inventory.items:
             remove = units - units_removed
             inventory.items[ice_type] -= remove
-            inventory.used_capacity -= (remove * 1000.0)
+            inventory.cargo_used -= (remove * 1000.0)
         
         return products
