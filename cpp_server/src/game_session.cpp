@@ -10,6 +10,31 @@ namespace eve {
 static constexpr float NPC_AWARENESS_RANGE = 50000.0f;
 static constexpr float PLAYER_SPAWN_SPACING_X = 50.0f;
 static constexpr float PLAYER_SPAWN_SPACING_Z = 30.0f;
+static constexpr size_t MAX_CHARACTER_NAME_LEN = 32;
+static constexpr size_t MAX_CHAT_MESSAGE_LEN = 256;
+
+// Escape a string for safe embedding in JSON values
+static std::string escapeJsonString(const std::string& input) {
+    std::string result;
+    result.reserve(input.size());
+    for (char c : input) {
+        switch (c) {
+            case '\"': result += "\\\""; break;
+            case '\\': result += "\\\\"; break;
+            case '\n': result += "\\n";  break;
+            case '\r': result += "\\r";  break;
+            case '\t': result += "\\t";  break;
+            default:
+                if (static_cast<unsigned char>(c) < 0x20) {
+                    // Skip other control characters
+                } else {
+                    result += c;
+                }
+                break;
+        }
+    }
+    return result;
+}
 
 // ---------------------------------------------------------------------------
 // Construction / Initialization
@@ -93,6 +118,16 @@ void GameSession::onClientMessage(const network::ClientConnection& client,
 
 void GameSession::handleConnect(const network::ClientConnection& client,
                                 const std::string& data) {
+    // Reject duplicate connections from the same socket
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        if (players_.find(static_cast<int>(client.socket)) != players_.end()) {
+            std::cerr << "[GameSession] Duplicate connect from "
+                      << client.address << ", ignoring" << std::endl;
+            return;
+        }
+    }
+
     std::string player_id   = extractJsonString(data, "player_id");
     std::string char_name   = extractJsonString(data, "character_name");
 
@@ -103,10 +138,16 @@ void GameSession::handleConnect(const network::ClientConnection& client,
         char_name = "Pilot";
     }
 
+    // Enforce length limits
+    if (char_name.size() > MAX_CHARACTER_NAME_LEN) {
+        char_name.resize(MAX_CHARACTER_NAME_LEN);
+    }
+
     // Create the player's ship entity in the game world
     std::string entity_id = createPlayerEntity(player_id, char_name);
 
-    // Record the mapping
+    // Record the mapping and snapshot other players for notification
+    std::vector<PlayerInfo> others;
     {
         std::lock_guard<std::mutex> lock(players_mutex_);
         PlayerInfo info;
@@ -114,7 +155,16 @@ void GameSession::handleConnect(const network::ClientConnection& client,
         info.character_name  = char_name;
         info.connection      = client;
         players_[static_cast<int>(client.socket)] = info;
+
+        for (const auto& kv : players_) {
+            if (kv.first != static_cast<int>(client.socket)) {
+                others.push_back(kv.second);
+            }
+        }
     }
+
+    // Escape char_name for safe JSON embedding
+    std::string safe_name = escapeJsonString(char_name);
 
     // Send connect_ack with the player's entity id
     std::ostringstream ack;
@@ -122,7 +172,7 @@ void GameSession::handleConnect(const network::ClientConnection& client,
         << "\"data\":{"
         << "\"success\":true,"
         << "\"player_entity_id\":\"" << entity_id << "\","
-        << "\"message\":\"Welcome, " << char_name << "!\""
+        << "\"message\":\"Welcome, " << safe_name << "!\""
         << "}}";
     tcp_server_->sendToClient(client, ack.str());
 
@@ -137,11 +187,8 @@ void GameSession::handleConnect(const network::ClientConnection& client,
 
     // Notify other clients about the new player entity
     std::string new_spawn = buildSpawnEntity(entity_id);
-    std::lock_guard<std::mutex> lock(players_mutex_);
-    for (const auto& kv : players_) {
-        if (kv.first != static_cast<int>(client.socket)) {
-            tcp_server_->sendToClient(kv.second.connection, new_spawn);
-        }
+    for (const auto& other : others) {
+        tcp_server_->sendToClient(other.connection, new_spawn);
     }
 }
 
@@ -225,7 +272,15 @@ void GameSession::handleChat(const network::ClientConnection& client,
     }
 
     std::string message = extractJsonString(data, "message");
-    std::string chat_msg = protocol_.createChatMessage(sender, message);
+
+    // Enforce message length limit
+    if (message.size() > MAX_CHAT_MESSAGE_LEN) {
+        message.resize(MAX_CHAT_MESSAGE_LEN);
+    }
+
+    // Escape for safe JSON embedding
+    std::string chat_msg = protocol_.createChatMessage(
+        escapeJsonString(sender), escapeJsonString(message));
 
     // Broadcast chat to everyone
     tcp_server_->broadcastToAll(chat_msg);
