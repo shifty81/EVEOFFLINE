@@ -35,6 +35,7 @@ include_directories(
 set(SERVER_SOURCES
     src/main.cpp
     src/server.cpp
+    src/game_session.cpp
     src/network/tcp_server.cpp
     src/network/protocol_handler.cpp
     src/config/server_config.cpp
@@ -51,6 +52,7 @@ set(SERVER_SOURCES
 
 set(SERVER_HEADERS
     include/server.h
+    include/game_session.h
     include/network/tcp_server.h
     include/network/protocol_handler.h
     include/config/server_config.h
