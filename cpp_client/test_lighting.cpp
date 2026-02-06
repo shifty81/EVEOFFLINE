@@ -34,7 +34,7 @@ float lastY = WINDOW_HEIGHT / 2.0f;
 
 // Callbacks
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
-    inputHandler.handleMouseMove(xpos, ypos);
+    inputHandler.handleMouse(xpos, ypos);
     
     if (firstMouse) {
         lastX = xpos;
@@ -61,7 +61,7 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    inputHandler.handleKeyPress(key, action);
+    inputHandler.handleKey(key, action, mods);
     
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -72,11 +72,7 @@ int main() {
     std::cout << "=== Dynamic Lighting System Test ===" << std::endl;
     
     // Create window
-    Window window;
-    if (!window.initialize(WINDOW_WIDTH, WINDOW_HEIGHT, "Lighting Test")) {
-        std::cerr << "Failed to initialize window" << std::endl;
-        return -1;
-    }
+    Window window("Lighting Test", WINDOW_WIDTH, WINDOW_HEIGHT);
     
     // Set callbacks
     glfwSetCursorPosCallback(window.getHandle(), mouseCallback);
@@ -89,8 +85,8 @@ int main() {
     glCullFace(GL_BACK);
     
     // Load shaders with multi-light support
-    Shader shader("cpp_client/shaders/basic.vert", "cpp_client/shaders/multi_light.frag");
-    if (!shader.isValid()) {
+    Shader shader;
+    if (!shader.loadFromFiles("shaders/basic.vert", "shaders/multi_light.frag")) {
         std::cerr << "Failed to load shaders" << std::endl;
         return -1;
     }
@@ -98,7 +94,6 @@ int main() {
     // Initialize camera
     camera.setDistance(500.0f);
     camera.setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
-    camera.updateViewMatrix();
     
     // Create light manager
     auto lightManager = std::make_unique<Lighting::LightManager>();
@@ -159,7 +154,7 @@ int main() {
     };
     
     for (const auto& pos : positions) {
-        testObjects.push_back(Model::createSphere(50.0f, 32, 16));
+        testObjects.push_back(Model::createShipModel("frigate", "caldari"));
     }
     
     std::cout << "\nControls:" << std::endl;
@@ -303,7 +298,7 @@ int main() {
         glfwPollEvents();
         
         // Update camera
-        camera.updateViewMatrix();
+        camera.update(deltaTime);
         
         // Clear screen
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -348,7 +343,7 @@ int main() {
         uiManager->SetTargetInfo(targetInfo);
         
         // Swap buffers
-        window.swapBuffers();
+        window.update();
     }
     
     // Cleanup UI

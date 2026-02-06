@@ -6,7 +6,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -19,6 +19,8 @@
 #include "rendering/mesh.h"
 #include "rendering/model.h"
 #include "ui/input_handler.h"
+
+using namespace eve;
 
 // Window dimensions
 const int WINDOW_WIDTH = 1280;
@@ -35,7 +37,7 @@ float lastY = WINDOW_HEIGHT / 2.0f;
 
 // Callbacks
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
-    inputHandler.handleMouseMove(xpos, ypos);
+    inputHandler.handleMouse(xpos, ypos);
     
     if (firstMouse) {
         lastX = xpos;
@@ -62,7 +64,7 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    inputHandler.handleKeyPress(key, action);
+    inputHandler.handleKey(key, action, mods);
     
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -138,20 +140,18 @@ int main() {
     std::cout << "=== Deferred Rendering Pipeline Test ===" << std::endl;
     
     // Create window
-    Window window;
-    if (!window.initialize(WINDOW_WIDTH, WINDOW_HEIGHT, "Deferred Rendering Test")) {
-        std::cerr << "Failed to initialize window" << std::endl;
-        return -1;
-    }
+    Window window("Deferred Rendering Test", WINDOW_WIDTH, WINDOW_HEIGHT);
     
     // Set callbacks
     glfwSetCursorPosCallback(window.getHandle(), mouseCallback);
     glfwSetScrollCallback(window.getHandle(), scrollCallback);
     glfwSetKeyCallback(window.getHandle(), keyCallback);
     
-    // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(err) << std::endl;
         return -1;
     }
     
@@ -168,16 +168,16 @@ int main() {
     }
     
     // Load shaders
-    Shader geometryShader("cpp_client/shaders/gbuffer_geometry.vert", 
-                          "cpp_client/shaders/gbuffer_geometry.frag");
-    if (!geometryShader.isValid()) {
+    Shader geometryShader;
+    if (!geometryShader.loadFromFiles("shaders/gbuffer_geometry.vert", 
+                          "shaders/gbuffer_geometry.frag")) {
         std::cerr << "Failed to load geometry shader" << std::endl;
         return -1;
     }
     
-    Shader lightingShader("cpp_client/shaders/gbuffer_lighting.vert",
-                          "cpp_client/shaders/gbuffer_lighting.frag");
-    if (!lightingShader.isValid()) {
+    Shader lightingShader;
+    if (!lightingShader.loadFromFiles("shaders/gbuffer_lighting.vert",
+                          "shaders/gbuffer_lighting.frag")) {
         std::cerr << "Failed to load lighting shader" << std::endl;
         return -1;
     }
@@ -187,23 +187,23 @@ int main() {
     auto quad = createQuad();
     
     // Setup camera
-    camera.setPosition(glm::vec3(0.0f, 0.0f, 10.0f));
+    camera.setDistance(10.0f);
     camera.setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
     
     // Setup lighting
-    LightManager lightManager;
+    Lighting::LightManager lightManager;
     
     // Add main directional light (sun)
-    Light sun;
-    sun.type = 0; // Directional
+    Lighting::Light sun;
+    sun.type = Lighting::LightType::DIRECTIONAL;
     sun.direction = glm::vec3(0.5f, -1.0f, 0.3f);
     sun.color = glm::vec3(1.0f, 1.0f, 0.95f);
     sun.intensity = 1.0f;
     lightManager.addLight(sun);
     
     // Add a few point lights
-    Light pointLight1;
-    pointLight1.type = 1; // Point
+    Lighting::Light pointLight1;
+    pointLight1.type = Lighting::LightType::POINT;
     pointLight1.position = glm::vec3(5.0f, 3.0f, 5.0f);
     pointLight1.color = glm::vec3(1.0f, 0.3f, 0.3f);
     pointLight1.intensity = 1.0f;
@@ -212,8 +212,8 @@ int main() {
     pointLight1.quadratic = 0.032f;
     lightManager.addLight(pointLight1);
     
-    Light pointLight2;
-    pointLight2.type = 1; // Point
+    Lighting::Light pointLight2;
+    pointLight2.type = Lighting::LightType::POINT;
     pointLight2.position = glm::vec3(-5.0f, 3.0f, 5.0f);
     pointLight2.color = glm::vec3(0.3f, 0.3f, 1.0f);
     pointLight2.intensity = 1.0f;
@@ -296,7 +296,7 @@ int main() {
         lightingShader.setFloat("ambientIntensity", 0.3f);
         
         // Upload lights
-        lightManager.uploadToShader(lightingShader);
+        lightManager.uploadToShader(&lightingShader);
         
         // Render fullscreen quad
         glDisable(GL_DEPTH_TEST);
@@ -304,8 +304,7 @@ int main() {
         glEnable(GL_DEPTH_TEST);
         
         // Swap buffers
-        window.swapBuffers();
-        window.pollEvents();
+        window.update();
     }
     
     std::cout << "Exiting..." << std::endl;

@@ -23,7 +23,7 @@ public:
      * @param port Server port
      * @param characterName Character name for login
      */
-    bool connect(const std::string& host, int port, const std::string& characterName);
+    bool connect(const std::string& host, int port, const std::string& characterName = "Player");
 
     /**
      * Disconnect from server

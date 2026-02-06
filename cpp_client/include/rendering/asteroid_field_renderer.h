@@ -9,6 +9,8 @@
 #include "shader.h"
 #include "camera.h"
 
+namespace eve {
+
 /**
  * Asteroid Field Renderer
  * Renders procedural asteroid fields using instanced rendering
@@ -161,3 +163,5 @@ private:
      */
     float hash(int seed, int index) const;
 };
+
+} // namespace eve

@@ -5,6 +5,8 @@
 #include <iostream>
 #include <algorithm>
 
+namespace eve {
+
 AsteroidFieldRenderer::AsteroidFieldRenderer()
     : m_fieldCenter(0.0f, 0.0f, 0.0f)
 {
@@ -358,7 +360,7 @@ void AsteroidFieldRenderer::clearField() {
     
     // Remove all instances
     for (const auto& asteroid : m_asteroids) {
-        m_renderer->removeInstance(asteroid.meshType, asteroid.instanceId);
+        m_renderer->removeInstance(asteroid.instanceId);
     }
     
     bool hadAsteroids = !m_asteroids.empty();
@@ -378,3 +380,5 @@ void AsteroidFieldRenderer::render(Shader* shader, const Camera& camera) {
     // Render all asteroids using instanced rendering
     m_renderer->renderAll(shader);
 }
+
+} // namespace eve

@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <memory>
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -15,6 +15,8 @@
 #include "rendering/camera.h"
 #include "rendering/asteroid_field_renderer.h"
 #include "ui/input_handler.h"
+
+using namespace eve;
 
 // Window dimensions
 const int WINDOW_WIDTH = 1280;
@@ -31,7 +33,7 @@ float lastY = WINDOW_HEIGHT / 2.0f;
 
 // Callbacks
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
-    inputHandler.handleMouseMove(xpos, ypos);
+    inputHandler.handleMouse(xpos, ypos);
     
     if (firstMouse) {
         lastX = xpos;
@@ -82,9 +84,11 @@ int main() {
     glfwSetScrollCallback(window.getHandle(), scrollCallback);
     glfwSetKeyCallback(window.getHandle(), keyCallback);
     
-    // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(err) << std::endl;
         return -1;
     }
     
