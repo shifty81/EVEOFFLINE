@@ -331,7 +331,7 @@ class PlanetaryInteractionSystem(System):
             planet_y=planet_y,
             cpu_usage=cpu_required,
             powergrid_usage=pg_required,
-            processing_cycle_time=600.0,  # 10 minutes
+            processing_cycle_time=1800.0,  # 30 minutes for basic, varies by recipe
             storage_capacity=10000.0
         )
         
