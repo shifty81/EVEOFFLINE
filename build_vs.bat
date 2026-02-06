@@ -92,6 +92,7 @@ set "VCPKG_TOOLCHAIN="
 set "VCPKG_FOUND=0"
 
 REM Check common vcpkg locations
+REM Note: Using backslashes for Windows file checks, forward slashes for CMake (CMake prefers forward slashes)
 if exist "C:\vcpkg\scripts\buildsystems\vcpkg.cmake" (
     set "VCPKG_TOOLCHAIN=-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
     set "VCPKG_FOUND=1"
