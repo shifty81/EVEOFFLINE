@@ -136,6 +136,7 @@ public:
     float tracking_speed = 0.5f;  // radians per second
     float rate_of_fire = 3.0f;  // seconds between shots
     float cooldown = 0.0f;  // current cooldown timer
+    float capacitor_cost = 5.0f;  // GJ per shot
     std::string ammo_type = "EMP";
     int ammo_count = 100;
     

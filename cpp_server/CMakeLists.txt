@@ -48,6 +48,9 @@ set(SERVER_SOURCES
     src/systems/combat_system.cpp
     src/systems/ai_system.cpp
     src/systems/targeting_system.cpp
+    src/systems/capacitor_system.cpp
+    src/systems/shield_recharge_system.cpp
+    src/systems/weapon_system.cpp
 )
 
 set(SERVER_HEADERS
@@ -68,6 +71,9 @@ set(SERVER_HEADERS
     include/systems/combat_system.h
     include/systems/ai_system.h
     include/systems/targeting_system.h
+    include/systems/capacitor_system.h
+    include/systems/shield_recharge_system.h
+    include/systems/weapon_system.h
 )
 
 # Steam SDK configuration

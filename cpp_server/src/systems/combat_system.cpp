@@ -12,38 +12,10 @@ CombatSystem::CombatSystem(ecs::World* world)
 }
 
 void CombatSystem::update(float delta_time) {
-    // Update weapon cooldowns
-    auto entities = world_->getEntities<components::Weapon>();
-    
-    for (auto* entity : entities) {
-        auto* weapon = entity->getComponent<components::Weapon>();
-        if (weapon && weapon->cooldown > 0.0f) {
-            weapon->cooldown -= delta_time;
-            if (weapon->cooldown < 0.0f) {
-                weapon->cooldown = 0.0f;
-            }
-        }
-    }
-    
-    // Update shield recharge
-    auto health_entities = world_->getEntities<components::Health>();
-    for (auto* entity : health_entities) {
-        auto* health = entity->getComponent<components::Health>();
-        if (health && health->shield_hp < health->shield_max) {
-            float recharge = health->shield_recharge_rate * delta_time;
-            health->shield_hp = std::min(health->shield_hp + recharge, health->shield_max);
-        }
-    }
-    
-    // Update capacitor recharge
-    auto cap_entities = world_->getEntities<components::Capacitor>();
-    for (auto* entity : cap_entities) {
-        auto* cap = entity->getComponent<components::Capacitor>();
-        if (cap && cap->capacitor < cap->capacitor_max) {
-            float recharge = cap->recharge_rate * delta_time;
-            cap->capacitor = std::min(cap->capacitor + recharge, cap->capacitor_max);
-        }
-    }
+    // CombatSystem now focuses on damage application only.
+    // Shield recharge is handled by ShieldRechargeSystem.
+    // Capacitor recharge is handled by CapacitorSystem.
+    // Weapon cooldowns and auto-fire are handled by WeaponSystem.
 }
 
 bool CombatSystem::applyDamage(const std::string& target_id, float damage, const std::string& damage_type) {
