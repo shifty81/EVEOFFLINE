@@ -213,6 +213,7 @@ set(CLIENT_SOURCES
     src/core/entity.cpp
     src/core/entity_manager.cpp
     src/core/entity_message_parser.cpp
+    src/core/file_logger.cpp
     src/rendering/window.cpp
     src/rendering/shader.cpp
     src/rendering/camera.cpp
@@ -260,6 +261,7 @@ set(CLIENT_HEADERS
     include/core/entity.h
     include/core/entity_manager.h
     include/core/entity_message_parser.h
+    include/core/file_logger.h
     include/rendering/window.h
     include/rendering/shader.h
     include/rendering/camera.h

@@ -6,13 +6,13 @@
 
 namespace UI {
 
-// EVE Online color scheme
-static const float COLOR_SHIELD[] = {0.0f, 0.6f, 1.0f, 1.0f};  // Blue
-static const float COLOR_ARMOR[] = {0.8f, 0.8f, 0.0f, 1.0f};   // Yellow
-static const float COLOR_HULL[] = {0.8f, 0.1f, 0.1f, 1.0f};    // Red
-static const float COLOR_BACKGROUND[] = {0.05f, 0.08f, 0.12f, 0.9f};  // Dark blue-black
-static const float COLOR_BORDER[] = {0.0f, 0.8f, 0.9f, 0.8f};  // Teal accent
-static const float COLOR_ACTIVE[] = {1.0f, 1.0f, 0.0f, 1.0f};  // Yellow for active
+// Use centralized EVEColors from ui_manager.h for consistency
+static const float COLOR_SHIELD[] = {0.2f, 0.6f, 1.0f, 1.0f};     // Blue — matches EVEColors::SHIELD_COLOR
+static const float COLOR_ARMOR[] = {1.0f, 0.816f, 0.251f, 1.0f};   // Gold — matches EVEColors::ARMOR_COLOR
+static const float COLOR_HULL[] = {0.902f, 0.271f, 0.271f, 1.0f};  // Red — matches EVEColors::HULL_COLOR
+static const float COLOR_BACKGROUND[] = {0.051f, 0.067f, 0.090f, 0.92f};  // Dark blue-black — matches EVEColors::BG_PRIMARY
+static const float COLOR_BORDER[] = {0.271f, 0.816f, 0.910f, 0.8f};       // Teal — matches EVEColors::ACCENT_PRIMARY
+static const float COLOR_ACTIVE[] = {1.0f, 0.878f, 0.4f, 1.0f};          // Yellow-gold for active target
 
 EVETargetList::EVETargetList()
     : m_posX(50.0f)

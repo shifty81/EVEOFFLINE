@@ -144,155 +144,170 @@ void UIManager::Render() {
 void UIManager::SetupEVEStyle() {
     ImGuiStyle& style = ImGui::GetStyle();
     
-    // Window styling
-    style.WindowRounding = 4.0f;
-    style.FrameRounding = 2.0f;
-    style.ScrollbarRounding = 2.0f;
-    style.GrabRounding = 2.0f;
+    // Window styling — EVE Photon UI uses near-square corners, compact spacing
+    style.WindowRounding = 2.0f;
+    style.FrameRounding = 1.0f;
+    style.ScrollbarRounding = 1.0f;
+    style.GrabRounding = 1.0f;
+    style.TabRounding = 1.0f;
     style.WindowBorderSize = 1.0f;
-    style.FrameBorderSize = 1.0f;
-    style.WindowPadding = ImVec2(12.0f, 12.0f);
-    style.FramePadding = ImVec2(8.0f, 4.0f);
-    style.ItemSpacing = ImVec2(8.0f, 6.0f);
-    style.ItemInnerSpacing = ImVec2(6.0f, 4.0f);
-    style.IndentSpacing = 20.0f;
-    style.ScrollbarSize = 14.0f;
-    style.GrabMinSize = 10.0f;
+    style.FrameBorderSize = 0.0f;  // Frames rely on color, not borders
+    style.WindowPadding = ImVec2(8.0f, 8.0f);
+    style.FramePadding = ImVec2(6.0f, 3.0f);
+    style.ItemSpacing = ImVec2(6.0f, 4.0f);
+    style.ItemInnerSpacing = ImVec2(4.0f, 4.0f);
+    style.IndentSpacing = 16.0f;
+    style.ScrollbarSize = 10.0f;
+    style.GrabMinSize = 8.0f;
     
-    // Color scheme - EVE Online Photon UI style
+    // Color scheme — EVE Online Photon UI dark theme
+    // Reference: docs/design/EVE_UI_STYLE_REFERENCE.md
     ImVec4* colors = style.Colors;
     
-    // Window background - dark blue-black
+    // Window background — dark blue-black, semi-transparent
     colors[ImGuiCol_WindowBg] = ImVec4(
-        EVEColors::BG_PRIMARY[0],
-        EVEColors::BG_PRIMARY[1],
-        EVEColors::BG_PRIMARY[2],
-        EVEColors::BG_PRIMARY[3]
-    );
+        EVEColors::BG_PRIMARY[0], EVEColors::BG_PRIMARY[1],
+        EVEColors::BG_PRIMARY[2], EVEColors::BG_PRIMARY[3]);
     
-    // Title bar
+    colors[ImGuiCol_ChildBg] = ImVec4(
+        EVEColors::BG_PANEL[0], EVEColors::BG_PANEL[1],
+        EVEColors::BG_PANEL[2], 0.5f);
+    
+    colors[ImGuiCol_PopupBg] = ImVec4(
+        EVEColors::BG_TOOLTIP[0], EVEColors::BG_TOOLTIP[1],
+        EVEColors::BG_TOOLTIP[2], EVEColors::BG_TOOLTIP[3]);
+    
+    // Title bar — darkest shade
     colors[ImGuiCol_TitleBg] = ImVec4(
-        EVEColors::BG_PANEL[0],
-        EVEColors::BG_PANEL[1],
-        EVEColors::BG_PANEL[2],
-        1.0f
-    );
+        EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
+        EVEColors::BG_HEADER[2], EVEColors::BG_HEADER[3]);
     colors[ImGuiCol_TitleBgActive] = ImVec4(
-        EVEColors::ACCENT_SECONDARY[0] * 0.3f,
-        EVEColors::ACCENT_SECONDARY[1] * 0.3f,
-        EVEColors::ACCENT_SECONDARY[2] * 0.3f,
-        1.0f
-    );
+        EVEColors::ACCENT_DIM[0] * 0.5f, EVEColors::ACCENT_DIM[1] * 0.5f,
+        EVEColors::ACCENT_DIM[2] * 0.5f, 1.0f);
+    colors[ImGuiCol_TitleBgCollapsed] = ImVec4(
+        EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
+        EVEColors::BG_HEADER[2], 0.6f);
     
-    // Borders
+    // Borders — subtle dark border, teal on highlight
     colors[ImGuiCol_Border] = ImVec4(
-        EVEColors::BORDER_NORMAL[0],
-        EVEColors::BORDER_NORMAL[1],
-        EVEColors::BORDER_NORMAL[2],
-        EVEColors::BORDER_NORMAL[3]
-    );
+        EVEColors::BORDER_NORMAL[0], EVEColors::BORDER_NORMAL[1],
+        EVEColors::BORDER_NORMAL[2], EVEColors::BORDER_NORMAL[3]);
+    colors[ImGuiCol_BorderShadow] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
     
-    // Frame/backgrounds
+    // Frame backgrounds — slightly lighter than window for contrast
     colors[ImGuiCol_FrameBg] = ImVec4(
-        EVEColors::BG_SECONDARY[0],
-        EVEColors::BG_SECONDARY[1],
-        EVEColors::BG_SECONDARY[2],
-        0.8f
-    );
+        EVEColors::BG_SECONDARY[0], EVEColors::BG_SECONDARY[1],
+        EVEColors::BG_SECONDARY[2], 0.7f);
     colors[ImGuiCol_FrameBgHovered] = ImVec4(
-        EVEColors::ACCENT_SECONDARY[0] * 0.4f,
-        EVEColors::ACCENT_SECONDARY[1] * 0.4f,
-        EVEColors::ACCENT_SECONDARY[2] * 0.4f,
-        0.8f
-    );
+        EVEColors::SELECTION[0], EVEColors::SELECTION[1],
+        EVEColors::SELECTION[2], EVEColors::SELECTION[3]);
     colors[ImGuiCol_FrameBgActive] = ImVec4(
-        EVEColors::ACCENT_PRIMARY[0] * 0.5f,
-        EVEColors::ACCENT_PRIMARY[1] * 0.5f,
-        EVEColors::ACCENT_PRIMARY[2] * 0.5f,
-        0.9f
-    );
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 0.8f);
     
     // Text
     colors[ImGuiCol_Text] = ImVec4(
-        EVEColors::TEXT_PRIMARY[0],
-        EVEColors::TEXT_PRIMARY[1],
-        EVEColors::TEXT_PRIMARY[2],
-        EVEColors::TEXT_PRIMARY[3]
-    );
+        EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
+        EVEColors::TEXT_PRIMARY[2], EVEColors::TEXT_PRIMARY[3]);
     colors[ImGuiCol_TextDisabled] = ImVec4(
-        EVEColors::TEXT_DISABLED[0],
-        EVEColors::TEXT_DISABLED[1],
-        EVEColors::TEXT_DISABLED[2],
-        EVEColors::TEXT_DISABLED[3]
-    );
+        EVEColors::TEXT_DISABLED[0], EVEColors::TEXT_DISABLED[1],
+        EVEColors::TEXT_DISABLED[2], EVEColors::TEXT_DISABLED[3]);
     
-    // Buttons
+    // Buttons — dim accent background, brighter on hover, full accent on press
     colors[ImGuiCol_Button] = ImVec4(
-        EVEColors::ACCENT_SECONDARY[0] * 0.4f,
-        EVEColors::ACCENT_SECONDARY[1] * 0.4f,
-        EVEColors::ACCENT_SECONDARY[2] * 0.4f,
-        0.8f
-    );
+        EVEColors::ACCENT_DIM[0] * 0.6f, EVEColors::ACCENT_DIM[1] * 0.6f,
+        EVEColors::ACCENT_DIM[2] * 0.6f, 0.7f);
     colors[ImGuiCol_ButtonHovered] = ImVec4(
-        EVEColors::ACCENT_SECONDARY[0] * 0.6f,
-        EVEColors::ACCENT_SECONDARY[1] * 0.6f,
-        EVEColors::ACCENT_SECONDARY[2] * 0.6f,
-        0.9f
-    );
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 0.9f);
     colors[ImGuiCol_ButtonActive] = ImVec4(
-        EVEColors::ACCENT_PRIMARY[0],
-        EVEColors::ACCENT_PRIMARY[1],
-        EVEColors::ACCENT_PRIMARY[2],
-        1.0f
-    );
+        EVEColors::ACCENT_PRIMARY[0] * 0.8f, EVEColors::ACCENT_PRIMARY[1] * 0.8f,
+        EVEColors::ACCENT_PRIMARY[2] * 0.8f, 1.0f);
     
-    // Headers
+    // Headers (collapsing headers, tree nodes)
     colors[ImGuiCol_Header] = ImVec4(
-        EVEColors::ACCENT_SECONDARY[0] * 0.3f,
-        EVEColors::ACCENT_SECONDARY[1] * 0.3f,
-        EVEColors::ACCENT_SECONDARY[2] * 0.3f,
-        0.8f
-    );
+        EVEColors::SELECTION[0], EVEColors::SELECTION[1],
+        EVEColors::SELECTION[2], 0.7f);
     colors[ImGuiCol_HeaderHovered] = ImVec4(
-        EVEColors::ACCENT_SECONDARY[0] * 0.5f,
-        EVEColors::ACCENT_SECONDARY[1] * 0.5f,
-        EVEColors::ACCENT_SECONDARY[2] * 0.5f,
-        0.9f
-    );
+        EVEColors::ACCENT_DIM[0] * 0.7f, EVEColors::ACCENT_DIM[1] * 0.7f,
+        EVEColors::ACCENT_DIM[2] * 0.7f, 0.8f);
     colors[ImGuiCol_HeaderActive] = ImVec4(
-        EVEColors::ACCENT_PRIMARY[0] * 0.7f,
-        EVEColors::ACCENT_PRIMARY[1] * 0.7f,
-        EVEColors::ACCENT_PRIMARY[2] * 0.7f,
-        1.0f
-    );
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 1.0f);
     
-    // Scrollbar
+    // Tabs — match EVE's filter tab style
+    colors[ImGuiCol_Tab] = ImVec4(
+        EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
+        EVEColors::BG_HEADER[2], 1.0f);
+    colors[ImGuiCol_TabHovered] = ImVec4(
+        EVEColors::ACCENT_DIM[0] * 0.6f, EVEColors::ACCENT_DIM[1] * 0.6f,
+        EVEColors::ACCENT_DIM[2] * 0.6f, 0.8f);
+    
+    // Separator
+    colors[ImGuiCol_Separator] = ImVec4(
+        EVEColors::BORDER_SUBTLE[0], EVEColors::BORDER_SUBTLE[1],
+        EVEColors::BORDER_SUBTLE[2], EVEColors::BORDER_SUBTLE[3]);
+    colors[ImGuiCol_SeparatorHovered] = ImVec4(
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 0.8f);
+    colors[ImGuiCol_SeparatorActive] = ImVec4(
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], 1.0f);
+    
+    // Scrollbar — slim, dark
     colors[ImGuiCol_ScrollbarBg] = ImVec4(
-        EVEColors::BG_PANEL[0],
-        EVEColors::BG_PANEL[1],
-        EVEColors::BG_PANEL[2],
-        0.5f
-    );
+        EVEColors::BG_PANEL[0], EVEColors::BG_PANEL[1],
+        EVEColors::BG_PANEL[2], 0.3f);
     colors[ImGuiCol_ScrollbarGrab] = ImVec4(
-        EVEColors::ACCENT_SECONDARY[0] * 0.5f,
-        EVEColors::ACCENT_SECONDARY[1] * 0.5f,
-        EVEColors::ACCENT_SECONDARY[2] * 0.5f,
-        0.8f
-    );
+        EVEColors::ACCENT_DIM[0] * 0.6f, EVEColors::ACCENT_DIM[1] * 0.6f,
+        EVEColors::ACCENT_DIM[2] * 0.6f, 0.6f);
     colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(
-        EVEColors::ACCENT_SECONDARY[0] * 0.7f,
-        EVEColors::ACCENT_SECONDARY[1] * 0.7f,
-        EVEColors::ACCENT_SECONDARY[2] * 0.7f,
-        0.9f
-    );
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 0.8f);
     colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(
-        EVEColors::ACCENT_PRIMARY[0],
-        EVEColors::ACCENT_PRIMARY[1],
-        EVEColors::ACCENT_PRIMARY[2],
-        1.0f
-    );
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], 1.0f);
     
-    std::cout << "[UIManager] EVE-style theme applied" << std::endl;
+    // Resize grip
+    colors[ImGuiCol_ResizeGrip] = ImVec4(
+        EVEColors::ACCENT_DIM[0] * 0.4f, EVEColors::ACCENT_DIM[1] * 0.4f,
+        EVEColors::ACCENT_DIM[2] * 0.4f, 0.4f);
+    colors[ImGuiCol_ResizeGripHovered] = ImVec4(
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], 0.6f);
+    colors[ImGuiCol_ResizeGripActive] = ImVec4(
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], 0.9f);
+    
+    // Table colors
+    colors[ImGuiCol_TableHeaderBg] = ImVec4(
+        EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
+        EVEColors::BG_HEADER[2], 1.0f);
+    colors[ImGuiCol_TableBorderStrong] = ImVec4(
+        EVEColors::BORDER_NORMAL[0], EVEColors::BORDER_NORMAL[1],
+        EVEColors::BORDER_NORMAL[2], 0.8f);
+    colors[ImGuiCol_TableBorderLight] = ImVec4(
+        EVEColors::BORDER_SUBTLE[0], EVEColors::BORDER_SUBTLE[1],
+        EVEColors::BORDER_SUBTLE[2], 0.4f);
+    colors[ImGuiCol_TableRowBg] = ImVec4(0.0f, 0.0f, 0.0f, 0.0f);
+    colors[ImGuiCol_TableRowBgAlt] = ImVec4(
+        EVEColors::BG_SECONDARY[0], EVEColors::BG_SECONDARY[1],
+        EVEColors::BG_SECONDARY[2], 0.3f);
+    
+    // Check mark
+    colors[ImGuiCol_CheckMark] = ImVec4(
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], 1.0f);
+    
+    // Slider
+    colors[ImGuiCol_SliderGrab] = ImVec4(
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 0.9f);
+    colors[ImGuiCol_SliderGrabActive] = ImVec4(
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], 1.0f);
+    
+    std::cout << "[UIManager] EVE Photon UI style applied" << std::endl;
 }
 
 void UIManager::SetShipStatus(const ShipStatus& status) {
