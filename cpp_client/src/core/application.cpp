@@ -306,8 +306,8 @@ void Application::update(float deltaTime) {
         status.armor_max = static_cast<float>(health.maxArmor);
         status.hull = health.currentHull;
         status.hull_max = static_cast<float>(health.maxHull);
-        status.capacitor = 85.0f;     // Demo value
-        status.capacitor_max = 100.0f;
+        status.capacitor = 85.0f;     // TODO: Replace with real capacitor simulation
+        status.capacitor_max = 100.0f; // TODO: Replace with real capacitor simulation
         status.velocity = m_playerSpeed;
         status.max_velocity = m_playerMaxSpeed;
         m_uiManager->SetShipStatus(status);
@@ -877,14 +877,19 @@ void Application::updateLocalMovement(float deltaTime) {
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
     if (!playerEntity) return;
     
+    // Movement physics constants
+    static constexpr float ACCELERATION = 80.0f;          // m/s²
+    static constexpr float DECELERATION = 40.0f;          // m/s² when stopping
+    static constexpr float APPROACH_DECEL_DIST = 50.0f;   // Start slowing at this range
+    static constexpr float WARP_SPEED = 5000.0f;          // Simulated warp speed m/s
+    static constexpr float WARP_EXIT_DIST = 100.0f;       // Exit warp at this range
+    
     glm::vec3 playerPos = playerEntity->getPosition();
-    float accel = 80.0f;  // Acceleration m/s²
-    float decel = 40.0f;  // Deceleration when stopping
     
     if (m_currentMoveCommand == MoveCommand::None) {
         // Decelerate to stop
         if (m_playerSpeed > 0.0f) {
-            m_playerSpeed = std::max(0.0f, m_playerSpeed - decel * deltaTime);
+            m_playerSpeed = std::max(0.0f, m_playerSpeed - DECELERATION * deltaTime);
             playerPos += m_playerVelocity * deltaTime;
         }
     } else {
@@ -907,11 +912,11 @@ void Application::updateLocalMovement(float deltaTime) {
             case MoveCommand::Approach: {
                 // Accelerate towards target, slow down when close
                 float targetSpeed = m_playerMaxSpeed;
-                if (dist < 50.0f) {
-                    targetSpeed = m_playerMaxSpeed * (dist / 50.0f);
+                if (dist < APPROACH_DECEL_DIST) {
+                    targetSpeed = m_playerMaxSpeed * (dist / APPROACH_DECEL_DIST);
                 }
                 m_playerSpeed = std::min(m_playerMaxSpeed,
-                                         m_playerSpeed + accel * deltaTime);
+                                         m_playerSpeed + ACCELERATION * deltaTime);
                 m_playerSpeed = std::min(m_playerSpeed, targetSpeed);
                 m_playerVelocity = dir * m_playerSpeed;
                 break;
@@ -919,7 +924,7 @@ void Application::updateLocalMovement(float deltaTime) {
             case MoveCommand::Orbit: {
                 // Orbit around target at set distance
                 m_playerSpeed = std::min(m_playerMaxSpeed,
-                                         m_playerSpeed + accel * deltaTime);
+                                         m_playerSpeed + ACCELERATION * deltaTime);
                 if (dist > m_orbitDistance + 10.0f) {
                     m_playerVelocity = dir * m_playerSpeed;
                 } else if (dist < m_orbitDistance - 10.0f) {
@@ -933,30 +938,29 @@ void Application::updateLocalMovement(float deltaTime) {
             }
             case MoveCommand::KeepAtRange: {
                 m_playerSpeed = std::min(m_playerMaxSpeed,
-                                         m_playerSpeed + accel * deltaTime);
+                                         m_playerSpeed + ACCELERATION * deltaTime);
                 if (dist > m_keepAtRangeDistance + 20.0f) {
                     m_playerVelocity = dir * m_playerSpeed;
                 } else if (dist < m_keepAtRangeDistance - 20.0f) {
                     m_playerVelocity = -dir * m_playerSpeed * 0.3f;
                 } else {
-                    m_playerSpeed = std::max(0.0f, m_playerSpeed - decel * deltaTime);
+                    m_playerSpeed = std::max(0.0f, m_playerSpeed - DECELERATION * deltaTime);
                     m_playerVelocity = dir * m_playerSpeed;
                 }
                 break;
             }
             case MoveCommand::AlignTo: {
                 m_playerSpeed = std::min(m_playerMaxSpeed * 0.75f,
-                                         m_playerSpeed + accel * deltaTime);
+                                         m_playerSpeed + ACCELERATION * deltaTime);
                 m_playerVelocity = dir * m_playerSpeed;
                 break;
             }
             case MoveCommand::WarpTo: {
                 // Warp = very fast movement, simulated
-                float warpSpeed = 5000.0f;
-                m_playerSpeed = std::min(warpSpeed,
-                                         m_playerSpeed + warpSpeed * deltaTime);
+                m_playerSpeed = std::min(WARP_SPEED,
+                                         m_playerSpeed + WARP_SPEED * deltaTime);
                 m_playerVelocity = dir * m_playerSpeed;
-                if (dist < 100.0f) {
+                if (dist < WARP_EXIT_DIST) {
                     m_currentMoveCommand = MoveCommand::None;
                     m_playerSpeed = 0.0f;
                     m_playerVelocity = glm::vec3(0.0f);
