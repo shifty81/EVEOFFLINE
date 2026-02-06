@@ -134,6 +134,54 @@
       "description": "Reduces ice harvester cycle time by 5%."
     }
   },
+  "ice_harvesters": {
+    "ice_harvester_i": {
+      "id": "ice_harvester_i",
+      "name": "Ice Harvester I",
+      "type": "ice_harvester",
+      "tech_level": 1,
+      "meta_level": 0,
+      "slot": "high",
+      "cpu": 18,
+      "powergrid": 20,
+      "capacitor_usage": 540,
+      "cycle_time": 300,
+      "optimal_range": 12000,
+      "ice_yield": 1,
+      "volume": 20,
+      "base_price": 850000,
+      "description": "Specialized module for harvesting ice. Yields 1 unit of ice per 5-minute cycle.",
+      "requirements": {
+        "skills": {
+          "Mining": 4,
+          "Ice_Harvesting": 1
+        }
+      }
+    },
+    "ice_harvester_ii": {
+      "id": "ice_harvester_ii",
+      "name": "Ice Harvester II",
+      "type": "ice_harvester",
+      "tech_level": 2,
+      "meta_level": 5,
+      "slot": "high",
+      "cpu": 27,
+      "powergrid": 30,
+      "capacitor_usage": 600,
+      "cycle_time": 250,
+      "optimal_range": 14000,
+      "ice_yield": 1,
+      "volume": 20,
+      "base_price": 2500000,
+      "description": "Tech II ice harvester with improved cycle time and range.",
+      "requirements": {
+        "skills": {
+          "Mining": 5,
+          "Ice_Harvesting": 5
+        }
+      }
+    }
+  },
   "survey_scanners": {
     "survey_scanner_i": {
       "id": "survey_scanner_i",

@@ -1,0 +1,197 @@
+{
+  "ice_types": {
+    "clear_icicle": {
+      "id": "clear_icicle",
+      "name": "Clear Icicle",
+      "description": "Common ice containing heavy water",
+      "volume": 1000.0,
+      "rarity": "common",
+      "security_level": "high",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "heavy_water": 500
+        }
+      },
+      "base_price": 1500
+    },
+    "glacial_mass": {
+      "id": "glacial_mass",
+      "name": "Glacial Mass",
+      "description": "Common ice rich in liquid ozone",
+      "volume": 1000.0,
+      "rarity": "common",
+      "security_level": "high",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "liquid_ozone": 500
+        }
+      },
+      "base_price": 1800
+    },
+    "blue_ice": {
+      "id": "blue_ice",
+      "name": "Blue Ice",
+      "description": "Uncommon ice with oxygen and heavy water",
+      "volume": 1000.0,
+      "rarity": "uncommon",
+      "security_level": "low",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "oxygen": 300,
+          "heavy_water": 200
+        }
+      },
+      "base_price": 3500
+    },
+    "white_glaze": {
+      "id": "white_glaze",
+      "name": "White Glaze",
+      "description": "Uncommon ice containing hydrogen and liquid ozone",
+      "volume": 1000.0,
+      "rarity": "uncommon",
+      "security_level": "low",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "hydrogen": 300,
+          "liquid_ozone": 200
+        }
+      },
+      "base_price": 3200
+    },
+    "glare_crust": {
+      "id": "glare_crust",
+      "name": "Glare Crust",
+      "description": "Rare ice with strontium clathrates",
+      "volume": 1000.0,
+      "rarity": "rare",
+      "security_level": "low",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "strontium_clathrates": 150,
+          "heavy_water": 350
+        }
+      },
+      "base_price": 8500
+    },
+    "dark_glitter": {
+      "id": "dark_glitter",
+      "name": "Dark Glitter",
+      "description": "Rare ice rich in strontium, oxygen, and heavy water",
+      "volume": 1000.0,
+      "rarity": "rare",
+      "security_level": "low",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "strontium_clathrates": 100,
+          "oxygen": 150,
+          "heavy_water": 250
+        }
+      },
+      "base_price": 9200
+    },
+    "gelidus": {
+      "id": "gelidus",
+      "name": "Gelidus",
+      "description": "Very rare ice containing helium isotopes",
+      "volume": 1000.0,
+      "rarity": "very_rare",
+      "security_level": "null",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "hydrogen": 200,
+          "helium_isotopes": 300,
+          "heavy_water": 100
+        }
+      },
+      "base_price": 15000
+    },
+    "krystallos": {
+      "id": "krystallos",
+      "name": "Krystallos",
+      "description": "Very rare ice with nitrogen isotopes",
+      "volume": 1000.0,
+      "rarity": "very_rare",
+      "security_level": "null",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "hydrogen": 200,
+          "nitrogen_isotopes": 300,
+          "heavy_water": 100
+        }
+      },
+      "base_price": 14500
+    },
+    "thick_blue_ice": {
+      "id": "thick_blue_ice",
+      "name": "Thick Blue Ice",
+      "description": "Ultra rare dense ice with oxygen and helium isotopes",
+      "volume": 1000.0,
+      "rarity": "ultra_rare",
+      "security_level": "null",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "oxygen": 350,
+          "helium_isotopes": 250
+        }
+      },
+      "base_price": 22000
+    },
+    "pristine_white_glaze": {
+      "id": "pristine_white_glaze",
+      "name": "Pristine White Glaze",
+      "description": "Ultra rare pure ice with hydrogen and nitrogen isotopes",
+      "volume": 1000.0,
+      "rarity": "ultra_rare",
+      "security_level": "null",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "hydrogen": 350,
+          "nitrogen_isotopes": 250
+        }
+      },
+      "base_price": 21000
+    },
+    "smooth_glacial_mass": {
+      "id": "smooth_glacial_mass",
+      "name": "Smooth Glacial Mass",
+      "description": "Ultra rare refined ice with liquid ozone and oxygen isotopes",
+      "volume": 1000.0,
+      "rarity": "ultra_rare",
+      "security_level": "null",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "liquid_ozone": 350,
+          "oxygen_isotopes": 250
+        }
+      },
+      "base_price": 20500
+    },
+    "enriched_clear_icicle": {
+      "id": "enriched_clear_icicle",
+      "name": "Enriched Clear Icicle",
+      "description": "Legendary ice concentrated with heavy water and strontium",
+      "volume": 1000.0,
+      "rarity": "legendary",
+      "security_level": "null",
+      "reprocessing": {
+        "batch_size": 1,
+        "products": {
+          "heavy_water": 400,
+          "strontium_clathrates": 200
+        }
+      },
+      "base_price": 35000
+    }
+  }
+}

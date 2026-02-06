@@ -337,11 +337,26 @@ class MiningLaser(Component):
 
 
 @dataclass
+class IceHarvester(Component):
+    """Ice harvester component for ice mining operations"""
+    harvester_type: str = "Ice Harvester I"  # Ice Harvester I, Ice Harvester II
+    cycle_time: float = 300.0  # seconds per cycle (5 minutes)
+    yield_amount: float = 1.0  # units per cycle (always 1 unit of ice)
+    optimal_range: float = 12000.0  # meters
+    capacitor_usage: float = 540.0  # GJ per cycle
+    is_active: bool = False
+    current_cycle: float = 0.0  # current cycle progress
+    target_ice_id: Optional[str] = None
+
+
+@dataclass
 class MiningYield(Component):
     """Tracks active mining operations and yields"""
     total_ore_mined: Dict[str, float] = field(default_factory=dict)  # {ore_type: m3}
+    total_ice_mined: Dict[str, int] = field(default_factory=dict)  # {ice_type: units}
     active_mining: bool = False
     target_asteroid_id: Optional[str] = None
+    target_ice_id: Optional[str] = None
     mining_start_time: float = 0.0
     yield_multiplier: float = 1.0  # From skills and modules
 
@@ -350,6 +365,7 @@ class MiningYield(Component):
 class OreHold(Component):
     """Specialized cargo hold for ore (mining barges/exhumers)"""
     ore: Dict[str, float] = field(default_factory=dict)  # {ore_type: m3}
+    ice: Dict[str, int] = field(default_factory=dict)  # {ice_type: units}
     ore_hold_capacity: float = 5000.0  # m3
     ore_hold_used: float = 0.0  # m3
 
