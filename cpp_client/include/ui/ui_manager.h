@@ -1,13 +1,13 @@
 #ifndef UI_MANAGER_H
 #define UI_MANAGER_H
 
-#include <GLFW/glfw3.h>
 #include <string>
 #include <vector>
 #include <memory>
 #include <unordered_map>
 
-// Forward declarations for ImGui types
+// Forward declarations
+struct GLFWwindow;
 struct ImGuiContext;
 
 namespace eve {

@@ -9,6 +9,9 @@
 #include "ui/input_handler.h"
 #include "ui/ui_manager.h"
 #include "ui/entity_picker.h"
+#include "ui/inventory_panel.h"
+#include "ui/fitting_panel.h"
+#include "ui/market_panel.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <thread>

@@ -17,8 +17,19 @@ struct Health {
     int maxArmor{0};
     int maxHull{0};
 
+    // Float accessors for rendering compatibility
+    float currentShield{0.0f};
+    float currentArmor{0.0f};
+    float currentHull{0.0f};
+
     Health() = default;
-    Health(int s, int a, int h) : shield(s), armor(a), hull(h), maxShield(s), maxArmor(a), maxHull(h) {}
+    Health(int s, int a, int h) 
+        : shield(s), armor(a), hull(h)
+        , maxShield(s), maxArmor(a), maxHull(h)
+        , currentShield(static_cast<float>(s))
+        , currentArmor(static_cast<float>(a))
+        , currentHull(static_cast<float>(h))
+    {}
 };
 
 /**

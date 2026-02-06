@@ -1,4 +1,4 @@
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -145,9 +145,11 @@ int main() {
     glfwSetScrollCallback(glfwWindow, scroll_callback);
     glfwSetKeyCallback(glfwWindow, key_callback);
     
-    // Initialize GLAD
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        std::cerr << "Failed to initialize GLAD" << std::endl;
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(err) << std::endl;
         return -1;
     }
     

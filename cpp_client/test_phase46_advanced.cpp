@@ -3,24 +3,21 @@
  * Tests drag-and-drop inventory, module browser, and market panels
  */
 
+#include <GL/glew.h>
 #include "rendering/window.h"
 #include "ui/ui_manager.h"
 #include "ui/inventory_panel.h"
 #include "ui/module_browser_panel.h"
 #include "ui/market_panel.h"
-#include <GL/glew.h>
 #include <iostream>
+
+using namespace eve;
 
 int main() {
     std::cout << "[Test] Phase 4.6 Advanced Features Test Program" << std::endl;
     
     // Create window
-    Rendering::Window window(1600, 900, "Phase 4.6 Advanced Features Test");
-    
-    if (!window.initialize()) {
-        std::cerr << "[Test] Failed to initialize window" << std::endl;
-        return -1;
-    }
+    Window window("Phase 4.6 Advanced Features Test", 1600, 900);
     
     // Initialize GLEW
     glewExperimental = GL_TRUE;
@@ -252,8 +249,7 @@ int main() {
     
     // Main loop
     while (!window.shouldClose()) {
-        // Handle events
-        window.pollEvents();
+        // Process events (handled by window.update() at end of loop)
         
         // Clear screen
         glClearColor(0.05f, 0.08f, 0.12f, 1.0f);
@@ -270,8 +266,8 @@ int main() {
         // End ImGui frame and render
         uiManager->EndFrame();
         
-        // Swap buffers
-        window.swapBuffers();
+        // Update window (swap buffers + poll events)
+        window.update();
     }
     
     std::cout << "[Test] Shutting down..." << std::endl;

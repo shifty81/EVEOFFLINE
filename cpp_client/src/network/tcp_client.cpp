@@ -35,7 +35,11 @@ static WSAInitializer g_wsaInit;
 #endif
 
 TCPClient::TCPClient()
+#ifdef _WIN32
+    : m_socket(nullptr)
+#else
     : m_socket(INVALID_SOCKET)
+#endif
     , m_connected(false)
 {
 }
@@ -86,10 +90,11 @@ bool TCPClient::connect(const std::string& host, int port) {
 
 #ifdef _WIN32
         closesocket(static_cast<SOCKET>(reinterpret_cast<uintptr_t>(m_socket)));
+        m_socket = nullptr;
 #else
         ::close(m_socket);
-#endif
         m_socket = INVALID_SOCKET;
+#endif
     }
 
     freeaddrinfo(result);
@@ -124,12 +129,13 @@ void TCPClient::disconnect() {
         if (m_socket != nullptr) {
             closesocket(static_cast<SOCKET>(reinterpret_cast<uintptr_t>(m_socket)));
         }
+        m_socket = nullptr;
 #else
         if (m_socket != INVALID_SOCKET) {
             ::close(m_socket);
         }
-#endif
         m_socket = INVALID_SOCKET;
+#endif
 
         // Wait for receive thread to finish
         if (m_receiveThread && m_receiveThread->joinable()) {

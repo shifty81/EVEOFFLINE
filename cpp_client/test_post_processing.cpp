@@ -9,7 +9,7 @@
  * - Interactive parameter adjustment
  */
 
-#include <glad/glad.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -58,23 +58,28 @@ unsigned int cubeVBO = 0;
 
 int main() {
     // Initialize window
-    Window window(SCR_WIDTH, SCR_HEIGHT, "Post-Processing Test (Bloom & HDR)");
-    if (!window.initialize()) {
-        std::cerr << "Failed to initialize window" << std::endl;
-        return -1;
-    }
+    eve::Window window("Post-Processing Test (Bloom & HDR)", SCR_WIDTH, SCR_HEIGHT);
     
     // Create camera
     camera = std::make_unique<eve::Camera>(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT);
     camera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
     camera->zoom(-20.0f);  // Move camera back
     
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    GLenum glewErr = glewInit();
+    if (glewErr != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(glewErr) << std::endl;
+        return -1;
+    }
+    
     // OpenGL configuration
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     
     // Load shaders
-    Shader lightingShader("shaders/multi_light.vert", "shaders/multi_light.frag");
+    eve::Shader lightingShader;
+    lightingShader.loadFromFiles("shaders/multi_light.vert", "shaders/multi_light.frag");
     
     // Setup post-processing
     auto postProcessing = std::make_unique<Rendering::PostProcessing>(SCR_WIDTH, SCR_HEIGHT);
@@ -140,7 +145,7 @@ int main() {
         lastFrame = currentFrame;
         
         // Input
-        processInput(window.getWindow());
+        processInput(window.getHandle());
         
         // Update post-processing settings
         postProcessing->setBloomEnabled(settings.bloomEnabled);
@@ -218,8 +223,7 @@ int main() {
         }
         
         // Swap and poll
-        window.swapBuffers();
-        window.pollEvents();
+        window.update();
     }
     
     return 0;
