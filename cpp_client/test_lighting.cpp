@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <memory>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -78,6 +79,14 @@ int main() {
     glfwSetCursorPosCallback(window.getHandle(), mouseCallback);
     glfwSetScrollCallback(window.getHandle(), scrollCallback);
     glfwSetKeyCallback(window.getHandle(), keyCallback);
+    
+    // Initialize GLEW
+    glewExperimental = GL_TRUE;
+    GLenum err = glewInit();
+    if (err != GLEW_OK) {
+        std::cerr << "Failed to initialize GLEW: " << glewGetErrorString(err) << std::endl;
+        return -1;
+    }
     
     // OpenGL settings
     glEnable(GL_DEPTH_TEST);

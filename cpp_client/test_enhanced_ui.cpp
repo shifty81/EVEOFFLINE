@@ -3,25 +3,22 @@
  * Tests inventory, fitting, and mission panels with demo data
  */
 
+#include <GL/glew.h>
 #include "rendering/window.h"
 #include "ui/ui_manager.h"
 #include "ui/inventory_panel.h"
 #include "ui/fitting_panel.h"
 #include "ui/mission_panel.h"
-#include <GL/glew.h>
 #include <iostream>
 #include <cmath>
+
+using namespace eve;
 
 int main() {
     std::cout << "[Test] Phase 4.5 Enhanced UI Test Program" << std::endl;
     
     // Create window
-    Rendering::Window window(1280, 720, "Phase 4.5 Enhanced UI Test");
-    
-    if (!window.initialize()) {
-        std::cerr << "[Test] Failed to initialize window" << std::endl;
-        return -1;
-    }
+    Window window("Phase 4.5 Enhanced UI Test", 1280, 720);
     
     // Initialize GLEW
     glewExperimental = GL_TRUE;

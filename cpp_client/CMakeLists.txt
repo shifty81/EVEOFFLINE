@@ -371,6 +371,10 @@ if(BUILD_TESTS)
         glfw
     )
     
+    if(USE_GLEW)
+        target_link_libraries(test_asteroid_field GLEW::GLEW)
+    endif()
+    
     if(WIN32)
         target_link_libraries(test_asteroid_field ws2_32)
     elseif(UNIX AND NOT APPLE)
@@ -438,6 +442,10 @@ if(BUILD_TESTS)
         glfw
     )
     
+    if(USE_GLEW)
+        target_link_libraries(test_shadow_mapping GLEW::GLEW)
+    endif()
+    
     if(WIN32)
         target_link_libraries(test_shadow_mapping ws2_32)
     elseif(UNIX AND NOT APPLE)
@@ -465,6 +473,10 @@ if(BUILD_TESTS)
         OpenGL::GL
         glfw
     )
+    
+    if(USE_GLEW)
+        target_link_libraries(test_deferred_rendering GLEW::GLEW)
+    endif()
     
     if(WIN32)
         target_link_libraries(test_deferred_rendering ws2_32)
@@ -518,6 +530,9 @@ if(BUILD_TESTS)
         OpenGL::GL
         glfw
     )
+    if(USE_GLEW)
+        target_link_libraries(test_post_processing GLEW::GLEW)
+    endif()
     if(WIN32)
         target_link_libraries(test_post_processing ws2_32)
     elseif(UNIX AND NOT APPLE)
