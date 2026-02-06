@@ -86,6 +86,33 @@ cmake .. -G "Visual Studio 17 2022" -A x64
 
 ---
 
+### "Does not match the generator used previously"
+
+**Symptoms**: CMake fails when falling back to VS 2019 with error:
+```
+Error: generator : Visual Studio 16 2019
+Does not match the generator used previously: Visual Studio 17 2022
+Either remove the CMakeCache.txt file and CMakeFiles directory or choose a different binary directory.
+```
+
+**Cause**: CMake cache from a previous run with a different generator wasn't cleaned.
+
+**Solution**: This has been fixed in the latest version. The build scripts now automatically clean the CMake cache before switching generators. Update your files:
+```cmd
+git pull origin main
+```
+
+If you need to manually fix it:
+```cmd
+cd build_vs
+del /f CMakeCache.txt
+rmdir /s /q CMakeFiles
+cd ..
+.\generate_solution.bat
+```
+
+---
+
 ### "The C compiler identification is unknown"
 
 **Symptoms**: CMake fails to detect the C/C++ compiler.
