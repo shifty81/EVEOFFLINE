@@ -496,7 +496,7 @@ Fatal error: Failed to initialize renderer
   - `shaders/` → `cpp_client/shaders/`
   - `assets/` → `cpp_client/assets/`
   
-  These symlinks allow the client to find resources when run from any directory.
+  These symlinks allow the client to find resources when run from the repository root directory.
 
 ### "Could not connect to server"
 
