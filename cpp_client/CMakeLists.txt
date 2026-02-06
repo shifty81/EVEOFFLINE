@@ -139,11 +139,13 @@ endif()
 # ImGui (UI library)
 # Try to use vcpkg ImGui first, fall back to bundled
 set(USE_VCPKG_IMGUI OFF)
+set(IMGUI_AVAILABLE OFF)
 if(USE_SYSTEM_LIBS)
     find_package(imgui CONFIG QUIET)
     if(imgui_FOUND)
         message(STATUS "Using system ImGui from vcpkg")
         set(USE_VCPKG_IMGUI ON)
+        set(IMGUI_AVAILABLE ON)
         set(IMGUI_SOURCES "")
     endif()
 endif()
@@ -152,6 +154,7 @@ if(NOT USE_VCPKG_IMGUI)
     # Check if bundled ImGui exists
     if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui/imgui.cpp")
         message(STATUS "Using bundled ImGui")
+        set(IMGUI_AVAILABLE ON)
         set(IMGUI_SOURCES
             external/imgui/imgui.cpp
             external/imgui/imgui_draw.cpp
@@ -164,13 +167,19 @@ if(NOT USE_VCPKG_IMGUI)
         message(FATAL_ERROR 
             "ImGui not found!\n"
             "\n"
-            "Solution: Install ImGui via vcpkg with GLFW and OpenGL3 bindings:\n"
+            "ImGui is REQUIRED for the EVE OFFLINE client UI.\n"
+            "\n"
+            "Solution: Install ImGui via vcpkg:\n"
             "  vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows\n"
             "\n"
-            "Then reconfigure CMake with the vcpkg toolchain:\n"
+            "Then run CMake with the vcpkg toolchain:\n"
             "  cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake\n"
             "\n"
-            "Or ensure external/imgui directory contains the ImGui source files.")
+            "Full dependency install (recommended):\n"
+            "  vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows\n"
+            "  vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows\n"
+            "\n"
+            "Or place ImGui source files in: ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui/")
     endif()
 endif()
 

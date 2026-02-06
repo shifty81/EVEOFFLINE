@@ -1,0 +1,240 @@
+{
+  "angel_stronghold_assault": {
+    "id": "angel_stronghold_assault",
+    "name": "Angel Cartel Stronghold Assault",
+    "level": 5,
+    "type": "combat",
+    "agent": "War Admiral Kael",
+    "faction": "Republic Fleet",
+    "description": "The Angel Cartel has established a heavily fortified stronghold in low security space. A coordinated fleet assault is required.",
+    "briefing": "This is a Level 5 fleet mission. You will face overwhelming numbers of Angel Cartel forces including battleships and commanders. A wing of combat pilots is strongly recommended. Expect heavy explosive and kinetic damage.",
+    "objectives": [
+      {"type": "destroy", "target": "angel_frigate", "count": 12},
+      {"type": "destroy", "target": "angel_cruiser", "count": 6},
+      {"type": "destroy", "target": "angel_battlecruiser", "count": 3},
+      {"type": "destroy", "target": "angel_battleship", "count": 2},
+      {"type": "destroy", "target": "angel_commander", "count": 1}
+    ],
+    "rewards": {
+      "isk": 5500000,
+      "loyalty_points": 12000,
+      "standing_gain": 0.15,
+      "items": ["large_projectile_turret_ii", "republic_fleet_emp_l"]
+    },
+    "location": "lowsec_angel_space",
+    "spawn_distance": 80000,
+    "time_limit": 14400,
+    "difficulty": "extreme",
+    "recommended_ship_class": "Battleship",
+    "recommended_wing_size": 5,
+    "security_restriction": 0.4
+  },
+  "blood_raider_covenant_purge": {
+    "id": "blood_raider_covenant_purge",
+    "name": "Blood Raider Covenant Purge",
+    "level": 5,
+    "type": "combat",
+    "agent": "Inquisitor Primus Aldren",
+    "faction": "Amarr Navy",
+    "description": "A Blood Raider temple complex has been discovered. Purge it from existence. Warning: Heavy energy neutralizer presence.",
+    "briefing": "The Blood Raiders have entrenched themselves with capital-grade energy neutralizers and tracking disruptors. Cap-stable fittings and EM/Thermal weapons are essential. Bring logistics support if possible.",
+    "objectives": [
+      {"type": "destroy", "target": "blood_raider_frigate", "count": 10},
+      {"type": "destroy", "target": "blood_raider_cruiser", "count": 8},
+      {"type": "destroy", "target": "blood_raider_battlecruiser", "count": 4},
+      {"type": "destroy", "target": "blood_raider_battleship", "count": 3},
+      {"type": "destroy", "target": "blood_raider_commander", "count": 1},
+      {"type": "destroy", "target": "blood_raider_temple", "count": 1}
+    ],
+    "rewards": {
+      "isk": 7200000,
+      "loyalty_points": 15000,
+      "standing_gain": 0.18,
+      "items": ["large_energy_turret_ii", "imperial_navy_multifrequency_l", "corpum_a_type_energized_adaptive_nano_membrane"]
+    },
+    "location": "lowsec_blood_raider_space",
+    "spawn_distance": 90000,
+    "time_limit": 18000,
+    "difficulty": "extreme",
+    "recommended_ship_class": "Battleship",
+    "recommended_wing_size": 6,
+    "security_restriction": 0.4
+  },
+  "guristas_pirate_king": {
+    "id": "guristas_pirate_king",
+    "name": "The Guristas Pirate King",
+    "level": 5,
+    "type": "combat",
+    "agent": "Fleet Marshal Otsuki",
+    "faction": "Caldari Navy",
+    "description": "Intelligence has located a Guristas fleet commanded by one of their legendary pirate kings. Destroy the fleet and eliminate the commander.",
+    "briefing": "The Guristas pirate king commands a massive fleet with ECM support ships. Bring ECCM modules and kinetic/thermal resistance. This is one of the toughest fleet missions available.",
+    "objectives": [
+      {"type": "destroy", "target": "guristas_frigate", "count": 15},
+      {"type": "destroy", "target": "guristas_cruiser", "count": 8},
+      {"type": "destroy", "target": "guristas_battlecruiser", "count": 5},
+      {"type": "destroy", "target": "guristas_battleship", "count": 3},
+      {"type": "destroy", "target": "guristas_commander", "count": 1}
+    ],
+    "rewards": {
+      "isk": 8000000,
+      "loyalty_points": 18000,
+      "standing_gain": 0.20,
+      "items": ["cruise_missile_launcher_ii", "caldari_navy_scourge_cruise_missile", "pith_x_type_shield_boost_amplifier"]
+    },
+    "location": "lowsec_guristas_space",
+    "spawn_distance": 100000,
+    "time_limit": 18000,
+    "difficulty": "extreme",
+    "recommended_ship_class": "Battleship",
+    "recommended_wing_size": 7,
+    "security_restriction": 0.3
+  },
+  "serpentis_drug_empire": {
+    "id": "serpentis_drug_empire",
+    "name": "Serpentis Drug Empire Takedown",
+    "level": 5,
+    "type": "combat",
+    "agent": "Commissioner Durand",
+    "faction": "Federation Navy",
+    "description": "The Serpentis Corporation has built a massive drug production facility. Multiple waves of defense fleets protect it. Destroy everything.",
+    "briefing": "This multi-stage mission involves clearing three waves of Serpentis defenders before you can assault the production facility. Expect sensor dampeners and heavy thermal/kinetic fire. Bring a well-tanked fleet.",
+    "objectives": [
+      {"type": "destroy", "target": "serpentis_frigate", "count": 12},
+      {"type": "destroy", "target": "serpentis_cruiser", "count": 7},
+      {"type": "destroy", "target": "serpentis_battlecruiser", "count": 4},
+      {"type": "destroy", "target": "serpentis_battleship", "count": 2},
+      {"type": "destroy", "target": "serpentis_commander", "count": 1},
+      {"type": "destroy", "target": "serpentis_drug_facility", "count": 1}
+    ],
+    "rewards": {
+      "isk": 6500000,
+      "loyalty_points": 14000,
+      "standing_gain": 0.16,
+      "items": ["large_hybrid_turret_ii", "federation_navy_antimatter_l", "shadow_serpentis_magnetic_field_stabilizer"]
+    },
+    "location": "lowsec_serpentis_space",
+    "spawn_distance": 85000,
+    "time_limit": 16200,
+    "difficulty": "extreme",
+    "recommended_ship_class": "Battleship",
+    "recommended_wing_size": 5,
+    "security_restriction": 0.4
+  },
+  "sansha_incursion_vanguard": {
+    "id": "sansha_incursion_vanguard",
+    "name": "Sansha Incursion Vanguard",
+    "level": 5,
+    "type": "combat",
+    "agent": "Incursion Commander Reyos",
+    "faction": "CONCORD",
+    "description": "Sansha's Nation is launching an incursion into known space. Lead a vanguard force to repel the initial assault wave.",
+    "briefing": "Incursion-level threat. Sansha forces use warp scramblers and tracking disruptors extensively. EM and thermal damage is recommended. You will need a coordinated wing with logistics support to survive.",
+    "objectives": [
+      {"type": "destroy", "target": "sansha_frigate", "count": 20},
+      {"type": "destroy", "target": "sansha_cruiser", "count": 10},
+      {"type": "destroy", "target": "sansha_battlecruiser", "count": 5},
+      {"type": "destroy", "target": "sansha_battleship", "count": 4},
+      {"type": "destroy", "target": "sansha_commander", "count": 2}
+    ],
+    "rewards": {
+      "isk": 10000000,
+      "loyalty_points": 25000,
+      "standing_gain": 0.25,
+      "items": ["concord_capital_armor_repairer", "true_sansha_heat_sink"]
+    },
+    "location": "incursion_zone",
+    "spawn_distance": 120000,
+    "time_limit": 21600,
+    "difficulty": "extreme",
+    "recommended_ship_class": "Battleship",
+    "recommended_wing_size": 10,
+    "security_restriction": 0.0
+  },
+  "rogue_drone_hive_extermination": {
+    "id": "rogue_drone_hive_extermination",
+    "name": "Rogue Drone Hive Extermination",
+    "level": 5,
+    "type": "combat",
+    "agent": "Research Director Malis",
+    "faction": "CONCORD",
+    "description": "A massive rogue drone hive has been detected. The queen drone must be destroyed before the hive expands further.",
+    "briefing": "Rogue drones self-repair and spawn reinforcements. The drone queen is heavily shielded and will spawn waves of defenders. EM damage is most effective. Bring area-of-effect weapons if possible.",
+    "objectives": [
+      {"type": "destroy", "target": "rogue_drone_small", "count": 30},
+      {"type": "destroy", "target": "rogue_drone_cruiser", "count": 8},
+      {"type": "destroy", "target": "rogue_drone_battleship", "count": 3},
+      {"type": "destroy", "target": "rogue_drone_queen", "count": 1}
+    ],
+    "rewards": {
+      "isk": 9000000,
+      "loyalty_points": 20000,
+      "standing_gain": 0.22,
+      "items": ["drone_damage_amplifier_ii", "integrated_drone_navigation_chip"]
+    },
+    "location": "drone_region_hive",
+    "spawn_distance": 110000,
+    "time_limit": 18000,
+    "difficulty": "extreme",
+    "recommended_ship_class": "Battleship",
+    "recommended_wing_size": 8,
+    "security_restriction": 0.0
+  },
+  "lowsec_mining_defense": {
+    "id": "lowsec_mining_defense",
+    "name": "Lowsec Mining Operation Defense",
+    "level": 5,
+    "type": "combat",
+    "agent": "Mining Director Vesk",
+    "faction": "ORE",
+    "description": "Protect a critical mining operation in low security space from pirate raids. Multiple attack waves expected over the duration.",
+    "briefing": "You must defend the mining fleet for the entire duration. Pirates will attack in waves from multiple directions. Keep the mining barges alive. This is an excellent opportunity to deploy your own mining wing with combat escorts.",
+    "objectives": [
+      {"type": "defend", "target": "ore_mining_fleet", "duration": 3600},
+      {"type": "destroy", "target": "pirate_frigate", "count": 20},
+      {"type": "destroy", "target": "pirate_cruiser", "count": 8},
+      {"type": "destroy", "target": "pirate_battleship", "count": 2}
+    ],
+    "rewards": {
+      "isk": 4500000,
+      "loyalty_points": 10000,
+      "standing_gain": 0.12,
+      "items": ["strip_miner_ii", "mining_laser_upgrade_ii"],
+      "bonus_ore": {"arkonor": 5000, "bistot": 3000, "crokite": 2000}
+    },
+    "location": "lowsec_mining_zone",
+    "spawn_distance": 60000,
+    "time_limit": 7200,
+    "difficulty": "hard",
+    "recommended_ship_class": "Battlecruiser",
+    "recommended_wing_size": 4,
+    "security_restriction": 0.4
+  },
+  "epic_trade_route_escort": {
+    "id": "epic_trade_route_escort",
+    "name": "Epic Trade Route Escort",
+    "level": 5,
+    "type": "courier",
+    "agent": "Trade Baron Helmsworth",
+    "faction": "InterBus",
+    "description": "Escort a high-value cargo convoy through dangerous space. Pirates will attempt to intercept along the route.",
+    "briefing": "This is a multi-system escort mission. You will travel through 5 systems, each potentially hostile. The convoy carries billions in trade goods. Your wing will need both combat and hauling capability.",
+    "objectives": [
+      {"type": "escort", "target": "trade_convoy", "systems": 5},
+      {"type": "deliver", "item": "high_value_cargo", "destination": "destination_station", "quantity": 1},
+      {"type": "survive", "target": "player_wing"}
+    ],
+    "rewards": {
+      "isk": 12000000,
+      "loyalty_points": 22000,
+      "standing_gain": 0.20,
+      "items": ["expanded_cargohold_ii"]
+    },
+    "location": "trade_route_start",
+    "time_limit": 14400,
+    "difficulty": "extreme",
+    "recommended_ship_class": "Battlecruiser",
+    "recommended_wing_size": 6,
+    "security_restriction": 0.5
+  }
+}
