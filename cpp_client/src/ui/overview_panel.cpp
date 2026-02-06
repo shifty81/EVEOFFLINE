@@ -193,7 +193,7 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     // Standing column
     ImGui::TableSetColumnIndex(4);
     if (entry.standing > 0) {
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 1.0f, 0.2f, 1.0f)); // Green
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.6f, 1.0f, 1.0f)); // Blue (EVE style)
         ImGui::Text("+%d", entry.standing);
         ImGui::PopStyleColor();
     } else if (entry.standing < 0) {
@@ -382,13 +382,13 @@ std::string OverviewPanel::FormatDistance(float meters) const {
 void OverviewPanel::GetStandingColor(int standing, float color[4]) const {
     if (standing < 0) {
         // Hostile - red
-        color[0] = 1.0f; color[1] = 0.2f; color[2] = 0.2f; color[3] = 1.0f;
+        color[0] = 0.8f; color[1] = 0.2f; color[2] = 0.2f; color[3] = 1.0f;
     } else if (standing > 0) {
         // Friendly - blue (EVE uses blue for friendlies)
         color[0] = 0.2f; color[1] = 0.6f; color[2] = 1.0f; color[3] = 1.0f;
     } else {
-        // Neutral - grey/white
-        color[0] = 0.9f; color[1] = 0.9f; color[2] = 0.9f; color[3] = 1.0f;
+        // Neutral - grey
+        color[0] = 0.667f; color[1] = 0.667f; color[2] = 0.667f; color[3] = 1.0f;
     }
 }
 

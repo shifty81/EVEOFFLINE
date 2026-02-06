@@ -24,33 +24,46 @@ class OverviewPanel;
 class MarketPanel;
 
 struct EVEColors {
-    // Background colors (RGB 0-1)
-    static constexpr float BG_PRIMARY[4] = {0.05f, 0.07f, 0.09f, 0.95f};
-    static constexpr float BG_SECONDARY[4] = {0.09f, 0.11f, 0.14f, 0.9f};
-    static constexpr float BG_PANEL[4] = {0.02f, 0.03f, 0.05f, 0.95f};
+    // Background colors — deep dark blue-black (Photon UI style)
+    // See docs/design/EVE_UI_STYLE_REFERENCE.md for full palette
+    static constexpr float BG_PRIMARY[4] = {0.051f, 0.067f, 0.090f, 0.92f};   // #0D1117
+    static constexpr float BG_SECONDARY[4] = {0.086f, 0.106f, 0.133f, 0.90f}; // #161B22
+    static constexpr float BG_PANEL[4] = {0.031f, 0.047f, 0.071f, 0.95f};     // #080C12
+    static constexpr float BG_HEADER[4] = {0.039f, 0.055f, 0.078f, 1.0f};     // #0A0E14
+    static constexpr float BG_TOOLTIP[4] = {0.110f, 0.129f, 0.157f, 0.95f};   // #1C2128
     
-    // Accent colors (teal/cyan)
-    static constexpr float ACCENT_PRIMARY[4] = {0.35f, 0.65f, 1.0f, 1.0f};
-    static constexpr float ACCENT_SECONDARY[4] = {0.47f, 0.76f, 1.0f, 1.0f};
+    // Accent colors — teal/cyan (EVE Photon default accent)
+    static constexpr float ACCENT_PRIMARY[4] = {0.271f, 0.816f, 0.910f, 1.0f};  // #45D0E8
+    static constexpr float ACCENT_SECONDARY[4] = {0.471f, 0.882f, 0.941f, 1.0f}; // #78E1F0
+    static constexpr float ACCENT_DIM[4] = {0.165f, 0.353f, 0.416f, 1.0f};      // #2A5A6A
+    
+    // Selection / interaction
+    static constexpr float SELECTION[4] = {0.102f, 0.227f, 0.290f, 0.80f};      // #1A3A4A
     
     // Border colors
-    static constexpr float BORDER_NORMAL[4] = {0.2f, 0.3f, 0.4f, 0.6f};
-    static constexpr float BORDER_HIGHLIGHT[4] = {0.35f, 0.65f, 1.0f, 0.8f};
+    static constexpr float BORDER_NORMAL[4] = {0.157f, 0.220f, 0.282f, 0.6f};   // #283848
+    static constexpr float BORDER_HIGHLIGHT[4] = {0.271f, 0.816f, 0.910f, 0.8f}; // #45D0E8
+    static constexpr float BORDER_SUBTLE[4] = {0.118f, 0.165f, 0.212f, 0.5f};    // #1E2A36
     
     // Text colors
-    static constexpr float TEXT_PRIMARY[4] = {0.9f, 0.95f, 1.0f, 1.0f};
-    static constexpr float TEXT_SECONDARY[4] = {0.7f, 0.75f, 0.8f, 1.0f};
-    static constexpr float TEXT_DISABLED[4] = {0.4f, 0.45f, 0.5f, 0.6f};
+    static constexpr float TEXT_PRIMARY[4] = {0.902f, 0.929f, 0.953f, 1.0f};   // #E6EDF3
+    static constexpr float TEXT_SECONDARY[4] = {0.545f, 0.580f, 0.620f, 1.0f}; // #8B949E
+    static constexpr float TEXT_DISABLED[4] = {0.282f, 0.310f, 0.345f, 0.6f};  // #484F58
     
-    // Health colors
-    static constexpr float SHIELD_COLOR[4] = {0.2f, 0.6f, 1.0f, 1.0f};
-    static constexpr float ARMOR_COLOR[4] = {1.0f, 0.8f, 0.2f, 1.0f};
-    static constexpr float HULL_COLOR[4] = {0.9f, 0.3f, 0.3f, 1.0f};
+    // Health colors (matches EVE Online exactly)
+    static constexpr float SHIELD_COLOR[4] = {0.2f, 0.6f, 1.0f, 1.0f};   // Blue
+    static constexpr float ARMOR_COLOR[4] = {1.0f, 0.816f, 0.251f, 1.0f}; // Gold
+    static constexpr float HULL_COLOR[4] = {0.902f, 0.271f, 0.271f, 1.0f}; // Red
     
-    // Target colors
-    static constexpr float TARGET_HOSTILE[4] = {1.0f, 0.2f, 0.2f, 1.0f};
-    static constexpr float TARGET_FRIENDLY[4] = {0.2f, 1.0f, 0.2f, 1.0f};
-    static constexpr float TARGET_NEUTRAL[4] = {0.8f, 0.8f, 0.8f, 1.0f};
+    // Target / standing colors
+    static constexpr float TARGET_HOSTILE[4] = {0.8f, 0.2f, 0.2f, 1.0f};   // Red
+    static constexpr float TARGET_FRIENDLY[4] = {0.2f, 0.6f, 1.0f, 1.0f};  // Blue (EVE uses blue)
+    static constexpr float TARGET_NEUTRAL[4] = {0.667f, 0.667f, 0.667f, 1.0f}; // Grey
+    
+    // Feedback colors
+    static constexpr float SUCCESS[4] = {0.2f, 0.8f, 0.4f, 1.0f};  // Green
+    static constexpr float WARNING[4] = {1.0f, 0.722f, 0.2f, 1.0f}; // Amber
+    static constexpr float DANGER[4] = {1.0f, 0.2f, 0.2f, 1.0f};   // Red
 };
 
 struct ShipStatus {
