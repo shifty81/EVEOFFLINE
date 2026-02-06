@@ -11,6 +11,7 @@
 #include <thread>
 #include <chrono>
 #include <cmath>
+#include <random>
 #include <filesystem>
 
 using namespace EVE;
@@ -234,6 +235,8 @@ void test_listener_movement(AudioManager& audio) {
 void test_combat_scenario(AudioManager& audio) {
     std::cout << "\n=== Test 7: Combat Scenario ===" << std::endl;
     std::cout << "Simulating a space battle..." << std::endl;
+    
+    std::mt19937 rng(std::random_device{}());
     
     // Start with some engine sounds
     auto player_engine = audio.play_engine_sound("frigate", glm::vec3(0.0f, 0.0f, 0.0f));
