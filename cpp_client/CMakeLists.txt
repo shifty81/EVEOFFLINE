@@ -47,9 +47,28 @@ else()
     set(AUDIO_HEADERS "")
 endif()
 
-# GLEW (OpenGL extension wrangler)
+# GLEW (OpenGL extension wrangler) - Optional, falls back to GLAD if not found
 if(USE_SYSTEM_LIBS)
-    find_package(GLEW REQUIRED)
+    find_package(GLEW QUIET)
+    if(GLEW_FOUND)
+        message(STATUS "GLEW found - using system GLEW")
+        set(USE_GLEW ON)
+    else()
+        message(WARNING "GLEW not found!")
+        message(WARNING "")
+        message(WARNING "Please install GLEW via vcpkg:")
+        message(WARNING "  vcpkg install glew:x64-windows")
+        message(WARNING "")
+        message(WARNING "Or install all dependencies at once:")
+        message(WARNING "  vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows")
+        message(WARNING "")
+        message(WARNING "Then re-run CMake with the toolchain file:")
+        message(WARNING "  cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+        message(WARNING "")
+        message(FATAL_ERROR "GLEW is required when USE_SYSTEM_LIBS=ON. See above for installation instructions.")
+    endif()
+else()
+    set(USE_GLEW OFF)
 endif()
 
 # GLFW
@@ -71,12 +90,12 @@ else()
     include_directories(external/glm)
 endif()
 
-# GLAD (OpenGL loader)
-if(USE_SYSTEM_LIBS)
-    message(STATUS "Using system OpenGL (no GLAD needed)")
+# GLAD (OpenGL loader) - Always include unless using GLEW
+if(USE_GLEW)
+    message(STATUS "Using system GLEW (GLAD not needed)")
     set(GLAD_SOURCES "")
 else()
-    message(STATUS "Using bundled GLAD")
+    message(STATUS "Using bundled GLAD for OpenGL loading")
     set(GLAD_SOURCES
         external/glad/src/glad.c
     )
@@ -217,9 +236,13 @@ add_executable(eve_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
 target_link_libraries(eve_client 
     Threads::Threads
     OpenGL::GL
-    GLEW::GLEW
     glfw
 )
+
+# Link GLEW if available
+if(USE_GLEW)
+    target_link_libraries(eve_client GLEW::GLEW)
+endif()
 
 # Link OpenAL if available
 if(OpenAL_FOUND)
@@ -310,9 +333,12 @@ if(BUILD_TESTS)
     target_link_libraries(test_lighting
         Threads::Threads
         OpenGL::GL
-        GLEW::GLEW
         glfw
     )
+    
+    if(USE_GLEW)
+        target_link_libraries(test_lighting GLEW::GLEW)
+    endif()
     
     if(WIN32)
         target_link_libraries(test_lighting ws2_32)
@@ -390,9 +416,11 @@ if(BUILD_TESTS)
     target_link_libraries(test_ui_system
         Threads::Threads
         OpenGL::GL
-        GLEW::GLEW
         glfw
     )
+    if(USE_GLEW)
+        target_link_libraries(test_ui_system GLEW::GLEW)
+    endif()
     if(WIN32)
         target_link_libraries(test_ui_system ws2_32)
     elseif(UNIX AND NOT APPLE)

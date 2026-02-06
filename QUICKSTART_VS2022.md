@@ -2,12 +2,16 @@
 
 This is a quick reference for building EVE OFFLINE in Visual Studio 2022. For complete instructions, see [VS2022_SETUP_GUIDE.md](VS2022_SETUP_GUIDE.md).
 
+## ⚠️ Important: Install Dependencies FIRST
+
+Before running any build scripts, you must install the required dependencies using vcpkg. The build scripts will detect vcpkg automatically and use it.
+
 ## 📋 Prerequisites Checklist
 
 - [ ] Visual Studio 2022 installed with "Desktop development with C++" workload
 - [ ] Git installed
 - [ ] CMake 3.15+ (usually included with VS2022)
-- [ ] vcpkg installed (recommended for dependencies)
+- [ ] vcpkg installed with dependencies (see below)
 
 ## ⚡ Quick Commands
 
@@ -18,12 +22,20 @@ This is a quick reference for building EVE OFFLINE in Visual Studio 2022. For co
 git clone https://github.com/shifty81/EVEOFFLINE.git
 cd EVEOFFLINE
 
-# 2. Install dependencies via vcpkg
-cd C:\vcpkg
-.\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
-cd C:\path\to\EVEOFFLINE
+# 2. Install vcpkg (if not already installed)
+cd C:\
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+.\bootstrap-vcpkg.bat
 
-# 3. Generate Visual Studio solution
+# 3. Install required dependencies
+.\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
+
+# 4. (Optional) Install audio support
+.\vcpkg install openal-soft:x64-windows
+
+# 5. Return to repository and generate Visual Studio solution
+cd C:\path\to\EVEOFFLINE
 build_vs.bat
 ```
 
@@ -68,7 +80,8 @@ start cpp_client\build_vs\EVEOfflineClient.sln
 
 | Issue | Fix |
 |-------|-----|
-| "Cannot find glfw3.h" | Install dependencies: `vcpkg install glfw3:x64-windows` |
+| **"Could NOT find GLEW"** | **Install dependencies FIRST**: See Initial Setup above |
+| "Cannot find glfw3.h" | Install dependencies: `vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows` |
 | "CMake not found" | Add to PATH: `C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin` |
 | "Build succeeds but crashes" | Check Working Directory in project properties |
 | "OpenAL not found" | Optional, ignore or install: `vcpkg install openal-soft:x64-windows` |

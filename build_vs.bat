@@ -86,6 +86,38 @@ cd build_vs
 REM Configure CMake for Visual Studio
 echo Configuring CMake for Visual Studio...
 echo.
+
+REM Check for vcpkg and set toolchain file if found
+set "VCPKG_TOOLCHAIN="
+set "VCPKG_FOUND=0"
+
+REM Check common vcpkg locations
+REM Note: Using backslashes for Windows file checks, forward slashes for CMake (CMake prefers forward slashes)
+if exist "C:\vcpkg\scripts\buildsystems\vcpkg.cmake" (
+    set "VCPKG_TOOLCHAIN=-DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    set "VCPKG_FOUND=1"
+    echo Found vcpkg at C:\vcpkg
+    echo.
+) else if exist "%USERPROFILE%\vcpkg\scripts\buildsystems\vcpkg.cmake" (
+    set "VCPKG_TOOLCHAIN=-DCMAKE_TOOLCHAIN_FILE=%USERPROFILE%/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    set "VCPKG_FOUND=1"
+    echo Found vcpkg at %USERPROFILE%\vcpkg
+    echo.
+) else if defined VCPKG_ROOT (
+    if exist "%VCPKG_ROOT%\scripts\buildsystems\vcpkg.cmake" (
+        set "VCPKG_TOOLCHAIN=-DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake"
+        set "VCPKG_FOUND=1"
+        echo Found vcpkg at %VCPKG_ROOT%
+        echo.
+    )
+)
+
+if %VCPKG_FOUND% EQU 0 (
+    echo WARNING: vcpkg not found. Dependencies (GLEW, GLFW, GLM) must be installed manually.
+    echo          Or install vcpkg and dependencies first - see VS2022_SETUP_GUIDE.md
+    echo.
+)
+
 echo Trying Visual Studio 2022 generator...
 
 cmake .. ^
@@ -93,7 +125,8 @@ cmake .. ^
     -A x64 ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
     -DUSE_SYSTEM_LIBS=ON ^
-    -DBUILD_TESTS=ON
+    -DBUILD_TESTS=ON ^
+    %VCPKG_TOOLCHAIN%
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
@@ -111,16 +144,34 @@ if %ERRORLEVEL% NEQ 0 (
         -A x64 ^
         -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
         -DUSE_SYSTEM_LIBS=ON ^
-        -DBUILD_TESTS=ON
+        -DBUILD_TESTS=ON ^
+        %VCPKG_TOOLCHAIN%
     
     if %ERRORLEVEL% NEQ 0 (
         echo.
         echo ERROR: CMake configuration failed for both VS 2022 and VS 2019!
         echo.
         echo Possible issues:
-        echo   1. Missing dependencies - run: vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows openal-soft:x64-windows
+        echo   1. Missing dependencies (GLEW, GLFW, GLM, etc.)
         echo   2. Visual Studio C++ tools not installed - install "Desktop development with C++" workload
         echo   3. CMake version too old - update from https://cmake.org/download/
+        echo.
+        echo SOLUTION: Install dependencies using vcpkg:
+        echo   1. Install vcpkg if not already installed:
+        echo      cd C:\
+        echo      git clone https://github.com/microsoft/vcpkg.git
+        echo      cd vcpkg
+        echo      .\bootstrap-vcpkg.bat
+        echo.
+        echo   2. Install required dependencies:
+        echo      .\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
+        echo.
+        echo   3. Optional: Install audio support:
+        echo      .\vcpkg install openal-soft:x64-windows
+        echo.
+        echo   4. Run this script again
+        echo.
+        echo For more information, see: VS2022_SETUP_GUIDE.md
         echo.
         echo Your Visual Studio installation: %VS_FOUND%
         echo CMake version:

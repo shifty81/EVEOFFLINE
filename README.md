@@ -36,18 +36,32 @@ pip install -r requirements.txt
 
 If you want to build and test the C++ client in Visual Studio 2022:
 
-1. **Follow the setup guide**: [VS2022_SETUP_GUIDE.md](VS2022_SETUP_GUIDE.md)
-2. **Or use the quick build script**:
+**⚠️ Important: Install dependencies FIRST before running build scripts!**
+
+1. **Install dependencies with vcpkg**:
    ```cmd
+   # Install vcpkg (if not already installed)
+   cd C:\
+   git clone https://github.com/microsoft/vcpkg.git
+   cd vcpkg
+   .\bootstrap-vcpkg.bat
+   
+   # Install required dependencies
+   .\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
+   ```
+
+2. **Build the project**:
+   ```cmd
+   cd C:\path\to\EVEOFFLINE
    build_vs.bat
    ```
+
 3. **Open the solution**: `cpp_client\build_vs\EVEOfflineClient.sln`
 
-The guide includes:
-- Complete dependency setup with vcpkg
-- Step-by-step VS2022 configuration
-- Troubleshooting common issues
-- Running tests and debugging
+For complete instructions, see:
+- **Quick Start**: [QUICKSTART_VS2022.md](QUICKSTART_VS2022.md)
+- **Full Guide**: [VS2022_SETUP_GUIDE.md](VS2022_SETUP_GUIDE.md)
+- **Troubleshooting**: [TROUBLESHOOTING_VS2022.md](TROUBLESHOOTING_VS2022.md)
 
 ### 🎯 Easy Launcher (NEW!)
 
