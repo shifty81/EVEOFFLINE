@@ -55,6 +55,9 @@ public:
     // Render the mission panel
     void Render();
     
+    // Render just the panel contents (no Begin/End) — used by docking manager
+    void RenderContents();
+    
     // Update mission data
     void SetMissionData(const MissionData& data);
     

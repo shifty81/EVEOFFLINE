@@ -417,4 +417,32 @@ void OverviewPanel::SetSortColumn(OverviewSortColumn column, bool ascending) {
     SortEntries();
 }
 
+void OverviewPanel::RenderContents() {
+    // Render filter tabs
+    RenderFilterTabs();
+    
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+    
+    // Render entity table
+    if (ImGui::BeginTable("OverviewTable", 5, 
+                         ImGuiTableFlags_Borders | 
+                         ImGuiTableFlags_RowBg | 
+                         ImGuiTableFlags_Resizable |
+                         ImGuiTableFlags_Sortable |
+                         ImGuiTableFlags_ScrollY |
+                         ImGuiTableFlags_SizingStretchProp)) {
+        
+        RenderTableHeader();
+        
+        // Render rows
+        for (size_t i = 0; i < m_filteredEntries.size(); i++) {
+            RenderEntityRow(m_filteredEntries[i], static_cast<int>(i));
+        }
+        
+        ImGui::EndTable();
+    }
+}
+
 } // namespace UI

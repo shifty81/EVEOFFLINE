@@ -13,10 +13,12 @@
 #include "ui/fitting_panel.h"
 #include "ui/market_panel.h"
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 #include <iostream>
 #include <thread>
 #include <chrono>
 #include <algorithm>
+#include <cmath>
 
 namespace eve {
 
@@ -100,14 +102,18 @@ void Application::initialize() {
         throw std::runtime_error("Failed to initialize UI manager");
     }
     
-    // Set up input callbacks using lambdas to bind to member functions
+    // Set up input callbacks — EVE Online style controls
+    // Left-click: select/target, Double-click: approach
+    // Right-click: context menu
+    // Left-drag: nothing (ImGui uses it for UI interaction)
+    // Right-drag: orbit camera around ship
+    // Scroll: zoom camera
     m_window->setKeyCallback([this](int key, int action) {
         // Handle ESC key to exit
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             shutdown();
         }
         
-        // Forward to input handler (will be updated to handle mods)
         m_inputHandler->handleKey(key, action, 0);
     });
     
@@ -119,6 +125,11 @@ void Application::initialize() {
         double x = m_inputHandler->getMouseX();
         double y = m_inputHandler->getMouseY();
         m_inputHandler->handleMouseButton(button, action, mods, x, y);
+    });
+    
+    // Scroll callback — EVE uses mousewheel for camera zoom
+    m_window->setScrollCallback([this](double xoffset, double yoffset) {
+        handleScroll(xoffset, yoffset);
     });
     
     m_window->setResizeCallback([this](int width, int height) {
@@ -154,6 +165,14 @@ void Application::initialize() {
     
     // Setup UI callbacks for network integration
     setupUICallbacks();
+    
+    // Spawn local player entity so ship is always visible (PVE mode)
+    spawnLocalPlayerEntity();
+    spawnDemoNPCEntities();
+    
+    // Set initial camera to orbit around player
+    m_camera->setDistance(200.0f);
+    m_camera->rotate(45.0f, 0.0f);
     
     std::cout << "Application initialized successfully" << std::endl;
 }
@@ -273,7 +292,29 @@ void Application::update(float deltaTime) {
     // Update game client
     m_gameClient->update(deltaTime);
     
-    // Can add more update logic here
+    // Update local movement (PVE mode — EVE-style movement commands)
+    updateLocalMovement(deltaTime);
+    
+    // Update ship status in the HUD
+    auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+    if (playerEntity) {
+        UI::ShipStatus status;
+        const auto& health = playerEntity->getHealth();
+        status.shields = health.currentShield;
+        status.shields_max = static_cast<float>(health.maxShield);
+        status.armor = health.currentArmor;
+        status.armor_max = static_cast<float>(health.maxArmor);
+        status.hull = health.currentHull;
+        status.hull_max = static_cast<float>(health.maxHull);
+        status.capacitor = 85.0f;     // TODO: Replace with real capacitor simulation
+        status.capacitor_max = 100.0f; // TODO: Replace with real capacitor simulation
+        status.velocity = m_playerSpeed;
+        status.max_velocity = m_playerMaxSpeed;
+        m_uiManager->SetShipStatus(status);
+        
+        // Camera follows player ship
+        m_camera->setTarget(playerEntity->getPosition());
+    }
 }
 
 void Application::render() {
@@ -296,6 +337,70 @@ void Application::render() {
     // Render UI
     m_uiManager->BeginFrame();
     m_uiManager->UpdateTargets(m_gameClient->getEntityManager().getAllEntities());
+    
+    // EVE-style right-click context menu
+    if (m_showContextMenu) {
+        ImGui::OpenPopup("##SpaceContextMenu");
+        m_showContextMenu = false;
+    }
+    
+    if (ImGui::BeginPopup("##SpaceContextMenu")) {
+        if (!m_contextMenuEntityId.empty()) {
+            // Entity context menu — PVE actions
+            auto entity = m_gameClient->getEntityManager().getEntity(m_contextMenuEntityId);
+            if (entity) {
+                ImGui::TextColored(ImVec4(0.27f, 0.82f, 0.91f, 1.0f), "%s",
+                                   entity->getShipName().empty() ? entity->getId().c_str() : entity->getShipName().c_str());
+                ImGui::Separator();
+                
+                if (ImGui::MenuItem("Approach")) {
+                    commandApproach(m_contextMenuEntityId);
+                }
+                if (ImGui::MenuItem("Orbit (500m)")) {
+                    commandOrbit(m_contextMenuEntityId, 500.0f);
+                }
+                if (ImGui::MenuItem("Keep at Range (2500m)")) {
+                    commandKeepAtRange(m_contextMenuEntityId, 2500.0f);
+                }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Lock Target")) {
+                    targetEntity(m_contextMenuEntityId, true);
+                }
+                if (ImGui::MenuItem("Align To")) {
+                    commandAlignTo(m_contextMenuEntityId);
+                }
+                if (ImGui::MenuItem("Warp To")) {
+                    commandWarpTo(m_contextMenuEntityId);
+                }
+                ImGui::Separator();
+                if (ImGui::MenuItem("Show Info")) {
+                    // Placeholder for info panel
+                    std::cout << "[Info] Entity: " << m_contextMenuEntityId << std::endl;
+                }
+            }
+        } else {
+            // Empty space context menu
+            ImGui::TextColored(ImVec4(0.55f, 0.58f, 0.62f, 1.0f), "Space");
+            ImGui::Separator();
+            if (ImGui::MenuItem("Stop Ship")) {
+                commandStopShip();
+            }
+            ImGui::Separator();
+            if (ImGui::BeginMenu("Panels")) {
+                if (ImGui::MenuItem("Overview")) { m_uiManager->ToggleOverview(); }
+                if (ImGui::MenuItem("Inventory")) { m_uiManager->ToggleInventory(); }
+                if (ImGui::MenuItem("Fitting")) { m_uiManager->ToggleFitting(); }
+                if (ImGui::MenuItem("Market")) { m_uiManager->ToggleMarket(); }
+                if (ImGui::MenuItem("Missions")) { m_uiManager->ToggleMission(); }
+                ImGui::EndMenu();
+            }
+            if (ImGui::MenuItem("Lock Interface")) {
+                m_uiManager->ToggleInterfaceLock();
+            }
+        }
+        ImGui::EndPopup();
+    }
+    
     m_uiManager->Render();
     m_uiManager->EndFrame();
     
@@ -404,68 +509,158 @@ void Application::handleKeyInput(int key, int action, int mods) {
         return;
     }
     
-    // Module activation (F1-F8)
+    // Module activation (F1-F8) — EVE standard
     if (key >= GLFW_KEY_F1 && key <= GLFW_KEY_F8) {
         int slot = key - GLFW_KEY_F1 + 1;  // F1 = slot 1
         activateModule(slot);
         return;
     }
     
-    // Target cycling
+    // Tab — cycle targets (EVE standard)
     if (key == GLFW_KEY_TAB) {
         cycleTarget();
         return;
     }
     
-    // Clear target
-    if (key == GLFW_KEY_ESCAPE) {
-        clearTarget();
+    // CTRL+SPACE — stop ship (EVE standard)
+    if (key == GLFW_KEY_SPACE && (mods & GLFW_MOD_CONTROL)) {
+        commandStopShip();
         return;
     }
     
-    // Movement keys (placeholder for future implementation)
-    if (key == GLFW_KEY_W) {
-        std::cout << "[Input] W pressed - Approach" << std::endl;
-    } else if (key == GLFW_KEY_A) {
-        std::cout << "[Input] A pressed - Orbit left" << std::endl;
-    } else if (key == GLFW_KEY_D) {
-        std::cout << "[Input] D pressed - Orbit right" << std::endl;
-    } else if (key == GLFW_KEY_S) {
-        std::cout << "[Input] S pressed - Stop ship" << std::endl;
+    // EVE-style shortcut keys with modifier:
+    // Q + click = Approach (we just toggle approach mode)
+    // W + click = Orbit
+    // E + click = Keep at Range
+    // A + click = Align To
+    if (key == GLFW_KEY_Q) {
+        m_uiManager->approach_active = true;
+        m_uiManager->orbit_active = false;
+        m_uiManager->keep_range_active = false;
+        std::cout << "[Controls] Approach mode active — click a target" << std::endl;
+    } else if (key == GLFW_KEY_W) {
+        m_uiManager->approach_active = false;
+        m_uiManager->orbit_active = true;
+        m_uiManager->keep_range_active = false;
+        std::cout << "[Controls] Orbit mode active — click a target" << std::endl;
+    } else if (key == GLFW_KEY_E) {
+        m_uiManager->approach_active = false;
+        m_uiManager->orbit_active = false;
+        m_uiManager->keep_range_active = true;
+        std::cout << "[Controls] Keep at Range mode active — click a target" << std::endl;
+    } else if (key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL)) {
+        commandStopShip();
+    }
+    
+    // Panel toggles
+    if (key == GLFW_KEY_I && (mods & GLFW_MOD_ALT)) {
+        m_uiManager->ToggleInventory();
+    } else if (key == GLFW_KEY_F && (mods & GLFW_MOD_ALT)) {
+        m_uiManager->ToggleFitting();
+    } else if (key == GLFW_KEY_O && (mods & GLFW_MOD_ALT)) {
+        m_uiManager->ToggleOverview();
+    } else if (key == GLFW_KEY_R && (mods & GLFW_MOD_ALT)) {
+        m_uiManager->ToggleMarket();
+    } else if (key == GLFW_KEY_J && (mods & GLFW_MOD_ALT)) {
+        m_uiManager->ToggleMission();
+    }
+    
+    // L — Toggle interface lock
+    if (key == GLFW_KEY_L && (mods & GLFW_MOD_CONTROL)) {
+        m_uiManager->ToggleInterfaceLock();
     }
 }
 
 void Application::handleMouseButton(int button, int action, int mods, double x, double y) {
-    // Only handle left click press
-    if (button != GLFW_MOUSE_BUTTON_LEFT || action != GLFW_PRESS) {
-        return;
+    // Track button state for camera control
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
+        if (action == GLFW_PRESS) {
+            m_rightMouseDown = true;
+            m_lastMouseDragX = x;
+            m_lastMouseDragY = y;
+        } else if (action == GLFW_RELEASE) {
+            // If right-click was a quick click (not a drag), show context menu
+            if (m_rightMouseDown) {
+                double dx = x - m_lastMouseDragX;
+                double dy = y - m_lastMouseDragY;
+                double dist = std::sqrt(dx * dx + dy * dy);
+                if (dist < 5.0) {
+                    // Quick right-click — show EVE context menu
+                    showSpaceContextMenu(x, y);
+                }
+            }
+            m_rightMouseDown = false;
+        }
     }
     
-    // Get all entities
-    auto entities = m_gameClient->getEntityManager().getAllEntities();
-    std::vector<std::shared_ptr<Entity>> entityList;
-    for (const auto& pair : entities) {
-        entityList.push_back(pair.second);
+    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        if (action == GLFW_PRESS) {
+            m_leftMouseDown = true;
+        } else if (action == GLFW_RELEASE) {
+            m_leftMouseDown = false;
+        }
     }
     
-    // Pick entity at mouse position
-    std::string pickedEntityId = m_entityPicker->pickEntity(
-        x, y,
-        m_window->getWidth(), m_window->getHeight(),
-        *m_camera,
-        entityList
-    );
-    
-    if (!pickedEntityId.empty()) {
-        // Check if CTRL is pressed for multi-target
-        bool addToTargets = (mods & GLFW_MOD_CONTROL) != 0;
-        targetEntity(pickedEntityId, addToTargets);
+    // Left-click: select entity / apply movement command
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        // Don't process clicks that ImGui captured
+        ImGuiIO& io = ImGui::GetIO();
+        if (io.WantCaptureMouse) return;
+        
+        // Pick entity at mouse position
+        auto entities = m_gameClient->getEntityManager().getAllEntities();
+        std::vector<std::shared_ptr<Entity>> entityList;
+        for (const auto& pair : entities) {
+            if (pair.first != m_localPlayerId) {  // Don't pick yourself
+                entityList.push_back(pair.second);
+            }
+        }
+        
+        std::string pickedEntityId = m_entityPicker->pickEntity(
+            x, y,
+            m_window->getWidth(), m_window->getHeight(),
+            *m_camera,
+            entityList
+        );
+        
+        if (!pickedEntityId.empty()) {
+            // EVE-style: Apply pending movement command if one is active
+            if (m_uiManager->approach_active) {
+                commandApproach(pickedEntityId);
+                m_uiManager->approach_active = false;
+            } else if (m_uiManager->orbit_active) {
+                commandOrbit(pickedEntityId);
+                m_uiManager->orbit_active = false;
+            } else if (m_uiManager->keep_range_active) {
+                commandKeepAtRange(pickedEntityId);
+                m_uiManager->keep_range_active = false;
+            } else {
+                // Default: select / CTRL+click to lock target
+                bool addToTargets = (mods & GLFW_MOD_CONTROL) != 0;
+                targetEntity(pickedEntityId, addToTargets);
+            }
+        }
     }
 }
 
 void Application::handleMouseMove(double x, double y, double deltaX, double deltaY) {
-    // Camera control could be added here
-    // For now, just track mouse position (already done by InputHandler)
+    // EVE-style camera: Right-click drag to orbit camera around ship
+    if (m_rightMouseDown) {
+        ImGuiIO& io = ImGui::GetIO();
+        if (!io.WantCaptureMouse) {
+            float sensitivity = 0.3f;
+            m_camera->rotate(static_cast<float>(deltaX) * sensitivity,
+                           static_cast<float>(-deltaY) * sensitivity);
+        }
+    }
+}
+
+void Application::handleScroll(double xoffset, double yoffset) {
+    // EVE-style: mousewheel zooms camera
+    ImGuiIO& io = ImGui::GetIO();
+    if (!io.WantCaptureMouse) {
+        m_camera->zoom(static_cast<float>(yoffset));
+    }
 }
 
 void Application::targetEntity(const std::string& entityId, bool addToTargets) {
@@ -542,6 +737,253 @@ void Application::activateModule(int slotNumber) {
     } else {
         std::cout << "[Modules] Not connected to server, activation not sent" << std::endl;
     }
+}
+
+// === EVE-style movement commands (PVE) ===
+
+void Application::showSpaceContextMenu(double x, double y) {
+    // Check if clicking on an entity
+    auto entities = m_gameClient->getEntityManager().getAllEntities();
+    std::vector<std::shared_ptr<Entity>> entityList;
+    for (const auto& pair : entities) {
+        if (pair.first != m_localPlayerId) {
+            entityList.push_back(pair.second);
+        }
+    }
+    
+    std::string pickedId = m_entityPicker->pickEntity(
+        x, y, m_window->getWidth(), m_window->getHeight(),
+        *m_camera, entityList);
+    
+    m_contextMenuEntityId = pickedId;
+    m_contextMenuX = x;
+    m_contextMenuY = y;
+    m_showContextMenu = true;
+}
+
+void Application::showEntityContextMenu(const std::string& entityId, double x, double y) {
+    m_contextMenuEntityId = entityId;
+    m_contextMenuX = x;
+    m_contextMenuY = y;
+    m_showContextMenu = true;
+}
+
+void Application::commandApproach(const std::string& entityId) {
+    m_currentMoveCommand = MoveCommand::Approach;
+    m_moveTargetId = entityId;
+    std::cout << "[Movement] Approaching " << entityId << std::endl;
+}
+
+void Application::commandOrbit(const std::string& entityId, float distance) {
+    m_currentMoveCommand = MoveCommand::Orbit;
+    m_moveTargetId = entityId;
+    m_orbitDistance = distance;
+    std::cout << "[Movement] Orbiting " << entityId << " at " << distance << "m" << std::endl;
+}
+
+void Application::commandKeepAtRange(const std::string& entityId, float distance) {
+    m_currentMoveCommand = MoveCommand::KeepAtRange;
+    m_moveTargetId = entityId;
+    m_keepAtRangeDistance = distance;
+    std::cout << "[Movement] Keeping at range " << distance << "m from " << entityId << std::endl;
+}
+
+void Application::commandAlignTo(const std::string& entityId) {
+    m_currentMoveCommand = MoveCommand::AlignTo;
+    m_moveTargetId = entityId;
+    std::cout << "[Movement] Aligning to " << entityId << std::endl;
+}
+
+void Application::commandWarpTo(const std::string& entityId) {
+    m_currentMoveCommand = MoveCommand::WarpTo;
+    m_moveTargetId = entityId;
+    std::cout << "[Movement] Warping to " << entityId << std::endl;
+}
+
+void Application::commandStopShip() {
+    m_currentMoveCommand = MoveCommand::None;
+    m_moveTargetId.clear();
+    m_playerVelocity = glm::vec3(0.0f);
+    m_playerSpeed = 0.0f;
+    m_uiManager->approach_active = false;
+    m_uiManager->orbit_active = false;
+    m_uiManager->keep_range_active = false;
+    std::cout << "[Movement] Ship stopped" << std::endl;
+}
+
+void Application::spawnLocalPlayerEntity() {
+    if (m_localPlayerSpawned) return;
+    
+    std::cout << "[PVE] Spawning local player ship..." << std::endl;
+    
+    // Create player entity at origin with a Rifter (Minmatar frigate)
+    Health playerHealth(1500, 800, 500);  // Shield, Armor, Hull
+    m_gameClient->getEntityManager().spawnEntity(
+        m_localPlayerId,
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        playerHealth,
+        "Rifter",
+        "Your Ship",
+        "Minmatar"
+    );
+    
+    m_localPlayerSpawned = true;
+    std::cout << "[PVE] Local player ship spawned as Rifter" << std::endl;
+}
+
+void Application::spawnDemoNPCEntities() {
+    std::cout << "[PVE] Spawning demo NPC entities..." << std::endl;
+    
+    // Spawn some NPC enemies for the PVE demo
+    // These would normally come from the server in missions/anomalies
+    
+    // Blood Raider pirate (hostile NPC)
+    Health npc1Health(800, 600, 400);
+    m_gameClient->getEntityManager().spawnEntity(
+        "npc_raider_1",
+        glm::vec3(300.0f, 10.0f, 200.0f),
+        npc1Health,
+        "Cruiser",
+        "Blood Raider",
+        "Blood Raiders"
+    );
+    
+    // Serpentis frigate
+    Health npc2Health(400, 300, 200);
+    m_gameClient->getEntityManager().spawnEntity(
+        "npc_serp_1",
+        glm::vec3(-250.0f, -5.0f, 350.0f),
+        npc2Health,
+        "Frigate",
+        "Serpentis Scout",
+        "Serpentis"
+    );
+    
+    // Guristas destroyer
+    Health npc3Health(600, 500, 350);
+    m_gameClient->getEntityManager().spawnEntity(
+        "npc_gur_1",
+        glm::vec3(150.0f, 20.0f, -300.0f),
+        npc3Health,
+        "Destroyer",
+        "Guristas Watchman",
+        "Guristas"
+    );
+    
+    std::cout << "[PVE] 3 NPC entities spawned" << std::endl;
+}
+
+void Application::updateLocalMovement(float deltaTime) {
+    auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+    if (!playerEntity) return;
+    
+    // Movement physics constants
+    static constexpr float ACCELERATION = 80.0f;          // m/s²
+    static constexpr float DECELERATION = 40.0f;          // m/s² when stopping
+    static constexpr float APPROACH_DECEL_DIST = 50.0f;   // Start slowing at this range
+    static constexpr float WARP_SPEED = 5000.0f;          // Simulated warp speed m/s
+    static constexpr float WARP_EXIT_DIST = 100.0f;       // Exit warp at this range
+    
+    glm::vec3 playerPos = playerEntity->getPosition();
+    
+    if (m_currentMoveCommand == MoveCommand::None) {
+        // Decelerate to stop
+        if (m_playerSpeed > 0.0f) {
+            m_playerSpeed = std::max(0.0f, m_playerSpeed - DECELERATION * deltaTime);
+            playerPos += m_playerVelocity * deltaTime;
+        }
+    } else {
+        // Get target position
+        auto targetEntity = m_gameClient->getEntityManager().getEntity(m_moveTargetId);
+        if (!targetEntity) {
+            m_currentMoveCommand = MoveCommand::None;
+            return;
+        }
+        
+        glm::vec3 targetPos = targetEntity->getPosition();
+        glm::vec3 toTarget = targetPos - playerPos;
+        float dist = glm::length(toTarget);
+        
+        if (dist < 0.01f) return;  // Already at target
+        
+        glm::vec3 dir = glm::normalize(toTarget);
+        
+        switch (m_currentMoveCommand) {
+            case MoveCommand::Approach: {
+                // Accelerate towards target, slow down when close
+                float targetSpeed = m_playerMaxSpeed;
+                if (dist < APPROACH_DECEL_DIST) {
+                    targetSpeed = m_playerMaxSpeed * (dist / APPROACH_DECEL_DIST);
+                }
+                m_playerSpeed = std::min(m_playerMaxSpeed,
+                                         m_playerSpeed + ACCELERATION * deltaTime);
+                m_playerSpeed = std::min(m_playerSpeed, targetSpeed);
+                m_playerVelocity = dir * m_playerSpeed;
+                break;
+            }
+            case MoveCommand::Orbit: {
+                // Orbit around target at set distance
+                m_playerSpeed = std::min(m_playerMaxSpeed,
+                                         m_playerSpeed + ACCELERATION * deltaTime);
+                if (dist > m_orbitDistance + 10.0f) {
+                    m_playerVelocity = dir * m_playerSpeed;
+                } else if (dist < m_orbitDistance - 10.0f) {
+                    m_playerVelocity = -dir * m_playerSpeed * 0.5f;
+                } else {
+                    // Orbit tangent
+                    glm::vec3 tangent(-dir.z, 0.0f, dir.x);
+                    m_playerVelocity = tangent * m_playerSpeed;
+                }
+                break;
+            }
+            case MoveCommand::KeepAtRange: {
+                m_playerSpeed = std::min(m_playerMaxSpeed,
+                                         m_playerSpeed + ACCELERATION * deltaTime);
+                if (dist > m_keepAtRangeDistance + 20.0f) {
+                    m_playerVelocity = dir * m_playerSpeed;
+                } else if (dist < m_keepAtRangeDistance - 20.0f) {
+                    m_playerVelocity = -dir * m_playerSpeed * 0.3f;
+                } else {
+                    m_playerSpeed = std::max(0.0f, m_playerSpeed - DECELERATION * deltaTime);
+                    m_playerVelocity = dir * m_playerSpeed;
+                }
+                break;
+            }
+            case MoveCommand::AlignTo: {
+                m_playerSpeed = std::min(m_playerMaxSpeed * 0.75f,
+                                         m_playerSpeed + ACCELERATION * deltaTime);
+                m_playerVelocity = dir * m_playerSpeed;
+                break;
+            }
+            case MoveCommand::WarpTo: {
+                // Warp = very fast movement, simulated
+                m_playerSpeed = std::min(WARP_SPEED,
+                                         m_playerSpeed + WARP_SPEED * deltaTime);
+                m_playerVelocity = dir * m_playerSpeed;
+                if (dist < WARP_EXIT_DIST) {
+                    m_currentMoveCommand = MoveCommand::None;
+                    m_playerSpeed = 0.0f;
+                    m_playerVelocity = glm::vec3(0.0f);
+                    std::cout << "[Movement] Warp complete" << std::endl;
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        
+        playerPos += m_playerVelocity * deltaTime;
+    }
+    
+    // Update player entity position
+    float rotation = 0.0f;
+    if (glm::length(m_playerVelocity) > 0.1f) {
+        rotation = std::atan2(m_playerVelocity.x, m_playerVelocity.z);
+    }
+    
+    Health currentHealth = playerEntity->getHealth();
+    m_gameClient->getEntityManager().updateEntityState(
+        m_localPlayerId, playerPos, m_playerVelocity, rotation, currentHealth);
 }
 
 } // namespace eve

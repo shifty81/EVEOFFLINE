@@ -197,4 +197,29 @@ void MissionPanel::GetMissionTypeColor(float color[4]) const {
     }
 }
 
+void MissionPanel::RenderContents() {
+    if (!m_data.is_active) {
+        // No active mission
+        ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "No active mission");
+        ImGui::Text("Accept a mission from an agent to get started.");
+    } else {
+        // Render mission details
+        RenderMissionInfo();
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+        RenderObjectivesList();
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+        RenderRewards();
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+        RenderProgressBar();
+        ImGui::Spacing();
+        RenderActionButtons();
+    }
+}
+
 } // namespace UI

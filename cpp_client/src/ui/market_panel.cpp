@@ -449,4 +449,35 @@ void MarketPanel::ShowError(const std::string& message) {
     m_pendingOperation = false;
 }
 
+void MarketPanel::RenderContents() {
+    // View tabs
+    RenderViewTabs();
+    ImGui::Separator();
+    ImGui::Spacing();
+    
+    // Render based on view mode
+    if (m_viewMode == 0) {
+        RenderBrowseView();
+    } else if (m_viewMode == 2) {
+        RenderQuickTradeView();
+    }
+    
+    // Render feedback message if active
+    if (m_feedbackTimer > 0.0f) {
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImVec4 color = m_feedbackIsError ? ImVec4(1.0f, 0.3f, 0.3f, 1.0f) : ImVec4(0.3f, 1.0f, 0.3f, 1.0f);
+        ImGui::PushStyleColor(ImGuiCol_Text, color);
+        ImGui::TextWrapped("%s %s", m_feedbackIsError ? "✗" : "✓", m_feedbackMessage.c_str());
+        ImGui::PopStyleColor();
+        m_feedbackTimer -= ImGui::GetIO().DeltaTime;
+    }
+    
+    // Show pending operation indicator
+    if (m_pendingOperation) {
+        ImGui::Spacing();
+        ImGui::Text("⏳ Transaction in progress...");
+    }
+}
+
 } // namespace UI

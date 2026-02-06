@@ -227,4 +227,46 @@ void FittingPanel::ShowError(const std::string& message) {
     m_pendingOperation = false;
 }
 
+void FittingPanel::RenderContents() {
+    // Render UI elements
+    RenderShipInfo();
+    ImGui::Spacing();
+    RenderResourceBars();
+    ImGui::Separator();
+    ImGui::Spacing();
+    
+    // Render slot sections
+    ImGui::BeginChild("SlotSections", ImVec2(0, 0), false);
+    
+    RenderSlotSection("High Slots", m_data.high_slots, "high", 8);
+    ImGui::Spacing();
+    
+    RenderSlotSection("Mid Slots", m_data.mid_slots, "mid", 8);
+    ImGui::Spacing();
+    
+    RenderSlotSection("Low Slots", m_data.low_slots, "low", 8);
+    ImGui::Spacing();
+    
+    RenderRigSection();
+    
+    ImGui::EndChild();
+    
+    // Render feedback message if active
+    if (m_feedbackTimer > 0.0f) {
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImVec4 color = m_feedbackIsError ? ImVec4(1.0f, 0.3f, 0.3f, 1.0f) : ImVec4(0.3f, 1.0f, 0.3f, 1.0f);
+        ImGui::PushStyleColor(ImGuiCol_Text, color);
+        ImGui::TextWrapped("%s %s", m_feedbackIsError ? "✗" : "✓", m_feedbackMessage.c_str());
+        ImGui::PopStyleColor();
+        m_feedbackTimer -= ImGui::GetIO().DeltaTime;
+    }
+    
+    // Show pending operation indicator
+    if (m_pendingOperation) {
+        ImGui::Spacing();
+        ImGui::Text("⏳ Operation in progress...");
+    }
+}
+
 } // namespace UI

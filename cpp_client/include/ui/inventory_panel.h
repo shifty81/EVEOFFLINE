@@ -45,6 +45,9 @@ public:
     // Render the inventory panel
     void Render();
     
+    // Render just the panel contents (no Begin/End) — used by docking manager
+    void RenderContents();
+    
     // Update inventory data
     void SetInventoryData(const InventoryData& data);
     

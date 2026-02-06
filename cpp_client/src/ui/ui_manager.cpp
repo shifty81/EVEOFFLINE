@@ -6,6 +6,7 @@
 #include "ui/mission_panel.h"
 #include "ui/overview_panel.h"
 #include "ui/market_panel.h"
+#include "ui/docking_manager.h"
 #include "core/entity.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -32,6 +33,7 @@ UIManager::UIManager()
     m_missionPanel = std::make_unique<MissionPanel>();
     m_overviewPanel = std::make_unique<OverviewPanel>();
     m_marketPanel = std::make_unique<MarketPanel>();
+    m_dockingManager = std::make_unique<DockingManager>();
 }
 
 UIManager::~UIManager() {
@@ -77,6 +79,9 @@ bool UIManager::Initialize(GLFWwindow* window) {
     ship_status_ = ShipStatus();
     target_info_ = TargetInfo();
     
+    // Setup dockable panels in the docking manager
+    SetupDockablePanels();
+    
     std::cout << "[UIManager] ImGui initialized successfully" << std::endl;
     return true;
 }
@@ -102,16 +107,18 @@ void UIManager::EndFrame() {
 }
 
 void UIManager::Render() {
+    // === Ship HUD (bottom-center, like EVE Online) ===
+    // The ship HUD is always rendered directly, not through the docking system
     if (show_ship_status_) {
         RenderShipStatusPanel();
     }
     
-    if (show_target_info_) {
-        RenderTargetInfoPanel();
-    }
-    
     if (show_speed_panel_) {
         RenderSpeedPanel();
+    }
+    
+    if (show_target_info_) {
+        RenderTargetInfoPanel();
     }
     
     if (show_combat_log_) {
@@ -123,22 +130,57 @@ void UIManager::Render() {
         m_targetList->render();
     }
     
-    // Render Phase 4.5 panels
+    // Render dockable panels (Inventory, Fitting, Mission, Overview, Market)
+    // through the docking manager
+    if (m_dockingManager) {
+        m_dockingManager->RenderAll();
+    }
+}
+
+void UIManager::SetupDockablePanels() {
+    if (!m_dockingManager) return;
+    
+    // Register each panel with the docking manager
+    // These panels can be docked together into tabbed containers
+    
     if (m_inventoryPanel) {
-        m_inventoryPanel->Render();
+        m_dockingManager->RegisterPanel("inventory", "Inventory",
+            [this]() { m_inventoryPanel->RenderContents(); },
+            ImVec2(50, 300), ImVec2(350, 400));
     }
+    
     if (m_fittingPanel) {
-        m_fittingPanel->Render();
+        m_dockingManager->RegisterPanel("fitting", "Fitting",
+            [this]() { m_fittingPanel->RenderContents(); },
+            ImVec2(420, 300), ImVec2(400, 450));
     }
+    
     if (m_missionPanel) {
-        m_missionPanel->Render();
+        m_dockingManager->RegisterPanel("mission", "Missions",
+            [this]() { m_missionPanel->RenderContents(); },
+            ImVec2(50, 50), ImVec2(400, 350));
     }
+    
     if (m_overviewPanel) {
-        m_overviewPanel->Render();
+        m_dockingManager->RegisterPanel("overview", "Overview",
+            [this]() { m_overviewPanel->RenderContents(); },
+            ImVec2(880, 50), ImVec2(380, 400));
     }
+    
     if (m_marketPanel) {
-        m_marketPanel->Render();
+        m_dockingManager->RegisterPanel("market", "Market",
+            [this]() { m_marketPanel->RenderContents(); },
+            ImVec2(420, 50), ImVec2(450, 500));
     }
+    
+    // Set default visibility — Overview visible, others hidden by default
+    m_dockingManager->SetPanelVisible("overview", true);
+    m_dockingManager->SetPanelVisible("inventory", false);
+    m_dockingManager->SetPanelVisible("fitting", false);
+    m_dockingManager->SetPanelVisible("mission", false);
+    m_dockingManager->SetPanelVisible("market", false);
+    
+    std::cout << "[UIManager] Dockable panels registered" << std::endl;
 }
 
 void UIManager::SetupEVEStyle() {
@@ -336,6 +378,9 @@ void UIManager::SetPanelVisible(const std::string& panel_name, bool visible) {
         show_speed_panel_ = visible;
     } else if (panel_name == "combat_log") {
         show_combat_log_ = visible;
+    } else if (m_dockingManager) {
+        // Try docking manager for dockable panels
+        m_dockingManager->SetPanelVisible(panel_name, visible);
     }
 }
 
@@ -348,17 +393,33 @@ bool UIManager::IsPanelVisible(const std::string& panel_name) const {
         return show_speed_panel_;
     } else if (panel_name == "combat_log") {
         return show_combat_log_;
+    } else if (m_dockingManager) {
+        return m_dockingManager->IsPanelVisible(panel_name);
     }
     return false;
 }
 
 void UIManager::RenderShipStatusPanel() {
-    ImGui::SetNextWindowPos(ImVec2(10, 550), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(300, 200), ImGuiCond_FirstUseEver);
+    // EVE Online positions the ship HUD at bottom-center of screen
+    ImGuiIO& io = ImGui::GetIO();
+    float hudWidth = 400.0f;
+    float hudHeight = 310.0f;
+    float posX = (io.DisplaySize.x - hudWidth) * 0.5f;
+    float posY = io.DisplaySize.y - hudHeight - 10.0f;
     
-    ImGui::Begin("Ship Status", &show_ship_status_, ImGuiWindowFlags_NoCollapse);
+    ImGui::SetNextWindowPos(ImVec2(posX, posY), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(hudWidth, hudHeight), ImGuiCond_FirstUseEver);
     
-    EVEPanels::RenderShipStatus(ship_status_);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
+                             ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBackground;
+    if (m_dockingManager && m_dockingManager->IsInterfaceLocked()) {
+        flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    }
+    
+    ImGui::Begin("##ShipHUD", &show_ship_status_, flags);
+    
+    // Use the EVE Online-style circular gauge display
+    EVEPanels::RenderShipStatusCircular(ship_status_);
     
     ImGui::End();
 }
@@ -367,7 +428,12 @@ void UIManager::RenderTargetInfoPanel() {
     ImGui::SetNextWindowPos(ImVec2(890, 10), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(300, 220), ImGuiCond_FirstUseEver);
     
-    ImGui::Begin("Target Info", &show_target_info_, ImGuiWindowFlags_NoCollapse);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+    if (m_dockingManager && m_dockingManager->IsInterfaceLocked()) {
+        flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    }
+    
+    ImGui::Begin("Target Info", &show_target_info_, flags);
     
     EVEPanels::RenderTargetInfo(target_info_);
     
@@ -375,12 +441,25 @@ void UIManager::RenderTargetInfoPanel() {
 }
 
 void UIManager::RenderSpeedPanel() {
-    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver);
-    ImGui::SetNextWindowSize(ImVec2(250, 120), ImGuiCond_FirstUseEver);
+    // EVE positions speed below the ship HUD, but we put it to the left for space
+    ImGuiIO& io = ImGui::GetIO();
+    float posX = (io.DisplaySize.x * 0.5f) - 350.0f;
+    float posY = io.DisplaySize.y - 200.0f;
     
-    ImGui::Begin("Speed", &show_speed_panel_, ImGuiWindowFlags_NoCollapse);
+    ImGui::SetNextWindowPos(ImVec2(posX, posY), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(250, 200), ImGuiCond_FirstUseEver);
     
-    EVEPanels::RenderSpeedDisplay(ship_status_.velocity, ship_status_.max_velocity);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar |
+                             ImGuiWindowFlags_NoBackground;
+    if (m_dockingManager && m_dockingManager->IsInterfaceLocked()) {
+        flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    }
+    
+    ImGui::Begin("##SpeedGauge", &show_speed_panel_, flags);
+    
+    // Use the EVE Online-style radial speed gauge
+    EVEPanels::RenderSpeedGauge(ship_status_.velocity, ship_status_.max_velocity,
+                                 &approach_active, &orbit_active, &keep_range_active);
     
     ImGui::End();
 }
@@ -389,7 +468,12 @@ void UIManager::RenderCombatLogPanel() {
     ImGui::SetNextWindowPos(ImVec2(320, 550), ImGuiCond_FirstUseEver);
     ImGui::SetNextWindowSize(ImVec2(450, 200), ImGuiCond_FirstUseEver);
     
-    ImGui::Begin("Combat Log", &show_combat_log_, ImGuiWindowFlags_NoCollapse);
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+    if (m_dockingManager && m_dockingManager->IsInterfaceLocked()) {
+        flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    }
+    
+    ImGui::Begin("Combat Log", &show_combat_log_, flags);
     
     EVEPanels::RenderCombatLog(combat_log_);
     
@@ -422,34 +506,59 @@ void UIManager::RemoveTarget(const std::string& entityId) {
     }
 }
 
-// Phase 4.5 panel visibility toggles
+// Phase 4.5 panel visibility toggles — now go through docking manager
 void UIManager::ToggleInventory() {
-    if (m_inventoryPanel) {
-        m_inventoryPanel->SetVisible(!m_inventoryPanel->IsVisible());
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("inventory");
+        m_dockingManager->SetPanelVisible("inventory", !vis);
     }
 }
 
 void UIManager::ToggleFitting() {
-    if (m_fittingPanel) {
-        m_fittingPanel->SetVisible(!m_fittingPanel->IsVisible());
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("fitting");
+        m_dockingManager->SetPanelVisible("fitting", !vis);
     }
 }
 
 void UIManager::ToggleMission() {
-    if (m_missionPanel) {
-        m_missionPanel->SetVisible(!m_missionPanel->IsVisible());
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("mission");
+        m_dockingManager->SetPanelVisible("mission", !vis);
     }
 }
 
 void UIManager::ToggleOverview() {
-    if (m_overviewPanel) {
-        m_overviewPanel->SetVisible(!m_overviewPanel->IsVisible());
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("overview");
+        m_dockingManager->SetPanelVisible("overview", !vis);
     }
 }
 
 void UIManager::ToggleMarket() {
-    if (m_marketPanel) {
-        m_marketPanel->SetVisible(!m_marketPanel->IsVisible());
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("market");
+        m_dockingManager->SetPanelVisible("market", !vis);
+    }
+}
+
+// Interface lock delegated to docking manager
+void UIManager::SetInterfaceLocked(bool locked) {
+    if (m_dockingManager) {
+        m_dockingManager->SetInterfaceLocked(locked);
+    }
+}
+
+bool UIManager::IsInterfaceLocked() const {
+    if (m_dockingManager) {
+        return m_dockingManager->IsInterfaceLocked();
+    }
+    return false;
+}
+
+void UIManager::ToggleInterfaceLock() {
+    if (m_dockingManager) {
+        m_dockingManager->ToggleInterfaceLock();
     }
 }
 

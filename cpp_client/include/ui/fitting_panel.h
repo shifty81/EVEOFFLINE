@@ -57,6 +57,9 @@ public:
     // Render the fitting panel
     void Render();
     
+    // Render just the panel contents (no Begin/End) — used by docking manager
+    void RenderContents();
+    
     // Update fitting data
     void SetFittingData(const FittingData& data);
     

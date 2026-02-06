@@ -193,6 +193,7 @@ endif()
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/external
+    ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui
     ${OPENGL_INCLUDE_DIR}
 )
 
@@ -248,6 +249,7 @@ set(CLIENT_SOURCES
     src/ui/module_browser_panel.cpp
     src/ui/market_panel.cpp
     src/ui/overview_panel.cpp
+    src/ui/docking_manager.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}
@@ -296,6 +298,7 @@ set(CLIENT_HEADERS
     include/ui/module_browser_panel.h
     include/ui/market_panel.h
     include/ui/overview_panel.h
+    include/ui/docking_manager.h
     ${AUDIO_HEADERS}
 )
 
@@ -430,6 +433,7 @@ if(BUILD_TESTS)
         src/ui/fitting_panel.cpp
         src/ui/mission_panel.cpp
         src/ui/overview_panel.cpp
+        src/ui/docking_manager.cpp
         src/ui/market_panel.cpp
         src/core/entity.cpp
         ${GLAD_SOURCES}
@@ -537,6 +541,7 @@ if(BUILD_TESTS)
         src/ui/fitting_panel.cpp
         src/ui/mission_panel.cpp
         src/ui/overview_panel.cpp
+        src/ui/docking_manager.cpp
         src/ui/market_panel.cpp
         src/core/entity.cpp
         ${IMGUI_SOURCES}

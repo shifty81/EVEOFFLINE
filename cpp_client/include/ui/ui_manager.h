@@ -22,6 +22,7 @@ class FittingPanel;
 class MissionPanel;
 class OverviewPanel;
 class MarketPanel;
+class DockingManager;
 
 struct EVEColors {
     // Background colors — deep dark blue-black (Photon UI style)
@@ -137,12 +138,25 @@ public:
     OverviewPanel* GetOverviewPanel() { return m_overviewPanel.get(); }
     MarketPanel* GetMarketPanel() { return m_marketPanel.get(); }
     
+    // Docking manager access
+    DockingManager* GetDockingManager() { return m_dockingManager.get(); }
+    
     // Panel visibility shortcuts (Phase 4.5)
     void ToggleInventory();
     void ToggleFitting();
     void ToggleMission();
     void ToggleOverview();
     void ToggleMarket();
+    
+    // Interface lock
+    void SetInterfaceLocked(bool locked);
+    bool IsInterfaceLocked() const;
+    void ToggleInterfaceLock();
+    
+    // Motion command states (for EVE-style movement)
+    bool approach_active = false;
+    bool orbit_active = false;
+    bool keep_range_active = false;
 
 private:
     ImGuiContext* context_;
@@ -164,6 +178,9 @@ private:
     std::unique_ptr<OverviewPanel> m_overviewPanel;
     std::unique_ptr<MarketPanel> m_marketPanel;
     
+    // Docking manager for panel docking/undocking/locking
+    std::unique_ptr<DockingManager> m_dockingManager;
+    
     // Panel visibility
     bool show_ship_status_;
     bool show_target_info_;
@@ -179,6 +196,9 @@ private:
     
     // Helper for health bars
     void RenderHealthBar(const char* label, float current, float max, const float color[4]);
+    
+    // Setup dockable panels in docking manager
+    void SetupDockablePanels();
 };
 
 } // namespace UI
