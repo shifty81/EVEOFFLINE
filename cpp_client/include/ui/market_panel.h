@@ -70,6 +70,11 @@ public:
     void SetQuickBuyCallback(QuickBuyCallback callback) { m_onQuickBuy = callback; }
     void SetQuickSellCallback(QuickSellCallback callback) { m_onQuickSell = callback; }
     
+    // Response feedback methods
+    void ShowSuccess(const std::string& message);
+    void ShowError(const std::string& message);
+    void SetPendingOperation(bool pending) { m_pendingOperation = pending; }
+    
 private:
     bool m_visible;
     
@@ -95,6 +100,12 @@ private:
     SellOrderCallback m_onSellOrder;
     QuickBuyCallback m_onQuickBuy;
     QuickSellCallback m_onQuickSell;
+    
+    // Response feedback state
+    bool m_pendingOperation;
+    std::string m_feedbackMessage;
+    bool m_feedbackIsError;
+    float m_feedbackTimer;
     
     // Helper functions
     void RenderViewTabs();

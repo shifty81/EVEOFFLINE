@@ -69,6 +69,11 @@ public:
     void SetUnfitModuleCallback(UnfitModuleCallback callback) { m_onUnfitModule = callback; }
     void SetOnlineModuleCallback(OnlineModuleCallback callback) { m_onOnlineModule = callback; }
     
+    // Response feedback methods
+    void ShowSuccess(const std::string& message);
+    void ShowError(const std::string& message);
+    void SetPendingOperation(bool pending) { m_pendingOperation = pending; }
+    
 private:
     bool m_visible;
     FittingData m_data;
@@ -77,6 +82,12 @@ private:
     FitModuleCallback m_onFitModule;
     UnfitModuleCallback m_onUnfitModule;
     OnlineModuleCallback m_onOnlineModule;
+    
+    // Response feedback state
+    bool m_pendingOperation;
+    std::string m_feedbackMessage;
+    bool m_feedbackIsError;
+    float m_feedbackTimer;
     
     // Helper functions
     void RenderShipInfo();

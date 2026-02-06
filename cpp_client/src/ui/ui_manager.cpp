@@ -4,6 +4,8 @@
 #include "ui/inventory_panel.h"
 #include "ui/fitting_panel.h"
 #include "ui/mission_panel.h"
+#include "ui/overview_panel.h"
+#include "ui/market_panel.h"
 #include "core/entity.h"
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
@@ -27,6 +29,7 @@ UIManager::UIManager()
     m_fittingPanel = std::make_unique<FittingPanel>();
     m_missionPanel = std::make_unique<MissionPanel>();
     m_overviewPanel = std::make_unique<OverviewPanel>();
+    m_marketPanel = std::make_unique<MarketPanel>();
 }
 
 UIManager::~UIManager() {
@@ -130,6 +133,9 @@ void UIManager::Render() {
     }
     if (m_overviewPanel) {
         m_overviewPanel->Render();
+    }
+    if (m_marketPanel) {
+        m_marketPanel->Render();
     }
 }
 
@@ -421,6 +427,12 @@ void UIManager::ToggleMission() {
 void UIManager::ToggleOverview() {
     if (m_overviewPanel) {
         m_overviewPanel->SetVisible(!m_overviewPanel->IsVisible());
+    }
+}
+
+void UIManager::ToggleMarket() {
+    if (m_marketPanel) {
+        m_marketPanel->SetVisible(!m_marketPanel->IsVisible());
     }
 }
 

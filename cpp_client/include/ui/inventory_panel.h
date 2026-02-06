@@ -60,6 +60,11 @@ public:
     // Drag-and-drop settings
     void SetDragDropEnabled(bool enabled) { m_dragDropEnabled = enabled; }
     
+    // Response feedback methods
+    void ShowSuccess(const std::string& message);
+    void ShowError(const std::string& message);
+    void SetPendingOperation(bool pending) { m_pendingOperation = pending; }
+    
 private:
     bool m_visible;
     InventoryData m_data;
@@ -79,6 +84,12 @@ private:
     bool m_dragDropEnabled;
     int m_draggedItemIndex;
     bool m_dragFromCargo;
+    
+    // Response feedback state
+    bool m_pendingOperation;
+    std::string m_feedbackMessage;
+    bool m_feedbackIsError;
+    float m_feedbackTimer;
     
     // Helper functions
     void RenderViewButtons();
