@@ -1,4 +1,5 @@
 #include "server.h"
+#include "game_session.h"
 #include "systems/movement_system.h"
 #include "systems/combat_system.h"
 #include "systems/ai_system.h"
@@ -102,6 +103,10 @@ bool Server::initialize() {
     // Initialize game world and systems
     initializeGameWorld();
     
+    // Initialize game session (bridges networking ↔ ECS world)
+    game_session_ = std::make_unique<GameSession>(game_world_.get(), tcp_server_.get());
+    game_session_->initialize();
+    
     return true;
 }
 
@@ -156,6 +161,11 @@ void Server::mainLoop() {
         // Update game world (ECS systems)
         game_world_->update(tick_duration);
         
+        // Broadcast state to all connected clients
+        if (game_session_) {
+            game_session_->update(tick_duration);
+        }
+        
         // Update Steam callbacks
         if (config_->use_steam && steam_auth_) {
             updateSteam();
@@ -195,7 +205,8 @@ void Server::updateSteam() {
 }
 
 int Server::getPlayerCount() const {
-    return tcp_server_ ? tcp_server_->getClientCount() : 0;
+    return game_session_ ? game_session_->getPlayerCount()
+                         : (tcp_server_ ? tcp_server_->getClientCount() : 0);
 }
 
 } // namespace eve
