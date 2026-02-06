@@ -349,6 +349,19 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders/
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/
      DESTINATION ${CMAKE_BINARY_DIR}/bin/assets)
 
+# For multi-config generators (e.g., Visual Studio, Xcode) the executable is
+# placed in a per-configuration subdirectory (e.g., bin/Release/).  Copy the
+# shaders and assets next to the executable so they can be found at runtime.
+add_custom_command(TARGET eve_client POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/shaders
+        $<TARGET_FILE_DIR:eve_client>/shaders
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/assets
+        $<TARGET_FILE_DIR:eve_client>/assets
+    COMMENT "Copying shaders and assets next to executable"
+)
+
 # Installation
 install(TARGETS eve_client
     RUNTIME DESTINATION bin

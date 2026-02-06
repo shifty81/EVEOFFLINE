@@ -4,7 +4,6 @@ __pycache__/
 *$py.class
 *.so
 .Python
-build/
 develop-eggs/
 dist/
 downloads/
@@ -47,7 +46,6 @@ saves/
 screenshots/
 replays/
 screenshot_*.png
-test_gui.py
 
 # Temporary files
 tmp/
@@ -60,6 +58,7 @@ temp/
 *.dmg
 
 # C++ build artifacts
+build/
 cpp_server/build/
 cpp_server/external/steamworks_sdk/
 cpp_client/build/
@@ -77,15 +76,15 @@ build_vs/
 *.so
 *.dylib
 
-# CMake
+# CMake (generated files, not CMakeLists.txt or our Makefile)
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
 !CMakeLists.txt
+!Makefile
 cpp_server/saves/
 cpp_server/logs/
 compile_commands.json
-Makefile
 *.cmake
 
 # Visual Studio

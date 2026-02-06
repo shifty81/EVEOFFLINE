@@ -76,7 +76,7 @@ if exist "C:\vcpkg\scripts\buildsystems\vcpkg.cmake" (
 
 if %VCPKG_FOUND% EQU 0 (
     echo WARNING: vcpkg not found. Dependencies ^(GLEW, GLFW, GLM^) must be installed manually.
-    echo          Or install vcpkg and dependencies first - see VS2022_SETUP_GUIDE.md
+    echo          Or install vcpkg and dependencies first - see docs/guides/VS2022_SETUP_GUIDE.md
     echo.
 )
 
@@ -146,7 +146,7 @@ if %ERRORLEVEL% NEQ 0 (
     echo.
     echo   Step 4 - Run this script again
     echo.
-    echo For more information, see: VS2022_SETUP_GUIDE.md
+    echo For more information, see: docs/guides/VS2022_SETUP_GUIDE.md
     echo.
     pause
     exit /b 1

@@ -1,25 +1,49 @@
 @echo off
-REM EVE OFFLINE - Windows Build and Test Script
-REM Quick access script for Windows users
+REM EVE OFFLINE - Windows Build Script
+REM Builds the C++ client and server using CMake
 
 echo ================================================
-echo EVE OFFLINE - Build and Test
+echo EVE OFFLINE - Build
 echo ================================================
 echo.
 
-REM Check if Python is available
-python --version >nul 2>&1
+REM Check for CMake
+where cmake >nul 2>&1
 if errorlevel 1 (
-    echo ERROR: Python not found!
-    echo Please install Python 3.11 or higher
+    echo ERROR: CMake not found!
+    echo Please install CMake from https://cmake.org/download/
     pause
     exit /b 1
 )
 
-REM Run the build script
-python build_and_test.py %*
+set "BUILD_TYPE=Release"
+if /i "%~1"=="--debug" (set "BUILD_TYPE=Debug")
 
-REM Check result
+REM Create build directory
+if not exist build mkdir build
+cd build
+
+REM Configure
+echo Configuring CMake (%BUILD_TYPE%)...
+cmake .. -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -DUSE_SYSTEM_LIBS=ON
+
+if errorlevel 1 (
+    echo.
+    echo ================================================
+    echo CMAKE CONFIGURATION FAILED
+    echo ================================================
+    echo.
+    echo Install dependencies via vcpkg:
+    echo   vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
+    echo   vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows
+    pause
+    exit /b 1
+)
+
+REM Build
+echo Building...
+cmake --build . --config %BUILD_TYPE%
+
 if errorlevel 1 (
     echo.
     echo ================================================
