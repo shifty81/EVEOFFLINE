@@ -121,7 +121,7 @@ int main() {
             lightPositions[i],
             lightColors[i],
             1.0f,
-            100.0f  // Range
+            100.0f  // Range (light influence distance)
         );
         lightManager.addLight(light);
     }
