@@ -703,6 +703,28 @@
     "max_level": 5,
     "prerequisites": {"mining": 4, "science": 4, "spaceship_command": 3}
   },
+  "ice_harvesting": {
+    "id": "ice_harvesting",
+    "name": "Ice Harvesting",
+    "description": "Skill for the operation of ice harvesters. 5% reduction in ice harvester cycle time per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {"mining": 4}
+  },
+  "ice_processing": {
+    "id": "ice_processing",
+    "name": "Ice Processing",
+    "description": "Skill for refining ice into fuel and materials. 2% increase in ice refining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {"reprocessing": 3}
+  },
   "exhumers": {
     "id": "exhumers",
     "name": "Exhumers",
