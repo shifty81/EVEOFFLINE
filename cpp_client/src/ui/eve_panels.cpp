@@ -3,6 +3,11 @@
 #include <algorithm>
 #include <cmath>
 
+// ImGui PI constant (not defined in all ImGui versions)
+#ifndef IM_PI
+#define IM_PI 3.14159265358979323846f
+#endif
+
 namespace UI {
 namespace EVEPanels {
 
