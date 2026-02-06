@@ -587,15 +587,15 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 #### Mining & Resource Gathering (Optional Enhancements)
 - [x] Exhumer ships (Skiff, Mackinaw, Hulk)
-- [ ] Gas harvesting
-- [ ] Moon mining (group content)
-- [ ] Ore compression
+- [x] Gas harvesting
+- [x] Moon mining (group content)
+- [x] Ore compression
 - [ ] Mining missions (framework exists)
 
 #### Other Advanced Systems (Planned)
 - [ ] Asteroid mining mechanics (basic framework exists)
 - [ ] Ore processing/refining
-- [ ] Moon mining (group content)
+- [x] Moon mining (group content)
 - [x] Gas harvesting
 - [ ] Mining crystals and upgrades
 
@@ -753,6 +753,8 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Mining barge ships** - Procurer, Retriever, Covetor ✅
 - [x] **Exhumer ships** - Skiff, Mackinaw, Hulk with Strip Miner II ✅
 - [x] **Gas harvesting system** - 9 gas types, harvester modules, skill bonuses ✅
+- [x] **Ore compression** - 15 ore + 12 ice types, batch compression, skill bonuses ✅
+- [x] **Moon mining** - 10 moon ore types, refinery extraction, belt fracturing ✅
 - [ ] Other Phase 7 systems (PI, R&D, WH space, etc.)
 
 ---
