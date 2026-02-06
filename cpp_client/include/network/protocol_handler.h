@@ -54,6 +54,16 @@ public:
     std::string createMarketBuyMessage(const std::string& itemId, int quantity, double price);
     std::string createMarketSellMessage(const std::string& itemId, int quantity, double price);
     std::string createMarketQueryMessage(const std::string& itemId);
+    
+    /**
+     * Response message type helpers
+     * These methods check if a message is a specific type of response
+     */
+    static bool isSuccessResponse(const std::string& type);
+    static bool isErrorResponse(const std::string& type);
+    static bool isInventoryResponse(const std::string& type);
+    static bool isFittingResponse(const std::string& type);
+    static bool isMarketResponse(const std::string& type);
 
     /**
      * Set message handler

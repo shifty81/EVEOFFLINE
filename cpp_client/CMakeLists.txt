@@ -497,6 +497,24 @@ if(BUILD_TESTS)
         ${CLIENT_HEADERS}
     )
     target_link_libraries(test_phase46_advanced ${LINK_LIBS})
+    
+    # Test: Phase 4.8 Server Response Handling
+    add_executable(test_server_responses
+        test_server_responses.cpp
+        src/network/tcp_client.cpp
+        src/network/protocol_handler.cpp
+        src/network/network_manager.cpp
+    )
+    target_link_libraries(test_server_responses
+        Threads::Threads
+    )
+    if(WIN32)
+        target_link_libraries(test_server_responses ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_server_responses)
+    elseif(APPLE)
+        target_link_libraries(test_server_responses)
+    endif()
 endif()
 
 message(STATUS "")

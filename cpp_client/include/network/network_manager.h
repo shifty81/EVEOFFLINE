@@ -9,6 +9,31 @@
 
 namespace eve {
 
+// Response callback types
+struct InventoryResponse {
+    bool success;
+    std::string message;
+    std::string itemId;
+    int quantity;
+};
+
+struct FittingResponse {
+    bool success;
+    std::string message;
+    std::string moduleId;
+    std::string slotType;
+    int slotIndex;
+};
+
+struct MarketResponse {
+    bool success;
+    std::string message;
+    std::string itemId;
+    int quantity;
+    double price;
+    double totalCost;
+};
+
 /**
  * High-level network manager
  * Combines TCP client and protocol handler for easy game integration
@@ -17,6 +42,12 @@ class NetworkManager {
 public:
     // Message handler for specific message types
     using TypedMessageHandler = std::function<void(const std::string& dataJson)>;
+    
+    // Callback types for gameplay operations
+    using InventoryCallback = std::function<void(const InventoryResponse&)>;
+    using FittingCallback = std::function<void(const FittingResponse&)>;
+    using MarketCallback = std::function<void(const MarketResponse&)>;
+    using ErrorCallback = std::function<void(const std::string& message)>;
 
     NetworkManager();
     ~NetworkManager();
@@ -84,6 +115,15 @@ public:
     void sendMarketBuy(const std::string& itemId, int quantity, double price);
     void sendMarketSell(const std::string& itemId, int quantity, double price);
     void sendMarketQuery(const std::string& itemId);
+    
+    /**
+     * Set response callbacks for gameplay operations
+     * These callbacks are invoked when the server responds to requests
+     */
+    void setInventoryCallback(InventoryCallback callback) { m_inventoryCallback = callback; }
+    void setFittingCallback(FittingCallback callback) { m_fittingCallback = callback; }
+    void setMarketCallback(MarketCallback callback) { m_marketCallback = callback; }
+    void setErrorCallback(ErrorCallback callback) { m_errorCallback = callback; }
 
     /**
      * Get connection state string
@@ -93,12 +133,24 @@ public:
 private:
     void onRawMessage(const std::string& message);
     void onProtocolMessage(const std::string& type, const std::string& dataJson);
+    
+    // Response handlers
+    void handleInventoryResponse(const std::string& type, const std::string& dataJson);
+    void handleFittingResponse(const std::string& type, const std::string& dataJson);
+    void handleMarketResponse(const std::string& type, const std::string& dataJson);
+    void handleErrorResponse(const std::string& dataJson);
 
     std::unique_ptr<TCPClient> m_tcpClient;
     std::unique_ptr<ProtocolHandler> m_protocolHandler;
     
     // Message handlers by type
     std::map<std::string, TypedMessageHandler> m_handlers;
+    
+    // Response callbacks
+    InventoryCallback m_inventoryCallback;
+    FittingCallback m_fittingCallback;
+    MarketCallback m_marketCallback;
+    ErrorCallback m_errorCallback;
     
     // Connection info
     std::string m_playerId;
