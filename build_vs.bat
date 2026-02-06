@@ -17,26 +17,26 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 REM Check for Visual Studio (VS 2022, 2019, or 2017)
-set VS_FOUND=0
+set "VS_FOUND=0"
 
 REM Check VS 2022
-if exist "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
-if exist "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
-if exist "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
 
 REM Check VS 2019
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
 
 REM Check VS 2017
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_FOUND=1")
 
 REM Also check if msbuild is in PATH
 where msbuild >nul 2>&1
-if %ERRORLEVEL% EQU 0 set VS_FOUND=1
+if %ERRORLEVEL% EQU 0 (set "VS_FOUND=1")
 
 if %VS_FOUND% EQU 0 (
     echo ERROR: Visual Studio not found!
@@ -52,16 +52,16 @@ if %VS_FOUND% EQU 0 (
 )
 
 REM Parse command line arguments
-set BUILD_TYPE=Release
-set CLEAN_BUILD=0
-set OPEN_VS=0
+set "BUILD_TYPE=Release"
+set "CLEAN_BUILD=0"
+set "OPEN_VS=0"
 
 :parse_args
 if "%~1"=="" goto end_parse
-if /i "%~1"=="--debug" set BUILD_TYPE=Debug
-if /i "%~1"=="--release" set BUILD_TYPE=Release
-if /i "%~1"=="--clean" set CLEAN_BUILD=1
-if /i "%~1"=="--open" set OPEN_VS=1
+if /i "%~1"=="--debug" (set "BUILD_TYPE=Debug")
+if /i "%~1"=="--release" (set "BUILD_TYPE=Release")
+if /i "%~1"=="--clean" (set "CLEAN_BUILD=1")
+if /i "%~1"=="--open" (set "OPEN_VS=1")
 shift
 goto parse_args
 :end_parse

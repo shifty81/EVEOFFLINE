@@ -17,16 +17,16 @@ if %ERRORLEVEL% NEQ 0 (
 )
 
 REM Parse command line arguments
-set BUILD_TYPE=Release
-set CLEAN_BUILD=0
-set OPEN_VS=0
+set "BUILD_TYPE=Release"
+set "CLEAN_BUILD=0"
+set "OPEN_VS=0"
 
 :parse_args
 if "%~1"=="" goto end_parse
-if /i "%~1"=="--debug" set BUILD_TYPE=Debug
-if /i "%~1"=="--release" set BUILD_TYPE=Release
-if /i "%~1"=="--clean" set CLEAN_BUILD=1
-if /i "%~1"=="--open" set OPEN_VS=1
+if /i "%~1"=="--debug" (set "BUILD_TYPE=Debug")
+if /i "%~1"=="--release" (set "BUILD_TYPE=Release")
+if /i "%~1"=="--clean" (set "CLEAN_BUILD=1")
+if /i "%~1"=="--open" (set "OPEN_VS=1")
 shift
 goto parse_args
 :end_parse

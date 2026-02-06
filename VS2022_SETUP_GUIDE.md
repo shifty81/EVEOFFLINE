@@ -2,6 +2,8 @@
 
 This guide will help you set up and build the EVE OFFLINE project in Visual Studio 2022 after cloning from Git.
 
+> **⚡ Quick Reference**: See [QUICKSTART_VS2022.md](QUICKSTART_VS2022.md) for a concise command reference.
+
 ## Quick Setup (5 Minutes)
 
 ### 1. Prerequisites
