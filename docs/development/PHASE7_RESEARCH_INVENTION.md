@@ -23,9 +23,10 @@ Players can attempt to invent Tech II BPCs from Tech I BPCs:
 
 - **Success Chance**:
   - Base rate varies by item type (18-34%)
-  - Increased by science skill levels (1% per level per skill)
+  - Increased by science skill levels (1% per level per skill, additive across all required skills)
   - Modified by decryptors (+/- 10% to 90%)
   - Formula: `base_rate * (1 + skill_bonus) * decryptor_modifier`
+  - Note: skill_bonus is expressed as a decimal (e.g., 0.15 for 15% total from all skills)
 
 - **Results on Success**:
   - Tech II Blueprint Copy with limited runs

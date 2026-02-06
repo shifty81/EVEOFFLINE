@@ -27,7 +27,7 @@ class InventionSystem:
         "battleship": 0.18,  # 18% base for battleships
     }
     
-    # Skill multiplier per level (5% per level of each science skill)
+    # Skill multiplier per level (1% per skill level, additive across all required skills)
     SKILL_MULTIPLIER_PER_LEVEL = 0.01  # 1% per skill level
     
     # Default T2 BPC runs (can be modified by decryptors)
@@ -119,7 +119,7 @@ class InventionSystem:
         # Base success rate
         base_rate = self.BASE_SUCCESS_RATES.get(item_category, 0.30)
         
-        # Skill bonus (1% per level of each required science skill)
+        # Skill bonus (1% per level per skill, additive across all required skills)
         skill_bonus = 0.0
         required_skills = t1_bpc.get("invention_skills", [])
         for skill_id in required_skills:
