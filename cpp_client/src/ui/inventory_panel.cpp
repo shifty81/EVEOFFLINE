@@ -318,4 +318,39 @@ void InventoryPanel::ShowError(const std::string& message) {
     m_pendingOperation = false;
 }
 
+void InventoryPanel::RenderContents() {
+    RenderViewButtons();
+    ImGui::Spacing();
+    RenderCapacityDisplay();
+    ImGui::Separator();
+    ImGui::Spacing();
+    
+    // Jettison drop zone (only for cargo view and when drag-drop enabled)
+    if (m_dragDropEnabled && m_viewMode == 0) {
+        RenderJettisonDropZone();
+    }
+    
+    RenderItemList();
+    ImGui::Spacing();
+    ImGui::Separator();
+    RenderActionButtons();
+    
+    // Render feedback message if active
+    if (m_feedbackTimer > 0.0f) {
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImVec4 color = m_feedbackIsError ? ImVec4(1.0f, 0.3f, 0.3f, 1.0f) : ImVec4(0.3f, 1.0f, 0.3f, 1.0f);
+        ImGui::PushStyleColor(ImGuiCol_Text, color);
+        ImGui::TextWrapped("%s %s", m_feedbackIsError ? "✗" : "✓", m_feedbackMessage.c_str());
+        ImGui::PopStyleColor();
+        m_feedbackTimer -= ImGui::GetIO().DeltaTime;
+    }
+    
+    // Show pending operation indicator
+    if (m_pendingOperation) {
+        ImGui::Spacing();
+        ImGui::Text("⏳ Operation in progress...");
+    }
+}
+
 } // namespace UI

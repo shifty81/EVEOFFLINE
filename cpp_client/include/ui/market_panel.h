@@ -55,6 +55,9 @@ public:
     // Render the market panel
     void Render();
     
+    // Render just the panel contents (no Begin/End) — used by docking manager
+    void RenderContents();
+    
     // Set market data
     void SetBuyOrders(const std::vector<MarketOrder>& orders);
     void SetSellOrders(const std::vector<MarketOrder>& orders);

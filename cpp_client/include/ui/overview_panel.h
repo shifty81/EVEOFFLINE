@@ -73,6 +73,9 @@ public:
     // Render the overview panel
     void Render();
     
+    // Render just the panel contents (no Begin/End) — used by docking manager
+    void RenderContents();
+    
     // Update overview from entity list
     void UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities);
     
