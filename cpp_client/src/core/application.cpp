@@ -165,12 +165,21 @@ void Application::setupUICallbacks() {
         return;
     }
     
-    // Setup inventory panel callbacks
+    // Get UI panels
     auto* inventoryPanel = m_uiManager->GetInventoryPanel();
+    auto* fittingPanel = m_uiManager->GetFittingPanel();
+    auto* marketPanel = m_uiManager->GetMarketPanel();
+    
+    // === Setup Request Callbacks (UI → Network) ===
+    
+    // Inventory panel drag-drop callback
     if (inventoryPanel) {
-        inventoryPanel->SetDragDropCallback([networkMgr](
+        inventoryPanel->SetDragDropCallback([networkMgr, inventoryPanel](
             const std::string& item_id, int quantity,
             bool from_cargo, bool to_cargo, bool to_space) {
+            
+            // Set pending state
+            inventoryPanel->SetPendingOperation(true);
             
             if (to_space) {
                 // Jettison operation
@@ -181,17 +190,69 @@ void Application::setupUICallbacks() {
             }
         });
         
-        std::cout << "  - Inventory panel callbacks wired" << std::endl;
+        std::cout << "  - Inventory panel request callbacks wired" << std::endl;
     }
     
-    // Setup fitting panel callbacks
-    auto* fittingPanel = m_uiManager->GetFittingPanel();
+    // Fitting panel callbacks (placeholder for future fitting operations)
     if (fittingPanel) {
-        // Note: FittingPanel would need callback methods added similar to inventory
-        // This is a placeholder for future integration
-        std::cout << "  - Fitting panel callbacks (ready for wiring)" << std::endl;
+        // TODO: Wire fitting callbacks when fitting operations are implemented
+        std::cout << "  - Fitting panel request callbacks (ready for wiring)" << std::endl;
     }
     
+    // Market panel callbacks (placeholder for future market operations)
+    if (marketPanel) {
+        // TODO: Wire market callbacks when market operations are implemented
+        std::cout << "  - Market panel request callbacks (ready for wiring)" << std::endl;
+    }
+    
+    // === Setup Response Callbacks (Network → UI) ===
+    
+    // Inventory response callback
+    networkMgr->setInventoryCallback([inventoryPanel](const eve::InventoryResponse& response) {
+        if (!inventoryPanel) return;
+        
+        if (response.success) {
+            std::cout << "✓ Inventory operation succeeded: " << response.message << std::endl;
+            inventoryPanel->ShowSuccess(response.message);
+        } else {
+            std::cerr << "✗ Inventory operation failed: " << response.message << std::endl;
+            inventoryPanel->ShowError(response.message);
+        }
+    });
+    
+    // Fitting response callback
+    networkMgr->setFittingCallback([fittingPanel](const eve::FittingResponse& response) {
+        if (!fittingPanel) return;
+        
+        if (response.success) {
+            std::cout << "✓ Fitting operation succeeded: " << response.message << std::endl;
+            fittingPanel->ShowSuccess(response.message);
+        } else {
+            std::cerr << "✗ Fitting operation failed: " << response.message << std::endl;
+            fittingPanel->ShowError(response.message);
+        }
+    });
+    
+    // Market response callback
+    networkMgr->setMarketCallback([marketPanel](const eve::MarketResponse& response) {
+        if (!marketPanel) return;
+        
+        if (response.success) {
+            std::cout << "✓ Market transaction succeeded: " << response.message << std::endl;
+            marketPanel->ShowSuccess(response.message);
+        } else {
+            std::cerr << "✗ Market transaction failed: " << response.message << std::endl;
+            marketPanel->ShowError(response.message);
+        }
+    });
+    
+    // Error response callback (general errors)
+    networkMgr->setErrorCallback([](const std::string& message) {
+        std::cerr << "✗ Server error: " << message << std::endl;
+        // TODO: Could show a general error dialog here
+    });
+    
+    std::cout << "  - Response callbacks wired for all panels" << std::endl;
     std::cout << "UI callbacks setup complete" << std::endl;
 }
 

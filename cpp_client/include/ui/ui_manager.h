@@ -21,6 +21,7 @@ class InventoryPanel;
 class FittingPanel;
 class MissionPanel;
 class OverviewPanel;
+class MarketPanel;
 
 struct EVEColors {
     // Background colors (RGB 0-1)
@@ -121,12 +122,14 @@ public:
     FittingPanel* GetFittingPanel() { return m_fittingPanel.get(); }
     MissionPanel* GetMissionPanel() { return m_missionPanel.get(); }
     OverviewPanel* GetOverviewPanel() { return m_overviewPanel.get(); }
+    MarketPanel* GetMarketPanel() { return m_marketPanel.get(); }
     
     // Panel visibility shortcuts (Phase 4.5)
     void ToggleInventory();
     void ToggleFitting();
     void ToggleMission();
     void ToggleOverview();
+    void ToggleMarket();
 
 private:
     ImGuiContext* context_;
@@ -146,6 +149,7 @@ private:
     std::unique_ptr<FittingPanel> m_fittingPanel;
     std::unique_ptr<MissionPanel> m_missionPanel;
     std::unique_ptr<OverviewPanel> m_overviewPanel;
+    std::unique_ptr<MarketPanel> m_marketPanel;
     
     // Panel visibility
     bool show_ship_status_;

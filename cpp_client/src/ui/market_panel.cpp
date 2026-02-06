@@ -12,6 +12,9 @@ MarketPanel::MarketPanel()
     , m_selectedSellOrderIndex(-1)
     , m_quickTradeQuantity(1)
     , m_quickTradePrice(0.0f)
+    , m_pendingOperation(false)
+    , m_feedbackIsError(false)
+    , m_feedbackTimer(0.0f)
 {
     memset(m_searchBuffer, 0, sizeof(m_searchBuffer));
 }
@@ -41,6 +44,23 @@ void MarketPanel::Render() {
         RenderBrowseView();
     } else if (m_viewMode == 2) {
         RenderQuickTradeView();
+    }
+    
+    // Render feedback message if active
+    if (m_feedbackTimer > 0.0f) {
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImVec4 color = m_feedbackIsError ? ImVec4(1.0f, 0.3f, 0.3f, 1.0f) : ImVec4(0.3f, 1.0f, 0.3f, 1.0f);
+        ImGui::PushStyleColor(ImGuiCol_Text, color);
+        ImGui::TextWrapped("%s %s", m_feedbackIsError ? "✗" : "✓", m_feedbackMessage.c_str());
+        ImGui::PopStyleColor();
+        m_feedbackTimer -= ImGui::GetIO().DeltaTime;
+    }
+    
+    // Show pending operation indicator
+    if (m_pendingOperation) {
+        ImGui::Spacing();
+        ImGui::Text("⏳ Transaction in progress...");
     }
     
     ImGui::End();
@@ -413,6 +433,20 @@ std::vector<MarketOrder> MarketPanel::GetItemSellOrders() const {
                  return a.price < b.price;
              });
     return orders;
+}
+
+void MarketPanel::ShowSuccess(const std::string& message) {
+    m_feedbackMessage = message;
+    m_feedbackIsError = false;
+    m_feedbackTimer = 3.0f;  // Show for 3 seconds
+    m_pendingOperation = false;
+}
+
+void MarketPanel::ShowError(const std::string& message) {
+    m_feedbackMessage = message;
+    m_feedbackIsError = true;
+    m_feedbackTimer = 5.0f;  // Show errors longer
+    m_pendingOperation = false;
 }
 
 } // namespace UI

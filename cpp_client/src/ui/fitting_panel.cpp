@@ -6,6 +6,9 @@ namespace UI {
 
 FittingPanel::FittingPanel()
     : m_visible(false)
+    , m_pendingOperation(false)
+    , m_feedbackIsError(false)
+    , m_feedbackTimer(0.0f)
 {
 }
 
@@ -46,6 +49,23 @@ void FittingPanel::Render() {
     RenderRigSection();
     
     ImGui::EndChild();
+    
+    // Render feedback message if active
+    if (m_feedbackTimer > 0.0f) {
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImVec4 color = m_feedbackIsError ? ImVec4(1.0f, 0.3f, 0.3f, 1.0f) : ImVec4(0.3f, 1.0f, 0.3f, 1.0f);
+        ImGui::PushStyleColor(ImGuiCol_Text, color);
+        ImGui::TextWrapped("%s %s", m_feedbackIsError ? "✗" : "✓", m_feedbackMessage.c_str());
+        ImGui::PopStyleColor();
+        m_feedbackTimer -= ImGui::GetIO().DeltaTime;
+    }
+    
+    // Show pending operation indicator
+    if (m_pendingOperation) {
+        ImGui::Spacing();
+        ImGui::Text("⏳ Operation in progress...");
+    }
     
     ImGui::End();
 }
@@ -191,6 +211,20 @@ void FittingPanel::RenderModuleSlot(const std::optional<ModuleInfo>& module,
     if (!enabled) {
         ImGui::EndDisabled();
     }
+}
+
+void FittingPanel::ShowSuccess(const std::string& message) {
+    m_feedbackMessage = message;
+    m_feedbackIsError = false;
+    m_feedbackTimer = 3.0f;  // Show for 3 seconds
+    m_pendingOperation = false;
+}
+
+void FittingPanel::ShowError(const std::string& message) {
+    m_feedbackMessage = message;
+    m_feedbackIsError = true;
+    m_feedbackTimer = 5.0f;  // Show errors longer
+    m_pendingOperation = false;
 }
 
 } // namespace UI
