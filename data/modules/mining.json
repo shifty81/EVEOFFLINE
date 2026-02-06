@@ -244,7 +244,7 @@
       "requirements": {
         "skills": {
           "Mining": 4,
-          "Gas_Cloud_Harvesting": 1
+          "gas_cloud_harvesting": 1
         }
       }
     },
@@ -267,7 +267,7 @@
       "requirements": {
         "skills": {
           "Mining": 5,
-          "Gas_Cloud_Harvesting": 5
+          "gas_cloud_harvesting": 5
         }
       }
     }

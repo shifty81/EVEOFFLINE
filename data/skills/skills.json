@@ -772,7 +772,7 @@
   "gas_cloud_harvesting": {
     "id": "gas_cloud_harvesting",
     "name": "Gas Cloud Harvesting",
-    "description": "Skill for the operation of gas cloud harvesters. 5% reduction in gas harvester cycle time per level.",
+    "description": "Skill for the operation of gas cloud harvesters. 5% bonus to gas harvester yield per level.",
     "category": "Resource Processing",
     "primary_attribute": "memory",
     "secondary_attribute": "intelligence",
