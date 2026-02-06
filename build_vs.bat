@@ -16,11 +16,37 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-REM Check for Visual Studio
+REM Check for Visual Studio (VS 2022, 2019, or 2017)
+set VS_FOUND=0
+
+REM Check VS 2022
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+
+REM Check VS 2019
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+
+REM Check VS 2017
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" set VS_FOUND=1
+
+REM Also check if msbuild is in PATH
 where msbuild >nul 2>&1
-if %ERRORLEVEL% NEQ 0 (
+if %ERRORLEVEL% EQU 0 set VS_FOUND=1
+
+if %VS_FOUND% EQU 0 (
     echo ERROR: Visual Studio not found!
-    echo Please install Visual Studio 2019 or later with C++ desktop development
+    echo Please install Visual Studio 2017/2019/2022 with C++ desktop development
+    echo.
+    echo Installation paths checked:
+    echo   - C:\Program Files\Microsoft Visual Studio\2022\
+    echo   - C:\Program Files (x86)\Microsoft Visual Studio\2019\
+    echo   - C:\Program Files (x86)\Microsoft Visual Studio\2017\
+    echo.
     pause
     exit /b 1
 )
@@ -60,6 +86,7 @@ cd build_vs
 REM Configure CMake for Visual Studio
 echo Configuring CMake for Visual Studio...
 echo.
+echo Trying Visual Studio 2022 generator...
 
 cmake .. ^
     -G "Visual Studio 17 2022" ^
@@ -70,15 +97,32 @@ cmake .. ^
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo ERROR: CMake configuration failed!
+    echo Visual Studio 2022 generator failed, trying Visual Studio 2019...
     echo.
-    echo Possible issues:
-    echo   1. Missing dependencies - run: vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows openal-soft:x64-windows
-    echo   2. Visual Studio version mismatch - try using "Visual Studio 16 2019" generator
-    echo   3. Missing Visual Studio C++ tools
-    echo.
-    pause
-    exit /b 1
+    
+    cmake .. ^
+        -G "Visual Studio 16 2019" ^
+        -A x64 ^
+        -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
+        -DUSE_SYSTEM_LIBS=ON ^
+        -DBUILD_TESTS=ON
+    
+    if %ERRORLEVEL% NEQ 0 (
+        echo.
+        echo ERROR: CMake configuration failed for both VS 2022 and VS 2019!
+        echo.
+        echo Possible issues:
+        echo   1. Missing dependencies - run: vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows openal-soft:x64-windows
+        echo   2. Visual Studio C++ tools not installed - install "Desktop development with C++" workload
+        echo   3. CMake version too old - update from https://cmake.org/download/
+        echo.
+        echo Your Visual Studio installation: %VS_FOUND%
+        echo CMake version:
+        cmake --version
+        echo.
+        pause
+        exit /b 1
+    )
 )
 
 echo.

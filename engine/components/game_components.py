@@ -409,3 +409,113 @@ class StructureService(Component):
     fuel_cost_per_hour: float = 10.0
     access_list: List[str] = field(default_factory=list)  # Player IDs with access
     service_bonus: float = 0.0  # Service-specific bonus percentage
+
+
+# === Planetary Interaction Components ===
+
+@dataclass
+class PlanetaryColony(Component):
+    """
+    Represents a player's colony on a planet
+    Based on EVE Online Planetary Interaction mechanics
+    """
+    planet_id: str = ""
+    planet_type: str = "barren"  # barren, temperate, oceanic, lava, gas, ice, storm, plasma
+    owner_id: str = ""
+    
+    # Colony management
+    command_center_id: Optional[str] = None  # ID of the command center structure
+    cpu_used: float = 0.0
+    cpu_max: float = 1675.0  # Command Center Level 5 capacity
+    powergrid_used: float = 0.0
+    powergrid_max: float = 6000.0  # Command Center Level 5 capacity
+    
+    # Installation tracking
+    installations: Dict[str, str] = field(default_factory=dict)  # {install_id: install_type}
+    links: List[Tuple[str, str]] = field(default_factory=list)  # [(from_id, to_id)]
+    
+    # Resource tracking
+    last_extraction_check: float = 0.0
+    total_extracted: Dict[str, int] = field(default_factory=dict)  # {resource_id: quantity}
+
+
+@dataclass
+class PIStructure(Component):
+    """
+    Individual planetary installation (extractor, processor, launchpad, etc.)
+    """
+    structure_type: str = "extractor"  # extractor, basic_processor, advanced_processor, launchpad, storage
+    colony_id: str = ""
+    
+    # Position on planet (normalized coordinates 0.0-1.0)
+    planet_x: float = 0.0
+    planet_y: float = 0.0
+    
+    # Resources
+    cpu_usage: float = 0.0
+    powergrid_usage: float = 0.0
+    
+    # Storage
+    storage: Dict[str, int] = field(default_factory=dict)  # {item_id: quantity}
+    storage_capacity: float = 500.0  # m3
+    
+    # Extractor-specific
+    extraction_resource: str = ""  # Resource being extracted
+    extraction_rate: float = 0.0  # Units per hour
+    extraction_cycle_time: float = 3600.0  # Seconds per cycle (1 hour default)
+    extraction_heads: int = 0  # Number of extraction heads
+    extraction_area_radius: float = 0.0
+    
+    # Processor-specific
+    recipe_id: str = ""  # Recipe being processed
+    processing_cycle_time: float = 600.0  # Seconds per cycle (10 minutes default)
+    current_cycle_progress: float = 0.0
+    
+    # Status
+    is_active: bool = False
+    last_update: float = 0.0
+
+
+@dataclass
+class PIResource(Component):
+    """
+    Planetary resource node or deposit
+    """
+    resource_id: str = "micro_organisms"
+    planet_id: str = ""
+    
+    # Resource location (normalized coordinates)
+    planet_x: float = 0.0
+    planet_y: float = 0.0
+    
+    # Resource data
+    concentration: float = 1.0  # 0.0 to 1.0 (100%)
+    quantity_remaining: int = 1000000
+    regeneration_rate: float = 100.0  # Units per hour
+    
+    # Extraction tracking
+    is_being_extracted: bool = False
+    extractor_id: Optional[str] = None
+
+
+@dataclass
+class ExtractorQueue(Component):
+    """
+    Manages the extraction queue for an extractor installation
+    Similar to manufacturing queues
+    """
+    extractor_id: str = ""
+    
+    # Queue management
+    program_start_time: float = 0.0
+    program_duration: float = 86400.0  # Seconds (24 hours default)
+    program_end_time: float = 0.0
+    
+    # Extraction tracking
+    cycles_completed: int = 0
+    total_cycles: int = 0
+    total_extracted: int = 0
+    
+    # Resource tracking
+    resource_id: str = ""
+    extraction_yield_per_cycle: int = 0
