@@ -912,48 +912,45 @@
         }
     },
     "ore_compression": {
+        "id": "ore_compression",
         "name": "Ore Compression",
         "description": "Skill in compressing raw ore for efficient transport. Reduces compression waste by 2% per level.",
-        "group": "Resource Processing",
-        "rank": 3,
+        "category": "Resource Processing",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
         "training_multiplier": 3,
         "max_level": 5,
         "prerequisites": {
             "mining": 3,
             "reprocessing": 2
-        },
-        "bonuses": {
-            "compression_waste_reduction": 0.02
         }
     },
     "moon_mining": {
+        "id": "moon_mining",
         "name": "Moon Mining",
         "description": "Understanding of moon extraction operations. Reduces extraction time by 4% per level.",
-        "group": "Resource Processing",
-        "rank": 4,
+        "category": "Resource Processing",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
         "training_multiplier": 4,
         "max_level": 5,
         "prerequisites": {
             "mining": 4,
             "mining_barge": 3
-        },
-        "bonuses": {
-            "extraction_time_reduction": 0.04
         }
     },
     "moon_ore_processing": {
+        "id": "moon_ore_processing",
         "name": "Moon Ore Processing",
         "description": "Improved refining of moon ores. Increases moon ore reprocessing yield by 2% per level.",
-        "group": "Resource Processing",
-        "rank": 4,
+        "category": "Resource Processing",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
         "training_multiplier": 4,
         "max_level": 5,
         "prerequisites": {
             "reprocessing": 4,
             "reprocessing_efficiency": 3
-        },
-        "bonuses": {
-            "moon_ore_reprocessing_bonus": 0.02
         }
     }
 }
