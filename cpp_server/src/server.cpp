@@ -4,6 +4,9 @@
 #include "systems/combat_system.h"
 #include "systems/ai_system.h"
 #include "systems/targeting_system.h"
+#include "systems/capacitor_system.h"
+#include "systems/shield_recharge_system.h"
+#include "systems/weapon_system.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -29,13 +32,16 @@ Server::~Server() {
 
 void Server::initializeGameWorld() {
     // Initialize game systems in order
+    game_world_->addSystem(std::make_unique<systems::CapacitorSystem>(game_world_.get()));
+    game_world_->addSystem(std::make_unique<systems::ShieldRechargeSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::AISystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::TargetingSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::MovementSystem>(game_world_.get()));
+    game_world_->addSystem(std::make_unique<systems::WeaponSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::CombatSystem>(game_world_.get()));
     
     std::cout << "Game world initialized with " << game_world_->getEntityCount() << " entities" << std::endl;
-    std::cout << "Systems: AI, Targeting, Movement, Combat" << std::endl;
+    std::cout << "Systems: Capacitor, ShieldRecharge, AI, Targeting, Movement, Weapon, Combat" << std::endl;
 }
 
 bool Server::initialize() {
