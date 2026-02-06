@@ -3,11 +3,9 @@
 
 # Detect OS
 ifeq ($(OS),Windows_NT)
-    PYTHON := python
     RM := del /Q
     RMDIR := rmdir /S /Q
 else
-    PYTHON := python3
     RM := rm -f
     RMDIR := rm -rf
 endif
@@ -23,104 +21,52 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}'
 	@echo ""
 
-.PHONY: install
-install: ## Install all dependencies
-	$(PYTHON) -m pip install -r requirements.txt
-
-.PHONY: install-dev
-install-dev: ## Install development dependencies
-	$(PYTHON) -m pip install -r requirements.txt
-	$(PYTHON) -m pip install pylint flake8 pytest black
-
 .PHONY: build
-build: ## Run full build and test
-	$(PYTHON) build_and_test.py
+build: ## Build both client and server (Release)
+	./build.sh Release
 
-.PHONY: quick
-quick: ## Run quick build (fast tests only)
-	$(PYTHON) build_and_test.py --quick
+.PHONY: build-debug
+build-debug: ## Build both client and server (Debug)
+	./build.sh Debug
 
-.PHONY: test
-test: ## Run all tests
-	$(PYTHON) automated_tests.py
+.PHONY: build-client
+build-client: ## Build C++ client only
+	@mkdir -p cpp_client/build
+	cd cpp_client/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_LIBS=ON && cmake --build . --config Release
 
-.PHONY: test-quick
-test-quick: ## Run quick tests
-	$(PYTHON) automated_tests.py --quick
-
-.PHONY: test-ui
-test-ui: ## Run UI tests
-	$(PYTHON) test_eve_ui_components.py
-
-.PHONY: lint
-lint: ## Run code quality checks
-	$(PYTHON) build_and_test.py --lint
-
-.PHONY: format
-format: ## Format code with black
-	$(PYTHON) -m black engine client server *.py
+.PHONY: build-server
+build-server: ## Build C++ server only
+	@mkdir -p cpp_server/build
+	cd cpp_server/build && cmake .. -DCMAKE_BUILD_TYPE=Release && cmake --build . --config Release
 
 .PHONY: clean
-clean: ## Clean build artifacts and cache
+clean: ## Clean all build artifacts
+	$(RMDIR) build 2>/dev/null || true
+	$(RMDIR) cpp_client/build 2>/dev/null || true
+	$(RMDIR) cpp_client/build_vs 2>/dev/null || true
+	$(RMDIR) cpp_server/build 2>/dev/null || true
+	$(RMDIR) build_vs 2>/dev/null || true
 	find . -type d -name "__pycache__" -exec $(RMDIR) {} + 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
-	find . -type f -name "*.pyo" -delete 2>/dev/null || true
-	find . -type d -name "*.egg-info" -exec $(RMDIR) {} + 2>/dev/null || true
-	$(RM) .coverage 2>/dev/null || true
-
-.PHONY: server
-server: ## Start the game server
-	$(PYTHON) server/server.py
-
-.PHONY: client
-client: ## Start the text client
-	$(PYTHON) client/client.py "TestPilot"
-
-.PHONY: gui
-gui: ## Start the 2D GUI client
-	$(PYTHON) client/gui_client.py "TestPilot"
-
-.PHONY: client-3d
-client-3d: ## Start the 3D client
-	$(PYTHON) client_3d.py "TestPilot"
-
-.PHONY: demo
-demo: ## Run interactive demo
-	$(PYTHON) interactive_demo.py
-
-.PHONY: gui-demo
-gui-demo: ## Run GUI demo
-	$(PYTHON) gui_demo.py
 
 .PHONY: check-deps
-check-deps: ## Check if all dependencies are installed
-	@echo "Checking dependencies..."
-	@$(PYTHON) -c "import sys; print('Python:', sys.version)" || echo "Python not found!"
-	@$(PYTHON) -c "import pygame; print('Pygame:', pygame.version.ver)" || echo "Pygame not installed"
-	@$(PYTHON) -c "import panda3d; print('Panda3D: OK')" || echo "Panda3D not installed"
-
-.PHONY: venv
-venv: ## Create virtual environment
-	$(PYTHON) -m venv venv
-	@echo "Virtual environment created. Activate with:"
-	@echo "  Windows: venv\\Scripts\\activate"
-	@echo "  Linux/Mac: source venv/bin/activate"
+check-deps: ## Check if build dependencies are installed
+	@echo "Checking build dependencies..."
+	@command -v cmake >/dev/null 2>&1 && echo "  ✓ CMake" || echo "  ✗ CMake not found"
+	@command -v g++ >/dev/null 2>&1 && echo "  ✓ g++" || (command -v clang++ >/dev/null 2>&1 && echo "  ✓ clang++" || echo "  ✗ No C++ compiler found")
+	@pkg-config --exists glfw3 2>/dev/null && echo "  ✓ GLFW3" || echo "  ? GLFW3 (may be available via vcpkg)"
+	@pkg-config --exists glew 2>/dev/null && echo "  ✓ GLEW" || echo "  ? GLEW (may be available via vcpkg)"
+	@pkg-config --exists glm 2>/dev/null && echo "  ✓ GLM" || echo "  ? GLM (may be available via vcpkg)"
 
 .PHONY: docs
-docs: ## Generate documentation
-	@echo "Documentation is in docs/ folder"
-	@echo "Main docs:"
-	@ls -1 docs/*.md 2>/dev/null || dir docs\\*.md
-
-.PHONY: git-pull
-git-pull: ## Pull latest changes and rebuild
-	git pull
-	$(PYTHON) build_and_test.py
-
-.PHONY: pre-commit
-pre-commit: ## Run pre-commit checks
-	$(PYTHON) build_and_test.py --quick
-	@echo "Pre-commit checks complete!"
+docs: ## Show documentation location
+	@echo "Documentation is in docs/ folder:"
+	@echo ""
+	@echo "  docs/guides/       - Build & setup guides"
+	@echo "  docs/cpp_client/   - C++ client documentation"
+	@echo "  docs/sessions/     - Development session notes"
+	@echo ""
+	@ls -1 docs/*.md 2>/dev/null || true
 
 .PHONY: all
-all: clean install build ## Clean, install, and build everything
+all: clean build ## Clean and build everything
