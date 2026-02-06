@@ -105,12 +105,39 @@ class CPPClientBuilder:
         
         # Check compiler
         if self.is_windows:
-            if not shutil.which("cl") and not shutil.which("g++"):
+            # Check for Visual Studio installations
+            vs_paths = [
+                r"C:\Program Files\Microsoft Visual Studio\2022",
+                r"C:\Program Files (x86)\Microsoft Visual Studio\2019",
+                r"C:\Program Files (x86)\Microsoft Visual Studio\2017",
+            ]
+            vs_found = False
+            vs_version = None
+            
+            for vs_path in vs_paths:
+                if Path(vs_path).exists():
+                    vs_found = True
+                    if "2022" in vs_path:
+                        vs_version = "2022"
+                    elif "2019" in vs_path:
+                        vs_version = "2019"
+                    elif "2017" in vs_path:
+                        vs_version = "2017"
+                    break
+            
+            # Also check if cl.exe or g++ is available
+            if not vs_found and not shutil.which("cl") and not shutil.which("g++"):
                 self.print_error("No C++ compiler found")
-                print("Install Visual Studio or MinGW")
+                print("Install Visual Studio 2017/2019/2022 with 'Desktop development with C++' workload")
+                print("Or install MinGW for GCC compiler")
                 return False
-            compiler = "MSVC" if shutil.which("cl") else "MinGW"
-            self.print_success(f"{compiler} compiler found")
+            
+            if vs_found:
+                self.print_success(f"Visual Studio {vs_version} found")
+            elif shutil.which("cl"):
+                self.print_success("MSVC compiler found")
+            else:
+                self.print_success("MinGW compiler found")
         else:
             if not shutil.which("g++") and not shutil.which("clang++"):
                 self.print_error("No C++ compiler found")
@@ -175,8 +202,26 @@ class CPPClientBuilder:
         if self.args.generator:
             cmd.extend(["-G", self.args.generator])
         elif self.is_windows and not self.args.mingw:
-            # Use Visual Studio on Windows by default
-            cmd.extend(["-G", "Visual Studio 17 2022", "-A", "x64"])
+            # Try to detect Visual Studio version and use appropriate generator
+            vs_generators = [
+                ("Visual Studio 17 2022", "2022"),
+                ("Visual Studio 16 2019", "2019"),
+                ("Visual Studio 15 2017", "2017"),
+            ]
+            
+            generator_found = False
+            for gen_name, vs_year in vs_generators:
+                vs_path = f"C:\\Program Files\\Microsoft Visual Studio\\{vs_year}" if vs_year == "2022" else f"C:\\Program Files (x86)\\Microsoft Visual Studio\\{vs_year}"
+                if Path(vs_path).exists():
+                    cmd.extend(["-G", gen_name, "-A", "x64"])
+                    self.print_success(f"Using {gen_name} generator")
+                    generator_found = True
+                    break
+            
+            if not generator_found:
+                # Default to VS 2022 and let CMake figure it out
+                cmd.extend(["-G", "Visual Studio 17 2022", "-A", "x64"])
+                self.print_warning("Visual Studio not found in standard paths, trying VS 2022 generator anyway")
         
         # Options
         cmd.append("-DUSE_SYSTEM_LIBS=ON")
@@ -193,6 +238,11 @@ class CPPClientBuilder:
             self.print_success(f"CMake configured ({build_type})")
         else:
             self.print_error("CMake configuration failed")
+            if self.is_windows:
+                print("\nTroubleshooting:")
+                print("  1. Ensure Visual Studio is installed with 'Desktop development with C++' workload")
+                print("  2. Try running from 'Developer Command Prompt for VS'")
+                print("  3. Install dependencies: vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows openal-soft:x64-windows")
         
         return success
     
