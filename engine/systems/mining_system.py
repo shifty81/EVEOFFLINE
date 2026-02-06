@@ -180,6 +180,10 @@ class MiningSystem(System):
             # Astrogeology: 5% per level
             astro_level = skills.skills.get("astrogeology", 0)
             multiplier *= (1.0 + astro_level * 0.05)
+            
+            # Exhumers skill: 3% per level
+            exhumer_level = skills.skills.get("exhumers", 0)
+            multiplier *= (1.0 + exhumer_level * 0.03)
         
         # Module bonuses (Mining Laser Upgrades)
         fitting = entity.get_component(Fitting)

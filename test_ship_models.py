@@ -77,7 +77,11 @@ def test_ship_generator():
         # Mining Barges
         "Procurer",
         "Retriever",
-        "Covetor"
+        "Covetor",
+        # Exhumers
+        "Skiff",
+        "Mackinaw",
+        "Hulk"
     ]
     
     # Test factions

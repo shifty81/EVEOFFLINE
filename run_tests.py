@@ -65,6 +65,9 @@ def main():
         ("tests/test_market.py", "Market System Tests"),
         ("tests/test_corporation.py", "Corporation System Tests"),
         ("tests/test_social.py", "Social System Tests"),
+        ("test_mining_system.py", "Mining System Tests"),
+        ("test_ice_mining.py", "Ice Mining Tests"),
+        ("test_gas_harvesting.py", "Gas Harvesting Tests"),
     ]
     
     results = []
