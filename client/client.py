@@ -7,7 +7,10 @@ import asyncio
 import time
 import sys
 import os
+import logging
 from typing import Optional, Dict
+from pathlib import Path
+from datetime import datetime
 
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -22,6 +25,43 @@ spec = importlib.util.spec_from_file_location("client_config",
 client_config_module = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(client_config_module)
 ClientConfig = client_config_module.ClientConfig
+
+
+def setup_client_logging(log_dir: str = "logs", log_level: str = "INFO") -> logging.Logger:
+    """
+    Set up file-based logging for the text client.
+    Logs are written to logs/eve_text_client.log so errors can be
+    reviewed even if the console window closes immediately.
+    """
+    logger = logging.getLogger("eve_text_client")
+    logger.setLevel(getattr(logging, log_level.upper()))
+    logger.handlers.clear()
+
+    # Console handler
+    console_handler = logging.StreamHandler(sys.stdout)
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(levelname)s - %(message)s', datefmt='%H:%M:%S'))
+    logger.addHandler(console_handler)
+
+    # File handler
+    log_path = Path(log_dir)
+    log_path.mkdir(exist_ok=True)
+    log_file = log_path / "eve_text_client.log"
+
+    file_handler = logging.FileHandler(log_file, mode='w', encoding='utf-8')
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s',
+        datefmt='%Y-%m-%d %H:%M:%S'))
+    logger.addHandler(file_handler)
+
+    logger.info(f"Logging to file: {log_file}")
+    return logger
+
+
+# Module-level logger, initialized in __main__ or by callers
+logger = logging.getLogger("eve_text_client")
 
 
 class GameClient:
@@ -49,7 +89,7 @@ class GameClient:
         if port is None:
             port = self.config.get_port()
         
-        print(f"[Client] Connecting to {host}:{port}...")
+        logger.info(f"Connecting to {host}:{port}...")
         
         try:
             # Use connection timeout from config
@@ -78,19 +118,19 @@ class GameClient:
             message = NetworkMessage.from_json(data.decode())
             
             if message.message_type == MessageType.CONNECT_ACK.value:
-                print(f"[Client] Connected! {message.data.get('message')}")
+                logger.info(f"Connected! {message.data.get('message')}")
                 self.running = True
                 self.reconnect_attempts = 0
                 return True
             else:
-                print(f"[Client] Connection failed: Invalid response")
+                logger.warning("Connection failed: Invalid response")
                 return False
                 
         except asyncio.TimeoutError:
-            print(f"[Client] Connection timeout after {timeout}s")
+            logger.error(f"Connection timeout after {timeout}s")
             return False
         except Exception as e:
-            print(f"[Client] Connection error: {e}")
+            logger.error(f"Connection error: {e}", exc_info=True)
             return False
             
     async def disconnect(self):
@@ -104,7 +144,7 @@ class GameClient:
             self.writer.close()
             await self.writer.wait_closed()
         self.running = False
-        print("[Client] Disconnected")
+        logger.info("Disconnected")
         
     async def send_input(self, vx: float, vy: float, vz: float):
         """Send movement input to server"""
@@ -143,7 +183,7 @@ class GameClient:
             try:
                 data = await self.reader.read(buffer_size)
                 if not data:
-                    print("[Client] Connection closed by server")
+                    logger.warning("Connection closed by server")
                     break
                     
                 message = NetworkMessage.from_json(data.decode())
@@ -160,7 +200,7 @@ class GameClient:
                     self.handle_error(message)
                     
             except Exception as e:
-                print(f"[Client] Error receiving: {e}")
+                logger.error(f"Error receiving: {e}", exc_info=True)
                 self.running = False
                 break
         
@@ -168,7 +208,7 @@ class GameClient:
         if self.config.get_auto_reconnect() and self.reconnect_attempts < self.max_reconnect_attempts:
             self.reconnect_attempts += 1
             delay = self.config.get_reconnect_delay()
-            print(f"[Client] Reconnecting in {delay}s (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})...")
+            logger.info(f"Reconnecting in {delay}s (attempt {self.reconnect_attempts}/{self.max_reconnect_attempts})...")
             await asyncio.sleep(delay)
             if await self.connect():
                 # Restart receive loop
@@ -185,25 +225,25 @@ class GameClient:
         """Handle entity spawn"""
         entity_id = message.data['entity_id']
         self.entities[entity_id] = message.data
-        print(f"[Client] Entity spawned: {entity_id}")
+        logger.info(f"Entity spawned: {entity_id}")
         
     def handle_destroy(self, message: NetworkMessage):
         """Handle entity destruction"""
         entity_id = message.data['entity_id']
         if entity_id in self.entities:
             del self.entities[entity_id]
-            print(f"[Client] Entity destroyed: {entity_id}")
+            logger.info(f"Entity destroyed: {entity_id}")
             
     def handle_chat(self, message: NetworkMessage):
         """Handle chat message"""
         sender = message.data.get('sender', 'Unknown')
         text = message.data.get('message', '')
-        print(f"[Chat] {sender}: {text}")
+        logger.info(f"[Chat] {sender}: {text}")
     
     def handle_error(self, message: NetworkMessage):
         """Handle error message from server"""
         error = message.data.get('error', 'Unknown error')
-        print(f"[Error] Server error: {error}")
+        logger.error(f"Server error: {error}")
         
     def render(self):
         """Simple text-based rendering for now"""
@@ -237,7 +277,7 @@ class GameClient:
                     self.game_loop()
                 )
             except KeyboardInterrupt:
-                print("\n[Client] Shutting down...")
+                logger.info("Shutting down...")
             finally:
                 await self.disconnect()
 
@@ -261,31 +301,43 @@ if __name__ == "__main__":
     parser.add_argument('--generate-name', action='store_true', help='Generate random character name')
     parser.add_argument('--name-style', choices=['random', 'male', 'female'], default='random',
                        help='Name generation style')
+    parser.add_argument('--debug', action='store_true', help='Enable debug logging')
+    parser.add_argument('--log-dir', default='logs', help='Log directory (default: logs)')
     args = parser.parse_args()
     
-    # Load configuration
-    config = ClientConfig(args.config) if args.config else ClientConfig()
+    # Setup file-based logging
+    log_level = "DEBUG" if args.debug else "INFO"
+    logger = setup_client_logging(log_dir=args.log_dir, log_level=log_level)
     
-    # Generate or use character name
-    if args.generate_name or (not args.character_name and config.get_auto_generate_name()):
-        style = args.name_style if args.name_style != 'random' else None
-        character_name = NameGenerator.generate_character_name(style)
-        print(f"[Client] Generated character name: {character_name}")
-    else:
-        character_name = args.character_name or "TestPilot"
-    
-    # Generate player ID
-    player_id = str(uuid.uuid4())
-    
-    # Get connection settings
-    host = args.host or config.get_host()
-    port = args.port or config.get_port()
-    
-    print(f"[Client] Starting EVE OFFLINE Text Client")
-    print(f"[Client] Character: {character_name}")
-    print(f"[Client] Player ID: {player_id}")
-    print(f"[Client] Server: {host}:{port}")
-    print()
-    
-    # Run client
-    asyncio.run(run_client(player_id, character_name, host, port, config))
+    try:
+        # Load configuration
+        config = ClientConfig(args.config) if args.config else ClientConfig()
+        
+        # Generate or use character name
+        if args.generate_name or (not args.character_name and config.get_auto_generate_name()):
+            style = args.name_style if args.name_style != 'random' else None
+            character_name = NameGenerator.generate_character_name(style)
+            logger.info(f"Generated character name: {character_name}")
+        else:
+            character_name = args.character_name or "TestPilot"
+        
+        # Generate player ID
+        player_id = str(uuid.uuid4())
+        
+        # Get connection settings
+        host = args.host or config.get_host()
+        port = args.port or config.get_port()
+        
+        logger.info("Starting EVE OFFLINE Text Client")
+        logger.info(f"Character: {character_name}")
+        logger.info(f"Player ID: {player_id}")
+        logger.info(f"Server: {host}:{port}")
+        
+        # Run client
+        asyncio.run(run_client(player_id, character_name, host, port, config))
+    except KeyboardInterrupt:
+        logger.info("Interrupted by user")
+    except Exception as e:
+        logger.error(f"Fatal error: {e}", exc_info=True)
+        logger.error(f"See {args.log_dir}/eve_text_client.log for details.")
+        sys.exit(1)

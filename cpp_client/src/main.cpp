@@ -1,8 +1,14 @@
 #include "core/application.h"
+#include "core/file_logger.h"
 #include <iostream>
 #include <cstdlib>
 
 int main(int argc, char** argv) {
+    // Initialize file logging so all output is captured to logs/eve_client.log.
+    // This ensures error messages are preserved even if the console window
+    // closes immediately on crash or exit.
+    eve::FileLogger::init();
+
     try {
         // Parse command line arguments
         std::string characterName = "Player";
@@ -20,10 +26,13 @@ int main(int argc, char** argv) {
         app.run();
 
         std::cout << "Client shutting down gracefully." << std::endl;
+        eve::FileLogger::shutdown();
         return EXIT_SUCCESS;
     }
     catch (const std::exception& e) {
         std::cerr << "Fatal error: " << e.what() << std::endl;
+        std::cerr << "See logs/eve_client.log for details." << std::endl;
+        eve::FileLogger::shutdown();
         return EXIT_FAILURE;
     }
 }
