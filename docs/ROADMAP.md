@@ -554,8 +554,8 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 ### 📋 Phase 7: Advanced Systems (IN PROGRESS) 🚀
 **Timeline**: Q4 2026+  
-**Priority**: High (Mining system complete)
-**Status**: Mining & Resource Gathering complete, other systems planned
+**Priority**: High
+**Status**: Mining, Ice Mining, and Planetary Interaction complete. Research & Invention, Wormholes, and Advanced Fleet Mechanics remain.
 
 #### ✅ Mining & Resource Gathering (COMPLETE)
 - [x] **Mining Laser Operations** - Cycle-based ore extraction
@@ -606,38 +606,54 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Server-side module activation
 - [ ] Data-driven ship stats from JSON files
 
-#### Other Advanced Systems (Planned)
-- [ ] Asteroid mining mechanics (basic framework exists)
-- [ ] Ore processing/refining
-- [x] Moon mining (group content)
-- [x] Gas harvesting
-- [ ] Mining crystals and upgrades
+#### ✅ Resource Gathering Systems (COMPLETE)
+- [x] **Asteroid mining** - Mining lasers, 15 ore types, mining barges
+- [x] **Ore processing/refining** - Reprocessing system with skills
+- [x] **Ice mining** - Ice harvesters, 12 ice types, isotope production
+- [x] **Moon mining** - Group content for T2 materials
+- [x] **Gas harvesting** - Cloud scooping for reactions
+- [x] **Ore compression** - Reduce ore volume for transport
 
-#### Planetary Interaction
-- [ ] Planet scanning
-- [ ] Colony management
-- [ ] Resource extraction
-- [ ] Manufacturing chains
-- [ ] Customs offices
+#### Future Mining Enhancements (Optional)
+- [ ] Mining crystals (improved yield)
+- [ ] Mining missions (framework exists)
 
-#### Research & Invention
-- [ ] Tech II blueprint invention
-- [ ] Datacores and research agents
-- [ ] Ancient relics (reverse engineering)
-- [ ] Tech III component invention
+#### ✅ Planetary Interaction (COMPLETE)
+- [x] **Planet scanning** - 8 planet types with resource deposits
+- [x] **Colony management** - Command center with CPU/PG management
+- [x] **Resource extraction** - ECU with 5 extraction heads
+- [x] **Manufacturing chains** - Basic & Advanced Industrial Facilities
+- [x] **Customs offices** - Launchpad for import/export
+- [x] **Production Chains** - 16 T0 → 15 T1 → 21 T2 → 9 T3 → 6 T4 materials
+- [x] **13 Tests** - 100% pass rate
+- [x] **Complete Documentation** - PHASE7_PLANETARY_INTERACTION.md
 
-#### Wormhole Space
-- [ ] Wormhole generation
-- [ ] Wormhole effects
-- [ ] Sleeper NPCs
-- [ ] Enhanced exploration sites
+**See [docs/development/PHASE7_PLANETARY_INTERACTION.md](docs/development/PHASE7_PLANETARY_INTERACTION.md) for complete PI documentation!**
 
-#### Advanced Fleet Mechanics
-- [ ] Fleet formations
-- [ ] Advanced fleet commands
-- [ ] Fleet bookmarks
-- [ ] Coordinate warps
-- [ ] Capital ship fleet doctrines
+#### Research & Invention (Planned - Next Priority)
+- [ ] **Tech II Blueprint Invention** - Invent T2 BPCs from T1 BPOs
+- [ ] **Datacores** - Research points and datacore production
+- [ ] **Research Agents** - Passive datacore generation
+- [ ] **Invention Components** - Decryptors for improving results
+- [ ] **Ancient Relics** - Reverse engineering for T2 components
+- [ ] **Invention Skills** - Science skills and specializations
+- [ ] **Tech III Component Invention** - Advanced invention mechanics
+
+#### Wormhole Space (Planned)
+- [ ] **Wormhole Generation** - Dynamic wormhole spawning
+- [ ] **Wormhole Effects** - System-wide bonuses/penalties
+- [ ] **Mass & Stability** - Wormhole mechanics and collapse
+- [ ] **Sleeper NPCs** - Advanced AI enemies with unique behaviors
+- [ ] **Enhanced Exploration Sites** - Sleeper data/relic sites
+- [ ] **Wormhole Classes** - C1-C6 difficulty tiers
+
+#### Advanced Fleet Mechanics (Planned)
+- [ ] **Fleet Formations** - Wing and squad organization
+- [ ] **Advanced Fleet Commands** - Warp to, anchor, keep at range
+- [ ] **Fleet Bookmarks** - Shared tactical bookmarks
+- [ ] **Coordinate Warps** - Fleet-wide synchronized warps
+- [ ] **Fleet Bonuses** - Leadership bonuses and boosts
+- [ ] **Capital Ship Fleet Doctrines** - Large ship coordination
 
 **Estimated Effort**: 12-16 weeks  
 **Blockers**: Phase 4-6 completion
