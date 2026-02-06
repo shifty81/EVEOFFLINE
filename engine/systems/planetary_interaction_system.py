@@ -47,7 +47,7 @@ class PlanetaryInteractionSystem(System):
             
             # Check if extraction program is still running
             current_time = self.world.game_time if hasattr(self.world, 'game_time') else 0
-            if current_time >= queue.program_end_time:
+            if current_time > queue.program_end_time:
                 structure.is_active = False
                 continue
             
@@ -111,7 +111,7 @@ class PlanetaryInteractionSystem(System):
         colony = PlanetaryColony(
             planet_id=planet_id,
             planet_type=planet_type,
-            owner_id=player.character_id
+            owner_id=player.player_id
         )
         colony_entity.add_component(colony)
         
@@ -169,7 +169,7 @@ class PlanetaryInteractionSystem(System):
         
         # Check CPU/PG availability
         cpu_required = 400.0  # Standard extractor CPU
-        pg_required = 2100.0  # Standard extractor PG
+        pg_required = 1100.0  # Standard extractor PG (reduced from 2100)
         
         if colony.cpu_used + cpu_required > colony.cpu_max:
             return None
@@ -408,7 +408,7 @@ class PlanetaryInteractionSystem(System):
         if not colony:
             return None
         
-        cpu_required = 3600.0
+        cpu_required = 510.0  # Launchpad CPU cost
         pg_required = 700.0
         
         if colony.cpu_used + cpu_required > colony.cpu_max:

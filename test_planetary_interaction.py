@@ -25,7 +25,7 @@ class TestPlanetaryInteractionSystem(unittest.TestCase):
         # Create test player
         self.player = self.world.create_entity()
         self.player.add_component(Player(
-            character_id="test_player_1",
+            player_id="test_player_1",
             character_name="Test Pilot"
         ))
         self.player.add_component(Inventory())
@@ -112,7 +112,7 @@ class TestPlanetaryInteractionSystem(unittest.TestCase):
         # Verify colony resources updated
         colony = colony_entity.get_component(PlanetaryColony)
         self.assertEqual(colony.cpu_used, 400.0)
-        self.assertEqual(colony.powergrid_used, 2100.0)
+        self.assertEqual(colony.powergrid_used, 1100.0)
         self.assertIn(extractor_id, colony.installations)
     
     def test_extractor_cpu_limit(self):
@@ -303,13 +303,13 @@ class TestPlanetaryInteractionSystem(unittest.TestCase):
         launchpad = launchpad_entity.get_component(PIStructure)
         
         self.assertEqual(launchpad.structure_type, "launchpad")
-        self.assertEqual(launchpad.cpu_usage, 3600.0)
+        self.assertEqual(launchpad.cpu_usage, 510.0)
         self.assertEqual(launchpad.powergrid_usage, 700.0)
         self.assertTrue(launchpad.is_active)
         
         # Verify colony resources
         colony = colony_entity.get_component(PlanetaryColony)
-        self.assertEqual(colony.cpu_used, 3600.0)
+        self.assertEqual(colony.cpu_used, 510.0)
         self.assertEqual(colony.powergrid_used, 700.0)
     
     def test_transfer_materials(self):
