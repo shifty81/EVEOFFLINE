@@ -3,45 +3,111 @@
 ## Overview
 This document describes the C++ client dependencies and how they are configured for the EVE Offline project.
 
-## Dependency Structure
+## Dependency Structure (Updated for vcpkg)
 
-### 1. GLAD (OpenGL Loader)
-**Status**: ✅ Configured (Bundled)
+### Windows (Visual Studio 2022) - vcpkg Installation
+
+The recommended way to install dependencies on Windows is using vcpkg:
+
+```cmd
+# Install vcpkg (if not already installed)
+cd C:\
+git clone https://github.com/microsoft/vcpkg.git
+cd vcpkg
+.\bootstrap-vcpkg.bat
+
+# Install all required dependencies at once
+.\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows imgui[glfw-binding,opengl3-binding]:x64-windows
+
+# Optional: Install audio support
+.\vcpkg install openal-soft:x64-windows
+```
+
+Then build using:
+```cmd
+cd C:\path\to\EVEOFFLINE
+.\build_vs.bat
+```
+
+The build script will automatically detect vcpkg at `C:\vcpkg` and use it.
+
+### 1. ImGui (UI Library)
+**Status**: ✅ Available via vcpkg
+- **Installation**: `vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows`
+- **CMake**: Uses `find_package(imgui CONFIG)` when USE_SYSTEM_LIBS=ON
+- **Fallback**: Can use bundled version if `external/imgui/` directory exists (not included in repo)
+
+**Why vcpkg**: ImGui with GLFW and OpenGL3 backends is complex to set up manually. vcpkg handles all the integration.
+
+### 2. GLEW (OpenGL Extension Wrangler)
+**Status**: ✅ Available via vcpkg
+- **Installation**: `vcpkg install glew:x64-windows`
+- **CMake**: Uses `find_package(GLEW)` when USE_SYSTEM_LIBS=ON
+- **Alternative**: GLAD (bundled) can be used if GLEW is not available
+
+**Why preferred**: When GLEW is available from vcpkg, GLAD is not needed, simplifying the build.
+
+### 3. GLAD (OpenGL Loader) - Optional
+**Status**: ⚠️ Fallback option (not included in repo)
+- **Used when**: GLEW is not available
 - **Location**: `external/glad/src/glad.c`, `external/glad/include/glad/`
-- **Files**:
-  - `glad.c` (7.2K) - OpenGL function pointers loader implementation
-  - `glad.h` (9.8K) - OpenGL core headers (GL 4.6)
-  - `khrplatform.h` (3.3K) - Khronos platform definitions
+- **Note**: The external/ directory is excluded from git, so GLAD must be installed separately if needed
 
-**Why bundled**: OpenGL loader must be compiled per-platform. Bundling provides compatibility across Linux, macOS, and Windows.
+**Recommendation**: Use GLEW from vcpkg instead of GLAD.
 
-### 2. nlohmann/json
-**Status**: ✅ Configured (Bundled, header-only)
-- **Location**: `external/json/include/json.hpp` (887K)
+### 4. nlohmann/json
+**Status**: ✅ Available via vcpkg
+- **Installation**: `vcpkg install nlohmann-json:x64-windows`
 - **Type**: Header-only library
-- **Version**: 3.11.2
+- **CMake**: Uses `find_package(nlohmann_json)` when available
 
-**Why bundled**: Header-only libraries don't need compilation and bundling ensures version consistency.
-
-### 3. GLFW (Window/Input Library)
-**Status**: ✅ Available (System library)
-- **Installed via**: apt (pre-installed)
+### 5. GLFW (Window/Input Library)
+**Status**: ✅ Available via vcpkg
+- **Installation**: `vcpkg install glfw3:x64-windows`
 - **Version**: 3.3+
-- **Fallback**: Can use bundled version if `external/glfw` directory exists
+- **CMake**: Uses `find_package(glfw3 3.3 REQUIRED)`
 
-### 4. GLM (Math Library)
-**Status**: ✅ Available (System library)
-- **Installed via**: apt (pre-installed)
+### 6. GLM (Math Library)
+**Status**: ✅ Available via vcpkg
+- **Installation**: `vcpkg install glm:x64-windows`
 - **Type**: Header-only library
-- **Fallback**: Can use bundled version via `external/glm`
+- **CMake**: Uses `find_package(glm REQUIRED)`
 
-### 5. OpenGL
+### 7. STB (Image Loading)
+**Status**: ⚠️ Optional (not included in repo)
+- **Location**: `external/stb/stb_image.h`
+- **Note**: The external/ directory is excluded from git
+- **Impact**: Texture loading may not work if missing
+- **Workaround**: Create `cpp_client/external/stb/` and download stb_image.h from https://github.com/nothings/stb
+
+### 8. OpenGL
 **Status**: ✅ Available (System library)
-- **Installed via**: libgl1-mesa-dev
+- **Windows**: Provided by graphics drivers
 
 ## CMake Configuration
 
-### Default Setup (Recommended)
+### Windows with vcpkg (Recommended)
+```cmd
+cd cpp_client
+mkdir build_vs
+cd build_vs
+cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake
+cmake --build . --config Release
+```
+
+Or use the automated script:
+```cmd
+.\build_vs.bat
+```
+
+### Linux (Using System Libraries)
+```bash
+cd cpp_client
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_LIBS=ON ..
+make -j$(nproc)
+```
 ```bash
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_LIBS=ON ..

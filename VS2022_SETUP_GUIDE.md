@@ -50,8 +50,8 @@ cd vcpkg
 # Add vcpkg to your PATH (optional but convenient)
 # Or note the location for later use
 
-# Install required packages
-.\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
+# Install required packages (all in one command)
+.\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows imgui[glfw-binding,opengl3-binding]:x64-windows
 
 # Optional: Install audio support
 .\vcpkg install openal-soft:x64-windows
@@ -62,7 +62,7 @@ cd vcpkg
 If you want a standalone executable with no external DLL dependencies:
 
 ```cmd
-.\vcpkg install glfw3:x64-windows-static glm:x64-windows-static glew:x64-windows-static nlohmann-json:x64-windows-static openal-soft:x64-windows-static
+.\vcpkg install glfw3:x64-windows-static glm:x64-windows-static glew:x64-windows-static nlohmann-json:x64-windows-static imgui[glfw-binding,opengl3-binding]:x64-windows-static openal-soft:x64-windows-static
 ```
 
 ### 4. Build with Visual Studio 2022
