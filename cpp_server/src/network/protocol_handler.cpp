@@ -39,15 +39,20 @@ std::string ProtocolHandler::messageTypeToString(MessageType type) {
 
 bool ProtocolHandler::parseMessage(const std::string& json, MessageType& type, std::string& data) {
     // Simple JSON parsing (in production, use a library like nlohmann/json or rapidjson)
-    // This is a simplified version compatible with the Python protocol
+    // This is a simplified version compatible with both the Python and C++ client protocols
     
-    // Find message_type field
+    // Find message type field – accept both "message_type" and "type"
     size_t type_pos = json.find("\"message_type\":");
+    size_t key_len = 15;  // length of "message_type":
+    if (type_pos == std::string::npos) {
+        type_pos = json.find("\"type\":");
+        key_len = 7;  // length of "type":
+    }
     if (type_pos == std::string::npos) {
         return false;
     }
     
-    size_t type_start = json.find("\"", type_pos + 15);
+    size_t type_start = json.find("\"", type_pos + key_len);
     size_t type_end = json.find("\"", type_start + 1);
     if (type_start == std::string::npos || type_end == std::string::npos) {
         return false;

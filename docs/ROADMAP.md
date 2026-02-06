@@ -1,7 +1,7 @@
 # EVE OFFLINE - Project Roadmap
 
-**Last Updated**: February 3, 2026  
-**Version**: 1.2
+**Last Updated**: February 6, 2026  
+**Version**: 1.4
 
 ---
 
@@ -592,6 +592,20 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Ore compression
 - [ ] Mining missions (framework exists)
 
+#### C++ Server–Client Integration (✅ IN PROGRESS)
+- [x] **Game Session Manager** - Bridges TCP networking to ECS world
+- [x] **Client Connect Handling** - Player entity spawning on connect
+- [x] **Connect Ack Protocol** - Returns player_entity_id to client
+- [x] **State Broadcast** - Sends entity positions/velocities/health each tick
+- [x] **Spawn Notifications** - Sends spawn_entity to newly connected clients
+- [x] **Input Processing** - Handles input_move to update player velocity
+- [x] **Disconnect Cleanup** - Removes player entity, notifies other clients
+- [x] **NPC Demo Entities** - 3 hostile NPCs spawned on server startup
+- [x] **Chat Broadcasting** - Relays chat messages to all connected clients
+- [ ] Server-side target locking protocol
+- [ ] Server-side module activation
+- [ ] Data-driven ship stats from JSON files
+
 #### Other Advanced Systems (Planned)
 - [ ] Asteroid mining mechanics (basic framework exists)
 - [ ] Ore processing/refining
@@ -743,6 +757,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - ✅ **Audio System** - Sound effects and music with 3D positioning
 - ✅ **Tech II Cruisers** - HAC, HIC, Recon, Logistics (20 ships)
 - ✅ **Phase 7 Mining System** - Complete mining & resource gathering with barges
+- ✅ **C++ Server Game Session** - Client connect/disconnect, entity spawning, state broadcast
 
 ### Phase 7 Goals (IN PROGRESS)
 - [x] **Mining & Resource Gathering** - Core system complete ✅
@@ -755,6 +770,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Gas harvesting system** - 9 gas types, harvester modules, skill bonuses ✅
 - [x] **Ore compression** - 15 ore + 12 ice types, batch compression, skill bonuses ✅
 - [x] **Moon mining** - 10 moon ore types, refinery extraction, belt fracturing ✅
+- [x] **C++ Server Game Session** - Client connect, state broadcast, NPC spawning ✅
 - [ ] Other Phase 7 systems (PI, R&D, WH space, etc.)
 
 ---
@@ -797,6 +813,16 @@ Have questions about the roadmap? Want to suggest features?
 
 ## Changelog
 
+### Version 1.4 (February 2026)
+- C++ Server Game Session Manager implemented
+- Server now processes client connect/disconnect messages
+- Player entity spawning with Rifter-class frigate stats
+- State broadcast: entity positions, velocities, health sent each tick
+- NPC demo entities spawned on server startup (Serpentis, Guristas, Blood Raiders)
+- Chat message relay to all connected clients
+- Protocol compatibility with C++ OpenGL client (connect_ack, spawn_entity, state_update, destroy_entity)
+- Server fully builds and runs on Linux (CMake)
+
 ### Version 1.3 (February 2026)
 - Phase 5 Polish completed: Asset Pipeline, PBR Materials, Audio System
 - Added Asset Loader for external 3D models (.obj, .gltf, .fbx)
@@ -834,7 +860,7 @@ Have questions about the roadmap? Want to suggest features?
 
 ---
 
-**Last Updated**: February 3, 2026  
+**Last Updated**: February 6, 2026  
 **Next Review**: April 2026
 
 *This roadmap is a living document and will be updated as the project evolves.*

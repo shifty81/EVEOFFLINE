@@ -6,6 +6,11 @@
 
 namespace eve {
 
+// Named constants
+static constexpr float NPC_AWARENESS_RANGE = 50000.0f;
+static constexpr float PLAYER_SPAWN_SPACING_X = 50.0f;
+static constexpr float PLAYER_SPAWN_SPACING_Z = 30.0f;
+
 // ---------------------------------------------------------------------------
 // Construction / Initialization
 // ---------------------------------------------------------------------------
@@ -59,23 +64,9 @@ void GameSession::onClientMessage(const network::ClientConnection& client,
     std::string data;
 
     if (!protocol_.parseMessage(raw, type, data)) {
-        // The server protocol handler uses "message_type" as the key, but the
-        // C++ client sends "type".  Try alternative parsing.
-        size_t pos = raw.find("\"type\":");
-        if (pos != std::string::npos) {
-            // Re-map: treat "type" the same as "message_type"
-            std::string patched = raw;
-            patched.replace(pos, 7, "\"message_type\":");
-            if (!protocol_.parseMessage(patched, type, data)) {
-                std::cerr << "[GameSession] Unrecognised message from "
-                          << client.address << std::endl;
-                return;
-            }
-        } else {
-            std::cerr << "[GameSession] Unrecognised message from "
-                      << client.address << std::endl;
-            return;
-        }
+        std::cerr << "[GameSession] Unrecognised message from "
+                  << client.address << std::endl;
+        return;
     }
 
     switch (type) {
@@ -324,7 +315,7 @@ std::string GameSession::buildSpawnEntity(const std::string& entity_id) const {
     }
 
     if (ship) {
-        json << ",\"ship_type\":\"" << ship->ship_name << "\"";
+        json << ",\"ship_type\":\"" << ship->ship_type << "\"";
         json << ",\"ship_name\":\"" << ship->ship_name << "\"";
     }
 
@@ -342,16 +333,17 @@ std::string GameSession::buildSpawnEntity(const std::string& entity_id) const {
 
 std::string GameSession::createPlayerEntity(const std::string& player_id,
                                             const std::string& character_name) {
-    std::string entity_id = "player_" + std::to_string(next_entity_id_++);
+    uint32_t id_num = next_entity_id_++;
+    std::string entity_id = "player_" + std::to_string(id_num);
 
     auto* entity = world_->createEntity(entity_id);
     if (!entity) return entity_id;
 
-    // Position – spawn near origin with slight randomness
+    // Position – spawn near origin with spacing per player
     auto pos = std::make_unique<components::Position>();
-    pos->x = static_cast<float>(next_entity_id_ * 50);
+    pos->x = static_cast<float>(id_num) * PLAYER_SPAWN_SPACING_X;
     pos->y = 0.0f;
-    pos->z = static_cast<float>(next_entity_id_ * 30);
+    pos->z = static_cast<float>(id_num) * PLAYER_SPAWN_SPACING_Z;
     entity->addComponent(std::move(pos));
 
     // Velocity
@@ -445,7 +437,7 @@ void GameSession::spawnNPC(const std::string& id, const std::string& name,
     auto ai = std::make_unique<components::AI>();
     ai->behavior = components::AI::Behavior::Aggressive;
     ai->state    = components::AI::State::Idle;
-    ai->awareness_range = 50000.0f;
+    ai->awareness_range = NPC_AWARENESS_RANGE;
     entity->addComponent(std::move(ai));
 
     auto weapon = std::make_unique<components::Weapon>();
