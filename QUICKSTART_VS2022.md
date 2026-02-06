@@ -1,6 +1,6 @@
-# Quick Start - Visual Studio 2022
+# Quick Start - Visual Studio 2022 / 2019
 
-This is a quick reference for building EVE OFFLINE in Visual Studio 2022. For complete instructions, see [VS2022_SETUP_GUIDE.md](VS2022_SETUP_GUIDE.md).
+This is a quick reference for building EVE OFFLINE in Visual Studio 2022 or 2019. For complete instructions, see [VS2022_SETUP_GUIDE.md](VS2022_SETUP_GUIDE.md).
 
 ## ⚠️ Important: Install Dependencies FIRST
 
@@ -8,10 +8,19 @@ Before running any build scripts, you must install the required dependencies usi
 
 ## 📋 Prerequisites Checklist
 
-- [ ] Visual Studio 2022 installed with "Desktop development with C++" workload
+- [ ] Visual Studio 2019 or 2022 installed with "Desktop development with C++" workload
 - [ ] Git installed
-- [ ] CMake 3.15+ (usually included with VS2022)
+- [ ] CMake 3.15+ (usually included with Visual Studio)
 - [ ] vcpkg installed with dependencies (see below)
+
+## 🔨 Which Build Script to Use?
+
+| Script | What It Does | When to Use |
+|--------|-------------|-------------|
+| **`build_vs.bat`** | Builds the **C++ client only** | **Use this one** for most development |
+| `generate_solution.bat` | Generates solution for **both client + server** | Only if you need to work on the C++ server too |
+
+**Recommended**: Use `build_vs.bat` — it builds and compiles the client in one step.
 
 ## ⚡ Quick Commands
 
@@ -80,13 +89,13 @@ start cpp_client\build_vs\EVEOfflineClient.sln
 
 | Issue | Fix |
 |-------|-----|
+| **"Does not match the generator used previously"** | **Fixed in latest version.** Run `build_vs.bat --clean` to clear old cache, or delete `cpp_client\build_vs\` folder |
 | **"Could NOT find GLEW"** | **Install dependencies FIRST**: See Initial Setup above |
-| "Cannot find imgui.cpp" | Install ImGui: `vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows` |
+| "ImGui not found" | Install ImGui: `vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows` |
 | "Cannot find glfw3.h" | Install dependencies: `vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows imgui[glfw-binding,opengl3-binding]:x64-windows` |
-| "CMake not found" | Add to PATH: `C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin` |
+| "CMake not found" | Add to PATH or use the one bundled with Visual Studio |
 | "Build succeeds but crashes" | Check Working Directory in project properties |
 | "OpenAL not found" | Optional, ignore or install: `vcpkg install openal-soft:x64-windows` |
-| "\Microsoft was unexpected at this time" | Fixed in latest version, run `git pull` |
 
 **For more detailed troubleshooting**: See [TROUBLESHOOTING_VS2022.md](TROUBLESHOOTING_VS2022.md)
 

@@ -80,59 +80,76 @@ if %VCPKG_FOUND% EQU 0 (
     echo.
 )
 
-REM Try VS 2022 first
+REM Always clean CMake cache before configuring to avoid generator mismatch errors
+if exist CMakeCache.txt (
+    echo Cleaning old CMake cache to avoid generator conflicts...
+    del /f CMakeCache.txt
+    if exist CMakeFiles rmdir /s /q CMakeFiles
+    echo.
+)
+
+REM Detect which Visual Studio generator to use
+set "VS_GENERATOR="
+
+REM Check VS 2022 first
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_GENERATOR=Visual Studio 17 2022")
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_GENERATOR=Visual Studio 17 2022")
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_GENERATOR=Visual Studio 17 2022")
+if exist "C:\Program Files\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_GENERATOR=Visual Studio 17 2022")
+
+REM If VS 2022 not found, check VS 2019
+if "%VS_GENERATOR%"=="" (
+    if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_GENERATOR=Visual Studio 16 2019")
+    if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_GENERATOR=Visual Studio 16 2019")
+    if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_GENERATOR=Visual Studio 16 2019")
+    if exist "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" (set "VS_GENERATOR=Visual Studio 16 2019")
+)
+
+if "%VS_GENERATOR%"=="" (
+    echo ERROR: Could not detect Visual Studio installation.
+    echo Please install Visual Studio 2019 or 2022 with "Desktop development with C++" workload.
+    pause
+    exit /b 1
+)
+
+echo Using generator: %VS_GENERATOR%
+echo.
+
 cmake .. ^
-    -G "Visual Studio 17 2022" ^
+    -G "%VS_GENERATOR%" ^
     -A x64 ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
     %VCPKG_TOOLCHAIN%
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo Visual Studio 2022 generator failed, trying Visual Studio 2019...
+    echo ERROR: CMake configuration failed!
     echo.
-    
-    REM Clean CMake cache to avoid generator mismatch
-    echo Cleaning CMake cache before switching generators...
-    if exist CMakeCache.txt del /f CMakeCache.txt
-    if exist CMakeFiles rmdir /s /q CMakeFiles
+    echo Generator used: %VS_GENERATOR%
     echo.
-    
-    cmake .. ^
-        -G "Visual Studio 16 2019" ^
-        -A x64 ^
-        -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
-        %VCPKG_TOOLCHAIN%
-    
-    if %ERRORLEVEL% NEQ 0 (
-        echo.
-        echo ERROR: CMake configuration failed!
-        echo.
-        echo Possible issues:
-        echo   1. Missing dependencies ^(GLEW, GLFW, GLM, etc.^)
-        echo   2. Visual Studio not installed
-        echo   3. CMake version too old
-        echo.
-        echo SOLUTION: Install dependencies using vcpkg:
-        echo   1. Install vcpkg if not already installed:
-        echo      cd C:\
-        echo      git clone https://github.com/microsoft/vcpkg.git
-        echo      cd vcpkg
-        echo      .\bootstrap-vcpkg.bat
-        echo.
-        echo   2. Install required dependencies:
-        echo      .\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
-        echo.
-        echo   3. Optional: Install audio support:
-        echo      .\vcpkg install openal-soft:x64-windows
-        echo.
-        echo   4. Run this script again
-        echo.
-        echo For more information, see: VS2022_SETUP_GUIDE.md
-        echo.
-        pause
-        exit /b 1
-    )
+    echo Most likely cause: Missing dependencies.
+    echo.
+    echo SOLUTION: Install ALL required dependencies using vcpkg:
+    echo.
+    echo   Step 1 - Install vcpkg ^(if not already installed^):
+    echo      cd C:\
+    echo      git clone https://github.com/microsoft/vcpkg.git
+    echo      cd vcpkg
+    echo      .\bootstrap-vcpkg.bat
+    echo.
+    echo   Step 2 - Install required dependencies:
+    echo      .\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
+    echo      .\vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows
+    echo.
+    echo   Step 3 - Optional audio support:
+    echo      .\vcpkg install openal-soft:x64-windows
+    echo.
+    echo   Step 4 - Run this script again
+    echo.
+    echo For more information, see: VS2022_SETUP_GUIDE.md
+    echo.
+    pause
+    exit /b 1
 )
 
 echo.
