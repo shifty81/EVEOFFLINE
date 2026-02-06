@@ -100,6 +100,12 @@ if %ERRORLEVEL% NEQ 0 (
     echo Visual Studio 2022 generator failed, trying Visual Studio 2019...
     echo.
     
+    REM Clean CMake cache to avoid generator mismatch
+    echo Cleaning CMake cache before switching generators...
+    if exist CMakeCache.txt del /f CMakeCache.txt
+    if exist CMakeFiles rmdir /s /q CMakeFiles
+    echo.
+    
     cmake .. ^
         -G "Visual Studio 16 2019" ^
         -A x64 ^
