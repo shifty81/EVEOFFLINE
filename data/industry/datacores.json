@@ -1,0 +1,64 @@
+{
+  "datacores": [
+    {
+      "id": "datacore_mechanical_engineering",
+      "name": "Mechanical Engineering Datacore",
+      "science_skill": "Mechanical Engineering",
+      "description": "Research data used for invention of armor, structure, and projectile items"
+    },
+    {
+      "id": "datacore_electronic_engineering",
+      "name": "Electronic Engineering Datacore",
+      "science_skill": "Electronic Engineering",
+      "description": "Research data used for invention of electronics, shields, and missiles"
+    },
+    {
+      "id": "datacore_rocket_science",
+      "name": "Rocket Science Datacore",
+      "science_skill": "Rocket Science",
+      "description": "Research data used for invention of missile launchers and ships"
+    },
+    {
+      "id": "datacore_quantum_physics",
+      "name": "Quantum Physics Datacore",
+      "science_skill": "Quantum Physics",
+      "description": "Research data used for invention of energy weapons and shields"
+    },
+    {
+      "id": "datacore_molecular_engineering",
+      "name": "Molecular Engineering Datacore",
+      "science_skill": "Molecular Engineering",
+      "description": "Research data used for invention of hybrid weapons and drones"
+    },
+    {
+      "id": "datacore_graviton_physics",
+      "name": "Graviton Physics Datacore",
+      "science_skill": "Graviton Physics",
+      "description": "Research data used for invention of propulsion and mining equipment"
+    },
+    {
+      "id": "datacore_laser_physics",
+      "name": "Laser Physics Datacore",
+      "science_skill": "Laser Physics",
+      "description": "Research data used for invention of energy weapons"
+    },
+    {
+      "id": "datacore_plasma_physics",
+      "name": "Plasma Physics Datacore",
+      "science_skill": "Plasma Physics",
+      "description": "Research data used for invention of hybrid weapons"
+    },
+    {
+      "id": "datacore_nanite_engineering",
+      "name": "Nanite Engineering Datacore",
+      "science_skill": "Nanite Engineering",
+      "description": "Research data used for invention of armor and repair equipment"
+    },
+    {
+      "id": "datacore_high_energy_physics",
+      "name": "High Energy Physics Datacore",
+      "science_skill": "High Energy Physics",
+      "description": "Research data used for invention of shield and capacitor equipment"
+    }
+  ]
+}

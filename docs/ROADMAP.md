@@ -555,7 +555,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 ### 📋 Phase 7: Advanced Systems (IN PROGRESS) 🚀
 **Timeline**: Q4 2026+  
 **Priority**: High
-**Status**: Mining, Ice Mining, and Planetary Interaction complete. Research & Invention, Wormholes, and Advanced Fleet Mechanics remain.
+**Status**: Mining, Ice Mining, Planetary Interaction, and Research & Invention complete. Wormholes and Advanced Fleet Mechanics remain.
 
 #### ✅ Mining & Resource Gathering (COMPLETE)
 - [x] **Mining Laser Operations** - Cycle-based ore extraction
@@ -630,14 +630,18 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 **See [docs/development/PHASE7_PLANETARY_INTERACTION.md](docs/development/PHASE7_PLANETARY_INTERACTION.md) for complete PI documentation!**
 
-#### Research & Invention (Planned - Next Priority)
-- [ ] **Tech II Blueprint Invention** - Invent T2 BPCs from T1 BPOs
-- [ ] **Datacores** - Research points and datacore production
-- [ ] **Research Agents** - Passive datacore generation
-- [ ] **Invention Components** - Decryptors for improving results
-- [ ] **Ancient Relics** - Reverse engineering for T2 components
-- [ ] **Invention Skills** - Science skills and specializations
-- [ ] **Tech III Component Invention** - Advanced invention mechanics
+#### ✅ Research & Invention (COMPLETE)
+- [x] **Tech II Blueprint Invention** - Invent T2 BPCs from T1 BPCs
+- [x] **Datacores** - 10 types for different science skills
+- [x] **R&D Agents** - Passive datacore generation (50 RP/day per skill level)
+- [x] **Invention Success Rates** - 18-34% base, modified by skills and decryptors
+- [x] **10 Decryptors** - Modify success chance, runs, ME, and TE
+- [x] **15 Science Skills** - 10 core sciences + 4 encryption methods + base Science
+- [x] **Skill Bonuses** - +1% success per level per skill
+- [x] **8 Tests** - 100% pass rate
+- [x] **Complete Documentation** - PHASE7_RESEARCH_INVENTION.md
+
+**See [docs/development/PHASE7_RESEARCH_INVENTION.md](docs/development/PHASE7_RESEARCH_INVENTION.md) for complete invention documentation!**
 
 #### Wormhole Space (Planned)
 - [ ] **Wormhole Generation** - Dynamic wormhole spawning

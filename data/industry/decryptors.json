@@ -1,0 +1,94 @@
+{
+  "decryptors": [
+    {
+      "id": "decryptor_attainment",
+      "name": "Decryptor - Attainment",
+      "probability_modifier": 0.80,
+      "runs_modifier": 4,
+      "me_modifier": 1,
+      "te_modifier": 2,
+      "description": "Greatly increases success chance and runs, slightly improves ME/TE"
+    },
+    {
+      "id": "decryptor_augmentation",
+      "name": "Decryptor - Augmentation",
+      "probability_modifier": -0.10,
+      "runs_modifier": 9,
+      "me_modifier": 2,
+      "te_modifier": 0,
+      "description": "Massively increases runs and ME, but decreases success chance"
+    },
+    {
+      "id": "decryptor_optimized_attainment",
+      "name": "Decryptor - Optimized Attainment",
+      "probability_modifier": 0.90,
+      "runs_modifier": 2,
+      "me_modifier": 1,
+      "te_modifier": -2,
+      "description": "Highest success chance bonus, adds runs and ME, reduces TE"
+    },
+    {
+      "id": "decryptor_optimized_augmentation",
+      "name": "Decryptor - Optimized Augmentation",
+      "probability_modifier": 0.0,
+      "runs_modifier": 7,
+      "me_modifier": 2,
+      "te_modifier": 1,
+      "description": "Balanced decryptor with good runs and efficiency bonuses"
+    },
+    {
+      "id": "decryptor_process_decryption",
+      "name": "Decryptor - Process Decryption",
+      "probability_modifier": 0.60,
+      "runs_modifier": 1,
+      "me_modifier": 3,
+      "te_modifier": 6,
+      "description": "High success chance, excellent TE bonus, good ME improvement"
+    },
+    {
+      "id": "decryptor_symmetry",
+      "name": "Decryptor - Symmetry",
+      "probability_modifier": 0.10,
+      "runs_modifier": 2,
+      "me_modifier": 1,
+      "te_modifier": 8,
+      "description": "Best TE bonus, small success chance increase"
+    },
+    {
+      "id": "decryptor_parity",
+      "name": "Decryptor - Parity",
+      "probability_modifier": 0.50,
+      "runs_modifier": 3,
+      "me_modifier": -2,
+      "te_modifier": 1,
+      "description": "Good success chance and runs, but reduces ME"
+    },
+    {
+      "id": "decryptor_war_strategon",
+      "name": "War Strategon",
+      "probability_modifier": 0.40,
+      "runs_modifier": 0,
+      "me_modifier": 2,
+      "te_modifier": 4,
+      "description": "Balanced efficiency improvements with moderate success bonus"
+    },
+    {
+      "id": "decryptor_occult_data",
+      "name": "Occult Data",
+      "probability_modifier": 0.90,
+      "runs_modifier": 0,
+      "me_modifier": 0,
+      "te_modifier": 0,
+      "description": "Pure success chance bonus with no other effects"
+    },
+    {
+      "id": "decryptor_accelerant",
+      "name": "Decryptor - Accelerant",
+      "probability_modifier": 0.20,
+      "runs_modifier": 1,
+      "me_modifier": 0,
+      "te_modifier": 10,
+      "description": "Maximum TE bonus, small success and runs increase"
+    }
+  ]
+}
