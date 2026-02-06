@@ -638,9 +638,13 @@ if(BUILD_TESTS)
     endif()
     
     # Test: Enhanced UI (Phase 4.5)
+    # Create source list without src/main.cpp to avoid duplicate main symbol
+    set(CLIENT_SOURCES_NO_MAIN ${CLIENT_SOURCES})
+    list(REMOVE_ITEM CLIENT_SOURCES_NO_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp src/main.cpp)
+    
     add_executable(test_enhanced_ui
         test_enhanced_ui.cpp
-        ${CLIENT_SOURCES}
+        ${CLIENT_SOURCES_NO_MAIN}
         ${CLIENT_HEADERS}
     )
     target_link_libraries(test_enhanced_ui
@@ -674,7 +678,7 @@ if(BUILD_TESTS)
     # Test: Phase 4.6 Advanced Features
     add_executable(test_phase46_advanced
         test_phase46_advanced.cpp
-        ${CLIENT_SOURCES}
+        ${CLIENT_SOURCES_NO_MAIN}
         ${CLIENT_HEADERS}
     )
     target_link_libraries(test_phase46_advanced
