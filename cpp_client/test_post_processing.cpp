@@ -121,9 +121,7 @@ int main() {
             lightPositions[i],
             lightColors[i],
             1.0f,
-            1.0f,   // Constant
-            0.09f,  // Linear
-            0.032f  // Quadratic
+            100.0f  // Range
         );
         lightManager.addLight(light);
     }

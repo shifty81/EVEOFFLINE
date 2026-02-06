@@ -33,6 +33,12 @@ find_package(OpenAL QUIET)
 if(OpenAL_FOUND)
     message(STATUS "OpenAL found - audio support enabled")
     add_definitions(-DUSE_OPENAL)
+    # Fix OpenAL include path: ensure <AL/al.h> works
+    # Some FindOpenAL modules set OPENAL_INCLUDE_DIR to the AL/ subdirectory itself
+    if(EXISTS "${OPENAL_INCLUDE_DIR}/al.h" AND NOT EXISTS "${OPENAL_INCLUDE_DIR}/AL/al.h")
+        get_filename_component(OPENAL_INCLUDE_PARENT "${OPENAL_INCLUDE_DIR}" DIRECTORY)
+        set(OPENAL_INCLUDE_DIR "${OPENAL_INCLUDE_PARENT}")
+    endif()
     set(AUDIO_SOURCES
         src/audio/audio_manager.cpp
         src/audio/audio_generator.cpp
@@ -287,6 +293,7 @@ set(CLIENT_HEADERS
     include/ui/mission_panel.h
     include/ui/module_browser_panel.h
     include/ui/market_panel.h
+    include/ui/overview_panel.h
     ${AUDIO_HEADERS}
 )
 
@@ -298,7 +305,13 @@ target_link_libraries(eve_client
     Threads::Threads
     OpenGL::GL
     glfw
+    glm::glm
 )
+
+# Link nlohmann_json if available
+if(nlohmann_json_FOUND)
+    target_link_libraries(eve_client nlohmann_json::nlohmann_json)
+endif()
 
 # Link GLEW if available
 if(USE_GLEW)
@@ -369,6 +382,7 @@ if(BUILD_TESTS)
         Threads::Threads
         OpenGL::GL
         glfw
+        glm::glm
     )
     
     if(USE_GLEW)
@@ -396,6 +410,13 @@ if(BUILD_TESTS)
         src/ui/input_handler.cpp
         src/ui/ui_manager.cpp
         src/ui/eve_panels.cpp
+        src/ui/eve_target_list.cpp
+        src/ui/inventory_panel.cpp
+        src/ui/fitting_panel.cpp
+        src/ui/mission_panel.cpp
+        src/ui/overview_panel.cpp
+        src/ui/market_panel.cpp
+        src/core/entity.cpp
         ${GLAD_SOURCES}
         ${IMGUI_SOURCES}
     )
@@ -404,6 +425,7 @@ if(BUILD_TESTS)
         Threads::Threads
         OpenGL::GL
         glfw
+        glm::glm
     )
     
     if(USE_GLEW)
@@ -440,6 +462,7 @@ if(BUILD_TESTS)
         Threads::Threads
         OpenGL::GL
         glfw
+        glm::glm
     )
     
     if(USE_GLEW)
@@ -472,6 +495,7 @@ if(BUILD_TESTS)
         Threads::Threads
         OpenGL::GL
         glfw
+        glm::glm
     )
     
     if(USE_GLEW)
@@ -493,12 +517,20 @@ if(BUILD_TESTS)
         src/rendering/window.cpp
         src/ui/ui_manager.cpp
         src/ui/eve_panels.cpp
+        src/ui/eve_target_list.cpp
+        src/ui/inventory_panel.cpp
+        src/ui/fitting_panel.cpp
+        src/ui/mission_panel.cpp
+        src/ui/overview_panel.cpp
+        src/ui/market_panel.cpp
+        src/core/entity.cpp
         ${IMGUI_SOURCES}
     )
     target_link_libraries(test_ui_system
         Threads::Threads
         OpenGL::GL
         glfw
+        glm::glm
     )
     if(USE_GLEW)
         target_link_libraries(test_ui_system GLEW::GLEW)
@@ -529,6 +561,7 @@ if(BUILD_TESTS)
         Threads::Threads
         OpenGL::GL
         glfw
+        glm::glm
     )
     if(USE_GLEW)
         target_link_libraries(test_post_processing GLEW::GLEW)
@@ -551,6 +584,7 @@ if(BUILD_TESTS)
         target_link_libraries(test_audio_system
             Threads::Threads
             ${OPENAL_LIBRARY}
+            glm::glm
         )
         target_include_directories(test_audio_system PRIVATE ${OPENAL_INCLUDE_DIR})
         
@@ -573,6 +607,9 @@ if(BUILD_TESTS)
     target_link_libraries(test_network
         Threads::Threads
     )
+    if(nlohmann_json_FOUND)
+        target_link_libraries(test_network nlohmann_json::nlohmann_json)
+    endif()
     if(WIN32)
         target_link_libraries(test_network ws2_32)
     elseif(UNIX AND NOT APPLE)
@@ -590,6 +627,7 @@ if(BUILD_TESTS)
     )
     target_link_libraries(test_entity_sync
         Threads::Threads
+        glm::glm
     )
     if(WIN32)
         target_link_libraries(test_entity_sync ws2_32)
@@ -609,6 +647,7 @@ if(BUILD_TESTS)
         Threads::Threads
         OpenGL::GL
         glfw
+        glm::glm
     )
     if(USE_GLEW)
         target_link_libraries(test_enhanced_ui GLEW::GLEW)
@@ -618,6 +657,10 @@ if(BUILD_TESTS)
     endif()
     if(OpenAL_FOUND)
         target_link_libraries(test_enhanced_ui ${OPENAL_LIBRARY})
+        target_include_directories(test_enhanced_ui PRIVATE ${OPENAL_INCLUDE_DIR})
+    endif()
+    if(nlohmann_json_FOUND)
+        target_link_libraries(test_enhanced_ui nlohmann_json::nlohmann_json)
     endif()
     if(WIN32)
         target_link_libraries(test_enhanced_ui ws2_32)
@@ -638,6 +681,7 @@ if(BUILD_TESTS)
         Threads::Threads
         OpenGL::GL
         glfw
+        glm::glm
     )
     if(USE_GLEW)
         target_link_libraries(test_phase46_advanced GLEW::GLEW)
@@ -647,6 +691,10 @@ if(BUILD_TESTS)
     endif()
     if(OpenAL_FOUND)
         target_link_libraries(test_phase46_advanced ${OPENAL_LIBRARY})
+        target_include_directories(test_phase46_advanced PRIVATE ${OPENAL_INCLUDE_DIR})
+    endif()
+    if(nlohmann_json_FOUND)
+        target_link_libraries(test_phase46_advanced nlohmann_json::nlohmann_json)
     endif()
     if(WIN32)
         target_link_libraries(test_phase46_advanced ws2_32)
@@ -667,6 +715,9 @@ if(BUILD_TESTS)
     target_link_libraries(test_server_responses
         Threads::Threads
     )
+    if(nlohmann_json_FOUND)
+        target_link_libraries(test_server_responses nlohmann_json::nlohmann_json)
+    endif()
     if(WIN32)
         target_link_libraries(test_server_responses ws2_32)
     elseif(UNIX AND NOT APPLE)

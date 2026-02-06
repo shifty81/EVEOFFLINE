@@ -4,6 +4,7 @@
  */
 
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 #include "rendering/window.h"
 #include "ui/ui_manager.h"
 #include "ui/inventory_panel.h"

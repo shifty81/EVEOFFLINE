@@ -62,7 +62,7 @@ void scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
 }
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    inputHandler.handleKeyPress(key, action);
+    inputHandler.handleKey(key, action, mods);
     
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
@@ -73,11 +73,7 @@ int main() {
     std::cout << "=== Asteroid Field Rendering Test ===" << std::endl;
     
     // Create window
-    Window window;
-    if (!window.initialize(WINDOW_WIDTH, WINDOW_HEIGHT, "Asteroid Field Test")) {
-        std::cerr << "Failed to initialize window" << std::endl;
-        return -1;
-    }
+    Window window("Asteroid Field Test", WINDOW_WIDTH, WINDOW_HEIGHT);
     
     // Set callbacks
     glfwSetCursorPosCallback(window.getHandle(), mouseCallback);
@@ -98,8 +94,8 @@ int main() {
     glCullFace(GL_BACK);
     
     // Load shaders
-    Shader shader("cpp_client/shaders/basic.vert", "cpp_client/shaders/basic.frag");
-    if (!shader.isValid()) {
+    Shader shader;
+    if (!shader.loadFromFiles("cpp_client/shaders/basic.vert", "cpp_client/shaders/basic.frag")) {
         std::cerr << "Failed to load shaders" << std::endl;
         return -1;
     }
@@ -107,7 +103,6 @@ int main() {
     // Initialize camera
     camera.setDistance(5000.0f);
     camera.setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
-    camera.updateViewMatrix();
     
     // Initialize asteroid field renderer
     auto asteroidRenderer = std::make_unique<AsteroidFieldRenderer>();
@@ -195,7 +190,7 @@ int main() {
         glfwPollEvents();
         
         // Update camera
-        camera.updateViewMatrix();
+        camera.update(deltaTime);
         
         // Clear screen
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -224,7 +219,7 @@ int main() {
         asteroidRenderer->render(&shader, camera);
         
         // Swap buffers
-        window.swapBuffers();
+        window.update();
     }
     
     std::cout << "\n=== Test Complete ===" << std::endl;
