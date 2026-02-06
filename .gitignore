@@ -65,6 +65,7 @@ cpp_server/external/steamworks_sdk/
 cpp_client/build/
 cpp_client/build_*/
 cpp_client/external/
+build_vs/
 *.o
 *.obj
 *.out

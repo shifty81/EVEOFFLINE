@@ -15,6 +15,7 @@ A PVE-focused space MMO inspired by EVE ONLINE, designed for small groups of pla
 
 ### Prerequisites
 - Python 3.11 or higher
+- **For C++ Client/Visual Studio 2022 Users**: See [VS2022_SETUP_GUIDE.md](VS2022_SETUP_GUIDE.md) for complete Visual Studio setup instructions
 
 ### Installation
 
@@ -30,6 +31,23 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies (optional for enhanced features)
 pip install -r requirements.txt
 ```
+
+### 🖥️ Visual Studio 2022 Setup (Windows)
+
+If you want to build and test the C++ client in Visual Studio 2022:
+
+1. **Follow the setup guide**: [VS2022_SETUP_GUIDE.md](VS2022_SETUP_GUIDE.md)
+2. **Or use the quick build script**:
+   ```cmd
+   build_vs.bat
+   ```
+3. **Open the solution**: `cpp_client\build_vs\EVEOfflineClient.sln`
+
+The guide includes:
+- Complete dependency setup with vcpkg
+- Step-by-step VS2022 configuration
+- Troubleshooting common issues
+- Running tests and debugging
 
 ### 🎯 Easy Launcher (NEW!)
 
@@ -133,7 +151,7 @@ bin\Release\eve_client.exe "YourName"  # Windows
 ```
 
 **Windows Visual Studio Users:**
-```bash
+```cmd
 # Generate Visual Studio solution and build
 build_vs.bat
 
@@ -141,7 +159,8 @@ build_vs.bat
 build_vs.bat --open
 ```
 
-See [docs/development/VISUAL_STUDIO_BUILD.md](docs/development/VISUAL_STUDIO_BUILD.md) for detailed Visual Studio setup.
+See [VS2022_SETUP_GUIDE.md](VS2022_SETUP_GUIDE.md) for complete Visual Studio 2022 setup guide.
+See [docs/development/VISUAL_STUDIO_BUILD.md](docs/development/VISUAL_STUDIO_BUILD.md) for advanced Visual Studio options.
 See [cpp_client/README.md](cpp_client/README.md) for C++ client documentation.
 
 **Start a text client (in a new terminal):**
