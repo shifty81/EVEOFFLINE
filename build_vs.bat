@@ -44,8 +44,8 @@ if %VS_FOUND% EQU 0 (
     echo.
     echo Installation paths checked:
     echo   - C:\Program Files\Microsoft Visual Studio\2022\
-    echo   - C:\Program Files (x86)\Microsoft Visual Studio\2019\
-    echo   - C:\Program Files (x86)\Microsoft Visual Studio\2017\
+    echo   - C:\Program Files ^(x86^)\Microsoft Visual Studio\2019\
+    echo   - C:\Program Files ^(x86^)\Microsoft Visual Studio\2017\
     echo.
     pause
     exit /b 1
@@ -113,7 +113,7 @@ if exist "C:\vcpkg\scripts\buildsystems\vcpkg.cmake" (
 )
 
 if %VCPKG_FOUND% EQU 0 (
-    echo WARNING: vcpkg not found. Dependencies (GLEW, GLFW, GLM) must be installed manually.
+    echo WARNING: vcpkg not found. Dependencies ^(GLEW, GLFW, GLM^) must be installed manually.
     echo          Or install vcpkg and dependencies first - see VS2022_SETUP_GUIDE.md
     echo.
 )
@@ -152,7 +152,7 @@ if %ERRORLEVEL% NEQ 0 (
         echo ERROR: CMake configuration failed for both VS 2022 and VS 2019!
         echo.
         echo Possible issues:
-        echo   1. Missing dependencies (GLEW, GLFW, GLM, etc.)
+        echo   1. Missing dependencies ^(GLEW, GLFW, GLM, etc.^)
         echo   2. Visual Studio C++ tools not installed - install "Desktop development with C++" workload
         echo   3. CMake version too old - update from https://cmake.org/download/
         echo.

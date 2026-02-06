@@ -75,7 +75,7 @@ if exist "C:\vcpkg\scripts\buildsystems\vcpkg.cmake" (
 )
 
 if %VCPKG_FOUND% EQU 0 (
-    echo WARNING: vcpkg not found. Dependencies (GLEW, GLFW, GLM) must be installed manually.
+    echo WARNING: vcpkg not found. Dependencies ^(GLEW, GLFW, GLM^) must be installed manually.
     echo          Or install vcpkg and dependencies first - see VS2022_SETUP_GUIDE.md
     echo.
 )
@@ -109,7 +109,7 @@ if %ERRORLEVEL% NEQ 0 (
         echo ERROR: CMake configuration failed!
         echo.
         echo Possible issues:
-        echo   1. Missing dependencies (GLEW, GLFW, GLM, etc.)
+        echo   1. Missing dependencies ^(GLEW, GLFW, GLM, etc.^)
         echo   2. Visual Studio not installed
         echo   3. CMake version too old
         echo.
