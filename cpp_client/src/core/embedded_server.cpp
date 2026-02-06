@@ -2,6 +2,11 @@
 #include <iostream>
 #include <chrono>
 
+// Define the placeholder Server class (forward-declared in embedded_server.h)
+namespace eve { namespace server {
+class Server {};
+} }
+
 namespace eve {
 
 EmbeddedServer::EmbeddedServer()
