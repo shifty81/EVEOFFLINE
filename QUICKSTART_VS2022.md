@@ -29,7 +29,7 @@ cd vcpkg
 .\bootstrap-vcpkg.bat
 
 # 3. Install required dependencies
-.\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
+.\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows imgui[glfw-binding,opengl3-binding]:x64-windows
 
 # 4. (Optional) Install audio support
 .\vcpkg install openal-soft:x64-windows
@@ -81,7 +81,8 @@ start cpp_client\build_vs\EVEOfflineClient.sln
 | Issue | Fix |
 |-------|-----|
 | **"Could NOT find GLEW"** | **Install dependencies FIRST**: See Initial Setup above |
-| "Cannot find glfw3.h" | Install dependencies: `vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows` |
+| "Cannot find imgui.cpp" | Install ImGui: `vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows` |
+| "Cannot find glfw3.h" | Install dependencies: `vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows imgui[glfw-binding,opengl3-binding]:x64-windows` |
 | "CMake not found" | Add to PATH: `C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin` |
 | "Build succeeds but crashes" | Check Working Directory in project properties |
 | "OpenAL not found" | Optional, ignore or install: `vcpkg install openal-soft:x64-windows` |

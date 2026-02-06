@@ -152,7 +152,7 @@ if %ERRORLEVEL% NEQ 0 (
         echo ERROR: CMake configuration failed for both VS 2022 and VS 2019!
         echo.
         echo Possible issues:
-        echo   1. Missing dependencies ^(GLEW, GLFW, GLM, etc.^)
+        echo   1. Missing dependencies ^(GLEW, GLFW, GLM, ImGui, etc.^)
         echo   2. Visual Studio C++ tools not installed - install "Desktop development with C++" workload
         echo   3. CMake version too old - update from https://cmake.org/download/
         echo.
@@ -165,6 +165,7 @@ if %ERRORLEVEL% NEQ 0 (
         echo.
         echo   2. Install required dependencies:
         echo      .\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
+        echo      .\vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows
         echo.
         echo   3. Optional: Install audio support:
         echo      .\vcpkg install openal-soft:x64-windows
