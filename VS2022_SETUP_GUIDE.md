@@ -216,6 +216,15 @@ set PATH=%PATH%;C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\
    cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake
    ```
 
+### "\Microsoft was unexpected at this time"
+
+**Solution:** This error has been fixed in the latest version. Update your repository:
+```cmd
+git pull origin main
+```
+
+If still experiencing issues, ensure the batch file uses proper syntax with quoted SET commands.
+
 ### "MSBuild version is too old" or "Platform Toolset v143 not installed"
 
 **Solution:** Update Visual Studio or install the C++ build tools:
@@ -253,6 +262,16 @@ Then re-run CMake configuration.
 Make sure you're opening the correct file:
 - Location: `cpp_client\build_vs\EVEOfflineClient.sln`
 - If it doesn't exist, run `build_vs.bat` first to generate it
+
+### For more detailed troubleshooting
+
+See [TROUBLESHOOTING_VS2022.md](TROUBLESHOOTING_VS2022.md) for comprehensive troubleshooting guide covering:
+- Script errors
+- CMake issues
+- Dependency problems
+- Build failures
+- Runtime issues
+- Performance problems
 
 ## Python Components
 

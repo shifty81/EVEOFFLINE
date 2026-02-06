@@ -72,6 +72,9 @@ start cpp_client\build_vs\EVEOfflineClient.sln
 | "CMake not found" | Add to PATH: `C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin` |
 | "Build succeeds but crashes" | Check Working Directory in project properties |
 | "OpenAL not found" | Optional, ignore or install: `vcpkg install openal-soft:x64-windows` |
+| "\Microsoft was unexpected at this time" | Fixed in latest version, run `git pull` |
+
+**For more detailed troubleshooting**: See [TROUBLESHOOTING_VS2022.md](TROUBLESHOOTING_VS2022.md)
 
 ## 🚀 Next Steps
 
