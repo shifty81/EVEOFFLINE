@@ -475,6 +475,29 @@ Use built-in profiling:
 - Verify GLSL version compatibility
 - Look at shader info log
 
+### "Failed to open shader file" or "Failed to load basic shader"
+
+If you see errors like:
+```
+Failed to open shader file: shaders/basic.vert
+Failed to open shader file: shaders/basic.frag
+Fatal error: Failed to initialize renderer
+```
+
+**Solution**: The client expects to find shader and asset files in specific directories relative to where it's run.
+
+- **Recommended**: Run the client from the `build/bin/` directory:
+  ```bash
+  cd build/bin
+  ./eve_client "CharacterName"
+  ```
+
+- **Alternative**: If running from the repository root, symlinks have been created:
+  - `shaders/` → `cpp_client/shaders/`
+  - `assets/` → `cpp_client/assets/`
+  
+  These symlinks allow the client to find resources when run from any directory.
+
 ### "Could not connect to server"
 
 - Verify server is running
