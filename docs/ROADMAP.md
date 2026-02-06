@@ -758,6 +758,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - ✅ **Tech II Cruisers** - HAC, HIC, Recon, Logistics (20 ships)
 - ✅ **Phase 7 Mining System** - Complete mining & resource gathering with barges
 - ✅ **C++ Server Game Session** - Client connect/disconnect, entity spawning, state broadcast
+- ✅ **C++ Server Dedicated Systems** - CapacitorSystem, ShieldRechargeSystem, WeaponSystem
 
 ### Phase 7 Goals (IN PROGRESS)
 - [x] **Mining & Resource Gathering** - Core system complete ✅
@@ -771,6 +772,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Ore compression** - 15 ore + 12 ice types, batch compression, skill bonuses ✅
 - [x] **Moon mining** - 10 moon ore types, refinery extraction, belt fracturing ✅
 - [x] **C++ Server Game Session** - Client connect, state broadcast, NPC spawning ✅
+- [x] **C++ Server CapacitorSystem** - Capacitor recharge and consumption ✅
+- [x] **C++ Server ShieldRechargeSystem** - Passive shield regeneration ✅
+- [x] **C++ Server WeaponSystem** - Weapon cooldowns, auto-fire, capacitor cost, damage cascade ✅
 - [ ] Other Phase 7 systems (PI, R&D, WH space, etc.)
 
 ---
@@ -812,6 +816,15 @@ Have questions about the roadmap? Want to suggest features?
 ---
 
 ## Changelog
+
+### Version 1.5 (February 2026)
+- C++ Server: Added dedicated CapacitorSystem (recharge + consumption API)
+- C++ Server: Added dedicated ShieldRechargeSystem (passive regeneration)
+- C++ Server: Added WeaponSystem (cooldowns, auto-fire for AI, capacitor cost, damage cascade)
+- C++ Server: Added `capacitor_cost` field to Weapon component
+- C++ Server: Refactored CombatSystem — shield/capacitor recharge and weapon cooldowns moved to dedicated systems
+- C++ Server: 7 systems now registered (Capacitor, ShieldRecharge, AI, Targeting, Movement, Weapon, Combat)
+- 31 new C++ tests (all passing)
 
 ### Version 1.4 (February 2026)
 - C++ Server Game Session Manager implemented
