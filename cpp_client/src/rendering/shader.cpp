@@ -4,8 +4,68 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <filesystem>
+
+#ifdef _WIN32
+#include <windows.h>
+#elif defined(__APPLE__)
+#include <mach-o/dyld.h>
+#include <climits>
+#else
+#include <unistd.h>
+#include <climits>
+#endif
 
 namespace eve {
+
+// Returns the directory containing the running executable.
+static std::string getExecutableDir() {
+    std::filesystem::path exePath;
+#ifdef _WIN32
+    char buf[MAX_PATH];
+    DWORD len = GetModuleFileNameA(nullptr, buf, MAX_PATH);
+    if (len > 0 && len < MAX_PATH) {
+        exePath = buf;
+    }
+#elif defined(__APPLE__)
+    char buf[PATH_MAX];
+    uint32_t size = sizeof(buf);
+    if (_NSGetExecutablePath(buf, &size) == 0) {
+        exePath = std::filesystem::canonical(buf);
+    }
+#else
+    char buf[PATH_MAX];
+    ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+    if (len != -1) {
+        buf[len] = '\0';
+        exePath = buf;
+    }
+#endif
+    if (!exePath.empty()) {
+        return exePath.parent_path().string();
+    }
+    return "";
+}
+
+// Resolve a file path by first checking as-is, then relative to the executable.
+static std::string resolvePath(const std::string& filePath) {
+    // First, try the path directly (works when CWD is correct)
+    if (std::filesystem::exists(filePath)) {
+        return filePath;
+    }
+
+    // Fall back to resolving relative to the executable directory
+    std::string exeDir = getExecutableDir();
+    if (!exeDir.empty()) {
+        std::filesystem::path resolved = std::filesystem::path(exeDir) / filePath;
+        if (std::filesystem::exists(resolved)) {
+            return resolved.string();
+        }
+    }
+
+    // Return original path (will produce the same "failed to open" error)
+    return filePath;
+}
 
 Shader::Shader()
     : m_programID(0)
@@ -144,9 +204,14 @@ bool Shader::linkProgram(unsigned int vertexShader, unsigned int fragmentShader)
 }
 
 std::string Shader::readFile(const std::string& filePath) {
-    std::ifstream file(filePath);
+    std::string resolvedFilePath = resolvePath(filePath);
+    std::ifstream file(resolvedFilePath);
     if (!file.is_open()) {
-        std::cerr << "Failed to open shader file: " << filePath << std::endl;
+        std::cerr << "Failed to open shader file: " << filePath;
+        if (resolvedFilePath != filePath) {
+            std::cerr << " (also tried: " << resolvedFilePath << ")";
+        }
+        std::cerr << std::endl;
         return "";
     }
     
