@@ -160,6 +160,7 @@ set(CLIENT_SOURCES
     src/ui/mission_panel.cpp
     src/ui/module_browser_panel.cpp
     src/ui/market_panel.cpp
+    src/ui/overview_panel.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}

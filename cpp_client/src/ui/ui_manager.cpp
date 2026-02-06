@@ -26,6 +26,7 @@ UIManager::UIManager()
     m_inventoryPanel = std::make_unique<InventoryPanel>();
     m_fittingPanel = std::make_unique<FittingPanel>();
     m_missionPanel = std::make_unique<MissionPanel>();
+    m_overviewPanel = std::make_unique<OverviewPanel>();
 }
 
 UIManager::~UIManager() {
@@ -126,6 +127,9 @@ void UIManager::Render() {
     }
     if (m_missionPanel) {
         m_missionPanel->Render();
+    }
+    if (m_overviewPanel) {
+        m_overviewPanel->Render();
     }
 }
 
@@ -377,6 +381,10 @@ void UIManager::UpdateTargets(const std::unordered_map<std::string, std::shared_
     if (m_targetList) {
         m_targetList->updateTargets(entities);
     }
+    // Also update overview panel
+    if (m_overviewPanel) {
+        m_overviewPanel->UpdateEntities(entities);
+    }
 }
 
 void UIManager::AddTarget(const std::string& entityId) {
@@ -407,6 +415,12 @@ void UIManager::ToggleFitting() {
 void UIManager::ToggleMission() {
     if (m_missionPanel) {
         m_missionPanel->SetVisible(!m_missionPanel->IsVisible());
+    }
+}
+
+void UIManager::ToggleOverview() {
+    if (m_overviewPanel) {
+        m_overviewPanel->SetVisible(!m_overviewPanel->IsVisible());
     }
 }
 
