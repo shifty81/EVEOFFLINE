@@ -87,7 +87,7 @@ void ShipPhysics::update(float deltaTime) {
             float distance = glm::length(toTarget);
             float error = distance - m_navRange;
             
-            if (abs(error) > 50.0f) {
+            if (std::fabs(error) > 50.0f) {
                 if (error > 0) {
                     // Too far, move closer
                     m_desiredDirection = glm::normalize(toTarget);
@@ -190,7 +190,7 @@ void ShipPhysics::updateOrbit(float deltaTime) {
     // If orbit range is smaller, move away while maintaining tangential component
     float error = distance - m_navRange;
     
-    if (abs(error) > 10.0f) {
+    if (std::fabs(error) > 10.0f) {
         // Need to adjust radius
         float radialComponent = error / distance;
         float tangentialComponent = sqrt(1.0f - radialComponent * radialComponent);

@@ -150,6 +150,10 @@ void StarMap::loadSystemData(const std::string& systemId) {
     // For now, generate some placeholder celestials
     // TODO: Load from actual system data files
     
+    // Use system ID hash as seed for consistent generation
+    std::hash<std::string> hasher;
+    size_t seed = hasher(systemId);
+    
     // Add a central star
     CelestialObject star;
     star.id = systemId + "_star";
@@ -159,19 +163,24 @@ void StarMap::loadSystemData(const std::string& systemId) {
     star.type = CelestialObject::STAR;
     m_celestials.push_back(star);
     
-    // Add some planets in orbit
+    // Add some planets in orbit with deterministic positions
     for (int i = 0; i < 5; i++) {
         CelestialObject planet;
         planet.id = systemId + "_planet_" + std::to_string(i);
         planet.name = it->name + " " + std::to_string(i + 1);
         float angle = (float)i / 5.0f * 2.0f * 3.14159f;
         float distance = 5000000.0f * (i + 1);
+        
+        // Use seed for deterministic "random" offsets
+        float yOffset = (float)((seed + i * 7) % 1000000 - 500000);
+        float radiusVariation = 1.0f + (float)((seed + i * 13) % 100) / 100.0f;
+        
         planet.position = glm::vec3(
             cos(angle) * distance,
-            (float)(rand() % 1000000 - 500000),
+            yOffset,
             sin(angle) * distance
         );
-        planet.radius = 6371.0f * (1.0f + (float)(rand() % 100) / 100.0f);
+        planet.radius = 6371.0f * radiusVariation;
         planet.type = CelestialObject::PLANET;
         m_celestials.push_back(planet);
     }
@@ -470,8 +479,15 @@ void StarMap::resetCamera() {
 }
 
 void StarMap::handleMouseClick(int x, int y) {
+    m_dragging = true;
+    m_lastMouseX = x;
+    m_lastMouseY = y;
     // TODO: Implement ray picking to select systems
     std::cout << "[StarMap] Mouse click at: " << x << ", " << y << std::endl;
+}
+
+void StarMap::handleMouseRelease(int x, int y) {
+    m_dragging = false;
 }
 
 void StarMap::handleMouseMove(int x, int y) {

@@ -43,15 +43,19 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
 
 void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        double xpos, ypos;
+        glfwGetCursorPos(window, &xpos, &ypos);
+        
         if (action == GLFW_PRESS) {
             g_mousePressed = true;
-            double xpos, ypos;
-            glfwGetCursorPos(window, &xpos, &ypos);
             if (g_starMap) {
                 g_starMap->handleMouseClick((int)xpos, (int)ypos);
             }
         } else if (action == GLFW_RELEASE) {
             g_mousePressed = false;
+            if (g_starMap) {
+                g_starMap->handleMouseRelease((int)xpos, (int)ypos);
+            }
         }
     }
 }

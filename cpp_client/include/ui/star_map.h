@@ -110,6 +110,7 @@ public:
      * Mouse interaction
      */
     void handleMouseClick(int x, int y);
+    void handleMouseRelease(int x, int y);
     void handleMouseMove(int x, int y);
     void handleMouseScroll(float delta);
 
