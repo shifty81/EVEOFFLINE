@@ -265,8 +265,29 @@ void TacticalOverlay::renderVelocityVector(const glm::vec3& position,
     glLineWidth(3.0f);
     glDrawArrays(GL_LINES, 0, 2);
     
-    // Draw arrow head (simple triangle)
-    // TODO: Add arrow head geometry
+    // Draw arrow head (simple triangle pointing in direction of velocity)
+    glm::vec3 velocityDir = glm::normalize(velocity);
+    glm::vec3 perpendicular = glm::normalize(glm::cross(velocityDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+    
+    // If velocity is perfectly vertical, use a different perpendicular
+    if (glm::length(perpendicular) < 0.01f) {
+        perpendicular = glm::normalize(glm::cross(velocityDir, glm::vec3(1.0f, 0.0f, 0.0f)));
+    }
+    
+    float arrowSize = 50.0f;  // Size of arrow head
+    glm::vec3 arrowLeft = endPoint - velocityDir * arrowSize + perpendicular * (arrowSize * 0.5f);
+    glm::vec3 arrowRight = endPoint - velocityDir * arrowSize - perpendicular * (arrowSize * 0.5f);
+    
+    float arrowVertices[] = {
+        endPoint.x, endPoint.y, endPoint.z,
+        arrowLeft.x, arrowLeft.y, arrowLeft.z,
+        
+        endPoint.x, endPoint.y, endPoint.z,
+        arrowRight.x, arrowRight.y, arrowRight.z
+    };
+    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(arrowVertices), arrowVertices, GL_DYNAMIC_DRAW);
+    glDrawArrays(GL_LINES, 0, 4);
     
     glBindVertexArray(0);
 }

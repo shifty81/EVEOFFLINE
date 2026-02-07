@@ -63,7 +63,7 @@ enum class OverviewSortColumn {
 // Callback types
 using SelectEntityCallback = std::function<void(const std::string& entity_id, bool ctrl_held)>;
 using AlignToCallback = std::function<void(const std::string& entity_id)>;
-using WarpToCallback = std::function<void(const std::string& entity_id)>;
+using WarpToCallback = std::function<void(const std::string& entity_id, int distance_m)>;
 using ApproachCallback = std::function<void(const std::string& entity_id)>;
 using OrbitCallback = std::function<void(const std::string& entity_id, int distance_m)>;
 using KeepAtRangeCallback = std::function<void(const std::string& entity_id, int distance_m)>;

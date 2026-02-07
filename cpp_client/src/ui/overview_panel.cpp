@@ -286,23 +286,22 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
         if (ImGui::BeginMenu("Warp To")) {
             if (ImGui::MenuItem("At 0km")) {
                 if (m_onWarpTo) {
-                    m_onWarpTo(entry.entity_id);
+                    m_onWarpTo(entry.entity_id, 0);
                 }
             }
             if (ImGui::MenuItem("At 10km")) {
-                // TODO: Pass distance parameter to warp callback
                 if (m_onWarpTo) {
-                    m_onWarpTo(entry.entity_id);
+                    m_onWarpTo(entry.entity_id, 10000);
                 }
             }
             if (ImGui::MenuItem("At 50km")) {
                 if (m_onWarpTo) {
-                    m_onWarpTo(entry.entity_id);
+                    m_onWarpTo(entry.entity_id, 50000);
                 }
             }
             if (ImGui::MenuItem("At 100km")) {
                 if (m_onWarpTo) {
-                    m_onWarpTo(entry.entity_id);
+                    m_onWarpTo(entry.entity_id, 100000);
                 }
             }
             ImGui::EndMenu();
