@@ -243,6 +243,7 @@ set(CLIENT_SOURCES
     src/ui/eve_panels.cpp
     src/ui/eve_target_list.cpp
     src/ui/entity_picker.cpp
+    src/ui/context_menu.cpp
     src/ui/inventory_panel.cpp
     src/ui/fitting_panel.cpp
     src/ui/mission_panel.cpp
@@ -292,6 +293,7 @@ set(CLIENT_HEADERS
     include/ui/eve_panels.h
     include/ui/eve_target_list.h
     include/ui/entity_picker.h
+    include/ui/context_menu.h
     include/ui/inventory_panel.h
     include/ui/fitting_panel.h
     include/ui/mission_panel.h

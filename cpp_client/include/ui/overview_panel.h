@@ -64,6 +64,13 @@ enum class OverviewSortColumn {
 using SelectEntityCallback = std::function<void(const std::string& entity_id, bool ctrl_held)>;
 using AlignToCallback = std::function<void(const std::string& entity_id)>;
 using WarpToCallback = std::function<void(const std::string& entity_id)>;
+using ApproachCallback = std::function<void(const std::string& entity_id)>;
+using OrbitCallback = std::function<void(const std::string& entity_id, int distance_m)>;
+using KeepAtRangeCallback = std::function<void(const std::string& entity_id, int distance_m)>;
+using LockTargetCallback = std::function<void(const std::string& entity_id)>;
+using UnlockTargetCallback = std::function<void(const std::string& entity_id)>;
+using LookAtCallback = std::function<void(const std::string& entity_id)>;
+using ShowInfoCallback = std::function<void(const std::string& entity_id)>;
 
 class OverviewPanel {
 public:
@@ -87,6 +94,13 @@ public:
     void SetSelectCallback(SelectEntityCallback callback) { m_onSelect = callback; }
     void SetAlignToCallback(AlignToCallback callback) { m_onAlignTo = callback; }
     void SetWarpToCallback(WarpToCallback callback) { m_onWarpTo = callback; }
+    void SetApproachCallback(ApproachCallback callback) { m_onApproach = callback; }
+    void SetOrbitCallback(OrbitCallback callback) { m_onOrbit = callback; }
+    void SetKeepAtRangeCallback(KeepAtRangeCallback callback) { m_onKeepAtRange = callback; }
+    void SetLockTargetCallback(LockTargetCallback callback) { m_onLockTarget = callback; }
+    void SetUnlockTargetCallback(UnlockTargetCallback callback) { m_onUnlockTarget = callback; }
+    void SetLookAtCallback(LookAtCallback callback) { m_onLookAt = callback; }
+    void SetShowInfoCallback(ShowInfoCallback callback) { m_onShowInfo = callback; }
     
     // Filter management
     void SetFilter(const OverviewFilter& filter);
@@ -118,6 +132,13 @@ private:
     SelectEntityCallback m_onSelect;
     AlignToCallback m_onAlignTo;
     WarpToCallback m_onWarpTo;
+    ApproachCallback m_onApproach;
+    OrbitCallback m_onOrbit;
+    KeepAtRangeCallback m_onKeepAtRange;
+    LockTargetCallback m_onLockTarget;
+    UnlockTargetCallback m_onUnlockTarget;
+    LookAtCallback m_onLookAt;
+    ShowInfoCallback m_onShowInfo;
     
     // Helper functions
     void RenderFilterTabs();
