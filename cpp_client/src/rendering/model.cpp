@@ -241,39 +241,73 @@ FactionColors Model::getFactionColors(const std::string& faction) {
 std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
     auto model = std::make_unique<Model>();
     
-    // Create a simple frigate hull (elongated diamond shape)
+    // Create a more detailed frigate hull with better geometry
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    // Main hull (elongated)
-    float length = 3.0f;
-    float width = 0.8f;
-    float height = 0.6f;
+    float length = 3.5f;
+    float width = 0.9f;
+    float height = 0.7f;
 
-    // Front nose
+    // Forward section - sleek nose
     vertices.push_back({{length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
     
-    // Mid sections
-    for (int i = 0; i < 3; ++i) {
-        float t = (i + 1) / 4.0f;
-        float z = -length * t;
-        float scale = 1.0f - t * 0.5f;
+    // Front-mid section - expanding
+    for (int i = 0; i < 2; ++i) {
+        float t = (i + 1) / 7.0f;
+        float z = length * (1.0f - t * 0.3f);
+        float scale = 0.3f + t * 1.2f;
         
-        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+        // Top, bottom, sides
+        vertices.push_back({{z, width * scale, height * scale * 0.3f}, {0.0f, 1.0f, 0.3f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale, height * scale * 0.3f}, {0.0f, -1.0f, 0.3f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale * 0.5f, height * scale}, {0.3f, 0.5f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale * 0.5f, height * scale}, {-0.3f, 0.5f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, width * scale * 0.5f, -height * scale * 0.7f}, {0.3f, 0.5f, -1.0f}, {}, colors.secondary});
+        vertices.push_back({{z, -width * scale * 0.5f, -height * scale * 0.7f}, {-0.3f, 0.5f, -1.0f}, {}, colors.secondary});
+    }
+    
+    // Mid section - main hull
+    for (int i = 2; i < 4; ++i) {
+        float t = (i + 1) / 7.0f;
+        float z = length * (1.0f - t);
+        float scale = 1.0f - (t - 0.3f) * 0.6f;
+        
+        vertices.push_back({{z, width * scale, height * scale * 0.3f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale, height * scale * 0.3f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale * 0.5f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale * 0.5f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, width * scale * 0.5f, -height * scale * 0.7f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+        vertices.push_back({{z, -width * scale * 0.5f, -height * scale * 0.7f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
     }
 
-    // Back end
-    vertices.push_back({{-length, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    // Rear section - engine pods
+    for (int i = 4; i < 6; ++i) {
+        float t = (i + 1) / 7.0f;
+        float z = length * (1.0f - t);
+        float scale = 0.7f - (t - 0.6f) * 0.8f;
+        
+        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.7f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
+    }
 
-    // Create triangles to form hull
-    // Simple indexing for basic shape
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
+    // Engine exhaust points
+    vertices.push_back({{-length * 0.3f, width * 0.4f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    vertices.push_back({{-length * 0.3f, -width * 0.4f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    // Create triangles connecting vertices
+    for (unsigned int i = 1; i < vertices.size() - 2; i += 2) {
         indices.push_back(0);
         indices.push_back(i);
         indices.push_back(i + 1);
+        
+        if (i + 2 < vertices.size()) {
+            indices.push_back(i);
+            indices.push_back(i + 1);
+            indices.push_back(i + 2);
+        }
     }
 
     auto mesh = std::make_unique<Mesh>(vertices, indices);
@@ -285,34 +319,69 @@ std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
 std::unique_ptr<Model> Model::createDestroyerModel(const FactionColors& colors) {
     auto model = std::make_unique<Model>();
     
-    // Destroyers are longer and thinner than frigates
+    // Destroyers are longer, thinner, and more aggressive than frigates
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    float length = 4.5f;
-    float width = 0.6f;
-    float height = 0.5f;
+    float length = 5.0f;
+    float width = 0.7f;
+    float height = 0.6f;
 
-    // Similar to frigate but more elongated
+    // Sharp aggressive nose
     vertices.push_back({{length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
     
-    for (int i = 0; i < 4; ++i) {
-        float t = (i + 1) / 5.0f;
-        float z = -length * t;
-        float scale = 1.0f - t * 0.3f;
+    // Forward weapon section - narrow and sleek
+    for (int i = 0; i < 3; ++i) {
+        float t = (i + 1) / 10.0f;
+        float z = length * (1.0f - t * 0.4f);
+        float scale = 0.4f + t * 0.8f;
         
-        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale, height * scale * 0.4f}, {0.0f, 1.0f, 0.2f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale, height * scale * 0.4f}, {0.0f, -1.0f, 0.2f}, {}, colors.secondary});
         vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.6f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+    }
+    
+    // Mid section - main destroyer spine
+    for (int i = 3; i < 7; ++i) {
+        float t = (i + 1) / 10.0f;
+        float z = length * (1.0f - t);
+        float scale = 1.0f - (t - 0.4f) * 0.5f;
+        
+        // Destroyer characteristic: dual-hull design with spine
+        vertices.push_back({{z, width * scale * 1.2f, height * scale * 0.3f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale * 1.2f, height * scale * 0.3f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, 0.0f, height * scale * 1.1f}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.5f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
     }
 
-    vertices.push_back({{-length, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    // Rear engine section - split engines
+    for (int i = 7; i < 9; ++i) {
+        float t = (i + 1) / 10.0f;
+        float z = length * (1.0f - t);
+        float scale = 0.6f - (t - 0.7f) * 1.2f;
+        
+        vertices.push_back({{z, width * scale * 1.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, -width * scale * 1.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, 0.0f, height * scale * 0.8f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.5f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
+    }
 
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
+    // Dual engine exhausts
+    vertices.push_back({{-length * 0.25f, width * 0.8f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    vertices.push_back({{-length * 0.25f, -width * 0.8f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    // Create triangulated mesh
+    for (unsigned int i = 1; i < vertices.size() - 2; i += 2) {
         indices.push_back(0);
         indices.push_back(i);
         indices.push_back(i + 1);
+        
+        if (i + 2 < vertices.size()) {
+            indices.push_back(i);
+            indices.push_back(i + 2);
+            indices.push_back(i + 1);
+        }
     }
 
     auto mesh = std::make_unique<Mesh>(vertices, indices);
@@ -324,33 +393,69 @@ std::unique_ptr<Model> Model::createDestroyerModel(const FactionColors& colors) 
 std::unique_ptr<Model> Model::createCruiserModel(const FactionColors& colors) {
     auto model = std::make_unique<Model>();
     
-    // Cruisers are larger and bulkier
+    // Cruisers are larger, bulkier, with more presence
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    float length = 5.0f;
-    float width = 1.5f;
-    float height = 1.0f;
+    float length = 6.0f;
+    float width = 1.8f;
+    float height = 1.2f;
 
-    vertices.push_back({{length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
+    // Command bridge section
+    vertices.push_back({{length * 0.9f, 0.0f, height * 0.3f}, {1.0f, 0.0f, 0.3f}, {}, colors.primary});
     
-    for (int i = 0; i < 5; ++i) {
-        float t = (i + 1) / 6.0f;
-        float z = -length * t;
-        float scale = 1.0f - t * 0.4f;
+    // Forward section - aggressive but substantial
+    for (int i = 0; i < 2; ++i) {
+        float t = (i + 1) / 12.0f;
+        float z = length * (0.9f - t * 0.3f);
+        float scale = 0.5f + t * 1.0f;
         
-        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale, height * scale * 0.4f}, {0.0f, 1.0f, 0.2f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale, height * scale * 0.4f}, {0.0f, -1.0f, 0.2f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale * 0.6f, height * scale}, {0.2f, 0.3f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale * 0.6f, height * scale}, {-0.2f, 0.3f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.5f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+    }
+    
+    // Main hull - wide and powerful
+    for (int i = 2; i < 8; ++i) {
+        float t = (i + 1) / 12.0f;
+        float z = length * (0.9f - t);
+        float scale = 1.0f + (i < 5 ? t * 0.3f : (1.0f - t) * 0.2f);
+        
+        vertices.push_back({{z, width * scale, height * scale * 0.3f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale, height * scale * 0.3f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale * 0.7f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale * 0.7f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.4f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
     }
 
-    vertices.push_back({{-length, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    // Engine section - powerful propulsion
+    for (int i = 8; i < 11; ++i) {
+        float t = (i + 1) / 12.0f;
+        float z = length * (0.9f - t);
+        float scale = 1.2f - (t - 0.7f) * 1.5f;
+        
+        vertices.push_back({{z, width * scale, height * scale * 0.2f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, -width * scale, height * scale * 0.2f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, 0.0f, height * scale * 0.6f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.3f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
+    }
 
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
+    // Main engine exhaust
+    vertices.push_back({{-length * 0.15f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    // Create mesh triangulation
+    for (unsigned int i = 1; i < vertices.size() - 2; i += 2) {
         indices.push_back(0);
         indices.push_back(i);
         indices.push_back(i + 1);
+        
+        if (i + 2 < vertices.size()) {
+            indices.push_back(i);
+            indices.push_back(i + 2);
+            indices.push_back(i + 3);
+        }
     }
 
     auto mesh = std::make_unique<Mesh>(vertices, indices);
@@ -369,33 +474,73 @@ std::unique_ptr<Model> Model::createTech2CruiserModel(const FactionColors& color
 std::unique_ptr<Model> Model::createBattlecruiserModel(const FactionColors& colors) {
     auto model = std::make_unique<Model>();
     
-    // Battlecruisers are massive
+    // Battlecruisers are massive, intimidating warships
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    float length = 7.0f;
-    float width = 2.0f;
-    float height = 1.5f;
+    float length = 8.5f;
+    float width = 2.5f;
+    float height = 1.8f;
 
-    vertices.push_back({{length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
+    // Forward command tower
+    vertices.push_back({{length * 0.85f, 0.0f, height * 0.5f}, {1.0f, 0.0f, 0.5f}, {}, colors.primary});
     
-    for (int i = 0; i < 6; ++i) {
-        float t = (i + 1) / 7.0f;
-        float z = -length * t;
-        float scale = 1.0f - t * 0.3f;
+    // Front weapon platforms - massive and menacing
+    for (int i = 0; i < 3; ++i) {
+        float t = (i + 1) / 15.0f;
+        float z = length * (0.85f - t * 0.4f);
+        float scale = 0.6f + t * 0.8f;
         
-        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale, height * scale * 0.3f}, {0.0f, 1.0f, 0.1f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale, height * scale * 0.3f}, {0.0f, -1.0f, 0.1f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale * 0.7f, height * scale}, {0.1f, 0.2f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale * 0.7f, height * scale}, {-0.1f, 0.2f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.4f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+    }
+    
+    // Main hull - broad and imposing
+    for (int i = 3; i < 10; ++i) {
+        float t = (i + 1) / 15.0f;
+        float z = length * (0.85f - t);
+        float widthScale = 1.0f + (i < 7 ? (t - 0.2f) * 0.4f : (1.0f - t) * 0.3f);
+        float heightScale = 1.0f - t * 0.15f;
+        
+        vertices.push_back({{z, width * widthScale, height * heightScale * 0.25f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * widthScale, height * heightScale * 0.25f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, width * widthScale * 0.6f, height * heightScale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * widthScale * 0.6f, height * heightScale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, 0.0f, -height * heightScale * 0.35f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
     }
 
-    vertices.push_back({{-length, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    // Engine array - multiple powerful engines
+    for (int i = 10; i < 14; ++i) {
+        float t = (i + 1) / 15.0f;
+        float z = length * (0.85f - t);
+        float scale = 1.3f - (t - 0.7f) * 1.8f;
+        
+        vertices.push_back({{z, width * scale * 0.9f, height * scale * 0.15f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, -width * scale * 0.9f, height * scale * 0.15f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, width * scale * 0.4f, height * scale * 0.5f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
+        vertices.push_back({{z, -width * scale * 0.4f, height * scale * 0.5f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
+        vertices.push_back({{z, 0.0f, -height * scale * 0.25f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
+    }
 
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
+    // Massive engine cluster exhausts
+    vertices.push_back({{-length * 0.18f, width * 0.6f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    vertices.push_back({{-length * 0.18f, -width * 0.6f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    vertices.push_back({{-length * 0.18f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    // Triangulation
+    for (unsigned int i = 1; i < vertices.size() - 3; i += 2) {
         indices.push_back(0);
         indices.push_back(i);
         indices.push_back(i + 1);
+        
+        if (i + 3 < vertices.size()) {
+            indices.push_back(i);
+            indices.push_back(i + 2);
+            indices.push_back(i + 3);
+        }
     }
 
     auto mesh = std::make_unique<Mesh>(vertices, indices);
@@ -407,33 +552,77 @@ std::unique_ptr<Model> Model::createBattlecruiserModel(const FactionColors& colo
 std::unique_ptr<Model> Model::createBattleshipModel(const FactionColors& colors) {
     auto model = std::make_unique<Model>();
     
-    // Battleships are the largest
+    // Battleships are the largest subcapital ships - absolutely massive and powerful
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
-    float length = 10.0f;
-    float width = 3.0f;
-    float height = 2.0f;
+    float length = 12.0f;
+    float width = 3.5f;
+    float height = 2.5f;
 
-    vertices.push_back({{length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
+    // Command citadel
+    vertices.push_back({{length * 0.8f, 0.0f, height * 0.6f}, {1.0f, 0.0f, 0.6f}, {}, colors.primary});
     
-    for (int i = 0; i < 8; ++i) {
-        float t = (i + 1) / 9.0f;
-        float z = -length * t;
-        float scale = 1.0f - t * 0.25f;
+    // Forward battle section with weapon batteries
+    for (int i = 0; i < 4; ++i) {
+        float t = (i + 1) / 20.0f;
+        float z = length * (0.8f - t * 0.5f);
+        float scale = 0.5f + t * 1.2f;
         
-        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale, height * scale * 0.25f}, {0.0f, 1.0f, 0.1f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale, height * scale * 0.25f}, {0.0f, -1.0f, 0.1f}, {}, colors.secondary});
+        vertices.push_back({{z, width * scale * 0.65f, height * scale * 0.9f}, {0.1f, 0.15f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale * 0.65f, height * scale * 0.9f}, {-0.1f, 0.15f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, width * scale * 0.5f, -height * scale * 0.3f}, {0.1f, 0.0f, -1.0f}, {}, colors.secondary});
+        vertices.push_back({{z, -width * scale * 0.5f, -height * scale * 0.3f}, {-0.1f, 0.0f, -1.0f}, {}, colors.secondary});
+    }
+    
+    // Main battleship superstructure - extremely wide and imposing
+    for (int i = 4; i < 14; ++i) {
+        float t = (i + 1) / 20.0f;
+        float z = length * (0.8f - t);
+        float widthScale = 1.0f + (i < 10 ? (t - 0.25f) * 0.5f : (1.0f - t) * 0.4f);
+        float heightScale = 1.0f - t * 0.12f;
+        
+        vertices.push_back({{z, width * widthScale, height * heightScale * 0.2f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * widthScale, height * heightScale * 0.2f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, width * widthScale * 0.55f, height * heightScale * 0.85f}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * widthScale * 0.55f, height * heightScale * 0.85f}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, width * widthScale * 0.45f, -height * heightScale * 0.25f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+        vertices.push_back({{z, -width * widthScale * 0.45f, -height * heightScale * 0.25f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
     }
 
-    vertices.push_back({{-length, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    // Massive engine banks
+    for (int i = 14; i < 19; ++i) {
+        float t = (i + 1) / 20.0f;
+        float z = length * (0.8f - t);
+        float scale = 1.5f - (t - 0.7f) * 2.2f;
+        
+        vertices.push_back({{z, width * scale * 0.8f, height * scale * 0.12f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, -width * scale * 0.8f, height * scale * 0.12f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
+        vertices.push_back({{z, width * scale * 0.35f, height * scale * 0.4f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
+        vertices.push_back({{z, -width * scale * 0.35f, height * scale * 0.4f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
+        vertices.push_back({{z, width * scale * 0.3f, -height * scale * 0.2f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
+        vertices.push_back({{z, -width * scale * 0.3f, -height * scale * 0.2f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
+    }
 
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
+    // Multiple massive engine exhaust ports
+    vertices.push_back({{-length * 0.22f, width * 0.9f, height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    vertices.push_back({{-length * 0.22f, -width * 0.9f, height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    vertices.push_back({{-length * 0.22f, width * 0.4f, -height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+    vertices.push_back({{-length * 0.22f, -width * 0.4f, -height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    // Triangulation with proper connectivity
+    for (unsigned int i = 1; i < vertices.size() - 4; i += 3) {
         indices.push_back(0);
         indices.push_back(i);
         indices.push_back(i + 1);
+        
+        if (i + 3 < vertices.size()) {
+            indices.push_back(i);
+            indices.push_back(i + 2);
+            indices.push_back(i + 3);
+        }
     }
 
     auto mesh = std::make_unique<Mesh>(vertices, indices);

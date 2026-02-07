@@ -36,6 +36,11 @@ public:
      * Create procedural ship model
      */
     static std::unique_ptr<Model> createShipModel(const std::string& shipType, const std::string& faction);
+    
+    /**
+     * Create procedural ship model with racial characteristics
+     */
+    static std::unique_ptr<Model> createShipModelWithRacialDesign(const std::string& shipType, const std::string& faction);
 
     /**
      * Draw the model
