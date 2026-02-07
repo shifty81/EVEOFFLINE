@@ -1663,5 +1663,115 @@
     "prerequisites": {
       "advanced_industry": 4
     }
+  },
+  "wing_command": {
+    "id": "wing_command",
+    "name": "Wing Command",
+    "description": "Advanced fleet command skill. Allows commanding a wing of up to 10 squad commanders. Increases wing member capacity by 1 per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "leadership": 5
+    }
+  },
+  "fleet_command": {
+    "id": "fleet_command",
+    "name": "Fleet Command",
+    "description": "Elite fleet command skill. Allows commanding an entire fleet of up to 5 wings. Increases fleet capacity by 1 wing per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 12,
+    "max_level": 5,
+    "prerequisites": {
+      "leadership": 5,
+      "wing_command": 3
+    }
+  },
+  "warfare_link_specialist": {
+    "id": "warfare_link_specialist",
+    "name": "Warfare Link Specialist",
+    "description": "Specialist skill for command burst modules. 2% bonus to command burst duration and strength per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {
+      "leadership": 5
+    }
+  },
+  "armored_warfare_specialist": {
+    "id": "armored_warfare_specialist",
+    "name": "Armored Warfare Specialist",
+    "description": "Advanced armor warfare specialization. Allows use of Armored Command Burst charges. 3% bonus to armored command burst effects per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "armored_warfare": 5,
+      "warfare_link_specialist": 1
+    }
+  },
+  "information_warfare_specialist": {
+    "id": "information_warfare_specialist",
+    "name": "Information Warfare Specialist",
+    "description": "Advanced information warfare specialization. Allows use of Information Command Burst charges. 3% bonus to information command burst effects per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "information_warfare": 5,
+      "warfare_link_specialist": 1
+    }
+  },
+  "siege_warfare_specialist": {
+    "id": "siege_warfare_specialist",
+    "name": "Siege Warfare Specialist",
+    "description": "Advanced siege warfare specialization. Allows use of Siege Command Burst charges for shield tanking. 3% bonus to siege command burst effects per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "siege_warfare": 5,
+      "warfare_link_specialist": 1
+    }
+  },
+  "skirmish_warfare_specialist": {
+    "id": "skirmish_warfare_specialist",
+    "name": "Skirmish Warfare Specialist",
+    "description": "Advanced skirmish warfare specialization. Allows use of Skirmish Command Burst charges. 3% bonus to skirmish command burst effects per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "skirmish_warfare": 5,
+      "warfare_link_specialist": 1
+    }
+  },
+  "mining_director": {
+    "id": "mining_director",
+    "name": "Mining Director",
+    "description": "Advanced mining fleet command. Allows use of Mining Foreman Burst charges. 3% bonus to mining fleet yield per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "mining_foreman": 5,
+      "warfare_link_specialist": 1
+    }
   }
 }

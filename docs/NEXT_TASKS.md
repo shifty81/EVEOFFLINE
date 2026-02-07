@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 7, 2026)**: Capital modules, cloaking devices, jump drives, advanced skills, rare NPC spawns, and mining missions have been added! The game now has 97+ modules, 129 skills, and comprehensive content across all tiers.
+> **Update (February 7, 2026)**: Capital modules, cloaking devices, jump drives, advanced skills, rare NPC spawns, and mining missions have been added! Leadership skills expanded with 8 new skills (Wing Command, Fleet Command, warfare specializations). 12 new exploration sites added. Mordu's Legion and Sisters of EVE NPC factions added. The game now has 97+ modules, 137 skills, and comprehensive content across all tiers.
 
 ## Current Status (February 2026)
 
@@ -19,10 +19,12 @@
 - **371 procedural ship models** (53 ships × 7 factions)
 - **Custom model support**: .obj, .gltf, .glb formats
 - **97+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital)
-- **129 skills** with complete skill tree
+- **137 skills** with complete skill tree (including 14 Leadership skills)
 - **4 epic arc mission chains** with 12 storyline missions
 - **8 rare NPC spawns** (4 faction commanders, 4 officer NPCs)
 - **10 mining missions** across levels 1-4
+- **18 exploration site templates** (combat, relic, data, gas, wormhole)
+- **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **8 major gameplay systems** fully implemented
 - **95+ test functions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
@@ -217,6 +219,25 @@ From ROADMAP.md "In Progress" section:
    - ✅ Progressive difficulty from highsec Veldspar to nullsec Mercoxit
    - ✅ NPC defense spawns in higher level missions
 
+10. ✅ **Add Leadership Skills** (COMPLETED - February 2026)
+    - ✅ Wing Command skill (advanced fleet command)
+    - ✅ Fleet Command skill (elite fleet command)
+    - ✅ Warfare Link Specialist skill (command burst modules)
+    - ✅ 4 warfare specializations (Armored, Information, Siege, Skirmish)
+    - ✅ Mining Director skill (advanced mining fleet command)
+
+11. ✅ **Add More Exploration Sites** (COMPLETED - February 2026)
+    - ✅ 12 new exploration site templates added
+    - ✅ Combat sites across all difficulty levels (Blood Raider, Angel, Sansha, Serpentis, Guristas)
+    - ✅ Relic sites (Sleeper Enclave, Forgotten Perimeter)
+    - ✅ Data sites (Unsecured Frontier, Central Guristas Survey, Serpentis Lookout)
+    - ✅ Wormhole anomaly entries (C1-C3 and C4-C6 destinations)
+    - ✅ 5 new loot item types (sleeper components, decryptors, faction modules, etc.)
+
+12. ✅ **Add New NPC Factions** (COMPLETED - February 2026)
+    - ✅ Mordu's Legion: 4 NPCs (frigate, cruiser, battlecruiser, battleship) with kiting behavior and warp disruptors
+    - ✅ Sisters of EVE: 3 NPCs (frigate, cruiser, battleship) with remote repair and scanning capabilities
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -283,4 +304,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 7, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Capital modules, advanced skills, rare NPCs, and mining missions added. Ready for Phase 8 planning.*
+*Status: Quick Wins, Medium-Term Tasks complete. Leadership skills, exploration sites, and new NPC factions added. Ready for Phase 8 planning.*
