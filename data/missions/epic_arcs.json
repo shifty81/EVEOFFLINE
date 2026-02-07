@@ -86,7 +86,7 @@
       "loyalty_points": 12000,
       "standing_gain": 0.15,
       "faction_standing_gain": 0.06,
-      "items": ["imperial_navy_mega_pulse_laser", "corpum_a_type_energized_adaptive_nano_membrane", "amarr_empire_medal_of_valor"]
+      "items": ["imperial_navy_mega_pulse_laser", "corpum_a_type_energized_adaptive_nano_membrane", "amarr_imperial_medal_of_valor"]
     },
     "location": "bleak_lands",
     "spawn_distance": 80000,
@@ -187,7 +187,7 @@
       "loyalty_points": 12000,
       "standing_gain": 0.15,
       "faction_standing_gain": 0.06,
-      "items": ["caldari_navy_ballistic_control_system", "pith_x_type_shield_boost_amplifier", "state_protectorate_commendation"]
+      "items": ["caldari_navy_ballistic_control_system", "pith_x_type_shield_boost_amplifier", "caldari_state_medal_of_service"]
     },
     "location": "lonetrek_border",
     "spawn_distance": 80000,
