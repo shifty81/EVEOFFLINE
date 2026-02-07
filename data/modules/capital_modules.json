@@ -244,7 +244,7 @@
     "damage_type": "em",
     "rate_of_fire": 600.0,
     "optimal_range": 250000,
-    "description": "Titan-class superweapon, 10 minute cycle time.",
+    "description": "Titan-class superweapon capable of obliterating capital ships in a single devastating blast. Only mountable on Titan-class vessels. Requires the ship to be in siege mode before activation. The 600-second rate of fire represents the cooldown between firings. Cannot target sub-capital ships.",
     "volume": 4000,
     "meta_level": 0
   }

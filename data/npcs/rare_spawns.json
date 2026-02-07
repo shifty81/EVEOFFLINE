@@ -29,11 +29,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 10,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 45
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["federation_navy_magnetic_field_stabilizer", "serpentis_faction_dogtag", "large_hybrid_weapons"],
+    "loot_table": [
+      "federation_navy_magnetic_field_stabilizer",
+      "serpentis_faction_dogtag",
+      "large_hybrid_weapons"
+    ],
     "special": {
       "sensor_dampener": true,
       "remote_repair": true
@@ -68,11 +87,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 86,
+        "kinetic": 62,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["caldari_navy_ballistic_control_system", "guristas_faction_dogtag", "cruise_missiles"],
+    "loot_table": [
+      "caldari_navy_ballistic_control_system",
+      "guristas_faction_dogtag",
+      "cruise_missiles"
+    ],
     "special": {
       "ecm": true,
       "target_painter": true
@@ -108,11 +146,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["imperial_navy_heat_sink", "blood_raiders_faction_dogtag", "large_energy_weapons"],
+    "loot_table": [
+      "imperial_navy_heat_sink",
+      "blood_raiders_faction_dogtag",
+      "large_energy_weapons"
+    ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 180,
@@ -149,11 +206,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["republic_fleet_gyrostabilizer", "angel_faction_dogtag", "large_projectile_weapons"],
+    "loot_table": [
+      "republic_fleet_gyrostabilizer",
+      "angel_faction_dogtag",
+      "large_projectile_weapons"
+    ],
     "special": {
       "web": true,
       "target_painter": true
@@ -188,11 +264,31 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 20, "thermal": 70, "kinetic": 90, "explosive": 60},
-      "armor": {"em": 60, "thermal": 90, "kinetic": 72, "explosive": 35},
-      "hull": {"em": 50, "thermal": 50, "kinetic": 50, "explosive": 50}
+      "shield": {
+        "em": 20,
+        "thermal": 70,
+        "kinetic": 90,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 90,
+        "kinetic": 72,
+        "explosive": 35
+      },
+      "hull": {
+        "em": 50,
+        "thermal": 50,
+        "kinetic": 50,
+        "explosive": 50
+      }
     },
-    "loot_table": ["tobias_modified_shield_booster", "guristas_officer_dogtag", "pith_x_type_shield_booster", "cruise_missiles"],
+    "loot_table": [
+      "tobias_modified_shield_booster",
+      "guristas_officer_dogtag",
+      "pith_x_type_shield_booster",
+      "cruise_missiles"
+    ],
     "special": {
       "ecm": true,
       "target_painter": true,
@@ -205,7 +301,7 @@
     "name": "Draclira Merlonne",
     "type": "battleship",
     "faction": "Blood Raiders",
-    "hull_hp": 12000,
+    "hull_hp": 16000,
     "armor_hp": 28000,
     "shield_hp": 14000,
     "max_velocity": 115,
@@ -230,11 +326,31 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 20, "thermal": 70, "kinetic": 90, "explosive": 60},
-      "armor": {"em": 60, "thermal": 50, "kinetic": 40, "explosive": 25},
-      "hull": {"em": 50, "thermal": 50, "kinetic": 50, "explosive": 50}
+      "shield": {
+        "em": 20,
+        "thermal": 70,
+        "kinetic": 90,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 50,
+        "kinetic": 40,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 50,
+        "thermal": 50,
+        "kinetic": 50,
+        "explosive": 50
+      }
     },
-    "loot_table": ["draclira_modified_energy_neutralizer", "blood_raiders_officer_dogtag", "corpus_x_type_armor_repairer", "large_energy_weapons"],
+    "loot_table": [
+      "draclira_modified_energy_neutralizer",
+      "blood_raiders_officer_dogtag",
+      "corpus_x_type_armor_repairer",
+      "large_energy_weapons"
+    ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 300,
@@ -272,11 +388,31 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 20, "thermal": 70, "kinetic": 90, "explosive": 60},
-      "armor": {"em": 25, "thermal": 50, "kinetic": 40, "explosive": 55},
-      "hull": {"em": 50, "thermal": 50, "kinetic": 50, "explosive": 50}
+      "shield": {
+        "em": 20,
+        "thermal": 70,
+        "kinetic": 90,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 25,
+        "thermal": 50,
+        "kinetic": 40,
+        "explosive": 55
+      },
+      "hull": {
+        "em": 50,
+        "thermal": 50,
+        "kinetic": 50,
+        "explosive": 50
+      }
     },
-    "loot_table": ["cormack_modified_armor_repairer", "serpentis_officer_dogtag", "shadow_serpentis_magnetic_field_stabilizer", "large_hybrid_weapons"],
+    "loot_table": [
+      "cormack_modified_armor_repairer",
+      "serpentis_officer_dogtag",
+      "shadow_serpentis_magnetic_field_stabilizer",
+      "large_hybrid_weapons"
+    ],
     "special": {
       "sensor_dampener": true,
       "web": true,
@@ -313,11 +449,31 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 20, "thermal": 35, "kinetic": 55, "explosive": 60},
-      "armor": {"em": 70, "thermal": 55, "kinetic": 45, "explosive": 35},
-      "hull": {"em": 50, "thermal": 50, "kinetic": 50, "explosive": 50}
+      "shield": {
+        "em": 20,
+        "thermal": 35,
+        "kinetic": 55,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 70,
+        "thermal": 55,
+        "kinetic": 45,
+        "explosive": 35
+      },
+      "hull": {
+        "em": 50,
+        "thermal": 50,
+        "kinetic": 50,
+        "explosive": 50
+      }
     },
-    "loot_table": ["hakim_modified_target_painter", "angel_officer_dogtag", "domination_tracking_enhancer", "large_projectile_weapons"],
+    "loot_table": [
+      "hakim_modified_target_painter",
+      "angel_officer_dogtag",
+      "domination_tracking_enhancer",
+      "large_projectile_weapons"
+    ],
     "special": {
       "target_painter": true,
       "web": true,
