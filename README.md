@@ -119,7 +119,7 @@ All game content is moddable via JSON files, structured around the EVE Online ma
   - Carriers, Dreadnoughts, Titans
   - Procedural 3D models with faction-specific designs
 - 70+ modules (weapons, defenses, utilities)
-- 100+ skills across 18 categories with attribute-based training
+- 100+ skills across 20 categories with attribute-based training
 - Missions across 5 levels with 7 types (combat, mining, courier, trade, scenario, exploration, storyline)
 - Character creation with 4 races, bloodlines, and attributes
 - Clone system, implants, and Learning skills

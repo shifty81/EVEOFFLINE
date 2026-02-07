@@ -88,6 +88,190 @@
         "fullerite_c32": 50
       },
       "isk_reward": 800000
+    },
+    "combat_blood_raider_refuge": {
+      "signature_type": "combat",
+      "name_prefix": "Blood Raider",
+      "name_suffix": "Refuge",
+      "difficulty": 1,
+      "npc_spawns": [
+        "blood_raiders_corpse",
+        "blood_raiders_corpse",
+        "blood_raiders_frigate"
+      ],
+      "loot_table": {
+        "salvage_material": 15,
+        "frequency_crystals": 5
+      },
+      "isk_reward": 350000
+    },
+    "combat_angel_hideaway": {
+      "signature_type": "combat",
+      "name_prefix": "Angel",
+      "name_suffix": "Hideaway",
+      "difficulty": 1,
+      "npc_spawns": [
+        "angel_frigate",
+        "angel_frigate",
+        "angel_frigate"
+      ],
+      "loot_table": {
+        "salvage_material": 12,
+        "projectile_ammo": 8
+      },
+      "isk_reward": 400000
+    },
+    "combat_sansha_den": {
+      "signature_type": "combat",
+      "name_prefix": "Sansha",
+      "name_suffix": "Den",
+      "difficulty": 2,
+      "npc_spawns": [
+        "sansha_frigate",
+        "sansha_frigate",
+        "sansha_cruiser"
+      ],
+      "loot_table": {
+        "salvage_material": 25,
+        "datacores": 3,
+        "frequency_crystals": 8
+      },
+      "isk_reward": 650000
+    },
+    "combat_serpentis_fortress": {
+      "signature_type": "combat",
+      "name_prefix": "Serpentis",
+      "name_suffix": "Fortress",
+      "difficulty": 4,
+      "npc_spawns": [
+        "serpentis_soldier",
+        "serpentis_soldier",
+        "serpentis_battlecruiser",
+        "serpentis_battlecruiser",
+        "serpentis_battleship"
+      ],
+      "loot_table": {
+        "salvage_material": 50,
+        "datacores": 8,
+        "blueprint_copy": 2,
+        "faction_module": 1
+      },
+      "isk_reward": 5000000
+    },
+    "combat_guristas_haven": {
+      "signature_type": "combat",
+      "name_prefix": "Guristas",
+      "name_suffix": "Haven",
+      "difficulty": 5,
+      "npc_spawns": [
+        "guristas_battlecruiser",
+        "guristas_battlecruiser",
+        "guristas_battleship",
+        "guristas_battleship",
+        "guristas_battleship"
+      ],
+      "loot_table": {
+        "salvage_material": 80,
+        "datacores": 12,
+        "blueprint_copy": 3,
+        "faction_module": 2
+      },
+      "isk_reward": 12000000
+    },
+    "relic_sleeper_enclave": {
+      "signature_type": "relic",
+      "name_prefix": "Sleeper",
+      "name_suffix": "Enclave",
+      "difficulty": 3,
+      "npc_spawns": [],
+      "loot_table": {
+        "ancient_artifacts": 10,
+        "salvage_material": 20,
+        "datacores": 5,
+        "sleeper_components": 3
+      },
+      "isk_reward": 1500000
+    },
+    "relic_forgotten_perimeter": {
+      "signature_type": "relic",
+      "name_prefix": "Forgotten",
+      "name_suffix": "Perimeter Habitation Coils",
+      "difficulty": 4,
+      "npc_spawns": [],
+      "loot_table": {
+        "ancient_artifacts": 15,
+        "salvage_material": 30,
+        "datacores": 8,
+        "blueprint_copy": 2
+      },
+      "isk_reward": 3000000
+    },
+    "data_unsecured_frontier": {
+      "signature_type": "data",
+      "name_prefix": "Unsecured",
+      "name_suffix": "Frontier Database",
+      "difficulty": 2,
+      "npc_spawns": [],
+      "loot_table": {
+        "datacores": 12,
+        "salvage_material": 8,
+        "decryptors": 2
+      },
+      "isk_reward": 900000
+    },
+    "data_central_guristas_survey": {
+      "signature_type": "data",
+      "name_prefix": "Central Guristas",
+      "name_suffix": "Survey Site",
+      "difficulty": 3,
+      "npc_spawns": [
+        "guristas_frigate",
+        "guristas_thrasher"
+      ],
+      "loot_table": {
+        "datacores": 15,
+        "salvage_material": 12,
+        "blueprint_copy": 2,
+        "decryptors": 3
+      },
+      "isk_reward": 1800000
+    },
+    "data_serpentis_lookout": {
+      "signature_type": "data",
+      "name_prefix": "Serpentis",
+      "name_suffix": "Lookout",
+      "difficulty": 4,
+      "npc_spawns": [
+        "serpentis_destroyer",
+        "serpentis_soldier"
+      ],
+      "loot_table": {
+        "datacores": 20,
+        "salvage_material": 15,
+        "blueprint_copy": 3,
+        "decryptors": 5
+      },
+      "isk_reward": 2500000
+    },
+    "wormhole_anomaly_perimeter": {
+      "signature_type": "wormhole",
+      "name_prefix": "Unstable",
+      "name_suffix": "Wormhole",
+      "difficulty": 3,
+      "npc_spawns": [],
+      "loot_table": {},
+      "isk_reward": 0,
+      "destination_class": "C1-C3"
+    },
+    "wormhole_anomaly_deep": {
+      "signature_type": "wormhole",
+      "name_prefix": "Dangerous",
+      "name_suffix": "Wormhole",
+      "difficulty": 5,
+      "npc_spawns": [],
+      "loot_table": {},
+      "isk_reward": 0,
+      "destination_class": "C4-C6"
     }
   },
   "loot_items": {
@@ -126,6 +310,36 @@
       "name": "Fullerite-C32",
       "volume": 10.0,
       "base_value": 5000
+    },
+    "sleeper_components": {
+      "item_id": "sleeper_components",
+      "name": "Sleeper Components",
+      "volume": 5.0,
+      "base_value": 200000
+    },
+    "decryptors": {
+      "item_id": "decryptors",
+      "name": "Decryptor",
+      "volume": 1.0,
+      "base_value": 150000
+    },
+    "faction_module": {
+      "item_id": "faction_module",
+      "name": "Faction Module (Random)",
+      "volume": 5.0,
+      "base_value": 25000000
+    },
+    "frequency_crystals": {
+      "item_id": "frequency_crystals",
+      "name": "Frequency Crystal",
+      "volume": 1.0,
+      "base_value": 5000
+    },
+    "projectile_ammo": {
+      "item_id": "projectile_ammo",
+      "name": "Projectile Ammunition",
+      "volume": 0.5,
+      "base_value": 2000
     }
   }
 }

@@ -24,11 +24,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 10,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 45
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["scrap_metal", "hybrid_charges", "serpentis_dogtag"]
+    "loot_table": [
+      "scrap_metal",
+      "hybrid_charges",
+      "serpentis_dogtag"
+    ]
   },
   "serpentis_soldier": {
     "id": "serpentis_soldier",
@@ -55,11 +74,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 10,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 45
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["serpentis_components", "hybrid_weapons", "serpentis_dogtag_advanced"]
+    "loot_table": [
+      "serpentis_components",
+      "hybrid_weapons",
+      "serpentis_dogtag_advanced"
+    ]
   },
   "guristas_thrasher": {
     "id": "guristas_thrasher",
@@ -85,11 +123,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 86,
+        "kinetic": 62,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["scrap_metal", "light_missiles", "guristas_dogtag"]
+    "loot_table": [
+      "scrap_metal",
+      "light_missiles",
+      "guristas_dogtag"
+    ]
   },
   "guristas_frigate": {
     "id": "guristas_frigate",
@@ -115,11 +172,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 86,
+        "kinetic": 62,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["scrap_metal", "light_missiles", "guristas_dogtag"]
+    "loot_table": [
+      "scrap_metal",
+      "light_missiles",
+      "guristas_dogtag"
+    ]
   },
   "blood_raiders_corpse": {
     "id": "blood_raiders_corpse",
@@ -146,11 +222,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["scrap_metal", "frequency_crystals", "blood_raiders_dogtag"],
+    "loot_table": [
+      "scrap_metal",
+      "frequency_crystals",
+      "blood_raiders_dogtag"
+    ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 15
@@ -181,11 +276,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["scrap_metal", "frequency_crystals", "blood_raiders_dogtag"],
+    "loot_table": [
+      "scrap_metal",
+      "frequency_crystals",
+      "blood_raiders_dogtag"
+    ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 15
@@ -216,11 +330,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 10,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 45
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["serpentis_components", "hybrid_charges", "serpentis_dogtag"]
+    "loot_table": [
+      "serpentis_components",
+      "hybrid_charges",
+      "serpentis_dogtag"
+    ]
   },
   "guristas_destroyer": {
     "id": "guristas_destroyer",
@@ -246,11 +379,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 86,
+        "kinetic": 62,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["guristas_components", "light_missiles", "guristas_dogtag"]
+    "loot_table": [
+      "guristas_components",
+      "light_missiles",
+      "guristas_dogtag"
+    ]
   },
   "blood_raiders_cruiser": {
     "id": "blood_raiders_cruiser",
@@ -277,11 +429,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["blood_raiders_components", "frequency_crystals", "blood_raiders_dogtag_advanced"],
+    "loot_table": [
+      "blood_raiders_components",
+      "frequency_crystals",
+      "blood_raiders_dogtag_advanced"
+    ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 45
@@ -312,11 +483,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 25, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 35, "explosive": 20},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 25,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 20
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sansha_components", "frequency_crystals", "sansha_dogtag"]
+    "loot_table": [
+      "sansha_components",
+      "frequency_crystals",
+      "sansha_dogtag"
+    ]
   },
   "sansha_cruiser": {
     "id": "sansha_cruiser",
@@ -343,11 +533,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 25, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 35, "explosive": 20},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 25,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 20
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sansha_components_advanced", "frequency_crystals", "sansha_dogtag_advanced"],
+    "loot_table": [
+      "sansha_components_advanced",
+      "frequency_crystals",
+      "sansha_dogtag_advanced"
+    ],
     "special": {
       "tracking_disruptor": true,
       "energy_neutralizer": true,
@@ -379,11 +588,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["angel_components", "projectile_ammo", "angel_dogtag"]
+    "loot_table": [
+      "angel_components",
+      "projectile_ammo",
+      "angel_dogtag"
+    ]
   },
   "angel_cruiser": {
     "id": "angel_cruiser",
@@ -410,11 +638,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["angel_components_advanced", "projectile_weapons", "angel_dogtag_advanced"]
+    "loot_table": [
+      "angel_components_advanced",
+      "projectile_weapons",
+      "angel_dogtag_advanced"
+    ]
   },
   "rogue_drone_frigate": {
     "id": "rogue_drone_frigate",
@@ -441,11 +688,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33},
-      "armor": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      },
+      "armor": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["drone_compounds", "drone_alloys", "salvaged_materials"],
+    "loot_table": [
+      "drone_compounds",
+      "drone_alloys",
+      "salvaged_materials"
+    ],
     "special": {
       "self_repair": true,
       "repair_rate": 8
@@ -476,11 +742,31 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33},
-      "armor": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      },
+      "armor": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["drone_compounds_advanced", "drone_alloys", "augmented_drone", "salvaged_materials"],
+    "loot_table": [
+      "drone_compounds_advanced",
+      "drone_alloys",
+      "augmented_drone",
+      "salvaged_materials"
+    ],
     "special": {
       "self_repair": true,
       "spawn_drones": true,
@@ -512,11 +798,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 10,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 45
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["serpentis_components_rare", "medium_hybrid_weapons", "serpentis_officer_dogtag"]
+    "loot_table": [
+      "serpentis_components_rare",
+      "medium_hybrid_weapons",
+      "serpentis_officer_dogtag"
+    ]
   },
   "guristas_battlecruiser": {
     "id": "guristas_battlecruiser",
@@ -542,11 +847,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 86,
+        "kinetic": 62,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["guristas_components_rare", "heavy_missiles", "guristas_officer_dogtag"]
+    "loot_table": [
+      "guristas_components_rare",
+      "heavy_missiles",
+      "guristas_officer_dogtag"
+    ]
   },
   "blood_raiders_battlecruiser": {
     "id": "blood_raiders_battlecruiser",
@@ -573,11 +897,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["blood_raiders_components_rare", "medium_energy_weapons", "blood_raiders_officer_dogtag"],
+    "loot_table": [
+      "blood_raiders_components_rare",
+      "medium_energy_weapons",
+      "blood_raiders_officer_dogtag"
+    ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 75
@@ -608,11 +951,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 25, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 35, "explosive": 20},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 25,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 20
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sansha_components_rare", "medium_energy_weapons", "sansha_officer_dogtag"],
+    "loot_table": [
+      "sansha_components_rare",
+      "medium_energy_weapons",
+      "sansha_officer_dogtag"
+    ],
     "special": {
       "tracking_disruptor": true,
       "energy_neutralizer": true,
@@ -644,11 +1006,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["angel_components_rare", "medium_projectile_weapons", "angel_officer_dogtag"]
+    "loot_table": [
+      "angel_components_rare",
+      "medium_projectile_weapons",
+      "angel_officer_dogtag"
+    ]
   },
   "serpentis_battleship": {
     "id": "serpentis_battleship",
@@ -675,11 +1056,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 10,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 45
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["serpentis_components_faction", "large_hybrid_weapons", "serpentis_faction_dogtag"]
+    "loot_table": [
+      "serpentis_components_faction",
+      "large_hybrid_weapons",
+      "serpentis_faction_dogtag"
+    ]
   },
   "guristas_battleship": {
     "id": "guristas_battleship",
@@ -705,11 +1105,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 86,
+        "kinetic": 62,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["guristas_components_faction", "cruise_missiles", "guristas_faction_dogtag"]
+    "loot_table": [
+      "guristas_components_faction",
+      "cruise_missiles",
+      "guristas_faction_dogtag"
+    ]
   },
   "blood_raiders_battleship": {
     "id": "blood_raiders_battleship",
@@ -736,11 +1155,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["blood_raiders_components_faction", "large_energy_weapons", "blood_raiders_faction_dogtag"],
+    "loot_table": [
+      "blood_raiders_components_faction",
+      "large_energy_weapons",
+      "blood_raiders_faction_dogtag"
+    ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 150,
@@ -772,11 +1210,30 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 25, "thermal": 60, "kinetic": 85, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 35, "explosive": 20},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 25,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 20
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sansha_components_faction", "large_energy_weapons", "sansha_faction_dogtag"],
+    "loot_table": [
+      "sansha_components_faction",
+      "large_energy_weapons",
+      "sansha_faction_dogtag"
+    ],
     "special": {
       "tracking_disruptor": true,
       "energy_neutralizer": true,
@@ -809,13 +1266,426 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 25
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["angel_components_faction", "large_projectile_weapons", "angel_faction_dogtag"],
+    "loot_table": [
+      "angel_components_faction",
+      "large_projectile_weapons",
+      "angel_faction_dogtag"
+    ],
     "special": {
       "web": true
+    }
+  },
+  "mordus_legion_frigate": {
+    "id": "mordus_legion_frigate",
+    "name": "Mordus Legion Pith Reaver",
+    "type": "frigate",
+    "faction": "Mordu's Legion",
+    "hull_hp": 350,
+    "armor_hp": 280,
+    "shield_hp": 420,
+    "max_velocity": 410,
+    "orbit_distance": 15000,
+    "signature_radius": 33,
+    "bounty": 35000,
+    "behavior": "kiting",
+    "awareness_range": 70000,
+    "weapons": [
+      {
+        "type": "light_missile",
+        "damage": 48,
+        "damage_type": "kinetic",
+        "range": 25000,
+        "rate_of_fire": 6.0
+      }
+    ],
+    "resistances": {
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 55,
+        "kinetic": 45,
+        "explosive": 30
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
+    },
+    "loot_table": [
+      "mordus_components",
+      "light_missiles",
+      "mordus_dogtag"
+    ],
+    "special": {
+      "warp_disruptor": true,
+      "disruptor_range": 24000
+    }
+  },
+  "mordus_legion_cruiser": {
+    "id": "mordus_legion_cruiser",
+    "name": "Mordus Legion Pith Eliminator",
+    "type": "cruiser",
+    "faction": "Mordu's Legion",
+    "hull_hp": 1500,
+    "armor_hp": 1200,
+    "shield_hp": 1800,
+    "max_velocity": 260,
+    "orbit_distance": 25000,
+    "signature_radius": 100,
+    "bounty": 225000,
+    "behavior": "kiting",
+    "awareness_range": 90000,
+    "weapons": [
+      {
+        "type": "heavy_missile",
+        "damage": 130,
+        "damage_type": "kinetic",
+        "range": 45000,
+        "rate_of_fire": 10.0
+      }
+    ],
+    "resistances": {
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 55,
+        "kinetic": 45,
+        "explosive": 30
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
+    },
+    "loot_table": [
+      "mordus_components_advanced",
+      "heavy_missiles",
+      "mordus_dogtag_advanced"
+    ],
+    "special": {
+      "warp_disruptor": true,
+      "disruptor_range": 36000
+    }
+  },
+  "mordus_legion_battlecruiser": {
+    "id": "mordus_legion_battlecruiser",
+    "name": "Mordus Legion Pith Warlord",
+    "type": "battlecruiser",
+    "faction": "Mordu's Legion",
+    "hull_hp": 3200,
+    "armor_hp": 2600,
+    "shield_hp": 3800,
+    "max_velocity": 175,
+    "orbit_distance": 35000,
+    "signature_radius": 240,
+    "bounty": 500000,
+    "behavior": "kiting",
+    "awareness_range": 110000,
+    "weapons": [
+      {
+        "type": "heavy_missile",
+        "damage": 220,
+        "damage_type": "kinetic",
+        "range": 55000,
+        "rate_of_fire": 11.0
+      }
+    ],
+    "resistances": {
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 55,
+        "kinetic": 45,
+        "explosive": 30
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
+    },
+    "loot_table": [
+      "mordus_components_rare",
+      "heavy_missiles",
+      "mordus_officer_dogtag"
+    ],
+    "special": {
+      "warp_disruptor": true,
+      "disruptor_range": 48000
+    }
+  },
+  "mordus_legion_battleship": {
+    "id": "mordus_legion_battleship",
+    "name": "Mordus Legion Pith Usurper",
+    "type": "battleship",
+    "faction": "Mordu's Legion",
+    "hull_hp": 6000,
+    "armor_hp": 5000,
+    "shield_hp": 7500,
+    "max_velocity": 100,
+    "orbit_distance": 50000,
+    "signature_radius": 400,
+    "bounty": 1100000,
+    "behavior": "kiting",
+    "awareness_range": 130000,
+    "weapons": [
+      {
+        "type": "cruise_missile",
+        "damage": 480,
+        "damage_type": "kinetic",
+        "range": 100000,
+        "rate_of_fire": 16.0
+      }
+    ],
+    "resistances": {
+      "shield": {
+        "em": 0,
+        "thermal": 60,
+        "kinetic": 85,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 55,
+        "kinetic": 45,
+        "explosive": 30
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
+    },
+    "loot_table": [
+      "mordus_components_faction",
+      "cruise_missiles",
+      "mordus_faction_dogtag"
+    ],
+    "special": {
+      "warp_disruptor": true,
+      "disruptor_range": 60000
+    }
+  },
+  "soe_frigate": {
+    "id": "soe_frigate",
+    "name": "Sisters of EVE Seeker",
+    "type": "frigate",
+    "faction": "Sisters of EVE",
+    "hull_hp": 300,
+    "armor_hp": 350,
+    "shield_hp": 300,
+    "max_velocity": 370,
+    "orbit_distance": 5000,
+    "signature_radius": 30,
+    "bounty": 20000,
+    "behavior": "defensive",
+    "awareness_range": 75000,
+    "weapons": [
+      {
+        "type": "small_energy",
+        "damage": 30,
+        "damage_type": "em",
+        "optimal_range": 6000,
+        "falloff_range": 4000,
+        "rate_of_fire": 4.0
+      }
+    ],
+    "resistances": {
+      "shield": {
+        "em": 20,
+        "thermal": 50,
+        "kinetic": 50,
+        "explosive": 40
+      },
+      "armor": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
+    },
+    "loot_table": [
+      "soe_components",
+      "salvage_material",
+      "soe_dogtag"
+    ],
+    "special": {
+      "remote_armor_repair": true,
+      "repair_amount": 25
+    }
+  },
+  "soe_cruiser": {
+    "id": "soe_cruiser",
+    "name": "Sisters of EVE Purifier",
+    "type": "cruiser",
+    "faction": "Sisters of EVE",
+    "hull_hp": 1300,
+    "armor_hp": 1700,
+    "shield_hp": 1300,
+    "max_velocity": 210,
+    "orbit_distance": 10000,
+    "signature_radius": 95,
+    "bounty": 175000,
+    "behavior": "defensive",
+    "awareness_range": 95000,
+    "weapons": [
+      {
+        "type": "medium_energy",
+        "damage": 85,
+        "damage_type": "em",
+        "optimal_range": 12000,
+        "falloff_range": 8000,
+        "rate_of_fire": 5.5
+      },
+      {
+        "type": "light_drone",
+        "damage": 35,
+        "damage_type": "thermal",
+        "range": 20000,
+        "rate_of_fire": 3.0,
+        "count": 5
+      }
+    ],
+    "resistances": {
+      "shield": {
+        "em": 20,
+        "thermal": 50,
+        "kinetic": 50,
+        "explosive": 40
+      },
+      "armor": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
+    },
+    "loot_table": [
+      "soe_components_advanced",
+      "salvage_material",
+      "soe_dogtag_advanced"
+    ],
+    "special": {
+      "remote_armor_repair": true,
+      "repair_amount": 65,
+      "scan_probe_launcher": true
+    }
+  },
+  "soe_battleship": {
+    "id": "soe_battleship",
+    "name": "Sisters of EVE Nestor",
+    "type": "battleship",
+    "faction": "Sisters of EVE",
+    "hull_hp": 5500,
+    "armor_hp": 7000,
+    "shield_hp": 5000,
+    "max_velocity": 80,
+    "orbit_distance": 20000,
+    "signature_radius": 450,
+    "bounty": 950000,
+    "behavior": "defensive",
+    "awareness_range": 100000,
+    "weapons": [
+      {
+        "type": "large_energy",
+        "damage": 350,
+        "damage_type": "em",
+        "optimal_range": 28000,
+        "falloff_range": 15000,
+        "rate_of_fire": 9.0
+      },
+      {
+        "type": "heavy_drone",
+        "damage": 120,
+        "damage_type": "thermal",
+        "range": 30000,
+        "rate_of_fire": 5.0,
+        "count": 5
+      }
+    ],
+    "resistances": {
+      "shield": {
+        "em": 20,
+        "thermal": 50,
+        "kinetic": 50,
+        "explosive": 40
+      },
+      "armor": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
+    },
+    "loot_table": [
+      "soe_components_faction",
+      "large_energy_weapons",
+      "soe_faction_dogtag",
+      "sisters_probe_launcher"
+    ],
+    "special": {
+      "remote_armor_repair": true,
+      "repair_amount": 200,
+      "scan_probe_launcher": true,
+      "remote_capacitor_transmitter": true
     }
   }
 }

@@ -535,7 +535,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 #### More Skills
 - [x] Capital ship skills (carriers, dreadnoughts, titans for all 4 races)
 - [x] Advanced weapon skills (large turret specializations, capital turrets)
-- [ ] Leadership skills
+- [x] Leadership skills (Wing Command, Fleet Command, Warfare Link Specialist, 4 warfare specializations, Mining Director)
 - [x] Jump skills (Jump Drive Operation, Calibration, Fuel Conservation)
 - [x] Cloaking skills
 - [x] Advanced industrial skills (Advanced Industry, Supply Chain Management)
@@ -544,10 +544,10 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Level 5 missions
 - [x] Epic mission arcs
 - [ ] Incursions (group PVE events)
-- [ ] More NPC factions
+- [x] More NPC factions (Mordu's Legion, Sisters of EVE)
 - [x] Rare NPC spawns (4 faction commanders, 4 officer NPCs)
-- [ ] More exploration sites
-- [ ] Special anomalies
+- [x] More exploration sites (12 new templates: combat, relic, data, wormhole anomalies)
+- [x] Special anomalies (wormhole anomalies for C1-C3 and C4-C6 space)
 
 **Estimated Effort**: 6-8 weeks  
 **Blockers**: None
