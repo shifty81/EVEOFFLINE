@@ -195,8 +195,7 @@ int WormholeDatabase::loadEffects(const std::string& filepath) {
                 size_t colon = mod_block.find(':', mk_end);
                 if (colon == std::string::npos) break;
 
-                float val = extractFloat(mod_block.substr(colon), "", 1.0f);
-                // Simple: find the number right after the colon
+                float val = 1.0f;
                 size_t vp = colon + 1;
                 while (vp < mod_block.size() && (mod_block[vp] == ' ' || mod_block[vp] == '\t'))
                     ++vp;

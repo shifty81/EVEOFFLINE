@@ -616,7 +616,6 @@ void testWormholeDatabaseLoad() {
     if (count == 0) count = db.loadFromDirectory("data");
     if (count == 0) count = db.loadFromDirectory("../../data");
     
-    assertTrue(db.getClassCount() > 0, "Loaded at least 1 wormhole class");
     assertTrue(db.getClassCount() == 6, "Loaded all 6 wormhole classes (C1-C6)");
     assertTrue(db.getEffectCount() > 0, "Loaded at least 1 wormhole effect");
 }
