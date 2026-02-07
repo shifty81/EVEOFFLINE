@@ -124,13 +124,15 @@
     "hull_upgrades": {
         "id": "hull_upgrades",
         "name": "Hull Upgrades",
-        "description": "Skill at installing armor upgrades. 5% bonus to armor HP per level.",
-        "category": "Armor",
+        "description": "Skill at upgrading ship hulls. Allows fitting of armor plates and hull modification modules.",
+        "category": "Mechanic",
         "primary_attribute": "intelligence",
         "secondary_attribute": "memory",
         "training_multiplier": 2,
         "max_level": 5,
-        "prerequisites": {}
+        "prerequisites": {
+            "mechanic": 1
+        }
     },
     "navigation": {
         "id": "navigation",
@@ -953,7 +955,6 @@
             "reprocessing_efficiency": 3
         }
     },
-
     "learning": {
         "id": "learning",
         "name": "Learning",
@@ -1020,7 +1021,6 @@
         "max_level": 5,
         "prerequisites": {}
     },
-
     "social": {
         "id": "social",
         "name": "Social",
@@ -1084,7 +1084,6 @@
             "social": 3
         }
     },
-
     "trade": {
         "id": "trade",
         "name": "Trade",
@@ -1161,7 +1160,6 @@
             "trade": 2
         }
     },
-
     "leadership": {
         "id": "leadership",
         "name": "Leadership",
@@ -1238,7 +1236,6 @@
             "leadership": 1
         }
     },
-
     "corporation_management": {
         "id": "corporation_management",
         "name": "Corporation Management",
@@ -1263,7 +1260,6 @@
             "corporation_management": 3
         }
     },
-
     "mechanic": {
         "id": "mechanic",
         "name": "Mechanic",
@@ -1274,19 +1270,6 @@
         "training_multiplier": 1,
         "max_level": 5,
         "prerequisites": {}
-    },
-    "hull_upgrades": {
-        "id": "hull_upgrades",
-        "name": "Hull Upgrades",
-        "description": "Skill at upgrading ship hulls. Allows fitting of armor plates and hull modification modules.",
-        "category": "Mechanic",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "mechanic": 1
-        }
     },
     "repair_systems": {
         "id": "repair_systems",
@@ -1314,7 +1297,6 @@
             "mechanic": 3
         }
     },
-
     "cybernetics": {
         "id": "cybernetics",
         "name": "Cybernetics",
@@ -1339,6 +1321,347 @@
         "max_level": 5,
         "prerequisites": {
             "science": 4
+        }
+    },
+    "capital_ships": {
+        "id": "capital_ships",
+        "name": "Capital Ships",
+        "description": "Grants the ability to pilot capital ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 14,
+        "max_level": 5,
+        "prerequisites": {
+            "minmatar_battleship": 5
+        }
+    },
+    "amarr_carrier": {
+        "id": "amarr_carrier",
+        "name": "Amarr Carrier",
+        "description": "Skill at operating Amarr carrier class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 14,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 1,
+            "amarr_battleship": 5
+        }
+    },
+    "caldari_carrier": {
+        "id": "caldari_carrier",
+        "name": "Caldari Carrier",
+        "description": "Skill at operating Caldari carrier class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 14,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 1,
+            "caldari_battleship": 5
+        }
+    },
+    "gallente_carrier": {
+        "id": "gallente_carrier",
+        "name": "Gallente Carrier",
+        "description": "Skill at operating Gallente carrier class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 14,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 1,
+            "gallente_battleship": 5
+        }
+    },
+    "minmatar_carrier": {
+        "id": "minmatar_carrier",
+        "name": "Minmatar Carrier",
+        "description": "Skill at operating Minmatar carrier class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 14,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 1,
+            "minmatar_battleship": 5
+        }
+    },
+    "amarr_dreadnought": {
+        "id": "amarr_dreadnought",
+        "name": "Amarr Dreadnought",
+        "description": "Skill at operating Amarr dreadnought class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 16,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 3,
+            "amarr_battleship": 5
+        }
+    },
+    "caldari_dreadnought": {
+        "id": "caldari_dreadnought",
+        "name": "Caldari Dreadnought",
+        "description": "Skill at operating Caldari dreadnought class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 16,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 3,
+            "caldari_battleship": 5
+        }
+    },
+    "gallente_dreadnought": {
+        "id": "gallente_dreadnought",
+        "name": "Gallente Dreadnought",
+        "description": "Skill at operating Gallente dreadnought class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 16,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 3,
+            "gallente_battleship": 5
+        }
+    },
+    "minmatar_dreadnought": {
+        "id": "minmatar_dreadnought",
+        "name": "Minmatar Dreadnought",
+        "description": "Skill at operating Minmatar dreadnought class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 16,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 3,
+            "minmatar_battleship": 5
+        }
+    },
+    "amarr_titan": {
+        "id": "amarr_titan",
+        "name": "Amarr Titan",
+        "description": "Skill at operating Amarr titan class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 20,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 5,
+            "amarr_battleship": 5
+        }
+    },
+    "caldari_titan": {
+        "id": "caldari_titan",
+        "name": "Caldari Titan",
+        "description": "Skill at operating Caldari titan class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 20,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 5,
+            "caldari_battleship": 5
+        }
+    },
+    "gallente_titan": {
+        "id": "gallente_titan",
+        "name": "Gallente Titan",
+        "description": "Skill at operating Gallente titan class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 20,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 5,
+            "gallente_battleship": 5
+        }
+    },
+    "minmatar_titan": {
+        "id": "minmatar_titan",
+        "name": "Minmatar Titan",
+        "description": "Skill at operating Minmatar titan class ships.",
+        "category": "Spaceship Command",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 20,
+        "max_level": 5,
+        "prerequisites": {
+            "capital_ships": 5,
+            "minmatar_battleship": 5
+        }
+    },
+    "jump_drive_operation": {
+        "id": "jump_drive_operation",
+        "name": "Jump Drive Operation",
+        "description": "Skill at operating jump drives. 5% reduction in capacitor need per level.",
+        "category": "Navigation",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "perception",
+        "training_multiplier": 8,
+        "max_level": 5,
+        "prerequisites": {
+            "navigation": 5,
+            "science": 5
+        }
+    },
+    "jump_drive_calibration": {
+        "id": "jump_drive_calibration",
+        "name": "Jump Drive Calibration",
+        "description": "Advanced skill at using jump drives. 0.5 LY increase to jump range per level.",
+        "category": "Navigation",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "perception",
+        "training_multiplier": 9,
+        "max_level": 5,
+        "prerequisites": {
+            "jump_drive_operation": 3
+        }
+    },
+    "jump_fuel_conservation": {
+        "id": "jump_fuel_conservation",
+        "name": "Jump Fuel Conservation",
+        "description": "Skill at conserving fuel during jump drive operation. 10% reduction in fuel need per level.",
+        "category": "Navigation",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "perception",
+        "training_multiplier": 8,
+        "max_level": 5,
+        "prerequisites": {
+            "jump_drive_operation": 3
+        }
+    },
+    "cloaking": {
+        "id": "cloaking",
+        "name": "Cloaking",
+        "description": "Skill at using cloaking devices. 10% reduction in scan resolution penalty per level.",
+        "category": "Electronics",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 6,
+        "max_level": 5,
+        "prerequisites": {
+            "cpu_management": 4
+        }
+    },
+    "large_projectile_specialization": {
+        "id": "large_projectile_specialization",
+        "name": "Large Projectile Turret Specialization",
+        "description": "Advanced skill at using large projectile turrets. 2% damage bonus per level to Tech II large projectile turrets.",
+        "category": "Gunnery",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 8,
+        "max_level": 5,
+        "prerequisites": {
+            "large_projectile": 5
+        }
+    },
+    "large_energy_specialization": {
+        "id": "large_energy_specialization",
+        "name": "Large Energy Turret Specialization",
+        "description": "Advanced skill at using large energy turrets. 2% damage bonus per level to Tech II large energy turrets.",
+        "category": "Gunnery",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 8,
+        "max_level": 5,
+        "prerequisites": {
+            "large_energy": 5
+        }
+    },
+    "large_hybrid_specialization": {
+        "id": "large_hybrid_specialization",
+        "name": "Large Hybrid Turret Specialization",
+        "description": "Advanced skill at using large hybrid turrets. 2% damage bonus per level to Tech II large hybrid turrets.",
+        "category": "Gunnery",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 8,
+        "max_level": 5,
+        "prerequisites": {
+            "large_hybrid": 5
+        }
+    },
+    "capital_projectile_turret": {
+        "id": "capital_projectile_turret",
+        "name": "Capital Projectile Turret",
+        "description": "Skill at using capital sized projectile turrets.",
+        "category": "Gunnery",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 10,
+        "max_level": 5,
+        "prerequisites": {
+            "large_projectile": 5,
+            "gunnery": 5
+        }
+    },
+    "capital_energy_turret": {
+        "id": "capital_energy_turret",
+        "name": "Capital Energy Turret",
+        "description": "Skill at using capital sized energy turrets.",
+        "category": "Gunnery",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 10,
+        "max_level": 5,
+        "prerequisites": {
+            "large_energy": 5,
+            "gunnery": 5
+        }
+    },
+    "capital_hybrid_turret": {
+        "id": "capital_hybrid_turret",
+        "name": "Capital Hybrid Turret",
+        "description": "Skill at using capital sized hybrid turrets.",
+        "category": "Gunnery",
+        "primary_attribute": "perception",
+        "secondary_attribute": "willpower",
+        "training_multiplier": 10,
+        "max_level": 5,
+        "prerequisites": {
+            "large_hybrid": 5,
+            "gunnery": 5
+        }
+    },
+    "advanced_industry": {
+        "id": "advanced_industry",
+        "name": "Advanced Industry",
+        "description": "Advanced knowledge of industrial processes. 3% reduction in manufacturing time per level.",
+        "category": "Industry",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 8,
+        "max_level": 5,
+        "prerequisites": {
+            "science": 5
+        }
+    },
+    "supply_chain_management": {
+        "id": "supply_chain_management",
+        "name": "Supply Chain Management",
+        "description": "Expertise in managing remote manufacturing operations. Increases number of remote manufacturing slots by 1 per level.",
+        "category": "Industry",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 10,
+        "max_level": 5,
+        "prerequisites": {
+            "advanced_industry": 4
         }
     }
 }
