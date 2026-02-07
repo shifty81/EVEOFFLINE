@@ -57,11 +57,6 @@ void GameSession::initialize() {
         }
     );
 
-    // Cache a pointer to the TargetingSystem so we can call startLock/unlockTarget
-    for (auto* entity : world_->getAllEntities()) { (void)entity; }
-    // The TargetingSystem is set externally or looked up via the world
-    // We store it via setTargetingSystem() called from server.cpp
-
     // Spawn a handful of NPC enemies so the world isn't empty
     spawnInitialNPCs();
 
