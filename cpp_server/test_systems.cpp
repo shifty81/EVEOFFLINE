@@ -15,6 +15,8 @@
 #include "systems/weapon_system.h"
 #include "systems/targeting_system.h"
 #include "data/ship_database.h"
+#include "data/wormhole_database.h"
+#include "systems/wormhole_system.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -604,13 +606,214 @@ void testShipDatabaseGetShipIds() {
     assertTrue(found, "rifter is in ship ID list");
 }
 
+// ==================== WormholeDatabase Tests ====================
+
+void testWormholeDatabaseLoad() {
+    std::cout << "\n=== WormholeDatabase Load ===" << std::endl;
+    
+    data::WormholeDatabase db;
+    int count = db.loadFromDirectory("../data");
+    if (count == 0) count = db.loadFromDirectory("data");
+    if (count == 0) count = db.loadFromDirectory("../../data");
+    
+    assertTrue(db.getClassCount() == 6, "Loaded all 6 wormhole classes (C1-C6)");
+    assertTrue(db.getEffectCount() > 0, "Loaded at least 1 wormhole effect");
+}
+
+void testWormholeDatabaseGetClass() {
+    std::cout << "\n=== WormholeDatabase Get Class ===" << std::endl;
+    
+    data::WormholeDatabase db;
+    if (db.loadFromDirectory("../data") == 0)
+        if (db.loadFromDirectory("data") == 0)
+            db.loadFromDirectory("../../data");
+    
+    const data::WormholeClassTemplate* c1 = db.getWormholeClass("c1");
+    if (c1) {
+        assertTrue(c1->wormhole_class == 1, "C1 wormhole class is 1");
+        assertTrue(c1->difficulty == "easy", "C1 difficulty is easy");
+        assertTrue(c1->max_ship_class == "Battlecruiser", "C1 max ship is Battlecruiser");
+        assertTrue(!c1->sleeper_spawns.empty(), "C1 has sleeper spawns");
+        assertTrue(c1->salvage_value_multiplier > 0.0f, "C1 has salvage multiplier");
+    } else {
+        assertTrue(false, "C1 wormhole class found");
+    }
+    
+    const data::WormholeClassTemplate* c6 = db.getWormholeClass("c6");
+    if (c6) {
+        assertTrue(c6->wormhole_class == 6, "C6 wormhole class is 6");
+        assertTrue(c6->difficulty == "extreme", "C6 difficulty is extreme");
+        assertTrue(c6->blue_loot_isk > c1->blue_loot_isk, "C6 loot > C1 loot");
+    } else {
+        assertTrue(false, "C6 wormhole class found");
+    }
+    
+    assertTrue(db.getWormholeClass("nonexistent") == nullptr, "Nonexistent class returns nullptr");
+}
+
+void testWormholeDatabaseEffects() {
+    std::cout << "\n=== WormholeDatabase Effects ===" << std::endl;
+    
+    data::WormholeDatabase db;
+    if (db.loadFromDirectory("../data") == 0)
+        if (db.loadFromDirectory("data") == 0)
+            db.loadFromDirectory("../../data");
+    
+    const data::WormholeEffect* magnetar = db.getEffect("magnetar");
+    if (magnetar) {
+        assertTrue(magnetar->name == "Magnetar", "Magnetar name correct");
+        assertTrue(!magnetar->modifiers.empty(), "Magnetar has modifiers");
+        auto it = magnetar->modifiers.find("damage_multiplier");
+        assertTrue(it != magnetar->modifiers.end(), "Magnetar has damage_multiplier");
+        if (it != magnetar->modifiers.end()) {
+            assertTrue(approxEqual(it->second, 1.86f), "Magnetar damage_multiplier is 1.86");
+        }
+    } else {
+        assertTrue(false, "Magnetar effect found");
+    }
+    
+    assertTrue(db.getEffect("nonexistent") == nullptr, "Nonexistent effect returns nullptr");
+}
+
+void testWormholeDatabaseClassIds() {
+    std::cout << "\n=== WormholeDatabase Class IDs ===" << std::endl;
+    
+    data::WormholeDatabase db;
+    if (db.loadFromDirectory("../data") == 0)
+        if (db.loadFromDirectory("data") == 0)
+            db.loadFromDirectory("../../data");
+    
+    auto ids = db.getClassIds();
+    assertTrue(ids.size() == 6, "getClassIds returns 6 classes");
+    
+    auto effect_ids = db.getEffectIds();
+    assertTrue(effect_ids.size() == 6, "getEffectIds returns 6 effects");
+}
+
+// ==================== WormholeSystem Tests ====================
+
+void testWormholeLifetimeDecay() {
+    std::cout << "\n=== Wormhole Lifetime Decay ===" << std::endl;
+    
+    ecs::World world;
+    systems::WormholeSystem whSys(&world);
+    
+    auto* wh_entity = world.createEntity("wh_1");
+    auto* wh = addComp<components::WormholeConnection>(wh_entity);
+    wh->wormhole_id = "wh_1";
+    wh->max_mass = 500000000.0;
+    wh->remaining_mass = 500000000.0;
+    wh->max_jump_mass = 20000000.0;
+    wh->max_lifetime_hours = 24.0f;
+    wh->elapsed_hours = 0.0f;
+    
+    assertTrue(whSys.isWormholeStable("wh_1"), "Wormhole starts stable");
+    
+    // Simulate 12 hours (43200 seconds)
+    whSys.update(43200.0f);
+    assertTrue(whSys.isWormholeStable("wh_1"), "Wormhole stable at 12 hours");
+    assertTrue(approxEqual(whSys.getRemainingLifetimeFraction("wh_1"), 0.5f),
+               "50% lifetime remaining at 12h");
+    
+    // Simulate another 13 hours to exceed lifetime
+    whSys.update(46800.0f);
+    assertTrue(!whSys.isWormholeStable("wh_1"), "Wormhole collapsed after 25 hours");
+}
+
+void testWormholeJumpMass() {
+    std::cout << "\n=== Wormhole Jump Mass ===" << std::endl;
+    
+    ecs::World world;
+    systems::WormholeSystem whSys(&world);
+    
+    auto* wh_entity = world.createEntity("wh_2");
+    auto* wh = addComp<components::WormholeConnection>(wh_entity);
+    wh->max_mass = 100000000.0;
+    wh->remaining_mass = 100000000.0;
+    wh->max_jump_mass = 20000000.0;
+    wh->max_lifetime_hours = 24.0f;
+    
+    // Ship too heavy for single jump
+    bool result = whSys.jumpThroughWormhole("wh_2", 30000000.0);
+    assertTrue(!result, "Ship too heavy for wormhole rejected");
+    assertTrue(approxEqual(whSys.getRemainingMassFraction("wh_2"), 1.0f),
+               "Mass unchanged on rejected jump");
+    
+    // Valid jump
+    result = whSys.jumpThroughWormhole("wh_2", 15000000.0);
+    assertTrue(result, "Valid ship mass jump succeeds");
+    assertTrue(approxEqual(whSys.getRemainingMassFraction("wh_2"), 0.85f),
+               "Mass reduced by ship mass");
+}
+
+void testWormholeMassCollapse() {
+    std::cout << "\n=== Wormhole Mass Collapse ===" << std::endl;
+    
+    ecs::World world;
+    systems::WormholeSystem whSys(&world);
+    
+    auto* wh_entity = world.createEntity("wh_3");
+    auto* wh = addComp<components::WormholeConnection>(wh_entity);
+    wh->max_mass = 30000000.0;
+    wh->remaining_mass = 30000000.0;
+    wh->max_jump_mass = 20000000.0;
+    wh->max_lifetime_hours = 24.0f;
+    
+    // First jump takes most of the mass
+    bool result = whSys.jumpThroughWormhole("wh_3", 18000000.0);
+    assertTrue(result, "First jump succeeds");
+    assertTrue(whSys.isWormholeStable("wh_3"), "Still stable after first jump");
+    
+    // Second jump depletes remaining mass and collapses
+    result = whSys.jumpThroughWormhole("wh_3", 15000000.0);
+    assertTrue(!result, "Second jump fails (not enough remaining mass)");
+    
+    // A jump that exactly uses remaining mass
+    result = whSys.jumpThroughWormhole("wh_3", 12000000.0);
+    assertTrue(result, "Exact remaining mass jump succeeds");
+    assertTrue(!whSys.isWormholeStable("wh_3"), "Wormhole collapsed after mass depleted");
+}
+
+void testWormholeNonexistent() {
+    std::cout << "\n=== Wormhole Nonexistent ===" << std::endl;
+    
+    ecs::World world;
+    systems::WormholeSystem whSys(&world);
+    
+    assertTrue(!whSys.isWormholeStable("ghost"), "Nonexistent wormhole is not stable");
+    assertTrue(whSys.getRemainingMassFraction("ghost") < 0.0f, "Nonexistent returns -1 mass fraction");
+    assertTrue(whSys.getRemainingLifetimeFraction("ghost") < 0.0f, "Nonexistent returns -1 lifetime fraction");
+    assertTrue(!whSys.jumpThroughWormhole("ghost", 1000.0), "Jump through nonexistent fails");
+}
+
+void testSolarSystemComponent() {
+    std::cout << "\n=== SolarSystem Component ===" << std::endl;
+    
+    ecs::World world;
+    
+    auto* sys_entity = world.createEntity("j123456");
+    auto* solar = addComp<components::SolarSystem>(sys_entity);
+    solar->system_id = "j123456";
+    solar->system_name = "J123456";
+    solar->wormhole_class = 3;
+    solar->effect_name = "magnetar";
+    solar->sleepers_spawned = false;
+    
+    assertTrue(solar->wormhole_class == 3, "SolarSystem wormhole class set correctly");
+    assertTrue(solar->effect_name == "magnetar", "SolarSystem effect set correctly");
+    assertTrue(!solar->sleepers_spawned, "Sleepers not yet spawned");
+    
+    solar->sleepers_spawned = true;
+    assertTrue(solar->sleepers_spawned, "Sleepers marked as spawned");
+}
+
 // ==================== Main ====================
 
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
     std::cout << "CapacitorSystem, ShieldRechargeSystem, WeaponSystem," << std::endl;
-    std::cout << "TargetingSystem, ShipDatabase" << std::endl;
+    std::cout << "TargetingSystem, ShipDatabase, WormholeDatabase, WormholeSystem" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -642,6 +845,19 @@ int main() {
     testShipDatabaseGetShip();
     testShipDatabaseResistances();
     testShipDatabaseGetShipIds();
+    
+    // WormholeDatabase tests
+    testWormholeDatabaseLoad();
+    testWormholeDatabaseGetClass();
+    testWormholeDatabaseEffects();
+    testWormholeDatabaseClassIds();
+    
+    // WormholeSystem tests
+    testWormholeLifetimeDecay();
+    testWormholeJumpMass();
+    testWormholeMassCollapse();
+    testWormholeNonexistent();
+    testSolarSystemComponent();
     
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
