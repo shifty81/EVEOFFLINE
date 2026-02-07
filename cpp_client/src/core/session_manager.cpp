@@ -4,6 +4,7 @@
 #include <iostream>
 #include <chrono>
 #include <cstring>
+#include <random>
 
 // Platform-specific socket headers
 #ifdef _WIN32
@@ -97,8 +98,12 @@ bool SessionManager::joinSession(const std::string& host, int port, const std::s
         m_networkManager = std::make_unique<NetworkManager>();
     }
 
-    // Connect to server
-    std::string playerId = "player_" + std::to_string(std::rand());
+    // Connect to server with a unique player ID
+    // Generate a UUID-like player ID using random device
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 999999);
+    std::string playerId = "player_" + std::to_string(dis(gen));
     std::string characterName = "Commander"; // Default character name
     
     if (!m_networkManager->connect(host, port, playerId, characterName)) {
@@ -303,8 +308,10 @@ bool SessionManager::invitePlayer(const std::string& player_name) {
     std::cout << "Inviting player: " << player_name << std::endl;
     
     // Send invite through network if available
+    // Note: In production, this should use a dedicated INVITE message type
+    // instead of a chat-based protocol to avoid conflicts with actual chat
     if (m_networkManager && m_networkManager->isConnected()) {
-        // Send a chat message as a simple invite mechanism
+        // Send a chat message as a simple invite mechanism (temporary)
         m_networkManager->sendChat("INVITE:" + player_name);
         std::cout << "Invite sent to " << player_name << std::endl;
         return true;
@@ -323,8 +330,10 @@ bool SessionManager::kickPlayer(const std::string& player_name) {
     std::cout << "Kicking player: " << player_name << std::endl;
     
     // Send kick command through network if available
+    // Note: In production, this should use a dedicated KICK message type
+    // instead of a chat-based protocol to avoid conflicts with actual chat
     if (m_networkManager && m_networkManager->isConnected()) {
-        // Send a chat message as a simple kick mechanism
+        // Send a chat message as a simple kick mechanism (temporary)
         m_networkManager->sendChat("KICK:" + player_name);
         
         // Remove from local player list

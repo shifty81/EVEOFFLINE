@@ -11,6 +11,11 @@
 #include <GL/glew.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 using json = nlohmann::json;
 
@@ -214,7 +219,7 @@ void StarMap::loadSystemData(const std::string& systemId) {
         CelestialObject planet;
         planet.id = systemId + "_planet_" + std::to_string(i);
         planet.name = it->name + " " + std::to_string(i + 1);
-        float angle = (float)i / 5.0f * 2.0f * 3.14159f;
+        float angle = (float)i / 5.0f * 2.0f * (float)M_PI;
         float distance = 5000000.0f * (i + 1);
         
         // Use seed for deterministic "random" offsets
@@ -503,8 +508,8 @@ void StarMap::renderTacticalOverlay() {
     for (float range : ranges) {
         const int segments = 64;
         for (int i = 0; i < segments; i++) {
-            float angle1 = (float)i / segments * 2.0f * 3.14159f;
-            float angle2 = (float)(i + 1) / segments * 2.0f * 3.14159f;
+            float angle1 = (float)i / segments * 2.0f * (float)M_PI;
+            float angle2 = (float)(i + 1) / segments * 2.0f * (float)M_PI;
             
             // First point
             lines.push_back(cos(angle1) * range);

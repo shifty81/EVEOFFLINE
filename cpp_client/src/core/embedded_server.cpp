@@ -112,11 +112,11 @@ void EmbeddedServer::setCurrentSystem(const std::string& system) {
 void EmbeddedServer::serverThread() {
     std::cout << "[Server Thread] Started" << std::endl;
 
-    // Server tick loop
+    // Server tick loop at ~30 Hz (33ms per tick, approximately 30.3 Hz)
     // In a full implementation, this would initialize and run the cpp_server
     // For now, we maintain a simple tick loop that tracks state
     auto lastTick = std::chrono::steady_clock::now();
-    const auto tickRate = std::chrono::milliseconds(33); // 30 Hz
+    const auto tickRate = std::chrono::milliseconds(33); // ~30 Hz (33.33ms would be exact)
     
     while (!m_shouldStop) {
         auto now = std::chrono::steady_clock::now();
