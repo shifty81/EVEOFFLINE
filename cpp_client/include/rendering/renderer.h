@@ -47,8 +47,21 @@ struct EntityVisual {
 };
 
 /**
- * Main renderer class
- * Handles all OpenGL rendering
+ * Main renderer class for EVE OFFLINE
+ * 
+ * Handles all OpenGL rendering including:
+ * - Starfield background rendering
+ * - Entity 3D models with lighting
+ * - Health bar overlays (shield/armor/hull)
+ * - Camera transforms and viewport management
+ * 
+ * Rendering Pipeline Order:
+ * 1. Clear framebuffer
+ * 2. Render starfield (background)
+ * 3. Render 3D entities with lighting
+ * 4. Render health bars (overlay)
+ * 
+ * Uses OpenGL 3.3+ with separate shaders for different render passes.
  */
 class Renderer {
 public:
@@ -107,9 +120,55 @@ public:
     void updateEntityVisuals(const std::unordered_map<std::string, std::shared_ptr<Entity>>& entities);
 
 private:
+    /**
+     * Initialize starfield geometry
+     * 
+     * Creates a procedurally generated star background with ~1000 stars
+     * distributed in a sphere around the camera. Stars have varying brightness
+     * to simulate depth and variety.
+     */
     void setupStarfield();
+    
+    /**
+     * Render the starfield background
+     * 
+     * Renders star points using GL_POINTS with the starfield shader.
+     * Stars maintain fixed position relative to camera to create parallax
+     * illusion. Must be rendered first (before entities).
+     * 
+     * @param camera Current camera for view transformation
+     */
     void renderStarfield(Camera& camera);
+    
+    /**
+     * Render all game entities
+     * 
+     * Renders ships, stations, asteroids using 3D models. Applies:
+     * - Model transformation (position, rotation, scale)
+     * - View/projection matrices from camera
+     * - Basic lighting (directional light)
+     * - Faction-specific colors
+     * 
+     * Must be rendered after starfield, before health bars.
+     * 
+     * @param camera Current camera for view/projection matrices
+     */
     void renderEntities(Camera& camera);
+    
+    /**
+     * Render health bars above entities
+     * 
+     * Renders 2D health bar overlays showing shield/armor/hull for each entity.
+     * Health bars are:
+     * - Positioned above entities in 3D space
+     * - Billboard-oriented (always face camera)
+     * - Color-coded (blue=shield, yellow=armor, red=hull)
+     * - Only shown for entities with health components
+     * 
+     * Must be rendered last (on top of everything else).
+     * 
+     * @param camera Current camera for world-to-screen projection
+     */
     void renderHealthBars(Camera& camera);
 
     std::unique_ptr<Shader> m_basicShader;
