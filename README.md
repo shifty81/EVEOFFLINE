@@ -155,13 +155,22 @@ data/
 ## 📚 Documentation
 
 All documentation is in [docs/](docs/):
-- [EVE Manual Reference](docs/EVE_MANUAL_REFERENCE.md) — How manual chapters map to implementation
+
+**Getting Started**
+- [Tutorial](docs/TUTORIAL.md) — New player guide: controls, combat, skills, ISK making
+- [Modding Guide](docs/MODDING_GUIDE.md) — Create custom ships, modules, and missions
 - [Build Guides](docs/guides/) — VS2022, vcpkg, build automation
-- [C++ Client Docs](docs/cpp_client/) — Rendering, UI, audio, networking
+
+**Development**
+- [Roadmap](docs/ROADMAP.md) — Development progress and plans
+- [Next Tasks](docs/NEXT_TASKS.md) — Recommendations for upcoming work
 - [Design Document](docs/design/DESIGN.md) — Game systems structured around EVE manual
+- [EVE Manual Reference](docs/EVE_MANUAL_REFERENCE.md) — How manual chapters map to implementation
+
+**Technical**
+- [C++ Client Docs](docs/cpp_client/) — Rendering, UI, audio, networking
 - [Ship Modeling](docs/SHIP_MODELING.md) — Procedural ship generation system
 - [EVE Ship Reference](docs/EVE_SHIP_REFERENCE.md) — Design inspiration from EVE Online
-- [Roadmap](docs/ROADMAP.md) — Development progress and plans
 
 ## 🤝 Contributing
 
