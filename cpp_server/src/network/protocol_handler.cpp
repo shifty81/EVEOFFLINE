@@ -22,6 +22,8 @@ void ProtocolHandler::initializeMessageTypes() {
     message_type_map_["target_unlock"] = MessageType::TARGET_UNLOCK;
     message_type_map_["module_activate"] = MessageType::MODULE_ACTIVATE;
     message_type_map_["module_deactivate"] = MessageType::MODULE_DEACTIVATE;
+    message_type_map_["wormhole_scan"] = MessageType::WORMHOLE_SCAN;
+    message_type_map_["wormhole_jump"] = MessageType::WORMHOLE_JUMP;
     message_type_map_["error"] = MessageType::ERROR;
 }
 
@@ -40,6 +42,8 @@ std::string ProtocolHandler::messageTypeToString(MessageType type) {
         case MessageType::TARGET_UNLOCK: return "target_unlock";
         case MessageType::MODULE_ACTIVATE: return "module_activate";
         case MessageType::MODULE_DEACTIVATE: return "module_deactivate";
+        case MessageType::WORMHOLE_SCAN: return "wormhole_scan";
+        case MessageType::WORMHOLE_JUMP: return "wormhole_jump";
         case MessageType::ERROR: return "error";
         default: return "unknown";
     }

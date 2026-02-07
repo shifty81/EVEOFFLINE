@@ -25,6 +25,8 @@ enum class MessageType {
     TARGET_UNLOCK,
     MODULE_ACTIVATE,
     MODULE_DEACTIVATE,
+    WORMHOLE_SCAN,
+    WORMHOLE_JUMP,
     ERROR
 };
 

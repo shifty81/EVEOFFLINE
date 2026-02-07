@@ -1,0 +1,210 @@
+{
+  "c1": {
+    "name": "Class 1 Wormhole",
+    "class": 1,
+    "difficulty": "easy",
+    "description": "Entry-level wormhole space. Suitable for solo or small groups.",
+    "max_ship_class": "Battlecruiser",
+    "max_ship_mass": 20000000,
+    "system_effects": {},
+    "static_connections": ["highsec"],
+    "max_wormhole_stability": 500000000,
+    "max_wormhole_lifetime_hours": 24,
+    "sleeper_spawns": [
+      {
+        "id": "sleeper_drone_c1",
+        "name": "Emergent Patroller",
+        "type": "frigate",
+        "count_min": 2,
+        "count_max": 4
+      },
+      {
+        "id": "sleeper_sentinel_c1",
+        "name": "Awakened Patroller",
+        "type": "cruiser",
+        "count_min": 1,
+        "count_max": 2
+      }
+    ],
+    "salvage_value_multiplier": 1.0,
+    "blue_loot_isk": 150000
+  },
+  "c2": {
+    "name": "Class 2 Wormhole",
+    "class": 2,
+    "difficulty": "moderate",
+    "description": "Two static connections make C2 space popular for small groups.",
+    "max_ship_class": "Battleship",
+    "max_ship_mass": 300000000,
+    "system_effects": {},
+    "static_connections": ["highsec", "c1"],
+    "max_wormhole_stability": 1000000000,
+    "max_wormhole_lifetime_hours": 24,
+    "sleeper_spawns": [
+      {
+        "id": "sleeper_drone_c2",
+        "name": "Emergent Defender",
+        "type": "frigate",
+        "count_min": 3,
+        "count_max": 5
+      },
+      {
+        "id": "sleeper_sentinel_c2",
+        "name": "Awakened Defender",
+        "type": "cruiser",
+        "count_min": 2,
+        "count_max": 3
+      }
+    ],
+    "salvage_value_multiplier": 1.5,
+    "blue_loot_isk": 300000
+  },
+  "c3": {
+    "name": "Class 3 Wormhole",
+    "class": 3,
+    "difficulty": "challenging",
+    "description": "Solo battleship or small gang territory. Known-space static.",
+    "max_ship_class": "Battleship",
+    "max_ship_mass": 300000000,
+    "system_effects": {},
+    "static_connections": ["lowsec"],
+    "max_wormhole_stability": 1000000000,
+    "max_wormhole_lifetime_hours": 24,
+    "sleeper_spawns": [
+      {
+        "id": "sleeper_drone_c3",
+        "name": "Emergent Warden",
+        "type": "frigate",
+        "count_min": 3,
+        "count_max": 6
+      },
+      {
+        "id": "sleeper_sentinel_c3",
+        "name": "Awakened Warden",
+        "type": "cruiser",
+        "count_min": 2,
+        "count_max": 4
+      },
+      {
+        "id": "sleeper_upholder_c3",
+        "name": "Sleepless Warden",
+        "type": "battleship",
+        "count_min": 0,
+        "count_max": 1
+      }
+    ],
+    "salvage_value_multiplier": 2.0,
+    "blue_loot_isk": 600000
+  },
+  "c4": {
+    "name": "Class 4 Wormhole",
+    "class": 4,
+    "difficulty": "hard",
+    "description": "Fleet-required content. Two wormhole-space statics.",
+    "max_ship_class": "Battleship",
+    "max_ship_mass": 300000000,
+    "system_effects": {},
+    "static_connections": ["c1", "c3"],
+    "max_wormhole_stability": 2000000000,
+    "max_wormhole_lifetime_hours": 24,
+    "sleeper_spawns": [
+      {
+        "id": "sleeper_drone_c4",
+        "name": "Emergent Keeper",
+        "type": "frigate",
+        "count_min": 4,
+        "count_max": 6
+      },
+      {
+        "id": "sleeper_sentinel_c4",
+        "name": "Awakened Keeper",
+        "type": "cruiser",
+        "count_min": 3,
+        "count_max": 5
+      },
+      {
+        "id": "sleeper_upholder_c4",
+        "name": "Sleepless Keeper",
+        "type": "battleship",
+        "count_min": 1,
+        "count_max": 2
+      }
+    ],
+    "salvage_value_multiplier": 3.0,
+    "blue_loot_isk": 1200000
+  },
+  "c5": {
+    "name": "Class 5 Wormhole",
+    "class": 5,
+    "difficulty": "very_hard",
+    "description": "Capital-capable. Dreadnought farming and fleet escalations.",
+    "max_ship_class": "Capital",
+    "max_ship_mass": 1800000000,
+    "system_effects": {},
+    "static_connections": ["c5"],
+    "max_wormhole_stability": 3000000000,
+    "max_wormhole_lifetime_hours": 24,
+    "sleeper_spawns": [
+      {
+        "id": "sleeper_drone_c5",
+        "name": "Emergent Preserver",
+        "type": "frigate",
+        "count_min": 5,
+        "count_max": 8
+      },
+      {
+        "id": "sleeper_sentinel_c5",
+        "name": "Awakened Preserver",
+        "type": "cruiser",
+        "count_min": 4,
+        "count_max": 6
+      },
+      {
+        "id": "sleeper_upholder_c5",
+        "name": "Sleepless Preserver",
+        "type": "battleship",
+        "count_min": 2,
+        "count_max": 4
+      }
+    ],
+    "salvage_value_multiplier": 5.0,
+    "blue_loot_isk": 3000000
+  },
+  "c6": {
+    "name": "Class 6 Wormhole",
+    "class": 6,
+    "difficulty": "extreme",
+    "description": "The most dangerous wormhole space. Maximum rewards, maximum risk.",
+    "max_ship_class": "Capital",
+    "max_ship_mass": 1800000000,
+    "system_effects": {},
+    "static_connections": ["c6"],
+    "max_wormhole_stability": 3000000000,
+    "max_wormhole_lifetime_hours": 24,
+    "sleeper_spawns": [
+      {
+        "id": "sleeper_drone_c6",
+        "name": "Emergent Sentinel",
+        "type": "frigate",
+        "count_min": 6,
+        "count_max": 10
+      },
+      {
+        "id": "sleeper_sentinel_c6",
+        "name": "Awakened Sentinel",
+        "type": "cruiser",
+        "count_min": 5,
+        "count_max": 8
+      },
+      {
+        "id": "sleeper_upholder_c6",
+        "name": "Sleepless Sentinel",
+        "type": "battleship",
+        "count_min": 3,
+        "count_max": 5
+      }
+    ],
+    "salvage_value_multiplier": 8.0,
+    "blue_loot_isk": 6000000
+  }
+}

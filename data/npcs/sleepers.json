@@ -1,0 +1,162 @@
+{
+  "sleeper_drone_c1": {
+    "id": "sleeper_drone_c1",
+    "name": "Emergent Patroller",
+    "type": "frigate",
+    "faction": "Sleepers",
+    "hull_hp": 400,
+    "armor_hp": 350,
+    "shield_hp": 450,
+    "max_velocity": 450,
+    "orbit_distance": 1000,
+    "signature_radius": 30,
+    "bounty": 0,
+    "blue_loot_value": 75000,
+    "behavior": "aggressive",
+    "awareness_range": 100000,
+    "weapons": [
+      {
+        "type": "sleeper_turret",
+        "damage": 35,
+        "damage_type": "em",
+        "optimal_range": 5000,
+        "falloff_range": 3000,
+        "rate_of_fire": 4.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sleeper_component", "ancient_salvage"]
+  },
+  "sleeper_sentinel_c1": {
+    "id": "sleeper_sentinel_c1",
+    "name": "Awakened Patroller",
+    "type": "cruiser",
+    "faction": "Sleepers",
+    "hull_hp": 1500,
+    "armor_hp": 1200,
+    "shield_hp": 1800,
+    "max_velocity": 300,
+    "orbit_distance": 3000,
+    "signature_radius": 120,
+    "bounty": 0,
+    "blue_loot_value": 150000,
+    "behavior": "aggressive",
+    "awareness_range": 100000,
+    "weapons": [
+      {
+        "type": "sleeper_turret",
+        "damage": 80,
+        "damage_type": "thermal",
+        "optimal_range": 12000,
+        "falloff_range": 6000,
+        "rate_of_fire": 5.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sleeper_component", "ancient_salvage", "neural_network_analyzer"]
+  },
+  "sleeper_drone_c3": {
+    "id": "sleeper_drone_c3",
+    "name": "Emergent Warden",
+    "type": "frigate",
+    "faction": "Sleepers",
+    "hull_hp": 600,
+    "armor_hp": 500,
+    "shield_hp": 650,
+    "max_velocity": 500,
+    "orbit_distance": 1200,
+    "signature_radius": 28,
+    "bounty": 0,
+    "blue_loot_value": 200000,
+    "behavior": "aggressive",
+    "awareness_range": 120000,
+    "weapons": [
+      {
+        "type": "sleeper_turret",
+        "damage": 50,
+        "damage_type": "kinetic",
+        "optimal_range": 6000,
+        "falloff_range": 4000,
+        "rate_of_fire": 3.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sleeper_component", "ancient_salvage", "sleeper_data_library"]
+  },
+  "sleeper_upholder_c3": {
+    "id": "sleeper_upholder_c3",
+    "name": "Sleepless Warden",
+    "type": "battleship",
+    "faction": "Sleepers",
+    "hull_hp": 4000,
+    "armor_hp": 3500,
+    "shield_hp": 5000,
+    "max_velocity": 180,
+    "orbit_distance": 8000,
+    "signature_radius": 350,
+    "bounty": 0,
+    "blue_loot_value": 600000,
+    "behavior": "aggressive",
+    "awareness_range": 150000,
+    "weapons": [
+      {
+        "type": "sleeper_turret",
+        "damage": 200,
+        "damage_type": "explosive",
+        "optimal_range": 25000,
+        "falloff_range": 10000,
+        "rate_of_fire": 6.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sleeper_component", "ancient_salvage", "neural_network_analyzer", "sleeper_data_library"]
+  },
+  "sleeper_upholder_c5": {
+    "id": "sleeper_upholder_c5",
+    "name": "Sleepless Preserver",
+    "type": "battleship",
+    "faction": "Sleepers",
+    "hull_hp": 8000,
+    "armor_hp": 7000,
+    "shield_hp": 10000,
+    "max_velocity": 150,
+    "orbit_distance": 10000,
+    "signature_radius": 400,
+    "bounty": 0,
+    "blue_loot_value": 3000000,
+    "behavior": "aggressive",
+    "awareness_range": 200000,
+    "weapons": [
+      {
+        "type": "sleeper_turret",
+        "damage": 400,
+        "damage_type": "em",
+        "optimal_range": 40000,
+        "falloff_range": 15000,
+        "rate_of_fire": 5.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["sleeper_component", "ancient_salvage", "neural_network_analyzer", "sleeper_data_library", "ancient_coordinates_database"]
+  }
+}

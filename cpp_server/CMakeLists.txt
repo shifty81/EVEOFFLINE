@@ -51,7 +51,9 @@ set(SERVER_SOURCES
     src/systems/capacitor_system.cpp
     src/systems/shield_recharge_system.cpp
     src/systems/weapon_system.cpp
+    src/systems/wormhole_system.cpp
     src/data/ship_database.cpp
+    src/data/wormhole_database.cpp
 )
 
 set(SERVER_HEADERS
@@ -75,7 +77,9 @@ set(SERVER_HEADERS
     include/systems/capacitor_system.h
     include/systems/shield_recharge_system.h
     include/systems/weapon_system.h
+    include/systems/wormhole_system.h
     include/data/ship_database.h
+    include/data/wormhole_database.h
 )
 
 # Steam SDK configuration
@@ -161,6 +165,8 @@ if(BUILD_TESTS)
         src/systems/movement_system.cpp
         src/systems/ai_system.cpp
         src/data/ship_database.cpp
+        src/data/wormhole_database.cpp
+        src/systems/wormhole_system.cpp
     )
 
     add_executable(test_systems

@@ -1,0 +1,67 @@
+{
+  "black_hole": {
+    "name": "Black Hole",
+    "description": "Increases ship velocity but decreases inertia",
+    "modifiers": {
+      "max_velocity": 1.86,
+      "inertia_modifier": 1.86,
+      "targeting_range": 0.58,
+      "missile_velocity": 1.86,
+      "stasis_web_strength": 0.58
+    }
+  },
+  "cataclysmic_variable": {
+    "name": "Cataclysmic Variable",
+    "description": "Increases shield transfer and reduces capacitor capacity",
+    "modifiers": {
+      "shield_transfer_amount": 1.86,
+      "capacitor_max": 0.58,
+      "capacitor_recharge_time": 0.58,
+      "remote_repair_amount": 0.58,
+      "armor_repair_amount": 0.58
+    }
+  },
+  "magnetar": {
+    "name": "Magnetar",
+    "description": "Increases damage but reduces targeting and tracking",
+    "modifiers": {
+      "damage_multiplier": 1.86,
+      "missile_explosion_radius": 1.86,
+      "drone_tracking": 0.58,
+      "targeting_range": 0.58,
+      "tracking_speed": 0.58
+    }
+  },
+  "pulsar": {
+    "name": "Pulsar",
+    "description": "Increases shield HP but decreases armor resistances",
+    "modifiers": {
+      "shield_hp_multiplier": 1.86,
+      "armor_resist_multiplier": 0.58,
+      "capacitor_recharge_time": 0.58,
+      "signature_radius": 1.86,
+      "nos_drain_amount": 1.86
+    }
+  },
+  "red_giant": {
+    "name": "Red Giant",
+    "description": "Increases heat damage and overheating benefits",
+    "modifiers": {
+      "heat_damage": 1.86,
+      "overheating_bonus": 1.86,
+      "smartbomb_damage": 1.86,
+      "smartbomb_range": 1.86,
+      "bomb_damage": 1.86
+    }
+  },
+  "wolf_rayet": {
+    "name": "Wolf-Rayet",
+    "description": "Increases armor HP and small weapon damage, decreases shield resistances",
+    "modifiers": {
+      "armor_hp_multiplier": 1.86,
+      "shield_resist_multiplier": 0.58,
+      "small_weapon_damage": 1.86,
+      "signature_radius": 0.58
+    }
+  }
+}

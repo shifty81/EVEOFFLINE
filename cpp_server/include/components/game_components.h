@@ -196,6 +196,48 @@ public:
     COMPONENT_TYPE(Faction)
 };
 
+/**
+ * @brief Solar system properties for wormhole space
+ *
+ * Tracks the wormhole class (C1-C6), active system-wide effects,
+ * and whether sleeper NPCs have already been spawned.
+ */
+class SolarSystem : public ecs::Component {
+public:
+    std::string system_id;
+    std::string system_name;
+    int wormhole_class = 0;               // 0 = k-space, 1-6 = wormhole class
+    std::string effect_name;              // e.g. "magnetar", "pulsar", "" for none
+    bool sleepers_spawned = false;
+    
+    COMPONENT_TYPE(SolarSystem)
+};
+
+/**
+ * @brief A wormhole connection between two systems
+ *
+ * Models mass limits, remaining stability, and lifetime so that
+ * the WormholeSystem can decay and eventually collapse connections.
+ */
+class WormholeConnection : public ecs::Component {
+public:
+    std::string wormhole_id;
+    std::string source_system;            // system entity id
+    std::string destination_system;       // system entity id
+    double max_mass = 500000000.0;        // kg total mass allowed
+    double remaining_mass = 500000000.0;  // kg remaining before collapse
+    double max_jump_mass = 20000000.0;    // kg max single-ship mass
+    float max_lifetime_hours = 24.0f;     // hours until natural collapse
+    float elapsed_hours = 0.0f;           // hours elapsed since spawn
+    bool collapsed = false;
+    
+    bool isStable() const {
+        return !collapsed && elapsed_hours < max_lifetime_hours && remaining_mass > 0.0;
+    }
+    
+    COMPONENT_TYPE(WormholeConnection)
+};
+
 } // namespace components
 } // namespace eve
 
