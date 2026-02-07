@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 7, 2026)**: External model loading has been implemented! The game now supports loading custom .obj, .gltf, and .glb 3D models, complementing the procedural generation system. Ready to work on additional content or other medium-term tasks.
+> **Update (February 7, 2026)**: Capital modules, cloaking devices, jump drives, advanced skills, rare NPC spawns, and mining missions have been added! The game now has 97+ modules, 129 skills, and comprehensive content across all tiers.
 
 ## Current Status (February 2026)
 
@@ -18,9 +18,11 @@
 - **53 ships** across all classes (Frigates to Titans, including Command Ships)
 - **371 procedural ship models** (53 ships × 7 factions)
 - **Custom model support**: .obj, .gltf, .glb formats
-- **82+ modules** for ship fitting (Tech I, Tech II, Faction, Officer)
-- **47 skills** with complete skill tree
+- **97+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital)
+- **129 skills** with complete skill tree
 - **4 epic arc mission chains** with 12 storyline missions
+- **8 rare NPC spawns** (4 faction commanders, 4 officer NPCs)
+- **10 mining missions** across levels 1-4
 - **8 major gameplay systems** fully implemented
 - **95+ test functions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
@@ -94,6 +96,9 @@ From ROADMAP.md "In Progress" section:
 - Tech II logistics modules
 - ✅ Officer modules (rare drops) — 4 officer modules
 - ✅ Faction modules — 8 faction modules
+- ✅ Capital-sized modules: 15 modules (shield, armor, logistics, weapons, siege, triage, doomsday)
+- ✅ Cloaking devices: 3 types (Prototype, Improved, Covert Ops)
+- ✅ Jump drives: 2 types (Economy, Standard)
 - Estimated effort: 1-2 weeks
 
 ### Priority 3: Advanced Features (Phase 8+)
@@ -189,6 +194,29 @@ From ROADMAP.md "In Progress" section:
    - ✅ 4 officer modules (rare drops from pirate commanders)
    - ✅ Proper meta_level hierarchy (faction: 8, officer: 12)
 
+6. ✅ **Add Capital Modules, Cloaking & Jump Drives** (COMPLETED - February 2026)
+   - ✅ 15 capital-sized modules (shield, armor, logistics, weapons, siege, triage)
+   - ✅ 3 cloaking devices (Prototype, Improved, Covert Ops)
+   - ✅ 2 jump drives (Economy, Standard)
+   - ✅ Doomsday device for Titans
+
+7. ✅ **Add Advanced Skills** (COMPLETED - February 2026)
+   - ✅ 13 capital ship skills (carriers, dreadnoughts, titans for all 4 races)
+   - ✅ 3 jump skills (operation, calibration, fuel conservation)
+   - ✅ 1 cloaking skill
+   - ✅ 6 advanced weapon skills (specializations and capital turrets)
+   - ✅ 2 advanced industrial skills
+
+8. ✅ **Add Rare NPC Spawns** (COMPLETED - February 2026)
+   - ✅ 4 faction fleet commanders (Serpentis, Guristas, Blood Raiders, Angel Cartel)
+   - ✅ 4 officer NPCs (Tobias, Draclira, Cormack, Hakim)
+   - ✅ Faction-specific loot drops
+
+9. ✅ **Add Mining Missions** (COMPLETED - February 2026)
+   - ✅ 10 mining missions across levels 1-4
+   - ✅ Progressive difficulty from highsec Veldspar to nullsec Mercoxit
+   - ✅ NPC defense spawns in higher level missions
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -255,4 +283,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 7, 2026*
-*Status: Quick Wins complete. Ready for Phase 8 planning or Medium-Term Tasks.*
+*Status: Quick Wins, Medium-Term Tasks complete. Capital modules, advanced skills, rare NPCs, and mining missions added. Ready for Phase 8 planning.*

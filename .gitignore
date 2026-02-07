@@ -60,6 +60,7 @@ temp/
 
 # C++ build artifacts
 build/
+build_test/
 cpp_server/build/
 cpp_server/external/steamworks_sdk/
 cpp_client/build/

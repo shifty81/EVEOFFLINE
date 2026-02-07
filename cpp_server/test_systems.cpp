@@ -609,6 +609,57 @@ void testShipDatabaseGetShipIds() {
     assertTrue(found, "rifter is in ship ID list");
 }
 
+void testShipDatabaseCapitalShips() {
+    std::cout << "\n=== ShipDatabase Capital Ships ===" << std::endl;
+    
+    data::ShipDatabase db;
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    // Verify capital ships are loaded
+    const data::ShipTemplate* archon = db.getShip("archon");
+    if (archon) {
+        assertTrue(archon->name == "Archon", "Archon name correct");
+        assertTrue(archon->ship_class == "Carrier", "Archon class is Carrier");
+        assertTrue(archon->race == "Amarr", "Archon race is Amarr");
+        assertTrue(archon->hull_hp > 10000.0f, "Archon has high hull HP");
+        assertTrue(archon->armor_hp > 50000.0f, "Archon has high armor HP");
+    } else {
+        assertTrue(false, "Archon carrier found in database");
+    }
+    
+    // Verify titan is loaded
+    const data::ShipTemplate* avatar = db.getShip("avatar");
+    if (avatar) {
+        assertTrue(avatar->name == "Avatar", "Avatar name correct");
+        assertTrue(avatar->ship_class == "Titan", "Avatar class is Titan");
+        assertTrue(avatar->hull_hp > 100000.0f, "Avatar has very high hull HP");
+    } else {
+        assertTrue(false, "Avatar titan found in database");
+    }
+    
+    // Verify multiple ship categories loaded
+    auto ids = db.getShipIds();
+    bool hasCapital = false, hasBattleship = false, hasFrigate = false;
+    bool hasTech2Cruiser = false, hasMiningBarge = false;
+    for (const auto& id : ids) {
+        if (id == "archon") hasCapital = true;
+        if (id == "tempest") hasBattleship = true;
+        if (id == "rifter") hasFrigate = true;
+        if (id == "vagabond") hasTech2Cruiser = true;
+        if (id == "procurer") hasMiningBarge = true;
+    }
+    assertTrue(hasCapital, "Capital ships loaded");
+    assertTrue(hasBattleship, "Battleships loaded");
+    assertTrue(hasFrigate, "Frigates loaded");
+    assertTrue(hasTech2Cruiser, "Tech II cruisers loaded");
+    assertTrue(hasMiningBarge, "Mining barges loaded");
+    assertTrue(ids.size() >= 50, "At least 50 ship templates loaded");
+}
+
 // ==================== WormholeDatabase Tests ====================
 
 void testWormholeDatabaseLoad() {
@@ -1709,6 +1760,7 @@ int main() {
     testShipDatabaseGetShip();
     testShipDatabaseResistances();
     testShipDatabaseGetShipIds();
+    testShipDatabaseCapitalShips();
     
     // WormholeDatabase tests
     testWormholeDatabaseLoad();

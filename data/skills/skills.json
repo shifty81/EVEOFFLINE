@@ -1,1344 +1,1667 @@
 {
-    "gunnery": {
-        "id": "gunnery",
-        "name": "Gunnery",
-        "description": "Basic skill for operating weapon turrets. 2% bonus to turret damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "small_projectile": {
-        "id": "small_projectile",
-        "name": "Small Projectile Turret",
-        "description": "Skill at using small projectile weapons. 5% bonus to damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "gunnery": 1
-        }
-    },
-    "small_energy": {
-        "id": "small_energy",
-        "name": "Small Energy Turret",
-        "description": "Skill at using small energy weapons. 5% bonus to damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "gunnery": 2
-        }
-    },
-    "missiles": {
-        "id": "missiles",
-        "name": "Missiles",
-        "description": "Basic skill for missile launcher operation. 2% bonus to missile damage per level.",
-        "category": "Missiles",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "light_missiles": {
-        "id": "light_missiles",
-        "name": "Light Missiles",
-        "description": "Operation of light missile launchers. 5% bonus to flight time per level.",
-        "category": "Missiles",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "missiles": 1
-        }
-    },
-    "spaceship_command": {
-        "id": "spaceship_command",
-        "name": "Spaceship Command",
-        "description": "Basic skill for flying spaceships. 2% bonus to ship agility per level.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "minmatar_frigate": {
-        "id": "minmatar_frigate",
-        "name": "Minmatar Frigate",
-        "description": "Skill at flying Minmatar frigates. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "spaceship_command": 1
-        }
-    },
-    "caldari_frigate": {
-        "id": "caldari_frigate",
-        "name": "Caldari Frigate",
-        "description": "Skill at flying Caldari frigates. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "spaceship_command": 1
-        }
-    },
-    "shield_operation": {
-        "id": "shield_operation",
-        "name": "Shield Operation",
-        "description": "Skill at operating shield systems. 5% bonus to shield recharge per level.",
-        "category": "Shields",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "shield_management": {
-        "id": "shield_management",
-        "name": "Shield Management",
-        "description": "Skill at managing shield systems. 5% bonus to shield HP per level.",
-        "category": "Shields",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "shield_operation": 3
-        }
-    },
-    "hull_upgrades": {
-        "id": "hull_upgrades",
-        "name": "Hull Upgrades",
-        "description": "Skill at installing armor upgrades. 5% bonus to armor HP per level.",
-        "category": "Armor",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "navigation": {
-        "id": "navigation",
-        "name": "Navigation",
-        "description": "Skill at maneuvering ships. 5% bonus to ship velocity per level.",
-        "category": "Navigation",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "perception",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "afterburner": {
-        "id": "afterburner",
-        "name": "Afterburner",
-        "description": "Skill at using afterburner modules. 10% reduction in capacitor use per level.",
-        "category": "Navigation",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "perception",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {
-            "navigation": 1
-        }
-    },
-    "targeting": {
-        "id": "targeting",
-        "name": "Targeting",
-        "description": "Basic targeting skill. One additional target per level.",
-        "category": "Targeting",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "perception",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "long_range_targeting": {
-        "id": "long_range_targeting",
-        "name": "Long Range Targeting",
-        "description": "Advanced targeting skill. 5% bonus to targeting range per level.",
-        "category": "Targeting",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "perception",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "targeting": 2
-        }
-    },
-    "medium_projectile": {
-        "id": "medium_projectile",
-        "name": "Medium Projectile Turret",
-        "description": "Skill at using medium projectile weapons. 5% bonus to damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "small_projectile": 3
-        }
-    },
-    "medium_energy": {
-        "id": "medium_energy",
-        "name": "Medium Energy Turret",
-        "description": "Skill at using medium energy weapons. 5% bonus to damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "small_energy": 3
-        }
-    },
-    "medium_hybrid": {
-        "id": "medium_hybrid",
-        "name": "Medium Hybrid Turret",
-        "description": "Skill at using medium hybrid weapons. 5% bonus to damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "gunnery": 3
-        }
-    },
-    "heavy_missiles": {
-        "id": "heavy_missiles",
-        "name": "Heavy Missiles",
-        "description": "Operation of heavy missile launchers. 5% bonus to explosion radius per level.",
-        "category": "Missiles",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 4,
-        "max_level": 5,
-        "prerequisites": {
-            "light_missiles": 3,
-            "missiles": 3
-        }
-    },
-    "rapid_launch": {
-        "id": "rapid_launch",
-        "name": "Rapid Launch",
-        "description": "Reduces missile launcher reload time. 3% reduction per level.",
-        "category": "Missiles",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "missiles": 2
-        }
-    },
-    "minmatar_destroyer": {
-        "id": "minmatar_destroyer",
-        "name": "Minmatar Destroyer",
-        "description": "Skill at flying Minmatar destroyers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "minmatar_frigate": 3,
-            "spaceship_command": 2
-        }
-    },
-    "caldari_destroyer": {
-        "id": "caldari_destroyer",
-        "name": "Caldari Destroyer",
-        "description": "Skill at flying Caldari destroyers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "caldari_frigate": 3,
-            "spaceship_command": 2
-        }
-    },
-    "gallente_frigate": {
-        "id": "gallente_frigate",
-        "name": "Gallente Frigate",
-        "description": "Skill at flying Gallente frigates. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "spaceship_command": 1
-        }
-    },
-    "amarr_frigate": {
-        "id": "amarr_frigate",
-        "name": "Amarr Frigate",
-        "description": "Skill at flying Amarr frigates. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "spaceship_command": 1
-        }
-    },
-    "gallente_destroyer": {
-        "id": "gallente_destroyer",
-        "name": "Gallente Destroyer",
-        "description": "Skill at flying Gallente destroyers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "gallente_frigate": 3,
-            "spaceship_command": 2
-        }
-    },
-    "amarr_destroyer": {
-        "id": "amarr_destroyer",
-        "name": "Amarr Destroyer",
-        "description": "Skill at flying Amarr destroyers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "amarr_frigate": 3,
-            "spaceship_command": 2
-        }
-    },
-    "minmatar_cruiser": {
-        "id": "minmatar_cruiser",
-        "name": "Minmatar Cruiser",
-        "description": "Skill at flying Minmatar cruisers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "minmatar_destroyer": 3,
-            "spaceship_command": 3
-        }
-    },
-    "caldari_cruiser": {
-        "id": "caldari_cruiser",
-        "name": "Caldari Cruiser",
-        "description": "Skill at flying Caldari cruisers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "caldari_destroyer": 3,
-            "spaceship_command": 3
-        }
-    },
-    "gallente_cruiser": {
-        "id": "gallente_cruiser",
-        "name": "Gallente Cruiser",
-        "description": "Skill at flying Gallente cruisers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "gallente_destroyer": 3,
-            "spaceship_command": 3
-        }
-    },
-    "amarr_cruiser": {
-        "id": "amarr_cruiser",
-        "name": "Amarr Cruiser",
-        "description": "Skill at flying Amarr cruisers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "amarr_destroyer": 3,
-            "spaceship_command": 3
-        }
-    },
-    "drones": {
-        "id": "drones",
-        "name": "Drones",
-        "description": "Basic drone operation. Allows control of 1 drone per level.",
-        "category": "Drones",
-        "primary_attribute": "memory",
-        "secondary_attribute": "perception",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "light_drones": {
-        "id": "light_drones",
-        "name": "Light Drone Operation",
-        "description": "Skill at controlling light combat drones. 5% bonus to damage per level.",
-        "category": "Drones",
-        "primary_attribute": "memory",
-        "secondary_attribute": "perception",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "drones": 1
-        }
-    },
-    "medium_drones": {
-        "id": "medium_drones",
-        "name": "Medium Drone Operation",
-        "description": "Skill at controlling medium combat drones. 5% bonus to damage per level.",
-        "category": "Drones",
-        "primary_attribute": "memory",
-        "secondary_attribute": "perception",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "drones": 3,
-            "light_drones": 3
-        }
-    },
-    "heavy_drones": {
-        "id": "heavy_drones",
-        "name": "Heavy Drone Operation",
-        "description": "Skill at controlling heavy combat drones. 5% bonus to damage per level.",
-        "category": "Drones",
-        "primary_attribute": "memory",
-        "secondary_attribute": "perception",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "drones": 5,
-            "medium_drones": 4
-        }
-    },
-    "drone_durability": {
-        "id": "drone_durability",
-        "name": "Drone Durability",
-        "description": "Increases drone hitpoints. 5% bonus per level.",
-        "category": "Drones",
-        "primary_attribute": "willpower",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "drones": 3
-        }
-    },
-    "drone_navigation": {
-        "id": "drone_navigation",
-        "name": "Drone Navigation",
-        "description": "Increases drone speed. 5% bonus per level.",
-        "category": "Drones",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "perception",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "drones": 2
-        }
-    },
-    "drone_interfacing": {
-        "id": "drone_interfacing",
-        "name": "Drone Interfacing",
-        "description": "Advanced drone control. 10% bonus to drone damage per level.",
-        "category": "Drones",
-        "primary_attribute": "memory",
-        "secondary_attribute": "perception",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "drones": 5
-        }
-    },
-    "electronic_warfare": {
-        "id": "electronic_warfare",
-        "name": "Electronic Warfare",
-        "description": "Basic electronic warfare skills. Required for EWAR modules.",
-        "category": "Electronic Warfare",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "perception",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "weapon_disruption": {
-        "id": "weapon_disruption",
-        "name": "Weapon Disruption",
-        "description": "Skill at using tracking disruptors and guidance disruptors. 5% bonus per level.",
-        "category": "Electronic Warfare",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "perception",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "electronic_warfare": 2
-        }
-    },
-    "propulsion_jamming": {
-        "id": "propulsion_jamming",
-        "name": "Propulsion Jamming",
-        "description": "Skill at using webifiers and warp scramblers. 5% bonus to range per level.",
-        "category": "Electronic Warfare",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "perception",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "electronic_warfare": 1
-        }
-    },
-    "armor_layering": {
-        "id": "armor_layering",
-        "name": "Armor Layering",
-        "description": "Optimizes armor plate effectiveness. 5% reduction in speed penalty per level.",
-        "category": "Armor",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "hull_upgrades": 4
-        }
-    },
-    "mechanics": {
-        "id": "mechanics",
-        "name": "Mechanics",
-        "description": "Basic ship repair skill. 5% bonus to hull HP per level.",
-        "category": "Engineering",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "energy_grid_upgrades": {
-        "id": "energy_grid_upgrades",
-        "name": "Energy Grid Upgrades",
-        "description": "Skill at fitting power grid upgrade modules. 5% reduction in CPU use per level.",
-        "category": "Engineering",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "cpu_management": {
-        "id": "cpu_management",
-        "name": "CPU Management",
-        "description": "Increases ship CPU output. 5% bonus per level.",
-        "category": "Engineering",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "power_grid_management": {
-        "id": "power_grid_management",
-        "name": "Power Grid Management",
-        "description": "Increases ship power grid output. 5% bonus per level.",
-        "category": "Engineering",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "capacitor_management": {
-        "id": "capacitor_management",
-        "name": "Capacitor Management",
-        "description": "Increases ship capacitor capacity. 5% bonus per level.",
-        "category": "Engineering",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "capacitor_systems_operation": {
-        "id": "capacitor_systems_operation",
-        "name": "Capacitor Systems Operation",
-        "description": "Reduces capacitor recharge time. 5% bonus per level.",
-        "category": "Engineering",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "large_projectile": {
-        "id": "large_projectile",
-        "name": "Large Projectile Turret",
-        "description": "Skill at using large projectile weapons. 5% bonus to damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "medium_projectile": 4,
-            "gunnery": 4
-        }
-    },
-    "large_energy": {
-        "id": "large_energy",
-        "name": "Large Energy Turret",
-        "description": "Skill at using large energy weapons. 5% bonus to damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "medium_energy": 4,
-            "gunnery": 4
-        }
-    },
-    "large_hybrid": {
-        "id": "large_hybrid",
-        "name": "Large Hybrid Turret",
-        "description": "Skill at using large hybrid weapons. 5% bonus to damage per level.",
-        "category": "Gunnery",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "medium_hybrid": 4,
-            "gunnery": 4
-        }
-    },
-    "cruise_missiles": {
-        "id": "cruise_missiles",
-        "name": "Cruise Missiles",
-        "description": "Operation of cruise missile launchers. 5% bonus to flight time per level.",
-        "category": "Missiles",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "heavy_missiles": 4,
-            "missiles": 4
-        }
-    },
-    "torpedoes": {
-        "id": "torpedoes",
-        "name": "Torpedoes",
-        "description": "Operation of torpedo launchers. 5% bonus to damage per level.",
-        "category": "Missiles",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "heavy_missiles": 4,
-            "missiles": 4
-        }
-    },
-    "minmatar_battlecruiser": {
-        "id": "minmatar_battlecruiser",
-        "name": "Minmatar Battlecruiser",
-        "description": "Skill at flying Minmatar battlecruisers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 6,
-        "max_level": 5,
-        "prerequisites": {
-            "minmatar_cruiser": 4,
-            "spaceship_command": 4
-        }
-    },
-    "caldari_battlecruiser": {
-        "id": "caldari_battlecruiser",
-        "name": "Caldari Battlecruiser",
-        "description": "Skill at flying Caldari battlecruisers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 6,
-        "max_level": 5,
-        "prerequisites": {
-            "caldari_cruiser": 4,
-            "spaceship_command": 4
-        }
-    },
-    "gallente_battlecruiser": {
-        "id": "gallente_battlecruiser",
-        "name": "Gallente Battlecruiser",
-        "description": "Skill at flying Gallente battlecruisers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 6,
-        "max_level": 5,
-        "prerequisites": {
-            "gallente_cruiser": 4,
-            "spaceship_command": 4
-        }
-    },
-    "amarr_battlecruiser": {
-        "id": "amarr_battlecruiser",
-        "name": "Amarr Battlecruiser",
-        "description": "Skill at flying Amarr battlecruisers. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 6,
-        "max_level": 5,
-        "prerequisites": {
-            "amarr_cruiser": 4,
-            "spaceship_command": 4
-        }
-    },
-    "minmatar_battleship": {
-        "id": "minmatar_battleship",
-        "name": "Minmatar Battleship",
-        "description": "Skill at flying Minmatar battleships. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 8,
-        "max_level": 5,
-        "prerequisites": {
-            "minmatar_battlecruiser": 4,
-            "spaceship_command": 5
-        }
-    },
-    "caldari_battleship": {
-        "id": "caldari_battleship",
-        "name": "Caldari Battleship",
-        "description": "Skill at flying Caldari battleships. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 8,
-        "max_level": 5,
-        "prerequisites": {
-            "caldari_battlecruiser": 4,
-            "spaceship_command": 5
-        }
-    },
-    "gallente_battleship": {
-        "id": "gallente_battleship",
-        "name": "Gallente Battleship",
-        "description": "Skill at flying Gallente battleships. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 8,
-        "max_level": 5,
-        "prerequisites": {
-            "gallente_battlecruiser": 4,
-            "spaceship_command": 5
-        }
-    },
-    "amarr_battleship": {
-        "id": "amarr_battleship",
-        "name": "Amarr Battleship",
-        "description": "Skill at flying Amarr battleships. Per level bonus varies by ship.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 8,
-        "max_level": 5,
-        "prerequisites": {
-            "amarr_battlecruiser": 4,
-            "spaceship_command": 5
-        }
-    },
-    "mining": {
-        "id": "mining",
-        "name": "Mining",
-        "description": "Skill for the operation of mining lasers. 5% bonus to mining yield per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "astrogeology": {
-        "id": "astrogeology",
-        "name": "Astrogeology",
-        "description": "Advanced mining laser operation. 5% bonus to mining yield per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "mining": 3
-        }
-    },
-    "mining_upgrades": {
-        "id": "mining_upgrades",
-        "name": "Mining Upgrades",
-        "description": "Skill for operation of mining upgrade modules. Reduces CPU usage of mining upgrades by 5% per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "mining_barge": {
-        "id": "mining_barge",
-        "name": "Mining Barge",
-        "description": "Skill for operation of mining barges. 5% bonus to ore hold capacity per level.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 4,
-        "max_level": 5,
-        "prerequisites": {
-            "mining": 4,
-            "science": 4,
-            "spaceship_command": 3
-        }
-    },
-    "ice_harvesting": {
-        "id": "ice_harvesting",
-        "name": "Ice Harvesting",
-        "description": "Skill for the operation of ice harvesters. 5% reduction in ice harvester cycle time per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "mining": 4
-        }
-    },
-    "ice_processing": {
-        "id": "ice_processing",
-        "name": "Ice Processing",
-        "description": "Skill for refining ice into fuel and materials. 2% increase in ice refining yield per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {
-            "reprocessing": 3
-        }
-    },
-    "exhumers": {
-        "id": "exhumers",
-        "name": "Exhumers",
-        "description": "Skill for operation of exhumer-class mining vessels. 3% bonus to mining yield per level.",
-        "category": "Spaceship Command",
-        "primary_attribute": "perception",
-        "secondary_attribute": "willpower",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "mining_barge": 5,
-            "astrogeology": 4
-        }
-    },
-    "reprocessing": {
-        "id": "reprocessing",
-        "name": "Reprocessing",
-        "description": "Basic ore processing skill. 3% increase in refining yield per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "reprocessing_efficiency": {
-        "id": "reprocessing_efficiency",
-        "name": "Reprocessing Efficiency",
-        "description": "Advanced refining skill. 2% increase in refining yield per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "reprocessing": 4
-        }
-    },
-    "science": {
-        "id": "science",
-        "name": "Science",
-        "description": "Basic knowledge of scientific principles. Required for various advanced operations.",
-        "category": "Science",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "gas_cloud_harvesting": {
-        "id": "gas_cloud_harvesting",
-        "name": "Gas Cloud Harvesting",
-        "description": "Skill for the operation of gas cloud harvesters. 5% bonus to gas harvester yield per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "mining": 4
-        }
-    },
-    "ore_compression": {
-        "id": "ore_compression",
-        "name": "Ore Compression",
-        "description": "Skill in compressing raw ore for efficient transport. Reduces compression waste by 2% per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "mining": 3,
-            "reprocessing": 2
-        }
-    },
-    "moon_mining": {
-        "id": "moon_mining",
-        "name": "Moon Mining",
-        "description": "Understanding of moon extraction operations. Reduces extraction time by 4% per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 4,
-        "max_level": 5,
-        "prerequisites": {
-            "mining": 4,
-            "mining_barge": 3
-        }
-    },
-    "moon_ore_processing": {
-        "id": "moon_ore_processing",
-        "name": "Moon Ore Processing",
-        "description": "Improved refining of moon ores. Increases moon ore reprocessing yield by 2% per level.",
-        "category": "Resource Processing",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 4,
-        "max_level": 5,
-        "prerequisites": {
-            "reprocessing": 4,
-            "reprocessing_efficiency": 3
-        }
-    },
-
-    "learning": {
-        "id": "learning",
-        "name": "Learning",
-        "description": "Improved skill training methods. Reduces all skill training times by 2% per level.",
-        "category": "Learning",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "instant_recall": {
-        "id": "instant_recall",
-        "name": "Instant Recall",
-        "description": "Enhanced memory capacity. Increases Memory attribute by 1 per level.",
-        "category": "Learning",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "analytical_mind": {
-        "id": "analytical_mind",
-        "name": "Analytical Mind",
-        "description": "Enhanced analytical abilities. Increases Intelligence attribute by 1 per level.",
-        "category": "Learning",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "spatial_awareness": {
-        "id": "spatial_awareness",
-        "name": "Spatial Awareness",
-        "description": "Enhanced spatial perception. Increases Perception attribute by 1 per level.",
-        "category": "Learning",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "iron_will": {
-        "id": "iron_will",
-        "name": "Iron Will",
-        "description": "Strengthened willpower. Increases Willpower attribute by 1 per level.",
-        "category": "Learning",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "empathy": {
-        "id": "empathy",
-        "name": "Empathy",
-        "description": "Enhanced social awareness. Increases Charisma attribute by 1 per level.",
-        "category": "Learning",
-        "primary_attribute": "memory",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-
-    "social": {
-        "id": "social",
-        "name": "Social",
-        "description": "Improved social interactions. 5% bonus to NPC agent standing gains per level.",
-        "category": "Social",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "connections": {
-        "id": "connections",
-        "name": "Connections",
-        "description": "Leveraging personal contacts. Increases effective standing with friendly agents by 4% per level.",
-        "category": "Social",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "social": 3
-        }
-    },
-    "negotiation": {
-        "id": "negotiation",
-        "name": "Negotiation",
-        "description": "Improved bargaining skills. Increases mission ISK rewards by 5% per level.",
-        "category": "Social",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "social": 1
-        }
-    },
-    "fast_talk": {
-        "id": "fast_talk",
-        "name": "Fast Talk",
-        "description": "Reduces standing loss from declining agent missions by 5% per level.",
-        "category": "Social",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 4,
-        "max_level": 5,
-        "prerequisites": {
-            "social": 4
-        }
-    },
-    "criminal_connections": {
-        "id": "criminal_connections",
-        "name": "Criminal Connections",
-        "description": "Increases effective standing with hostile agents by 4% per level.",
-        "category": "Social",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "intelligence",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "social": 3
-        }
-    },
-
-    "trade": {
-        "id": "trade",
-        "name": "Trade",
-        "description": "Increases the number of active market orders by 4 per level.",
-        "category": "Trade",
-        "primary_attribute": "willpower",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "retail": {
-        "id": "retail",
-        "name": "Retail",
-        "description": "Further increases the number of active market orders by 8 per level.",
-        "category": "Trade",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "memory",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "trade": 2
-        }
-    },
-    "accounting": {
-        "id": "accounting",
-        "name": "Accounting",
-        "description": "Reduces sales tax by 10% per level.",
-        "category": "Trade",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "trade": 4
-        }
-    },
-    "broker_relations": {
-        "id": "broker_relations",
-        "name": "Broker Relations",
-        "description": "Reduces broker fees by 5% per level.",
-        "category": "Trade",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "memory",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "trade": 2
-        }
-    },
-    "marketing": {
-        "id": "marketing",
-        "name": "Marketing",
-        "description": "Ability to place sell orders remotely. Each level extends remote range.",
-        "category": "Trade",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "trade": 2
-        }
-    },
-    "procurement": {
-        "id": "procurement",
-        "name": "Procurement",
-        "description": "Ability to place buy orders remotely. Each level extends remote range.",
-        "category": "Trade",
-        "primary_attribute": "charisma",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "trade": 2
-        }
-    },
-
-    "leadership": {
-        "id": "leadership",
-        "name": "Leadership",
-        "description": "Basic fleet command skill. Increases fleet member capacity by 2 per level.",
-        "category": "Leadership",
-        "primary_attribute": "willpower",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "mining_foreman": {
-        "id": "mining_foreman",
-        "name": "Mining Foreman",
-        "description": "Fleet command specialization for mining operations. 2% bonus to fleet mining yield per level.",
-        "category": "Leadership",
-        "primary_attribute": "willpower",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "leadership": 1
-        }
-    },
-    "skirmish_warfare": {
-        "id": "skirmish_warfare",
-        "name": "Skirmish Warfare",
-        "description": "Fleet command specialization for speed and agility. 2% bonus to fleet agility per level.",
-        "category": "Leadership",
-        "primary_attribute": "willpower",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "leadership": 1
-        }
-    },
-    "information_warfare": {
-        "id": "information_warfare",
-        "name": "Information Warfare",
-        "description": "Fleet command specialization for electronic warfare. 2% bonus to fleet sensor strength per level.",
-        "category": "Leadership",
-        "primary_attribute": "willpower",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "leadership": 1
-        }
-    },
-    "armored_warfare": {
-        "id": "armored_warfare",
-        "name": "Armored Warfare",
-        "description": "Fleet command specialization for armor tanking. 2% bonus to fleet armor HP per level.",
-        "category": "Leadership",
-        "primary_attribute": "willpower",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "leadership": 1
-        }
-    },
-    "siege_warfare": {
-        "id": "siege_warfare",
-        "name": "Siege Warfare",
-        "description": "Fleet command specialization for shield tanking. 2% bonus to fleet shield HP per level.",
-        "category": "Leadership",
-        "primary_attribute": "willpower",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "leadership": 1
-        }
-    },
-
-    "corporation_management": {
-        "id": "corporation_management",
-        "name": "Corporation Management",
-        "description": "Basic corporation management. Increases maximum corporation members by 20 per level.",
-        "category": "Corporation Management",
-        "primary_attribute": "memory",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "starbase_defense_management": {
-        "id": "starbase_defense_management",
-        "name": "Starbase Defense Management",
-        "description": "Skill at managing starbase defense systems. Allows control of defense structures.",
-        "category": "Corporation Management",
-        "primary_attribute": "memory",
-        "secondary_attribute": "charisma",
-        "training_multiplier": 4,
-        "max_level": 5,
-        "prerequisites": {
-            "corporation_management": 3
-        }
-    },
-
-    "mechanic": {
-        "id": "mechanic",
-        "name": "Mechanic",
-        "description": "Knowledge of ship construction and repair. 5% bonus to hull HP per level.",
-        "category": "Mechanic",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {}
-    },
-    "hull_upgrades": {
-        "id": "hull_upgrades",
-        "name": "Hull Upgrades",
-        "description": "Skill at upgrading ship hulls. Allows fitting of armor plates and hull modification modules.",
-        "category": "Mechanic",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "mechanic": 1
-        }
-    },
-    "repair_systems": {
-        "id": "repair_systems",
-        "name": "Repair Systems",
-        "description": "Operation of armor repair modules. 5% reduction in repair module duration per level.",
-        "category": "Mechanic",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 1,
-        "max_level": 5,
-        "prerequisites": {
-            "mechanic": 1
-        }
-    },
-    "jury_rigging": {
-        "id": "jury_rigging",
-        "name": "Jury Rigging",
-        "description": "Basic skill for installing ship rigs. Required for all rig installation.",
-        "category": "Mechanic",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 2,
-        "max_level": 5,
-        "prerequisites": {
-            "mechanic": 3
-        }
-    },
-
-    "cybernetics": {
-        "id": "cybernetics",
-        "name": "Cybernetics",
-        "description": "Skill at using cybernetic implants. Required for implant installation. Level 1 for basic, level 3 for limited, level 4 for standard implants.",
-        "category": "Science",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 3,
-        "max_level": 5,
-        "prerequisites": {
-            "science": 3
-        }
-    },
-    "infomorph_psychology": {
-        "id": "infomorph_psychology",
-        "name": "Infomorph Psychology",
-        "description": "Understanding of clone technology. Allows use of jump clones. Maximum jump clones equals skill level.",
-        "category": "Science",
-        "primary_attribute": "intelligence",
-        "secondary_attribute": "memory",
-        "training_multiplier": 5,
-        "max_level": 5,
-        "prerequisites": {
-            "science": 4
-        }
+  "gunnery": {
+    "id": "gunnery",
+    "name": "Gunnery",
+    "description": "Basic skill for operating weapon turrets. 2% bonus to turret damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "small_projectile": {
+    "id": "small_projectile",
+    "name": "Small Projectile Turret",
+    "description": "Skill at using small projectile weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "gunnery": 1
     }
+  },
+  "small_energy": {
+    "id": "small_energy",
+    "name": "Small Energy Turret",
+    "description": "Skill at using small energy weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "gunnery": 2
+    }
+  },
+  "missiles": {
+    "id": "missiles",
+    "name": "Missiles",
+    "description": "Basic skill for missile launcher operation. 2% bonus to missile damage per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "light_missiles": {
+    "id": "light_missiles",
+    "name": "Light Missiles",
+    "description": "Operation of light missile launchers. 5% bonus to flight time per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "missiles": 1
+    }
+  },
+  "spaceship_command": {
+    "id": "spaceship_command",
+    "name": "Spaceship Command",
+    "description": "Basic skill for flying spaceships. 2% bonus to ship agility per level.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "minmatar_frigate": {
+    "id": "minmatar_frigate",
+    "name": "Minmatar Frigate",
+    "description": "Skill at flying Minmatar frigates. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "spaceship_command": 1
+    }
+  },
+  "caldari_frigate": {
+    "id": "caldari_frigate",
+    "name": "Caldari Frigate",
+    "description": "Skill at flying Caldari frigates. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "spaceship_command": 1
+    }
+  },
+  "shield_operation": {
+    "id": "shield_operation",
+    "name": "Shield Operation",
+    "description": "Skill at operating shield systems. 5% bonus to shield recharge per level.",
+    "category": "Shields",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "shield_management": {
+    "id": "shield_management",
+    "name": "Shield Management",
+    "description": "Skill at managing shield systems. 5% bonus to shield HP per level.",
+    "category": "Shields",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "shield_operation": 3
+    }
+  },
+  "hull_upgrades": {
+    "id": "hull_upgrades",
+    "name": "Hull Upgrades",
+    "description": "Skill at upgrading ship hulls. Allows fitting of armor plates and hull modification modules.",
+    "category": "Mechanic",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "mechanic": 1
+    }
+  },
+  "navigation": {
+    "id": "navigation",
+    "name": "Navigation",
+    "description": "Skill at maneuvering ships. 5% bonus to ship velocity per level.",
+    "category": "Navigation",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "afterburner": {
+    "id": "afterburner",
+    "name": "Afterburner",
+    "description": "Skill at using afterburner modules. 10% reduction in capacitor use per level.",
+    "category": "Navigation",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {
+      "navigation": 1
+    }
+  },
+  "targeting": {
+    "id": "targeting",
+    "name": "Targeting",
+    "description": "Basic targeting skill. One additional target per level.",
+    "category": "Targeting",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "long_range_targeting": {
+    "id": "long_range_targeting",
+    "name": "Long Range Targeting",
+    "description": "Advanced targeting skill. 5% bonus to targeting range per level.",
+    "category": "Targeting",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "targeting": 2
+    }
+  },
+  "medium_projectile": {
+    "id": "medium_projectile",
+    "name": "Medium Projectile Turret",
+    "description": "Skill at using medium projectile weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "small_projectile": 3
+    }
+  },
+  "medium_energy": {
+    "id": "medium_energy",
+    "name": "Medium Energy Turret",
+    "description": "Skill at using medium energy weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "small_energy": 3
+    }
+  },
+  "medium_hybrid": {
+    "id": "medium_hybrid",
+    "name": "Medium Hybrid Turret",
+    "description": "Skill at using medium hybrid weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "gunnery": 3
+    }
+  },
+  "heavy_missiles": {
+    "id": "heavy_missiles",
+    "name": "Heavy Missiles",
+    "description": "Operation of heavy missile launchers. 5% bonus to explosion radius per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 4,
+    "max_level": 5,
+    "prerequisites": {
+      "light_missiles": 3,
+      "missiles": 3
+    }
+  },
+  "rapid_launch": {
+    "id": "rapid_launch",
+    "name": "Rapid Launch",
+    "description": "Reduces missile launcher reload time. 3% reduction per level.",
+    "category": "Missiles",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "missiles": 2
+    }
+  },
+  "minmatar_destroyer": {
+    "id": "minmatar_destroyer",
+    "name": "Minmatar Destroyer",
+    "description": "Skill at flying Minmatar destroyers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "minmatar_frigate": 3,
+      "spaceship_command": 2
+    }
+  },
+  "caldari_destroyer": {
+    "id": "caldari_destroyer",
+    "name": "Caldari Destroyer",
+    "description": "Skill at flying Caldari destroyers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "caldari_frigate": 3,
+      "spaceship_command": 2
+    }
+  },
+  "gallente_frigate": {
+    "id": "gallente_frigate",
+    "name": "Gallente Frigate",
+    "description": "Skill at flying Gallente frigates. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "spaceship_command": 1
+    }
+  },
+  "amarr_frigate": {
+    "id": "amarr_frigate",
+    "name": "Amarr Frigate",
+    "description": "Skill at flying Amarr frigates. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "spaceship_command": 1
+    }
+  },
+  "gallente_destroyer": {
+    "id": "gallente_destroyer",
+    "name": "Gallente Destroyer",
+    "description": "Skill at flying Gallente destroyers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "gallente_frigate": 3,
+      "spaceship_command": 2
+    }
+  },
+  "amarr_destroyer": {
+    "id": "amarr_destroyer",
+    "name": "Amarr Destroyer",
+    "description": "Skill at flying Amarr destroyers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "amarr_frigate": 3,
+      "spaceship_command": 2
+    }
+  },
+  "minmatar_cruiser": {
+    "id": "minmatar_cruiser",
+    "name": "Minmatar Cruiser",
+    "description": "Skill at flying Minmatar cruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "minmatar_destroyer": 3,
+      "spaceship_command": 3
+    }
+  },
+  "caldari_cruiser": {
+    "id": "caldari_cruiser",
+    "name": "Caldari Cruiser",
+    "description": "Skill at flying Caldari cruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "caldari_destroyer": 3,
+      "spaceship_command": 3
+    }
+  },
+  "gallente_cruiser": {
+    "id": "gallente_cruiser",
+    "name": "Gallente Cruiser",
+    "description": "Skill at flying Gallente cruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "gallente_destroyer": 3,
+      "spaceship_command": 3
+    }
+  },
+  "amarr_cruiser": {
+    "id": "amarr_cruiser",
+    "name": "Amarr Cruiser",
+    "description": "Skill at flying Amarr cruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "amarr_destroyer": 3,
+      "spaceship_command": 3
+    }
+  },
+  "drones": {
+    "id": "drones",
+    "name": "Drones",
+    "description": "Basic drone operation. Allows control of 1 drone per level.",
+    "category": "Drones",
+    "primary_attribute": "memory",
+    "secondary_attribute": "perception",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "light_drones": {
+    "id": "light_drones",
+    "name": "Light Drone Operation",
+    "description": "Skill at controlling light combat drones. 5% bonus to damage per level.",
+    "category": "Drones",
+    "primary_attribute": "memory",
+    "secondary_attribute": "perception",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "drones": 1
+    }
+  },
+  "medium_drones": {
+    "id": "medium_drones",
+    "name": "Medium Drone Operation",
+    "description": "Skill at controlling medium combat drones. 5% bonus to damage per level.",
+    "category": "Drones",
+    "primary_attribute": "memory",
+    "secondary_attribute": "perception",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "drones": 3,
+      "light_drones": 3
+    }
+  },
+  "heavy_drones": {
+    "id": "heavy_drones",
+    "name": "Heavy Drone Operation",
+    "description": "Skill at controlling heavy combat drones. 5% bonus to damage per level.",
+    "category": "Drones",
+    "primary_attribute": "memory",
+    "secondary_attribute": "perception",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "drones": 5,
+      "medium_drones": 4
+    }
+  },
+  "drone_durability": {
+    "id": "drone_durability",
+    "name": "Drone Durability",
+    "description": "Increases drone hitpoints. 5% bonus per level.",
+    "category": "Drones",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "drones": 3
+    }
+  },
+  "drone_navigation": {
+    "id": "drone_navigation",
+    "name": "Drone Navigation",
+    "description": "Increases drone speed. 5% bonus per level.",
+    "category": "Drones",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "drones": 2
+    }
+  },
+  "drone_interfacing": {
+    "id": "drone_interfacing",
+    "name": "Drone Interfacing",
+    "description": "Advanced drone control. 10% bonus to drone damage per level.",
+    "category": "Drones",
+    "primary_attribute": "memory",
+    "secondary_attribute": "perception",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "drones": 5
+    }
+  },
+  "electronic_warfare": {
+    "id": "electronic_warfare",
+    "name": "Electronic Warfare",
+    "description": "Basic electronic warfare skills. Required for EWAR modules.",
+    "category": "Electronic Warfare",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "weapon_disruption": {
+    "id": "weapon_disruption",
+    "name": "Weapon Disruption",
+    "description": "Skill at using tracking disruptors and guidance disruptors. 5% bonus per level.",
+    "category": "Electronic Warfare",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "electronic_warfare": 2
+    }
+  },
+  "propulsion_jamming": {
+    "id": "propulsion_jamming",
+    "name": "Propulsion Jamming",
+    "description": "Skill at using webifiers and warp scramblers. 5% bonus to range per level.",
+    "category": "Electronic Warfare",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "electronic_warfare": 1
+    }
+  },
+  "armor_layering": {
+    "id": "armor_layering",
+    "name": "Armor Layering",
+    "description": "Optimizes armor plate effectiveness. 5% reduction in speed penalty per level.",
+    "category": "Armor",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "hull_upgrades": 4
+    }
+  },
+  "mechanics": {
+    "id": "mechanics",
+    "name": "Mechanics",
+    "description": "Basic ship repair skill. 5% bonus to hull HP per level.",
+    "category": "Engineering",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "energy_grid_upgrades": {
+    "id": "energy_grid_upgrades",
+    "name": "Energy Grid Upgrades",
+    "description": "Skill at fitting power grid upgrade modules. 5% reduction in CPU use per level.",
+    "category": "Engineering",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "cpu_management": {
+    "id": "cpu_management",
+    "name": "CPU Management",
+    "description": "Increases ship CPU output. 5% bonus per level.",
+    "category": "Engineering",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "power_grid_management": {
+    "id": "power_grid_management",
+    "name": "Power Grid Management",
+    "description": "Increases ship power grid output. 5% bonus per level.",
+    "category": "Engineering",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "capacitor_management": {
+    "id": "capacitor_management",
+    "name": "Capacitor Management",
+    "description": "Increases ship capacitor capacity. 5% bonus per level.",
+    "category": "Engineering",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "capacitor_systems_operation": {
+    "id": "capacitor_systems_operation",
+    "name": "Capacitor Systems Operation",
+    "description": "Reduces capacitor recharge time. 5% bonus per level.",
+    "category": "Engineering",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "large_projectile": {
+    "id": "large_projectile",
+    "name": "Large Projectile Turret",
+    "description": "Skill at using large projectile weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "medium_projectile": 4,
+      "gunnery": 4
+    }
+  },
+  "large_energy": {
+    "id": "large_energy",
+    "name": "Large Energy Turret",
+    "description": "Skill at using large energy weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "medium_energy": 4,
+      "gunnery": 4
+    }
+  },
+  "large_hybrid": {
+    "id": "large_hybrid",
+    "name": "Large Hybrid Turret",
+    "description": "Skill at using large hybrid weapons. 5% bonus to damage per level.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "medium_hybrid": 4,
+      "gunnery": 4
+    }
+  },
+  "cruise_missiles": {
+    "id": "cruise_missiles",
+    "name": "Cruise Missiles",
+    "description": "Operation of cruise missile launchers. 5% bonus to flight time per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "heavy_missiles": 4,
+      "missiles": 4
+    }
+  },
+  "torpedoes": {
+    "id": "torpedoes",
+    "name": "Torpedoes",
+    "description": "Operation of torpedo launchers. 5% bonus to damage per level.",
+    "category": "Missiles",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "heavy_missiles": 4,
+      "missiles": 4
+    }
+  },
+  "minmatar_battlecruiser": {
+    "id": "minmatar_battlecruiser",
+    "name": "Minmatar Battlecruiser",
+    "description": "Skill at flying Minmatar battlecruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {
+      "minmatar_cruiser": 4,
+      "spaceship_command": 4
+    }
+  },
+  "caldari_battlecruiser": {
+    "id": "caldari_battlecruiser",
+    "name": "Caldari Battlecruiser",
+    "description": "Skill at flying Caldari battlecruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {
+      "caldari_cruiser": 4,
+      "spaceship_command": 4
+    }
+  },
+  "gallente_battlecruiser": {
+    "id": "gallente_battlecruiser",
+    "name": "Gallente Battlecruiser",
+    "description": "Skill at flying Gallente battlecruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {
+      "gallente_cruiser": 4,
+      "spaceship_command": 4
+    }
+  },
+  "amarr_battlecruiser": {
+    "id": "amarr_battlecruiser",
+    "name": "Amarr Battlecruiser",
+    "description": "Skill at flying Amarr battlecruisers. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {
+      "amarr_cruiser": 4,
+      "spaceship_command": 4
+    }
+  },
+  "minmatar_battleship": {
+    "id": "minmatar_battleship",
+    "name": "Minmatar Battleship",
+    "description": "Skill at flying Minmatar battleships. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "minmatar_battlecruiser": 4,
+      "spaceship_command": 5
+    }
+  },
+  "caldari_battleship": {
+    "id": "caldari_battleship",
+    "name": "Caldari Battleship",
+    "description": "Skill at flying Caldari battleships. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "caldari_battlecruiser": 4,
+      "spaceship_command": 5
+    }
+  },
+  "gallente_battleship": {
+    "id": "gallente_battleship",
+    "name": "Gallente Battleship",
+    "description": "Skill at flying Gallente battleships. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "gallente_battlecruiser": 4,
+      "spaceship_command": 5
+    }
+  },
+  "amarr_battleship": {
+    "id": "amarr_battleship",
+    "name": "Amarr Battleship",
+    "description": "Skill at flying Amarr battleships. Per level bonus varies by ship.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "amarr_battlecruiser": 4,
+      "spaceship_command": 5
+    }
+  },
+  "mining": {
+    "id": "mining",
+    "name": "Mining",
+    "description": "Skill for the operation of mining lasers. 5% bonus to mining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "astrogeology": {
+    "id": "astrogeology",
+    "name": "Astrogeology",
+    "description": "Advanced mining laser operation. 5% bonus to mining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "mining": 3
+    }
+  },
+  "mining_upgrades": {
+    "id": "mining_upgrades",
+    "name": "Mining Upgrades",
+    "description": "Skill for operation of mining upgrade modules. Reduces CPU usage of mining upgrades by 5% per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "mining_barge": {
+    "id": "mining_barge",
+    "name": "Mining Barge",
+    "description": "Skill for operation of mining barges. 5% bonus to ore hold capacity per level.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 4,
+    "max_level": 5,
+    "prerequisites": {
+      "mining": 4,
+      "science": 4,
+      "spaceship_command": 3
+    }
+  },
+  "ice_harvesting": {
+    "id": "ice_harvesting",
+    "name": "Ice Harvesting",
+    "description": "Skill for the operation of ice harvesters. 5% reduction in ice harvester cycle time per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "mining": 4
+    }
+  },
+  "ice_processing": {
+    "id": "ice_processing",
+    "name": "Ice Processing",
+    "description": "Skill for refining ice into fuel and materials. 2% increase in ice refining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {
+      "reprocessing": 3
+    }
+  },
+  "exhumers": {
+    "id": "exhumers",
+    "name": "Exhumers",
+    "description": "Skill for operation of exhumer-class mining vessels. 3% bonus to mining yield per level.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "mining_barge": 5,
+      "astrogeology": 4
+    }
+  },
+  "reprocessing": {
+    "id": "reprocessing",
+    "name": "Reprocessing",
+    "description": "Basic ore processing skill. 3% increase in refining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "reprocessing_efficiency": {
+    "id": "reprocessing_efficiency",
+    "name": "Reprocessing Efficiency",
+    "description": "Advanced refining skill. 2% increase in refining yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "reprocessing": 4
+    }
+  },
+  "science": {
+    "id": "science",
+    "name": "Science",
+    "description": "Basic knowledge of scientific principles. Required for various advanced operations.",
+    "category": "Science",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "gas_cloud_harvesting": {
+    "id": "gas_cloud_harvesting",
+    "name": "Gas Cloud Harvesting",
+    "description": "Skill for the operation of gas cloud harvesters. 5% bonus to gas harvester yield per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "mining": 4
+    }
+  },
+  "ore_compression": {
+    "id": "ore_compression",
+    "name": "Ore Compression",
+    "description": "Skill in compressing raw ore for efficient transport. Reduces compression waste by 2% per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "mining": 3,
+      "reprocessing": 2
+    }
+  },
+  "moon_mining": {
+    "id": "moon_mining",
+    "name": "Moon Mining",
+    "description": "Understanding of moon extraction operations. Reduces extraction time by 4% per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 4,
+    "max_level": 5,
+    "prerequisites": {
+      "mining": 4,
+      "mining_barge": 3
+    }
+  },
+  "moon_ore_processing": {
+    "id": "moon_ore_processing",
+    "name": "Moon Ore Processing",
+    "description": "Improved refining of moon ores. Increases moon ore reprocessing yield by 2% per level.",
+    "category": "Resource Processing",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 4,
+    "max_level": 5,
+    "prerequisites": {
+      "reprocessing": 4,
+      "reprocessing_efficiency": 3
+    }
+  },
+  "learning": {
+    "id": "learning",
+    "name": "Learning",
+    "description": "Improved skill training methods. Reduces all skill training times by 2% per level.",
+    "category": "Learning",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "instant_recall": {
+    "id": "instant_recall",
+    "name": "Instant Recall",
+    "description": "Enhanced memory capacity. Increases Memory attribute by 1 per level.",
+    "category": "Learning",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "analytical_mind": {
+    "id": "analytical_mind",
+    "name": "Analytical Mind",
+    "description": "Enhanced analytical abilities. Increases Intelligence attribute by 1 per level.",
+    "category": "Learning",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "spatial_awareness": {
+    "id": "spatial_awareness",
+    "name": "Spatial Awareness",
+    "description": "Enhanced spatial perception. Increases Perception attribute by 1 per level.",
+    "category": "Learning",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "iron_will": {
+    "id": "iron_will",
+    "name": "Iron Will",
+    "description": "Strengthened willpower. Increases Willpower attribute by 1 per level.",
+    "category": "Learning",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "empathy": {
+    "id": "empathy",
+    "name": "Empathy",
+    "description": "Enhanced social awareness. Increases Charisma attribute by 1 per level.",
+    "category": "Learning",
+    "primary_attribute": "memory",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "social": {
+    "id": "social",
+    "name": "Social",
+    "description": "Improved social interactions. 5% bonus to NPC agent standing gains per level.",
+    "category": "Social",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "connections": {
+    "id": "connections",
+    "name": "Connections",
+    "description": "Leveraging personal contacts. Increases effective standing with friendly agents by 4% per level.",
+    "category": "Social",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "social": 3
+    }
+  },
+  "negotiation": {
+    "id": "negotiation",
+    "name": "Negotiation",
+    "description": "Improved bargaining skills. Increases mission ISK rewards by 5% per level.",
+    "category": "Social",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "social": 1
+    }
+  },
+  "fast_talk": {
+    "id": "fast_talk",
+    "name": "Fast Talk",
+    "description": "Reduces standing loss from declining agent missions by 5% per level.",
+    "category": "Social",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 4,
+    "max_level": 5,
+    "prerequisites": {
+      "social": 4
+    }
+  },
+  "criminal_connections": {
+    "id": "criminal_connections",
+    "name": "Criminal Connections",
+    "description": "Increases effective standing with hostile agents by 4% per level.",
+    "category": "Social",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "intelligence",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "social": 3
+    }
+  },
+  "trade": {
+    "id": "trade",
+    "name": "Trade",
+    "description": "Increases the number of active market orders by 4 per level.",
+    "category": "Trade",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "retail": {
+    "id": "retail",
+    "name": "Retail",
+    "description": "Further increases the number of active market orders by 8 per level.",
+    "category": "Trade",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "memory",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "trade": 2
+    }
+  },
+  "accounting": {
+    "id": "accounting",
+    "name": "Accounting",
+    "description": "Reduces sales tax by 10% per level.",
+    "category": "Trade",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "trade": 4
+    }
+  },
+  "broker_relations": {
+    "id": "broker_relations",
+    "name": "Broker Relations",
+    "description": "Reduces broker fees by 5% per level.",
+    "category": "Trade",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "memory",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "trade": 2
+    }
+  },
+  "marketing": {
+    "id": "marketing",
+    "name": "Marketing",
+    "description": "Ability to place sell orders remotely. Each level extends remote range.",
+    "category": "Trade",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "trade": 2
+    }
+  },
+  "procurement": {
+    "id": "procurement",
+    "name": "Procurement",
+    "description": "Ability to place buy orders remotely. Each level extends remote range.",
+    "category": "Trade",
+    "primary_attribute": "charisma",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "trade": 2
+    }
+  },
+  "leadership": {
+    "id": "leadership",
+    "name": "Leadership",
+    "description": "Basic fleet command skill. Increases fleet member capacity by 2 per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "mining_foreman": {
+    "id": "mining_foreman",
+    "name": "Mining Foreman",
+    "description": "Fleet command specialization for mining operations. 2% bonus to fleet mining yield per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "leadership": 1
+    }
+  },
+  "skirmish_warfare": {
+    "id": "skirmish_warfare",
+    "name": "Skirmish Warfare",
+    "description": "Fleet command specialization for speed and agility. 2% bonus to fleet agility per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "leadership": 1
+    }
+  },
+  "information_warfare": {
+    "id": "information_warfare",
+    "name": "Information Warfare",
+    "description": "Fleet command specialization for electronic warfare. 2% bonus to fleet sensor strength per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "leadership": 1
+    }
+  },
+  "armored_warfare": {
+    "id": "armored_warfare",
+    "name": "Armored Warfare",
+    "description": "Fleet command specialization for armor tanking. 2% bonus to fleet armor HP per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "leadership": 1
+    }
+  },
+  "siege_warfare": {
+    "id": "siege_warfare",
+    "name": "Siege Warfare",
+    "description": "Fleet command specialization for shield tanking. 2% bonus to fleet shield HP per level.",
+    "category": "Leadership",
+    "primary_attribute": "willpower",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "leadership": 1
+    }
+  },
+  "corporation_management": {
+    "id": "corporation_management",
+    "name": "Corporation Management",
+    "description": "Basic corporation management. Increases maximum corporation members by 20 per level.",
+    "category": "Corporation Management",
+    "primary_attribute": "memory",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "starbase_defense_management": {
+    "id": "starbase_defense_management",
+    "name": "Starbase Defense Management",
+    "description": "Skill at managing starbase defense systems. Allows control of defense structures.",
+    "category": "Corporation Management",
+    "primary_attribute": "memory",
+    "secondary_attribute": "charisma",
+    "training_multiplier": 4,
+    "max_level": 5,
+    "prerequisites": {
+      "corporation_management": 3
+    }
+  },
+  "mechanic": {
+    "id": "mechanic",
+    "name": "Mechanic",
+    "description": "Knowledge of ship construction and repair. 5% bonus to hull HP per level.",
+    "category": "Mechanic",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {}
+  },
+  "repair_systems": {
+    "id": "repair_systems",
+    "name": "Repair Systems",
+    "description": "Operation of armor repair modules. 5% reduction in repair module duration per level.",
+    "category": "Mechanic",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 1,
+    "max_level": 5,
+    "prerequisites": {
+      "mechanic": 1
+    }
+  },
+  "jury_rigging": {
+    "id": "jury_rigging",
+    "name": "Jury Rigging",
+    "description": "Basic skill for installing ship rigs. Required for all rig installation.",
+    "category": "Mechanic",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 2,
+    "max_level": 5,
+    "prerequisites": {
+      "mechanic": 3
+    }
+  },
+  "cybernetics": {
+    "id": "cybernetics",
+    "name": "Cybernetics",
+    "description": "Skill at using cybernetic implants. Required for implant installation. Level 1 for basic, level 3 for limited, level 4 for standard implants.",
+    "category": "Science",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 3,
+    "max_level": 5,
+    "prerequisites": {
+      "science": 3
+    }
+  },
+  "infomorph_psychology": {
+    "id": "infomorph_psychology",
+    "name": "Infomorph Psychology",
+    "description": "Understanding of clone technology. Allows use of jump clones. Maximum jump clones equals skill level.",
+    "category": "Science",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 5,
+    "max_level": 5,
+    "prerequisites": {
+      "science": 4
+    }
+  },
+  "capital_ships": {
+    "id": "capital_ships",
+    "name": "Capital Ships",
+    "description": "Grants the ability to pilot capital ships. Requires mastery of Spaceship Command. Individual capital ship types require their faction's Battleship skill at level 5.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 14,
+    "max_level": 5,
+    "prerequisites": {
+      "spaceship_command": 5
+    }
+  },
+  "amarr_carrier": {
+    "id": "amarr_carrier",
+    "name": "Amarr Carrier",
+    "description": "Skill at operating Amarr carrier class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 14,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 1,
+      "amarr_battleship": 5
+    }
+  },
+  "caldari_carrier": {
+    "id": "caldari_carrier",
+    "name": "Caldari Carrier",
+    "description": "Skill at operating Caldari carrier class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 14,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 1,
+      "caldari_battleship": 5
+    }
+  },
+  "gallente_carrier": {
+    "id": "gallente_carrier",
+    "name": "Gallente Carrier",
+    "description": "Skill at operating Gallente carrier class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 14,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 1,
+      "gallente_battleship": 5
+    }
+  },
+  "minmatar_carrier": {
+    "id": "minmatar_carrier",
+    "name": "Minmatar Carrier",
+    "description": "Skill at operating Minmatar carrier class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 14,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 1,
+      "minmatar_battleship": 5
+    }
+  },
+  "amarr_dreadnought": {
+    "id": "amarr_dreadnought",
+    "name": "Amarr Dreadnought",
+    "description": "Skill at operating Amarr dreadnought class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 16,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 3,
+      "amarr_battleship": 5
+    }
+  },
+  "caldari_dreadnought": {
+    "id": "caldari_dreadnought",
+    "name": "Caldari Dreadnought",
+    "description": "Skill at operating Caldari dreadnought class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 16,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 3,
+      "caldari_battleship": 5
+    }
+  },
+  "gallente_dreadnought": {
+    "id": "gallente_dreadnought",
+    "name": "Gallente Dreadnought",
+    "description": "Skill at operating Gallente dreadnought class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 16,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 3,
+      "gallente_battleship": 5
+    }
+  },
+  "minmatar_dreadnought": {
+    "id": "minmatar_dreadnought",
+    "name": "Minmatar Dreadnought",
+    "description": "Skill at operating Minmatar dreadnought class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 16,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 3,
+      "minmatar_battleship": 5
+    }
+  },
+  "amarr_titan": {
+    "id": "amarr_titan",
+    "name": "Amarr Titan",
+    "description": "Skill at operating Amarr titan class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 20,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 5,
+      "amarr_battleship": 5
+    }
+  },
+  "caldari_titan": {
+    "id": "caldari_titan",
+    "name": "Caldari Titan",
+    "description": "Skill at operating Caldari titan class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 20,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 5,
+      "caldari_battleship": 5
+    }
+  },
+  "gallente_titan": {
+    "id": "gallente_titan",
+    "name": "Gallente Titan",
+    "description": "Skill at operating Gallente titan class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 20,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 5,
+      "gallente_battleship": 5
+    }
+  },
+  "minmatar_titan": {
+    "id": "minmatar_titan",
+    "name": "Minmatar Titan",
+    "description": "Skill at operating Minmatar titan class ships.",
+    "category": "Spaceship Command",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 20,
+    "max_level": 5,
+    "prerequisites": {
+      "capital_ships": 5,
+      "minmatar_battleship": 5
+    }
+  },
+  "jump_drive_operation": {
+    "id": "jump_drive_operation",
+    "name": "Jump Drive Operation",
+    "description": "Skill at operating jump drives. 5% reduction in capacitor need per level.",
+    "category": "Navigation",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "navigation": 5,
+      "science": 5
+    }
+  },
+  "jump_drive_calibration": {
+    "id": "jump_drive_calibration",
+    "name": "Jump Drive Calibration",
+    "description": "Advanced skill at using jump drives. 0.5 LY increase to jump range per level.",
+    "category": "Navigation",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 9,
+    "max_level": 5,
+    "prerequisites": {
+      "jump_drive_operation": 3
+    }
+  },
+  "jump_fuel_conservation": {
+    "id": "jump_fuel_conservation",
+    "name": "Jump Fuel Conservation",
+    "description": "Skill at conserving fuel during jump drive operation. 10% reduction in fuel need per level.",
+    "category": "Navigation",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "perception",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "jump_drive_operation": 3
+    }
+  },
+  "cloaking": {
+    "id": "cloaking",
+    "name": "Cloaking",
+    "description": "Skill at using cloaking devices. 10% reduction in scan resolution penalty per level.",
+    "category": "Electronics",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 6,
+    "max_level": 5,
+    "prerequisites": {
+      "cpu_management": 4
+    }
+  },
+  "large_projectile_specialization": {
+    "id": "large_projectile_specialization",
+    "name": "Large Projectile Turret Specialization",
+    "description": "Advanced skill at using large projectile turrets. 2% damage bonus per level to Tech II large projectile turrets.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "large_projectile": 5
+    }
+  },
+  "large_energy_specialization": {
+    "id": "large_energy_specialization",
+    "name": "Large Energy Turret Specialization",
+    "description": "Advanced skill at using large energy turrets. 2% damage bonus per level to Tech II large energy turrets.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "large_energy": 5
+    }
+  },
+  "large_hybrid_specialization": {
+    "id": "large_hybrid_specialization",
+    "name": "Large Hybrid Turret Specialization",
+    "description": "Advanced skill at using large hybrid turrets. 2% damage bonus per level to Tech II large hybrid turrets.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "large_hybrid": 5
+    }
+  },
+  "capital_projectile_turret": {
+    "id": "capital_projectile_turret",
+    "name": "Capital Projectile Turret",
+    "description": "Skill at using capital sized projectile turrets.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 10,
+    "max_level": 5,
+    "prerequisites": {
+      "large_projectile": 5,
+      "gunnery": 5
+    }
+  },
+  "capital_energy_turret": {
+    "id": "capital_energy_turret",
+    "name": "Capital Energy Turret",
+    "description": "Skill at using capital sized energy turrets.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 10,
+    "max_level": 5,
+    "prerequisites": {
+      "large_energy": 5,
+      "gunnery": 5
+    }
+  },
+  "capital_hybrid_turret": {
+    "id": "capital_hybrid_turret",
+    "name": "Capital Hybrid Turret",
+    "description": "Skill at using capital sized hybrid turrets.",
+    "category": "Gunnery",
+    "primary_attribute": "perception",
+    "secondary_attribute": "willpower",
+    "training_multiplier": 10,
+    "max_level": 5,
+    "prerequisites": {
+      "large_hybrid": 5,
+      "gunnery": 5
+    }
+  },
+  "advanced_industry": {
+    "id": "advanced_industry",
+    "name": "Advanced Industry",
+    "description": "Advanced knowledge of industrial processes. 3% reduction in manufacturing time per level.",
+    "category": "Industry",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 8,
+    "max_level": 5,
+    "prerequisites": {
+      "science": 5
+    }
+  },
+  "supply_chain_management": {
+    "id": "supply_chain_management",
+    "name": "Supply Chain Management",
+    "description": "Expertise in managing remote manufacturing operations. Increases number of remote manufacturing slots by 1 per level.",
+    "category": "Industry",
+    "primary_attribute": "intelligence",
+    "secondary_attribute": "memory",
+    "training_multiplier": 10,
+    "max_level": 5,
+    "prerequisites": {
+      "advanced_industry": 4
+    }
+  }
 }

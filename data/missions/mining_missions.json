@@ -1,0 +1,304 @@
+{
+  "veldspar_collection": {
+    "id": "veldspar_collection",
+    "name": "Veldspar Collection",
+    "level": 1,
+    "type": "mining",
+    "agent": "Mining Foreman Rikka",
+    "faction": "ORE",
+    "description": "Our refinery needs a fresh supply of Veldspar to keep production running. Head to the belts and mine what we need.",
+    "briefing": "Pilot, we're running low on Veldspar stocks. Head out to the nearest asteroid belt and bring back 1000 units. Simple work, but essential for our operations.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "veldspar",
+        "count": 1000
+      }
+    ],
+    "rewards": {
+      "isk": 25000,
+      "loyalty_points": 100,
+      "standing_gain": 0.005,
+      "items": []
+    },
+    "location": "perimeter",
+    "time_limit": 7200,
+    "difficulty": "easy",
+    "recommended_ship_class": "mining_frigate"
+  },
+  "scordite_run": {
+    "id": "scordite_run",
+    "name": "Scordite Mining Run",
+    "level": 1,
+    "type": "mining",
+    "agent": "Mining Foreman Rikka",
+    "faction": "ORE",
+    "description": "We need Scordite for our mineral processing operations. Mine the required amount and return.",
+    "briefing": "Scordite is a valuable ore containing both Tritanium and Pyerite. We need 800 units delivered to this station. Get to the belts and start mining.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "scordite",
+        "count": 800
+      }
+    ],
+    "rewards": {
+      "isk": 35000,
+      "loyalty_points": 120,
+      "standing_gain": 0.006,
+      "items": []
+    },
+    "location": "perimeter",
+    "time_limit": 7200,
+    "difficulty": "easy",
+    "recommended_ship_class": "mining_frigate"
+  },
+  "pyroxeres_extraction": {
+    "id": "pyroxeres_extraction",
+    "name": "Pyroxeres Extraction",
+    "level": 2,
+    "type": "mining",
+    "agent": "Mining Operations Manager Holt",
+    "faction": "ORE",
+    "description": "Our manufacturing division requires Pyroxeres for advanced production. Extract the ore from designated asteroid fields.",
+    "briefing": "Pyroxeres contains Nocxium, a mineral we desperately need for tech II component production. Mine 1500 units from the asteroid belts and return to station.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "pyroxeres",
+        "count": 1500
+      }
+    ],
+    "rewards": {
+      "isk": 85000,
+      "loyalty_points": 250,
+      "standing_gain": 0.015,
+      "items": []
+    },
+    "location": "perimeter",
+    "time_limit": 9000,
+    "difficulty": "medium",
+    "recommended_ship_class": "mining_barge"
+  },
+  "plagioclase_harvest": {
+    "id": "plagioclase_harvest",
+    "name": "Plagioclase Harvest",
+    "level": 2,
+    "type": "mining",
+    "agent": "Mining Operations Manager Holt",
+    "faction": "ORE",
+    "description": "A large order for Plagioclase has come in. We need experienced miners to fill it.",
+    "briefing": "One of our corporate clients needs a bulk delivery of Plagioclase. Mine 2000 units and bring them back to this station. A mining barge is recommended for this volume.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "plagioclase",
+        "count": 2000
+      }
+    ],
+    "rewards": {
+      "isk": 100000,
+      "loyalty_points": 300,
+      "standing_gain": 0.018,
+      "items": []
+    },
+    "location": "perimeter",
+    "time_limit": 10800,
+    "difficulty": "medium",
+    "recommended_ship_class": "mining_barge"
+  },
+  "kernite_survey": {
+    "id": "kernite_survey",
+    "name": "Kernite Survey",
+    "level": 2,
+    "type": "mining",
+    "agent": "Mining Operations Manager Holt",
+    "faction": "ORE",
+    "description": "We've located Kernite deposits in nearby belts. Survey the area and extract the ore.",
+    "briefing": "Kernite is a mid-grade ore rich in Mexallon and Isogen. We need 1200 units mined and delivered. Survey the asteroid belts to find the richest deposits.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "kernite",
+        "count": 1200
+      }
+    ],
+    "rewards": {
+      "isk": 120000,
+      "loyalty_points": 350,
+      "standing_gain": 0.02,
+      "items": []
+    },
+    "location": "hek",
+    "time_limit": 9000,
+    "difficulty": "medium",
+    "recommended_ship_class": "mining_barge"
+  },
+  "jaspet_deep_mining": {
+    "id": "jaspet_deep_mining",
+    "name": "Jaspet Deep Mining Operation",
+    "level": 3,
+    "type": "mining",
+    "agent": "Senior Mining Director Vasquez",
+    "faction": "ORE",
+    "description": "Jaspet deposits have been found in lowsec space. Extract the ore, but be prepared for hostile encounters.",
+    "briefing": "We've identified rich Jaspet deposits in a lowsec system. The ore is extremely valuable, but the area is dangerous. Mine 2500 units and return safely. Watch your directional scanner at all times.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "jaspet",
+        "count": 2500
+      }
+    ],
+    "rewards": {
+      "isk": 350000,
+      "loyalty_points": 800,
+      "standing_gain": 0.035,
+      "items": [
+        "mining_laser_upgrade"
+      ]
+    },
+    "location": "rancer",
+    "time_limit": 14400,
+    "difficulty": "hard",
+    "recommended_ship_class": "mining_barge"
+  },
+  "hemorphite_expedition": {
+    "id": "hemorphite_expedition",
+    "name": "Hemorphite Expedition",
+    "level": 3,
+    "type": "mining",
+    "agent": "Senior Mining Director Vasquez",
+    "faction": "ORE",
+    "description": "An expedition to mine Hemorphite from deep asteroid fields. This ore is critical for advanced manufacturing.",
+    "briefing": "Hemorphite is a rare ore that yields Nocxium and Isogen in large quantities. We're sending you on an expedition to mine 3000 units. The asteroid fields are deep in contested space.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "hemorphite",
+        "count": 3000
+      }
+    ],
+    "rewards": {
+      "isk": 420000,
+      "loyalty_points": 950,
+      "standing_gain": 0.04,
+      "items": []
+    },
+    "location": "rancer",
+    "time_limit": 16200,
+    "difficulty": "hard",
+    "recommended_ship_class": "mining_barge"
+  },
+  "hedbergite_recovery": {
+    "id": "hedbergite_recovery",
+    "name": "Hedbergite Recovery Mission",
+    "level": 3,
+    "type": "mining",
+    "agent": "Senior Mining Director Vasquez",
+    "faction": "ORE",
+    "description": "Recover Hedbergite from an asteroid field that has attracted pirate attention. Expect NPC defense spawns.",
+    "briefing": "We have a Hedbergite-rich asteroid field that pirates have been using as a staging area. Mine 2000 units of Hedbergite while defending yourself from NPC spawns. Bring combat drones or an escort.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "hedbergite",
+        "count": 2000
+      }
+    ],
+    "rewards": {
+      "isk": 500000,
+      "loyalty_points": 1100,
+      "standing_gain": 0.045,
+      "items": []
+    },
+    "location": "rancer",
+    "time_limit": 14400,
+    "difficulty": "very_hard",
+    "recommended_ship_class": "mining_barge",
+    "npc_presence": {
+      "types": [
+        "serpentis_scout",
+        "serpentis_destroyer"
+      ],
+      "count": 5
+    }
+  },
+  "arkonor_extraction": {
+    "id": "arkonor_extraction",
+    "name": "Arkonor Deep Extraction",
+    "level": 4,
+    "type": "mining",
+    "agent": "Chief Mining Officer Krane",
+    "faction": "ORE",
+    "description": "Extract Arkonor from a nullsec asteroid field. Enemy NPC waves will attempt to disrupt your operation.",
+    "briefing": "Arkonor is one of the most valuable ores in New Eden, found only in nullsec space. We need 5000 units extracted from a field deep in hostile territory. Expect multiple waves of NPC enemies attempting to drive you off. A well-fitted Exhumer with combat support is essential.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "arkonor",
+        "count": 5000
+      }
+    ],
+    "rewards": {
+      "isk": 1500000,
+      "loyalty_points": 3000,
+      "standing_gain": 0.08,
+      "items": []
+    },
+    "location": "outer_ring_nullsec",
+    "time_limit": 21600,
+    "difficulty": "extreme",
+    "recommended_ship_class": "exhumer",
+    "npc_presence": {
+      "types": [
+        "angel_frigate",
+        "angel_cruiser",
+        "angel_battlecruiser"
+      ],
+      "count": 8,
+      "waves": 3
+    }
+  },
+  "mercoxit_critical": {
+    "id": "mercoxit_critical",
+    "name": "Critical Mercoxit Acquisition",
+    "level": 4,
+    "type": "mining",
+    "agent": "Chief Mining Officer Krane",
+    "faction": "ORE",
+    "description": "Mine Mercoxit using specialized mining crystals. This rare ore is essential for Tech II production and requires expert mining skills.",
+    "briefing": "Mercoxit is the rarest and most dangerous ore to mine. It requires specialized deep core mining equipment and Mercoxit mining crystals. We need 2000 units for a critical Tech II manufacturing contract. The fields are in nullsec and heavily contested. This is the most challenging mining operation we offer.",
+    "objectives": [
+      {
+        "type": "mine",
+        "target": "mercoxit",
+        "count": 2000
+      }
+    ],
+    "rewards": {
+      "isk": 2500000,
+      "loyalty_points": 5000,
+      "standing_gain": 0.1,
+      "items": []
+    },
+    "location": "syndicate_nullsec",
+    "time_limit": 25200,
+    "difficulty": "extreme",
+    "recommended_ship_class": "exhumer",
+    "npc_presence": {
+      "types": [
+        "guristas_frigate",
+        "guristas_destroyer",
+        "guristas_battlecruiser",
+        "guristas_battleship"
+      ],
+      "count": 10,
+      "waves": 4
+    },
+    "requirements": {
+      "skill": "deep_core_mining",
+      "equipment": "mercoxit_mining_crystal"
+    }
+  }
+}
