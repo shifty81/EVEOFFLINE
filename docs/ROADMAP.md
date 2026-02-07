@@ -527,25 +527,25 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Tech II modules (all types)
 - [x] Officer modules (rare drops)
 - [x] Faction modules
-- [ ] Capital-sized modules
+- [x] Capital-sized modules (shield booster, armor repairer, logistics, weapons, siege, triage, doomsday)
 - [ ] Advanced EWAR modules
-- [ ] Cloaking devices
-- [ ] Jump drives
+- [x] Cloaking devices (Prototype, Improved, Covert Ops)
+- [x] Jump drives (Economy, Standard)
 
 #### More Skills
-- [ ] Capital ship skills
-- [ ] Advanced weapon skills
+- [x] Capital ship skills (carriers, dreadnoughts, titans for all 4 races)
+- [x] Advanced weapon skills (large turret specializations, capital turrets)
 - [ ] Leadership skills
-- [ ] Jump skills
-- [ ] Cloaking skills
-- [ ] Advanced industrial skills
+- [x] Jump skills (Jump Drive Operation, Calibration, Fuel Conservation)
+- [x] Cloaking skills
+- [x] Advanced industrial skills (Advanced Industry, Supply Chain Management)
 
 #### More Missions & Content
 - [ ] Level 5 missions
 - [x] Epic mission arcs
 - [ ] Incursions (group PVE events)
 - [ ] More NPC factions
-- [ ] Rare NPC spawns (faction/officer)
+- [x] Rare NPC spawns (4 faction commanders, 4 officer NPCs)
 - [ ] More exploration sites
 - [ ] Special anomalies
 
@@ -592,7 +592,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Gas harvesting
 - [x] Moon mining (group content)
 - [x] Ore compression
-- [ ] Mining missions (framework exists)
+- [x] Mining missions (10 missions, levels 1-4)
 
 #### ✅ C++ Server–Client Integration (COMPLETE)
 - [x] **Game Session Manager** - Bridges TCP networking to ECS world
@@ -618,7 +618,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 #### Future Mining Enhancements (Optional)
 - [ ] Mining crystals (improved yield)
-- [ ] Mining missions (framework exists)
+- [x] Mining missions (10 missions, levels 1-4)
 
 #### ✅ Planetary Interaction (COMPLETE)
 - [x] **Planet scanning** - 8 planet types with resource deposits
