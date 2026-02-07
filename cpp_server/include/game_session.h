@@ -48,18 +48,122 @@ public:
 
 private:
     // --- Message handlers ---
+    /**
+     * Routes incoming client messages to appropriate handlers
+     * @param client Client connection info
+     * @param raw Raw message string from network
+     */
     void onClientMessage(const network::ClientConnection& client, const std::string& raw);
+    
+    /**
+     * Handle client connection
+     * 
+     * Creates a player entity and spawns them in the game world.
+     * Expected message format: {"type":"connect","character_name":"PlayerName"}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data
+     */
     void handleConnect(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle client disconnection
+     * 
+     * Removes player entity from world and cleans up player info.
+     * 
+     * @param client Client connection info
+     */
     void handleDisconnect(const network::ClientConnection& client);
+    
+    /**
+     * Handle player movement input
+     * 
+     * Expected message format: {"type":"input_move","forward":1.0,"strafe":0.5}
+     * Values range from -1.0 to 1.0 for each axis.
+     * 
+     * @param client Client connection info
+     * @param data JSON message data with forward/strafe values
+     */
     void handleInputMove(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle chat message
+     * 
+     * Broadcasts chat message to all connected clients.
+     * Expected format: {"type":"chat","message":"Hello world"}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data with message content
+     */
     void handleChat(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle target lock request
+     * 
+     * Attempts to lock the specified target entity.
+     * Expected format: {"type":"target_lock","target_id":"entity_123"}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data with target_id
+     */
     void handleTargetLock(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle target unlock request
+     * 
+     * Clears the current target lock.
+     * Expected format: {"type":"target_unlock"}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data
+     */
     void handleTargetUnlock(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle module activation
+     * 
+     * Activates a ship module (weapon, shield booster, etc.).
+     * Expected format: {"type":"module_activate","slot":0}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data with slot number
+     */
     void handleModuleActivate(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle module deactivation
+     * 
+     * Deactivates a ship module.
+     * Expected format: {"type":"module_deactivate","slot":0}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data with slot number
+     */
     void handleModuleDeactivate(const network::ClientConnection& client, const std::string& data);
 
     // --- State broadcast ---
+    /**
+     * Build full state update message
+     * 
+     * Creates JSON message with all entity states including:
+     * - Position, velocity, rotation
+     * - Health (shield, armor, hull)
+     * - Target locks
+     * - Active modules
+     * 
+     * @return JSON string with format: {"type":"state_update","entities":[...]}
+     */
     std::string buildStateUpdate() const;
+    
+    /**
+     * Build entity spawn notification
+     * 
+     * Creates JSON message to notify clients when a new entity appears.
+     * Includes full entity data (type, ship, faction, initial stats).
+     * 
+     * @param entity_id ID of entity to spawn
+     * @return JSON string with format: {"type":"spawn_entity","entity":{...}}
+     */
     std::string buildSpawnEntity(const std::string& entity_id) const;
 
     // --- NPC management ---
@@ -73,9 +177,30 @@ private:
                                    const std::string& ship_type = "rifter");
 
     // --- Helpers ---
-    /// Extract a string value from a simple JSON object (lightweight parser)
+    /**
+     * Extract a string value from a simple JSON object (lightweight parser)
+     * 
+     * Simple JSON parser for extracting string fields. Looks for "key":"value"
+     * pattern in the JSON string. Not a full JSON parser - only handles simple
+     * key-value pairs.
+     * 
+     * @param json JSON string to parse
+     * @param key Key name to extract
+     * @return Extracted string value, or empty string if not found
+     */
     static std::string extractJsonString(const std::string& json, const std::string& key);
-    /// Extract a float value from a simple JSON object
+    
+    /**
+     * Extract a float value from a simple JSON object
+     * 
+     * Simple JSON parser for extracting numeric fields. Looks for "key":value
+     * pattern (no quotes around value).
+     * 
+     * @param json JSON string to parse
+     * @param key Key name to extract
+     * @param fallback Default value if key not found or parsing fails
+     * @return Extracted float value, or fallback if not found
+     */
     static float extractJsonFloat(const std::string& json, const std::string& key, float fallback = 0.0f);
 
     ecs::World* world_;
