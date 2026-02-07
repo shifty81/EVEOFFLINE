@@ -484,13 +484,17 @@ void UIManager::RenderHealthBar(const char* label, float current, float max, con
     EVEPanels::RenderHealthBar(label, current, max, color);
 }
 
+void UIManager::SetPlayerPosition(const glm::vec3& position) {
+    m_playerPosition = position;
+}
+
 void UIManager::UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities) {
     if (m_targetList) {
         m_targetList->updateTargets(entities);
     }
-    // Also update overview panel
+    // Also update overview panel with player position
     if (m_overviewPanel) {
-        m_overviewPanel->UpdateEntities(entities);
+        m_overviewPanel->UpdateEntities(entities, m_playerPosition);
     }
 }
 

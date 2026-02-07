@@ -27,7 +27,8 @@ public:
      * Called when receiving SPAWN_ENTITY message from server
      */
     void spawnEntity(const std::string& id, const glm::vec3& position,
-                     const Health& health, const std::string& shipType = "",
+                     const Health& health, const Capacitor& capacitor = Capacitor(),
+                     const std::string& shipType = "",
                      const std::string& shipName = "", const std::string& faction = "");
 
     /**
@@ -41,7 +42,8 @@ public:
      * Called when processing STATE_UPDATE message
      */
     void updateEntityState(const std::string& id, const glm::vec3& position,
-                           const glm::vec3& velocity, float rotation, const Health& health);
+                           const glm::vec3& velocity, float rotation, const Health& health,
+                           const Capacitor& capacitor = Capacitor());
 
     /**
      * Process state update message

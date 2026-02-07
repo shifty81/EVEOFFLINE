@@ -26,6 +26,13 @@ Health EntityMessageParser::parseHealth(const nlohmann::json& healthJson) {
     return health;
 }
 
+Capacitor EntityMessageParser::parseCapacitor(const nlohmann::json& capacitorJson) {
+    Capacitor capacitor;
+    capacitor.current = capacitorJson.value("current", 0.0f);
+    capacitor.max = capacitorJson.value("max", 0.0f);
+    return capacitor;
+}
+
 bool EntityMessageParser::parseSpawnEntity(const std::string& dataJson, EntityManager& entityManager) {
     try {
         auto data = nlohmann::json::parse(dataJson);
@@ -49,13 +56,19 @@ bool EntityMessageParser::parseSpawnEntity(const std::string& dataJson, EntityMa
             health = parseHealth(data["health"]);
         }
         
+        // Extract capacitor
+        Capacitor capacitor;
+        if (data.contains("capacitor")) {
+            capacitor = parseCapacitor(data["capacitor"]);
+        }
+        
         // Extract optional ship info
         std::string shipType = data.value("ship_type", "");
         std::string shipName = data.value("ship_name", "");
         std::string faction = data.value("faction", "");
         
         // Spawn entity
-        entityManager.spawnEntity(entityId, position, health, shipType, shipName, faction);
+        entityManager.spawnEntity(entityId, position, health, capacitor, shipType, shipName, faction);
         return true;
         
     } catch (const nlohmann::json::exception& e) {
@@ -135,8 +148,14 @@ bool EntityMessageParser::parseStateUpdate(const std::string& dataJson, EntityMa
                 health = parseHealth(entityData["health"]);
             }
             
+            // Extract capacitor
+            Capacitor capacitor;
+            if (entityData.contains("capacitor")) {
+                capacitor = parseCapacitor(entityData["capacitor"]);
+            }
+            
             // Update entity state
-            entityManager.updateEntityState(entityId, position, velocity, rotation, health);
+            entityManager.updateEntityState(entityId, position, velocity, rotation, health, capacitor);
         }
         
         // Process state update (remove entities not in update)

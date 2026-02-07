@@ -42,6 +42,9 @@ private:
     
     // Helper to parse health from JSON
     static Health parseHealth(const nlohmann::json& healthJson);
+    
+    // Helper to parse capacitor from JSON
+    static Capacitor parseCapacitor(const nlohmann::json& capacitorJson);
 };
 
 } // namespace eve

@@ -8,19 +8,20 @@ EntityManager::EntityManager() {
 }
 
 void EntityManager::spawnEntity(const std::string& id, const glm::vec3& position,
-                                const Health& health, const std::string& shipType,
+                                const Health& health, const Capacitor& capacitor,
+                                const std::string& shipType,
                                 const std::string& shipName, const std::string& faction) {
     // Check if entity already exists
     auto it = m_entities.find(id);
     if (it != m_entities.end()) {
         std::cerr << "Warning: Entity " << id << " already exists, updating instead" << std::endl;
-        it->second->updateFromSpawn(position, health, shipType, shipName, faction);
+        it->second->updateFromSpawn(position, health, capacitor, shipType, shipName, faction);
         return;
     }
 
     // Create new entity
     auto entity = std::make_shared<Entity>(id);
-    entity->updateFromSpawn(position, health, shipType, shipName, faction);
+    entity->updateFromSpawn(position, health, capacitor, shipType, shipName, faction);
     
     // Store entity
     m_entities[id] = entity;
@@ -56,16 +57,17 @@ void EntityManager::destroyEntity(const std::string& id) {
 }
 
 void EntityManager::updateEntityState(const std::string& id, const glm::vec3& position,
-                                      const glm::vec3& velocity, float rotation, const Health& health) {
+                                      const glm::vec3& velocity, float rotation, const Health& health,
+                                      const Capacitor& capacitor) {
     auto it = m_entities.find(id);
     if (it == m_entities.end()) {
         // Entity doesn't exist yet, spawn it
-        spawnEntity(id, position, health);
+        spawnEntity(id, position, health, capacitor);
         return;
     }
 
     // Update existing entity
-    it->second->updateFromState(position, velocity, rotation, health);
+    it->second->updateFromState(position, velocity, rotation, health, capacitor);
     
     // Notify callback
     if (m_onEntityUpdated) {

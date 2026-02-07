@@ -9,6 +9,7 @@ Entity::Entity(const std::string& id)
 }
 
 void Entity::updateFromSpawn(const glm::vec3& position, const Health& health,
+                             const Capacitor& capacitor,
                              const std::string& shipType,
                              const std::string& shipName,
                              const std::string& faction) {
@@ -19,6 +20,9 @@ void Entity::updateFromSpawn(const glm::vec3& position, const Health& health,
     
     // Set health
     m_health = health;
+    
+    // Set capacitor
+    m_capacitor = capacitor;
     
     // Set ship info
     m_shipType = shipType;
@@ -31,7 +35,8 @@ void Entity::updateFromSpawn(const glm::vec3& position, const Health& health,
 }
 
 void Entity::updateFromState(const glm::vec3& position, const glm::vec3& velocity,
-                             float rotation, const Health& health) {
+                              float rotation, const Health& health,
+                              const Capacitor& capacitor) {
     // Store previous position for interpolation
     m_prevPosition = m_position;
     
@@ -40,6 +45,7 @@ void Entity::updateFromState(const glm::vec3& position, const glm::vec3& velocit
     m_targetVelocity = velocity;
     m_targetRotation = rotation;
     m_health = health;
+    m_capacitor = capacitor;
     
     // Reset interpolation progress
     m_interpolationProgress = 0.0f;

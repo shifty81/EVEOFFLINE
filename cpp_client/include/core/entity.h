@@ -33,6 +33,18 @@ struct Health {
 };
 
 /**
+ * Capacitor structure for entities
+ * Represents the energy capacitor in EVE ONLINE
+ */
+struct Capacitor {
+    float current{0.0f};
+    float max{0.0f};
+
+    Capacitor() = default;
+    Capacitor(float c, float m) : current(c), max(m) {}
+};
+
+/**
  * Client-side entity representation
  * Stores entity state with interpolation support for smooth rendering
  */
@@ -47,6 +59,7 @@ public:
     glm::vec3 getVelocity() const { return m_velocity; }
     float getRotation() const { return m_rotation; }
     const Health& getHealth() const { return m_health; }
+    const Capacitor& getCapacitor() const { return m_capacitor; }
     
     // Ship info
     const std::string& getShipType() const { return m_shipType; }
@@ -63,6 +76,7 @@ public:
      * Called when entity first appears
      */
     void updateFromSpawn(const glm::vec3& position, const Health& health,
+                         const Capacitor& capacitor = Capacitor(),
                          const std::string& shipType = "",
                          const std::string& shipName = "",
                          const std::string& faction = "");
@@ -72,7 +86,8 @@ public:
      * Sets target state for interpolation
      */
     void updateFromState(const glm::vec3& position, const glm::vec3& velocity,
-                         float rotation, const Health& health);
+                         float rotation, const Health& health,
+                         const Capacitor& capacitor = Capacitor());
 
     /**
      * Interpolate position towards target
@@ -91,6 +106,7 @@ private:
     glm::vec3 m_velocity{0.0f};
     float m_rotation{0.0f};
     Health m_health;
+    Capacitor m_capacitor;
 
     // Previous state (for interpolation)
     glm::vec3 m_prevPosition{0.0f};
