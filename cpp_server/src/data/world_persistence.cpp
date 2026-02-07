@@ -224,6 +224,54 @@ std::string WorldPersistence::serializeEntity(
              << "}";
     }
 
+    // Standings
+    auto* standings = entity->getComponent<components::Standings>();
+    if (standings) {
+        json << ",\"standings\":{";
+        
+        // Serialize personal standings
+        if (!standings->personal_standings.empty()) {
+            json << "\"personal\":{";
+            bool first = true;
+            for (const auto& [entity_id, standing] : standings->personal_standings) {
+                if (!first) json << ",";
+                json << "\"" << escapeJson(entity_id) << "\":" << standing;
+                first = false;
+            }
+            json << "}";
+        }
+        
+        // Serialize corporation standings
+        if (!standings->corporation_standings.empty()) {
+            if (!standings->personal_standings.empty()) json << ",";
+            json << "\"corporation\":{";
+            bool first = true;
+            for (const auto& [corp_name, standing] : standings->corporation_standings) {
+                if (!first) json << ",";
+                json << "\"" << escapeJson(corp_name) << "\":" << standing;
+                first = false;
+            }
+            json << "}";
+        }
+        
+        // Serialize faction standings
+        if (!standings->faction_standings.empty()) {
+            if (!standings->personal_standings.empty() || !standings->corporation_standings.empty()) {
+                json << ",";
+            }
+            json << "\"faction\":{";
+            bool first = true;
+            for (const auto& [faction_name, standing] : standings->faction_standings) {
+                if (!first) json << ",";
+                json << "\"" << escapeJson(faction_name) << "\":" << standing;
+                first = false;
+            }
+            json << "}";
+        }
+        
+        json << "}";
+    }
+
     // AI
     auto* ai = entity->getComponent<components::AI>();
     if (ai) {
@@ -399,6 +447,128 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
         auto fac = std::make_unique<components::Faction>();
         fac->faction_name = extractString(fac_json, "faction_name");
         entity->addComponent(std::move(fac));
+    }
+
+    // Standings
+    std::string standings_json = extractObject(json, "standings");
+    if (!standings_json.empty()) {
+        auto standings = std::make_unique<components::Standings>();
+        
+        // Deserialize personal standings
+        std::string personal_json = extractObject(standings_json, "personal");
+        if (!personal_json.empty()) {
+            // Parse the personal standings map
+            // Format: {"entity_id": standing_value, ...}
+            size_t pos = 0;
+            while (pos < personal_json.size()) {
+                // Find next key
+                size_t key_start = personal_json.find("\"", pos);
+                if (key_start == std::string::npos) break;
+                key_start++;
+                size_t key_end = personal_json.find("\"", key_start);
+                if (key_end == std::string::npos) break;
+                
+                std::string entity_id = personal_json.substr(key_start, key_end - key_start);
+                
+                // Find value after colon
+                size_t colon = personal_json.find(":", key_end);
+                if (colon == std::string::npos) break;
+                
+                // Extract number
+                size_t val_start = colon + 1;
+                while (val_start < personal_json.size() && 
+                       (personal_json[val_start] == ' ' || personal_json[val_start] == '\t')) {
+                    val_start++;
+                }
+                size_t val_end = val_start;
+                while (val_end < personal_json.size() && 
+                       (std::isdigit(personal_json[val_end]) || personal_json[val_end] == '.' || 
+                        personal_json[val_end] == '-' || personal_json[val_end] == '+')) {
+                    val_end++;
+                }
+                
+                if (val_end > val_start) {
+                    float standing = std::stof(personal_json.substr(val_start, val_end - val_start));
+                    standings->personal_standings[entity_id] = standing;
+                }
+                
+                pos = val_end + 1;
+            }
+        }
+        
+        // Deserialize corporation standings
+        std::string corp_json = extractObject(standings_json, "corporation");
+        if (!corp_json.empty()) {
+            size_t pos = 0;
+            while (pos < corp_json.size()) {
+                size_t key_start = corp_json.find("\"", pos);
+                if (key_start == std::string::npos) break;
+                key_start++;
+                size_t key_end = corp_json.find("\"", key_start);
+                if (key_end == std::string::npos) break;
+                
+                std::string corp_name = corp_json.substr(key_start, key_end - key_start);
+                size_t colon = corp_json.find(":", key_end);
+                if (colon == std::string::npos) break;
+                
+                size_t val_start = colon + 1;
+                while (val_start < corp_json.size() && 
+                       (corp_json[val_start] == ' ' || corp_json[val_start] == '\t')) {
+                    val_start++;
+                }
+                size_t val_end = val_start;
+                while (val_end < corp_json.size() && 
+                       (std::isdigit(corp_json[val_end]) || corp_json[val_end] == '.' || 
+                        corp_json[val_end] == '-' || corp_json[val_end] == '+')) {
+                    val_end++;
+                }
+                
+                if (val_end > val_start) {
+                    float standing = std::stof(corp_json.substr(val_start, val_end - val_start));
+                    standings->corporation_standings[corp_name] = standing;
+                }
+                
+                pos = val_end + 1;
+            }
+        }
+        
+        // Deserialize faction standings
+        std::string faction_json = extractObject(standings_json, "faction");
+        if (!faction_json.empty()) {
+            size_t pos = 0;
+            while (pos < faction_json.size()) {
+                size_t key_start = faction_json.find("\"", pos);
+                if (key_start == std::string::npos) break;
+                key_start++;
+                size_t key_end = faction_json.find("\"", key_start);
+                if (key_end == std::string::npos) break;
+                
+                std::string faction_name = faction_json.substr(key_start, key_end - key_start);
+                size_t colon = faction_json.find(":", key_end);
+                if (colon == std::string::npos) break;
+                
+                size_t val_start = colon + 1;
+                while (val_start < faction_json.size() && 
+                       (faction_json[val_start] == ' ' || faction_json[val_start] == '\t')) {
+                    val_start++;
+                }
+                size_t val_end = val_start;
+                while (val_end < faction_json.size() && 
+                       (std::isdigit(faction_json[val_end]) || faction_json[val_end] == '.' || 
+                        faction_json[val_end] == '-' || faction_json[val_end] == '+')) {
+                    val_end++;
+                }
+                
+                if (val_end > val_start) {
+                    float standing = std::stof(faction_json.substr(val_start, val_end - val_start));
+                    standings->faction_standings[faction_name] = standing;
+                }
+                
+                pos = val_end + 1;
+            }
+        }
+        
+        entity->addComponent(std::move(standings));
     }
 
     // AI
