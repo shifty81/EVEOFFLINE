@@ -215,16 +215,58 @@ void Application::setupUICallbacks() {
         std::cout << "  - Inventory panel request callbacks wired" << std::endl;
     }
     
-    // Fitting panel callbacks (placeholder for future fitting operations)
+    // Fitting panel callbacks
     if (fittingPanel) {
-        // TODO: Wire fitting callbacks when fitting operations are implemented
-        std::cout << "  - Fitting panel request callbacks (ready for wiring)" << std::endl;
+        fittingPanel->SetFitModuleCallback([networkMgr, fittingPanel](const std::string& module_id, const std::string& slot_type, int slot_index) {
+            // Send module fit request to server
+            fittingPanel->SetPendingOperation(true);
+            networkMgr->sendModuleFit(module_id, slot_type, slot_index);
+        });
+        
+        fittingPanel->SetUnfitModuleCallback([networkMgr, fittingPanel](const std::string& slot_type, int slot_index) {
+            // Send module unfit request to server
+            fittingPanel->SetPendingOperation(true);
+            networkMgr->sendModuleUnfit(slot_type, slot_index);
+        });
+        
+        fittingPanel->SetOnlineModuleCallback([networkMgr, fittingPanel](const std::string& slot_type, int slot_index, bool online) {
+            // Module online/offline could trigger a server message if needed
+            // For now, this is client-side only
+            std::cout << "Module " << slot_type << "[" << slot_index << "] set to " 
+                      << (online ? "online" : "offline") << std::endl;
+        });
+        
+        std::cout << "  - Fitting panel request callbacks wired" << std::endl;
     }
     
-    // Market panel callbacks (placeholder for future market operations)
+    // Market panel callbacks
     if (marketPanel) {
-        // TODO: Wire market callbacks when market operations are implemented
-        std::cout << "  - Market panel request callbacks (ready for wiring)" << std::endl;
+        marketPanel->SetBuyOrderCallback([networkMgr, marketPanel](const std::string& order_id, int quantity) {
+            // Send buy order fulfillment to server
+            // Note: Server will look up the actual price from the order_id
+            marketPanel->SetPendingOperation(true);
+            networkMgr->sendMarketBuy(order_id, quantity, 0.0);  // Price retrieved server-side
+        });
+        
+        marketPanel->SetSellOrderCallback([networkMgr, marketPanel](const std::string& item_id, int quantity, float price) {
+            // Send sell order creation to server with specified price
+            marketPanel->SetPendingOperation(true);
+            networkMgr->sendMarketSell(item_id, quantity, price);
+        });
+        
+        marketPanel->SetQuickBuyCallback([networkMgr, marketPanel](const std::string& item_id, int quantity) {
+            // Send instant buy to server - price of 0.0 signals server to use best available market price
+            marketPanel->SetPendingOperation(true);
+            networkMgr->sendMarketBuy(item_id, quantity, 0.0);
+        });
+        
+        marketPanel->SetQuickSellCallback([networkMgr, marketPanel](const std::string& item_id, int quantity) {
+            // Send instant sell to server - price of 0.0 signals server to use best available market price
+            marketPanel->SetPendingOperation(true);
+            networkMgr->sendMarketSell(item_id, quantity, 0.0);
+        });
+        
+        std::cout << "  - Market panel request callbacks wired" << std::endl;
     }
     
     // === Setup Response Callbacks (Network → UI) ===
