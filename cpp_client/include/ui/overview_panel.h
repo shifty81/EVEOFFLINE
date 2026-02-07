@@ -6,6 +6,7 @@
 #include <functional>
 #include <unordered_map>
 #include <memory>
+#include <glm/glm.hpp>
 
 namespace eve {
     class Entity;
@@ -84,7 +85,8 @@ public:
     void RenderContents();
     
     // Update overview from entity list
-    void UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities);
+    void UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities,
+                        const glm::vec3& playerPosition = glm::vec3(0.0f));
     
     // Visibility
     void SetVisible(bool visible) { m_visible = visible; }

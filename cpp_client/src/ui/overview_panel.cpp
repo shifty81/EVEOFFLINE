@@ -341,7 +341,8 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     }
 }
 
-void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities) {
+void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities,
+                                   const glm::vec3& playerPosition) {
     m_entries.clear();
     
     for (const auto& [id, entity] : entities) {
@@ -361,9 +362,10 @@ void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::sh
             entry.ship_type = "Unknown";
         }
         
-        // Calculate distance from origin (TODO: use player position)
+        // Calculate distance from player position
         glm::vec3 pos = entity->getPosition();
-        entry.distance = std::sqrt(pos.x * pos.x + pos.y * pos.y + pos.z * pos.z);
+        glm::vec3 delta = pos - playerPosition;
+        entry.distance = std::sqrt(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
         
         // Get health percentages
         const eve::Health& health = entity->getHealth();
@@ -380,9 +382,13 @@ void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::sh
             entry.corporation = "Unknown";
         }
         
-        // Negative standing for NPCs (hostile)
-        entry.standing = -5;  // TODO: Get from standings system
-        entry.is_player = false;  // TODO: Distinguish players from NPCs
+        // Determine if entity is a player (players have IDs starting with "player_")
+        entry.is_player = (entry.entity_id.find("player_") == 0);
+        
+        // Set standing based on faction and player status
+        // Players are neutral (0), NPCs are hostile (-5) by default
+        // TODO: Implement proper standings system with configurable values
+        entry.standing = entry.is_player ? 0 : -5;
         
         m_entries.push_back(entry);
     }

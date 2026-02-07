@@ -49,9 +49,19 @@ std::string EntityPicker::pickEntity(
         // Get entity position
         glm::vec3 entityPos = entity->getPosition();
         
-        // Determine picking radius based on ship type
-        // TODO: Could get actual ship size from data
-        float pickRadius = m_pickingRadius;
+        // Determine picking radius based on ship type and size
+        float pickRadius = m_pickingRadius;  // Default
+        std::string shipType = entity->getShipType();
+        if (shipType.find("Cruiser") != std::string::npos) {
+            pickRadius = m_pickingRadius * 1.5f;
+        } else if (shipType.find("Battleship") != std::string::npos || 
+                   shipType.find("Battlecruiser") != std::string::npos) {
+            pickRadius = m_pickingRadius * 2.0f;
+        } else if (shipType.find("Capital") != std::string::npos || 
+                   shipType.find("Carrier") != std::string::npos ||
+                   shipType.find("Dreadnought") != std::string::npos) {
+            pickRadius = m_pickingRadius * 3.0f;
+        }
         
         // Test ray-sphere intersection
         float hitDistance = raySphereIntersection(

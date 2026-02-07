@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <glm/glm.hpp>
 
 // Forward declarations
 struct GLFWwindow;
@@ -118,6 +119,7 @@ public:
     void SetShipStatus(const ShipStatus& status);
     void SetTargetInfo(const TargetInfo& target);
     void AddCombatLogMessage(const std::string& message);
+    void SetPlayerPosition(const glm::vec3& position);
     
     // Target list management
     void UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities);
@@ -167,6 +169,7 @@ private:
     TargetInfo target_info_;
     std::vector<std::string> combat_log_;
     static constexpr size_t MAX_COMBAT_LOG_MESSAGES = 10;
+    glm::vec3 m_playerPosition{0.0f};  // Player position for distance calculations
     
     // EVE-style target list
     std::unique_ptr<EVETargetList> m_targetList;

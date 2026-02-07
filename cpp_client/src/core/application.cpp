@@ -358,6 +358,9 @@ void Application::update(float deltaTime) {
         status.max_velocity = m_playerMaxSpeed;
         m_uiManager->SetShipStatus(status);
         
+        // Update player position for UI calculations (e.g., distance in overview)
+        m_uiManager->SetPlayerPosition(playerEntity->getPosition());
+        
         // Camera follows player ship
         m_camera->setTarget(playerEntity->getPosition());
     }
