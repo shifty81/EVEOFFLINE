@@ -553,7 +553,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 ### 📋 Phase 7: Advanced Systems (IN PROGRESS) 🚀
 **Timeline**: Q4 2026+  
 **Priority**: High
-**Status**: Mining, Ice Mining, Planetary Interaction, and Research & Invention complete. Wormholes and Advanced Fleet Mechanics remain.
+**Status**: Mining, Ice Mining, Planetary Interaction, Research & Invention, and C++ Server–Client Integration complete. Wormholes and Advanced Fleet Mechanics remain.
 
 #### ✅ Mining & Resource Gathering (COMPLETE)
 - [x] **Mining Laser Operations** - Cycle-based ore extraction
@@ -590,7 +590,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Ore compression
 - [ ] Mining missions (framework exists)
 
-#### C++ Server–Client Integration (✅ IN PROGRESS)
+#### ✅ C++ Server–Client Integration (COMPLETE)
 - [x] **Game Session Manager** - Bridges TCP networking to ECS world
 - [x] **Client Connect Handling** - Player entity spawning on connect
 - [x] **Connect Ack Protocol** - Returns player_entity_id to client
@@ -600,9 +600,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Disconnect Cleanup** - Removes player entity, notifies other clients
 - [x] **NPC Demo Entities** - 3 hostile NPCs spawned on server startup
 - [x] **Chat Broadcasting** - Relays chat messages to all connected clients
-- [ ] Server-side target locking protocol
-- [ ] Server-side module activation
-- [ ] Data-driven ship stats from JSON files
+- [x] **Server-side target locking protocol** - TARGET_LOCK/TARGET_UNLOCK messages with TargetingSystem integration
+- [x] **Server-side module activation** - MODULE_ACTIVATE/MODULE_DEACTIVATE messages with weapon/capacitor validation
+- [x] **Data-driven ship stats from JSON files** - ShipDatabase loads 66 ship templates from data/ships/*.json
 
 #### ✅ Resource Gathering Systems (COMPLETE)
 - [x] **Asteroid mining** - Mining lasers, 15 ore types, mining barges
@@ -777,6 +777,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - ✅ **Phase 7 Mining System** - Complete mining & resource gathering with barges
 - ✅ **C++ Server Game Session** - Client connect/disconnect, entity spawning, state broadcast
 - ✅ **C++ Server Dedicated Systems** - CapacitorSystem, ShieldRechargeSystem, WeaponSystem
+- ✅ **C++ Server Target Locking** - Server-side TARGET_LOCK/TARGET_UNLOCK protocol
+- ✅ **C++ Server Module Activation** - Server-side MODULE_ACTIVATE/MODULE_DEACTIVATE protocol
+- ✅ **C++ Server ShipDatabase** - Data-driven ship stats from 66 JSON ship templates
 
 ### Phase 7 Goals (IN PROGRESS)
 - [x] **Mining & Resource Gathering** - Core system complete ✅
@@ -793,6 +796,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **C++ Server CapacitorSystem** - Capacitor recharge and consumption ✅
 - [x] **C++ Server ShieldRechargeSystem** - Passive shield regeneration ✅
 - [x] **C++ Server WeaponSystem** - Weapon cooldowns, auto-fire, capacitor cost, damage cascade ✅
+- [x] **C++ Server Target Locking Protocol** - Server-side target lock/unlock messages ✅
+- [x] **C++ Server Module Activation Protocol** - Server-side module activate/deactivate messages ✅
+- [x] **C++ Server ShipDatabase** - Data-driven ship stats from 66 JSON templates ✅
 - [ ] Other Phase 7 systems (PI, R&D, WH space, etc.)
 
 ---

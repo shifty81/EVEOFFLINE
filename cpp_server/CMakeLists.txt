@@ -51,6 +51,7 @@ set(SERVER_SOURCES
     src/systems/capacitor_system.cpp
     src/systems/shield_recharge_system.cpp
     src/systems/weapon_system.cpp
+    src/data/ship_database.cpp
 )
 
 set(SERVER_HEADERS
@@ -74,6 +75,7 @@ set(SERVER_HEADERS
     include/systems/capacitor_system.h
     include/systems/shield_recharge_system.h
     include/systems/weapon_system.h
+    include/data/ship_database.h
 )
 
 # Steam SDK configuration
@@ -144,3 +146,29 @@ message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Steam Integration: ${USE_STEAM_SDK}")
 message(STATUS "  Build Tests: ${BUILD_TESTS}")
 message(STATUS "")
+
+# Test executable
+if(BUILD_TESTS)
+    # Sources needed by test_systems (exclude main.cpp, server.cpp, game_session.cpp)
+    set(TEST_SUPPORT_SOURCES
+        src/ecs/entity.cpp
+        src/ecs/world.cpp
+        src/systems/capacitor_system.cpp
+        src/systems/shield_recharge_system.cpp
+        src/systems/weapon_system.cpp
+        src/systems/combat_system.cpp
+        src/systems/targeting_system.cpp
+        src/systems/movement_system.cpp
+        src/systems/ai_system.cpp
+        src/data/ship_database.cpp
+    )
+
+    add_executable(test_systems
+        test_systems.cpp
+        ${TEST_SUPPORT_SOURCES}
+    )
+    target_link_libraries(test_systems Threads::Threads)
+    if(WIN32)
+        target_link_libraries(test_systems ws2_32)
+    endif()
+endif()
