@@ -1,6 +1,8 @@
 # EVE OFFLINE
 
-A PVE-focused space MMO inspired by EVE ONLINE, designed for small groups of players (2-20). Built with C++ and OpenGL.
+A PVE-focused space MMO inspired by EVE ONLINE, designed for small groups of players (2-20). Built with C++ and OpenGL. Game systems are structured around the EVE Online game manual.
+
+> **Status**: In active R&D and development — actively testing until further notice.
 
 ## Project Structure
 
@@ -111,14 +113,20 @@ cmake --build . --config Release
 - **Cross-Platform**: Windows, Linux, macOS
 
 ### Game Content (data/)
-All game content is moddable via JSON files:
+All game content is moddable via JSON files, structured around the EVE Online manual:
 - 58+ ships (frigates to titans, Tech I and Tech II, plus capitals)
   - Frigates, Destroyers, Cruisers, Battlecruisers, Battleships
   - Carriers, Dreadnoughts, Titans
   - Procedural 3D models with faction-specific designs
 - 70+ modules (weapons, defenses, utilities)
-- 47+ skills with training system
-- 28 missions across 4 difficulty levels
+- 100+ skills across 18 categories with attribute-based training
+- Missions across 5 levels with 7 types (combat, mining, courier, trade, scenario, exploration, storyline)
+- Character creation with 4 races, bloodlines, and attributes
+- Clone system, implants, and Learning skills
+- CONCORD security enforcement and insurance
+- Corporation system with NPC and player corps
+- Contract/escrow system
+- Deadspace complexes with 5 difficulty tiers
 - Mining, manufacturing, market, and exploration systems
 - Stations and asteroids with visual variety
 
@@ -127,22 +135,33 @@ All game content is moddable via JSON files:
 Edit JSON files in `data/` to customize game content:
 ```
 data/
-├── ships/          # Ship definitions
-├── modules/        # Module definitions
-├── skills/         # Skill definitions
-├── npcs/           # NPC definitions
-├── missions/       # Mission templates
-└── universe/       # Solar system data
+├── character_creation/ # Races, bloodlines, clones, implants
+├── ships/              # Ship definitions
+├── modules/            # Module definitions
+├── skills/             # Skill definitions
+├── npcs/               # NPC definitions
+├── missions/           # Mission templates
+├── universe/           # Solar system data
+├── security/           # CONCORD, insurance
+├── corporations/       # NPC and player corps
+├── contracts/          # Contract/escrow system
+├── exploration/        # Signatures, deadspace complexes
+├── industry/           # Blueprints, manufacturing
+├── market/             # Pricing system
+├── asteroid_fields/    # Mining belt data
+└── planetary_interaction/ # PI resources
 ```
 
 ## 📚 Documentation
 
 All documentation is in [docs/](docs/):
+- [EVE Manual Reference](docs/EVE_MANUAL_REFERENCE.md) — How manual chapters map to implementation
 - [Build Guides](docs/guides/) — VS2022, vcpkg, build automation
 - [C++ Client Docs](docs/cpp_client/) — Rendering, UI, audio, networking
+- [Design Document](docs/design/DESIGN.md) — Game systems structured around EVE manual
 - [Ship Modeling](docs/SHIP_MODELING.md) — Procedural ship generation system
 - [EVE Ship Reference](docs/EVE_SHIP_REFERENCE.md) — Design inspiration from EVE Online
-- [API & Design](docs/) — Architecture, roadmap, contributing
+- [Roadmap](docs/ROADMAP.md) — Development progress and plans
 
 ## 🤝 Contributing
 

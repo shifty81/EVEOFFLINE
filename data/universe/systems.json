@@ -87,6 +87,46 @@
         {"id": "belt_1", "ore_types": ["veldspar", "scordite", "pyroxeres"], "spawn_rate": 0.2}
       ],
       "gates": ["rancer", "frarn"]
+    },
+    {
+      "id": "amarr",
+      "name": "Amarr",
+      "security": 1.0,
+      "faction": "Amarr",
+      "type": "highsec",
+      "description": "Capital of the Amarr Empire and major trade hub. The throne world of the largest empire in New Eden.",
+      "coordinates": {"x": 200000, "y": -100000, "z": 0},
+      "stations": [
+        {
+          "id": "amarr_8",
+          "name": "Amarr VIII - Emperor Family Academy",
+          "type": "station",
+          "services": ["market", "repair", "fitting", "missions", "cloning", "insurance"]
+        }
+      ],
+      "asteroid_belts": [],
+      "gates": ["ashab", "sarum_prime"]
+    },
+    {
+      "id": "dodixie",
+      "name": "Dodixie",
+      "security": 0.9,
+      "faction": "Gallente",
+      "type": "highsec",
+      "description": "Major Gallente trade hub in Sinq Laison region. Home of the Federation Navy Assembly Plant.",
+      "coordinates": {"x": -150000, "y": -50000, "z": 0},
+      "stations": [
+        {
+          "id": "dodixie_9_20",
+          "name": "Dodixie IX - Moon 20 - Federation Navy Assembly Plant",
+          "type": "station",
+          "services": ["market", "repair", "fitting", "missions", "cloning", "insurance"]
+        }
+      ],
+      "asteroid_belts": [
+        {"id": "belt_1", "ore_types": ["veldspar", "scordite"], "spawn_rate": 0.1}
+      ],
+      "gates": ["botane", "pakhshi"]
     }
   ],
   "generation_config": {

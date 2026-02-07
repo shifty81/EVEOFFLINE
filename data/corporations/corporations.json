@@ -1,0 +1,160 @@
+{
+  "corporation_system": {
+    "description": "Corporations are the primary social organizations in New Eden. Every player belongs to a corporation, either NPC or player-run. Corporations provide shared resources, tax revenue, and organizational structure.",
+    "npc_corporations": {
+      "caldari_navy": {
+        "id": "caldari_navy",
+        "name": "Caldari Navy",
+        "faction": "Caldari",
+        "type": "military",
+        "description": "The naval arm of the Caldari State, responsible for defending Caldari sovereignty.",
+        "tax_rate": 11,
+        "divisions": ["military", "security", "logistics"],
+        "agent_types": ["combat", "courier"]
+      },
+      "caldari_provisions": {
+        "id": "caldari_provisions",
+        "name": "Caldari Provisions",
+        "faction": "Caldari",
+        "type": "industrial",
+        "description": "A major Caldari corporation providing goods and services throughout the State.",
+        "tax_rate": 11,
+        "divisions": ["mining", "distribution", "manufacturing"],
+        "agent_types": ["mining", "courier", "trade"]
+      },
+      "amarr_navy": {
+        "id": "amarr_navy",
+        "name": "Amarr Navy",
+        "faction": "Amarr",
+        "type": "military",
+        "description": "The imperial fleet of the Amarr Empire, the largest navy in New Eden.",
+        "tax_rate": 11,
+        "divisions": ["military", "security", "intelligence"],
+        "agent_types": ["combat", "courier"]
+      },
+      "ministry_of_war": {
+        "id": "ministry_of_war",
+        "name": "Ministry of War",
+        "faction": "Amarr",
+        "type": "military",
+        "description": "Oversees the Amarr Empire's military operations and defense strategy.",
+        "tax_rate": 11,
+        "divisions": ["military", "security", "r_and_d"],
+        "agent_types": ["combat", "courier"]
+      },
+      "federation_navy": {
+        "id": "federation_navy",
+        "name": "Federation Navy",
+        "faction": "Gallente",
+        "type": "military",
+        "description": "The military arm of the Gallente Federation, champions of freedom in New Eden.",
+        "tax_rate": 11,
+        "divisions": ["military", "security", "logistics"],
+        "agent_types": ["combat", "courier"]
+      },
+      "republic_fleet": {
+        "id": "republic_fleet",
+        "name": "Republic Fleet",
+        "faction": "Minmatar",
+        "type": "military",
+        "description": "The Minmatar Republic's defense force, built from reclaimed and improvised ships.",
+        "tax_rate": 11,
+        "divisions": ["military", "security", "logistics"],
+        "agent_types": ["combat", "courier"]
+      },
+      "core_complexion": {
+        "id": "core_complexion",
+        "name": "Core Complexion Inc.",
+        "faction": "Minmatar",
+        "type": "research",
+        "description": "A Minmatar research corporation with R&D agents available for scientific research.",
+        "tax_rate": 11,
+        "divisions": ["r_and_d", "manufacturing"],
+        "agent_types": ["research"],
+        "research_fields": ["minmatar_starship_engineering", "mechanical_engineering"]
+      },
+      "creodron": {
+        "id": "creodron",
+        "name": "Creodron",
+        "faction": "Gallente",
+        "type": "research",
+        "description": "A Gallente research corporation specializing in drone technology and starship engineering.",
+        "tax_rate": 11,
+        "divisions": ["r_and_d", "manufacturing"],
+        "agent_types": ["research"],
+        "research_fields": ["gallentian_starship_engineering", "electronic_engineering"]
+      },
+      "carthum_conglomerate": {
+        "id": "carthum_conglomerate",
+        "name": "Carthum Conglomerate",
+        "faction": "Amarr",
+        "type": "research",
+        "description": "An Amarr research corporation with advanced R&D programs.",
+        "tax_rate": 11,
+        "divisions": ["r_and_d", "manufacturing"],
+        "agent_types": ["research"],
+        "research_fields": ["amarrian_starship_engineering", "laser_physics"]
+      },
+      "ishukone_corporation": {
+        "id": "ishukone_corporation",
+        "name": "Ishukone Corporation",
+        "faction": "Caldari",
+        "type": "research",
+        "description": "One of the Caldari mega-corporations with advanced research capabilities.",
+        "tax_rate": 11,
+        "divisions": ["r_and_d", "manufacturing", "distribution"],
+        "agent_types": ["research"],
+        "research_fields": ["caldari_starship_engineering", "graviton_physics"]
+      }
+    },
+    "player_corporation_mechanics": {
+      "creation_cost": 1599800,
+      "minimum_members": 1,
+      "tax_rate_range": {
+        "min": 0,
+        "max": 100
+      },
+      "roles": {
+        "ceo": {
+          "name": "CEO",
+          "description": "Full control over all corporation functions.",
+          "permissions": ["all"]
+        },
+        "director": {
+          "name": "Director",
+          "description": "Has most CEO powers except dissolving the corporation.",
+          "permissions": ["manage_members", "manage_hangars", "manage_wallet", "manage_structures"]
+        },
+        "hangar_access": {
+          "name": "Hangar Access",
+          "description": "Can access corporation hangars.",
+          "permissions": ["view_hangars", "take_items"]
+        },
+        "accountant": {
+          "name": "Accountant",
+          "description": "Can view and manage corporation wallet.",
+          "permissions": ["view_wallet", "make_payments"]
+        }
+      },
+      "wallet_divisions": 7,
+      "hangar_divisions": 7,
+      "offices": {
+        "description": "Corporations can rent offices at stations for storage and operations.",
+        "rental_cost_per_month": 10000
+      }
+    },
+    "standings": {
+      "description": "Corporation standings affect access to agents, tax rates at stations, and NPC behavior. Standing is gained through missions and lost through hostile actions.",
+      "range": {
+        "min": -10.0,
+        "max": 10.0
+      },
+      "effects": {
+        "above_5": "Access to level 4 agents, reduced broker fees.",
+        "3_to_5": "Access to level 3 agents, standard broker fees.",
+        "0_to_3": "Access to level 1-2 agents.",
+        "below_0": "Restricted access, higher fees, faction police may engage."
+      }
+    }
+  }
+}

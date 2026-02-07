@@ -1,7 +1,6 @@
 # EVE OFFLINE - Project Roadmap
 
-**Last Updated**: February 6, 2026  
-**Version**: 1.4
+**Status**: In active R&D and development — actively testing until further notice
 
 ---
 
@@ -19,7 +18,7 @@
 ## Project Vision
 
 EVE OFFLINE is a PVE-focused space MMO inspired by EVE Online, designed for small groups of players (2-20). The project aims to recreate the EVE Online experience with:
-- Custom Python game engine with ECS architecture
+- C++ and OpenGL game engine with ECS architecture
 - Server-authoritative multiplayer for cooperative gameplay
 - EVE-like mechanics: ships, skills, fitting, combat, missions, exploration
 - Fully moddable via editable JSON files
@@ -29,11 +28,10 @@ EVE OFFLINE is a PVE-focused space MMO inspired by EVE Online, designed for smal
 
 ## Current Status
 
-### 🎯 Phase 6 - Advanced Content & Tech II Ships ✅
+### 🎯 Active R&D and Development
 
-**Current Version**: Phase 6 Tech II Cruisers Complete  
-**Overall Progress**: ~90% of core features implemented  
-**Status**: All ship model integration complete (46 ships, 322 models). Tech II Cruisers (HAC, HIC, Recon, Logistics) fully implemented with 3D models. Mission system expansion complete with 28 missions across 4 levels.
+**Overall Progress**: Core features implemented, actively testing and expanding  
+**Status**: All ship model integration complete (58+ ships). Tech II ships, capitals, mining barges, and exhumers implemented with 3D models. Mission system expansion complete with missions across 5 levels. Game systems being structured around the EVE Online manual.
 
 ---
 
@@ -837,7 +835,21 @@ Have questions about the roadmap? Want to suggest features?
 
 ## Changelog
 
-### Version 1.5 (February 2026)
+### R&D - Manual-Aligned Systems (Current)
+- Character creation system with 4 races, bloodlines, and attributes
+- Clone system with medical clones and jump clones
+- Implant system for attribute enhancement (5 slots, 4 grades)
+- CONCORD security enforcement and criminal flag mechanics
+- Insurance system with 6 coverage levels
+- Contract and escrow system (item exchange, courier, auction)
+- Corporation system with NPC and player corp mechanics
+- Deadspace complexes with 5 difficulty tiers and escalation
+- Added Learning, Social, Trade, Leadership, Corporation Management, Mechanic skill categories
+- Added Cybernetics and Infomorph Psychology skills for implants/clones
+- Added trade, scenario, and storyline mission types per EVE manual
+- Design document restructured around EVE Online manual chapters
+
+### R&D - C++ Server Systems
 - C++ Server: Added dedicated CapacitorSystem (recharge + consumption API)
 - C++ Server: Added dedicated ShieldRechargeSystem (passive regeneration)
 - C++ Server: Added WeaponSystem (cooldowns, auto-fire for AI, capacitor cost, damage cascade)
@@ -846,7 +858,7 @@ Have questions about the roadmap? Want to suggest features?
 - C++ Server: 7 systems now registered (Capacitor, ShieldRecharge, AI, Targeting, Movement, Weapon, Combat)
 - 31 new C++ tests (all passing)
 
-### Version 1.4 (February 2026)
+### R&D - C++ Server Game Session
 - C++ Server Game Session Manager implemented
 - Server now processes client connect/disconnect messages
 - Player entity spawning with Rifter-class frigate stats
@@ -856,44 +868,37 @@ Have questions about the roadmap? Want to suggest features?
 - Protocol compatibility with C++ OpenGL client (connect_ack, spawn_entity, state_update, destroy_entity)
 - Server fully builds and runs on Linux (CMake)
 
-### Version 1.3 (February 2026)
+### R&D - Phase 5 Polish
 - Phase 5 Polish completed: Asset Pipeline, PBR Materials, Audio System
 - Added Asset Loader for external 3D models (.obj, .gltf, .fbx)
 - Implemented PBR Materials system with metallic/roughness workflow
 - Added Audio System with 3D spatial positioning
 - Support for weapon sounds, explosions, engine sounds, music
 - Comprehensive test coverage for all new systems
-- Updated roadmap to reflect Phase 5 complete status
-- Phase 5 is now 100% complete!
 
-### Version 1.2 (February 2026)
+### R&D - Phase 5 Core
 - Phase 5 Core completed: 3D Graphics and Performance
 - Added 84 procedural ship models (12 ships × 7 factions)
 - Implemented performance optimization system (60+ FPS, LOD, culling)
 - Added advanced particle system (5 effect types)
 - Completed 3D client foundation with Panda3D
 - 84+ new test functions for Phase 5 features
-- Updated roadmap to reflect Phase 5 core completion
-- Remaining Phase 5 polish items moved to future work
 
-### Version 1.1 (February 2026)
+### R&D - Phase 4 Social
 - Phase 4 completed: Corporation & Social features
 - Added Corporation System with full management
 - Added Social System with contacts, mail, and chat
 - Added Contract System for player-to-player trading
 - 39 new test functions (91+ total)
-- Updated milestones and success metrics
 
-### Version 1.0 (February 2026)
+### R&D - Initial
 - Initial roadmap document
 - Complete Phase 1-3 status
 - Planned Phase 4-7 features
 - 3D graphics options analysis
-- Development timeline
 
 ---
 
-**Last Updated**: February 6, 2026  
-**Next Review**: April 2026
+**Status**: In active R&D and development — actively testing until further notice
 
 *This roadmap is a living document and will be updated as the project evolves.*

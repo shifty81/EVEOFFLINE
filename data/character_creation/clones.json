@@ -1,0 +1,75 @@
+{
+  "clone_system": {
+    "description": "When your capsule is destroyed, your clone is activated. Clone grade determines how many skill points are retained. Wise players keep clones updated to avoid losing training time.",
+    "medical_clones": {
+      "alpha_clone": {
+        "id": "alpha_clone",
+        "name": "Alpha Clone",
+        "description": "Basic clone provided free of charge. Limited skill point retention.",
+        "max_skill_points": 900000,
+        "cost": 0,
+        "available_at": "any_station_with_cloning"
+      },
+      "beta_clone": {
+        "id": "beta_clone",
+        "name": "Beta Clone",
+        "description": "Improved clone with moderate skill point retention.",
+        "max_skill_points": 3400000,
+        "cost": 45000,
+        "available_at": "any_station_with_cloning"
+      },
+      "gamma_clone": {
+        "id": "gamma_clone",
+        "name": "Gamma Clone",
+        "description": "Advanced clone with good skill point retention.",
+        "max_skill_points": 7800000,
+        "cost": 450000,
+        "available_at": "any_station_with_cloning"
+      },
+      "delta_clone": {
+        "id": "delta_clone",
+        "name": "Delta Clone",
+        "description": "High-grade clone with excellent skill point retention.",
+        "max_skill_points": 16500000,
+        "cost": 4500000,
+        "available_at": "any_station_with_cloning"
+      },
+      "epsilon_clone": {
+        "id": "epsilon_clone",
+        "name": "Epsilon Clone",
+        "description": "Top-grade clone with near-perfect skill point retention.",
+        "max_skill_points": 35000000,
+        "cost": 13500000,
+        "available_at": "any_station_with_cloning"
+      },
+      "omega_clone": {
+        "id": "omega_clone",
+        "name": "Omega Clone",
+        "description": "Ultimate clone with maximum skill point retention.",
+        "max_skill_points": 100000000,
+        "cost": 45000000,
+        "available_at": "any_station_with_cloning"
+      }
+    },
+    "jump_clones": {
+      "description": "Jump clones allow instant travel to a pre-placed clone body. Requires the Infomorph Psychology skill.",
+      "cooldown_hours": 24,
+      "max_jump_clones_per_skill_level": {
+        "1": 1,
+        "2": 2,
+        "3": 3,
+        "4": 4,
+        "5": 5
+      },
+      "required_skill": "infomorph_psychology",
+      "installation_cost": 100000
+    },
+    "death_mechanics": {
+      "ship_destruction": "When your ship is destroyed, you eject in a capsule (pod). The pod can warp to safety.",
+      "pod_kill": "If your capsule is destroyed, your clone is activated at the station where your medical clone is located.",
+      "skill_point_loss": "If your clone grade cannot cover your total skill points, you lose a percentage of the excess skill points from random skills.",
+      "implant_loss": "All implants are destroyed when your capsule is destroyed. Implants are not covered by insurance.",
+      "free_ship": "If your clone is activated and you have no ships stored, a basic starter frigate is provided free of charge."
+    }
+  }
+}

@@ -152,5 +152,103 @@
     "spawn_distance": 17000,
     "time_limit": 3900,
     "difficulty": "easy"
+  },
+  "trade_supplies": {
+    "id": "trade_supplies",
+    "name": "Supply Acquisition",
+    "level": 1,
+    "type": "trade",
+    "agent": "Procurement Officer Voss",
+    "faction": "Caldari Provisions",
+    "description": "We need specific items for our operations. Acquire them from the market and deliver them to us.",
+    "briefing": "Pilot, our stocks of tritanium are running low. We need you to acquire 500 units of tritanium and bring them to this station. You can buy them on the market or mine and refine the ore yourself.",
+    "objectives": [
+      {
+        "type": "deliver",
+        "target": "tritanium",
+        "quantity": 500
+      }
+    ],
+    "rewards": {
+      "isk": 45000,
+      "loyalty_points": 200,
+      "standing_gain": 0.015,
+      "items": []
+    },
+    "location": "jita",
+    "time_limit": 7200,
+    "difficulty": "easy",
+    "notes": "Trade missions provide better standing gains than courier or mining missions."
+  },
+  "scenario_data_retrieval": {
+    "id": "scenario_data_retrieval",
+    "name": "Contested Data Retrieval",
+    "level": 1,
+    "type": "scenario",
+    "agent": "Intelligence Officer Mirra",
+    "faction": "Caldari Navy",
+    "description": "A drifting cargo container in a combat zone holds valuable intel. Retrieve it while dealing with hostile NPCs.",
+    "briefing": "We have located a drifting cargo container at coordinates in a known pirate patrol route. The container holds encrypted data files we need. Retrieve the container and bring it back, but be warned — pirates are in the area.",
+    "objectives": [
+      {
+        "type": "retrieve",
+        "target": "encrypted_data_files",
+        "count": 1
+      },
+      {
+        "type": "survive",
+        "description": "Navigate through the combat zone"
+      }
+    ],
+    "rewards": {
+      "isk": 60000,
+      "loyalty_points": 180,
+      "standing_gain": 0.012,
+      "items": ["survey_scanner"]
+    },
+    "location": "perimeter",
+    "spawn_distance": 20000,
+    "time_limit": 5400,
+    "difficulty": "medium",
+    "npc_presence": {
+      "types": ["serpentis_scout"],
+      "count": 3
+    },
+    "notes": "Scenario missions involve retrieving items from combat zones. Caution is advised."
+  },
+  "storyline_proving_grounds": {
+    "id": "storyline_proving_grounds",
+    "name": "Proving Your Worth",
+    "level": 1,
+    "type": "storyline",
+    "agent": "Storyline Agent Katrel",
+    "faction": "Caldari Navy",
+    "description": "A special mission offered by a storyline agent after completing multiple regular missions. Affects faction standing.",
+    "briefing": "Your consistent service has been noted by high command. We have a special operation that requires a capable pilot. This mission will significantly affect your standing with the Caldari State and its allies.",
+    "objectives": [
+      {
+        "type": "destroy",
+        "target": "serpentis_lieutenant",
+        "count": 1
+      },
+      {
+        "type": "retrieve",
+        "target": "stolen_navy_documents",
+        "count": 1
+      }
+    ],
+    "rewards": {
+      "isk": 100000,
+      "loyalty_points": 500,
+      "standing_gain": 0.05,
+      "faction_standing_gain": 0.02,
+      "items": ["implant_limited_ocular_filter"]
+    },
+    "location": "perimeter",
+    "spawn_distance": 15000,
+    "time_limit": 7200,
+    "difficulty": "medium",
+    "is_important": true,
+    "notes": "Storyline missions are offered after completing a series of regular agent missions. They affect faction standing with allies and enemies."
   }
 }
