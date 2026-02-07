@@ -330,7 +330,7 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
     } else if (isCruiser(shipType)) {
         model = createCruiserModel(colors);
     } else if (isCommandShip(shipType)) {
-        model = createBattlecruiserModel(colors);
+        model = createBattlecruiserModel(colors); // Command Ships share battlecruiser hull size
     } else if (isBattlecruiser(shipType)) {
         model = createBattlecruiserModel(colors);
     } else if (isBattleship(shipType)) {
