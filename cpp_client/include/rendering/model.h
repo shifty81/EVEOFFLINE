@@ -88,6 +88,13 @@ private:
     std::vector<std::unique_ptr<Mesh>> m_meshes;
 
     /**
+     * Model loading helper methods
+     * Internal methods for loading different file formats
+     */
+    bool loadOBJ(const std::string& path);
+    bool loadGLTF(const std::string& path);
+
+    /**
      * Ship type classification helpers
      * These methods determine which procedural generation function to use
      * based on ship type string matching.

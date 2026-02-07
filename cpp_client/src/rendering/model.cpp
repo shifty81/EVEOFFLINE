@@ -3,6 +3,19 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <fstream>
+
+// Model loading libraries
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
+// tinygltf configuration
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+// Disable JSON dependency warnings - tinygltf will handle JSON internally
+#define TINYGLTF_NO_EXTERNAL_IMAGE
+#include <tiny_gltf.h>
 
 namespace eve {
 
@@ -19,9 +32,271 @@ Model::~Model() {
 }
 
 bool Model::loadFromFile(const std::string& path) {
-    // TODO: Implement model loading from file
-    std::cout << "Model loading not yet implemented: " << path << std::endl;
-    return false;
+    // Determine file format based on extension
+    std::string extension;
+    size_t dotPos = path.find_last_of('.');
+    if (dotPos != std::string::npos) {
+        extension = path.substr(dotPos + 1);
+        // Convert to lowercase
+        std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    }
+
+    if (extension == "obj") {
+        return loadOBJ(path);
+    } else if (extension == "gltf" || extension == "glb") {
+        return loadGLTF(path);
+    } else {
+        std::cerr << "Unsupported model format: " << extension << std::endl;
+        std::cerr << "Supported formats: .obj, .gltf, .glb" << std::endl;
+        return false;
+    }
+}
+
+bool Model::loadOBJ(const std::string& path) {
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    std::string warn, err;
+
+    // Load the OBJ file
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
+
+    if (!warn.empty()) {
+        std::cout << "OBJ Warning: " << warn << std::endl;
+    }
+
+    if (!err.empty()) {
+        std::cerr << "OBJ Error: " << err << std::endl;
+    }
+
+    if (!ret) {
+        std::cerr << "Failed to load OBJ file: " << path << std::endl;
+        return false;
+    }
+
+    std::cout << "Loaded OBJ: " << path << std::endl;
+    std::cout << "  Shapes: " << shapes.size() << std::endl;
+    std::cout << "  Materials: " << materials.size() << std::endl;
+
+    // Process each shape in the OBJ file
+    for (size_t s = 0; s < shapes.size(); s++) {
+        std::vector<Vertex> vertices;
+        std::vector<unsigned int> indices;
+
+        // Process each face
+        size_t index_offset = 0;
+        for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
+            int fv = shapes[s].mesh.num_face_vertices[f];
+
+            // Process each vertex in the face
+            for (size_t v = 0; v < fv; v++) {
+                tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+
+                Vertex vertex;
+
+                // Position
+                vertex.position = glm::vec3(
+                    attrib.vertices[3 * idx.vertex_index + 0],
+                    attrib.vertices[3 * idx.vertex_index + 1],
+                    attrib.vertices[3 * idx.vertex_index + 2]
+                );
+
+                // Normal (if available)
+                if (idx.normal_index >= 0) {
+                    vertex.normal = glm::vec3(
+                        attrib.normals[3 * idx.normal_index + 0],
+                        attrib.normals[3 * idx.normal_index + 1],
+                        attrib.normals[3 * idx.normal_index + 2]
+                    );
+                } else {
+                    vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+                }
+
+                // Texture coordinates (if available)
+                if (idx.texcoord_index >= 0) {
+                    vertex.texCoords = glm::vec2(
+                        attrib.texcoords[2 * idx.texcoord_index + 0],
+                        attrib.texcoords[2 * idx.texcoord_index + 1]
+                    );
+                } else {
+                    vertex.texCoords = glm::vec2(0.0f, 0.0f);
+                }
+
+                // Color (default white, or from material)
+                vertex.color = glm::vec3(1.0f, 1.0f, 1.0f);
+                if (!materials.empty() && shapes[s].mesh.material_ids[f] >= 0) {
+                    int mat_id = shapes[s].mesh.material_ids[f];
+                    if (mat_id < materials.size()) {
+                        vertex.color = glm::vec3(
+                            materials[mat_id].diffuse[0],
+                            materials[mat_id].diffuse[1],
+                            materials[mat_id].diffuse[2]
+                        );
+                    }
+                }
+
+                vertices.push_back(vertex);
+                indices.push_back(static_cast<unsigned int>(vertices.size() - 1));
+            }
+
+            index_offset += fv;
+        }
+
+        // Create mesh from vertices and indices
+        if (!vertices.empty() && !indices.empty()) {
+            auto mesh = std::make_unique<Mesh>(vertices, indices);
+            addMesh(std::move(mesh));
+        }
+    }
+
+    return !m_meshes.empty();
+}
+
+bool Model::loadGLTF(const std::string& path) {
+    tinygltf::Model gltfModel;
+    tinygltf::TinyGLTF loader;
+    std::string err, warn;
+
+    bool ret = false;
+    
+    // Determine if it's binary (.glb) or text (.gltf)
+    std::string extension;
+    size_t dotPos = path.find_last_of('.');
+    if (dotPos != std::string::npos) {
+        extension = path.substr(dotPos + 1);
+        std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    }
+
+    if (extension == "glb") {
+        ret = loader.LoadBinaryFromFile(&gltfModel, &err, &warn, path);
+    } else {
+        ret = loader.LoadASCIIFromFile(&gltfModel, &err, &warn, path);
+    }
+
+    if (!warn.empty()) {
+        std::cout << "GLTF Warning: " << warn << std::endl;
+    }
+
+    if (!err.empty()) {
+        std::cerr << "GLTF Error: " << err << std::endl;
+    }
+
+    if (!ret) {
+        std::cerr << "Failed to load GLTF file: " << path << std::endl;
+        return false;
+    }
+
+    std::cout << "Loaded GLTF: " << path << std::endl;
+    std::cout << "  Meshes: " << gltfModel.meshes.size() << std::endl;
+    std::cout << "  Materials: " << gltfModel.materials.size() << std::endl;
+
+    // Process each mesh in the GLTF file
+    for (const auto& mesh : gltfModel.meshes) {
+        for (const auto& primitive : mesh.primitives) {
+            std::vector<Vertex> vertices;
+            std::vector<unsigned int> indices;
+
+            // Get position accessor
+            const tinygltf::Accessor& posAccessor = gltfModel.accessors[primitive.attributes.at("POSITION")];
+            const tinygltf::BufferView& posView = gltfModel.bufferViews[posAccessor.bufferView];
+            const tinygltf::Buffer& posBuffer = gltfModel.buffers[posView.buffer];
+            const float* positions = reinterpret_cast<const float*>(&posBuffer.data[posView.byteOffset + posAccessor.byteOffset]);
+
+            // Get normal accessor (if available)
+            const float* normals = nullptr;
+            if (primitive.attributes.find("NORMAL") != primitive.attributes.end()) {
+                const tinygltf::Accessor& normAccessor = gltfModel.accessors[primitive.attributes.at("NORMAL")];
+                const tinygltf::BufferView& normView = gltfModel.bufferViews[normAccessor.bufferView];
+                const tinygltf::Buffer& normBuffer = gltfModel.buffers[normView.buffer];
+                normals = reinterpret_cast<const float*>(&normBuffer.data[normView.byteOffset + normAccessor.byteOffset]);
+            }
+
+            // Get texture coordinate accessor (if available)
+            const float* texCoords = nullptr;
+            if (primitive.attributes.find("TEXCOORD_0") != primitive.attributes.end()) {
+                const tinygltf::Accessor& texAccessor = gltfModel.accessors[primitive.attributes.at("TEXCOORD_0")];
+                const tinygltf::BufferView& texView = gltfModel.bufferViews[texAccessor.bufferView];
+                const tinygltf::Buffer& texBuffer = gltfModel.buffers[texView.buffer];
+                texCoords = reinterpret_cast<const float*>(&texBuffer.data[texView.byteOffset + texAccessor.byteOffset]);
+            }
+
+            // Create vertices
+            for (size_t i = 0; i < posAccessor.count; i++) {
+                Vertex vertex;
+
+                vertex.position = glm::vec3(
+                    positions[i * 3 + 0],
+                    positions[i * 3 + 1],
+                    positions[i * 3 + 2]
+                );
+
+                if (normals) {
+                    vertex.normal = glm::vec3(
+                        normals[i * 3 + 0],
+                        normals[i * 3 + 1],
+                        normals[i * 3 + 2]
+                    );
+                } else {
+                    vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+                }
+
+                if (texCoords) {
+                    vertex.texCoords = glm::vec2(
+                        texCoords[i * 2 + 0],
+                        texCoords[i * 2 + 1]
+                    );
+                } else {
+                    vertex.texCoords = glm::vec2(0.0f, 0.0f);
+                }
+
+                // Default color (or from material)
+                vertex.color = glm::vec3(1.0f, 1.0f, 1.0f);
+                if (primitive.material >= 0 && primitive.material < gltfModel.materials.size()) {
+                    const auto& material = gltfModel.materials[primitive.material];
+                    if (material.pbrMetallicRoughness.baseColorFactor.size() >= 3) {
+                        vertex.color = glm::vec3(
+                            material.pbrMetallicRoughness.baseColorFactor[0],
+                            material.pbrMetallicRoughness.baseColorFactor[1],
+                            material.pbrMetallicRoughness.baseColorFactor[2]
+                        );
+                    }
+                }
+
+                vertices.push_back(vertex);
+            }
+
+            // Get indices
+            const tinygltf::Accessor& indexAccessor = gltfModel.accessors[primitive.indices];
+            const tinygltf::BufferView& indexView = gltfModel.bufferViews[indexAccessor.bufferView];
+            const tinygltf::Buffer& indexBuffer = gltfModel.buffers[indexView.buffer];
+
+            // Handle different index types
+            if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+                const uint16_t* buf = reinterpret_cast<const uint16_t*>(&indexBuffer.data[indexView.byteOffset + indexAccessor.byteOffset]);
+                for (size_t i = 0; i < indexAccessor.count; i++) {
+                    indices.push_back(static_cast<unsigned int>(buf[i]));
+                }
+            } else if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
+                const uint32_t* buf = reinterpret_cast<const uint32_t*>(&indexBuffer.data[indexView.byteOffset + indexAccessor.byteOffset]);
+                for (size_t i = 0; i < indexAccessor.count; i++) {
+                    indices.push_back(buf[i]);
+                }
+            } else if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
+                const uint8_t* buf = reinterpret_cast<const uint8_t*>(&indexBuffer.data[indexView.byteOffset + indexAccessor.byteOffset]);
+                for (size_t i = 0; i < indexAccessor.count; i++) {
+                    indices.push_back(static_cast<unsigned int>(buf[i]));
+                }
+            }
+
+            // Create mesh from vertices and indices
+            if (!vertices.empty() && !indices.empty()) {
+                auto meshPtr = std::make_unique<Mesh>(vertices, indices);
+                addMesh(std::move(meshPtr));
+            }
+        }
+    }
+
+    return !m_meshes.empty();
 }
 
 void Model::addMesh(std::unique_ptr<Mesh> mesh) {
