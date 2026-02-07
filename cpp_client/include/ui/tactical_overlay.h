@@ -5,6 +5,8 @@
 
 namespace eve {
 
+class Shader;
+
 /**
  * Tactical Overlay
  * 
@@ -122,6 +124,7 @@ private:
     unsigned int m_circleVBO;
     unsigned int m_lineVAO;
     unsigned int m_lineVBO;
+    Shader* m_overlayShader;
 
     // Constants
     static constexpr int CIRCLE_SEGMENTS = 64;

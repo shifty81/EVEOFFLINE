@@ -244,6 +244,7 @@ set(CLIENT_SOURCES
     src/ui/eve_target_list.cpp
     src/ui/entity_picker.cpp
     src/ui/context_menu.cpp
+    src/ui/tactical_overlay.cpp
     src/ui/inventory_panel.cpp
     src/ui/fitting_panel.cpp
     src/ui/mission_panel.cpp
