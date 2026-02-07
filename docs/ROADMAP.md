@@ -445,8 +445,11 @@ Phase 5 core development completed with procedural ship models, performance opti
 Optional enhancements:
 - ✅ More Tech II variants: 4 Command Ships (Claymore, Vulture, Astarte, Absolution)
 - ✅ More modules: 8 Tech II EWAR modules, 4 Tech II Logistics modules
+- ✅ Epic arc missions: 4 arcs (12 storyline missions) across all empire factions
+- ✅ Faction modules: 8 faction modules (4 weapon upgrades, 4 defensive)
+- ✅ Officer modules: 4 rare officer-grade modules
 - More Tech II variants (second HAC per race)
-- Additional mission content (Level 5 missions, epic arcs)
+- Additional mission content (Level 5 missions)
 
 ---
 
@@ -522,8 +525,8 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 #### More Modules
 - [ ] Tech II modules (all types)
-- [ ] Officer modules (rare drops)
-- [ ] Faction modules
+- [x] Officer modules (rare drops)
+- [x] Faction modules
 - [ ] Capital-sized modules
 - [ ] Advanced EWAR modules
 - [ ] Cloaking devices
@@ -539,7 +542,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 #### More Missions & Content
 - [ ] Level 5 missions
-- [ ] Epic mission arcs
+- [x] Epic mission arcs
 - [ ] Incursions (group PVE events)
 - [ ] More NPC factions
 - [ ] Rare NPC spawns (faction/officer)

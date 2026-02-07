@@ -12,14 +12,15 @@
 - ✅ **Phase 6**: Advanced Content & Tech II Ships (Q2 2026)
 - ✅ **Phase 7**: Mining, PI, Research, C++ Server Integration, Wormholes, Fleet (Q4 2026)
 - ✅ **Quick Wins**: Tutorial, Modding Guide, Code Cleanup (February 2026)
-- ✅ **Medium-Term**: External Model Loading, Standings System, Tech II Content (February 2026)
+- ✅ **Medium-Term**: External Model Loading, Standings System, Tech II Content, Epic Arcs, Faction/Officer Modules (February 2026)
 
 ### Project Highlights
-- **49 ships** across all classes (Frigates to Titans)
-- **343 procedural ship models** (49 ships × 7 factions)
+- **53 ships** across all classes (Frigates to Titans, including Command Ships)
+- **371 procedural ship models** (53 ships × 7 factions)
 - **Custom model support**: .obj, .gltf, .glb formats
-- **70+ modules** for ship fitting
+- **82+ modules** for ship fitting (Tech I, Tech II, Faction, Officer)
 - **47 skills** with complete skill tree
+- **4 epic arc mission chains** with 12 storyline missions
 - **8 major gameplay systems** fully implemented
 - **95+ test functions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
@@ -85,13 +86,14 @@ From ROADMAP.md "In Progress" section:
 
 #### 2.2 Additional Mission Content
 - Level 5 missions (high-end PVE)
-- Epic mission arcs (story-driven content)
+- ✅ Epic mission arcs (story-driven content) — 4 arcs, 12 missions
 - Estimated effort: 2-3 weeks
 
 #### 2.3 More Modules
 - Tech II EWAR modules
 - Tech II logistics modules
-- Officer modules (rare drops)
+- ✅ Officer modules (rare drops) — 4 officer modules
+- ✅ Faction modules — 8 faction modules
 - Estimated effort: 1-2 weeks
 
 ### Priority 3: Advanced Features (Phase 8+)
@@ -176,6 +178,17 @@ From ROADMAP.md "In Progress" section:
    - ✅ 4 Tech II Logistics modules
    - ✅ Command Ship class recognition in 3D client
 
+4. ✅ **Add Epic Arc Missions** (COMPLETED - February 2026)
+   - ✅ 4 epic arcs (Amarr, Caldari, Gallente, Minmatar)
+   - ✅ 12 storyline missions with chapter progression
+   - ✅ Escalating difficulty and rewards across chapters
+   - ✅ Faction module rewards for completing arcs
+
+5. ✅ **Add Faction & Officer Modules** (COMPLETED - February 2026)
+   - ✅ 8 faction modules (weapons and defensive, one per faction)
+   - ✅ 4 officer modules (rare drops from pirate commanders)
+   - ✅ Proper meta_level hierarchy (faction: 8, officer: 12)
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -192,7 +205,7 @@ From ROADMAP.md "In Progress" section:
 
 3. **Advanced Content**
    - Level 5 missions
-   - Epic arcs
+   - ✅ Epic arcs
    - Incursions (group PVE)
    - Tournament system
 

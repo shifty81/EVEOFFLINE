@@ -1,0 +1,406 @@
+{
+  "amarr_right_to_rule_ch1": {
+    "id": "amarr_right_to_rule_ch1",
+    "name": "Shadows in the Sacred Throne",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Inquisitor Hareth Kador",
+    "faction": "Imperial Navy",
+    "description": "Blood Raider sympathizers have been identified within the ranks of the Amarr Navy. The Theology Council demands an immediate and discreet investigation before the corruption spreads further.",
+    "briefing": "Capsuleer, I will be direct with you. We have intercepted coded transmissions originating from within our own fleet staging area in Sarum Prime. The cipher matches known Blood Raider communication protocols. Someone in the 7th Imperial Squadron is feeding intelligence to Omir Sarikusa's fanatics. I need you to eliminate the Blood Raider forward scouts operating near our patrol routes and recover their communication logs. The honor of the Empire depends on your discretion.",
+    "objectives": [
+      {"type": "destroy", "target": "blood_raiders_cruiser", "count": 8},
+      {"type": "destroy", "target": "blood_raiders_battlecruiser", "count": 3},
+      {"type": "retrieve", "target": "encrypted_blood_raider_comm_logs", "count": 1}
+    ],
+    "rewards": {
+      "isk": 2000000,
+      "loyalty_points": 3000,
+      "standing_gain": 0.08,
+      "faction_standing_gain": 0.03,
+      "items": ["imperial_navy_multifrequency_l", "heat_sink_ii"]
+    },
+    "location": "sarum_prime",
+    "spawn_distance": 50000,
+    "time_limit": 10800,
+    "difficulty": "hard",
+    "is_important": true,
+    "arc_name": "Right to Rule",
+    "arc_faction": "Amarr",
+    "chapter": 1,
+    "next_mission": "amarr_right_to_rule_ch2",
+    "prerequisite_mission": null
+  },
+
+  "amarr_right_to_rule_ch2": {
+    "id": "amarr_right_to_rule_ch2",
+    "name": "The Traitor Among Us",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Inquisitor Hareth Kador",
+    "faction": "Imperial Navy",
+    "description": "The recovered communication logs have revealed a high-ranking naval officer secretly coordinating Blood Raider ambushes on Imperial convoys. The traitor must be exposed and the Blood Raider staging base destroyed.",
+    "briefing": "The logs you recovered have been decrypted. The traitor is Captain Vorkan Arzad of the 7th Squadron — a decorated officer with three decades of service. It seems the Blood Raiders turned him years ago with promises of forbidden rituals. He has been directing an entire Blood Raider strike wing from a hidden deadspace pocket in Arzad. I need you to assault that base, destroy their fleet, and capture Captain Arzad alive. He will face the Theology Council's judgment, not a quick death in the void.",
+    "objectives": [
+      {"type": "destroy", "target": "blood_raiders_battlecruiser", "count": 6},
+      {"type": "destroy", "target": "blood_raiders_battleship", "count": 4},
+      {"type": "destroy", "target": "blood_raider_staging_tower", "count": 1},
+      {"type": "retrieve", "target": "captain_arzad_escape_pod", "count": 1}
+    ],
+    "rewards": {
+      "isk": 5000000,
+      "loyalty_points": 5000,
+      "standing_gain": 0.10,
+      "faction_standing_gain": 0.04,
+      "items": ["armor_explosive_hardener_ii", "corpum_a_type_energized_adaptive_nano_membrane"]
+    },
+    "location": "arzad",
+    "spawn_distance": 60000,
+    "time_limit": 14400,
+    "difficulty": "very_hard",
+    "is_important": true,
+    "arc_name": "Right to Rule",
+    "arc_faction": "Amarr",
+    "chapter": 2,
+    "next_mission": "amarr_right_to_rule_ch3",
+    "prerequisite_mission": "amarr_right_to_rule_ch1"
+  },
+
+  "amarr_right_to_rule_ch3": {
+    "id": "amarr_right_to_rule_ch3",
+    "name": "Divine Reckoning",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Inquisitor Hareth Kador",
+    "faction": "Imperial Navy",
+    "description": "Captain Arzad's interrogation has revealed the Blood Raiders are preparing a massive ritual sacrifice using captured Amarr citizens. Their covenant fleet, led by a Blood Raider Archon-class carrier, must be annihilated before the ritual is completed.",
+    "briefing": "Capsuleer, the situation is far worse than we feared. Arzad confessed that his betrayal was only one thread in a much larger web. The Blood Raiders have gathered a covenant fleet in the Bleak Lands, and they hold over two hundred Amarr faithful in their cargo bays — intended as blood sacrifices in a dark ritual to their profane god. A Blood Raider Archon leads the fleet. You must destroy the covenant fleet, eliminate the Archon, and rescue the hostages before the ritual concludes. The Empress herself has sanctioned this operation. Go with God's wrath, capsuleer. This ends now.",
+    "objectives": [
+      {"type": "destroy", "target": "blood_raiders_battleship", "count": 8},
+      {"type": "destroy", "target": "blood_raider_archon", "count": 1},
+      {"type": "retrieve", "target": "rescued_amarr_hostages", "count": 1},
+      {"type": "destroy", "target": "blood_raider_ritual_beacon", "count": 1}
+    ],
+    "rewards": {
+      "isk": 15000000,
+      "loyalty_points": 12000,
+      "standing_gain": 0.15,
+      "faction_standing_gain": 0.06,
+      "items": ["imperial_navy_mega_pulse_laser", "corpum_a_type_energized_adaptive_nano_membrane", "amarr_imperial_medal_of_valor"]
+    },
+    "location": "bleak_lands",
+    "spawn_distance": 80000,
+    "time_limit": 18000,
+    "difficulty": "extreme",
+    "is_important": true,
+    "arc_name": "Right to Rule",
+    "arc_faction": "Amarr",
+    "chapter": 3,
+    "next_mission": null,
+    "prerequisite_mission": "amarr_right_to_rule_ch2"
+  },
+
+  "caldari_penumbra_ch1": {
+    "id": "caldari_penumbra_ch1",
+    "name": "Unbalanced Books",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Director Otsuka Haatakan",
+    "faction": "Caldari Navy",
+    "description": "Lai Dai Corporation has detected irregular financial flows between a Caldari Navy procurement office and a shell company linked to the Guristas Pirates. The State Protectorate suspects corporate espionage at the highest level.",
+    "briefing": "I appreciate your discretion in accepting this contract, capsuleer. Lai Dai's forensic accountants flagged a series of payments routed through an Echelon Entertainment subsidiary — a known Guristas front. The payments originate from a Caldari Navy procurement office in Nourvukaiken. We believe a Guristas operative is embedded within the station's supply chain, siphoning advanced weapon prototypes. Your first task is to intercept a Guristas smuggling convoy before it reaches the Venal border and recover whatever prototypes they are carrying.",
+    "objectives": [
+      {"type": "destroy", "target": "guristas_cruiser", "count": 6},
+      {"type": "destroy", "target": "guristas_battlecruiser", "count": 4},
+      {"type": "retrieve", "target": "stolen_navy_weapon_prototypes", "count": 1}
+    ],
+    "rewards": {
+      "isk": 2000000,
+      "loyalty_points": 3000,
+      "standing_gain": 0.08,
+      "faction_standing_gain": 0.03,
+      "items": ["caldari_navy_scourge_cruise_missile", "ballistic_control_system_ii"]
+    },
+    "location": "nourvukaiken",
+    "spawn_distance": 50000,
+    "time_limit": 10800,
+    "difficulty": "hard",
+    "is_important": true,
+    "arc_name": "Penumbra",
+    "arc_faction": "Caldari",
+    "chapter": 1,
+    "next_mission": "caldari_penumbra_ch2",
+    "prerequisite_mission": null
+  },
+
+  "caldari_penumbra_ch2": {
+    "id": "caldari_penumbra_ch2",
+    "name": "The Rabbit Hole",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Director Otsuka Haatakan",
+    "faction": "Caldari Navy",
+    "description": "The recovered prototypes contained embedded tracking firmware. Analysis reveals the Guristas are building a prototype electronic warfare platform that could blind the entire Caldari Navy sensor network. Their research facility must be located and neutralized.",
+    "briefing": "The prototypes you recovered were not mere weapons — they contained classified sensor algorithms from the Caldari Navy's AEGIS network. If the Guristas reverse-engineer this technology, they could develop countermeasures that render our entire fleet detection grid useless. Our intelligence assets have traced the research to a hidden Guristas laboratory in a deadspace pocket near Taisy. The facility is heavily guarded by Fatal Rabbit elite squadrons. Destroy the research facility, eliminate the escort fleet, and recover the AEGIS algorithm data cores before they can be transmitted to Venal.",
+    "objectives": [
+      {"type": "destroy", "target": "guristas_battlecruiser", "count": 5},
+      {"type": "destroy", "target": "guristas_battleship", "count": 5},
+      {"type": "destroy", "target": "guristas_research_facility", "count": 1},
+      {"type": "retrieve", "target": "aegis_algorithm_data_cores", "count": 1}
+    ],
+    "rewards": {
+      "isk": 5000000,
+      "loyalty_points": 5000,
+      "standing_gain": 0.10,
+      "faction_standing_gain": 0.04,
+      "items": ["tracking_computer_ii", "pith_x_type_shield_boost_amplifier"]
+    },
+    "location": "taisy",
+    "spawn_distance": 60000,
+    "time_limit": 14400,
+    "difficulty": "very_hard",
+    "is_important": true,
+    "arc_name": "Penumbra",
+    "arc_faction": "Caldari",
+    "chapter": 2,
+    "next_mission": "caldari_penumbra_ch3",
+    "prerequisite_mission": "caldari_penumbra_ch1"
+  },
+
+  "caldari_penumbra_ch3": {
+    "id": "caldari_penumbra_ch3",
+    "name": "Fatal Overreach",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Director Otsuka Haatakan",
+    "faction": "Caldari Navy",
+    "description": "The Guristas have activated their electronic warfare platform aboard a modified Wyvern-class supercarrier. If it goes online, the entire Caldari border defense network goes dark. This is a final, decisive strike against Fatal Rabbit's most ambitious operation.",
+    "briefing": "Capsuleer, we are out of time. The Guristas have installed the completed jamming platform aboard the Huntsman's Wyvern — Fatal Rabbit's flagship. Our deep-cover agent reports they plan to activate it within hours, creating a sensor blackout across the entire Lonetrek-Black Rise corridor. Every Guristas raiding fleet in Venal is standing by to exploit the gap. The State Protectorate has authorized unrestricted engagement. You will lead the assault on the Wyvern's escort fleet and disable the jamming platform. The Caldari Navy will handle the supercarrier once its defenses are down. The fate of the State's border security rests on this operation.",
+    "objectives": [
+      {"type": "destroy", "target": "guristas_battleship", "count": 10},
+      {"type": "destroy", "target": "guristas_dreadnought", "count": 1},
+      {"type": "destroy", "target": "jamming_platform_array", "count": 1},
+      {"type": "defend", "target": "caldari_navy_strike_fleet", "duration": 600}
+    ],
+    "rewards": {
+      "isk": 15000000,
+      "loyalty_points": 12000,
+      "standing_gain": 0.15,
+      "faction_standing_gain": 0.06,
+      "items": ["caldari_navy_ballistic_control_system", "pith_x_type_shield_boost_amplifier", "caldari_state_medal_of_service"]
+    },
+    "location": "lonetrek_border",
+    "spawn_distance": 80000,
+    "time_limit": 18000,
+    "difficulty": "extreme",
+    "is_important": true,
+    "arc_name": "Penumbra",
+    "arc_faction": "Caldari",
+    "chapter": 3,
+    "next_mission": null,
+    "prerequisite_mission": "caldari_penumbra_ch2"
+  },
+
+  "gallente_syndication_ch1": {
+    "id": "gallente_syndication_ch1",
+    "name": "Bitter Harvest",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Agent Coralie Duvailer",
+    "faction": "Federation Navy",
+    "description": "A new strain of the Serpentis-manufactured combat booster 'Crash' is flooding the streets of Dodixie and Oursulaert. Federation Customs suspects the Serpentis have established a new production network dangerously close to high-security space.",
+    "briefing": "Capsuleer, we have a crisis on our hands. Federation hospitals are reporting a surge of overdose cases from a new variant of Crash — the Serpentis combat booster. This strain is more potent and far more addictive than anything we have seen before. Worse, it is reaching civilian populations, not just capsuleers. Federation Customs traced a distribution chain to a Serpentis stash site in Algintal. I need you to hit that site, destroy the drug stockpiles, and eliminate the Serpentis distributors. We need to stem the flow before more citizens die.",
+    "objectives": [
+      {"type": "destroy", "target": "serpentis_cruiser", "count": 6},
+      {"type": "destroy", "target": "serpentis_battlecruiser", "count": 4},
+      {"type": "destroy", "target": "serpentis_drug_cache", "count": 3},
+      {"type": "retrieve", "target": "serpentis_distribution_records", "count": 1}
+    ],
+    "rewards": {
+      "isk": 2000000,
+      "loyalty_points": 3000,
+      "standing_gain": 0.08,
+      "faction_standing_gain": 0.03,
+      "items": ["federation_navy_antimatter_l", "magnetic_field_stabilizer_ii"]
+    },
+    "location": "algintal",
+    "spawn_distance": 50000,
+    "time_limit": 10800,
+    "difficulty": "hard",
+    "is_important": true,
+    "arc_name": "Syndication",
+    "arc_faction": "Gallente",
+    "chapter": 1,
+    "next_mission": "gallente_syndication_ch2",
+    "prerequisite_mission": null
+  },
+
+  "gallente_syndication_ch2": {
+    "id": "gallente_syndication_ch2",
+    "name": "Serpent's Garden",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Agent Coralie Duvailer",
+    "faction": "Federation Navy",
+    "description": "The distribution records reveal a massive Serpentis production laboratory hidden in Syndicate region space, operating under the protection of a corrupt Senate aide. The lab must be destroyed before the next shipment leaves.",
+    "briefing": "The records you recovered paint a grim picture. The Serpentis have built an industrial-scale laboratory in a deadspace pocket near MHC-R3, producing enough refined Crash to supply the entire Federation. But here is the twist that keeps me up at night — the logistics are being coordinated by someone in Senator Brecourt's office. A Senate aide named Vesren Moliere has been providing clearance codes that allow Serpentis transports to pass through Federation customs checkpoints unchallenged. We cannot move on Moliere yet without evidence, but we can shut down his supply. Destroy the production lab and its escort fleet, and recover the lab's production manifests. Those records will be the chain we use to drag Moliere before a tribunal.",
+    "objectives": [
+      {"type": "destroy", "target": "serpentis_battlecruiser", "count": 5},
+      {"type": "destroy", "target": "serpentis_battleship", "count": 5},
+      {"type": "destroy", "target": "serpentis_production_laboratory", "count": 1},
+      {"type": "retrieve", "target": "crash_production_manifests", "count": 1}
+    ],
+    "rewards": {
+      "isk": 5000000,
+      "loyalty_points": 5000,
+      "standing_gain": 0.10,
+      "faction_standing_gain": 0.04,
+      "items": ["tracking_enhancer_ii", "shadow_serpentis_magnetic_field_stabilizer"]
+    },
+    "location": "syndicate_border",
+    "spawn_distance": 60000,
+    "time_limit": 14400,
+    "difficulty": "very_hard",
+    "is_important": true,
+    "arc_name": "Syndication",
+    "arc_faction": "Gallente",
+    "chapter": 2,
+    "next_mission": "gallente_syndication_ch3",
+    "prerequisite_mission": "gallente_syndication_ch1"
+  },
+
+  "gallente_syndication_ch3": {
+    "id": "gallente_syndication_ch3",
+    "name": "Broken Crown",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Agent Coralie Duvailer",
+    "faction": "Federation Navy",
+    "description": "Salvador Sarpati himself has dispatched a Serpentis Corporation capital fleet to silence the witnesses and destroy the evidence. The Federation Navy is mobilizing for a direct confrontation, and they need a capsuleer spearhead.",
+    "briefing": "Capsuleer, Sarpati is furious. The loss of his laboratory and the exposure of his Senate contact has cost him billions and threatened his entire Federation distribution network. Our intelligence reports that he has dispatched a Serpentis capital task force — led by a Vindicator-class flagship — to intercept and destroy the evidence convoy transporting Moliere and the production manifests to the Federal Supreme Court. The Federation Navy is scrambling a response fleet, but they will not arrive in time. You must defend the evidence convoy, destroy the Serpentis task force, and eliminate the flagship. If that convoy is destroyed, Moliere walks free and the Serpentis rebuild within months. Everything we have fought for comes down to this.",
+    "objectives": [
+      {"type": "destroy", "target": "serpentis_battleship", "count": 10},
+      {"type": "destroy", "target": "serpentis_vindicator_flagship", "count": 1},
+      {"type": "defend", "target": "federation_evidence_convoy", "duration": 600},
+      {"type": "destroy", "target": "serpentis_cruiser", "count": 6}
+    ],
+    "rewards": {
+      "isk": 15000000,
+      "loyalty_points": 12000,
+      "standing_gain": 0.15,
+      "faction_standing_gain": 0.06,
+      "items": ["federation_navy_magnetic_field_stabilizer", "shadow_serpentis_magnetic_field_stabilizer", "gallente_federation_medal_of_freedom"]
+    },
+    "location": "villore",
+    "spawn_distance": 80000,
+    "time_limit": 18000,
+    "difficulty": "extreme",
+    "is_important": true,
+    "arc_name": "Syndication",
+    "arc_faction": "Gallente",
+    "chapter": 3,
+    "next_mission": null,
+    "prerequisite_mission": "gallente_syndication_ch2"
+  },
+
+  "minmatar_wildfire_ch1": {
+    "id": "minmatar_wildfire_ch1",
+    "name": "Smoke on the Horizon",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Fleet Commander Valklear Arnulf",
+    "faction": "Republic Fleet",
+    "description": "Republic Fleet intelligence has detected unusual Angel Cartel activity near Minmatar border systems. Large quantities of rare minerals used in advanced weapon manufacturing are being smuggled into Curse region. The Republic fears a new weapons program.",
+    "briefing": "Capsuleer, I will not waste your time with pleasantries. The Angel Cartel has been running heavy convoys through our border systems for weeks — convoys loaded with isogen-5 and fullerite compounds. Those are not materials you use for drug production or standard pirate armaments. Those are components for capital-class weapon systems. Our scouts tracked the latest convoy to a waypoint in Eystur before it jumped toward Curse. I need you to hit the next convoy, destroy the escorts, and seize the cargo manifests. We need to know what the Angels are building, and we need to know yesterday.",
+    "objectives": [
+      {"type": "destroy", "target": "angel_cartel_cruiser", "count": 6},
+      {"type": "destroy", "target": "angel_cartel_battlecruiser", "count": 4},
+      {"type": "retrieve", "target": "angel_cartel_cargo_manifests", "count": 1}
+    ],
+    "rewards": {
+      "isk": 2000000,
+      "loyalty_points": 3000,
+      "standing_gain": 0.08,
+      "faction_standing_gain": 0.03,
+      "items": ["republic_fleet_emp_l", "gyrostabilizer_ii"]
+    },
+    "location": "eystur",
+    "spawn_distance": 50000,
+    "time_limit": 10800,
+    "difficulty": "hard",
+    "is_important": true,
+    "arc_name": "Wildfire",
+    "arc_faction": "Minmatar",
+    "chapter": 1,
+    "next_mission": "minmatar_wildfire_ch2",
+    "prerequisite_mission": null
+  },
+
+  "minmatar_wildfire_ch2": {
+    "id": "minmatar_wildfire_ch2",
+    "name": "Forged in Fire",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Fleet Commander Valklear Arnulf",
+    "faction": "Republic Fleet",
+    "description": "The cargo manifests reveal the Angel Cartel is constructing a devastating new superweapon — a directional doomsday device small enough to mount on a battleship hull. Their weapons foundry deep in Curse must be destroyed before the prototype is completed.",
+    "briefing": "The manifests confirmed our worst fears. The Angel Cartel is not building conventional weapons — they are developing a miniaturized doomsday device, codenamed 'Wildfire.' If they succeed, any Angel battleship could carry the destructive power of a titan's main gun. The foundry is located in a fortified deadspace complex in Utopia. It is defended by Domination-class elite ships and automated defense batteries. I will not lie to you — this will be one of the hardest fights of your career. Destroy the foundry, eliminate the defense fleet, and recover the Wildfire prototype schematics. If we fail here, the balance of power in the warzone shifts permanently in the Cartel's favor.",
+    "objectives": [
+      {"type": "destroy", "target": "angel_cartel_battlecruiser", "count": 5},
+      {"type": "destroy", "target": "angel_cartel_battleship", "count": 5},
+      {"type": "destroy", "target": "angel_weapons_foundry", "count": 1},
+      {"type": "retrieve", "target": "wildfire_prototype_schematics", "count": 1}
+    ],
+    "rewards": {
+      "isk": 5000000,
+      "loyalty_points": 5000,
+      "standing_gain": 0.10,
+      "faction_standing_gain": 0.04,
+      "items": ["large_shield_booster_ii", "gist_x_type_large_shield_booster"]
+    },
+    "location": "curse_region",
+    "spawn_distance": 60000,
+    "time_limit": 14400,
+    "difficulty": "very_hard",
+    "is_important": true,
+    "arc_name": "Wildfire",
+    "arc_faction": "Minmatar",
+    "chapter": 2,
+    "next_mission": "minmatar_wildfire_ch3",
+    "prerequisite_mission": "minmatar_wildfire_ch1"
+  },
+
+  "minmatar_wildfire_ch3": {
+    "id": "minmatar_wildfire_ch3",
+    "name": "Ashes and Defiance",
+    "level": 4,
+    "type": "storyline",
+    "agent": "Fleet Commander Valklear Arnulf",
+    "faction": "Republic Fleet",
+    "description": "The Angel Cartel completed a second Wildfire prototype in a backup facility and mounted it on a Machariel-class flagship. They are moving to test-fire the weapon on a populated Minmatar border colony. The Republic Fleet is launching an emergency strike.",
+    "briefing": "Capsuleer, I have the worst possible news. The Angels had a second foundry — we did not know about it in time. They have completed a working Wildfire prototype and mounted it on the Domination flagship Machariel, the 'Scorch Apostle.' Intelligence reports the Cartel plans to demonstrate the weapon's power by firing it on the Minmatar mining colony at Audesder — six thousand souls, mostly freed slaves building new lives. The Republic Fleet is scrambling everything we have, but the Scorch Apostle's escort fleet is massive. You will spearhead the assault. Destroy the escort fleet, disable the Machariel before it can fire, and protect Audesder. Those people have already survived slavery. They will not die to pirate ambition. Not on my watch, and not on yours.",
+    "objectives": [
+      {"type": "destroy", "target": "angel_cartel_battleship", "count": 10},
+      {"type": "destroy", "target": "angel_domination_machariel", "count": 1},
+      {"type": "defend", "target": "audesder_mining_colony", "duration": 600},
+      {"type": "destroy", "target": "angel_cartel_cruiser", "count": 8}
+    ],
+    "rewards": {
+      "isk": 15000000,
+      "loyalty_points": 12000,
+      "standing_gain": 0.15,
+      "faction_standing_gain": 0.06,
+      "items": ["republic_fleet_gyrostabilizer", "gist_x_type_large_shield_booster", "minmatar_republic_medal_of_defiance"]
+    },
+    "location": "audesder",
+    "spawn_distance": 80000,
+    "time_limit": 18000,
+    "difficulty": "extreme",
+    "is_important": true,
+    "arc_name": "Wildfire",
+    "arc_faction": "Minmatar",
+    "chapter": 3,
+    "next_mission": null,
+    "prerequisite_mission": "minmatar_wildfire_ch2"
+  }
+}
