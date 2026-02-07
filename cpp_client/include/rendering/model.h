@@ -58,6 +58,11 @@ private:
     static bool isBattlecruiser(const std::string& shipType);
     static bool isBattleship(const std::string& shipType);
     static bool isMiningBarge(const std::string& shipType);
+    static bool isCarrier(const std::string& shipType);
+    static bool isDreadnought(const std::string& shipType);
+    static bool isTitan(const std::string& shipType);
+    static bool isStation(const std::string& shipType);
+    static bool isAsteroid(const std::string& shipType);
 
     static FactionColors getFactionColors(const std::string& faction);
     
@@ -68,6 +73,11 @@ private:
     static std::unique_ptr<Model> createBattlecruiserModel(const FactionColors& colors);
     static std::unique_ptr<Model> createBattleshipModel(const FactionColors& colors);
     static std::unique_ptr<Model> createMiningBargeModel(const FactionColors& colors);
+    static std::unique_ptr<Model> createCarrierModel(const FactionColors& colors);
+    static std::unique_ptr<Model> createDreadnoughtModel(const FactionColors& colors);
+    static std::unique_ptr<Model> createTitanModel(const FactionColors& colors);
+    static std::unique_ptr<Model> createStationModel(const FactionColors& colors, const std::string& stationType);
+    static std::unique_ptr<Model> createAsteroidModel(const std::string& oreType);
     static std::unique_ptr<Model> createGenericModel(const FactionColors& colors);
 
     // Model cache

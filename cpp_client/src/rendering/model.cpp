@@ -55,6 +55,16 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
         model = createBattlecruiserModel(colors);
     } else if (isBattleship(shipType)) {
         model = createBattleshipModel(colors);
+    } else if (isCarrier(shipType)) {
+        model = createCarrierModel(colors);
+    } else if (isDreadnought(shipType)) {
+        model = createDreadnoughtModel(colors);
+    } else if (isTitan(shipType)) {
+        model = createTitanModel(colors);
+    } else if (isStation(shipType)) {
+        model = createStationModel(colors, shipType);
+    } else if (isAsteroid(shipType)) {
+        model = createAsteroidModel(shipType);
     } else {
         model = createGenericModel(colors);
     }
@@ -125,9 +135,53 @@ bool Model::isBattleship(const std::string& shipType) {
 
 bool Model::isMiningBarge(const std::string& shipType) {
     static const std::vector<std::string> miningNames = {
-        "Mining Barge", "Procurer", "Retriever", "Covetor"
+        "Mining Barge", "Procurer", "Retriever", "Covetor", "Exhumer", "Hulk", "Mackinaw", "Skiff"
     };
     return std::any_of(miningNames.begin(), miningNames.end(),
+        [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
+}
+
+bool Model::isCarrier(const std::string& shipType) {
+    static const std::vector<std::string> carrierNames = {
+        "Carrier", "Archon", "Thanatos", "Chimera", "Nidhoggur",
+        "Supercarrier", "Hel", "Nyx", "Wyvern", "Aeon"
+    };
+    return std::any_of(carrierNames.begin(), carrierNames.end(),
+        [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
+}
+
+bool Model::isDreadnought(const std::string& shipType) {
+    static const std::vector<std::string> dreadNames = {
+        "Dreadnought", "Revelation", "Moros", "Phoenix", "Naglfar"
+    };
+    return std::any_of(dreadNames.begin(), dreadNames.end(),
+        [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
+}
+
+bool Model::isTitan(const std::string& shipType) {
+    static const std::vector<std::string> titanNames = {
+        "Titan", "Avatar", "Erebus", "Leviathan", "Ragnarok"
+    };
+    return std::any_of(titanNames.begin(), titanNames.end(),
+        [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
+}
+
+bool Model::isStation(const std::string& shipType) {
+    static const std::vector<std::string> stationNames = {
+        "Station", "Citadel", "Keepstar", "Fortizar", "Astrahus",
+        "Outpost", "Refinery", "Engineering Complex"
+    };
+    return std::any_of(stationNames.begin(), stationNames.end(),
+        [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
+}
+
+bool Model::isAsteroid(const std::string& shipType) {
+    static const std::vector<std::string> asteroidNames = {
+        "Asteroid", "Veldspar", "Scordite", "Pyroxeres", "Plagioclase",
+        "Omber", "Kernite", "Jaspet", "Hemorphite", "Hedbergite",
+        "Gneiss", "Dark Ochre", "Crokite", "Bistot", "Arkonor", "Mercoxit"
+    };
+    return std::any_of(asteroidNames.begin(), asteroidNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
 }
 
@@ -429,6 +483,240 @@ std::unique_ptr<Model> Model::createMiningBargeModel(const FactionColors& colors
 std::unique_ptr<Model> Model::createGenericModel(const FactionColors& colors) {
     // Default to frigate model for unknown ship types
     return createFrigateModel(colors);
+}
+
+std::unique_ptr<Model> Model::createCarrierModel(const FactionColors& colors) {
+    auto model = std::make_unique<Model>();
+    
+    // Carriers are massive capital ships with a distinctive carrier deck
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    float length = 15.0f;
+    float width = 6.0f;
+    float height = 4.0f;
+
+    // Front command section (smaller)
+    vertices.push_back({{length * 0.8f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
+    
+    // Main carrier deck sections - flat and wide
+    for (int i = 0; i < 10; ++i) {
+        float t = (i + 1) / 11.0f;
+        float z = length * 0.8f - length * t;
+        // Carriers are wider in the middle
+        float widthScale = (i < 5) ? (1.0f + t * 0.5f) : (1.5f - (t - 0.5f) * 0.8f);
+        float heightScale = 1.0f - t * 0.2f;
+        
+        vertices.push_back({{z, width * widthScale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * widthScale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, 0.0f, height * heightScale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, 0.0f, -height * heightScale * 0.3f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+    }
+
+    // Rear engine section
+    vertices.push_back({{-length * 0.3f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
+        indices.push_back(0);
+        indices.push_back(i);
+        indices.push_back(i + 1);
+    }
+
+    auto mesh = std::make_unique<Mesh>(vertices, indices);
+    model->addMesh(std::move(mesh));
+
+    return model;
+}
+
+std::unique_ptr<Model> Model::createDreadnoughtModel(const FactionColors& colors) {
+    auto model = std::make_unique<Model>();
+    
+    // Dreadnoughts are compact but heavily armored with massive gun platforms
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    float length = 12.0f;
+    float width = 4.5f;
+    float height = 5.0f;
+
+    // Front weapon platform
+    vertices.push_back({{length * 0.7f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
+    
+    // Main hull - bulky and thick
+    for (int i = 0; i < 8; ++i) {
+        float t = (i + 1) / 9.0f;
+        float z = length * 0.7f - length * t;
+        // Dreadnoughts are thick and compact
+        float scale = 1.0f + (t < 0.5f ? t * 0.4f : (1.0f - t) * 0.4f);
+        
+        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, 0.0f, -height * scale}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+    }
+
+    // Rear engine array
+    vertices.push_back({{-length * 0.35f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
+        indices.push_back(0);
+        indices.push_back(i);
+        indices.push_back(i + 1);
+    }
+
+    auto mesh = std::make_unique<Mesh>(vertices, indices);
+    model->addMesh(std::move(mesh));
+
+    return model;
+}
+
+std::unique_ptr<Model> Model::createTitanModel(const FactionColors& colors) {
+    auto model = std::make_unique<Model>();
+    
+    // Titans are absolutely massive, the largest ships in the game
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    float length = 25.0f;
+    float width = 8.0f;
+    float height = 7.0f;
+
+    // Massive front section
+    vertices.push_back({{length * 0.6f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
+    
+    // Command tower and main hull
+    for (int i = 0; i < 15; ++i) {
+        float t = (i + 1) / 16.0f;
+        float z = length * 0.6f - length * t;
+        
+        // Titans have a distinctive shape - wider in forward sections
+        float widthScale = 1.0f + (t < 0.4f ? t * 0.8f : (1.0f - t) * 0.5f);
+        float heightScale = 1.0f + (t < 0.3f ? t * 0.5f : (1.0f - t) * 0.3f);
+        
+        vertices.push_back({{z, width * widthScale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
+        vertices.push_back({{z, -width * widthScale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
+        vertices.push_back({{z, 0.0f, height * heightScale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{z, 0.0f, -height * heightScale * 0.6f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+    }
+
+    // Massive engine clusters
+    vertices.push_back({{-length * 0.45f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
+        indices.push_back(0);
+        indices.push_back(i);
+        indices.push_back(i + 1);
+    }
+
+    auto mesh = std::make_unique<Mesh>(vertices, indices);
+    model->addMesh(std::move(mesh));
+
+    return model;
+}
+
+std::unique_ptr<Model> Model::createStationModel(const FactionColors& colors, const std::string& stationType) {
+    auto model = std::make_unique<Model>();
+    
+    // Stations are large stationary structures
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    float size = 20.0f;
+    float radius = size * 0.5f;
+    
+    // Create a basic station structure with a central hub and spokes
+    // Central core
+    int segments = 8;
+    for (int i = 0; i < segments; ++i) {
+        float angle = (i * 2.0f * 3.14159f) / segments;
+        float x = radius * 0.3f * std::cos(angle);
+        float y = radius * 0.3f * std::sin(angle);
+        
+        vertices.push_back({{x, y, radius * 0.5f}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
+        vertices.push_back({{x, y, -radius * 0.5f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
+    }
+    
+    // Add docking spokes
+    for (int i = 0; i < 4; ++i) {
+        float angle = (i * 3.14159f * 0.5f);
+        float x = radius * std::cos(angle);
+        float y = radius * std::sin(angle);
+        
+        vertices.push_back({{x, y, 0.0f}, {std::cos(angle), std::sin(angle), 0.0f}, {}, colors.accent});
+    }
+
+    // Create triangles for the station structure
+    for (unsigned int i = 0; i < vertices.size() / 2 - 1; ++i) {
+        indices.push_back(i);
+        indices.push_back(i + 1);
+        indices.push_back(i + 2);
+    }
+
+    auto mesh = std::make_unique<Mesh>(vertices, indices);
+    model->addMesh(std::move(mesh));
+
+    return model;
+}
+
+std::unique_ptr<Model> Model::createAsteroidModel(const std::string& oreType) {
+    auto model = std::make_unique<Model>();
+    
+    // Asteroids are irregular rock formations
+    std::vector<Vertex> vertices;
+    std::vector<unsigned int> indices;
+
+    // Determine color based on ore type
+    glm::vec3 asteroidColor = glm::vec3(0.5f, 0.5f, 0.5f); // Default gray
+    
+    if (oreType.find("Veldspar") != std::string::npos) {
+        asteroidColor = glm::vec3(0.6f, 0.4f, 0.2f); // Brown-orange
+    } else if (oreType.find("Scordite") != std::string::npos) {
+        asteroidColor = glm::vec3(0.5f, 0.5f, 0.55f); // Gray metallic
+    } else if (oreType.find("Pyroxeres") != std::string::npos) {
+        asteroidColor = glm::vec3(0.7f, 0.3f, 0.2f); // Red-brown
+    } else if (oreType.find("Plagioclase") != std::string::npos) {
+        asteroidColor = glm::vec3(0.3f, 0.5f, 0.4f); // Green-gray
+    } else if (oreType.find("Omber") != std::string::npos) {
+        asteroidColor = glm::vec3(0.8f, 0.6f, 0.3f); // Golden-brown
+    } else if (oreType.find("Kernite") != std::string::npos) {
+        asteroidColor = glm::vec3(0.3f, 0.6f, 0.7f); // Blue-cyan
+    } else if (oreType.find("Jaspet") != std::string::npos) {
+        asteroidColor = glm::vec3(0.6f, 0.2f, 0.3f); // Dark red
+    } else if (oreType.find("Hemorphite") != std::string::npos) {
+        asteroidColor = glm::vec3(0.9f, 0.3f, 0.2f); // Bright red-orange
+    }
+
+    float size = 2.5f;
+    
+    // Create an irregular shape using multiple vertices
+    int points = 12;
+    for (int i = 0; i < points; ++i) {
+        float theta = (i * 2.0f * 3.14159f) / points;
+        float phi = (i * 3.14159f) / points;
+        
+        // Add randomness to make it look irregular
+        float r = size * (0.7f + (i % 3) * 0.15f);
+        
+        float x = r * std::sin(phi) * std::cos(theta);
+        float y = r * std::sin(phi) * std::sin(theta);
+        float z = r * std::cos(phi);
+        
+        glm::vec3 normal = glm::normalize(glm::vec3(x, y, z));
+        
+        vertices.push_back({{x, y, z}, normal, {}, asteroidColor});
+    }
+
+    // Create triangles
+    for (unsigned int i = 0; i < vertices.size(); ++i) {
+        indices.push_back(0);
+        indices.push_back(i);
+        indices.push_back((i + 1) % vertices.size());
+    }
+
+    auto mesh = std::make_unique<Mesh>(vertices, indices);
+    model->addMesh(std::move(mesh));
+
+    return model;
 }
 
 } // namespace eve
