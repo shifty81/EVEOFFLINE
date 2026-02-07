@@ -2,9 +2,21 @@
 
 This document describes the procedural ship modeling system used in EVE OFFLINE to generate 3D models for ships, stations, and asteroids that are inspired by EVE Online's iconic designs.
 
+> **See Also:** [SCALE_AND_DETAIL_SYSTEM.md](SCALE_AND_DETAIL_SYSTEM.md) for comprehensive scale information and the enhanced detail generation system.
+
 ## Overview
 
 The modeling system procedurally generates ship geometry based on ship class and faction, creating distinctive silhouettes that evoke EVE Online's design language without using actual EVE assets.
+
+### Enhanced Procedural Generation (New!)
+
+As of February 2026, the system now includes:
+- **Enhanced detail generation** with weapon hardpoints, engine glow, and hull panels
+- **Faction-specific traits** (Caldari blocky, Amarr spires, Gallente organic, Minmatar asymmetric)
+- **Dynamic detail scaling** based on ship class
+- **Proper scale relationships** between all entities (ships, stations, asteroids)
+
+See [SCALE_AND_DETAIL_SYSTEM.md](SCALE_AND_DETAIL_SYSTEM.md) for complete details.
 
 ## Ship Classes
 
