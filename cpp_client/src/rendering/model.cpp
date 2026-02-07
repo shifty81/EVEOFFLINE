@@ -1126,6 +1126,25 @@ std::unique_ptr<Model> Model::createBattleshipModel(const FactionColors& colors)
     vertices.push_back({{-length * 0.22f, width * 0.4f, -height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
     vertices.push_back({{-length * 0.22f, -width * 0.4f, -height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
 
+    // Add enhanced details for battleship - massive weapon platforms
+    // Forward turret batteries (top and bottom)
+    addWeaponHardpoints(vertices, indices, length * 0.5f, width * 0.8f, height * 0.4f, 4,
+                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
+    addWeaponHardpoints(vertices, indices, length * 0.3f, width * 0.9f, height * 0.3f, 4,
+                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
+    
+    // Missile launcher bays on sides
+    addWeaponHardpoints(vertices, indices, length * 0.2f, width * 1.0f, 0.0f, 4,
+                        glm::vec3(colors.secondary.r, colors.secondary.g, colors.secondary.b));
+    
+    // Massive engine array at rear - 6 large exhausts
+    addEngineDetail(vertices, indices, -length * 0.22f, width * 1.2f, height * 0.5f, 6,
+                    glm::vec3(colors.accent.r * 1.3f, colors.accent.g * 1.3f, colors.accent.b * 1.8f));
+    
+    // Command superstructure detail
+    addHullPanelLines(vertices, indices, length * 0.6f, 0.0f, width * 1.1f,
+                     glm::vec3(colors.primary.r, colors.primary.g, colors.primary.b));
+
     // Triangulation with proper connectivity
     for (unsigned int i = 1; i < vertices.size() - 4; i += 3) {
         indices.push_back(0);
