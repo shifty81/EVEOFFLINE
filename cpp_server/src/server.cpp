@@ -225,11 +225,17 @@ bool Server::saveWorld() {
     // Ensure save directory exists
     struct stat st;
     if (stat(config_->save_path.c_str(), &st) != 0) {
+        int ret;
 #ifdef _WIN32
-        _mkdir(config_->save_path.c_str());
+        ret = _mkdir(config_->save_path.c_str());
 #else
-        mkdir(config_->save_path.c_str(), 0755);
+        ret = mkdir(config_->save_path.c_str(), 0755);
 #endif
+        if (ret != 0) {
+            std::cerr << "[AutoSave] Failed to create save directory: "
+                      << config_->save_path << std::endl;
+            return false;
+        }
     }
 
     std::string filepath = config_->save_path + "/world_state.json";

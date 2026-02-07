@@ -8,6 +8,29 @@
 namespace eve {
 namespace data {
 
+// Escape a string for safe JSON embedding
+static std::string escapeJson(const std::string& input) {
+    std::string result;
+    result.reserve(input.size());
+    for (char c : input) {
+        switch (c) {
+            case '\"': result += "\\\""; break;
+            case '\\': result += "\\\\"; break;
+            case '\n': result += "\\n";  break;
+            case '\r': result += "\\r";  break;
+            case '\t': result += "\\t";  break;
+            default:
+                if (static_cast<unsigned char>(c) < 0x20) {
+                    // Skip other control characters
+                } else {
+                    result += c;
+                }
+                break;
+        }
+    }
+    return result;
+}
+
 // ---------------------------------------------------------------------------
 // File I/O
 // ---------------------------------------------------------------------------
@@ -118,7 +141,7 @@ bool WorldPersistence::deserializeWorld(ecs::World* world,
 std::string WorldPersistence::serializeEntity(
         const ecs::Entity* entity) const {
     std::ostringstream json;
-    json << "{\"id\":\"" << entity->getId() << "\"";
+    json << "{\"id\":\"" << escapeJson(entity->getId()) << "\"";
 
     // Position
     auto* pos = entity->getComponent<components::Position>();
@@ -178,10 +201,10 @@ std::string WorldPersistence::serializeEntity(
     auto* ship = entity->getComponent<components::Ship>();
     if (ship) {
         json << ",\"ship\":{"
-             << "\"ship_type\":\"" << ship->ship_type << "\""
-             << ",\"ship_class\":\"" << ship->ship_class << "\""
-             << ",\"ship_name\":\"" << ship->ship_name << "\""
-             << ",\"race\":\"" << ship->race << "\""
+             << "\"ship_type\":\"" << escapeJson(ship->ship_type) << "\""
+             << ",\"ship_class\":\"" << escapeJson(ship->ship_class) << "\""
+             << ",\"ship_name\":\"" << escapeJson(ship->ship_name) << "\""
+             << ",\"race\":\"" << escapeJson(ship->race) << "\""
              << ",\"cpu\":" << ship->cpu
              << ",\"cpu_max\":" << ship->cpu_max
              << ",\"powergrid\":" << ship->powergrid
@@ -197,7 +220,7 @@ std::string WorldPersistence::serializeEntity(
     auto* fac = entity->getComponent<components::Faction>();
     if (fac) {
         json << ",\"faction\":{"
-             << "\"faction_name\":\"" << fac->faction_name << "\""
+             << "\"faction_name\":\"" << escapeJson(fac->faction_name) << "\""
              << "}";
     }
 
@@ -207,7 +230,7 @@ std::string WorldPersistence::serializeEntity(
         json << ",\"ai\":{"
              << "\"behavior\":" << static_cast<int>(ai->behavior)
              << ",\"state\":" << static_cast<int>(ai->state)
-             << ",\"target_entity_id\":\"" << ai->target_entity_id << "\""
+             << ",\"target_entity_id\":\"" << escapeJson(ai->target_entity_id) << "\""
              << ",\"orbit_distance\":" << ai->orbit_distance
              << ",\"awareness_range\":" << ai->awareness_range
              << "}";
@@ -217,15 +240,15 @@ std::string WorldPersistence::serializeEntity(
     auto* weapon = entity->getComponent<components::Weapon>();
     if (weapon) {
         json << ",\"weapon\":{"
-             << "\"weapon_type\":\"" << weapon->weapon_type << "\""
-             << ",\"damage_type\":\"" << weapon->damage_type << "\""
+             << "\"weapon_type\":\"" << escapeJson(weapon->weapon_type) << "\""
+             << ",\"damage_type\":\"" << escapeJson(weapon->damage_type) << "\""
              << ",\"damage\":" << weapon->damage
              << ",\"optimal_range\":" << weapon->optimal_range
              << ",\"falloff_range\":" << weapon->falloff_range
              << ",\"tracking_speed\":" << weapon->tracking_speed
              << ",\"rate_of_fire\":" << weapon->rate_of_fire
              << ",\"capacitor_cost\":" << weapon->capacitor_cost
-             << ",\"ammo_type\":\"" << weapon->ammo_type << "\""
+             << ",\"ammo_type\":\"" << escapeJson(weapon->ammo_type) << "\""
              << ",\"ammo_count\":" << weapon->ammo_count
              << "}";
     }
@@ -234,10 +257,10 @@ std::string WorldPersistence::serializeEntity(
     auto* player = entity->getComponent<components::Player>();
     if (player) {
         json << ",\"player\":{"
-             << "\"player_id\":\"" << player->player_id << "\""
-             << ",\"character_name\":\"" << player->character_name << "\""
+             << "\"player_id\":\"" << escapeJson(player->player_id) << "\""
+             << ",\"character_name\":\"" << escapeJson(player->character_name) << "\""
              << ",\"isk\":" << player->isk
-             << ",\"corporation\":\"" << player->corporation << "\""
+             << ",\"corporation\":\"" << escapeJson(player->corporation) << "\""
              << "}";
     }
 
@@ -245,9 +268,9 @@ std::string WorldPersistence::serializeEntity(
     auto* wh = entity->getComponent<components::WormholeConnection>();
     if (wh) {
         json << ",\"wormhole_connection\":{"
-             << "\"wormhole_id\":\"" << wh->wormhole_id << "\""
-             << ",\"source_system\":\"" << wh->source_system << "\""
-             << ",\"destination_system\":\"" << wh->destination_system << "\""
+             << "\"wormhole_id\":\"" << escapeJson(wh->wormhole_id) << "\""
+             << ",\"source_system\":\"" << escapeJson(wh->source_system) << "\""
+             << ",\"destination_system\":\"" << escapeJson(wh->destination_system) << "\""
              << ",\"max_mass\":" << wh->max_mass
              << ",\"remaining_mass\":" << wh->remaining_mass
              << ",\"max_jump_mass\":" << wh->max_jump_mass
@@ -261,10 +284,10 @@ std::string WorldPersistence::serializeEntity(
     auto* ss = entity->getComponent<components::SolarSystem>();
     if (ss) {
         json << ",\"solar_system\":{"
-             << "\"system_id\":\"" << ss->system_id << "\""
-             << ",\"system_name\":\"" << ss->system_name << "\""
+             << "\"system_id\":\"" << escapeJson(ss->system_id) << "\""
+             << ",\"system_name\":\"" << escapeJson(ss->system_name) << "\""
              << ",\"wormhole_class\":" << ss->wormhole_class
-             << ",\"effect_name\":\"" << ss->effect_name << "\""
+             << ",\"effect_name\":\"" << escapeJson(ss->effect_name) << "\""
              << ",\"sleepers_spawned\":" << (ss->sleepers_spawned ? "true" : "false")
              << "}";
     }
@@ -273,10 +296,10 @@ std::string WorldPersistence::serializeEntity(
     auto* fm = entity->getComponent<components::FleetMembership>();
     if (fm) {
         json << ",\"fleet_membership\":{"
-             << "\"fleet_id\":\"" << fm->fleet_id << "\""
-             << ",\"role\":\"" << fm->role << "\""
-             << ",\"squad_id\":\"" << fm->squad_id << "\""
-             << ",\"wing_id\":\"" << fm->wing_id << "\""
+             << "\"fleet_id\":\"" << escapeJson(fm->fleet_id) << "\""
+             << ",\"role\":\"" << escapeJson(fm->role) << "\""
+             << ",\"squad_id\":\"" << escapeJson(fm->squad_id) << "\""
+             << ",\"wing_id\":\"" << escapeJson(fm->wing_id) << "\""
              << "}";
     }
 
