@@ -3,9 +3,9 @@
 ## Overview
 Implement EVE Online-inspired user interface for the 3D client, focusing on strategic gameplay with context menus, entity selection, and tactical commands.
 
-## Phase 1: Entity Selection System ✅ Next Priority
+## Phase 1: Entity Selection System ✅ COMPLETE
 
-### 1.1 Mouse Picking / Ray Casting
+### 1.1 Mouse Picking / Ray Casting ✅
 - Implement 3D ray casting from mouse click to 3D world
 - Detect which entity (if any) was clicked
 - Handle click on empty space vs. entity
@@ -15,18 +15,18 @@ Implement EVE Online-inspired user interface for the 3D client, focusing on stra
 - Add collision spheres to entity nodes
 - Convert 2D mouse coords to 3D ray
 
-### 1.2 Selection State Management
+### 1.2 Selection State Management ✅
 - Track currently selected entity
 - Visual highlight for selected entity (glow, outline, or bracket highlight)
 - Selected entity info display
 - Deselect when clicking empty space
 
-### 1.3 Visual Feedback
+### 1.3 Visual Feedback ✅
 - Highlight selected entity with different color/glow
 - Show selection bracket with enhanced visibility
 - Distance indicator to selected object
 
-## Phase 2: Context Menu System ✅ Priority
+## Phase 2: Context Menu System ✅ COMPLETE
 
 ### 2.1 Right-Click Context Menu
 - Detect right-click events (mouse2)
@@ -62,15 +62,19 @@ Right-click on Ship:
 └── Cancel
 ```
 
-### 2.2 Menu Rendering
-- Use Panda3D's DirectGUI for menu (simple approach)
-- OR use custom 2D overlay rendering (more control)
+### 2.2 Menu Rendering ✅
+- Use ImGui for menu (clean integration with existing UI)
+- Custom 2D overlay rendering with full control
 - Semi-transparent dark background
 - White/gold text (EVE color scheme)
 - Mouse hover highlights
 
-### 2.3 Menu Actions
-- Send appropriate network commands to server
+**Implementation:**
+- EVE-style colors: Dark background (0.1, 0.1, 0.1, 0.95) with gold hover (0.8, 0.6, 0.2)
+- Implemented in `cpp_client/src/ui/context_menu.cpp`
+
+### 2.3 Menu Actions ✅
+- Send appropriate network commands to server (callback system ready)
 - Close menu after action selected
 - Visual feedback (ship starts moving, etc.)
 
@@ -210,24 +214,25 @@ client_3d/
 
 ## Implementation Priority
 
-**Week 1:**
+**Week 1:** ✅ COMPLETE
 1. ✅ Entity selection with ray casting
 2. ✅ Basic context menu rendering
-3. ✅ Menu actions (Approach, Orbit)
+3. ✅ Menu actions (Approach, Orbit, Keep at Range, Warp To)
+4. ✅ Tactical overlay with range circles and velocity vectors
 
-**Week 2:**
-4. Selected object panel
-5. Ship status HUD
-6. Entity brackets (basic)
+**Week 2:** (Remaining work)
+4. Selected object panel (already exists in overview)
+5. Ship status HUD (already exists)
+6. Entity brackets (basic implementation exists)
 
-**Week 3:**
-7. Complete navigation commands
-8. Target list UI
+**Week 3:** (Future)
+7. Complete navigation commands (network integration)
+8. Target list UI (already exists in EVE Target List)
 9. Hotkey system
 
-**Week 4:**
+**Week 4:** (Future)
 10. Polish and refinement
-11. Overview panel (basic)
+11. Overview panel (already exists - fully functional)
 12. Performance optimization
 
 ## Testing Strategy
@@ -243,22 +248,25 @@ client_3d/
 - ✅ Can select entities with left-click
 - ✅ Right-click shows context menu with working commands
 - ✅ Selected object shows in HUD panel
-- ✅ Can issue Approach/Orbit/Keep at Range commands
+- ✅ Can issue Approach/Orbit/Keep at Range commands (UI implementation complete)
 - ✅ Entity brackets visible and informative
 - ✅ All interactions feel responsive (< 100ms)
 - ✅ Maintains 60 FPS with full UI
+- ✅ Tactical overlay renders range circles and velocity vectors
+- ✅ Context menu supports hierarchical submenus
+- ⏳ Network integration with server commands (next step)
 
 ## Notes
 
-- Keep EVE's clean, minimalist aesthetic
-- Dark backgrounds with semi-transparency
-- Ensure readability in all situations
-- Performance is critical - UI updates 60 times/sec
-- Server is authoritative - UI just sends commands
+- Keep EVE's clean, minimalist aesthetic ✅
+- Dark backgrounds with semi-transparency ✅
+- Ensure readability in all situations ✅
+- Performance is critical - UI updates 60 times/sec ✅
+- Server is authoritative - UI just sends commands (callbacks ready)
 - Test with multiple ships on screen (fleet scenarios)
 
 ---
 
-**Document Version:** 1.0  
-**Last Updated:** February 2, 2026  
-**Status:** Planning Complete - Ready for Implementation
+**Document Version:** 1.1  
+**Last Updated:** February 7, 2026  
+**Status:** Phase 1 & 2 Complete - Context Menu and Tactical Overlay Implemented!

@@ -206,32 +206,137 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
         ImGui::PopStyleColor();
     }
     
-    // Context menu (placeholder)
+    // Context menu (enhanced)
     if (ImGui::BeginPopup("EntityContextMenu")) {
+        // Approach
         if (ImGui::MenuItem("Approach")) {
-            // TODO: Implement
-        }
-        if (ImGui::MenuItem("Orbit")) {
-            // TODO: Implement
-        }
-        if (ImGui::MenuItem("Keep at Range")) {
-            // TODO: Implement
-        }
-        ImGui::Separator();
-        if (ImGui::MenuItem("Warp To")) {
-            if (m_onWarpTo) {
-                m_onWarpTo(entry.entity_id);
+            if (m_onApproach) {
+                m_onApproach(entry.entity_id);
             }
         }
-        if (ImGui::MenuItem("Look At")) {
-            // TODO: Implement
+        
+        // Orbit with submenu
+        if (ImGui::BeginMenu("Orbit")) {
+            if (ImGui::MenuItem("500m")) {
+                if (m_onOrbit) {
+                    m_onOrbit(entry.entity_id, 500);
+                }
+            }
+            if (ImGui::MenuItem("1km")) {
+                if (m_onOrbit) {
+                    m_onOrbit(entry.entity_id, 1000);
+                }
+            }
+            if (ImGui::MenuItem("5km")) {
+                if (m_onOrbit) {
+                    m_onOrbit(entry.entity_id, 5000);
+                }
+            }
+            if (ImGui::MenuItem("10km")) {
+                if (m_onOrbit) {
+                    m_onOrbit(entry.entity_id, 10000);
+                }
+            }
+            if (ImGui::MenuItem("20km")) {
+                if (m_onOrbit) {
+                    m_onOrbit(entry.entity_id, 20000);
+                }
+            }
+            if (ImGui::MenuItem("50km")) {
+                if (m_onOrbit) {
+                    m_onOrbit(entry.entity_id, 50000);
+                }
+            }
+            ImGui::EndMenu();
         }
+        
+        // Keep at Range with submenu
+        if (ImGui::BeginMenu("Keep at Range")) {
+            if (ImGui::MenuItem("1km")) {
+                if (m_onKeepAtRange) {
+                    m_onKeepAtRange(entry.entity_id, 1000);
+                }
+            }
+            if (ImGui::MenuItem("5km")) {
+                if (m_onKeepAtRange) {
+                    m_onKeepAtRange(entry.entity_id, 5000);
+                }
+            }
+            if (ImGui::MenuItem("10km")) {
+                if (m_onKeepAtRange) {
+                    m_onKeepAtRange(entry.entity_id, 10000);
+                }
+            }
+            if (ImGui::MenuItem("20km")) {
+                if (m_onKeepAtRange) {
+                    m_onKeepAtRange(entry.entity_id, 20000);
+                }
+            }
+            if (ImGui::MenuItem("50km")) {
+                if (m_onKeepAtRange) {
+                    m_onKeepAtRange(entry.entity_id, 50000);
+                }
+            }
+            ImGui::EndMenu();
+        }
+        
         ImGui::Separator();
+        
+        // Warp To with submenu
+        if (ImGui::BeginMenu("Warp To")) {
+            if (ImGui::MenuItem("At 0km")) {
+                if (m_onWarpTo) {
+                    m_onWarpTo(entry.entity_id, 0);
+                }
+            }
+            if (ImGui::MenuItem("At 10km")) {
+                if (m_onWarpTo) {
+                    m_onWarpTo(entry.entity_id, 10000);
+                }
+            }
+            if (ImGui::MenuItem("At 50km")) {
+                if (m_onWarpTo) {
+                    m_onWarpTo(entry.entity_id, 50000);
+                }
+            }
+            if (ImGui::MenuItem("At 100km")) {
+                if (m_onWarpTo) {
+                    m_onWarpTo(entry.entity_id, 100000);
+                }
+            }
+            ImGui::EndMenu();
+        }
+        
+        ImGui::Separator();
+        
+        // Lock Target
         if (ImGui::MenuItem("Lock Target")) {
-            if (m_onSelect) {
-                m_onSelect(entry.entity_id, true);  // CTRL+Click behavior
+            if (m_onLockTarget) {
+                m_onLockTarget(entry.entity_id);
             }
         }
+        
+        // Look At
+        if (ImGui::MenuItem("Look At")) {
+            if (m_onLookAt) {
+                m_onLookAt(entry.entity_id);
+            }
+        }
+        
+        // Show Info
+        if (ImGui::MenuItem("Show Info")) {
+            if (m_onShowInfo) {
+                m_onShowInfo(entry.entity_id);
+            }
+        }
+        
+        ImGui::Separator();
+        
+        // Cancel
+        if (ImGui::MenuItem("Cancel")) {
+            // Just close the menu
+        }
+        
         ImGui::EndPopup();
     }
 }
