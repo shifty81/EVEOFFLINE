@@ -952,5 +952,393 @@
             "reprocessing": 4,
             "reprocessing_efficiency": 3
         }
+    },
+
+    "learning": {
+        "id": "learning",
+        "name": "Learning",
+        "description": "Improved skill training methods. Reduces all skill training times by 2% per level.",
+        "category": "Learning",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "instant_recall": {
+        "id": "instant_recall",
+        "name": "Instant Recall",
+        "description": "Enhanced memory capacity. Increases Memory attribute by 1 per level.",
+        "category": "Learning",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "analytical_mind": {
+        "id": "analytical_mind",
+        "name": "Analytical Mind",
+        "description": "Enhanced analytical abilities. Increases Intelligence attribute by 1 per level.",
+        "category": "Learning",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "spatial_awareness": {
+        "id": "spatial_awareness",
+        "name": "Spatial Awareness",
+        "description": "Enhanced spatial perception. Increases Perception attribute by 1 per level.",
+        "category": "Learning",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "iron_will": {
+        "id": "iron_will",
+        "name": "Iron Will",
+        "description": "Strengthened willpower. Increases Willpower attribute by 1 per level.",
+        "category": "Learning",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "empathy": {
+        "id": "empathy",
+        "name": "Empathy",
+        "description": "Enhanced social awareness. Increases Charisma attribute by 1 per level.",
+        "category": "Learning",
+        "primary_attribute": "memory",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+
+    "social": {
+        "id": "social",
+        "name": "Social",
+        "description": "Improved social interactions. 5% bonus to NPC agent standing gains per level.",
+        "category": "Social",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "connections": {
+        "id": "connections",
+        "name": "Connections",
+        "description": "Leveraging personal contacts. Increases effective standing with friendly agents by 4% per level.",
+        "category": "Social",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 3,
+        "max_level": 5,
+        "prerequisites": {
+            "social": 3
+        }
+    },
+    "negotiation": {
+        "id": "negotiation",
+        "name": "Negotiation",
+        "description": "Improved bargaining skills. Increases mission ISK rewards by 5% per level.",
+        "category": "Social",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "social": 1
+        }
+    },
+    "fast_talk": {
+        "id": "fast_talk",
+        "name": "Fast Talk",
+        "description": "Reduces standing loss from declining agent missions by 5% per level.",
+        "category": "Social",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 4,
+        "max_level": 5,
+        "prerequisites": {
+            "social": 4
+        }
+    },
+    "criminal_connections": {
+        "id": "criminal_connections",
+        "name": "Criminal Connections",
+        "description": "Increases effective standing with hostile agents by 4% per level.",
+        "category": "Social",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "intelligence",
+        "training_multiplier": 3,
+        "max_level": 5,
+        "prerequisites": {
+            "social": 3
+        }
+    },
+
+    "trade": {
+        "id": "trade",
+        "name": "Trade",
+        "description": "Increases the number of active market orders by 4 per level.",
+        "category": "Trade",
+        "primary_attribute": "willpower",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "retail": {
+        "id": "retail",
+        "name": "Retail",
+        "description": "Further increases the number of active market orders by 8 per level.",
+        "category": "Trade",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "memory",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "trade": 2
+        }
+    },
+    "accounting": {
+        "id": "accounting",
+        "name": "Accounting",
+        "description": "Reduces sales tax by 10% per level.",
+        "category": "Trade",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "memory",
+        "training_multiplier": 3,
+        "max_level": 5,
+        "prerequisites": {
+            "trade": 4
+        }
+    },
+    "broker_relations": {
+        "id": "broker_relations",
+        "name": "Broker Relations",
+        "description": "Reduces broker fees by 5% per level.",
+        "category": "Trade",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "memory",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "trade": 2
+        }
+    },
+    "marketing": {
+        "id": "marketing",
+        "name": "Marketing",
+        "description": "Ability to place sell orders remotely. Each level extends remote range.",
+        "category": "Trade",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "memory",
+        "training_multiplier": 3,
+        "max_level": 5,
+        "prerequisites": {
+            "trade": 2
+        }
+    },
+    "procurement": {
+        "id": "procurement",
+        "name": "Procurement",
+        "description": "Ability to place buy orders remotely. Each level extends remote range.",
+        "category": "Trade",
+        "primary_attribute": "charisma",
+        "secondary_attribute": "memory",
+        "training_multiplier": 3,
+        "max_level": 5,
+        "prerequisites": {
+            "trade": 2
+        }
+    },
+
+    "leadership": {
+        "id": "leadership",
+        "name": "Leadership",
+        "description": "Basic fleet command skill. Increases fleet member capacity by 2 per level.",
+        "category": "Leadership",
+        "primary_attribute": "willpower",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "mining_foreman": {
+        "id": "mining_foreman",
+        "name": "Mining Foreman",
+        "description": "Fleet command specialization for mining operations. 2% bonus to fleet mining yield per level.",
+        "category": "Leadership",
+        "primary_attribute": "willpower",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "leadership": 1
+        }
+    },
+    "skirmish_warfare": {
+        "id": "skirmish_warfare",
+        "name": "Skirmish Warfare",
+        "description": "Fleet command specialization for speed and agility. 2% bonus to fleet agility per level.",
+        "category": "Leadership",
+        "primary_attribute": "willpower",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "leadership": 1
+        }
+    },
+    "information_warfare": {
+        "id": "information_warfare",
+        "name": "Information Warfare",
+        "description": "Fleet command specialization for electronic warfare. 2% bonus to fleet sensor strength per level.",
+        "category": "Leadership",
+        "primary_attribute": "willpower",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "leadership": 1
+        }
+    },
+    "armored_warfare": {
+        "id": "armored_warfare",
+        "name": "Armored Warfare",
+        "description": "Fleet command specialization for armor tanking. 2% bonus to fleet armor HP per level.",
+        "category": "Leadership",
+        "primary_attribute": "willpower",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "leadership": 1
+        }
+    },
+    "siege_warfare": {
+        "id": "siege_warfare",
+        "name": "Siege Warfare",
+        "description": "Fleet command specialization for shield tanking. 2% bonus to fleet shield HP per level.",
+        "category": "Leadership",
+        "primary_attribute": "willpower",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "leadership": 1
+        }
+    },
+
+    "corporation_management": {
+        "id": "corporation_management",
+        "name": "Corporation Management",
+        "description": "Basic corporation management. Increases maximum corporation members by 20 per level.",
+        "category": "Corporation Management",
+        "primary_attribute": "memory",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "starbase_defense_management": {
+        "id": "starbase_defense_management",
+        "name": "Starbase Defense Management",
+        "description": "Skill at managing starbase defense systems. Allows control of defense structures.",
+        "category": "Corporation Management",
+        "primary_attribute": "memory",
+        "secondary_attribute": "charisma",
+        "training_multiplier": 4,
+        "max_level": 5,
+        "prerequisites": {
+            "corporation_management": 3
+        }
+    },
+
+    "mechanic": {
+        "id": "mechanic",
+        "name": "Mechanic",
+        "description": "Knowledge of ship construction and repair. 5% bonus to hull HP per level.",
+        "category": "Mechanic",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {}
+    },
+    "hull_upgrades": {
+        "id": "hull_upgrades",
+        "name": "Hull Upgrades",
+        "description": "Skill at upgrading ship hulls. Allows fitting of armor plates and hull modification modules.",
+        "category": "Mechanic",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "mechanic": 1
+        }
+    },
+    "repair_systems": {
+        "id": "repair_systems",
+        "name": "Repair Systems",
+        "description": "Operation of armor repair modules. 5% reduction in repair module duration per level.",
+        "category": "Mechanic",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 1,
+        "max_level": 5,
+        "prerequisites": {
+            "mechanic": 1
+        }
+    },
+    "jury_rigging": {
+        "id": "jury_rigging",
+        "name": "Jury Rigging",
+        "description": "Basic skill for installing ship rigs. Required for all rig installation.",
+        "category": "Mechanic",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 2,
+        "max_level": 5,
+        "prerequisites": {
+            "mechanic": 3
+        }
+    },
+
+    "cybernetics": {
+        "id": "cybernetics",
+        "name": "Cybernetics",
+        "description": "Skill at using cybernetic implants. Required for implant installation. Level 1 for basic, level 3 for limited, level 4 for standard implants.",
+        "category": "Science",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 3,
+        "max_level": 5,
+        "prerequisites": {
+            "science": 3
+        }
+    },
+    "infomorph_psychology": {
+        "id": "infomorph_psychology",
+        "name": "Infomorph Psychology",
+        "description": "Understanding of clone technology. Allows use of jump clones. Maximum jump clones equals skill level.",
+        "category": "Science",
+        "primary_attribute": "intelligence",
+        "secondary_attribute": "memory",
+        "training_multiplier": 5,
+        "max_level": 5,
+        "prerequisites": {
+            "science": 4
+        }
     }
 }

@@ -1,0 +1,128 @@
+{
+  "concord_system": {
+    "description": "CONCORD is the interstellar police force of New Eden. They enforce security in high-sec space and respond to criminal acts. In EVE OFFLINE, CONCORD provides security enforcement for PVE gameplay.",
+    "security_ratings": {
+      "high_sec": {
+        "range": "0.5 to 1.0",
+        "description": "Empire-controlled space with CONCORD protection. Criminal acts result in swift CONCORD response.",
+        "concord_response": true,
+        "gate_guns": true,
+        "npc_police_patrols": true,
+        "player_aggression_allowed": false
+      },
+      "low_sec": {
+        "range": "0.1 to 0.4",
+        "description": "Frontier space with limited security. Gate guns fire on criminals but CONCORD does not respond.",
+        "concord_response": false,
+        "gate_guns": true,
+        "npc_police_patrols": false,
+        "player_aggression_allowed": true,
+        "security_penalty": true
+      },
+      "null_sec": {
+        "range": "0.0",
+        "description": "Lawless space with no security enforcement. Only player-created structures provide safety.",
+        "concord_response": false,
+        "gate_guns": false,
+        "npc_police_patrols": false,
+        "player_aggression_allowed": true,
+        "security_penalty": false
+      }
+    },
+    "concord_response_times": {
+      "1.0": 6,
+      "0.9": 7,
+      "0.8": 10,
+      "0.7": 14,
+      "0.6": 19,
+      "0.5": 24
+    },
+    "criminal_flags": {
+      "suspect": {
+        "description": "Flagged for minor infractions. Anyone may engage you without penalty.",
+        "duration_seconds": 900,
+        "causes": ["stealing_from_wrecks", "assisting_criminals", "illegal_cargo"]
+      },
+      "criminal": {
+        "description": "Flagged for criminal acts. CONCORD will respond and destroy your ship in high-sec.",
+        "duration_seconds": 900,
+        "causes": ["attacking_neutral_player", "pod_killing"]
+      },
+      "weapons_timer": {
+        "description": "Active when you have recently used aggressive modules. Cannot dock or jump while active.",
+        "duration_seconds": 60,
+        "causes": ["activating_weapons", "activating_ewar"]
+      }
+    },
+    "security_status": {
+      "description": "Your personal security status ranges from -10.0 to +10.0. Low security status restricts access to high-sec space.",
+      "initial_value": 0.0,
+      "min_value": -10.0,
+      "max_value": 10.0,
+      "effects": {
+        "above_0": "Full access to all empire space.",
+        "-0.1_to_-1.9": "Faction police may engage you in the corresponding faction's high-sec space.",
+        "-2.0_to_-4.9": "Cannot enter 1.0 security systems without being attacked by faction police.",
+        "-5.0_and_below": "Kill on sight in all high-sec space. CONCORD and faction police will engage."
+      },
+      "gaining_security_status": {
+        "killing_npc_pirates": "Small security status gain per kill, scaled by NPC bounty value.",
+        "completing_missions": "Security status gain from completing agent missions."
+      }
+    }
+  },
+  "insurance_system": {
+    "description": "Ships can be insured against destruction. When an insured ship is destroyed, you receive an ISK payout based on the insurance level.",
+    "insurance_levels": {
+      "basic": {
+        "id": "basic",
+        "name": "Basic Insurance",
+        "payout_percentage": 40,
+        "cost_percentage": 0,
+        "description": "Default insurance on all ships. Pays 40% of base ship value on destruction."
+      },
+      "standard": {
+        "id": "standard",
+        "name": "Standard Insurance",
+        "payout_percentage": 50,
+        "cost_percentage": 5,
+        "description": "Pays 50% of base ship value on destruction."
+      },
+      "bronze": {
+        "id": "bronze",
+        "name": "Bronze Insurance",
+        "payout_percentage": 60,
+        "cost_percentage": 10,
+        "description": "Pays 60% of base ship value on destruction."
+      },
+      "silver": {
+        "id": "silver",
+        "name": "Silver Insurance",
+        "payout_percentage": 70,
+        "cost_percentage": 15,
+        "description": "Pays 70% of base ship value on destruction."
+      },
+      "gold": {
+        "id": "gold",
+        "name": "Gold Insurance",
+        "payout_percentage": 80,
+        "cost_percentage": 20,
+        "description": "Pays 80% of base ship value on destruction."
+      },
+      "platinum": {
+        "id": "platinum",
+        "name": "Platinum Insurance",
+        "payout_percentage": 100,
+        "cost_percentage": 30,
+        "description": "Full payout. Pays 100% of base ship value on destruction."
+      }
+    },
+    "insurance_duration_days": 90,
+    "notes": [
+      "Insurance only covers the hull value, not fitted modules or cargo.",
+      "Tech II and faction ships receive lower insurance payouts relative to their market value.",
+      "Insurance is voided if the ship is repackaged.",
+      "Only one insurance contract per ship at a time."
+    ]
+  }
+}

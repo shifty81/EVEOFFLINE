@@ -1,0 +1,206 @@
+{
+  "implant_system": {
+    "description": "Implants can raise your base attributes and save significant training time. They are installed in your character and destroyed if removed or if you are pod-killed.",
+    "required_skill": "cybernetics",
+    "max_implants_per_attribute": 1,
+    "implant_slots": {
+      "slot_1": "perception",
+      "slot_2": "memory",
+      "slot_3": "willpower",
+      "slot_4": "intelligence",
+      "slot_5": "charisma"
+    },
+    "implants": {
+      "perception": [
+        {
+          "id": "limited_ocular_filter",
+          "name": "Limited Ocular Filter",
+          "attribute": "perception",
+          "bonus": 1,
+          "grade": "limited",
+          "required_cybernetics_level": 1,
+          "cost": 5000
+        },
+        {
+          "id": "limited_beta_ocular_filter",
+          "name": "Limited Ocular Filter - Beta",
+          "attribute": "perception",
+          "bonus": 2,
+          "grade": "limited_beta",
+          "required_cybernetics_level": 3,
+          "cost": 50000
+        },
+        {
+          "id": "basic_ocular_filter",
+          "name": "Basic Ocular Filter",
+          "attribute": "perception",
+          "bonus": 3,
+          "grade": "basic",
+          "required_cybernetics_level": 1,
+          "cost": 500000
+        },
+        {
+          "id": "standard_ocular_filter",
+          "name": "Standard Ocular Filter",
+          "attribute": "perception",
+          "bonus": 4,
+          "grade": "standard",
+          "required_cybernetics_level": 4,
+          "cost": 5000000
+        }
+      ],
+      "memory": [
+        {
+          "id": "limited_memory_augmentation",
+          "name": "Limited Memory Augmentation",
+          "attribute": "memory",
+          "bonus": 1,
+          "grade": "limited",
+          "required_cybernetics_level": 1,
+          "cost": 5000
+        },
+        {
+          "id": "limited_beta_memory_augmentation",
+          "name": "Limited Memory Augmentation - Beta",
+          "attribute": "memory",
+          "bonus": 2,
+          "grade": "limited_beta",
+          "required_cybernetics_level": 3,
+          "cost": 50000
+        },
+        {
+          "id": "basic_memory_augmentation",
+          "name": "Basic Memory Augmentation",
+          "attribute": "memory",
+          "bonus": 3,
+          "grade": "basic",
+          "required_cybernetics_level": 1,
+          "cost": 500000
+        },
+        {
+          "id": "standard_memory_augmentation",
+          "name": "Standard Memory Augmentation",
+          "attribute": "memory",
+          "bonus": 4,
+          "grade": "standard",
+          "required_cybernetics_level": 4,
+          "cost": 5000000
+        }
+      ],
+      "willpower": [
+        {
+          "id": "limited_neural_boost",
+          "name": "Limited Neural Boost",
+          "attribute": "willpower",
+          "bonus": 1,
+          "grade": "limited",
+          "required_cybernetics_level": 1,
+          "cost": 5000
+        },
+        {
+          "id": "limited_beta_neural_boost",
+          "name": "Limited Neural Boost - Beta",
+          "attribute": "willpower",
+          "bonus": 2,
+          "grade": "limited_beta",
+          "required_cybernetics_level": 3,
+          "cost": 50000
+        },
+        {
+          "id": "basic_neural_boost",
+          "name": "Basic Neural Boost",
+          "attribute": "willpower",
+          "bonus": 3,
+          "grade": "basic",
+          "required_cybernetics_level": 1,
+          "cost": 500000
+        },
+        {
+          "id": "standard_neural_boost",
+          "name": "Standard Neural Boost",
+          "attribute": "willpower",
+          "bonus": 4,
+          "grade": "standard",
+          "required_cybernetics_level": 4,
+          "cost": 5000000
+        }
+      ],
+      "intelligence": [
+        {
+          "id": "limited_cybernetic_subprocessor",
+          "name": "Limited Cybernetic Subprocessor",
+          "attribute": "intelligence",
+          "bonus": 1,
+          "grade": "limited",
+          "required_cybernetics_level": 1,
+          "cost": 5000
+        },
+        {
+          "id": "limited_beta_cybernetic_subprocessor",
+          "name": "Limited Cybernetic Subprocessor - Beta",
+          "attribute": "intelligence",
+          "bonus": 2,
+          "grade": "limited_beta",
+          "required_cybernetics_level": 3,
+          "cost": 50000
+        },
+        {
+          "id": "basic_cybernetic_subprocessor",
+          "name": "Basic Cybernetic Subprocessor",
+          "attribute": "intelligence",
+          "bonus": 3,
+          "grade": "basic",
+          "required_cybernetics_level": 1,
+          "cost": 500000
+        },
+        {
+          "id": "standard_cybernetic_subprocessor",
+          "name": "Standard Cybernetic Subprocessor",
+          "attribute": "intelligence",
+          "bonus": 4,
+          "grade": "standard",
+          "required_cybernetics_level": 4,
+          "cost": 5000000
+        }
+      ],
+      "charisma": [
+        {
+          "id": "limited_social_adaptation_chip",
+          "name": "Limited Social Adaptation Chip",
+          "attribute": "charisma",
+          "bonus": 1,
+          "grade": "limited",
+          "required_cybernetics_level": 1,
+          "cost": 5000
+        },
+        {
+          "id": "limited_beta_social_adaptation_chip",
+          "name": "Limited Social Adaptation Chip - Beta",
+          "attribute": "charisma",
+          "bonus": 2,
+          "grade": "limited_beta",
+          "required_cybernetics_level": 3,
+          "cost": 50000
+        },
+        {
+          "id": "basic_social_adaptation_chip",
+          "name": "Basic Social Adaptation Chip",
+          "attribute": "charisma",
+          "bonus": 3,
+          "grade": "basic",
+          "required_cybernetics_level": 1,
+          "cost": 500000
+        },
+        {
+          "id": "standard_social_adaptation_chip",
+          "name": "Standard Social Adaptation Chip",
+          "attribute": "charisma",
+          "bonus": 4,
+          "grade": "standard",
+          "required_cybernetics_level": 4,
+          "cost": 5000000
+        }
+      ]
+    }
+  }
+}

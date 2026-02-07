@@ -1,0 +1,340 @@
+{
+  "races": {
+    "amarr": {
+      "id": "amarr",
+      "name": "Amarr",
+      "description": "The largest of the empires in New Eden, the Amarr Empire is a theocracy ruled by a succession of Emperors. The Amarr are proud, supercilious, and have a great sense of tradition and ancestry.",
+      "base_attributes": {
+        "perception": 7,
+        "memory": 6,
+        "willpower": 5,
+        "intelligence": 7,
+        "charisma": 5
+      },
+      "starting_ship": "punisher",
+      "starting_system": "amarr",
+      "weapon_specialty": "energy",
+      "defense_specialty": "armor",
+      "bloodlines": {
+        "amarrian": {
+          "id": "amarrian",
+          "name": "Amarrian",
+          "description": "Those directly descendant from the Amarrian ethnic group are proud and supercilious with a great sense of tradition and ancestry.",
+          "attribute_modifiers": {
+            "perception": 0,
+            "memory": 1,
+            "willpower": 0,
+            "intelligence": 0,
+            "charisma": -1
+          },
+          "starting_skills": {
+            "small_energy": 1,
+            "gunnery": 1,
+            "repair_systems": 1,
+            "mechanic": 1,
+            "spaceship_command": 1,
+            "amarr_frigate": 1
+          }
+        },
+        "ni_kunni": {
+          "id": "ni_kunni",
+          "name": "Ni-Kunni",
+          "description": "The Ni-Kunni were assimilated into Amarr society centuries ago and tend to be traders and artisans.",
+          "attribute_modifiers": {
+            "perception": -1,
+            "memory": 0,
+            "willpower": 0,
+            "intelligence": 0,
+            "charisma": 1
+          },
+          "starting_skills": {
+            "small_energy": 1,
+            "gunnery": 1,
+            "trade": 1,
+            "social": 1,
+            "spaceship_command": 1,
+            "amarr_frigate": 1
+          }
+        },
+        "khanid": {
+          "id": "khanid",
+          "name": "Khanid",
+          "description": "The Khanid are a proud and fierce people with a militaristic tradition.",
+          "attribute_modifiers": {
+            "perception": 1,
+            "memory": 0,
+            "willpower": 0,
+            "intelligence": -1,
+            "charisma": 0
+          },
+          "starting_skills": {
+            "small_energy": 1,
+            "gunnery": 1,
+            "missiles": 1,
+            "mechanic": 1,
+            "spaceship_command": 1,
+            "amarr_frigate": 1
+          }
+        }
+      }
+    },
+    "caldari": {
+      "id": "caldari",
+      "name": "Caldari",
+      "description": "A corporate-driven society where the State and its mega-corporations rule all aspects of life. The Caldari are efficient, disciplined, and practical.",
+      "base_attributes": {
+        "perception": 5,
+        "memory": 8,
+        "willpower": 7,
+        "intelligence": 6,
+        "charisma": 4
+      },
+      "starting_ship": "merlin",
+      "starting_system": "jita",
+      "weapon_specialty": "hybrid_missiles",
+      "defense_specialty": "shields",
+      "bloodlines": {
+        "deteis": {
+          "id": "deteis",
+          "name": "Deteis",
+          "description": "The Deteis are the most numerous of the Caldari bloodlines and known for their tenacity and hard work.",
+          "attribute_modifiers": {
+            "perception": 1,
+            "memory": 0,
+            "willpower": 0,
+            "intelligence": 0,
+            "charisma": -1
+          },
+          "starting_skills": {
+            "small_hybrid": 1,
+            "gunnery": 1,
+            "missiles": 1,
+            "shield_operation": 1,
+            "spaceship_command": 1,
+            "caldari_frigate": 1
+          }
+        },
+        "civire": {
+          "id": "civire",
+          "name": "Civire",
+          "description": "The Civire are resilient and hard-nosed people who excel in competitive and combative environments.",
+          "attribute_modifiers": {
+            "perception": 0,
+            "memory": 0,
+            "willpower": 1,
+            "intelligence": 0,
+            "charisma": -1
+          },
+          "starting_skills": {
+            "small_hybrid": 1,
+            "gunnery": 1,
+            "missiles": 1,
+            "engineering": 1,
+            "spaceship_command": 1,
+            "caldari_frigate": 1
+          }
+        },
+        "achura": {
+          "id": "achura",
+          "name": "Achura",
+          "description": "The Achura are a reclusive people known for their introverted nature and intellectual pursuits.",
+          "attribute_modifiers": {
+            "perception": -1,
+            "memory": 1,
+            "willpower": 0,
+            "intelligence": 1,
+            "charisma": -1
+          },
+          "starting_skills": {
+            "small_hybrid": 1,
+            "science": 1,
+            "electronics": 1,
+            "engineering": 1,
+            "spaceship_command": 1,
+            "caldari_frigate": 1
+          }
+        }
+      }
+    },
+    "gallente": {
+      "id": "gallente",
+      "name": "Gallente",
+      "description": "Champions of liberty and individual freedom, the Gallente Federation is the only true democracy in New Eden. Creative and freedom-loving, they excel in drone warfare and hybrid weapons.",
+      "base_attributes": {
+        "perception": 6,
+        "memory": 8,
+        "willpower": 8,
+        "intelligence": 4,
+        "charisma": 4
+      },
+      "starting_ship": "tristan",
+      "starting_system": "dodixie",
+      "weapon_specialty": "hybrid_drones",
+      "defense_specialty": "armor",
+      "bloodlines": {
+        "gallentean": {
+          "id": "gallentean",
+          "name": "Gallentean",
+          "description": "The ethnic Gallenteans are outgoing and friendly, valuing personal freedom above all.",
+          "attribute_modifiers": {
+            "perception": 0,
+            "memory": 0,
+            "willpower": 0,
+            "intelligence": 0,
+            "charisma": 0
+          },
+          "starting_skills": {
+            "small_hybrid": 1,
+            "gunnery": 1,
+            "drones": 1,
+            "repair_systems": 1,
+            "spaceship_command": 1,
+            "gallente_frigate": 1
+          }
+        },
+        "intaki": {
+          "id": "intaki",
+          "name": "Intaki",
+          "description": "The Intaki are a spiritual and philosophical people with a deep connection to the Ida faith.",
+          "attribute_modifiers": {
+            "perception": -1,
+            "memory": 0,
+            "willpower": 1,
+            "intelligence": 0,
+            "charisma": 0
+          },
+          "starting_skills": {
+            "small_hybrid": 1,
+            "gunnery": 1,
+            "drones": 1,
+            "social": 1,
+            "spaceship_command": 1,
+            "gallente_frigate": 1
+          }
+        },
+        "jin_mei": {
+          "id": "jin_mei",
+          "name": "Jin-Mei",
+          "description": "The Jin-Mei are a proud and honorable people with a rigid caste system despite living in the free Federation.",
+          "attribute_modifiers": {
+            "perception": 0,
+            "memory": -1,
+            "willpower": 0,
+            "intelligence": 0,
+            "charisma": 1
+          },
+          "starting_skills": {
+            "small_hybrid": 1,
+            "gunnery": 1,
+            "leadership": 1,
+            "social": 1,
+            "spaceship_command": 1,
+            "gallente_frigate": 1
+          }
+        }
+      }
+    },
+    "minmatar": {
+      "id": "minmatar",
+      "name": "Minmatar",
+      "description": "A tribal people fiercely proud of their heritage. Once enslaved by the Amarr, the Minmatar now fight for their freedom. They are resourceful and versatile, favoring projectile weapons and speed.",
+      "base_attributes": {
+        "perception": 8,
+        "memory": 6,
+        "willpower": 3,
+        "intelligence": 7,
+        "charisma": 6
+      },
+      "starting_ship": "rifter",
+      "starting_system": "hek",
+      "weapon_specialty": "projectile",
+      "defense_specialty": "shield_armor",
+      "bloodlines": {
+        "brutor": {
+          "id": "brutor",
+          "name": "Brutor",
+          "description": "The Brutor tribe is the most physical and combative of the Minmatar bloodlines.",
+          "attribute_modifiers": {
+            "perception": 1,
+            "memory": 0,
+            "willpower": 0,
+            "intelligence": -1,
+            "charisma": 0
+          },
+          "starting_skills": {
+            "small_projectile": 1,
+            "gunnery": 1,
+            "mechanic": 1,
+            "navigation": 1,
+            "spaceship_command": 1,
+            "minmatar_frigate": 1
+          }
+        },
+        "sebiestor": {
+          "id": "sebiestor",
+          "name": "Sebiestor",
+          "description": "The Sebiestor are the most tech-savvy of the Minmatar tribes, excelling in engineering and innovation.",
+          "attribute_modifiers": {
+            "perception": 0,
+            "memory": 0,
+            "willpower": 0,
+            "intelligence": 1,
+            "charisma": -1
+          },
+          "starting_skills": {
+            "small_projectile": 1,
+            "gunnery": 1,
+            "engineering": 1,
+            "electronics": 1,
+            "spaceship_command": 1,
+            "minmatar_frigate": 1
+          }
+        },
+        "vherokior": {
+          "id": "vherokior",
+          "name": "Vherokior",
+          "description": "Vherokior are a nomadic and adaptable people, known for their diverse range of talents.",
+          "attribute_modifiers": {
+            "perception": 0,
+            "memory": 0,
+            "willpower": -1,
+            "intelligence": 0,
+            "charisma": 1
+          },
+          "starting_skills": {
+            "small_projectile": 1,
+            "gunnery": 1,
+            "social": 1,
+            "trade": 1,
+            "spaceship_command": 1,
+            "minmatar_frigate": 1
+          }
+        }
+      }
+    }
+  },
+  "attribute_descriptions": {
+    "perception": "Primary attribute for Spaceship Command, Gunnery, and Missile skills. The most important attribute for combat-oriented characters.",
+    "memory": "Primary attribute for Drone, Industry, Corporate Management, and Learning skills. Essential for miners, producers, and scientific characters.",
+    "willpower": "Primary attribute for Leadership skills and elite Spaceship Command skills. Secondary attribute for most combat skills (Gunnery and Missiles). Important for commanders and combat careers.",
+    "intelligence": "Primary attribute for Electronics, Engineering, Mechanic, Navigation, and Science skills. Crucial for ship performance optimization and research careers.",
+    "charisma": "Primary attribute for Social and Trade skills. Important for agent mission runners and traders."
+  },
+  "skill_group_attributes": {
+    "corporation_management": { "primary": "memory", "secondary": "charisma" },
+    "drones": { "primary": "memory", "secondary": "perception" },
+    "electronics": { "primary": "intelligence", "secondary": "memory" },
+    "engineering": { "primary": "intelligence", "secondary": "memory" },
+    "gunnery": { "primary": "perception", "secondary": "willpower" },
+    "industry": { "primary": "memory", "secondary": "intelligence" },
+    "leadership": { "primary": "willpower", "secondary": "charisma" },
+    "learning": { "primary": "memory", "secondary": "intelligence" },
+    "mechanic": { "primary": "intelligence", "secondary": "memory" },
+    "missiles": { "primary": "perception", "secondary": "willpower" },
+    "navigation": { "primary": "intelligence", "secondary": "perception" },
+    "science": { "primary": "intelligence", "secondary": "memory" },
+    "social": { "primary": "charisma", "secondary": "intelligence" },
+    "spaceship_command": { "primary": "perception", "secondary": "willpower" },
+    "trade": { "primary": "willpower", "secondary": "charisma" }
+  }
+}
