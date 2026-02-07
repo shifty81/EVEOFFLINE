@@ -428,11 +428,6 @@ int OverviewPanel::CalculateStanding(const std::string& faction, bool is_player)
     
     // Unknown/neutral by default
     return 0;
-    }
-    
-    // Apply filter and sort
-    ApplyFilter();
-    SortEntries();
 }
 
 void OverviewPanel::ApplyFilter() {
