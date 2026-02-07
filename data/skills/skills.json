@@ -1735,7 +1735,7 @@
   "siege_warfare_specialist": {
     "id": "siege_warfare_specialist",
     "name": "Siege Warfare Specialist",
-    "description": "Advanced siege warfare specialization. Allows use of Shield Command Burst charges. 3% bonus to shield command burst effects per level.",
+    "description": "Advanced siege warfare specialization. Allows use of Siege Command Burst charges for shield tanking. 3% bonus to siege command burst effects per level.",
     "category": "Leadership",
     "primary_attribute": "willpower",
     "secondary_attribute": "charisma",
