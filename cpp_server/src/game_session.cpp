@@ -351,6 +351,15 @@ std::string GameSession::buildStateUpdate() const {
                  << "}";
         }
 
+        // Capacitor
+        auto* cap = entity->getComponent<components::Capacitor>();
+        if (cap) {
+            json << ",\"capacitor\":{"
+                 << "\"current\":" << cap->capacitor
+                 << ",\"max\":" << cap->capacitor_max
+                 << "}";
+        }
+
         json << "}";
     }
 
@@ -385,6 +394,14 @@ std::string GameSession::buildSpawnEntity(const std::string& entity_id) const {
              << ",\"max_shield\":" << hp->shield_max
              << ",\"max_armor\":" << hp->armor_max
              << ",\"max_hull\":" << hp->hull_max << "}";
+    }
+
+    auto* cap = entity->getComponent<components::Capacitor>();
+    if (cap) {
+        json << ",\"capacitor\":{"
+             << "\"current\":" << cap->capacitor
+             << ",\"max\":" << cap->capacitor_max
+             << "}";
     }
 
     if (ship) {

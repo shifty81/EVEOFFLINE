@@ -306,8 +306,12 @@ void Application::update(float deltaTime) {
         status.armor_max = static_cast<float>(health.maxArmor);
         status.hull = health.currentHull;
         status.hull_max = static_cast<float>(health.maxHull);
-        status.capacitor = 85.0f;     // TODO: Replace with real capacitor simulation
-        status.capacitor_max = 100.0f; // TODO: Replace with real capacitor simulation
+        
+        // Use real capacitor data from entity
+        const auto& capacitor = playerEntity->getCapacitor();
+        status.capacitor = capacitor.current;
+        status.capacitor_max = capacitor.max;
+        
         status.velocity = m_playerSpeed;
         status.max_velocity = m_playerMaxSpeed;
         m_uiManager->SetShipStatus(status);
@@ -818,10 +822,13 @@ void Application::spawnLocalPlayerEntity() {
     
     // Create player entity at origin with a Rifter (Minmatar frigate)
     Health playerHealth(1500, 800, 500);  // Shield, Armor, Hull
+    Capacitor playerCapacitor(250.0f, 250.0f);  // Rifter capacitor: 250 GJ
+    
     m_gameClient->getEntityManager().spawnEntity(
         m_localPlayerId,
         glm::vec3(0.0f, 0.0f, 0.0f),
         playerHealth,
+        playerCapacitor,
         "Rifter",
         "Your Ship",
         "Minmatar"
