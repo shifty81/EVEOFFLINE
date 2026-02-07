@@ -11,6 +11,7 @@
 #include "ecs/world.h"
 #include "game_session.h"
 #include "systems/targeting_system.h"
+#include "data/world_persistence.h"
 
 namespace eve {
 
@@ -37,6 +38,10 @@ public:
     
     // Get game world
     ecs::World* getWorld() { return game_world_.get(); }
+
+    // World persistence
+    bool saveWorld();
+    bool loadWorld();
     
 private:
     std::unique_ptr<ServerConfig> config_;
@@ -45,6 +50,7 @@ private:
     std::unique_ptr<auth::Whitelist> whitelist_;
     std::unique_ptr<ecs::World> game_world_;
     std::unique_ptr<GameSession> game_session_;
+    data::WorldPersistence world_persistence_;
     systems::TargetingSystem* targeting_system_ = nullptr;
     
     std::atomic<bool> running_;
