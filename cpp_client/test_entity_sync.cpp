@@ -50,7 +50,8 @@ void testBasicEntityOperations() {
     // Test spawn
     std::cout << "\n1. Spawning entity..." << std::endl;
     Health health(100, 200, 300);
-    manager.spawnEntity("entity-001", glm::vec3(10.0f, 20.0f, 30.0f), health, 
+    Capacitor cap(150.0f, 150.0f);
+    manager.spawnEntity("entity-001", glm::vec3(10.0f, 20.0f, 30.0f), health, cap,
                        "Rifter", "My Ship", "Minmatar");
     
     auto entity = manager.getEntity("entity-001");

@@ -891,10 +891,12 @@ void Application::spawnDemoNPCEntities() {
     
     // Blood Raider pirate (hostile NPC)
     Health npc1Health(800, 600, 400);
+    Capacitor npc1Cap(500.0f, 500.0f);
     m_gameClient->getEntityManager().spawnEntity(
         "npc_raider_1",
         glm::vec3(300.0f, 10.0f, 200.0f),
         npc1Health,
+        npc1Cap,
         "Cruiser",
         "Blood Raider",
         "Blood Raiders"
@@ -902,10 +904,12 @@ void Application::spawnDemoNPCEntities() {
     
     // Serpentis frigate
     Health npc2Health(400, 300, 200);
+    Capacitor npc2Cap(300.0f, 300.0f);
     m_gameClient->getEntityManager().spawnEntity(
         "npc_serp_1",
         glm::vec3(-250.0f, -5.0f, 350.0f),
         npc2Health,
+        npc2Cap,
         "Frigate",
         "Serpentis Scout",
         "Serpentis"
@@ -913,10 +917,12 @@ void Application::spawnDemoNPCEntities() {
     
     // Guristas destroyer
     Health npc3Health(600, 500, 350);
+    Capacitor npc3Cap(400.0f, 400.0f);
     m_gameClient->getEntityManager().spawnEntity(
         "npc_gur_1",
         glm::vec3(150.0f, 20.0f, -300.0f),
         npc3Health,
+        npc3Cap,
         "Destroyer",
         "Guristas Watchman",
         "Guristas"
