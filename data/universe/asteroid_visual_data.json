@@ -1,0 +1,202 @@
+{
+  "asteroid_visual_data": {
+    "ore_types": {
+      "veldspar": {
+        "color": [0.6, 0.4, 0.2],
+        "roughness": 0.8,
+        "metallic": 0.3,
+        "description": "Brown-orange, rough surface, common in all security levels"
+      },
+      "scordite": {
+        "color": [0.5, 0.5, 0.55],
+        "roughness": 0.7,
+        "metallic": 0.6,
+        "description": "Gray metallic, slightly reflective"
+      },
+      "pyroxeres": {
+        "color": [0.7, 0.3, 0.2],
+        "roughness": 0.75,
+        "metallic": 0.4,
+        "description": "Red-brown, volcanic appearance"
+      },
+      "plagioclase": {
+        "color": [0.3, 0.5, 0.4],
+        "roughness": 0.65,
+        "metallic": 0.5,
+        "description": "Green-gray, crystalline structure"
+      },
+      "omber": {
+        "color": [0.8, 0.6, 0.3],
+        "roughness": 0.7,
+        "metallic": 0.45,
+        "description": "Golden-brown, sedimentary layers"
+      },
+      "kernite": {
+        "color": [0.3, 0.6, 0.7],
+        "roughness": 0.6,
+        "metallic": 0.55,
+        "description": "Blue-cyan, icy appearance"
+      },
+      "jaspet": {
+        "color": [0.6, 0.2, 0.3],
+        "roughness": 0.8,
+        "metallic": 0.35,
+        "description": "Dark red-brown, dense and heavy"
+      },
+      "hemorphite": {
+        "color": [0.9, 0.3, 0.2],
+        "roughness": 0.65,
+        "metallic": 0.7,
+        "description": "Bright red-orange, highly metallic"
+      },
+      "hedbergite": {
+        "color": [0.9, 0.7, 0.4],
+        "roughness": 0.6,
+        "metallic": 0.65,
+        "description": "Golden-yellow, valuable ore"
+      },
+      "gneiss": {
+        "color": [0.7, 0.7, 0.8],
+        "roughness": 0.7,
+        "metallic": 0.5,
+        "description": "Light gray-blue, banded structure"
+      },
+      "dark_ochre": {
+        "color": [0.4, 0.3, 0.25],
+        "roughness": 0.85,
+        "metallic": 0.4,
+        "description": "Dark brown-gray, nullsec ore"
+      },
+      "spodumain": {
+        "color": [0.8, 0.8, 0.9],
+        "roughness": 0.5,
+        "metallic": 0.8,
+        "description": "Silvery-white, highly reflective"
+      },
+      "crokite": {
+        "color": [0.6, 0.4, 0.6],
+        "roughness": 0.7,
+        "metallic": 0.6,
+        "description": "Purple-brown, rare nullsec ore"
+      },
+      "bistot": {
+        "color": [0.3, 0.8, 0.6],
+        "roughness": 0.6,
+        "metallic": 0.7,
+        "description": "Bright green-cyan, luminescent"
+      },
+      "arkonor": {
+        "color": [0.9, 0.5, 0.3],
+        "roughness": 0.65,
+        "metallic": 0.75,
+        "description": "Orange-gold, most valuable ore"
+      },
+      "mercoxit": {
+        "color": [0.2, 0.9, 0.9],
+        "roughness": 0.4,
+        "metallic": 0.9,
+        "description": "Bright cyan, crystalline, radioactive glow"
+      }
+    },
+    "belt_configurations": {
+      "standard_semicircle": {
+        "shape": "semicircle",
+        "radius": 50000,
+        "thickness": 5000,
+        "asteroid_count": 150,
+        "density": "medium",
+        "description": "Standard belt, semicircular shape, 50km radius"
+      },
+      "standard_sphere": {
+        "shape": "sphere",
+        "radius": 70000,
+        "asteroid_count": 200,
+        "density": "medium",
+        "description": "Spherical distribution, 70km radius"
+      },
+      "dense_anomaly": {
+        "shape": "cluster",
+        "radius": 30000,
+        "asteroid_count": 300,
+        "density": "high",
+        "description": "Cosmic anomaly, dense cluster, better visuals"
+      },
+      "sparse_outer": {
+        "shape": "ring",
+        "radius": 100000,
+        "thickness": 10000,
+        "asteroid_count": 80,
+        "density": "low",
+        "description": "Outer belt, sparse distribution"
+      }
+    },
+    "asteroid_sizes": {
+      "small": {
+        "min_radius": 10,
+        "max_radius": 50,
+        "probability": 0.6,
+        "description": "Small asteroids, common"
+      },
+      "medium": {
+        "min_radius": 50,
+        "max_radius": 200,
+        "probability": 0.3,
+        "description": "Medium asteroids"
+      },
+      "large": {
+        "min_radius": 200,
+        "max_radius": 500,
+        "probability": 0.09,
+        "description": "Large asteroids, rare"
+      },
+      "huge": {
+        "min_radius": 500,
+        "max_radius": 1000,
+        "probability": 0.01,
+        "description": "Huge asteroids, very rare"
+      }
+    },
+    "lighting": {
+      "ambient": [0.05, 0.05, 0.1],
+      "star_light_color": [1.0, 0.95, 0.85],
+      "star_light_intensity": 1.5,
+      "rim_light_intensity": 0.3,
+      "dust_particle_color": [0.3, 0.3, 0.35],
+      "dust_density": 0.1
+    },
+    "instancing": {
+      "lod_distances": [1000, 5000, 20000, 50000],
+      "lod_detail_levels": [
+        {"triangles": 2000, "description": "High detail, close range"},
+        {"triangles": 500, "description": "Medium detail"},
+        {"triangles": 100, "description": "Low detail"},
+        {"triangles": 20, "description": "Very low detail, distant"}
+      ],
+      "culling_distance": 100000,
+      "occlusion_culling": true
+    }
+  },
+  "security_distribution": {
+    "highsec": {
+      "security_range": [0.5, 1.0],
+      "common_ores": ["veldspar", "scordite", "pyroxeres", "plagioclase"],
+      "rare_ores": ["omber", "kernite"],
+      "belt_density": "medium",
+      "npc_presence": "minimal"
+    },
+    "lowsec": {
+      "security_range": [0.1, 0.4],
+      "common_ores": ["kernite", "jaspet", "hemorphite", "omber"],
+      "rare_ores": ["hedbergite", "gneiss"],
+      "belt_density": "high",
+      "npc_presence": "moderate"
+    },
+    "nullsec": {
+      "security_range": [-1.0, 0.0],
+      "common_ores": ["gneiss", "dark_ochre", "spodumain", "crokite"],
+      "rare_ores": ["bistot", "arkonor", "mercoxit"],
+      "belt_density": "very_high",
+      "npc_presence": "heavy"
+    }
+  }
+}
