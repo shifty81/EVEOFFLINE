@@ -85,15 +85,31 @@ public:
      */
     void update(float deltaTime);
 
+    /**
+     * Notify server of player connection/disconnection
+     * Used to track player count
+     */
+    void notifyPlayerConnected();
+    void notifyPlayerDisconnected();
+    
+    /**
+     * Set current system for status reporting
+     */
+    void setCurrentSystem(const std::string& system);
+
 private:
     void serverThread();
 
-    std::unique_ptr<server::Server> m_server;
+    // Note: Full cpp_server integration would add:
+    // std::unique_ptr<server::Server> m_server;
+    
     std::unique_ptr<std::thread> m_serverThread;
     std::atomic<bool> m_running;
     std::atomic<bool> m_shouldStop;
+    std::atomic<int> m_connectedPlayers;
     Config m_config;
     double m_uptime;
+    std::string m_currentSystem;
 };
 
 } // namespace eve

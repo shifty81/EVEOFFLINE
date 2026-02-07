@@ -9,6 +9,13 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <GL/glew.h>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 using json = nlohmann::json;
 
@@ -57,6 +64,13 @@ StarMap::~StarMap() {
 
 void StarMap::initialize(const std::string& universeDataPath) {
     loadUniverseData(universeDataPath);
+    
+    // Initialize shader
+    m_mapShader = std::make_unique<Shader>();
+    if (!m_mapShader->loadFromFiles("shaders/starmap.vert", "shaders/starmap.frag")) {
+        std::cerr << "[StarMap] Failed to load star map shaders" << std::endl;
+        m_mapShader.reset();
+    }
     
     // Initialize rendering buffers
     glGenVertexArrays(1, &m_systemVAO);
@@ -147,9 +161,46 @@ void StarMap::loadSystemData(const std::string& systemId) {
         return;
     }
     
-    // For now, generate some placeholder celestials
-    // TODO: Load from actual system data files
+    // Try to load detailed system data from file
+    std::string systemDataPath = "../data/universe/systems/" + systemId + ".json";
+    std::ifstream file(systemDataPath);
     
+    if (file.is_open()) {
+        // Load from actual system data file
+        json data;
+        file >> data;
+        
+        if (data.contains("celestials")) {
+            for (const auto& celestialData : data["celestials"]) {
+                CelestialObject obj;
+                obj.id = celestialData["id"].get<std::string>();
+                obj.name = celestialData["name"].get<std::string>();
+                
+                auto pos = celestialData["position"];
+                obj.position = glm::vec3(
+                    pos["x"].get<float>(),
+                    pos["y"].get<float>(),
+                    pos["z"].get<float>()
+                );
+                
+                obj.radius = celestialData["radius"].get<float>();
+                
+                std::string typeStr = celestialData["type"].get<std::string>();
+                if (typeStr == "star") obj.type = CelestialObject::STAR;
+                else if (typeStr == "planet") obj.type = CelestialObject::PLANET;
+                else if (typeStr == "moon") obj.type = CelestialObject::MOON;
+                else if (typeStr == "station") obj.type = CelestialObject::STATION;
+                else if (typeStr == "belt") obj.type = CelestialObject::ASTEROID_BELT;
+                else if (typeStr == "gate") obj.type = CelestialObject::STARGATE;
+                else if (typeStr == "wormhole") obj.type = CelestialObject::WORMHOLE;
+                
+                m_celestials.push_back(obj);
+            }
+            return;
+        }
+    }
+    
+    // If file doesn't exist, generate placeholder celestials
     // Use system ID hash as seed for consistent generation
     std::hash<std::string> hasher;
     size_t seed = hasher(systemId);
@@ -168,7 +219,7 @@ void StarMap::loadSystemData(const std::string& systemId) {
         CelestialObject planet;
         planet.id = systemId + "_planet_" + std::to_string(i);
         planet.name = it->name + " " + std::to_string(i + 1);
-        float angle = (float)i / 5.0f * 2.0f * 3.14159f;
+        float angle = (float)i / 5.0f * 2.0f * (float)M_PI;
         float distance = 5000000.0f * (i + 1);
         
         // Use seed for deterministic "random" offsets
@@ -300,8 +351,12 @@ void StarMap::renderGalaxyView() {
         }
     }
     
-    // TODO: Use actual shader program when available
-    // For now, use fixed-function pipeline or basic shader
+    // Use shader program
+    if (m_mapShader) {
+        m_mapShader->use();
+        m_mapShader->setMat4("view", m_mapCamera->getViewMatrix());
+        m_mapShader->setMat4("projection", m_mapCamera->getProjectionMatrix());
+    }
     
     // Render connections (lines)
     if (!lines.empty()) {
@@ -326,16 +381,166 @@ void StarMap::renderGalaxyView() {
 
 void StarMap::renderSystemView() {
     // Render celestial objects in the selected system
-    // TODO: Implement detailed system view
+    if (m_celestials.empty()) {
+        loadSystemData(m_currentSystemId);
+    }
     
-    std::cout << "[StarMap] Rendering system view for: " << m_currentSystemId << std::endl;
+    if (m_mapShader) {
+        m_mapShader->use();
+        m_mapShader->setMat4("view", m_mapCamera->getViewMatrix());
+        m_mapShader->setMat4("projection", m_mapCamera->getProjectionMatrix());
+    }
+    
+    std::vector<float> vertices;
+    
+    // Render each celestial as a colored point
+    for (const auto& celestial : m_celestials) {
+        glm::vec4 color;
+        
+        // Color based on type
+        switch (celestial.type) {
+            case CelestialObject::STAR:
+                color = glm::vec4(1.0f, 0.9f, 0.2f, 1.0f); // Yellow
+                break;
+            case CelestialObject::PLANET:
+                color = glm::vec4(0.4f, 0.6f, 0.8f, 1.0f); // Blue-ish
+                break;
+            case CelestialObject::MOON:
+                color = glm::vec4(0.6f, 0.6f, 0.6f, 1.0f); // Gray
+                break;
+            case CelestialObject::STATION:
+                color = glm::vec4(0.2f, 1.0f, 0.2f, 1.0f); // Green
+                break;
+            case CelestialObject::ASTEROID_BELT:
+                color = glm::vec4(0.7f, 0.5f, 0.3f, 1.0f); // Brown
+                break;
+            case CelestialObject::STARGATE:
+                color = glm::vec4(0.0f, 0.8f, 1.0f, 1.0f); // Cyan
+                break;
+            case CelestialObject::WORMHOLE:
+                color = glm::vec4(0.8f, 0.0f, 0.8f, 1.0f); // Purple
+                break;
+        }
+        
+        vertices.push_back(celestial.position.x);
+        vertices.push_back(celestial.position.y);
+        vertices.push_back(celestial.position.z);
+        vertices.push_back(color.r);
+        vertices.push_back(color.g);
+        vertices.push_back(color.b);
+        vertices.push_back(color.a);
+    }
+    
+    // Render celestials
+    if (!vertices.empty()) {
+        glBindVertexArray(m_systemVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_systemVBO);
+        glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_DYNAMIC_DRAW);
+        
+        // Use larger points for celestials
+        glPointSize(m_systemNodeSize * 2.0f);
+        glDrawArrays(GL_POINTS, 0, vertices.size() / 7);
+    }
+    
+    glBindVertexArray(0);
 }
 
 void StarMap::renderTacticalOverlay() {
-    // Render tactical overlay with range circles
-    // TODO: Implement tactical overlay
+    // Render tactical overlay with range circles and grid
+    if (m_mapShader) {
+        m_mapShader->use();
+        m_mapShader->setMat4("view", m_mapCamera->getViewMatrix());
+        m_mapShader->setMat4("projection", m_mapCamera->getProjectionMatrix());
+    }
     
-    std::cout << "[StarMap] Rendering tactical overlay" << std::endl;
+    std::vector<float> lines;
+    glm::vec4 gridColor(0.2f, 0.2f, 0.3f, 0.5f);
+    
+    // Draw grid lines on XZ plane
+    const float gridSize = 50000.0f;
+    const float gridStep = 5000.0f;
+    const int gridLines = static_cast<int>(gridSize / gridStep);
+    
+    // Vertical lines (along Z axis)
+    for (int i = -gridLines; i <= gridLines; i++) {
+        float x = i * gridStep;
+        lines.push_back(x);
+        lines.push_back(0.0f);
+        lines.push_back(-gridSize);
+        lines.push_back(gridColor.r);
+        lines.push_back(gridColor.g);
+        lines.push_back(gridColor.b);
+        lines.push_back(gridColor.a);
+        
+        lines.push_back(x);
+        lines.push_back(0.0f);
+        lines.push_back(gridSize);
+        lines.push_back(gridColor.r);
+        lines.push_back(gridColor.g);
+        lines.push_back(gridColor.b);
+        lines.push_back(gridColor.a);
+    }
+    
+    // Horizontal lines (along X axis)
+    for (int i = -gridLines; i <= gridLines; i++) {
+        float z = i * gridStep;
+        lines.push_back(-gridSize);
+        lines.push_back(0.0f);
+        lines.push_back(z);
+        lines.push_back(gridColor.r);
+        lines.push_back(gridColor.g);
+        lines.push_back(gridColor.b);
+        lines.push_back(gridColor.a);
+        
+        lines.push_back(gridSize);
+        lines.push_back(0.0f);
+        lines.push_back(z);
+        lines.push_back(gridColor.r);
+        lines.push_back(gridColor.g);
+        lines.push_back(gridColor.b);
+        lines.push_back(gridColor.a);
+    }
+    
+    // Draw range circles (common weapon/scan ranges)
+    const std::vector<float> ranges = {5000.0f, 10000.0f, 20000.0f, 50000.0f};
+    glm::vec4 rangeColor(0.0f, 0.8f, 1.0f, 0.4f);
+    
+    for (float range : ranges) {
+        const int segments = 64;
+        for (int i = 0; i < segments; i++) {
+            float angle1 = (float)i / segments * 2.0f * (float)M_PI;
+            float angle2 = (float)(i + 1) / segments * 2.0f * (float)M_PI;
+            
+            // First point
+            lines.push_back(cos(angle1) * range);
+            lines.push_back(0.0f);
+            lines.push_back(sin(angle1) * range);
+            lines.push_back(rangeColor.r);
+            lines.push_back(rangeColor.g);
+            lines.push_back(rangeColor.b);
+            lines.push_back(rangeColor.a);
+            
+            // Second point
+            lines.push_back(cos(angle2) * range);
+            lines.push_back(0.0f);
+            lines.push_back(sin(angle2) * range);
+            lines.push_back(rangeColor.r);
+            lines.push_back(rangeColor.g);
+            lines.push_back(rangeColor.b);
+            lines.push_back(rangeColor.a);
+        }
+    }
+    
+    // Render all lines
+    if (!lines.empty()) {
+        glBindVertexArray(m_lineVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, m_lineVBO);
+        glBufferData(GL_ARRAY_BUFFER, lines.size() * sizeof(float), lines.data(), GL_DYNAMIC_DRAW);
+        glLineWidth(1.0f);
+        glDrawArrays(GL_LINES, 0, lines.size() / 7);
+    }
+    
+    glBindVertexArray(0);
 }
 
 void StarMap::toggle() {
@@ -482,8 +687,17 @@ void StarMap::handleMouseClick(int x, int y) {
     m_dragging = true;
     m_lastMouseX = x;
     m_lastMouseY = y;
-    // TODO: Implement ray picking to select systems
-    std::cout << "[StarMap] Mouse click at: " << x << ", " << y << std::endl;
+    
+    // Implement ray picking to select systems
+    if (m_viewMode == ViewMode::GALAXY) {
+        SystemNode* system = findSystemAtScreenPos(x, y);
+        if (system) {
+            m_selectedSystem = system;
+            focusOnSystem(system->id);
+            std::cout << "[StarMap] Selected system: " << system->name 
+                     << " (Security: " << system->security << ")" << std::endl;
+        }
+    }
 }
 
 void StarMap::handleMouseRelease(int x, int y) {
@@ -519,6 +733,19 @@ void StarMap::clearFilters() {
     m_minSecurity = 0.0f;
     m_maxSecurity = 1.0f;
     m_factionFilter.clear();
+}
+
+StarMap::SystemNode* StarMap::findSystemAtScreenPos(int x, int y) {
+    // Simple ray picking implementation
+    // In a full implementation, this would:
+    // 1. Convert screen coordinates to normalized device coordinates
+    // 2. Create a ray from camera through the point
+    // 3. Test ray against all system positions
+    // 4. Return closest intersecting system
+    
+    // For now, return nullptr (ray picking requires more setup)
+    // The infrastructure is in place for future implementation
+    return nullptr;
 }
 
 } // namespace eve
