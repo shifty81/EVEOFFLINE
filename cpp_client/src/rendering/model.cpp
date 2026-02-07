@@ -3,6 +3,19 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <fstream>
+
+// Model loading libraries
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
+// tinygltf configuration
+#define TINYGLTF_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+// Disable JSON dependency warnings - tinygltf will handle JSON internally
+#define TINYGLTF_NO_EXTERNAL_IMAGE
+#include <tiny_gltf.h>
 
 namespace eve {
 
@@ -19,9 +32,271 @@ Model::~Model() {
 }
 
 bool Model::loadFromFile(const std::string& path) {
-    // TODO: Implement model loading from file
-    std::cout << "Model loading not yet implemented: " << path << std::endl;
-    return false;
+    // Determine file format based on extension
+    std::string extension;
+    size_t dotPos = path.find_last_of('.');
+    if (dotPos != std::string::npos) {
+        extension = path.substr(dotPos + 1);
+        // Convert to lowercase
+        std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    }
+
+    if (extension == "obj") {
+        return loadOBJ(path);
+    } else if (extension == "gltf" || extension == "glb") {
+        return loadGLTF(path);
+    } else {
+        std::cerr << "Unsupported model format: " << extension << std::endl;
+        std::cerr << "Supported formats: .obj, .gltf, .glb" << std::endl;
+        return false;
+    }
+}
+
+bool Model::loadOBJ(const std::string& path) {
+    tinyobj::attrib_t attrib;
+    std::vector<tinyobj::shape_t> shapes;
+    std::vector<tinyobj::material_t> materials;
+    std::string warn, err;
+
+    // Load the OBJ file
+    bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, path.c_str());
+
+    if (!warn.empty()) {
+        std::cout << "OBJ Warning: " << warn << std::endl;
+    }
+
+    if (!err.empty()) {
+        std::cerr << "OBJ Error: " << err << std::endl;
+    }
+
+    if (!ret) {
+        std::cerr << "Failed to load OBJ file: " << path << std::endl;
+        return false;
+    }
+
+    std::cout << "Loaded OBJ: " << path << std::endl;
+    std::cout << "  Shapes: " << shapes.size() << std::endl;
+    std::cout << "  Materials: " << materials.size() << std::endl;
+
+    // Process each shape in the OBJ file
+    for (size_t s = 0; s < shapes.size(); s++) {
+        std::vector<Vertex> vertices;
+        std::vector<unsigned int> indices;
+
+        // Process each face
+        size_t index_offset = 0;
+        for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
+            int fv = shapes[s].mesh.num_face_vertices[f];
+
+            // Process each vertex in the face
+            for (size_t v = 0; v < fv; v++) {
+                tinyobj::index_t idx = shapes[s].mesh.indices[index_offset + v];
+
+                Vertex vertex;
+
+                // Position
+                vertex.position = glm::vec3(
+                    attrib.vertices[3 * idx.vertex_index + 0],
+                    attrib.vertices[3 * idx.vertex_index + 1],
+                    attrib.vertices[3 * idx.vertex_index + 2]
+                );
+
+                // Normal (if available)
+                if (idx.normal_index >= 0) {
+                    vertex.normal = glm::vec3(
+                        attrib.normals[3 * idx.normal_index + 0],
+                        attrib.normals[3 * idx.normal_index + 1],
+                        attrib.normals[3 * idx.normal_index + 2]
+                    );
+                } else {
+                    vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+                }
+
+                // Texture coordinates (if available)
+                if (idx.texcoord_index >= 0) {
+                    vertex.texCoords = glm::vec2(
+                        attrib.texcoords[2 * idx.texcoord_index + 0],
+                        attrib.texcoords[2 * idx.texcoord_index + 1]
+                    );
+                } else {
+                    vertex.texCoords = glm::vec2(0.0f, 0.0f);
+                }
+
+                // Color (default white, or from material)
+                vertex.color = glm::vec3(1.0f, 1.0f, 1.0f);
+                if (!materials.empty() && shapes[s].mesh.material_ids[f] >= 0) {
+                    size_t mat_id = static_cast<size_t>(shapes[s].mesh.material_ids[f]);
+                    if (mat_id < materials.size()) {
+                        vertex.color = glm::vec3(
+                            materials[mat_id].diffuse[0],
+                            materials[mat_id].diffuse[1],
+                            materials[mat_id].diffuse[2]
+                        );
+                    }
+                }
+
+                vertices.push_back(vertex);
+                indices.push_back(static_cast<unsigned int>(vertices.size() - 1));
+            }
+
+            index_offset += fv;
+        }
+
+        // Create mesh from vertices and indices
+        if (!vertices.empty() && !indices.empty()) {
+            auto mesh = std::make_unique<Mesh>(vertices, indices);
+            addMesh(std::move(mesh));
+        }
+    }
+
+    return !m_meshes.empty();
+}
+
+bool Model::loadGLTF(const std::string& path) {
+    tinygltf::Model gltfModel;
+    tinygltf::TinyGLTF loader;
+    std::string err, warn;
+
+    bool ret = false;
+    
+    // Determine if it's binary (.glb) or text (.gltf)
+    std::string extension;
+    size_t dotPos = path.find_last_of('.');
+    if (dotPos != std::string::npos) {
+        extension = path.substr(dotPos + 1);
+        std::transform(extension.begin(), extension.end(), extension.begin(), ::tolower);
+    }
+
+    if (extension == "glb") {
+        ret = loader.LoadBinaryFromFile(&gltfModel, &err, &warn, path);
+    } else {
+        ret = loader.LoadASCIIFromFile(&gltfModel, &err, &warn, path);
+    }
+
+    if (!warn.empty()) {
+        std::cout << "GLTF Warning: " << warn << std::endl;
+    }
+
+    if (!err.empty()) {
+        std::cerr << "GLTF Error: " << err << std::endl;
+    }
+
+    if (!ret) {
+        std::cerr << "Failed to load GLTF file: " << path << std::endl;
+        return false;
+    }
+
+    std::cout << "Loaded GLTF: " << path << std::endl;
+    std::cout << "  Meshes: " << gltfModel.meshes.size() << std::endl;
+    std::cout << "  Materials: " << gltfModel.materials.size() << std::endl;
+
+    // Process each mesh in the GLTF file
+    for (const auto& mesh : gltfModel.meshes) {
+        for (const auto& primitive : mesh.primitives) {
+            std::vector<Vertex> vertices;
+            std::vector<unsigned int> indices;
+
+            // Get position accessor
+            const tinygltf::Accessor& posAccessor = gltfModel.accessors[primitive.attributes.at("POSITION")];
+            const tinygltf::BufferView& posView = gltfModel.bufferViews[posAccessor.bufferView];
+            const tinygltf::Buffer& posBuffer = gltfModel.buffers[posView.buffer];
+            const float* positions = reinterpret_cast<const float*>(&posBuffer.data[posView.byteOffset + posAccessor.byteOffset]);
+
+            // Get normal accessor (if available)
+            const float* normals = nullptr;
+            if (primitive.attributes.find("NORMAL") != primitive.attributes.end()) {
+                const tinygltf::Accessor& normAccessor = gltfModel.accessors[primitive.attributes.at("NORMAL")];
+                const tinygltf::BufferView& normView = gltfModel.bufferViews[normAccessor.bufferView];
+                const tinygltf::Buffer& normBuffer = gltfModel.buffers[normView.buffer];
+                normals = reinterpret_cast<const float*>(&normBuffer.data[normView.byteOffset + normAccessor.byteOffset]);
+            }
+
+            // Get texture coordinate accessor (if available)
+            const float* texCoords = nullptr;
+            if (primitive.attributes.find("TEXCOORD_0") != primitive.attributes.end()) {
+                const tinygltf::Accessor& texAccessor = gltfModel.accessors[primitive.attributes.at("TEXCOORD_0")];
+                const tinygltf::BufferView& texView = gltfModel.bufferViews[texAccessor.bufferView];
+                const tinygltf::Buffer& texBuffer = gltfModel.buffers[texView.buffer];
+                texCoords = reinterpret_cast<const float*>(&texBuffer.data[texView.byteOffset + texAccessor.byteOffset]);
+            }
+
+            // Create vertices
+            for (size_t i = 0; i < posAccessor.count; i++) {
+                Vertex vertex;
+
+                vertex.position = glm::vec3(
+                    positions[i * 3 + 0],
+                    positions[i * 3 + 1],
+                    positions[i * 3 + 2]
+                );
+
+                if (normals) {
+                    vertex.normal = glm::vec3(
+                        normals[i * 3 + 0],
+                        normals[i * 3 + 1],
+                        normals[i * 3 + 2]
+                    );
+                } else {
+                    vertex.normal = glm::vec3(0.0f, 1.0f, 0.0f);
+                }
+
+                if (texCoords) {
+                    vertex.texCoords = glm::vec2(
+                        texCoords[i * 2 + 0],
+                        texCoords[i * 2 + 1]
+                    );
+                } else {
+                    vertex.texCoords = glm::vec2(0.0f, 0.0f);
+                }
+
+                // Default color (or from material)
+                vertex.color = glm::vec3(1.0f, 1.0f, 1.0f);
+                if (primitive.material >= 0 && primitive.material < gltfModel.materials.size()) {
+                    const auto& material = gltfModel.materials[primitive.material];
+                    if (material.pbrMetallicRoughness.baseColorFactor.size() >= 3) {
+                        vertex.color = glm::vec3(
+                            material.pbrMetallicRoughness.baseColorFactor[0],
+                            material.pbrMetallicRoughness.baseColorFactor[1],
+                            material.pbrMetallicRoughness.baseColorFactor[2]
+                        );
+                    }
+                }
+
+                vertices.push_back(vertex);
+            }
+
+            // Get indices
+            const tinygltf::Accessor& indexAccessor = gltfModel.accessors[primitive.indices];
+            const tinygltf::BufferView& indexView = gltfModel.bufferViews[indexAccessor.bufferView];
+            const tinygltf::Buffer& indexBuffer = gltfModel.buffers[indexView.buffer];
+
+            // Handle different index types
+            if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_SHORT) {
+                const uint16_t* buf = reinterpret_cast<const uint16_t*>(&indexBuffer.data[indexView.byteOffset + indexAccessor.byteOffset]);
+                for (size_t i = 0; i < indexAccessor.count; i++) {
+                    indices.push_back(static_cast<unsigned int>(buf[i]));
+                }
+            } else if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_INT) {
+                const uint32_t* buf = reinterpret_cast<const uint32_t*>(&indexBuffer.data[indexView.byteOffset + indexAccessor.byteOffset]);
+                for (size_t i = 0; i < indexAccessor.count; i++) {
+                    indices.push_back(buf[i]);
+                }
+            } else if (indexAccessor.componentType == TINYGLTF_COMPONENT_TYPE_UNSIGNED_BYTE) {
+                const uint8_t* buf = reinterpret_cast<const uint8_t*>(&indexBuffer.data[indexView.byteOffset + indexAccessor.byteOffset]);
+                for (size_t i = 0; i < indexAccessor.count; i++) {
+                    indices.push_back(static_cast<unsigned int>(buf[i]));
+                }
+            }
+
+            // Create mesh from vertices and indices
+            if (!vertices.empty() && !indices.empty()) {
+                auto meshPtr = std::make_unique<Mesh>(vertices, indices);
+                addMesh(std::move(meshPtr));
+            }
+        }
+    }
+
+    return !m_meshes.empty();
 }
 
 void Model::addMesh(std::unique_ptr<Mesh> mesh) {
@@ -240,6 +515,230 @@ FactionColors Model::getFactionColors(const std::string& faction) {
     };
 }
 
+// ==================== Enhanced Procedural Detail Generation ====================
+
+/**
+ * Get design traits based on faction and ship class
+ */
+ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::string& shipClass) {
+    ShipDesignTraits traits;
+    
+    // Determine faction design style
+    if (faction.find("Caldari") != std::string::npos) {
+        traits.style = ShipDesignTraits::DesignStyle::CALDARI_BLOCKY;
+        traits.isBlocky = true;
+        traits.isOrganic = false;
+        traits.isAsymmetric = false;
+        traits.hasSpires = false;
+        traits.hasExposedFramework = false;
+        traits.asymmetryFactor = 0.0f;
+    } else if (faction.find("Amarr") != std::string::npos) {
+        traits.style = ShipDesignTraits::DesignStyle::AMARR_ORNATE;
+        traits.hasSpires = true;
+        traits.isBlocky = false;
+        traits.isOrganic = false;
+        traits.isAsymmetric = false;
+        traits.hasExposedFramework = false;
+        traits.asymmetryFactor = 0.0f;
+    } else if (faction.find("Gallente") != std::string::npos) {
+        traits.style = ShipDesignTraits::DesignStyle::GALLENTE_ORGANIC;
+        traits.isOrganic = true;
+        traits.isBlocky = false;
+        traits.isAsymmetric = false;
+        traits.hasSpires = false;
+        traits.hasExposedFramework = false;
+        traits.asymmetryFactor = 0.0f;
+    } else if (faction.find("Minmatar") != std::string::npos) {
+        traits.style = ShipDesignTraits::DesignStyle::MINMATAR_ASYMMETRIC;
+        traits.isAsymmetric = true;
+        traits.hasExposedFramework = true;
+        traits.isBlocky = false;
+        traits.isOrganic = false;
+        traits.hasSpires = false;
+        traits.asymmetryFactor = 0.3f;
+    } else {
+        // Default traits for unknown factions
+        traits.style = ShipDesignTraits::DesignStyle::CALDARI_BLOCKY;
+        traits.isBlocky = false;
+        traits.isOrganic = false;
+        traits.isAsymmetric = false;
+        traits.hasSpires = false;
+        traits.hasExposedFramework = false;
+        traits.asymmetryFactor = 0.0f;
+    }
+    
+    // Set weapon hardpoints based on ship class
+    if (shipClass.find("Frigate") != std::string::npos) {
+        traits.turretHardpoints = 2;
+        traits.missileHardpoints = 0;
+        traits.droneHardpoints = 0;
+        traits.engineCount = 2;
+        traits.hasLargeEngines = false;
+        traits.detailScale = 1.0f;
+    } else if (shipClass.find("Destroyer") != std::string::npos) {
+        traits.turretHardpoints = 4;
+        traits.missileHardpoints = 0;
+        traits.droneHardpoints = 0;
+        traits.engineCount = 2;
+        traits.hasLargeEngines = false;
+        traits.detailScale = 1.2f;
+    } else if (shipClass.find("Cruiser") != std::string::npos) {
+        traits.turretHardpoints = 4;
+        traits.missileHardpoints = 2;
+        traits.droneHardpoints = 1;
+        traits.engineCount = 3;
+        traits.hasLargeEngines = false;
+        traits.detailScale = 1.5f;
+    } else if (shipClass.find("Battlecruiser") != std::string::npos) {
+        traits.turretHardpoints = 6;
+        traits.missileHardpoints = 2;
+        traits.droneHardpoints = 2;
+        traits.engineCount = 4;
+        traits.hasLargeEngines = true;
+        traits.detailScale = 2.0f;
+    } else if (shipClass.find("Battleship") != std::string::npos) {
+        traits.turretHardpoints = 8;
+        traits.missileHardpoints = 4;
+        traits.droneHardpoints = 2;
+        traits.engineCount = 6;
+        traits.hasLargeEngines = true;
+        traits.detailScale = 2.5f;
+    } else {
+        // Defaults
+        traits.turretHardpoints = 2;
+        traits.missileHardpoints = 0;
+        traits.droneHardpoints = 0;
+        traits.engineCount = 2;
+        traits.hasLargeEngines = false;
+        traits.detailScale = 1.0f;
+    }
+    
+    return traits;
+}
+
+/**
+ * Add weapon hardpoint geometry (turret mounts)
+ */
+void Model::addWeaponHardpoints(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                                 float posZ, float offsetX, float offsetY, int count, const glm::vec3& color) {
+    float hardpointSize = 0.15f;
+    int startIdx = vertices.size();
+    
+    for (int i = 0; i < count; ++i) {
+        float side = (i % 2 == 0) ? 1.0f : -1.0f;
+        float xPos = offsetX * side;
+        float yPos = offsetY;
+        
+        // Create small turret mount geometry
+        vertices.push_back({{posZ, xPos, yPos}, {0.0f, side, 0.0f}, {}, color});
+        vertices.push_back({{posZ + hardpointSize, xPos, yPos}, {side, 0.0f, 0.0f}, {}, color});
+        vertices.push_back({{posZ, xPos, yPos + hardpointSize}, {0.0f, 0.0f, 1.0f}, {}, color});
+        
+        // Add triangle
+        if (vertices.size() >= 3) {
+            indices.push_back(startIdx + i * 3);
+            indices.push_back(startIdx + i * 3 + 1);
+            indices.push_back(startIdx + i * 3 + 2);
+        }
+    }
+}
+
+/**
+ * Add engine exhaust detail geometry
+ */
+void Model::addEngineDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                            float posZ, float width, float height, int count, const glm::vec3& color) {
+    float exhaustSize = 0.2f;
+    int startIdx = vertices.size();
+    
+    for (int i = 0; i < count; ++i) {
+        float angle = (i * 2.0f * PI) / count;
+        float xOffset = width * 0.5f * std::cos(angle);
+        float yOffset = height * 0.5f * std::sin(angle);
+        
+        // Engine exhaust cone
+        vertices.push_back({{posZ, xOffset, yOffset}, {-1.0f, 0.0f, 0.0f}, {}, color});
+        vertices.push_back({{posZ - exhaustSize, xOffset * 0.7f, yOffset * 0.7f}, {-1.0f, 0.0f, 0.0f}, {}, color});
+        vertices.push_back({{posZ - exhaustSize, xOffset * 1.3f, yOffset * 1.3f}, {-1.0f, 0.0f, 0.0f}, {}, color});
+        
+        if (vertices.size() >= 3) {
+            indices.push_back(startIdx + i * 3);
+            indices.push_back(startIdx + i * 3 + 1);
+            indices.push_back(startIdx + i * 3 + 2);
+        }
+    }
+}
+
+/**
+ * Add hull panel lines for detail
+ */
+void Model::addHullPanelLines(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                              float startZ, float endZ, float width, const glm::vec3& color) {
+    float panelWidth = 0.05f;
+    int panelCount = static_cast<int>((startZ - endZ) / 1.0f);
+    int startIdx = vertices.size();
+    
+    for (int i = 0; i < panelCount; ++i) {
+        float z = startZ - i * 1.0f;
+        
+        // Add subtle panel line geometry
+        vertices.push_back({{z, width, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, color * 0.9f});
+        vertices.push_back({{z, -width, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, color * 0.9f});
+        vertices.push_back({{z - panelWidth, width, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, color * 0.8f});
+        
+        if (i < panelCount - 1 && vertices.size() >= 3) {
+            indices.push_back(startIdx + i * 3);
+            indices.push_back(startIdx + i * 3 + 1);
+            indices.push_back(startIdx + i * 3 + 2);
+        }
+    }
+}
+
+/**
+ * Add Amarr-style spire detail
+ */
+void Model::addSpireDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                           float posZ, float height, const glm::vec3& color) {
+    int startIdx = vertices.size();
+    
+    // Central spire point
+    vertices.push_back({{posZ, 0.0f, height * 1.5f}, {0.0f, 0.0f, 1.0f}, {}, color});
+    
+    // Base of spire
+    vertices.push_back({{posZ - 0.3f, 0.2f, height}, {0.0f, 1.0f, 0.3f}, {}, color * 0.9f});
+    vertices.push_back({{posZ - 0.3f, -0.2f, height}, {0.0f, -1.0f, 0.3f}, {}, color * 0.9f});
+    vertices.push_back({{posZ - 0.3f, 0.0f, height * 0.8f}, {0.0f, 0.0f, 0.9f}, {}, color * 0.85f});
+    
+    // Create spire triangles
+    indices.push_back(startIdx);
+    indices.push_back(startIdx + 1);
+    indices.push_back(startIdx + 2);
+    
+    indices.push_back(startIdx);
+    indices.push_back(startIdx + 2);
+    indices.push_back(startIdx + 3);
+}
+
+/**
+ * Add Minmatar-style asymmetric detail
+ */
+void Model::addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                                float posZ, float offset, const glm::vec3& color) {
+    int startIdx = vertices.size();
+    
+    // Asymmetric protruding structure
+    vertices.push_back({{posZ, offset, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, color});
+    vertices.push_back({{posZ - 0.4f, offset * 1.3f, 0.1f}, {0.5f, 1.0f, 0.1f}, {}, color * 0.9f});
+    vertices.push_back({{posZ - 0.4f, offset * 0.7f, -0.1f}, {0.5f, 0.7f, -0.1f}, {}, color * 0.85f});
+    
+    // Create triangle
+    indices.push_back(startIdx);
+    indices.push_back(startIdx + 1);
+    indices.push_back(startIdx + 2);
+}
+
+// ==================== Ship Model Creation Functions ====================
+
 // Ship model creation functions
 std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
     auto model = std::make_unique<Model>();
@@ -299,6 +798,18 @@ std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
     // Engine exhaust points
     vertices.push_back({{-length * 0.3f, width * 0.4f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
     vertices.push_back({{-length * 0.3f, -width * 0.4f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    // Add enhanced details - weapon hardpoints on forward hull
+    addWeaponHardpoints(vertices, indices, length * 0.6f, width * 0.5f, height * 0.2f, 2, 
+                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
+    
+    // Add engine glow detail at rear
+    addEngineDetail(vertices, indices, -length * 0.3f, width * 0.5f, height * 0.3f, 2,
+                    glm::vec3(colors.accent.r * 1.2f, colors.accent.g * 1.2f, colors.accent.b * 1.5f));
+    
+    // Add hull panel lines for detail
+    addHullPanelLines(vertices, indices, length * 0.5f, 0.0f, width * 0.8f,
+                     glm::vec3(colors.primary.r, colors.primary.g, colors.primary.b));
 
     // Create triangles connecting vertices
     for (unsigned int i = 1; i < vertices.size() - 2; i += 2) {
@@ -614,6 +1125,25 @@ std::unique_ptr<Model> Model::createBattleshipModel(const FactionColors& colors)
     vertices.push_back({{-length * 0.22f, -width * 0.9f, height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
     vertices.push_back({{-length * 0.22f, width * 0.4f, -height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
     vertices.push_back({{-length * 0.22f, -width * 0.4f, -height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    // Add enhanced details for battleship - massive weapon platforms
+    // Forward turret batteries (top and bottom)
+    addWeaponHardpoints(vertices, indices, length * 0.5f, width * 0.8f, height * 0.4f, 4,
+                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
+    addWeaponHardpoints(vertices, indices, length * 0.3f, width * 0.9f, height * 0.3f, 4,
+                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
+    
+    // Missile launcher bays on sides
+    addWeaponHardpoints(vertices, indices, length * 0.2f, width * 1.0f, 0.0f, 4,
+                        glm::vec3(colors.secondary.r, colors.secondary.g, colors.secondary.b));
+    
+    // Massive engine array at rear - 6 large exhausts
+    addEngineDetail(vertices, indices, -length * 0.22f, width * 1.2f, height * 0.5f, 6,
+                    glm::vec3(colors.accent.r * 1.3f, colors.accent.g * 1.3f, colors.accent.b * 1.8f));
+    
+    // Command superstructure detail
+    addHullPanelLines(vertices, indices, length * 0.6f, 0.0f, width * 1.1f,
+                     glm::vec3(colors.primary.r, colors.primary.g, colors.primary.b));
 
     // Triangulation with proper connectivity
     for (unsigned int i = 1; i < vertices.size() - 4; i += 3) {

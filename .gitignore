@@ -67,6 +67,12 @@ cpp_client/build_*/
 cpp_client/external/*
 !cpp_client/external/stb/
 !cpp_client/external/stb/stb_image.h
+!cpp_client/external/tinyobjloader/
+!cpp_client/external/tinyobjloader/tiny_obj_loader.h
+!cpp_client/external/tinygltf/
+!cpp_client/external/tinygltf/tiny_gltf.h
+!cpp_client/external/nlohmann/
+!cpp_client/external/nlohmann/json.hpp
 build_vs/
 *.o
 *.obj

@@ -20,6 +20,42 @@ struct FactionColors {
 };
 
 /**
+ * Ship design characteristics for enhanced procedural generation
+ * Based on EVE Online faction design languages
+ */
+struct ShipDesignTraits {
+    // Faction design language
+    enum class DesignStyle {
+        CALDARI_BLOCKY,      // Angular, industrial, city-block architecture
+        AMARR_ORNATE,        // Golden spires, cathedral-like, vertical emphasis
+        GALLENTE_ORGANIC,    // Smooth curves, flowing forms, drone aesthetics
+        MINMATAR_ASYMMETRIC  // Irregular, exposed framework, welded-together look
+    };
+    
+    DesignStyle style;
+    
+    // Visual characteristics
+    bool hasSpires;          // Vertical spires (Amarr)
+    bool isAsymmetric;       // Asymmetric design (Minmatar)
+    bool hasExposedFramework;// Visible structure (Minmatar)
+    bool isBlocky;           // Angular design (Caldari)
+    bool isOrganic;          // Smooth curves (Gallente)
+    
+    // Weapon hardpoint configuration
+    int turretHardpoints;    // Number of visible turret mounts
+    int missileHardpoints;   // Number of missile launcher bays
+    int droneHardpoints;     // Number of drone bay indicators
+    
+    // Engine configuration
+    int engineCount;         // Number of engine exhausts
+    bool hasLargeEngines;    // Massive engine banks (battleship+)
+    
+    // Scale modifiers for detail
+    float detailScale;       // Scale factor for hull detail
+    float asymmetryFactor;   // 0=symmetric, 1=highly asymmetric
+};
+
+/**
  * 3D Model class for rendering entities in EVE OFFLINE
  * 
  * Supports both file-based model loading and procedural generation of ship models.
@@ -88,6 +124,13 @@ private:
     std::vector<std::unique_ptr<Mesh>> m_meshes;
 
     /**
+     * Model loading helper methods
+     * Internal methods for loading different file formats
+     */
+    bool loadOBJ(const std::string& path);
+    bool loadGLTF(const std::string& path);
+
+    /**
      * Ship type classification helpers
      * These methods determine which procedural generation function to use
      * based on ship type string matching.
@@ -125,6 +168,21 @@ private:
     static std::unique_ptr<Model> createStationModel(const FactionColors& colors, const std::string& stationType);
     static std::unique_ptr<Model> createAsteroidModel(const std::string& oreType);
     static std::unique_ptr<Model> createGenericModel(const FactionColors& colors);
+
+    /**
+     * Helper functions for enhanced procedural ship detail generation
+     */
+    static ShipDesignTraits getDesignTraits(const std::string& faction, const std::string& shipClass);
+    static void addWeaponHardpoints(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, 
+                                    float posZ, float offsetX, float offsetY, int count, const glm::vec3& color);
+    static void addEngineDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                                float posZ, float width, float height, int count, const glm::vec3& color);
+    static void addHullPanelLines(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                                  float startZ, float endZ, float width, const glm::vec3& color);
+    static void addSpireDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                               float posZ, float height, const glm::vec3& color);
+    static void addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                                    float posZ, float offset, const glm::vec3& color);
 
     /**
      * Model cache for sharing geometry between instances

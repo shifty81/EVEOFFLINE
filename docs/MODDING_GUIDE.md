@@ -1,6 +1,6 @@
 # EVE OFFLINE - Modding Guide
 
-Welcome to the EVE OFFLINE modding guide! This document will teach you how to create and modify game content using JSON files.
+Welcome to the EVE OFFLINE modding guide! This document will teach you how to create and modify game content using JSON files and custom 3D models.
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -9,9 +9,10 @@ Welcome to the EVE OFFLINE modding guide! This document will teach you how to cr
 4. [Module Modding](#module-modding)
 5. [Mission Creation](#mission-creation)
 6. [Skill Customization](#skill-customization)
-7. [Balance Guidelines](#balance-guidelines)
-8. [Testing Your Mods](#testing-your-mods)
-9. [Troubleshooting](#troubleshooting)
+7. [Custom 3D Models](#custom-3d-models)
+8. [Balance Guidelines](#balance-guidelines)
+9. [Testing Your Mods](#testing-your-mods)
+10. [Troubleshooting](#troubleshooting)
 
 ---
 
@@ -661,6 +662,177 @@ A durable cruiser with lower speed:
   }
 }
 ```
+
+---
+
+## Custom 3D Models
+
+EVE OFFLINE now supports loading custom 3D models in addition to the built-in procedural ship generation. This allows you to create unique ship designs using your favorite 3D modeling software.
+
+### Supported Formats
+
+- **.obj** (Wavefront OBJ) - Simple text-based format, widely supported
+- **.gltf** (GL Transmission Format) - Modern JSON-based format with advanced features
+- **.glb** (Binary GLTF) - Compact binary version of GLTF
+
+### Model Requirements
+
+#### Scale and Dimensions
+- Ships should be modeled in meters
+- Typical sizes:
+  - Frigates: 30-60 meters
+  - Cruisers: 100-300 meters
+  - Battleships: 400-500 meters
+  - Capitals: 1000-3000 meters
+
+#### Geometry
+- Use triangles or quads (quads will be automatically triangulated)
+- Keep polygon count reasonable:
+  - Frigates: 1,000-5,000 triangles
+  - Cruisers: 5,000-15,000 triangles
+  - Battleships: 15,000-30,000 triangles
+  - Capitals: 30,000-50,000 triangles
+
+#### Materials
+- Include normals for proper lighting
+- UV coordinates for textures (optional but recommended)
+- Vertex colors are supported
+- Material colors will be extracted from the model file
+
+### Creating a Model
+
+#### Example: Simple .obj File
+
+```obj
+# Simple ship hull
+v 0.0 0.0 10.0
+v 5.0 0.0 -10.0
+v -5.0 0.0 -10.0
+v 0.0 3.0 0.0
+
+vn 0.0 1.0 0.0
+vn 0.0 -1.0 0.0
+vn 0.577 0.577 0.577
+vn -0.577 0.577 0.577
+
+vt 0.5 1.0
+vt 1.0 0.0
+vt 0.0 0.0
+vt 0.5 0.5
+
+f 1/1/1 2/2/1 3/3/1
+f 1/1/2 4/4/2 2/2/2
+f 2/2/3 4/4/3 3/3/3
+f 3/3/4 4/4/4 1/1/4
+```
+
+#### Using Blender
+
+1. **Model your ship**
+   - Keep the ship centered on the origin (0,0,0)
+   - Face the ship along the Z-axis (forward direction)
+   - Use appropriate scale (meters)
+
+2. **Export as .obj**
+   - File → Export → Wavefront (.obj)
+   - Enable "Write Normals"
+   - Enable "Include UVs"
+   - Set Forward: Y Forward, Up: Z Up
+
+3. **Export as .gltf/.glb** (Recommended)
+   - File → Export → glTF 2.0
+   - Format: Choose glTF Binary (.glb) for smaller files
+   - Include: Normals, UVs, Vertex Colors
+   - Geometry: Apply Modifiers
+
+### Integrating Custom Models
+
+#### Option 1: Place in Assets Directory
+
+Place your model file in `cpp_client/assets/models/`:
+
+```
+cpp_client/assets/models/
+├── my_custom_frigate.obj
+├── my_custom_cruiser.glb
+└── textures/
+    └── my_ship_texture.png
+```
+
+#### Option 2: Load at Runtime
+
+The model loading system automatically detects the file format:
+
+```cpp
+// In your code (C++)
+#include "rendering/model.h"
+
+auto model = std::make_unique<eve::Model>();
+if (model->loadFromFile("assets/models/my_custom_frigate.obj")) {
+    std::cout << "Model loaded successfully!" << std::endl;
+    model->draw();
+} else {
+    std::cerr << "Failed to load model" << std::endl;
+}
+```
+
+### Model Validation
+
+After creating your model, validate it:
+
+1. **Check File Format**
+   - Ensure the file extension matches the content (.obj, .gltf, or .glb)
+   - Use a text editor to verify .obj and .gltf files are properly formatted
+
+2. **Test in a Viewer**
+   - Use online viewers like [gltf-viewer.donmccurdy.com](https://gltf-viewer.donmccurdy.com/)
+   - Or desktop tools like Blender, MeshLab, or Windows 3D Viewer
+
+3. **Check Console Output**
+   - When loading a model, the game prints diagnostic information
+   - Look for warnings about missing normals, texture coordinates, or materials
+
+### Troubleshooting Models
+
+#### Model Doesn't Load
+- **Check file path**: Ensure the path is correct and file exists
+- **Check file format**: Verify the extension matches the actual format
+- **Check console**: Look for error messages in the game console
+
+#### Model Appears Black
+- **Missing normals**: Re-export with normals enabled
+- **Inverted normals**: Flip normals in your 3D software
+- **No lighting**: Ensure proper lighting is set up in the scene
+
+#### Model Too Large/Small
+- **Check scale**: Models should be in meters
+- **Adjust in Blender**: Use the Scale tool (S key) before exporting
+- **Check export settings**: Ensure scale is set to 1.0
+
+#### Model Appears at Wrong Angle
+- **Check orientation**: Ships should face along +Z axis in model space
+- **Adjust export axes**: Set Forward: Y Forward, Up: Z Up in export settings
+- **Rotate in software**: Apply rotation before exporting
+
+### Best Practices
+
+1. **Start Simple**: Begin with basic shapes, then add detail
+2. **Optimize Early**: Keep polygon count reasonable from the start
+3. **Test Frequently**: Load and test your model in-game often
+4. **Use References**: Study existing ship designs for inspiration
+5. **Version Control**: Keep multiple versions as you iterate
+6. **Document Changes**: Note what works and what doesn't
+
+### Example Workflow
+
+1. **Concept**: Sketch your ship design
+2. **Block Out**: Create basic shapes in Blender
+3. **Test Load**: Export and load in game to check scale/orientation
+4. **Add Detail**: Refine geometry and add features
+5. **Materials**: Add colors, textures, and normals
+6. **Final Export**: Export in preferred format (.glb recommended)
+7. **Integrate**: Place in assets folder and test in-game
+8. **Polish**: Adjust based on in-game appearance
 
 ---
 
