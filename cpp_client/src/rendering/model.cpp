@@ -6,6 +6,9 @@
 
 namespace eve {
 
+// Mathematical constants
+constexpr float PI = 3.14159265358979323846f;
+
 // Initialize static cache
 std::map<std::string, std::shared_ptr<Model>> Model::s_modelCache;
 
@@ -817,7 +820,7 @@ std::unique_ptr<Model> Model::createStationModel(const FactionColors& colors, co
     // Central core
     int segments = 8;
     for (int i = 0; i < segments; ++i) {
-        float angle = (i * 2.0f * 3.14159f) / segments;
+        float angle = (i * 2.0f * PI) / segments;
         float x = radius * 0.3f * std::cos(angle);
         float y = radius * 0.3f * std::sin(angle);
         
@@ -827,7 +830,7 @@ std::unique_ptr<Model> Model::createStationModel(const FactionColors& colors, co
     
     // Add docking spokes
     for (int i = 0; i < 4; ++i) {
-        float angle = (i * 3.14159f * 0.5f);
+        float angle = (i * PI * 0.5f);
         float x = radius * std::cos(angle);
         float y = radius * std::sin(angle);
         
@@ -880,8 +883,8 @@ std::unique_ptr<Model> Model::createAsteroidModel(const std::string& oreType) {
     // Create an irregular shape using multiple vertices
     int points = 12;
     for (int i = 0; i < points; ++i) {
-        float theta = (i * 2.0f * 3.14159f) / points;
-        float phi = (i * 3.14159f) / points;
+        float theta = (i * 2.0f * PI) / points;
+        float phi = (i * PI) / points;
         
         // Add randomness to make it look irregular
         float r = size * (0.7f + (i % 3) * 0.15f);
