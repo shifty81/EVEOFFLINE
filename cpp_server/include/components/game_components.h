@@ -238,6 +238,23 @@ public:
     COMPONENT_TYPE(WormholeConnection)
 };
 
+/**
+ * @brief Fleet membership for an entity (attached to each fleet member)
+ *
+ * Tracks which fleet a player belongs to, their role, and any
+ * active fleet bonuses being applied.
+ */
+class FleetMembership : public ecs::Component {
+public:
+    std::string fleet_id;
+    std::string role = "Member";  // "FleetCommander", "WingCommander", "SquadCommander", "Member"
+    std::string squad_id;
+    std::string wing_id;
+    std::map<std::string, float> active_bonuses;  // e.g. "armor_hp_bonus" -> 0.10
+    
+    COMPONENT_TYPE(FleetMembership)
+};
+
 } // namespace components
 } // namespace eve
 
