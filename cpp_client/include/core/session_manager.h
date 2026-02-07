@@ -3,11 +3,14 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <memory>
+#include <algorithm>
 
 namespace eve {
 
 // Forward declarations
 class EmbeddedServer;
+class NetworkManager;
 
 /**
  * Multiplayer session manager
@@ -135,6 +138,7 @@ private:
 
     bool m_isHost;
     EmbeddedServer* m_hostedServer;
+    std::unique_ptr<NetworkManager> m_networkManager;
 };
 
 } // namespace eve
