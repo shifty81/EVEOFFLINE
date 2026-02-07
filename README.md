@@ -112,11 +112,15 @@ cmake --build . --config Release
 
 ### Game Content (data/)
 All game content is moddable via JSON files:
-- 46+ ships (frigates to battleships, Tech I and Tech II)
+- 58+ ships (frigates to titans, Tech I and Tech II, plus capitals)
+  - Frigates, Destroyers, Cruisers, Battlecruisers, Battleships
+  - Carriers, Dreadnoughts, Titans
+  - Procedural 3D models with faction-specific designs
 - 70+ modules (weapons, defenses, utilities)
 - 47+ skills with training system
 - 28 missions across 4 difficulty levels
 - Mining, manufacturing, market, and exploration systems
+- Stations and asteroids with visual variety
 
 ## 🔧 Modding
 
@@ -136,6 +140,8 @@ data/
 All documentation is in [docs/](docs/):
 - [Build Guides](docs/guides/) — VS2022, vcpkg, build automation
 - [C++ Client Docs](docs/cpp_client/) — Rendering, UI, audio, networking
+- [Ship Modeling](docs/SHIP_MODELING.md) — Procedural ship generation system
+- [EVE Ship Reference](docs/EVE_SHIP_REFERENCE.md) — Design inspiration from EVE Online
 - [API & Design](docs/) — Architecture, roadmap, contributing
 
 ## 🤝 Contributing
