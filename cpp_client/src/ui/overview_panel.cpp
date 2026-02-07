@@ -385,12 +385,49 @@ void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::sh
         // Determine if entity is a player (players have IDs starting with "player_")
         entry.is_player = (entry.entity_id.find("player_") == 0);
         
-        // Set standing based on faction and player status
-        // Players are neutral (0), NPCs are hostile (-5) by default
-        // TODO: Implement proper standings system with configurable values
-        entry.standing = entry.is_player ? 0 : -5;
+        // Calculate standing based on faction
+        entry.standing = CalculateStanding(entry.corporation, entry.is_player);
         
         m_entries.push_back(entry);
+    }
+    
+    // Apply filter and sort
+    ApplyFilter();
+    SortEntries();
+}
+
+int OverviewPanel::CalculateStanding(const std::string& faction, bool is_player) const {
+    // Players are neutral by default
+    if (is_player) {
+        return 0;
+    }
+    
+    // Pirate factions are hostile
+    if (faction == "Serpentis" || faction == "Guristas" || 
+        faction == "Blood Raiders" || faction == "Sansha's Nation" ||
+        faction == "Angel Cartel" || faction == "Mordu's Legion") {
+        return -5;
+    }
+    
+    // Rogue drones are hostile
+    if (faction == "Rogue Drones") {
+        return -5;
+    }
+    
+    // Empire factions and corporations are neutral by default
+    // In a full implementation, this would check player's standings with the faction
+    if (faction == "Caldari" || faction == "Gallente" || 
+        faction == "Amarr" || faction == "Minmatar") {
+        return 0;
+    }
+    
+    // CONCORD and other friendly factions
+    if (faction == "CONCORD" || faction == "ORE" || faction == "Sisters of EVE") {
+        return 5;
+    }
+    
+    // Unknown/neutral by default
+    return 0;
     }
     
     // Apply filter and sort

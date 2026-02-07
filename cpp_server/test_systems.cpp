@@ -1323,6 +1323,117 @@ void testSerializeDeserializeShipAndFaction() {
     assertTrue(lfac->faction_name == "Caldari", "Faction name preserved");
 }
 
+void testSerializeDeserializeStandings() {
+    std::cout << "\n=== Serialize/Deserialize Standings ===" << std::endl;
+
+    ecs::World world;
+    auto* entity = world.createEntity("player_1");
+
+    // Add Standings component with test data
+    auto standings = std::make_unique<components::Standings>();
+    standings->personal_standings["npc_pirate_001"] = -5.0f;
+    standings->personal_standings["player_friend"] = 8.5f;
+    standings->corporation_standings["Republic Fleet"] = 3.0f;
+    standings->corporation_standings["Serpentis"] = -7.5f;
+    standings->faction_standings["Minmatar"] = 2.5f;
+    standings->faction_standings["Amarr"] = -1.5f;
+    entity->addComponent(std::move(standings));
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    persistence.deserializeWorld(&world2, json);
+
+    auto* loaded = world2.getEntity("player_1");
+    assertTrue(loaded != nullptr, "Entity loaded");
+
+    auto* lstandings = loaded->getComponent<components::Standings>();
+    assertTrue(lstandings != nullptr, "Standings component loaded");
+    
+    // Check personal standings
+    assertTrue(lstandings->personal_standings.size() == 2, "Personal standings count preserved");
+    assertTrue(approxEqual(lstandings->personal_standings["npc_pirate_001"], -5.0f), "Personal standing (pirate) preserved");
+    assertTrue(approxEqual(lstandings->personal_standings["player_friend"], 8.5f), "Personal standing (friend) preserved");
+    
+    // Check corporation standings
+    assertTrue(lstandings->corporation_standings.size() == 2, "Corporation standings count preserved");
+    assertTrue(approxEqual(lstandings->corporation_standings["Republic Fleet"], 3.0f), "Corporation standing (Republic Fleet) preserved");
+    assertTrue(approxEqual(lstandings->corporation_standings["Serpentis"], -7.5f), "Corporation standing (Serpentis) preserved");
+    
+    // Check faction standings
+    assertTrue(lstandings->faction_standings.size() == 2, "Faction standings count preserved");
+    assertTrue(approxEqual(lstandings->faction_standings["Minmatar"], 2.5f), "Faction standing (Minmatar) preserved");
+    assertTrue(approxEqual(lstandings->faction_standings["Amarr"], -1.5f), "Faction standing (Amarr) preserved");
+}
+
+void testStandingsGetStanding() {
+    std::cout << "\n=== Standings getStandingWith ===" << std::endl;
+
+    ecs::World world;
+    auto* entity = world.createEntity("player_1");
+
+    auto standings = std::make_unique<components::Standings>();
+    standings->personal_standings["npc_001"] = -5.0f;
+    standings->corporation_standings["TestCorp"] = 3.0f;
+    standings->faction_standings["Caldari"] = 7.0f;
+    entity->addComponent(std::move(standings));
+
+    auto* comp = entity->getComponent<components::Standings>();
+    
+    // Personal standing has highest priority
+    float standing1 = comp->getStandingWith("npc_001", "", "");
+    assertTrue(approxEqual(standing1, -5.0f), "Personal standing returned");
+    
+    // Corporation standing used when no personal standing
+    float standing2 = comp->getStandingWith("npc_002", "TestCorp", "");
+    assertTrue(approxEqual(standing2, 3.0f), "Corporation standing returned");
+    
+    // Faction standing used when no personal or corp standing
+    float standing3 = comp->getStandingWith("npc_003", "OtherCorp", "Caldari");
+    assertTrue(approxEqual(standing3, 7.0f), "Faction standing returned");
+    
+    // Neutral (0) when no standing exists
+    float standing4 = comp->getStandingWith("unknown", "UnknownCorp", "UnknownFaction");
+    assertTrue(approxEqual(standing4, 0.0f), "Neutral standing for unknown entity");
+    
+    // Personal standing overrides corporation
+    comp->personal_standings["npc_004"] = 9.0f;
+    float standing5 = comp->getStandingWith("npc_004", "TestCorp", "");
+    assertTrue(approxEqual(standing5, 9.0f), "Personal standing overrides corporation");
+}
+
+void testStandingsModify() {
+    std::cout << "\n=== Standings modifyStanding ===" << std::endl;
+
+    std::map<std::string, float> test_standings;
+    
+    // Start with no standing (implicit 0)
+    components::Standings::modifyStanding(test_standings, "entity1", 2.5f);
+    assertTrue(approxEqual(test_standings["entity1"], 2.5f), "Standing increased from 0 to 2.5");
+    
+    // Increase existing standing
+    components::Standings::modifyStanding(test_standings, "entity1", 3.0f);
+    assertTrue(approxEqual(test_standings["entity1"], 5.5f), "Standing increased to 5.5");
+    
+    // Decrease standing
+    components::Standings::modifyStanding(test_standings, "entity1", -2.0f);
+    assertTrue(approxEqual(test_standings["entity1"], 3.5f), "Standing decreased to 3.5");
+    
+    // Clamp at maximum (10.0)
+    components::Standings::modifyStanding(test_standings, "entity1", 15.0f);
+    assertTrue(approxEqual(test_standings["entity1"], 10.0f), "Standing clamped at max (10.0)");
+    
+    // Clamp at minimum (-10.0)
+    components::Standings::modifyStanding(test_standings, "entity2", -20.0f);
+    assertTrue(approxEqual(test_standings["entity2"], -10.0f), "Standing clamped at min (-10.0)");
+    
+    // Negative adjustment from positive
+    test_standings["entity3"] = 5.0f;
+    components::Standings::modifyStanding(test_standings, "entity3", -8.0f);
+    assertTrue(approxEqual(test_standings["entity3"], -3.0f), "Standing went from +5 to -3");
+}
+
 void testSerializeDeserializeAIAndWeapon() {
     std::cout << "\n=== Serialize/Deserialize AI & Weapon ===" << std::endl;
 
@@ -1629,6 +1740,9 @@ int main() {
     testSerializeDeserializeBasicEntity();
     testSerializeDeserializeHealthCapacitor();
     testSerializeDeserializeShipAndFaction();
+    testSerializeDeserializeStandings();
+    testStandingsGetStanding();
+    testStandingsModify();
     testSerializeDeserializeAIAndWeapon();
     testSerializeDeserializePlayerComponent();
     testSerializeDeserializeMultipleEntities();

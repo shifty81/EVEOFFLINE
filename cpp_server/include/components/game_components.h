@@ -197,6 +197,89 @@ public:
 };
 
 /**
+ * @brief Personal standings with entities, corporations, and factions
+ * 
+ * Tracks relationships on a -10 to +10 scale:
+ * - Personal standings: Individual player/NPC relationships
+ * - Corporation standings: Corporation-level relationships
+ * - Faction standings: Faction-wide relationships
+ * 
+ * Standings affect:
+ * - Agent access (requires positive corp/faction standing)
+ * - NPC aggression (negative standings cause attacks)
+ * - Market taxes and broker fees
+ * - Mission rewards and LP gains
+ */
+class Standings : public ecs::Component {
+public:
+    // Personal standings with individual entities (player_id or npc_id)
+    std::map<std::string, float> personal_standings;
+    
+    // Corporation standings (corporation_name: standing)
+    std::map<std::string, float> corporation_standings;
+    
+    // Faction standings (faction_name: standing) 
+    // Duplicated from Faction component for convenience
+    std::map<std::string, float> faction_standings;
+    
+    /**
+     * @brief Get standing with an entity
+     * Checks personal, then corporation, then faction standings in order
+     * @return Standing value from -10 to +10, or 0 if no standing exists
+     */
+    float getStandingWith(const std::string& entity_id, 
+                         const std::string& entity_corp = "",
+                         const std::string& entity_faction = "") const {
+        // Check personal standing first (highest priority)
+        auto personal_it = personal_standings.find(entity_id);
+        if (personal_it != personal_standings.end()) {
+            return personal_it->second;
+        }
+        
+        // Check corporation standing
+        if (!entity_corp.empty()) {
+            auto corp_it = corporation_standings.find(entity_corp);
+            if (corp_it != corporation_standings.end()) {
+                return corp_it->second;
+            }
+        }
+        
+        // Check faction standing (lowest priority)
+        if (!entity_faction.empty()) {
+            auto faction_it = faction_standings.find(entity_faction);
+            if (faction_it != faction_standings.end()) {
+                return faction_it->second;
+            }
+        }
+        
+        return 0.0f;  // Neutral if no standing found
+    }
+    
+    /**
+     * @brief Modify standing with clamping to valid range
+     * @param standing_map The map to modify (personal, corp, or faction)
+     * @param key The entity/corp/faction identifier
+     * @param change Amount to change (can be negative)
+     */
+    static void modifyStanding(std::map<std::string, float>& standing_map,
+                              const std::string& key,
+                              float change) {
+        float current = 0.0f;
+        auto it = standing_map.find(key);
+        if (it != standing_map.end()) {
+            current = it->second;
+        }
+        
+        // Apply change and clamp to -10 to +10
+        float new_standing = current + change;
+        new_standing = std::max(-10.0f, std::min(10.0f, new_standing));
+        standing_map[key] = new_standing;
+    }
+    
+    COMPONENT_TYPE(Standings)
+};
+
+/**
  * @brief Solar system properties for wormhole space
  *
  * Tracks the wormhole class (C1-C6), active system-wide effects,

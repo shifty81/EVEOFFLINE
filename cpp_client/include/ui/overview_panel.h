@@ -152,7 +152,8 @@ private:
     // Distance formatting
     std::string FormatDistance(float meters) const;
     
-    // Standing colors
+    // Standing calculation and colors
+    int CalculateStanding(const std::string& faction, bool is_player) const;
     void GetStandingColor(int standing, float color[4]) const;
 };
 

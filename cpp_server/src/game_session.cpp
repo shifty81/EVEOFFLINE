@@ -495,6 +495,21 @@ std::string GameSession::createPlayerEntity(const std::string& player_id,
     faction->faction_name = tmpl ? tmpl->race : "Minmatar";
     entity->addComponent(std::move(faction));
 
+    // Standings - Initialize with default faction standings
+    auto standings = std::make_unique<components::Standings>();
+    // Set default standings for major factions (-10 to +10)
+    // Player starts neutral with most factions
+    standings->faction_standings["Caldari"] = 0.0f;
+    standings->faction_standings["Gallente"] = 0.0f;
+    standings->faction_standings["Amarr"] = 0.0f;
+    standings->faction_standings["Minmatar"] = 0.0f;
+    // Pirate factions are hostile by default
+    standings->faction_standings["Serpentis"] = -5.0f;
+    standings->faction_standings["Guristas"] = -5.0f;
+    standings->faction_standings["Blood Raiders"] = -5.0f;
+    standings->faction_standings["Sansha's Nation"] = -5.0f;
+    entity->addComponent(std::move(standings));
+
     // Capacitor
     auto cap = std::make_unique<components::Capacitor>();
     cap->capacitor_max = tmpl ? tmpl->capacitor : 250.0f;
@@ -548,6 +563,25 @@ void GameSession::spawnNPC(const std::string& id, const std::string& name,
     auto fac = std::make_unique<components::Faction>();
     fac->faction_name = faction_name;
     entity->addComponent(std::move(fac));
+
+    // Standings - NPCs have faction standings based on their faction
+    auto standings = std::make_unique<components::Standings>();
+    // Pirate NPCs are hostile to players
+    if (faction_name == "Serpentis" || faction_name == "Guristas" || 
+        faction_name == "Blood Raiders" || faction_name == "Sansha's Nation") {
+        // Hostile to all empire factions
+        standings->faction_standings["Caldari"] = -5.0f;
+        standings->faction_standings["Gallente"] = -5.0f;
+        standings->faction_standings["Amarr"] = -5.0f;
+        standings->faction_standings["Minmatar"] = -5.0f;
+    } else {
+        // Empire NPCs are neutral to players by default
+        standings->faction_standings["Caldari"] = 0.0f;
+        standings->faction_standings["Gallente"] = 0.0f;
+        standings->faction_standings["Amarr"] = 0.0f;
+        standings->faction_standings["Minmatar"] = 0.0f;
+    }
+    entity->addComponent(std::move(standings));
 
     auto ai = std::make_unique<components::AI>();
     ai->behavior = components::AI::Behavior::Aggressive;

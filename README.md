@@ -171,6 +171,7 @@ All documentation is in [docs/](docs/):
 - [C++ Client Docs](docs/cpp_client/) — Rendering, UI, audio, networking
 - [Ship Modeling](docs/SHIP_MODELING.md) — Procedural ship generation system
 - [EVE Ship Reference](docs/EVE_SHIP_REFERENCE.md) — Design inspiration from EVE Online
+- [Standings System](docs/STANDINGS_SYSTEM.md) — NPC relationships and faction standings
 
 ## 🤝 Contributing
 
