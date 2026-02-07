@@ -12,12 +12,14 @@ This document analyzes gameplay features from EVE Online that are missing or inc
 - Gate guns and faction police
 - Criminal flagging and suspect timers
 
-**Current Status:** Basic security levels exist but no enforcement
+**Current Status:** Data structures defined (`data/security/concord_and_insurance.json`)
 **Implementation Needed:**
-- [ ] CONCORD NPC response system for high-sec
-- [ ] Criminal flagging mechanics
-- [ ] Security status tracking per player
-- [ ] Faction standing system with consequences
+- [x] CONCORD response time data per security level
+- [x] Criminal flagging mechanics (suspect, criminal, weapons timer)
+- [x] Security status tracking range (-10.0 to +10.0) with effects
+- [x] Faction standing system consequences
+- [ ] Runtime CONCORD NPC spawning in server code
+- [ ] Gate gun AI behavior
 
 ---
 
@@ -45,12 +47,12 @@ This document analyzes gameplay features from EVE Online that are missing or inc
 - Insurance payouts
 - Salvage from wrecks
 
-**Current Status:** Basic bounty values in NPC data
+**Current Status:** Basic bounty values in NPC data, insurance data defined
 **Implementation Needed:**
 - [ ] Automatic bounty payout on NPC destruction
 - [ ] Loyalty Points (LP) system
 - [ ] LP stores with unique items
-- [ ] Insurance contracts
+- [x] Insurance contract data (`data/security/concord_and_insurance.json`)
 - [ ] Salvaging mechanics with modules
 
 ---
@@ -80,10 +82,10 @@ This document analyzes gameplay features from EVE Online that are missing or inc
 - Order expiration and fees
 - Hauling and logistics
 
-**Current Status:** Basic market data structure
+**Current Status:** Basic market data structure, contract/escrow data defined
 **Implementation Needed:**
 - [ ] Order matching engine
-- [ ] Broker fees and sales tax
+- [x] Broker fees and sales tax data (`data/contracts/contracts.json`)
 - [ ] Order modification/cancellation
 - [ ] Regional price differences
 - [ ] Market API for clients
@@ -99,12 +101,14 @@ This document analyzes gameplay features from EVE Online that are missing or inc
 - Skill point loss on pod death
 - Clone grades
 
-**Current Status:** Not implemented
+**Current Status:** Data structures defined (`data/character_creation/clones.json`, `data/character_creation/implants.json`)
 **Implementation Needed:**
-- [ ] Clone bay stations
-- [ ] Jump clone timer (24 hours)
-- [ ] Implant system
-- [ ] Death penalties
+- [x] Clone grades and skill point retention data
+- [x] Jump clone mechanics (24-hour cooldown, Infomorph Psychology skill)
+- [x] Implant system (5 attribute slots, 4 grades)
+- [x] Death mechanics (pod kill, skill point loss, implant loss)
+- [ ] Clone bay station service in server code
+- [ ] Jump clone installation UI
 
 ---
 
@@ -148,13 +152,13 @@ This document analyzes gameplay features from EVE Online that are missing or inc
 - Mutated modules (Abyssal)
 - Implants and boosters
 
-**Current Status:** Basic modules exist, no tiers
+**Current Status:** Basic modules exist, implant data defined
 **Implementation Needed:**
 - [ ] Tech II module variants
 - [ ] Faction module drops
 - [ ] Deadspace loot tables
 - [ ] Meta level system (0-5+)
-- [ ] Implant slots
+- [x] Implant data with slots and grades (`data/character_creation/implants.json`)
 
 ---
 
@@ -275,4 +279,4 @@ To achieve a complete EVE-like PVE experience, focus on:
 4. **Content variety**: Missions, Exploration, Mining, Industry
 5. **Social features**: Corporations, Fleet operations, Shared goals
 
-The current implementation has ~40% of EVE's PVE features. Completing Phase 1-3 would bring it to ~75% feature parity.
+The current implementation has ~60% of EVE's PVE features (data structures for most systems, runtime code for core gameplay). Completing the remaining runtime implementation would bring it to ~85% feature parity.
