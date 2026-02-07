@@ -35,7 +35,11 @@ void Server::initializeGameWorld() {
     game_world_->addSystem(std::make_unique<systems::CapacitorSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::ShieldRechargeSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::AISystem>(game_world_.get()));
-    game_world_->addSystem(std::make_unique<systems::TargetingSystem>(game_world_.get()));
+
+    auto targeting = std::make_unique<systems::TargetingSystem>(game_world_.get());
+    targeting_system_ = targeting.get();
+    game_world_->addSystem(std::move(targeting));
+
     game_world_->addSystem(std::make_unique<systems::MovementSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::WeaponSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::CombatSystem>(game_world_.get()));
@@ -110,7 +114,9 @@ bool Server::initialize() {
     initializeGameWorld();
     
     // Initialize game session (bridges networking ↔ ECS world)
-    game_session_ = std::make_unique<GameSession>(game_world_.get(), tcp_server_.get());
+    game_session_ = std::make_unique<GameSession>(
+        game_world_.get(), tcp_server_.get(), config_->data_path);
+    game_session_->setTargetingSystem(targeting_system_);
     game_session_->initialize();
     
     return true;

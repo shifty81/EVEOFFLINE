@@ -10,6 +10,7 @@
 #include "auth/whitelist.h"
 #include "ecs/world.h"
 #include "game_session.h"
+#include "systems/targeting_system.h"
 
 namespace eve {
 
@@ -44,6 +45,7 @@ private:
     std::unique_ptr<auth::Whitelist> whitelist_;
     std::unique_ptr<ecs::World> game_world_;
     std::unique_ptr<GameSession> game_session_;
+    systems::TargetingSystem* targeting_system_ = nullptr;
     
     std::atomic<bool> running_;
     

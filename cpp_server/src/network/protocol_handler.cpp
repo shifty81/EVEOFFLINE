@@ -18,6 +18,10 @@ void ProtocolHandler::initializeMessageTypes() {
     message_type_map_["command"] = MessageType::COMMAND;
     message_type_map_["spawn_entity"] = MessageType::SPAWN_ENTITY;
     message_type_map_["remove_entity"] = MessageType::REMOVE_ENTITY;
+    message_type_map_["target_lock"] = MessageType::TARGET_LOCK;
+    message_type_map_["target_unlock"] = MessageType::TARGET_UNLOCK;
+    message_type_map_["module_activate"] = MessageType::MODULE_ACTIVATE;
+    message_type_map_["module_deactivate"] = MessageType::MODULE_DEACTIVATE;
     message_type_map_["error"] = MessageType::ERROR;
 }
 
@@ -32,6 +36,10 @@ std::string ProtocolHandler::messageTypeToString(MessageType type) {
         case MessageType::COMMAND: return "command";
         case MessageType::SPAWN_ENTITY: return "spawn_entity";
         case MessageType::REMOVE_ENTITY: return "remove_entity";
+        case MessageType::TARGET_LOCK: return "target_lock";
+        case MessageType::TARGET_UNLOCK: return "target_unlock";
+        case MessageType::MODULE_ACTIVATE: return "module_activate";
+        case MessageType::MODULE_DEACTIVATE: return "module_deactivate";
         case MessageType::ERROR: return "error";
         default: return "unknown";
     }

@@ -13,6 +13,8 @@
 #include "systems/capacitor_system.h"
 #include "systems/shield_recharge_system.h"
 #include "systems/weapon_system.h"
+#include "systems/targeting_system.h"
+#include "data/ship_database.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -425,12 +427,190 @@ void testWeaponNoAutoFireIdleAI() {
     assertTrue(approxEqual(playerHealth->shield_hp, 100.0f), "Idle AI does not auto-fire");
 }
 
+// ==================== TargetingSystem Tests ====================
+
+void testTargetLockUnlock() {
+    std::cout << "\n=== Target Lock/Unlock ===" << std::endl;
+    
+    ecs::World world;
+    systems::TargetingSystem targetSys(&world);
+    
+    auto* ship1 = world.createEntity("ship1");
+    auto* target_comp = addComp<components::Target>(ship1);
+    auto* shipComp = addComp<components::Ship>(ship1);
+    shipComp->scan_resolution = 500.0f;
+    shipComp->max_locked_targets = 3;
+    shipComp->max_targeting_range = 50000.0f;
+    addComp<components::Position>(ship1);
+    
+    auto* npc = world.createEntity("npc1");
+    addComp<components::Position>(npc);
+    
+    bool result = targetSys.startLock("ship1", "npc1");
+    assertTrue(result, "Start lock succeeds");
+    assertTrue(!targetSys.isTargetLocked("ship1", "npc1"), "Not yet locked (in progress)");
+    
+    // Simulate enough time for the lock to complete
+    // lock_time = 1000 / 500 = 2 seconds
+    targetSys.update(3.0f);
+    assertTrue(targetSys.isTargetLocked("ship1", "npc1"), "Target locked after sufficient time");
+    
+    // Unlock
+    targetSys.unlockTarget("ship1", "npc1");
+    assertTrue(!targetSys.isTargetLocked("ship1", "npc1"), "Target unlocked");
+}
+
+void testTargetLockMaxTargets() {
+    std::cout << "\n=== Target Lock Max Targets ===" << std::endl;
+    
+    ecs::World world;
+    systems::TargetingSystem targetSys(&world);
+    
+    auto* ship1 = world.createEntity("ship1");
+    addComp<components::Target>(ship1);
+    auto* shipComp = addComp<components::Ship>(ship1);
+    shipComp->scan_resolution = 1000.0f;  // fast lock
+    shipComp->max_locked_targets = 2;
+    addComp<components::Position>(ship1);
+    
+    world.createEntity("t1");
+    addComp<components::Position>(world.getEntity("t1"));
+    world.createEntity("t2");
+    addComp<components::Position>(world.getEntity("t2"));
+    world.createEntity("t3");
+    addComp<components::Position>(world.getEntity("t3"));
+    
+    assertTrue(targetSys.startLock("ship1", "t1"), "Lock t1 succeeds");
+    assertTrue(targetSys.startLock("ship1", "t2"), "Lock t2 succeeds");
+    bool result = targetSys.startLock("ship1", "t3");
+    assertTrue(!result, "Lock t3 fails (max 2 targets)");
+}
+
+void testTargetLockNonexistent() {
+    std::cout << "\n=== Target Lock Nonexistent ===" << std::endl;
+    
+    ecs::World world;
+    systems::TargetingSystem targetSys(&world);
+    
+    auto* ship1 = world.createEntity("ship1");
+    addComp<components::Target>(ship1);
+    addComp<components::Ship>(ship1);
+    addComp<components::Position>(ship1);
+    
+    bool result = targetSys.startLock("ship1", "ghost");
+    assertTrue(!result, "Lock nonexistent target fails");
+    
+    result = targetSys.startLock("ghost", "ship1");
+    assertTrue(!result, "Lock from nonexistent entity fails");
+}
+
+// ==================== ShipDatabase Tests ====================
+
+void testShipDatabaseLoadFromDirectory() {
+    std::cout << "\n=== ShipDatabase Load From Directory ===" << std::endl;
+    
+    data::ShipDatabase db;
+    int count = db.loadFromDirectory("../data");
+    
+    // If data/ isn't at ../data (depends on CWD), try other paths
+    if (count == 0) {
+        count = db.loadFromDirectory("data");
+    }
+    if (count == 0) {
+        count = db.loadFromDirectory("../../data");
+    }
+    
+    assertTrue(count > 0, "Loaded at least 1 ship from data directory");
+    assertTrue(db.getShipCount() > 0, "Ship count > 0");
+}
+
+void testShipDatabaseGetShip() {
+    std::cout << "\n=== ShipDatabase Get Ship ===" << std::endl;
+    
+    data::ShipDatabase db;
+    // Try multiple paths
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    const data::ShipTemplate* rifter = db.getShip("rifter");
+    if (rifter) {
+        assertTrue(rifter->name == "Rifter", "Rifter name correct");
+        assertTrue(rifter->ship_class == "Frigate", "Rifter class is Frigate");
+        assertTrue(rifter->race == "Minmatar", "Rifter race is Minmatar");
+        assertTrue(rifter->shield_hp > 0.0f, "Rifter has shield HP");
+        assertTrue(rifter->armor_hp > 0.0f, "Rifter has armor HP");
+        assertTrue(rifter->hull_hp > 0.0f, "Rifter has hull HP");
+        assertTrue(rifter->cpu > 0.0f, "Rifter has CPU");
+        assertTrue(rifter->powergrid > 0.0f, "Rifter has powergrid");
+        assertTrue(rifter->max_velocity > 0.0f, "Rifter has velocity");
+        assertTrue(rifter->scan_resolution > 0.0f, "Rifter has scan resolution");
+        assertTrue(rifter->max_locked_targets > 0, "Rifter has max locked targets");
+    } else {
+        assertTrue(false, "Rifter template found in database");
+    }
+    
+    const data::ShipTemplate* missing = db.getShip("nonexistent_ship");
+    assertTrue(missing == nullptr, "Nonexistent ship returns nullptr");
+}
+
+void testShipDatabaseResistances() {
+    std::cout << "\n=== ShipDatabase Resistances ===" << std::endl;
+    
+    data::ShipDatabase db;
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    const data::ShipTemplate* rifter = db.getShip("rifter");
+    if (rifter) {
+        // Rifter shield: em=0, thermal=20, kinetic=40, explosive=50 (in JSON)
+        // Converted to fractions: 0.0, 0.20, 0.40, 0.50
+        assertTrue(approxEqual(rifter->shield_resists.em, 0.0f), "Shield EM resist = 0%");
+        assertTrue(approxEqual(rifter->shield_resists.thermal, 0.20f), "Shield thermal resist = 20%");
+        assertTrue(approxEqual(rifter->shield_resists.kinetic, 0.40f), "Shield kinetic resist = 40%");
+        assertTrue(approxEqual(rifter->shield_resists.explosive, 0.50f), "Shield explosive resist = 50%");
+        
+        // Armor: em=60, thermal=35, kinetic=25, explosive=10
+        assertTrue(approxEqual(rifter->armor_resists.em, 0.60f), "Armor EM resist = 60%");
+        assertTrue(approxEqual(rifter->armor_resists.thermal, 0.35f), "Armor thermal resist = 35%");
+    } else {
+        assertTrue(false, "Rifter template found for resistance check");
+    }
+}
+
+void testShipDatabaseGetShipIds() {
+    std::cout << "\n=== ShipDatabase Get Ship IDs ===" << std::endl;
+    
+    data::ShipDatabase db;
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    auto ids = db.getShipIds();
+    assertTrue(ids.size() > 0, "getShipIds returns non-empty list");
+    
+    // Check that 'rifter' is in the list
+    bool found = false;
+    for (const auto& id : ids) {
+        if (id == "rifter") found = true;
+    }
+    assertTrue(found, "rifter is in ship ID list");
+}
+
 // ==================== Main ====================
 
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
-    std::cout << "CapacitorSystem, ShieldRechargeSystem, WeaponSystem" << std::endl;
+    std::cout << "CapacitorSystem, ShieldRechargeSystem, WeaponSystem," << std::endl;
+    std::cout << "TargetingSystem, ShipDatabase" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -451,6 +631,17 @@ int main() {
     testWeaponDamageResistances();
     testWeaponAutoFireAI();
     testWeaponNoAutoFireIdleAI();
+    
+    // Targeting system tests
+    testTargetLockUnlock();
+    testTargetLockMaxTargets();
+    testTargetLockNonexistent();
+    
+    // ShipDatabase tests
+    testShipDatabaseLoadFromDirectory();
+    testShipDatabaseGetShip();
+    testShipDatabaseResistances();
+    testShipDatabaseGetShipIds();
     
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

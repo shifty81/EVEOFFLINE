@@ -21,6 +21,10 @@ enum class MessageType {
     COMMAND,
     SPAWN_ENTITY,
     REMOVE_ENTITY,
+    TARGET_LOCK,
+    TARGET_UNLOCK,
+    MODULE_ACTIVATE,
+    MODULE_DEACTIVATE,
     ERROR
 };
 

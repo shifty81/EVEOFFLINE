@@ -1,5 +1,6 @@
 #include "game_session.h"
 #include "components/game_components.h"
+#include "systems/targeting_system.h"
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -40,9 +41,12 @@ static std::string escapeJsonString(const std::string& input) {
 // Construction / Initialization
 // ---------------------------------------------------------------------------
 
-GameSession::GameSession(ecs::World* world, network::TCPServer* tcp_server)
+GameSession::GameSession(ecs::World* world, network::TCPServer* tcp_server,
+                         const std::string& data_path)
     : world_(world)
     , tcp_server_(tcp_server) {
+    // Load ship data from JSON
+    ship_db_.loadFromDirectory(data_path);
 }
 
 void GameSession::initialize() {
@@ -53,11 +57,18 @@ void GameSession::initialize() {
         }
     );
 
+    // Cache a pointer to the TargetingSystem so we can call startLock/unlockTarget
+    for (auto* entity : world_->getAllEntities()) { (void)entity; }
+    // The TargetingSystem is set externally or looked up via the world
+    // We store it via setTargetingSystem() called from server.cpp
+
     // Spawn a handful of NPC enemies so the world isn't empty
     spawnInitialNPCs();
 
     std::cout << "[GameSession] Initialized – "
-              << world_->getEntityCount() << " entities in world" << std::endl;
+              << world_->getEntityCount() << " entities in world"
+              << ", " << ship_db_.getShipCount() << " ship templates loaded"
+              << std::endl;
 }
 
 // ---------------------------------------------------------------------------
@@ -106,6 +117,18 @@ void GameSession::onClientMessage(const network::ClientConnection& client,
             break;
         case network::MessageType::CHAT:
             handleChat(client, data);
+            break;
+        case network::MessageType::TARGET_LOCK:
+            handleTargetLock(client, data);
+            break;
+        case network::MessageType::TARGET_UNLOCK:
+            handleTargetUnlock(client, data);
+            break;
+        case network::MessageType::MODULE_ACTIVATE:
+            handleModuleActivate(client, data);
+            break;
+        case network::MessageType::MODULE_DEACTIVATE:
+            handleModuleDeactivate(client, data);
             break;
         default:
             break;
@@ -387,12 +410,16 @@ std::string GameSession::buildSpawnEntity(const std::string& entity_id) const {
 // ---------------------------------------------------------------------------
 
 std::string GameSession::createPlayerEntity(const std::string& player_id,
-                                            const std::string& character_name) {
+                                            const std::string& character_name,
+                                            const std::string& ship_type) {
     uint32_t id_num = next_entity_id_++;
     std::string entity_id = "player_" + std::to_string(id_num);
 
     auto* entity = world_->createEntity(entity_id);
     if (!entity) return entity_id;
+
+    // Try to load ship stats from database; fall back to defaults
+    const data::ShipTemplate* tmpl = ship_db_.getShip(ship_type);
 
     // Position – spawn near origin with spacing per player
     auto pos = std::make_unique<components::Position>();
@@ -403,26 +430,47 @@ std::string GameSession::createPlayerEntity(const std::string& player_id,
 
     // Velocity
     auto vel = std::make_unique<components::Velocity>();
-    vel->max_speed = 300.0f;
+    vel->max_speed = tmpl ? tmpl->max_velocity : 300.0f;
     entity->addComponent(std::move(vel));
 
-    // Health – Rifter-class frigate stats
+    // Health
     auto hp = std::make_unique<components::Health>();
-    hp->shield_hp  = hp->shield_max  = 450.0f;
-    hp->armor_hp   = hp->armor_max   = 350.0f;
-    hp->hull_hp    = hp->hull_max    = 300.0f;
-    hp->shield_recharge_rate = 3.5f;
+    hp->shield_hp  = hp->shield_max  = tmpl ? tmpl->shield_hp : 450.0f;
+    hp->armor_hp   = hp->armor_max   = tmpl ? tmpl->armor_hp  : 350.0f;
+    hp->hull_hp    = hp->hull_max    = tmpl ? tmpl->hull_hp   : 300.0f;
+    hp->shield_recharge_rate = tmpl ? (tmpl->shield_hp / tmpl->shield_recharge_time) : 3.5f;
+    if (tmpl) {
+        hp->shield_em_resist        = tmpl->shield_resists.em;
+        hp->shield_thermal_resist   = tmpl->shield_resists.thermal;
+        hp->shield_kinetic_resist   = tmpl->shield_resists.kinetic;
+        hp->shield_explosive_resist = tmpl->shield_resists.explosive;
+        hp->armor_em_resist         = tmpl->armor_resists.em;
+        hp->armor_thermal_resist    = tmpl->armor_resists.thermal;
+        hp->armor_kinetic_resist    = tmpl->armor_resists.kinetic;
+        hp->armor_explosive_resist  = tmpl->armor_resists.explosive;
+        hp->hull_em_resist          = tmpl->hull_resists.em;
+        hp->hull_thermal_resist     = tmpl->hull_resists.thermal;
+        hp->hull_kinetic_resist     = tmpl->hull_resists.kinetic;
+        hp->hull_explosive_resist   = tmpl->hull_resists.explosive;
+    }
     entity->addComponent(std::move(hp));
 
     // Ship info
     auto ship = std::make_unique<components::Ship>();
-    ship->ship_name  = "Rifter";
-    ship->ship_class = "Frigate";
-    ship->ship_type  = "Frigate";
-    ship->race       = "Minmatar";
-    ship->cpu_max    = 125.0f;
-    ship->powergrid_max = 37.0f;
+    ship->ship_name  = tmpl ? tmpl->name       : "Rifter";
+    ship->ship_class = tmpl ? tmpl->ship_class  : "Frigate";
+    ship->ship_type  = tmpl ? tmpl->ship_class  : "Frigate";
+    ship->race       = tmpl ? tmpl->race        : "Minmatar";
+    ship->cpu_max    = tmpl ? tmpl->cpu          : 125.0f;
+    ship->powergrid_max = tmpl ? tmpl->powergrid : 37.0f;
+    ship->signature_radius    = tmpl ? tmpl->signature_radius    : 35.0f;
+    ship->scan_resolution     = tmpl ? tmpl->scan_resolution     : 400.0f;
+    ship->max_locked_targets  = tmpl ? tmpl->max_locked_targets  : 4;
+    ship->max_targeting_range = tmpl ? tmpl->max_targeting_range : 18000.0f;
     entity->addComponent(std::move(ship));
+
+    // Target component (for target locking)
+    entity->addComponent(std::make_unique<components::Target>());
 
     // Player tag
     auto player = std::make_unique<components::Player>();
@@ -432,14 +480,14 @@ std::string GameSession::createPlayerEntity(const std::string& player_id,
 
     // Faction
     auto faction = std::make_unique<components::Faction>();
-    faction->faction_name = "Minmatar";
+    faction->faction_name = tmpl ? tmpl->race : "Minmatar";
     entity->addComponent(std::move(faction));
 
     // Capacitor
     auto cap = std::make_unique<components::Capacitor>();
-    cap->capacitor_max = 250.0f;
-    cap->capacitor     = 250.0f;
-    cap->recharge_rate = 3.0f;
+    cap->capacitor_max = tmpl ? tmpl->capacitor : 250.0f;
+    cap->capacitor     = cap->capacitor_max;
+    cap->recharge_rate = tmpl ? (tmpl->capacitor / tmpl->capacitor_recharge_time) : 3.0f;
     entity->addComponent(std::move(cap));
 
     return entity_id;
@@ -503,6 +551,135 @@ void GameSession::spawnNPC(const std::string& id, const std::string& name,
 
     std::cout << "[GameSession] Spawned NPC: " << name
               << " (" << faction_name << " " << ship_name << ")" << std::endl;
+}
+
+// ---------------------------------------------------------------------------
+// TARGET_LOCK handler
+// ---------------------------------------------------------------------------
+
+void GameSession::handleTargetLock(const network::ClientConnection& client,
+                                   const std::string& data) {
+    std::string entity_id;
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        auto it = players_.find(static_cast<int>(client.socket));
+        if (it == players_.end()) return;
+        entity_id = it->second.entity_id;
+    }
+
+    std::string target_id = extractJsonString(data, "target_id");
+    if (target_id.empty()) return;
+
+    bool success = false;
+    if (targeting_system_) {
+        success = targeting_system_->startLock(entity_id, target_id);
+    }
+
+    // Send acknowledgement to the requesting client
+    std::ostringstream ack;
+    ack << "{\"type\":\"target_lock_ack\",\"data\":{"
+        << "\"success\":" << (success ? "true" : "false") << ","
+        << "\"target_id\":\"" << escapeJsonString(target_id) << "\""
+        << "}}";
+    tcp_server_->sendToClient(client, ack.str());
+}
+
+// ---------------------------------------------------------------------------
+// TARGET_UNLOCK handler
+// ---------------------------------------------------------------------------
+
+void GameSession::handleTargetUnlock(const network::ClientConnection& client,
+                                     const std::string& data) {
+    std::string entity_id;
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        auto it = players_.find(static_cast<int>(client.socket));
+        if (it == players_.end()) return;
+        entity_id = it->second.entity_id;
+    }
+
+    std::string target_id = extractJsonString(data, "target_id");
+    if (target_id.empty()) return;
+
+    if (targeting_system_) {
+        targeting_system_->unlockTarget(entity_id, target_id);
+    }
+
+    // Send acknowledgement
+    std::ostringstream ack;
+    ack << "{\"type\":\"target_unlock_ack\",\"data\":{"
+        << "\"target_id\":\"" << escapeJsonString(target_id) << "\""
+        << "}}";
+    tcp_server_->sendToClient(client, ack.str());
+}
+
+// ---------------------------------------------------------------------------
+// MODULE_ACTIVATE handler
+// ---------------------------------------------------------------------------
+
+void GameSession::handleModuleActivate(const network::ClientConnection& client,
+                                       const std::string& data) {
+    std::string entity_id;
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        auto it = players_.find(static_cast<int>(client.socket));
+        if (it == players_.end()) return;
+        entity_id = it->second.entity_id;
+    }
+
+    int slot_index = static_cast<int>(extractJsonFloat(data, "\"slot_index\":", -1.0f));
+    std::string target_id = extractJsonString(data, "target_id");
+
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return;
+
+    // For now, module activation triggers the weapon system for high-slot weapons.
+    // Future: full module system with mid/low slot modules, heat, etc.
+    auto* weapon = entity->getComponent<components::Weapon>();
+    bool success = false;
+
+    if (weapon && !target_id.empty()) {
+        // Delegate to WeaponSystem-style logic (inline check)
+        if (weapon->cooldown <= 0.0f && weapon->ammo_count > 0) {
+            auto* cap = entity->getComponent<components::Capacitor>();
+            if (!cap || cap->capacitor >= weapon->capacitor_cost) {
+                success = true;
+                // The actual firing happens through the WeaponSystem on the next tick
+                // We just validate that the activation request is valid
+            }
+        }
+    }
+
+    std::ostringstream ack;
+    ack << "{\"type\":\"module_activate_ack\",\"data\":{"
+        << "\"success\":" << (success ? "true" : "false") << ","
+        << "\"slot_index\":" << slot_index
+        << "}}";
+    tcp_server_->sendToClient(client, ack.str());
+}
+
+// ---------------------------------------------------------------------------
+// MODULE_DEACTIVATE handler
+// ---------------------------------------------------------------------------
+
+void GameSession::handleModuleDeactivate(const network::ClientConnection& client,
+                                         const std::string& data) {
+    std::string entity_id;
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        auto it = players_.find(static_cast<int>(client.socket));
+        if (it == players_.end()) return;
+        entity_id = it->second.entity_id;
+    }
+
+    int slot_index = static_cast<int>(extractJsonFloat(data, "\"slot_index\":", -1.0f));
+
+    // Module deactivation acknowledged (future: stop active module cycles)
+    std::ostringstream ack;
+    ack << "{\"type\":\"module_deactivate_ack\",\"data\":{"
+        << "\"slot_index\":" << slot_index
+        << "}}";
+    tcp_server_->sendToClient(client, ack.str());
 }
 
 // ---------------------------------------------------------------------------
