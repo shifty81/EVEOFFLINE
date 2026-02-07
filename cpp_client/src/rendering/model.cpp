@@ -125,7 +125,7 @@ bool Model::loadOBJ(const std::string& path) {
                 // Color (default white, or from material)
                 vertex.color = glm::vec3(1.0f, 1.0f, 1.0f);
                 if (!materials.empty() && shapes[s].mesh.material_ids[f] >= 0) {
-                    int mat_id = shapes[s].mesh.material_ids[f];
+                    size_t mat_id = static_cast<size_t>(shapes[s].mesh.material_ids[f]);
                     if (mat_id < materials.size()) {
                         vertex.color = glm::vec3(
                             materials[mat_id].diffuse[0],
