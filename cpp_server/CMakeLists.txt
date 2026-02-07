@@ -52,6 +52,7 @@ set(SERVER_SOURCES
     src/systems/shield_recharge_system.cpp
     src/systems/weapon_system.cpp
     src/systems/wormhole_system.cpp
+    src/systems/fleet_system.cpp
     src/data/ship_database.cpp
     src/data/wormhole_database.cpp
 )
@@ -78,6 +79,7 @@ set(SERVER_HEADERS
     include/systems/shield_recharge_system.h
     include/systems/weapon_system.h
     include/systems/wormhole_system.h
+    include/systems/fleet_system.h
     include/data/ship_database.h
     include/data/wormhole_database.h
 )
@@ -167,6 +169,7 @@ if(BUILD_TESTS)
         src/data/ship_database.cpp
         src/data/wormhole_database.cpp
         src/systems/wormhole_system.cpp
+        src/systems/fleet_system.cpp
     )
 
     add_executable(test_systems
