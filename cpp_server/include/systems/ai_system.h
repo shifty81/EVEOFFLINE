@@ -27,8 +27,10 @@ private:
      * Idle behavior state
      * 
      * NPC waits and scans for targets. If a player is detected within detection
-     * range (typically 50km), transitions to approach state. NPCs in this state
-     * have no velocity and remain stationary.
+     * range, transitions to approach state. NPCs in this state have no velocity
+     * and remain stationary.
+     * 
+     * Detection ranges are configured per-NPC in the AIComponent.
      * 
      * @param entity The NPC entity to update
      */
@@ -38,8 +40,10 @@ private:
      * Approach behavior state
      * 
      * NPC moves toward target at maximum velocity. Once within preferred orbit
-     * range (typically 10-15km for small ships, 20-30km for larger), transitions
-     * to orbit state. Uses simple direct-line movement without collision avoidance.
+     * range, transitions to orbit state. Uses simple direct-line movement
+     * without collision avoidance.
+     * 
+     * Preferred orbit ranges vary by NPC configuration and ship class.
      * 
      * @param entity The NPC entity to update
      */
@@ -53,10 +57,12 @@ private:
      * range, may transition back to approach. This is the primary combat state
      * where NPCs will continuously fire weapons.
      * 
-     * Orbit distances by ship class:
-     * - Frigates: ~10km
-     * - Cruisers: ~20km
-     * - Battleships: ~30km
+     * Typical orbit distances by ship class:
+     * - Frigates: ~10km (close-range brawlers)
+     * - Cruisers: ~20km (medium-range combatants)
+     * - Battleships: ~30km (long-range artillery)
+     * 
+     * Actual distances are configured per-NPC in the AIComponent.
      * 
      * @param entity The NPC entity to update
      */
@@ -67,7 +73,8 @@ private:
      * 
      * NPC actively engages target with weapons while maintaining orbit. Triggers
      * weapon activation when in optimal range and manages target locking. If
-     * NPC health drops below flee threshold (typically 25%), transitions to flee.
+     * NPC health drops below flee threshold (configured in AIComponent),
+     * transitions to flee state.
      * 
      * @param entity The NPC entity to update
      */

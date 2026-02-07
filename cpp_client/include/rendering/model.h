@@ -27,7 +27,7 @@ struct FactionColors {
  * visual characteristics based on EVE Online's design language.
  * 
  * Features:
- * - Procedural generation for 49+ ship types across 10 classes (frigates to titans)
+ * - Procedural generation for all ship classes (frigates to titans)
  * - Faction-specific color schemes and design patterns for 7 factions
  * - Model caching to prevent duplicate geometry generation
  * - Support for stations and asteroids
