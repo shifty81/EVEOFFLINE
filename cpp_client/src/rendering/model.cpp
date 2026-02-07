@@ -515,6 +515,230 @@ FactionColors Model::getFactionColors(const std::string& faction) {
     };
 }
 
+// ==================== Enhanced Procedural Detail Generation ====================
+
+/**
+ * Get design traits based on faction and ship class
+ */
+ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::string& shipClass) {
+    ShipDesignTraits traits;
+    
+    // Determine faction design style
+    if (faction.find("Caldari") != std::string::npos) {
+        traits.style = ShipDesignTraits::DesignStyle::CALDARI_BLOCKY;
+        traits.isBlocky = true;
+        traits.isOrganic = false;
+        traits.isAsymmetric = false;
+        traits.hasSpires = false;
+        traits.hasExposedFramework = false;
+        traits.asymmetryFactor = 0.0f;
+    } else if (faction.find("Amarr") != std::string::npos) {
+        traits.style = ShipDesignTraits::DesignStyle::AMARR_ORNATE;
+        traits.hasSpires = true;
+        traits.isBlocky = false;
+        traits.isOrganic = false;
+        traits.isAsymmetric = false;
+        traits.hasExposedFramework = false;
+        traits.asymmetryFactor = 0.0f;
+    } else if (faction.find("Gallente") != std::string::npos) {
+        traits.style = ShipDesignTraits::DesignStyle::GALLENTE_ORGANIC;
+        traits.isOrganic = true;
+        traits.isBlocky = false;
+        traits.isAsymmetric = false;
+        traits.hasSpires = false;
+        traits.hasExposedFramework = false;
+        traits.asymmetryFactor = 0.0f;
+    } else if (faction.find("Minmatar") != std::string::npos) {
+        traits.style = ShipDesignTraits::DesignStyle::MINMATAR_ASYMMETRIC;
+        traits.isAsymmetric = true;
+        traits.hasExposedFramework = true;
+        traits.isBlocky = false;
+        traits.isOrganic = false;
+        traits.hasSpires = false;
+        traits.asymmetryFactor = 0.3f;
+    } else {
+        // Default traits for unknown factions
+        traits.style = ShipDesignTraits::DesignStyle::CALDARI_BLOCKY;
+        traits.isBlocky = false;
+        traits.isOrganic = false;
+        traits.isAsymmetric = false;
+        traits.hasSpires = false;
+        traits.hasExposedFramework = false;
+        traits.asymmetryFactor = 0.0f;
+    }
+    
+    // Set weapon hardpoints based on ship class
+    if (shipClass.find("Frigate") != std::string::npos) {
+        traits.turretHardpoints = 2;
+        traits.missileHardpoints = 0;
+        traits.droneHardpoints = 0;
+        traits.engineCount = 2;
+        traits.hasLargeEngines = false;
+        traits.detailScale = 1.0f;
+    } else if (shipClass.find("Destroyer") != std::string::npos) {
+        traits.turretHardpoints = 4;
+        traits.missileHardpoints = 0;
+        traits.droneHardpoints = 0;
+        traits.engineCount = 2;
+        traits.hasLargeEngines = false;
+        traits.detailScale = 1.2f;
+    } else if (shipClass.find("Cruiser") != std::string::npos) {
+        traits.turretHardpoints = 4;
+        traits.missileHardpoints = 2;
+        traits.droneHardpoints = 1;
+        traits.engineCount = 3;
+        traits.hasLargeEngines = false;
+        traits.detailScale = 1.5f;
+    } else if (shipClass.find("Battlecruiser") != std::string::npos) {
+        traits.turretHardpoints = 6;
+        traits.missileHardpoints = 2;
+        traits.droneHardpoints = 2;
+        traits.engineCount = 4;
+        traits.hasLargeEngines = true;
+        traits.detailScale = 2.0f;
+    } else if (shipClass.find("Battleship") != std::string::npos) {
+        traits.turretHardpoints = 8;
+        traits.missileHardpoints = 4;
+        traits.droneHardpoints = 2;
+        traits.engineCount = 6;
+        traits.hasLargeEngines = true;
+        traits.detailScale = 2.5f;
+    } else {
+        // Defaults
+        traits.turretHardpoints = 2;
+        traits.missileHardpoints = 0;
+        traits.droneHardpoints = 0;
+        traits.engineCount = 2;
+        traits.hasLargeEngines = false;
+        traits.detailScale = 1.0f;
+    }
+    
+    return traits;
+}
+
+/**
+ * Add weapon hardpoint geometry (turret mounts)
+ */
+void Model::addWeaponHardpoints(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                                 float posZ, float offsetX, float offsetY, int count, const glm::vec3& color) {
+    float hardpointSize = 0.15f;
+    int startIdx = vertices.size();
+    
+    for (int i = 0; i < count; ++i) {
+        float side = (i % 2 == 0) ? 1.0f : -1.0f;
+        float xPos = offsetX * side;
+        float yPos = offsetY;
+        
+        // Create small turret mount geometry
+        vertices.push_back({{posZ, xPos, yPos}, {0.0f, side, 0.0f}, {}, color});
+        vertices.push_back({{posZ + hardpointSize, xPos, yPos}, {side, 0.0f, 0.0f}, {}, color});
+        vertices.push_back({{posZ, xPos, yPos + hardpointSize}, {0.0f, 0.0f, 1.0f}, {}, color});
+        
+        // Add triangle
+        if (vertices.size() >= 3) {
+            indices.push_back(startIdx + i * 3);
+            indices.push_back(startIdx + i * 3 + 1);
+            indices.push_back(startIdx + i * 3 + 2);
+        }
+    }
+}
+
+/**
+ * Add engine exhaust detail geometry
+ */
+void Model::addEngineDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                            float posZ, float width, float height, int count, const glm::vec3& color) {
+    float exhaustSize = 0.2f;
+    int startIdx = vertices.size();
+    
+    for (int i = 0; i < count; ++i) {
+        float angle = (i * 2.0f * PI) / count;
+        float xOffset = width * 0.5f * std::cos(angle);
+        float yOffset = height * 0.5f * std::sin(angle);
+        
+        // Engine exhaust cone
+        vertices.push_back({{posZ, xOffset, yOffset}, {-1.0f, 0.0f, 0.0f}, {}, color});
+        vertices.push_back({{posZ - exhaustSize, xOffset * 0.7f, yOffset * 0.7f}, {-1.0f, 0.0f, 0.0f}, {}, color});
+        vertices.push_back({{posZ - exhaustSize, xOffset * 1.3f, yOffset * 1.3f}, {-1.0f, 0.0f, 0.0f}, {}, color});
+        
+        if (vertices.size() >= 3) {
+            indices.push_back(startIdx + i * 3);
+            indices.push_back(startIdx + i * 3 + 1);
+            indices.push_back(startIdx + i * 3 + 2);
+        }
+    }
+}
+
+/**
+ * Add hull panel lines for detail
+ */
+void Model::addHullPanelLines(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                              float startZ, float endZ, float width, const glm::vec3& color) {
+    float panelWidth = 0.05f;
+    int panelCount = static_cast<int>((startZ - endZ) / 1.0f);
+    int startIdx = vertices.size();
+    
+    for (int i = 0; i < panelCount; ++i) {
+        float z = startZ - i * 1.0f;
+        
+        // Add subtle panel line geometry
+        vertices.push_back({{z, width, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, color * 0.9f});
+        vertices.push_back({{z, -width, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, color * 0.9f});
+        vertices.push_back({{z - panelWidth, width, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, color * 0.8f});
+        
+        if (i < panelCount - 1 && vertices.size() >= 3) {
+            indices.push_back(startIdx + i * 3);
+            indices.push_back(startIdx + i * 3 + 1);
+            indices.push_back(startIdx + i * 3 + 2);
+        }
+    }
+}
+
+/**
+ * Add Amarr-style spire detail
+ */
+void Model::addSpireDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                           float posZ, float height, const glm::vec3& color) {
+    int startIdx = vertices.size();
+    
+    // Central spire point
+    vertices.push_back({{posZ, 0.0f, height * 1.5f}, {0.0f, 0.0f, 1.0f}, {}, color});
+    
+    // Base of spire
+    vertices.push_back({{posZ - 0.3f, 0.2f, height}, {0.0f, 1.0f, 0.3f}, {}, color * 0.9f});
+    vertices.push_back({{posZ - 0.3f, -0.2f, height}, {0.0f, -1.0f, 0.3f}, {}, color * 0.9f});
+    vertices.push_back({{posZ - 0.3f, 0.0f, height * 0.8f}, {0.0f, 0.0f, 0.9f}, {}, color * 0.85f});
+    
+    // Create spire triangles
+    indices.push_back(startIdx);
+    indices.push_back(startIdx + 1);
+    indices.push_back(startIdx + 2);
+    
+    indices.push_back(startIdx);
+    indices.push_back(startIdx + 2);
+    indices.push_back(startIdx + 3);
+}
+
+/**
+ * Add Minmatar-style asymmetric detail
+ */
+void Model::addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
+                                float posZ, float offset, const glm::vec3& color) {
+    int startIdx = vertices.size();
+    
+    // Asymmetric protruding structure
+    vertices.push_back({{posZ, offset, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, color});
+    vertices.push_back({{posZ - 0.4f, offset * 1.3f, 0.1f}, {0.5f, 1.0f, 0.1f}, {}, color * 0.9f});
+    vertices.push_back({{posZ - 0.4f, offset * 0.7f, -0.1f}, {0.5f, 0.7f, -0.1f}, {}, color * 0.85f});
+    
+    // Create triangle
+    indices.push_back(startIdx);
+    indices.push_back(startIdx + 1);
+    indices.push_back(startIdx + 2);
+}
+
+// ==================== Ship Model Creation Functions ====================
+
 // Ship model creation functions
 std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
     auto model = std::make_unique<Model>();
@@ -574,6 +798,18 @@ std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
     // Engine exhaust points
     vertices.push_back({{-length * 0.3f, width * 0.4f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
     vertices.push_back({{-length * 0.3f, -width * 0.4f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
+
+    // Add enhanced details - weapon hardpoints on forward hull
+    addWeaponHardpoints(vertices, indices, length * 0.6f, width * 0.5f, height * 0.2f, 2, 
+                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
+    
+    // Add engine glow detail at rear
+    addEngineDetail(vertices, indices, -length * 0.3f, width * 0.5f, height * 0.3f, 2,
+                    glm::vec3(colors.accent.r * 1.2f, colors.accent.g * 1.2f, colors.accent.b * 1.5f));
+    
+    // Add hull panel lines for detail
+    addHullPanelLines(vertices, indices, length * 0.5f, 0.0f, width * 0.8f,
+                     glm::vec3(colors.primary.r, colors.primary.g, colors.primary.b));
 
     // Create triangles connecting vertices
     for (unsigned int i = 1; i < vertices.size() - 2; i += 2) {
