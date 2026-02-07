@@ -1191,9 +1191,8 @@ void testFleetMembershipComponent() {
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
-    std::cout << "CapacitorSystem, ShieldRechargeSystem, WeaponSystem," << std::endl;
-    std::cout << "TargetingSystem, ShipDatabase, WormholeDatabase, WormholeSystem," << std::endl;
-    std::cout << "FleetSystem" << std::endl;
+    std::cout << "Capacitor, Shield, Weapon, Targeting," << std::endl;
+    std::cout << "ShipDB, WormholeDB, Wormhole, Fleet" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests

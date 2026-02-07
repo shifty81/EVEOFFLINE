@@ -107,7 +107,7 @@ bool FleetSystem::addMember(const std::string& fleet_id,
     info.role = "Member";
 
     auto* player = entity->getComponent<components::Player>();
-    if (player && character_name == "Pilot") {
+    if (player && character_name.empty()) {
         info.character_name = player->character_name;
     }
 

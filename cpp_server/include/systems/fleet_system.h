@@ -81,7 +81,7 @@ public:
      * @return true if added
      */
     bool addMember(const std::string& fleet_id, const std::string& entity_id,
-                   const std::string& character_name = "Pilot");
+                   const std::string& character_name = "");
 
     /**
      * @brief Remove a member (or leave voluntarily)
