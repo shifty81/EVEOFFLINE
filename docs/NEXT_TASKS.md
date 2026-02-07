@@ -12,7 +12,7 @@
 - ✅ **Phase 6**: Advanced Content & Tech II Ships (Q2 2026)
 - ✅ **Phase 7**: Mining, PI, Research, C++ Server Integration, Wormholes, Fleet (Q4 2026)
 - ✅ **Quick Wins**: Tutorial, Modding Guide, Code Cleanup (February 2026)
-- ✅ **Medium-Term**: External Model Loading, Standings System (February 2026)
+- ✅ **Medium-Term**: External Model Loading, Standings System, Tech II Content (February 2026)
 
 ### Project Highlights
 - **49 ships** across all classes (Frigates to Titans)
@@ -170,11 +170,11 @@ From ROADMAP.md "In Progress" section:
    - ✅ Integrated with player/NPC spawning
    - ✅ Full test coverage and documentation
 
-3. **Add More Tech II Content**
-   - 4 more HACs (one per race)
-   - 4 Command Ships
-   - 8 Tech II EWAR modules
-   - 4 Tech II Logistics modules
+3. ✅ **Add More Tech II Content** (COMPLETED - February 2026)
+   - ✅ 4 Command Ships (Claymore, Vulture, Astarte, Absolution)
+   - ✅ 8 Tech II EWAR modules
+   - ✅ 4 Tech II Logistics modules
+   - ✅ Command Ship class recognition in 3D client
 
 ### Long-Term Goals (1-3 months each)
 

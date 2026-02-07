@@ -443,9 +443,10 @@ Phase 5 core development completed with procedural ship models, performance opti
 **Timeline**: Q2-Q3 2026
 
 Optional enhancements:
-- More Tech II variants (second HAC per race, Tech II Battlecruisers)
+- ✅ More Tech II variants: 4 Command Ships (Claymore, Vulture, Astarte, Absolution)
+- ✅ More modules: 8 Tech II EWAR modules, 4 Tech II Logistics modules
+- More Tech II variants (second HAC per race)
 - Additional mission content (Level 5 missions, epic arcs)
-- More modules (Tech II EWAR, logistics modules)
 
 ---
 
@@ -830,8 +831,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 Want to contribute? Check out our priorities:
 
 **High Priority (Help Wanted):**
-- Phase 6: Additional ship designs and stats (Tech II ships, Battlecruisers, Battleships)
-- Phase 6: More modules (Tech II variants, officer modules)
+- Phase 6: Additional ship designs and stats (second HACs per race, more Tech II ships)
+- ✅ Phase 6: Command Ships added (Claymore, Vulture, Astarte, Absolution)
+- ✅ Phase 6: Tech II EWAR and Logistics modules added
 - Phase 6: More mission content (Level 5 missions, epic arcs)
 - Testing and bug reports
 - 3D asset creation (ship models, station models)

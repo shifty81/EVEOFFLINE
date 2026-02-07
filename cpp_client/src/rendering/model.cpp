@@ -329,6 +329,8 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
         model = createTech2CruiserModel(colors);
     } else if (isCruiser(shipType)) {
         model = createCruiserModel(colors);
+    } else if (isCommandShip(shipType)) {
+        model = createBattlecruiserModel(colors);
     } else if (isBattlecruiser(shipType)) {
         model = createBattlecruiserModel(colors);
     } else if (isBattleship(shipType)) {
@@ -400,6 +402,14 @@ bool Model::isBattlecruiser(const std::string& shipType) {
         "Battlecruiser", "Cyclone", "Ferox", "Brutix", "Harbinger"
     };
     return std::any_of(bcNames.begin(), bcNames.end(),
+        [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
+}
+
+bool Model::isCommandShip(const std::string& shipType) {
+    static const std::vector<std::string> csNames = {
+        "Command Ship", "Claymore", "Vulture", "Astarte", "Absolution"
+    };
+    return std::any_of(csNames.begin(), csNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
 }
 

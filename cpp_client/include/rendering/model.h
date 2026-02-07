@@ -140,6 +140,7 @@ private:
     static bool isCruiser(const std::string& shipType);
     static bool isTech2Cruiser(const std::string& shipType);
     static bool isBattlecruiser(const std::string& shipType);
+    static bool isCommandShip(const std::string& shipType);
     static bool isBattleship(const std::string& shipType);
     static bool isMiningBarge(const std::string& shipType);
     static bool isCarrier(const std::string& shipType);
