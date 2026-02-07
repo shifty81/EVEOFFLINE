@@ -1,0 +1,327 @@
+{
+  "serpentis_fleet_commander": {
+    "id": "serpentis_fleet_commander",
+    "name": "Serpentis Fleet Commander",
+    "type": "battleship",
+    "faction": "Serpentis",
+    "hull_hp": 8000,
+    "armor_hp": 12000,
+    "shield_hp": 10000,
+    "max_velocity": 110,
+    "orbit_distance": 18000,
+    "signature_radius": 450,
+    "bounty": 2000000,
+    "reward_isk": 2500000,
+    "spawn_chance": 0.05,
+    "behavior": "aggressive",
+    "aggro_range": 120000,
+    "awareness_range": 120000,
+    "warp_scramble": false,
+    "weapons": [
+      {
+        "type": "large_hybrid",
+        "name": "Dual 425mm Railgun",
+        "damage": 380,
+        "damage_type": "kinetic",
+        "optimal_range": 30000,
+        "falloff_range": 18000,
+        "rate_of_fire": 9.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 10, "thermal": 35, "kinetic": 25, "explosive": 45},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["federation_navy_magnetic_field_stabilizer", "serpentis_faction_dogtag", "large_hybrid_weapons"],
+    "special": {
+      "sensor_dampener": true,
+      "remote_repair": true
+    }
+  },
+  "guristas_fleet_commander": {
+    "id": "guristas_fleet_commander",
+    "name": "Guristas Fleet Commander",
+    "type": "battleship",
+    "faction": "Guristas",
+    "hull_hp": 8500,
+    "armor_hp": 10000,
+    "shield_hp": 14000,
+    "max_velocity": 105,
+    "orbit_distance": 22000,
+    "signature_radius": 460,
+    "bounty": 2200000,
+    "reward_isk": 2800000,
+    "spawn_chance": 0.05,
+    "behavior": "aggressive",
+    "aggro_range": 125000,
+    "awareness_range": 125000,
+    "warp_scramble": false,
+    "weapons": [
+      {
+        "type": "cruise_missile",
+        "name": "Cruise Missile Launcher",
+        "damage": 350,
+        "damage_type": "kinetic",
+        "range": 90000,
+        "rate_of_fire": 16.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 86, "kinetic": 62, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["caldari_navy_ballistic_control_system", "guristas_faction_dogtag", "cruise_missiles"],
+    "special": {
+      "ecm": true,
+      "target_painter": true
+    }
+  },
+  "blood_raider_fleet_commander": {
+    "id": "blood_raider_fleet_commander",
+    "name": "Blood Raider Fleet Commander",
+    "type": "battleship",
+    "faction": "Blood Raiders",
+    "hull_hp": 7500,
+    "armor_hp": 14000,
+    "shield_hp": 8000,
+    "max_velocity": 95,
+    "orbit_distance": 24000,
+    "signature_radius": 470,
+    "bounty": 2500000,
+    "reward_isk": 3000000,
+    "spawn_chance": 0.04,
+    "behavior": "aggressive",
+    "aggro_range": 115000,
+    "awareness_range": 115000,
+    "warp_scramble": false,
+    "weapons": [
+      {
+        "type": "large_energy",
+        "name": "Mega Pulse Laser",
+        "damage": 400,
+        "damage_type": "em",
+        "optimal_range": 28000,
+        "falloff_range": 16000,
+        "rate_of_fire": 8.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 60, "kinetic": 85, "explosive": 50},
+      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["imperial_navy_heat_sink", "blood_raiders_faction_dogtag", "large_energy_weapons"],
+    "special": {
+      "energy_neutralizer": true,
+      "cap_drain": 180,
+      "web": true
+    }
+  },
+  "angel_cartel_fleet_commander": {
+    "id": "angel_cartel_fleet_commander",
+    "name": "Angel Cartel Fleet Commander",
+    "type": "battleship",
+    "faction": "Angel Cartel",
+    "hull_hp": 9000,
+    "armor_hp": 11000,
+    "shield_hp": 12000,
+    "max_velocity": 120,
+    "orbit_distance": 20000,
+    "signature_radius": 440,
+    "bounty": 2300000,
+    "reward_isk": 2800000,
+    "spawn_chance": 0.05,
+    "behavior": "aggressive",
+    "aggro_range": 118000,
+    "awareness_range": 118000,
+    "warp_scramble": false,
+    "weapons": [
+      {
+        "type": "large_projectile",
+        "name": "800mm Autocannon",
+        "damage": 360,
+        "damage_type": "explosive",
+        "optimal_range": 20000,
+        "falloff_range": 24000,
+        "rate_of_fire": 8.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
+      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 25},
+      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+    },
+    "loot_table": ["republic_fleet_gyrostabilizer", "angel_faction_dogtag", "large_projectile_weapons"],
+    "special": {
+      "web": true,
+      "target_painter": true
+    }
+  },
+  "tobias_kruzhor": {
+    "id": "tobias_kruzhor",
+    "name": "Tobias Kruzhor",
+    "type": "battleship",
+    "faction": "Guristas",
+    "hull_hp": 15000,
+    "armor_hp": 18000,
+    "shield_hp": 25000,
+    "max_velocity": 130,
+    "orbit_distance": 25000,
+    "signature_radius": 500,
+    "bounty": 15000000,
+    "reward_isk": 15000000,
+    "spawn_chance": 0.005,
+    "behavior": "aggressive",
+    "aggro_range": 150000,
+    "awareness_range": 150000,
+    "warp_scramble": true,
+    "weapons": [
+      {
+        "type": "cruise_missile",
+        "name": "Officer Cruise Missile Launcher",
+        "damage": 600,
+        "damage_type": "kinetic",
+        "range": 100000,
+        "rate_of_fire": 14.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 20, "thermal": 70, "kinetic": 90, "explosive": 60},
+      "armor": {"em": 60, "thermal": 90, "kinetic": 72, "explosive": 35},
+      "hull": {"em": 50, "thermal": 50, "kinetic": 50, "explosive": 50}
+    },
+    "loot_table": ["tobias_modified_shield_booster", "guristas_officer_dogtag", "pith_x_type_shield_booster", "cruise_missiles"],
+    "special": {
+      "ecm": true,
+      "target_painter": true,
+      "warp_scrambler": true,
+      "web": true
+    }
+  },
+  "draclira_merlonne": {
+    "id": "draclira_merlonne",
+    "name": "Draclira Merlonne",
+    "type": "battleship",
+    "faction": "Blood Raiders",
+    "hull_hp": 12000,
+    "armor_hp": 28000,
+    "shield_hp": 14000,
+    "max_velocity": 115,
+    "orbit_distance": 26000,
+    "signature_radius": 520,
+    "bounty": 18000000,
+    "reward_isk": 18000000,
+    "spawn_chance": 0.005,
+    "behavior": "aggressive",
+    "aggro_range": 145000,
+    "awareness_range": 145000,
+    "warp_scramble": true,
+    "weapons": [
+      {
+        "type": "large_energy",
+        "name": "Officer Mega Pulse Laser",
+        "damage": 650,
+        "damage_type": "em",
+        "optimal_range": 35000,
+        "falloff_range": 20000,
+        "rate_of_fire": 7.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 20, "thermal": 70, "kinetic": 90, "explosive": 60},
+      "armor": {"em": 60, "thermal": 50, "kinetic": 40, "explosive": 25},
+      "hull": {"em": 50, "thermal": 50, "kinetic": 50, "explosive": 50}
+    },
+    "loot_table": ["draclira_modified_energy_neutralizer", "blood_raiders_officer_dogtag", "corpus_x_type_armor_repairer", "large_energy_weapons"],
+    "special": {
+      "energy_neutralizer": true,
+      "cap_drain": 300,
+      "web": true,
+      "warp_scrambler": true
+    }
+  },
+  "cormack_vaaja": {
+    "id": "cormack_vaaja",
+    "name": "Cormack Vaaja",
+    "type": "battleship",
+    "faction": "Serpentis",
+    "hull_hp": 14000,
+    "armor_hp": 22000,
+    "shield_hp": 16000,
+    "max_velocity": 125,
+    "orbit_distance": 22000,
+    "signature_radius": 490,
+    "bounty": 16000000,
+    "reward_isk": 16000000,
+    "spawn_chance": 0.005,
+    "behavior": "aggressive",
+    "aggro_range": 140000,
+    "awareness_range": 140000,
+    "warp_scramble": true,
+    "weapons": [
+      {
+        "type": "large_hybrid",
+        "name": "Officer Dual 425mm Railgun",
+        "damage": 580,
+        "damage_type": "kinetic",
+        "optimal_range": 38000,
+        "falloff_range": 22000,
+        "rate_of_fire": 8.0
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 20, "thermal": 70, "kinetic": 90, "explosive": 60},
+      "armor": {"em": 25, "thermal": 50, "kinetic": 40, "explosive": 55},
+      "hull": {"em": 50, "thermal": 50, "kinetic": 50, "explosive": 50}
+    },
+    "loot_table": ["cormack_modified_armor_repairer", "serpentis_officer_dogtag", "shadow_serpentis_magnetic_field_stabilizer", "large_hybrid_weapons"],
+    "special": {
+      "sensor_dampener": true,
+      "web": true,
+      "warp_scrambler": true
+    }
+  },
+  "hakim_stormare": {
+    "id": "hakim_stormare",
+    "name": "Hakim Stormare",
+    "type": "battleship",
+    "faction": "Angel Cartel",
+    "hull_hp": 16000,
+    "armor_hp": 20000,
+    "shield_hp": 20000,
+    "max_velocity": 140,
+    "orbit_distance": 20000,
+    "signature_radius": 480,
+    "bounty": 14000000,
+    "reward_isk": 14000000,
+    "spawn_chance": 0.005,
+    "behavior": "aggressive",
+    "aggro_range": 135000,
+    "awareness_range": 135000,
+    "warp_scramble": true,
+    "weapons": [
+      {
+        "type": "large_projectile",
+        "name": "Officer 800mm Autocannon",
+        "damage": 550,
+        "damage_type": "explosive",
+        "optimal_range": 25000,
+        "falloff_range": 28000,
+        "rate_of_fire": 7.5
+      }
+    ],
+    "resistances": {
+      "shield": {"em": 20, "thermal": 35, "kinetic": 55, "explosive": 60},
+      "armor": {"em": 70, "thermal": 55, "kinetic": 45, "explosive": 35},
+      "hull": {"em": 50, "thermal": 50, "kinetic": 50, "explosive": 50}
+    },
+    "loot_table": ["hakim_modified_target_painter", "angel_officer_dogtag", "domination_tracking_enhancer", "large_projectile_weapons"],
+    "special": {
+      "target_painter": true,
+      "web": true,
+      "warp_scrambler": true
+    }
+  }
+}
