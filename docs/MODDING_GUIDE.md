@@ -73,6 +73,9 @@ JSON files use key-value pairs:
 - No trailing commas
 - Numbers don't need quotes
 - Boolean values: `true` or `false`
+- **No comments allowed** - JSON doesn't support `//` or `/* */` comments
+
+**Note**: The examples in this guide show field descriptions separately for clarity. When creating your own JSON files, do not include inline comments - they will cause parse errors.
 
 ---
 
@@ -101,46 +104,30 @@ Here's a complete ship definition with explanations:
     "class": "Frigate",
     "race": "Minmatar",
     "description": "A custom ship with unique characteristics.",
-    
-    // Hit Points
-    "hull_hp": 350,       // Structure HP
-    "armor_hp": 400,      // Armor HP
-    "shield_hp": 450,     // Shield HP
-    
-    // Fitting Resources
-    "capacitor": 280,     // Capacitor capacity (GJ)
-    "cpu": 140,           // CPU (tf)
-    "powergrid": 38,      // PowerGrid (MW)
-    
-    // Module Slots
-    "high_slots": 3,      // Weapon/utility slots
-    "mid_slots": 3,       // Shield/EWAR slots
-    "low_slots": 3,       // Armor/damage mods
-    "rig_slots": 3,       // Rig slots
-    
-    // Cargo & Movement
-    "cargo_capacity": 120,    // m³
-    "max_velocity": 325,      // m/s
-    "inertia_modifier": 2.8,  // Lower = more agile
-    
-    // Targeting
-    "signature_radius": 37,       // m (smaller = harder to hit)
-    "scan_resolution": 620,       // mm (higher = faster lock)
+    "hull_hp": 350,
+    "armor_hp": 400,
+    "shield_hp": 450,
+    "capacitor": 280,
+    "cpu": 140,
+    "powergrid": 38,
+    "high_slots": 3,
+    "mid_slots": 3,
+    "low_slots": 3,
+    "rig_slots": 3,
+    "cargo_capacity": 120,
+    "max_velocity": 325,
+    "inertia_modifier": 2.8,
+    "signature_radius": 37,
+    "scan_resolution": 620,
     "max_locked_targets": 4,
-    "max_targeting_range": 18000, // m
-    
-    // Regeneration
-    "shield_recharge_time": 625,     // seconds
-    "capacitor_recharge_time": 157,  // seconds
-    
-    // Ship Bonuses (per skill level)
+    "max_targeting_range": 18000,
+    "shield_recharge_time": 625,
+    "capacitor_recharge_time": 157,
     "bonuses": {
-      "small_projectile_damage": 5,    // +5% per level
-      "small_projectile_falloff": 10,  // +10% per level
-      "tracking_speed": 7.5             // +7.5% per level
+      "small_projectile_damage": 5,
+      "small_projectile_falloff": 10,
+      "tracking_speed": 7.5
     },
-    
-    // Damage Resistances (%)
     "resistances": {
       "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
       "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
@@ -149,6 +136,29 @@ Here's a complete ship definition with explanations:
   }
 }
 ```
+
+**Field Descriptions:**
+- `hull_hp` - Structure HP
+- `armor_hp` - Armor HP  
+- `shield_hp` - Shield HP
+- `capacitor` - Capacitor capacity (GJ)
+- `cpu` - CPU (tf)
+- `powergrid` - PowerGrid (MW)
+- `high_slots` - Weapon/utility slots
+- `mid_slots` - Shield/EWAR slots
+- `low_slots` - Armor/damage mods
+- `rig_slots` - Rig slots
+- `cargo_capacity` - Cargo hold size (m³)
+- `max_velocity` - Maximum speed (m/s)
+- `inertia_modifier` - Agility (lower = more agile)
+- `signature_radius` - Target size (m, smaller = harder to hit)
+- `scan_resolution` - Lock speed (mm, higher = faster lock)
+- `max_locked_targets` - Maximum simultaneous targets
+- `max_targeting_range` - Maximum target distance (m)
+- `shield_recharge_time` - Shield recharge time (seconds)
+- `capacitor_recharge_time` - Capacitor recharge time (seconds)
+- `bonuses` - Ship bonuses per skill level (% increase)
+- `resistances` - Damage resistances by layer and type (%)
 
 ### Ship Classes
 
