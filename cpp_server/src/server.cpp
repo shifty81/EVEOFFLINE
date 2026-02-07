@@ -10,6 +10,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <sys/stat.h>
 
 namespace eve {
 
@@ -187,8 +188,7 @@ void Server::mainLoop() {
         if (config_->auto_save && config_->persistent_world) {
             auto now = std::chrono::steady_clock::now();
             if (now - last_save_time >= save_interval) {
-                // TODO: Implement world saving
-                std::cout << "[AutoSave] Saving world state..." << std::endl;
+                saveWorld();
                 last_save_time = now;
             }
         }
@@ -219,6 +219,27 @@ void Server::updateSteam() {
 int Server::getPlayerCount() const {
     return game_session_ ? game_session_->getPlayerCount()
                          : (tcp_server_ ? tcp_server_->getClientCount() : 0);
+}
+
+bool Server::saveWorld() {
+    // Ensure save directory exists
+    struct stat st;
+    if (stat(config_->save_path.c_str(), &st) != 0) {
+#ifdef _WIN32
+        _mkdir(config_->save_path.c_str());
+#else
+        mkdir(config_->save_path.c_str(), 0755);
+#endif
+    }
+
+    std::string filepath = config_->save_path + "/world_state.json";
+    std::cout << "[AutoSave] Saving world state..." << std::endl;
+    return world_persistence_.saveWorld(game_world_.get(), filepath);
+}
+
+bool Server::loadWorld() {
+    std::string filepath = config_->save_path + "/world_state.json";
+    return world_persistence_.loadWorld(game_world_.get(), filepath);
 }
 
 } // namespace eve

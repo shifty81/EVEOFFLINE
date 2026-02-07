@@ -55,6 +55,7 @@ set(SERVER_SOURCES
     src/systems/fleet_system.cpp
     src/data/ship_database.cpp
     src/data/wormhole_database.cpp
+    src/data/world_persistence.cpp
 )
 
 set(SERVER_HEADERS
@@ -82,6 +83,7 @@ set(SERVER_HEADERS
     include/systems/fleet_system.h
     include/data/ship_database.h
     include/data/wormhole_database.h
+    include/data/world_persistence.h
 )
 
 # Steam SDK configuration
@@ -170,6 +172,7 @@ if(BUILD_TESTS)
         src/data/wormhole_database.cpp
         src/systems/wormhole_system.cpp
         src/systems/fleet_system.cpp
+        src/data/world_persistence.cpp
     )
 
     add_executable(test_systems
