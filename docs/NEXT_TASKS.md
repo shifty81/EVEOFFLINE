@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 7, 2026)**: Capital modules, cloaking devices, jump drives, advanced skills, rare NPC spawns, and mining missions have been added! Leadership skills expanded with 8 new skills (Wing Command, Fleet Command, warfare specializations). 12 new exploration sites added. Mordu's Legion and Sisters of EVE NPC factions added. The game now has 97+ modules, 137 skills, and comprehensive content across all tiers.
+> **Update (February 8, 2026)**: Incursions system added with 8 encounters across 4 tiers (vanguard, assault, headquarters, mothership) and 6 incursion-specific NPC types. Mining crystals added with 30 crystal types (Tech I and Tech II for all 15 ore types). The game now has 127+ modules, 137 skills, and comprehensive content across all tiers.
 
 ## Current Status (February 2026)
 
@@ -18,14 +18,14 @@
 - **53 ships** across all classes (Frigates to Titans, including Command Ships)
 - **371 procedural ship models** (53 ships × 7 factions)
 - **Custom model support**: .obj, .gltf, .glb formats
-- **97+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital)
+- **127+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital, Mining Crystals)
 - **137 skills** with complete skill tree (including 14 Leadership skills)
 - **4 epic arc mission chains** with 12 storyline missions
 - **8 rare NPC spawns** (4 faction commanders, 4 officer NPCs)
 - **10 mining missions** across levels 1-4
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
-- **8 major gameplay systems** fully implemented
+- **9 major gameplay systems** fully implemented (including Incursions)
 - **95+ test functions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
@@ -91,6 +91,7 @@ From ROADMAP.md "In Progress" section:
 #### 2.2 Additional Mission Content
 - Level 5 missions (high-end PVE)
 - ✅ Epic mission arcs (story-driven content) — 4 arcs, 12 missions
+- ✅ Incursions (group PVE events) — 8 encounters across 4 tiers
 - Estimated effort: 2-3 weeks
 
 #### 2.3 More Modules
@@ -238,6 +239,21 @@ From ROADMAP.md "In Progress" section:
     - ✅ Mordu's Legion: 4 NPCs (frigate, cruiser, battlecruiser, battleship) with kiting behavior and warp disruptors
     - ✅ Sisters of EVE: 3 NPCs (frigate, cruiser, battleship) with remote repair and scanning capabilities
 
+13. ✅ **Add Incursions System** (COMPLETED - February 2026)
+    - ✅ 8 incursion encounters across 4 tiers (vanguard, assault, headquarters, mothership)
+    - ✅ 6 incursion-specific NPC types (overseer, logistics cruiser, commander, carrier, Kundalini, mothership)
+    - ✅ Influence mechanic with system-wide effects (cyno jamming, security penalty, bounty reduction)
+    - ✅ Scaled fleet size requirements (10-pilot vanguard to 80-pilot mothership)
+    - ✅ Multi-wave encounters with progressive difficulty
+    - ✅ ISK, loyalty points, CONCORD LP, and standing rewards
+
+14. ✅ **Add Mining Crystals** (COMPLETED - February 2026)
+    - ✅ 30 mining crystal types (Tech I and Tech II for all 15 ore types)
+    - ✅ Tech I crystals: +62.5% mining yield, low volatility
+    - ✅ Tech II crystals: +75% mining yield, higher volatility, skill requirements
+    - ✅ Compatible with Modulated Strip Miners and Deep Core Strip Miners
+    - ✅ Mercoxit crystals restricted to Deep Core Strip Miners only
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -255,7 +271,7 @@ From ROADMAP.md "In Progress" section:
 3. **Advanced Content**
    - Level 5 missions
    - ✅ Epic arcs
-   - Incursions (group PVE)
+   - ✅ Incursions (group PVE)
    - Tournament system
 
 ---
@@ -303,5 +319,5 @@ The project has a solid foundation and can grow in multiple directions based on 
 
 ---
 
-*Last Updated: February 7, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Leadership skills, exploration sites, and new NPC factions added. Ready for Phase 8 planning.*
+*Last Updated: February 8, 2026*
+*Status: Quick Wins, Medium-Term Tasks complete. Incursions system and mining crystals added. Ready for Phase 8 planning.*
