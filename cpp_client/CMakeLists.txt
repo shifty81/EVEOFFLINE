@@ -157,6 +157,8 @@ endif()
 # tinygltf (header-only .gltf/.glb model loader)
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/tinygltf")
     include_directories(external/tinygltf)
+    # Tell tinygltf to NOT include json.hpp itself - we'll include nlohmann/json before tinygltf
+    add_definitions(-DTINYGLTF_NO_INCLUDE_JSON)
     message(STATUS "Using bundled tinygltf for .gltf/.glb model loading")
 else()
     message(WARNING "tinygltf not found at external/tinygltf - .gltf/.glb loading disabled")
