@@ -159,6 +159,8 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/tinygltf")
     include_directories(external/tinygltf)
     # Tell tinygltf to NOT include json.hpp itself - we'll include nlohmann/json before tinygltf
     add_definitions(-DTINYGLTF_NO_INCLUDE_JSON)
+    # Disable stb_image_write dependency (only stb_image.h for loading is available)
+    add_definitions(-DTINYGLTF_NO_STB_IMAGE_WRITE)
     message(STATUS "Using bundled tinygltf for .gltf/.glb model loading")
 else()
     message(WARNING "tinygltf not found at external/tinygltf - .gltf/.glb loading disabled")
