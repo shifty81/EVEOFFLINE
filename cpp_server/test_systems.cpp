@@ -645,19 +645,66 @@ void testShipDatabaseCapitalShips() {
     auto ids = db.getShipIds();
     bool hasCapital = false, hasBattleship = false, hasFrigate = false;
     bool hasTech2Cruiser = false, hasMiningBarge = false;
+    bool hasMarauder = false, hasIndustrial = false;
     for (const auto& id : ids) {
         if (id == "archon") hasCapital = true;
         if (id == "tempest") hasBattleship = true;
         if (id == "rifter") hasFrigate = true;
         if (id == "vagabond") hasTech2Cruiser = true;
         if (id == "procurer") hasMiningBarge = true;
+        if (id == "vargur") hasMarauder = true;
+        if (id == "badger") hasIndustrial = true;
     }
     assertTrue(hasCapital, "Capital ships loaded");
     assertTrue(hasBattleship, "Battleships loaded");
     assertTrue(hasFrigate, "Frigates loaded");
     assertTrue(hasTech2Cruiser, "Tech II cruisers loaded");
     assertTrue(hasMiningBarge, "Mining barges loaded");
+    assertTrue(hasMarauder, "Marauder battleships loaded");
+    assertTrue(hasIndustrial, "Industrial ships loaded");
     assertTrue(ids.size() >= 50, "At least 50 ship templates loaded");
+}
+
+void testShipDatabaseMarauders() {
+    std::cout << "\n=== ShipDatabase Marauder Ships ===" << std::endl;
+    
+    data::ShipDatabase db;
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    // Verify all 4 Marauders are loaded
+    const data::ShipTemplate* vargur = db.getShip("vargur");
+    if (vargur) {
+        assertTrue(vargur->name == "Vargur", "Vargur name correct");
+        assertTrue(vargur->ship_class == "Marauder", "Vargur class is Marauder");
+        assertTrue(vargur->race == "Minmatar", "Vargur race is Minmatar");
+        assertTrue(vargur->hull_hp > 8000.0f, "Vargur has high hull HP");
+        assertTrue(vargur->shield_hp > 10000.0f, "Vargur has high shield HP");
+        assertTrue(vargur->max_locked_targets >= 10, "Vargur has 10 locked targets");
+    } else {
+        assertTrue(false, "Vargur marauder found in database");
+    }
+    
+    const data::ShipTemplate* golem = db.getShip("golem");
+    assertTrue(golem != nullptr, "Golem marauder found in database");
+    if (golem) {
+        assertTrue(golem->race == "Caldari", "Golem race is Caldari");
+    }
+    
+    const data::ShipTemplate* kronos = db.getShip("kronos");
+    assertTrue(kronos != nullptr, "Kronos marauder found in database");
+    if (kronos) {
+        assertTrue(kronos->race == "Gallente", "Kronos race is Gallente");
+    }
+    
+    const data::ShipTemplate* paladin = db.getShip("paladin");
+    assertTrue(paladin != nullptr, "Paladin marauder found in database");
+    if (paladin) {
+        assertTrue(paladin->race == "Amarr", "Paladin race is Amarr");
+    }
 }
 
 // ==================== WormholeDatabase Tests ====================
@@ -1761,6 +1808,7 @@ int main() {
     testShipDatabaseResistances();
     testShipDatabaseGetShipIds();
     testShipDatabaseCapitalShips();
+    testShipDatabaseMarauders();
     
     // WormholeDatabase tests
     testWormholeDatabaseLoad();

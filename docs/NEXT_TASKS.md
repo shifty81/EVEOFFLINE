@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 8, 2026)**: Interceptors (8 ships: 4 combat + 4 fleet), Covert Ops frigates (4 ships), and Industrial ships (4 haulers) added. Incursions system added with 8 encounters across 4 tiers. Mining crystals added with 30 crystal types. The game now has 86 ships, 127+ modules, 137 skills, and comprehensive content across all tiers.
+> **Update (February 8, 2026)**: Marauder battleships (4 ships: Vargur, Golem, Kronos, Paladin) and 8 medium Tech II weapon modules added. ShipDatabase loader fixed to include Industrial ships. The game now has 90 ships, 135+ modules, 137 skills, and comprehensive content across all tiers.
 
 ## Current Status (February 2026)
 
@@ -15,10 +15,10 @@
 - ✅ **Medium-Term**: External Model Loading, Standings System, Tech II Content, Epic Arcs, Faction/Officer Modules (February 2026)
 
 ### Project Highlights
-- **86 ships** across all classes (Frigates to Titans, including Command Ships, Interceptors, Covert Ops, Industrials)
-- **602 procedural ship models** (86 ships × 7 factions)
+- **90 ships** across all classes (Frigates to Titans, including Command Ships, Interceptors, Covert Ops, Industrials, Marauders)
+- **630 procedural ship models** (90 ships × 7 factions)
 - **Custom model support**: .obj, .gltf, .glb formats
-- **127+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital, Mining Crystals)
+- **135+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital, Mining Crystals)
 - **137 skills** with complete skill tree (including 14 Leadership skills)
 - **4 epic arc mission chains** with 12 storyline missions
 - **8 rare NPC spawns** (4 faction commanders, 4 officer NPCs)
@@ -278,6 +278,28 @@ From ROADMAP.md "In Progress" section:
     - ✅ Cargo capacity bonuses per skill level
     - ✅ Race-specific tank bonuses (shield/armor)
 
+18. ✅ **Add Marauder Battleships** (COMPLETED - February 2026)
+    - ✅ 4 Marauders (Vargur, Golem, Kronos, Paladin)
+    - ✅ Bastion Module bonuses for sustained PVE combat
+    - ✅ Tractor beam range/velocity bonuses
+    - ✅ Micro Jump Drive cooldown reduction
+    - ✅ Race-specific weapon bonuses (projectile, missile, hybrid, energy)
+
+19. ✅ **Add Medium Tech II Weapons** (COMPLETED - February 2026)
+    - ✅ 425mm AutoCannon II (medium projectile)
+    - ✅ Heavy Neutron Blaster II (medium hybrid blaster)
+    - ✅ 250mm Railgun II (medium hybrid railgun)
+    - ✅ Focused Medium Pulse Laser II (medium energy)
+    - ✅ Focused Medium Beam Laser II (medium energy)
+    - ✅ Heavy Missile Launcher II (medium missile)
+    - ✅ Rapid Light Missile Launcher II (medium missile)
+    - ✅ Improved stats over Tech I variants (damage, range, tracking)
+
+20. ✅ **Fix ShipDatabase Loader** (COMPLETED - February 2026)
+    - ✅ Added industrials.json to ShipDatabase file list
+    - ✅ Added tech2_battleships.json to ShipDatabase file list
+    - ✅ Total loaded ships increased from 82 to 90
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -344,4 +366,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 8, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Interceptors, Covert Ops, and Industrials added. Ready for Phase 8 planning.*
+*Status: Quick Wins, Medium-Term Tasks complete. Marauders, medium Tech II weapons added. 90 ships, 135+ modules. Ready for Phase 8 planning.*
