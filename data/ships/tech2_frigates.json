@@ -33,9 +33,24 @@
       "assault_damage_control_effectiveness": 10
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 60, "thermal": 40, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "hawk": {
@@ -72,9 +87,24 @@
       "assault_damage_control_effectiveness": 10
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 30, "kinetic": 50, "explosive": 60},
-      "armor": {"em": 55, "thermal": 50, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 50,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "enyo": {
@@ -111,9 +141,24 @@
       "assault_damage_control_effectiveness": 10
     },
     "resistances": {
-      "shield": {"em": 5, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 55, "thermal": 45, "kinetic": 35, "explosive": 65},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 5,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 65
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "retribution": {
@@ -151,9 +196,24 @@
       "assault_damage_control_effectiveness": 10
     },
     "resistances": {
-      "shield": {"em": 5, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 20},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 5,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 20
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "wolf": {
@@ -190,9 +250,24 @@
       "assault_damage_control_effectiveness": 10
     },
     "resistances": {
-      "shield": {"em": 8, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 62, "thermal": 42, "kinetic": 32, "explosive": 18},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 8,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 62,
+        "thermal": 42,
+        "kinetic": 32,
+        "explosive": 18
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "harpy": {
@@ -229,9 +304,24 @@
       "assault_damage_control_effectiveness": 10
     },
     "resistances": {
-      "shield": {"em": 12, "thermal": 32, "kinetic": 52, "explosive": 62},
-      "armor": {"em": 56, "thermal": 51, "kinetic": 31, "explosive": 16},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 12,
+        "thermal": 32,
+        "kinetic": 52,
+        "explosive": 62
+      },
+      "armor": {
+        "em": 56,
+        "thermal": 51,
+        "kinetic": 31,
+        "explosive": 16
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "claw": {
@@ -267,9 +357,24 @@
       "warp_speed_bonus": 25
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 60, "thermal": 40, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "crow": {
@@ -305,9 +410,24 @@
       "warp_speed_bonus": 25
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 30, "kinetic": 50, "explosive": 60},
-      "armor": {"em": 55, "thermal": 50, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 50,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "taranis": {
@@ -343,9 +463,24 @@
       "warp_speed_bonus": 25
     },
     "resistances": {
-      "shield": {"em": 5, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 55, "thermal": 45, "kinetic": 35, "explosive": 65},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 5,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 65
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "crusader": {
@@ -381,9 +516,24 @@
       "warp_speed_bonus": 25
     },
     "resistances": {
-      "shield": {"em": 5, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 20},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 5,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 20
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "stiletto": {
@@ -420,9 +570,24 @@
       "interdiction_nullifier": true
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 60, "thermal": 40, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "raptor": {
@@ -459,9 +624,24 @@
       "interdiction_nullifier": true
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 30, "kinetic": 50, "explosive": 60},
-      "armor": {"em": 55, "thermal": 50, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 50,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "ares": {
@@ -498,9 +678,24 @@
       "interdiction_nullifier": true
     },
     "resistances": {
-      "shield": {"em": 5, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 55, "thermal": 45, "kinetic": 35, "explosive": 65},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 5,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 65
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "malediction": {
@@ -537,9 +732,24 @@
       "interdiction_nullifier": true
     },
     "resistances": {
-      "shield": {"em": 5, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 20},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 5,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 20
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "cheetah": {
@@ -577,9 +787,24 @@
       "cloaking_device_cpu": -20
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 60, "thermal": 40, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "buzzard": {
@@ -617,9 +842,24 @@
       "cloaking_device_cpu": -20
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 30, "kinetic": 50, "explosive": 60},
-      "armor": {"em": 55, "thermal": 50, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 50,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "helios": {
@@ -657,9 +897,24 @@
       "cloaking_device_cpu": -20
     },
     "resistances": {
-      "shield": {"em": 5, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 55, "thermal": 45, "kinetic": 35, "explosive": 65},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 5,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 65
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
   "anathema": {
@@ -697,9 +952,240 @@
       "cloaking_device_cpu": -20
     },
     "resistances": {
-      "shield": {"em": 5, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 60, "thermal": 45, "kinetic": 35, "explosive": 20},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 5,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 20
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
+    }
+  },
+  "hound": {
+    "id": "hound",
+    "name": "Hound",
+    "class": "Stealth Bomber",
+    "tech_level": 2,
+    "race": "Minmatar",
+    "description": "The Hound is a Minmatar stealth bomber designed to deliver devastating torpedo strikes from the safety of a Covert Ops cloak. Its explosive damage specialization makes it lethal against battleships and structures.",
+    "hull_hp": 250,
+    "armor_hp": 200,
+    "shield_hp": 350,
+    "capacitor": 280,
+    "cpu": 260,
+    "powergrid": 38,
+    "high_slots": 3,
+    "mid_slots": 4,
+    "low_slots": 3,
+    "rig_slots": 2,
+    "cargo_capacity": 175,
+    "max_velocity": 380,
+    "inertia_modifier": 2.2,
+    "signature_radius": 32,
+    "scan_resolution": 700,
+    "max_locked_targets": 5,
+    "max_targeting_range": 45000,
+    "shield_recharge_time": 580,
+    "capacitor_recharge_time": 155,
+    "bonuses": {
+      "torpedo_damage": 5,
+      "torpedo_explosion_velocity": 10,
+      "bomb_launcher": true,
+      "covert_ops_cloak": true,
+      "cloaking_device_cpu": -20
+    },
+    "resistances": {
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
+    }
+  },
+  "manticore": {
+    "id": "manticore",
+    "name": "Manticore",
+    "class": "Stealth Bomber",
+    "tech_level": 2,
+    "race": "Caldari",
+    "description": "The Manticore is a Caldari stealth bomber specializing in kinetic torpedo strikes. Its advanced targeting systems and covert capabilities make it an ideal ambush vessel for fleet operations.",
+    "hull_hp": 230,
+    "armor_hp": 180,
+    "shield_hp": 380,
+    "capacitor": 290,
+    "cpu": 270,
+    "powergrid": 36,
+    "high_slots": 3,
+    "mid_slots": 5,
+    "low_slots": 2,
+    "rig_slots": 2,
+    "cargo_capacity": 170,
+    "max_velocity": 370,
+    "inertia_modifier": 2.3,
+    "signature_radius": 33,
+    "scan_resolution": 710,
+    "max_locked_targets": 6,
+    "max_targeting_range": 48000,
+    "shield_recharge_time": 570,
+    "capacitor_recharge_time": 160,
+    "bonuses": {
+      "torpedo_damage": 5,
+      "torpedo_kinetic_damage": 10,
+      "bomb_launcher": true,
+      "covert_ops_cloak": true,
+      "cloaking_device_cpu": -20
+    },
+    "resistances": {
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 40
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
+    }
+  },
+  "nemesis": {
+    "id": "nemesis",
+    "name": "Nemesis",
+    "class": "Stealth Bomber",
+    "tech_level": 2,
+    "race": "Gallente",
+    "description": "The Nemesis is a Gallente stealth bomber that delivers thermal torpedo damage with surgical precision. Combined with its drone bay and Covert Ops cloak, it excels at hit-and-run attacks.",
+    "hull_hp": 280,
+    "armor_hp": 220,
+    "shield_hp": 300,
+    "capacitor": 300,
+    "cpu": 255,
+    "powergrid": 40,
+    "high_slots": 3,
+    "mid_slots": 3,
+    "low_slots": 4,
+    "rig_slots": 2,
+    "cargo_capacity": 180,
+    "max_velocity": 365,
+    "inertia_modifier": 2.4,
+    "signature_radius": 34,
+    "scan_resolution": 690,
+    "max_locked_targets": 5,
+    "max_targeting_range": 44000,
+    "shield_recharge_time": 590,
+    "capacitor_recharge_time": 158,
+    "bonuses": {
+      "torpedo_damage": 5,
+      "torpedo_thermal_damage": 10,
+      "bomb_launcher": true,
+      "covert_ops_cloak": true,
+      "cloaking_device_cpu": -20
+    },
+    "resistances": {
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
+    }
+  },
+  "purifier": {
+    "id": "purifier",
+    "name": "Purifier",
+    "class": "Stealth Bomber",
+    "tech_level": 2,
+    "race": "Amarr",
+    "description": "The Purifier is an Amarr stealth bomber that harnesses EM torpedo damage to punish shield-tanked targets. Its armor tank and Covert Ops capabilities make it a versatile ambush platform.",
+    "hull_hp": 240,
+    "armor_hp": 250,
+    "shield_hp": 280,
+    "capacitor": 310,
+    "cpu": 265,
+    "powergrid": 37,
+    "high_slots": 3,
+    "mid_slots": 3,
+    "low_slots": 4,
+    "rig_slots": 2,
+    "cargo_capacity": 165,
+    "max_velocity": 360,
+    "inertia_modifier": 2.5,
+    "signature_radius": 35,
+    "scan_resolution": 680,
+    "max_locked_targets": 5,
+    "max_targeting_range": 46000,
+    "shield_recharge_time": 600,
+    "capacitor_recharge_time": 165,
+    "bonuses": {
+      "torpedo_damage": 5,
+      "torpedo_em_damage": 10,
+      "bomb_launcher": true,
+      "covert_ops_cloak": true,
+      "cloaking_device_cpu": -20
+    },
+    "resistances": {
+      "shield": {
+        "em": 15,
+        "thermal": 30,
+        "kinetic": 40,
+        "explosive": 45
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 50,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   }
 }

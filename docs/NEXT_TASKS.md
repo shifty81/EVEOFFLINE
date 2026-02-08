@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 8, 2026)**: Marauder battleships (4 ships: Vargur, Golem, Kronos, Paladin) and 8 medium Tech II weapon modules added. ShipDatabase loader fixed to include Industrial ships. The game now has 90 ships, 135+ modules, 137 skills, and comprehensive content across all tiers.
+> **Update (February 8, 2026)**: Interdictor destroyers (4 ships: Sabre, Flycatcher, Eris, Heretic), Stealth Bombers (4 ships: Hound, Manticore, Nemesis, Purifier), and 8 large Tech II weapons added. The game now has 98 ships, 159+ modules, 137 skills, and comprehensive content across all tiers.
 
 ## Current Status (February 2026)
 
@@ -15,10 +15,10 @@
 - ✅ **Medium-Term**: External Model Loading, Standings System, Tech II Content, Epic Arcs, Faction/Officer Modules (February 2026)
 
 ### Project Highlights
-- **90 ships** across all classes (Frigates to Titans, including Command Ships, Interceptors, Covert Ops, Industrials, Marauders)
-- **630 procedural ship models** (90 ships × 7 factions)
+- **98 ships** across all classes (Frigates to Titans, including Command Ships, Interceptors, Covert Ops, Industrials, Marauders, Interdictors, Stealth Bombers)
+- **686 procedural ship models** (98 ships × 7 factions)
 - **Custom model support**: .obj, .gltf, .glb formats
-- **135+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital, Mining Crystals)
+- **159+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital, Mining Crystals)
 - **137 skills** with complete skill tree (including 14 Leadership skills)
 - **4 epic arc mission chains** with 12 storyline missions
 - **8 rare NPC spawns** (4 faction commanders, 4 officer NPCs)
@@ -300,6 +300,30 @@ From ROADMAP.md "In Progress" section:
     - ✅ Added tech2_battleships.json to ShipDatabase file list
     - ✅ Total loaded ships increased from 82 to 90
 
+21. ✅ **Add Interdictor Destroyers** (COMPLETED - February 2026)
+    - ✅ 4 Interdictors (Sabre, Flycatcher, Eris, Heretic)
+    - ✅ Warp disruption probe (bubble) launcher capability
+    - ✅ Race-specific weapon bonuses (projectile, missile, hybrid, energy)
+    - ✅ Destroyer-class hull with Tech II stats
+    - ✅ Added tech2_destroyers.json to ShipDatabase file list
+
+22. ✅ **Add Stealth Bomber Frigates** (COMPLETED - February 2026)
+    - ✅ 4 Stealth Bombers (Hound, Manticore, Nemesis, Purifier)
+    - ✅ Torpedo damage bonuses with race-specific damage types
+    - ✅ Bomb launcher capability
+    - ✅ Covert Ops cloaking device compatibility
+    - ✅ Long targeting range for standoff engagement
+
+23. ✅ **Add Large Tech II Weapons** (COMPLETED - February 2026)
+    - ✅ 800mm Repeating Cannon II (large projectile autocannon)
+    - ✅ 1400mm Howitzer Artillery II (large projectile artillery)
+    - ✅ Mega Pulse Laser II (large energy pulse)
+    - ✅ Tachyon Beam Laser II (large energy beam)
+    - ✅ 425mm Railgun II (large hybrid railgun)
+    - ✅ Neutron Blaster Cannon II (large hybrid blaster)
+    - ✅ Cruise Missile Launcher II (large missile)
+    - ✅ Torpedo Launcher II (large missile)
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -366,4 +390,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 8, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Marauders, medium Tech II weapons added. 90 ships, 135+ modules. Ready for Phase 8 planning.*
+*Status: Quick Wins, Medium-Term Tasks complete. Interdictors, Stealth Bombers, large Tech II weapons added. 98 ships, 159+ modules. Ready for Phase 8 planning.*

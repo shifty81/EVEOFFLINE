@@ -1,0 +1,214 @@
+{
+  "sabre": {
+    "id": "sabre",
+    "name": "Sabre",
+    "class": "Interdictor",
+    "tech_level": 2,
+    "race": "Minmatar",
+    "description": "The Sabre is a Minmatar interdictor capable of deploying warp disruption probes to create interdiction bubbles. Its high speed and autocannon firepower make it a deadly tackler in fleet engagements.",
+    "hull_hp": 750,
+    "armor_hp": 600,
+    "shield_hp": 800,
+    "capacitor": 450,
+    "cpu": 210,
+    "powergrid": 58,
+    "high_slots": 7,
+    "mid_slots": 4,
+    "low_slots": 3,
+    "rig_slots": 2,
+    "cargo_capacity": 280,
+    "max_velocity": 330,
+    "inertia_modifier": 2.4,
+    "signature_radius": 55,
+    "scan_resolution": 620,
+    "max_locked_targets": 7,
+    "max_targeting_range": 30000,
+    "shield_recharge_time": 700,
+    "capacitor_recharge_time": 180,
+    "bonuses": {
+      "small_projectile_damage": 10,
+      "small_projectile_tracking": 7.5,
+      "interdiction_sphere_launcher": true,
+      "bubble_duration_bonus": 10
+    },
+    "resistances": {
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
+    }
+  },
+  "flycatcher": {
+    "id": "flycatcher",
+    "name": "Flycatcher",
+    "class": "Interdictor",
+    "tech_level": 2,
+    "race": "Caldari",
+    "description": "The Flycatcher is a Caldari interdictor designed around missile systems and shield tanking. It deploys warp disruption probes while maintaining excellent range control with light missiles.",
+    "hull_hp": 700,
+    "armor_hp": 550,
+    "shield_hp": 900,
+    "capacitor": 460,
+    "cpu": 225,
+    "powergrid": 55,
+    "high_slots": 7,
+    "mid_slots": 5,
+    "low_slots": 2,
+    "rig_slots": 2,
+    "cargo_capacity": 270,
+    "max_velocity": 310,
+    "inertia_modifier": 2.5,
+    "signature_radius": 58,
+    "scan_resolution": 600,
+    "max_locked_targets": 7,
+    "max_targeting_range": 35000,
+    "shield_recharge_time": 680,
+    "capacitor_recharge_time": 185,
+    "bonuses": {
+      "light_missile_damage": 10,
+      "light_missile_kinetic_damage": 5,
+      "interdiction_sphere_launcher": true,
+      "bubble_duration_bonus": 10
+    },
+    "resistances": {
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 40
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
+    }
+  },
+  "eris": {
+    "id": "eris",
+    "name": "Eris",
+    "class": "Interdictor",
+    "tech_level": 2,
+    "race": "Gallente",
+    "description": "The Eris is a Gallente interdictor built for close-range brawling. Its hybrid turrets deliver devastating blaster damage while its interdiction sphere traps targets within engagement range.",
+    "hull_hp": 800,
+    "armor_hp": 700,
+    "shield_hp": 650,
+    "capacitor": 470,
+    "cpu": 215,
+    "powergrid": 62,
+    "high_slots": 7,
+    "mid_slots": 3,
+    "low_slots": 4,
+    "rig_slots": 2,
+    "cargo_capacity": 290,
+    "max_velocity": 305,
+    "inertia_modifier": 2.6,
+    "signature_radius": 56,
+    "scan_resolution": 610,
+    "max_locked_targets": 7,
+    "max_targeting_range": 28000,
+    "shield_recharge_time": 720,
+    "capacitor_recharge_time": 175,
+    "bonuses": {
+      "small_hybrid_damage": 10,
+      "small_hybrid_tracking": 7.5,
+      "interdiction_sphere_launcher": true,
+      "bubble_duration_bonus": 10
+    },
+    "resistances": {
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 45,
+        "kinetic": 35,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
+    }
+  },
+  "heretic": {
+    "id": "heretic",
+    "name": "Heretic",
+    "class": "Interdictor",
+    "tech_level": 2,
+    "race": "Amarr",
+    "description": "The Heretic is an Amarr interdictor that combines energy turret firepower with interdiction capabilities. Its strong armor tank allows it to survive in hostile space while maintaining tackle on targets.",
+    "hull_hp": 720,
+    "armor_hp": 750,
+    "shield_hp": 600,
+    "capacitor": 500,
+    "cpu": 220,
+    "powergrid": 60,
+    "high_slots": 7,
+    "mid_slots": 3,
+    "low_slots": 4,
+    "rig_slots": 2,
+    "cargo_capacity": 275,
+    "max_velocity": 300,
+    "inertia_modifier": 2.7,
+    "signature_radius": 57,
+    "scan_resolution": 590,
+    "max_locked_targets": 7,
+    "max_targeting_range": 32000,
+    "shield_recharge_time": 710,
+    "capacitor_recharge_time": 190,
+    "bonuses": {
+      "small_energy_damage": 10,
+      "small_energy_tracking": 7.5,
+      "interdiction_sphere_launcher": true,
+      "bubble_duration_bonus": 10
+    },
+    "resistances": {
+      "shield": {
+        "em": 15,
+        "thermal": 30,
+        "kinetic": 40,
+        "explosive": 45
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 50,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
+    }
+  }
+}
