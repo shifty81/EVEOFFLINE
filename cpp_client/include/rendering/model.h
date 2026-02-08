@@ -5,6 +5,7 @@
 #include <memory>
 #include <map>
 #include <glm/glm.hpp>
+#include "rendering/mesh.h"
 
 namespace eve {
 
