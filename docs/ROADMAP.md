@@ -517,9 +517,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Tech II ships (all classes)
 - [ ] Battleships (4 races)
 - [ ] Battlecruisers (4 races)
-- [ ] Tech II Frigates (Assault, Interceptor, Covert Ops)
+- [x] Tech II Frigates (Assault, Interceptor, Covert Ops)
 - [ ] Tech II Cruisers (HAC, HIC, Recon, Logistics)
-- [ ] Industrial ships
+- [x] Industrial ships
 - [ ] Mining barges
 - [ ] Capital ships (Carriers, Dreadnoughts)
 
