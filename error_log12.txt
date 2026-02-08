@@ -1,0 +1,1136 @@
+================================================
+EVE OFFLINE C++ Client - Visual Studio Build
+================================================
+
+Build Type: Release
+
+Configuring CMake for Visual Studio...
+
+Found vcpkg at C:\vcpkg
+
+Using generator: Visual Studio 17 2022
+
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.19045.
+-- The C compiler identification is MSVC 19.38.33145.0
+-- The CXX compiler identification is MSVC 19.38.33145.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Found Threads: TRUE
+-- Found OpenGL: opengl32
+-- OpenAL found - audio support enabled
+-- GLEW found - using system GLEW
+-- Using system GLEW (GLAD not needed)
+-- Using system nlohmann/json
+-- Using bundled STB image loader
+-- Using bundled tinyobjloader for .obj model loading
+-- Using bundled tinygltf for .gltf/.glb model loading
+-- Using system ImGui from vcpkg
+-- Building test suite...
+--
+-- EVE OFFLINE Client Configuration:
+--   C++ Standard: 17
+--   OpenGL:
+--   Use System Libraries: ON
+--   Build Tests: ON
+--
+-- Configuring done (6.8s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/GIT PROJECTS/EVEOFFLINE/cpp_client/build_vs
+
+CMake configuration successful!
+
+Building project...
+
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  main.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_phase46_advanced.cpp
+  test_audio_system.cpp
+  test_entity_sync.cpp
+  test_deferred_rendering.cpp
+  test_lighting.cpp
+  test_asteroid_field.cpp
+  test_enhanced_ui.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_network.cpp
+  application.cpp
+  application.cpp
+  window.cpp
+  application.cpp
+  window.cpp
+  window.cpp
+  audio_manager.cpp
+  test_post_processing.cpp
+  shader.cpp
+  shader.cpp
+  shader.cpp
+  game_client.cpp
+  game_client.cpp
+  tcp_client.cpp
+  entity.cpp
+  audio_generator.cpp
+  window.cpp
+  game_client.cpp
+  entity_manager.cpp
+  Generating Code...
+  shader.cpp
+  camera.cpp
+  camera.cpp
+  protocol_handler.cpp
+  mesh.cpp
+  camera.cpp
+  entity_message_parser.cpp
+  embedded_server.cpp
+  mesh.cpp
+  embedded_server.cpp
+  model.cpp
+  mesh.cpp
+  session_manager.cpp
+  instanced_renderer.cpp
+  embedded_server.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  session_manager.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  gbuffer.cpp
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,54): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+  camera.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  test_audio_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_audio_system.exe
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,56): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,53): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\external\tinygltf\tiny_gltf.h(1715,10): error C1083: Cannot open include file: 'j
+son.hpp': No such file or directory [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  lighting.cpp
+  session_manager.cpp
+  network_manager.cpp
+  lighting.cpp
+  asteroid_field_renderer.cpp
+  lighting.cpp
+  entity.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Generating Code...
+  entity.cpp
+  input_handler.cpp
+  entity_manager.cpp
+  post_processing.cpp
+  input_handler.cpp
+  entity.cpp
+  input_handler.cpp
+  entity_manager.cpp
+  ui_manager.cpp
+  Generating Code...
+  entity_manager.cpp
+  entity_message_parser.cpp
+  Generating Code...
+  test_server_responses.cpp
+  Generating Code...
+  Generating Code...
+  entity_message_parser.cpp
+  entity_message_parser.cpp
+  eve_panels.cpp
+  tcp_client.cpp
+  eve_target_list.cpp
+  file_logger.cpp
+  inventory_panel.cpp
+  window.cpp
+  test_entity_sync.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_entity_sync.exe
+  protocol_handler.cpp
+  file_logger.cpp
+  fitting_panel.cpp
+  test_asteroid_field.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_asteroid_field.exe
+  shader.cpp
+  mission_panel.cpp
+  file_logger.cpp
+  window.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_post_processing.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_post_processing.exe
+  test_shadow_mapping.cpp
+  test_ui_system.cpp
+  overview_panel.cpp
+  shader.cpp
+  window.cpp
+  window.cpp
+  network_manager.cpp
+  window.cpp
+  shader.cpp
+  camera.cpp
+  docking_manager.cpp
+  ui_manager.cpp
+  shader.cpp
+  renderer.cpp
+  camera.cpp
+  market_panel.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,54): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,56): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,53): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+  renderer.cpp
+  eve_panels.cpp
+  mesh.cpp
+  camera.cpp
+  entity.cpp
+  Generating Code...
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,54): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,56): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,53): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+  model.cpp
+  eve_target_list.cpp
+  renderer.cpp
+  mesh.cpp
+  Generating Code...
+  camera.cpp
+  test_deferred_rendering.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_deferred_rendering
+  .exe
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,54): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,56): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,53): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+  model.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,54): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,56): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,53): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/renderer.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+  mesh.cpp
+  inventory_panel.cpp
+  mesh.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\external\tinygltf\tiny_gltf.h(1715,10): error C1083: Cannot open include file: 'j
+son.hpp': No such file or directory [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  texture.cpp
+  shadow_map.cpp
+  model.cpp
+  fitting_panel.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  particle_system.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+  mission_panel.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,54): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(177,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,45):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,38): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(179,54): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,56): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,53): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.
+vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,47):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,40): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(181,56): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,44):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,37): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(183,53): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49): error C2065: 'Vertex': undeclared identifier [
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2923: 'std::vector': 'Vertex' is not a
+valid template type argument for parameter '_Ty' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxpr
+oj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,49):
+      see declaration of 'Vertex'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,42): error C2976: 'std::vector': too few template a
+rguments [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\include\rendering\model.h(185,58): error C2955: 'std::vector': use of class templ
+ate requires template argument list [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\vector(436,14):
+      see declaration of 'std::vector'
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\external\tinygltf\tiny_gltf.h(1715,10): error C1083: Cannot open include file: 'j
+son.hpp': No such file or directory [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  texture.cpp
+  lighting.cpp
+  overview_panel.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\external\tinygltf\tiny_gltf.h(1715,10): error C1083: Cannot open include file: 'j
+son.hpp': No such file or directory [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  texture.cpp
+  test_network.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_network.exe
+  particle_system.cpp
+  healthbar_renderer.cpp
+  input_handler.cpp
+  particle_system.cpp
+  visual_effects.cpp
+  test_server_responses.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_server_responses.exe
+  healthbar_renderer.cpp
+  docking_manager.cpp
+  Generating Code...
+  visual_effects.cpp
+  pbr_materials.cpp
+  healthbar_renderer.cpp
+  market_panel.cpp
+  entity.cpp
+  pbr_materials.cpp
+  Generating Code...
+  visual_effects.cpp
+  Generating Code...
+  test_shadow_mapping.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_shadow_mapping.exe
+  pbr_materials.cpp
+  Generating Code...
+  Generating Code...
+  test_ui_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_ui_system.exe
+  Compiling...
+  lod_manager.cpp
+  frustum_culler.cpp
+  Compiling...
+  lod_manager.cpp
+  instanced_renderer.cpp
+  frustum_culler.cpp
+  asteroid_field_renderer.cpp
+  Compiling...
+  lod_manager.cpp
+  instanced_renderer.cpp
+  lighting.cpp
+  frustum_culler.cpp
+  asteroid_field_renderer.cpp
+  instanced_renderer.cpp
+  shadow_map.cpp
+  lighting.cpp
+  asteroid_field_renderer.cpp
+  gbuffer.cpp
+  shadow_map.cpp
+  post_processing.cpp
+  lighting.cpp
+  gbuffer.cpp
+  tcp_client.cpp
+  shadow_map.cpp
+  post_processing.cpp
+  gbuffer.cpp
+  protocol_handler.cpp
+  tcp_client.cpp
+  post_processing.cpp
+  protocol_handler.cpp
+  tcp_client.cpp
+  network_manager.cpp
+  protocol_handler.cpp
+  network_manager.cpp
+  hud.cpp
+  input_handler.cpp
+  network_manager.cpp
+  ui_manager.cpp
+  hud.cpp
+  input_handler.cpp
+  eve_panels.cpp
+  ui_manager.cpp
+  hud.cpp
+  eve_target_list.cpp
+  input_handler.cpp
+  eve_panels.cpp
+  entity_picker.cpp
+  ui_manager.cpp
+  eve_target_list.cpp
+  context_menu.cpp
+  eve_panels.cpp
+  entity_picker.cpp
+  tactical_overlay.cpp
+  eve_target_list.cpp
+  context_menu.cpp
+  inventory_panel.cpp
+  entity_picker.cpp
+  tactical_overlay.cpp
+  Generating Code...
+  context_menu.cpp
+  inventory_panel.cpp
+  tactical_overlay.cpp
+  Generating Code...
+  inventory_panel.cpp
+  Generating Code...
+  Compiling...
+  fitting_panel.cpp
+  mission_panel.cpp
+  module_browser_panel.cpp
+  Compiling...
+  fitting_panel.cpp
+  market_panel.cpp
+  mission_panel.cpp
+  overview_panel.cpp
+  module_browser_panel.cpp
+  Compiling...
+  fitting_panel.cpp
+  market_panel.cpp
+  docking_manager.cpp
+  mission_panel.cpp
+  overview_panel.cpp
+  module_browser_panel.cpp
+  audio_manager.cpp
+  market_panel.cpp
+  docking_manager.cpp
+  overview_panel.cpp
+  audio_generator.cpp
+  audio_manager.cpp
+  Generating Code...
+  docking_manager.cpp
+  audio_generator.cpp
+  audio_manager.cpp
+  Generating Code...
+  audio_generator.cpp
+  Generating Code...
+
+ERROR: Build failed!
+Press any key to continue . . .
