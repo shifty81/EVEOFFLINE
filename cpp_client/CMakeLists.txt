@@ -451,6 +451,7 @@ if(BUILD_TESTS)
         src/rendering/camera.cpp
         src/rendering/mesh.cpp
         src/rendering/model.cpp
+        src/rendering/texture.cpp
         src/rendering/lighting.cpp
         src/ui/input_handler.cpp
         src/ui/ui_manager.cpp
