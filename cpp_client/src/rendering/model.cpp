@@ -16,8 +16,8 @@
 // Disable JSON dependency warnings - tinygltf will handle JSON internally
 #define TINYGLTF_NO_EXTERNAL_IMAGE
 // Include nlohmann/json before tinygltf and skip tinygltf's own json include
-#include <nlohmann/json.hpp>
 #define TINYGLTF_NO_INCLUDE_JSON
+#include <nlohmann/json.hpp>
 #include <tiny_gltf.h>
 
 namespace eve {
