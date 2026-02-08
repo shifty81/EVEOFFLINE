@@ -11,7 +11,7 @@
 
 // tinygltf configuration
 #define TINYGLTF_IMPLEMENTATION
-#define STB_IMAGE_IMPLEMENTATION
+// Note: STB_IMAGE_IMPLEMENTATION is defined in texture.cpp to avoid multiple definitions
 // Disable stb_image_write (not available, only needed for saving models)
 #ifndef TINYGLTF_NO_STB_IMAGE_WRITE
 #define TINYGLTF_NO_STB_IMAGE_WRITE
