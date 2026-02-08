@@ -541,9 +541,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Advanced industrial skills (Advanced Industry, Supply Chain Management)
 
 #### More Missions & Content
-- [ ] Level 5 missions
+- [x] Level 5 missions (6 extreme difficulty fleet missions)
 - [x] Epic mission arcs
-- [ ] Incursions (group PVE events)
+- [x] Incursions (group PVE events) — 8 encounters, 4 tiers, 6 NPC types
 - [x] More NPC factions (Mordu's Legion, Sisters of EVE)
 - [x] Rare NPC spawns (4 faction commanders, 4 officer NPCs)
 - [x] More exploration sites (12 new templates: combat, relic, data, wormhole anomalies)
@@ -617,7 +617,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Ore compression** - Reduce ore volume for transport
 
 #### Future Mining Enhancements (Optional)
-- [ ] Mining crystals (improved yield)
+- [x] Mining crystals (improved yield) — 30 crystals (Tech I/II for 15 ore types)
 - [x] Mining missions (10 missions, levels 1-4)
 
 #### ✅ Planetary Interaction (COMPLETE)

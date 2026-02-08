@@ -1,0 +1,732 @@
+{
+  "incursion_info": {
+    "description": "Incursions are large-scale Sansha's Nation invasions of known space. They require coordinated fleet efforts to repel and offer substantial ISK and loyalty point rewards.",
+    "mechanic": "Incursions spawn in constellation-sized areas, reducing system security and spawning encounter sites. Players must complete encounters to reduce the incursion influence bar. Once influence reaches 0%, the mothership site spawns for the final battle.",
+    "site_types": ["vanguard", "assault", "headquarters", "mothership"],
+    "fleet_sizes": {
+      "vanguard": 10,
+      "assault": 20,
+      "headquarters": 40,
+      "mothership": 80
+    },
+    "influence_per_completion": {
+      "vanguard": 0.01,
+      "assault": 0.03,
+      "headquarters": 0.07,
+      "mothership": 1.0
+    },
+    "system_effects": {
+      "cyno_jammed": true,
+      "security_penalty": -0.5,
+      "bounty_reduction": 0.5,
+      "tank_penalty": 0.1
+    }
+  },
+  "encounters": {
+    "nation_mining_colony": {
+      "id": "nation_mining_colony",
+      "name": "Nation Mining Colony",
+      "type": "vanguard",
+      "description": "A small Sansha mining operation has been established. Destroy the mining units and clear the defending forces.",
+      "briefing": "Vanguard-class encounter. Expect Sansha frigates and cruisers with heavy tracking disruption. A fleet of 10 pilots in battlecruisers or battleships is recommended. Focus fire on the Sansha Overseers first to break their command links.",
+      "difficulty": "hard",
+      "recommended_fleet_size": 10,
+      "recommended_ship_class": "Battlecruiser",
+      "time_limit": 1800,
+      "waves": [
+        {
+          "wave_number": 1,
+          "trigger": "on_warp_in",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 6},
+            {"type": "sansha_cruiser", "count": 3},
+            {"type": "sansha_overseer", "count": 1}
+          ]
+        },
+        {
+          "wave_number": 2,
+          "trigger": "overseer_destroyed",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 4},
+            {"type": "sansha_cruiser", "count": 4},
+            {"type": "sansha_battlecruiser", "count": 2}
+          ]
+        },
+        {
+          "wave_number": 3,
+          "trigger": "all_destroyed",
+          "npcs": [
+            {"type": "sansha_cruiser", "count": 3},
+            {"type": "sansha_battlecruiser", "count": 2},
+            {"type": "sansha_battleship", "count": 1}
+          ]
+        }
+      ],
+      "objectives": [
+        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
+        {"type": "destroy", "target": "sansha_mining_unit", "count": 3, "description": "Destroy Sansha Mining Units"}
+      ],
+      "rewards": {
+        "isk": 10000000,
+        "loyalty_points": 3500,
+        "concord_lp": 3500,
+        "standing_gain": 0.05
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module"
+      ]
+    },
+    "override_transfer_array": {
+      "id": "override_transfer_array",
+      "name": "Override Transfer Array",
+      "type": "vanguard",
+      "description": "Sansha forces are using a transfer array to beam reinforcements into the constellation. Destroy the array and its defenders.",
+      "briefing": "Vanguard-class encounter. The transfer array is shielded and will only become vulnerable once the defending fleet is destroyed. Sansha forces will use energy neutralizers aggressively. Bring cap-stable fits or cap boosters.",
+      "difficulty": "hard",
+      "recommended_fleet_size": 10,
+      "recommended_ship_class": "Battlecruiser",
+      "time_limit": 1800,
+      "waves": [
+        {
+          "wave_number": 1,
+          "trigger": "on_warp_in",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 5},
+            {"type": "sansha_cruiser", "count": 4},
+            {"type": "sansha_battlecruiser", "count": 1}
+          ]
+        },
+        {
+          "wave_number": 2,
+          "trigger": "battlecruiser_destroyed",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 3},
+            {"type": "sansha_cruiser", "count": 3},
+            {"type": "sansha_battlecruiser", "count": 2},
+            {"type": "sansha_battleship", "count": 1}
+          ]
+        }
+      ],
+      "objectives": [
+        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
+        {"type": "destroy", "target": "sansha_transfer_array", "count": 1, "description": "Destroy the Transfer Array"}
+      ],
+      "rewards": {
+        "isk": 10000000,
+        "loyalty_points": 3500,
+        "concord_lp": 3500,
+        "standing_gain": 0.05
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module"
+      ]
+    },
+    "nation_commander_outpost": {
+      "id": "nation_commander_outpost",
+      "name": "Nation Commander Outpost",
+      "type": "vanguard",
+      "description": "A Sansha field commander has set up an outpost to coordinate regional operations. Eliminate the commander and destroy the outpost.",
+      "briefing": "Vanguard-class encounter. The commander's battleship has very high resistances and uses tracking disruption. Logistics support is recommended. Focus fire is essential to break through the remote repair chain.",
+      "difficulty": "hard",
+      "recommended_fleet_size": 10,
+      "recommended_ship_class": "Battlecruiser",
+      "time_limit": 1800,
+      "waves": [
+        {
+          "wave_number": 1,
+          "trigger": "on_warp_in",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 4},
+            {"type": "sansha_cruiser", "count": 3}
+          ]
+        },
+        {
+          "wave_number": 2,
+          "trigger": "all_destroyed",
+          "npcs": [
+            {"type": "sansha_cruiser", "count": 4},
+            {"type": "sansha_battlecruiser", "count": 2},
+            {"type": "sansha_commander", "count": 1}
+          ]
+        }
+      ],
+      "objectives": [
+        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
+        {"type": "destroy", "target": "sansha_commander", "count": 1, "description": "Eliminate the Nation Commander"}
+      ],
+      "rewards": {
+        "isk": 12000000,
+        "loyalty_points": 4000,
+        "concord_lp": 4000,
+        "standing_gain": 0.07
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module",
+        "sansha_bpc"
+      ]
+    },
+    "true_power_provisional_headquarters": {
+      "id": "true_power_provisional_headquarters",
+      "name": "True Power Provisional Headquarters",
+      "type": "assault",
+      "description": "A True Power headquarters has been established to direct the incursion. A coordinated assault fleet is required to destroy it.",
+      "briefing": "Assault-class encounter. Expect overwhelming numbers of Sansha forces including battleships and logistics cruisers. A 20-pilot fleet with dedicated logistics is mandatory. EM and thermal damage recommended. The headquarters structure has a reinforcement timer.",
+      "difficulty": "extreme",
+      "recommended_fleet_size": 20,
+      "recommended_ship_class": "Battleship",
+      "time_limit": 3600,
+      "waves": [
+        {
+          "wave_number": 1,
+          "trigger": "on_warp_in",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 8},
+            {"type": "sansha_cruiser", "count": 6},
+            {"type": "sansha_battlecruiser", "count": 4},
+            {"type": "sansha_battleship", "count": 2}
+          ]
+        },
+        {
+          "wave_number": 2,
+          "trigger": "half_destroyed",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 6},
+            {"type": "sansha_cruiser", "count": 4},
+            {"type": "sansha_battlecruiser", "count": 3},
+            {"type": "sansha_battleship", "count": 3},
+            {"type": "sansha_logistics_cruiser", "count": 2}
+          ]
+        },
+        {
+          "wave_number": 3,
+          "trigger": "all_destroyed",
+          "npcs": [
+            {"type": "sansha_cruiser", "count": 4},
+            {"type": "sansha_battleship", "count": 4},
+            {"type": "sansha_logistics_cruiser", "count": 2},
+            {"type": "sansha_commander", "count": 1}
+          ]
+        }
+      ],
+      "objectives": [
+        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
+        {"type": "destroy", "target": "true_power_headquarters", "count": 1, "description": "Destroy the Provisional Headquarters"}
+      ],
+      "rewards": {
+        "isk": 25000000,
+        "loyalty_points": 7000,
+        "concord_lp": 7000,
+        "standing_gain": 0.10
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module",
+        "concord_module",
+        "sansha_bpc"
+      ]
+    },
+    "nation_staging_point": {
+      "id": "nation_staging_point",
+      "name": "Nation Staging Point",
+      "type": "assault",
+      "description": "Sansha forces are staging for a major push from this location. Destroy the staging infrastructure and eliminate the defending fleet.",
+      "briefing": "Assault-class encounter. Heavy energy neutralizer and warp disruption presence. Capital-class remote repairs on Sansha battleships. Requires coordinated alpha strikes to break through reps. 20-pilot fleet minimum with at least 3 logistics.",
+      "difficulty": "extreme",
+      "recommended_fleet_size": 20,
+      "recommended_ship_class": "Battleship",
+      "time_limit": 3600,
+      "waves": [
+        {
+          "wave_number": 1,
+          "trigger": "on_warp_in",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 10},
+            {"type": "sansha_cruiser", "count": 5},
+            {"type": "sansha_battlecruiser", "count": 3},
+            {"type": "sansha_battleship", "count": 2}
+          ]
+        },
+        {
+          "wave_number": 2,
+          "trigger": "half_destroyed",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 5},
+            {"type": "sansha_cruiser", "count": 6},
+            {"type": "sansha_battleship", "count": 4},
+            {"type": "sansha_logistics_cruiser", "count": 3}
+          ]
+        },
+        {
+          "wave_number": 3,
+          "trigger": "all_destroyed",
+          "npcs": [
+            {"type": "sansha_battleship", "count": 5},
+            {"type": "sansha_logistics_cruiser", "count": 2},
+            {"type": "sansha_commander", "count": 1}
+          ]
+        }
+      ],
+      "objectives": [
+        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
+        {"type": "destroy", "target": "sansha_staging_beacon", "count": 3, "description": "Destroy Staging Beacons"}
+      ],
+      "rewards": {
+        "isk": 28000000,
+        "loyalty_points": 7500,
+        "concord_lp": 7500,
+        "standing_gain": 0.10
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module",
+        "concord_module",
+        "sansha_bpc"
+      ]
+    },
+    "true_creations_research_center": {
+      "id": "true_creations_research_center",
+      "name": "True Creations Research Center",
+      "type": "headquarters",
+      "description": "A major True Creations research facility is manufacturing Sansha combat drones and implants. This is a high-priority target requiring a large fleet operation.",
+      "briefing": "Headquarters-class encounter. The research center is defended by multiple waves of heavy Sansha forces including capital-class entities. A 40-pilot fleet with significant logistics support is required. The facility must be destroyed after clearing all defenders. Expect heavy EM/thermal damage.",
+      "difficulty": "extreme",
+      "recommended_fleet_size": 40,
+      "recommended_ship_class": "Battleship",
+      "time_limit": 5400,
+      "waves": [
+        {
+          "wave_number": 1,
+          "trigger": "on_warp_in",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 12},
+            {"type": "sansha_cruiser", "count": 8},
+            {"type": "sansha_battlecruiser", "count": 6},
+            {"type": "sansha_battleship", "count": 4},
+            {"type": "sansha_logistics_cruiser", "count": 3}
+          ]
+        },
+        {
+          "wave_number": 2,
+          "trigger": "half_destroyed",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 8},
+            {"type": "sansha_cruiser", "count": 6},
+            {"type": "sansha_battleship", "count": 6},
+            {"type": "sansha_logistics_cruiser", "count": 4},
+            {"type": "sansha_commander", "count": 2}
+          ]
+        },
+        {
+          "wave_number": 3,
+          "trigger": "all_destroyed",
+          "npcs": [
+            {"type": "sansha_battleship", "count": 8},
+            {"type": "sansha_logistics_cruiser", "count": 3},
+            {"type": "sansha_commander", "count": 2},
+            {"type": "sansha_nation_carrier", "count": 1}
+          ]
+        }
+      ],
+      "objectives": [
+        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
+        {"type": "destroy", "target": "true_creations_research_center", "count": 1, "description": "Destroy the Research Center"}
+      ],
+      "rewards": {
+        "isk": 60000000,
+        "loyalty_points": 14000,
+        "concord_lp": 14000,
+        "standing_gain": 0.15
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module",
+        "concord_module",
+        "sansha_bpc",
+        "implant_set_slave"
+      ]
+    },
+    "kundalini_manifest": {
+      "id": "kundalini_manifest",
+      "name": "Kundalini Manifest",
+      "type": "headquarters",
+      "description": "The primary Sansha Nation command ship has been located. This massive vessel coordinates the entire incursion and must be destroyed to break the invasion.",
+      "briefing": "Headquarters-class encounter. The Kundalini Manifest is a supercarrier-class vessel with extreme defenses and fighter support. A full 40-pilot battleship fleet with heavy logistics and EWAR support is required. Destroying this vessel significantly reduces incursion influence.",
+      "difficulty": "extreme",
+      "recommended_fleet_size": 40,
+      "recommended_ship_class": "Battleship",
+      "time_limit": 5400,
+      "waves": [
+        {
+          "wave_number": 1,
+          "trigger": "on_warp_in",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 15},
+            {"type": "sansha_cruiser", "count": 10},
+            {"type": "sansha_battlecruiser", "count": 6},
+            {"type": "sansha_battleship", "count": 5},
+            {"type": "sansha_logistics_cruiser", "count": 4}
+          ]
+        },
+        {
+          "wave_number": 2,
+          "trigger": "half_destroyed",
+          "npcs": [
+            {"type": "sansha_cruiser", "count": 8},
+            {"type": "sansha_battleship", "count": 8},
+            {"type": "sansha_logistics_cruiser", "count": 4},
+            {"type": "sansha_commander", "count": 3}
+          ]
+        },
+        {
+          "wave_number": 3,
+          "trigger": "all_destroyed",
+          "npcs": [
+            {"type": "sansha_battleship", "count": 6},
+            {"type": "sansha_commander", "count": 2},
+            {"type": "sansha_nation_carrier", "count": 1},
+            {"type": "kundalini_manifest", "count": 1}
+          ]
+        }
+      ],
+      "objectives": [
+        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
+        {"type": "destroy", "target": "kundalini_manifest", "count": 1, "description": "Destroy the Kundalini Manifest"}
+      ],
+      "rewards": {
+        "isk": 80000000,
+        "loyalty_points": 18000,
+        "concord_lp": 18000,
+        "standing_gain": 0.20
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module",
+        "concord_module",
+        "sansha_bpc",
+        "implant_set_slave",
+        "faction_module"
+      ]
+    },
+    "nation_mothership": {
+      "id": "nation_mothership",
+      "name": "Nation Mothership",
+      "type": "mothership",
+      "description": "The Sansha Nation mothership has been located — the command vessel directing the entire incursion. Destroying it will end the incursion and liberate the constellation.",
+      "briefing": "Mothership-class encounter. This is the final encounter of the incursion. The mothership is a titan-class vessel with massive hit points and devastating weapons. An 80-pilot fleet including capitals is required. This encounter only spawns when the incursion influence reaches 0%. Completing this encounter ends the incursion entirely.",
+      "difficulty": "legendary",
+      "recommended_fleet_size": 80,
+      "recommended_ship_class": "Capital",
+      "time_limit": 7200,
+      "waves": [
+        {
+          "wave_number": 1,
+          "trigger": "on_warp_in",
+          "npcs": [
+            {"type": "sansha_frigate", "count": 20},
+            {"type": "sansha_cruiser", "count": 15},
+            {"type": "sansha_battlecruiser", "count": 10},
+            {"type": "sansha_battleship", "count": 8},
+            {"type": "sansha_logistics_cruiser", "count": 6},
+            {"type": "sansha_commander", "count": 4}
+          ]
+        },
+        {
+          "wave_number": 2,
+          "trigger": "half_destroyed",
+          "npcs": [
+            {"type": "sansha_cruiser", "count": 10},
+            {"type": "sansha_battleship", "count": 12},
+            {"type": "sansha_logistics_cruiser", "count": 6},
+            {"type": "sansha_commander", "count": 3},
+            {"type": "sansha_nation_carrier", "count": 2}
+          ]
+        },
+        {
+          "wave_number": 3,
+          "trigger": "all_destroyed",
+          "npcs": [
+            {"type": "sansha_battleship", "count": 8},
+            {"type": "sansha_nation_carrier", "count": 2},
+            {"type": "sansha_nation_mothership", "count": 1}
+          ]
+        }
+      ],
+      "objectives": [
+        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
+        {"type": "destroy", "target": "sansha_nation_mothership", "count": 1, "description": "Destroy the Nation Mothership"}
+      ],
+      "rewards": {
+        "isk": 200000000,
+        "loyalty_points": 50000,
+        "concord_lp": 50000,
+        "standing_gain": 0.50
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module",
+        "concord_module",
+        "sansha_bpc",
+        "implant_set_slave",
+        "faction_module",
+        "officer_module"
+      ]
+    }
+  },
+  "incursion_npcs": {
+    "sansha_overseer": {
+      "id": "sansha_overseer",
+      "name": "Sansha's Overseer",
+      "type": "cruiser",
+      "faction": "Sansha's Nation",
+      "hull_hp": 2800,
+      "armor_hp": 3500,
+      "shield_hp": 2200,
+      "max_velocity": 220,
+      "orbit_distance": 18000,
+      "signature_radius": 120,
+      "bounty": 750000,
+      "behavior": "command",
+      "awareness_range": 100000,
+      "weapons": [
+        {
+          "type": "medium_energy",
+          "damage": 85,
+          "damage_type": "em",
+          "optimal_range": 20000,
+          "falloff_range": 8000,
+          "rate_of_fire": 5.0
+        }
+      ],
+      "ewar": [
+        {"type": "tracking_disruption", "strength": 0.30, "range": 40000}
+      ],
+      "resistances": {
+        "shield": {"em": 20, "thermal": 50, "kinetic": 40, "explosive": 30},
+        "armor": {"em": 60, "thermal": 55, "kinetic": 25, "explosive": 20},
+        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      },
+      "loot_table": ["sansha_dogtag", "salvage_material"]
+    },
+    "sansha_logistics_cruiser": {
+      "id": "sansha_logistics_cruiser",
+      "name": "Sansha's Logistics",
+      "type": "cruiser",
+      "faction": "Sansha's Nation",
+      "hull_hp": 2000,
+      "armor_hp": 4000,
+      "shield_hp": 1800,
+      "max_velocity": 200,
+      "orbit_distance": 25000,
+      "signature_radius": 130,
+      "bounty": 500000,
+      "behavior": "support",
+      "awareness_range": 100000,
+      "weapons": [
+        {
+          "type": "medium_energy",
+          "damage": 45,
+          "damage_type": "em",
+          "optimal_range": 18000,
+          "falloff_range": 6000,
+          "rate_of_fire": 6.0
+        }
+      ],
+      "remote_repair": {
+        "type": "armor",
+        "amount": 350,
+        "range": 40000,
+        "cycle_time": 5.0
+      },
+      "resistances": {
+        "shield": {"em": 20, "thermal": 50, "kinetic": 40, "explosive": 30},
+        "armor": {"em": 65, "thermal": 60, "kinetic": 30, "explosive": 25},
+        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      },
+      "loot_table": ["sansha_dogtag", "salvage_material"]
+    },
+    "sansha_commander": {
+      "id": "sansha_commander",
+      "name": "Sansha's Nation Commander",
+      "type": "battleship",
+      "faction": "Sansha's Nation",
+      "hull_hp": 8000,
+      "armor_hp": 12000,
+      "shield_hp": 6000,
+      "max_velocity": 120,
+      "orbit_distance": 30000,
+      "signature_radius": 350,
+      "bounty": 3000000,
+      "behavior": "command",
+      "awareness_range": 150000,
+      "weapons": [
+        {
+          "type": "large_energy",
+          "damage": 200,
+          "damage_type": "em",
+          "optimal_range": 40000,
+          "falloff_range": 15000,
+          "rate_of_fire": 7.0
+        },
+        {
+          "type": "large_energy",
+          "damage": 180,
+          "damage_type": "thermal",
+          "optimal_range": 35000,
+          "falloff_range": 12000,
+          "rate_of_fire": 6.5
+        }
+      ],
+      "ewar": [
+        {"type": "tracking_disruption", "strength": 0.40, "range": 50000},
+        {"type": "energy_neutralizer", "amount": 200, "range": 25000, "cycle_time": 8.0}
+      ],
+      "resistances": {
+        "shield": {"em": 30, "thermal": 55, "kinetic": 45, "explosive": 35},
+        "armor": {"em": 70, "thermal": 65, "kinetic": 35, "explosive": 30},
+        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      },
+      "loot_table": ["sansha_dogtag", "salvage_material", "true_sansha_module"]
+    },
+    "sansha_nation_carrier": {
+      "id": "sansha_nation_carrier",
+      "name": "Sansha's Nation Carrier",
+      "type": "capital",
+      "faction": "Sansha's Nation",
+      "hull_hp": 30000,
+      "armor_hp": 50000,
+      "shield_hp": 20000,
+      "max_velocity": 60,
+      "orbit_distance": 50000,
+      "signature_radius": 2500,
+      "bounty": 15000000,
+      "behavior": "command",
+      "awareness_range": 250000,
+      "weapons": [
+        {
+          "type": "fighter_bomber",
+          "damage": 500,
+          "damage_type": "em",
+          "optimal_range": 80000,
+          "falloff_range": 20000,
+          "rate_of_fire": 10.0
+        }
+      ],
+      "remote_repair": {
+        "type": "armor",
+        "amount": 1500,
+        "range": 60000,
+        "cycle_time": 8.0
+      },
+      "resistances": {
+        "shield": {"em": 35, "thermal": 55, "kinetic": 50, "explosive": 40},
+        "armor": {"em": 75, "thermal": 70, "kinetic": 40, "explosive": 35},
+        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      },
+      "loot_table": ["sansha_dogtag", "salvage_material", "true_sansha_module", "concord_module"]
+    },
+    "kundalini_manifest": {
+      "id": "kundalini_manifest",
+      "name": "Kundalini Manifest",
+      "type": "capital",
+      "faction": "Sansha's Nation",
+      "hull_hp": 60000,
+      "armor_hp": 80000,
+      "shield_hp": 40000,
+      "max_velocity": 45,
+      "orbit_distance": 60000,
+      "signature_radius": 3500,
+      "bounty": 30000000,
+      "behavior": "command",
+      "awareness_range": 300000,
+      "weapons": [
+        {
+          "type": "fighter_bomber",
+          "damage": 800,
+          "damage_type": "em",
+          "optimal_range": 100000,
+          "falloff_range": 30000,
+          "rate_of_fire": 8.0
+        },
+        {
+          "type": "doomsday_beam",
+          "damage": 5000,
+          "damage_type": "em",
+          "optimal_range": 150000,
+          "falloff_range": 0,
+          "rate_of_fire": 120.0
+        }
+      ],
+      "ewar": [
+        {"type": "energy_neutralizer", "amount": 500, "range": 40000, "cycle_time": 6.0}
+      ],
+      "resistances": {
+        "shield": {"em": 40, "thermal": 60, "kinetic": 55, "explosive": 45},
+        "armor": {"em": 80, "thermal": 75, "kinetic": 45, "explosive": 40},
+        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      },
+      "loot_table": ["sansha_dogtag", "salvage_material", "true_sansha_module", "concord_module", "implant_set_slave"]
+    },
+    "sansha_nation_mothership": {
+      "id": "sansha_nation_mothership",
+      "name": "Sansha's Nation Mothership",
+      "type": "titan",
+      "faction": "Sansha's Nation",
+      "hull_hp": 200000,
+      "armor_hp": 300000,
+      "shield_hp": 150000,
+      "max_velocity": 25,
+      "orbit_distance": 100000,
+      "signature_radius": 12000,
+      "bounty": 100000000,
+      "behavior": "command",
+      "awareness_range": 500000,
+      "weapons": [
+        {
+          "type": "fighter_bomber",
+          "damage": 1500,
+          "damage_type": "em",
+          "optimal_range": 150000,
+          "falloff_range": 50000,
+          "rate_of_fire": 6.0
+        },
+        {
+          "type": "doomsday_beam",
+          "damage": 15000,
+          "damage_type": "em",
+          "optimal_range": 250000,
+          "falloff_range": 0,
+          "rate_of_fire": 180.0
+        }
+      ],
+      "ewar": [
+        {"type": "energy_neutralizer", "amount": 1000, "range": 60000, "cycle_time": 5.0},
+        {"type": "warp_disruption_field", "strength": 100, "range": 100000}
+      ],
+      "resistances": {
+        "shield": {"em": 50, "thermal": 65, "kinetic": 60, "explosive": 50},
+        "armor": {"em": 85, "thermal": 80, "kinetic": 50, "explosive": 45},
+        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      },
+      "loot_table": [
+        "sansha_dogtag",
+        "salvage_material",
+        "true_sansha_module",
+        "concord_module",
+        "implant_set_slave",
+        "faction_module",
+        "officer_module"
+      ]
+    }
+  }
+}
