@@ -646,6 +646,7 @@ void testShipDatabaseCapitalShips() {
     bool hasCapital = false, hasBattleship = false, hasFrigate = false;
     bool hasTech2Cruiser = false, hasMiningBarge = false;
     bool hasMarauder = false, hasIndustrial = false;
+    bool hasInterdictor = false, hasStealthBomber = false;
     for (const auto& id : ids) {
         if (id == "archon") hasCapital = true;
         if (id == "tempest") hasBattleship = true;
@@ -654,6 +655,8 @@ void testShipDatabaseCapitalShips() {
         if (id == "procurer") hasMiningBarge = true;
         if (id == "vargur") hasMarauder = true;
         if (id == "badger") hasIndustrial = true;
+        if (id == "sabre") hasInterdictor = true;
+        if (id == "hound") hasStealthBomber = true;
     }
     assertTrue(hasCapital, "Capital ships loaded");
     assertTrue(hasBattleship, "Battleships loaded");
@@ -662,6 +665,8 @@ void testShipDatabaseCapitalShips() {
     assertTrue(hasMiningBarge, "Mining barges loaded");
     assertTrue(hasMarauder, "Marauder battleships loaded");
     assertTrue(hasIndustrial, "Industrial ships loaded");
+    assertTrue(hasInterdictor, "Interdictor destroyers loaded");
+    assertTrue(hasStealthBomber, "Stealth Bomber frigates loaded");
     assertTrue(ids.size() >= 50, "At least 50 ship templates loaded");
 }
 
@@ -704,6 +709,87 @@ void testShipDatabaseMarauders() {
     assertTrue(paladin != nullptr, "Paladin marauder found in database");
     if (paladin) {
         assertTrue(paladin->race == "Amarr", "Paladin race is Amarr");
+    }
+}
+
+void testShipDatabaseInterdictors() {
+    std::cout << "\n=== ShipDatabase Interdictor Ships ===" << std::endl;
+    
+    data::ShipDatabase db;
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    // Verify all 4 Interdictors are loaded
+    const data::ShipTemplate* sabre = db.getShip("sabre");
+    if (sabre) {
+        assertTrue(sabre->name == "Sabre", "Sabre name correct");
+        assertTrue(sabre->ship_class == "Interdictor", "Sabre class is Interdictor");
+        assertTrue(sabre->race == "Minmatar", "Sabre race is Minmatar");
+        assertTrue(sabre->hull_hp > 700.0f, "Sabre has destroyer-class hull HP");
+        assertTrue(sabre->max_locked_targets >= 7, "Sabre has 7 locked targets");
+    } else {
+        assertTrue(false, "Sabre interdictor found in database");
+    }
+    
+    const data::ShipTemplate* flycatcher = db.getShip("flycatcher");
+    assertTrue(flycatcher != nullptr, "Flycatcher interdictor found in database");
+    if (flycatcher) {
+        assertTrue(flycatcher->race == "Caldari", "Flycatcher race is Caldari");
+    }
+    
+    const data::ShipTemplate* eris = db.getShip("eris");
+    assertTrue(eris != nullptr, "Eris interdictor found in database");
+    if (eris) {
+        assertTrue(eris->race == "Gallente", "Eris race is Gallente");
+    }
+    
+    const data::ShipTemplate* heretic = db.getShip("heretic");
+    assertTrue(heretic != nullptr, "Heretic interdictor found in database");
+    if (heretic) {
+        assertTrue(heretic->race == "Amarr", "Heretic race is Amarr");
+    }
+}
+
+void testShipDatabaseStealthBombers() {
+    std::cout << "\n=== ShipDatabase Stealth Bomber Ships ===" << std::endl;
+    
+    data::ShipDatabase db;
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    // Verify all 4 Stealth Bombers are loaded
+    const data::ShipTemplate* hound = db.getShip("hound");
+    if (hound) {
+        assertTrue(hound->name == "Hound", "Hound name correct");
+        assertTrue(hound->ship_class == "Stealth Bomber", "Hound class is Stealth Bomber");
+        assertTrue(hound->race == "Minmatar", "Hound race is Minmatar");
+        assertTrue(hound->max_targeting_range >= 45000.0f, "Hound has long targeting range");
+    } else {
+        assertTrue(false, "Hound stealth bomber found in database");
+    }
+    
+    const data::ShipTemplate* manticore = db.getShip("manticore");
+    assertTrue(manticore != nullptr, "Manticore stealth bomber found in database");
+    if (manticore) {
+        assertTrue(manticore->race == "Caldari", "Manticore race is Caldari");
+    }
+    
+    const data::ShipTemplate* nemesis = db.getShip("nemesis");
+    assertTrue(nemesis != nullptr, "Nemesis stealth bomber found in database");
+    if (nemesis) {
+        assertTrue(nemesis->race == "Gallente", "Nemesis race is Gallente");
+    }
+    
+    const data::ShipTemplate* purifier = db.getShip("purifier");
+    assertTrue(purifier != nullptr, "Purifier stealth bomber found in database");
+    if (purifier) {
+        assertTrue(purifier->race == "Amarr", "Purifier race is Amarr");
     }
 }
 
@@ -1775,7 +1861,7 @@ int main() {
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
     std::cout << "Capacitor, Shield, Weapon, Targeting," << std::endl;
     std::cout << "ShipDB, WormholeDB, Wormhole, Fleet," << std::endl;
-    std::cout << "WorldPersistence" << std::endl;
+    std::cout << "WorldPersistence, Interdictors, StealthBombers" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -1809,6 +1895,8 @@ int main() {
     testShipDatabaseGetShipIds();
     testShipDatabaseCapitalShips();
     testShipDatabaseMarauders();
+    testShipDatabaseInterdictors();
+    testShipDatabaseStealthBombers();
     
     // WormholeDatabase tests
     testWormholeDatabaseLoad();

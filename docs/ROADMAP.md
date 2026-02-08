@@ -518,7 +518,8 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Battleships (4 races)
 - [x] Tech II Battleships (Marauders: Vargur, Golem, Kronos, Paladin)
 - [x] Battlecruisers (4 races)
-- [x] Tech II Frigates (Assault, Interceptor, Covert Ops)
+- [x] Tech II Frigates (Assault, Interceptor, Covert Ops, Stealth Bomber)
+- [x] Tech II Destroyers (Interdictors: Sabre, Flycatcher, Eris, Heretic)
 - [x] Tech II Cruisers (HAC, HIC, Recon, Logistics)
 - [x] Industrial ships
 - [x] Mining barges
@@ -533,6 +534,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Cloaking devices (Prototype, Improved, Covert Ops)
 - [x] Jump drives (Economy, Standard)
 - [x] Medium Tech II weapons (autocannon, blasters, railgun, pulse/beam lasers, heavy/rapid light missiles)
+- [x] Large Tech II weapons (800mm autocannon, 1400mm artillery, mega pulse/tachyon beam lasers, 425mm railgun, neutron blaster, cruise/torpedo launchers)
 
 #### More Skills
 - [x] Capital ship skills (carriers, dreadnoughts, titans for all 4 races)

@@ -19,6 +19,7 @@ int ShipDatabase::loadFromDirectory(const std::string& data_dir) {
         "frigates.json",
         "tech2_frigates.json",
         "destroyers.json",
+        "tech2_destroyers.json",
         "cruisers.json",
         "tech2_cruisers.json",
         "battlecruisers.json",
