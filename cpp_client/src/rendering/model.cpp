@@ -12,7 +12,8 @@
 // tinygltf configuration
 #define TINYGLTF_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
-#define STB_IMAGE_WRITE_IMPLEMENTATION
+// Disable stb_image_write (not available, only needed for saving models)
+#define TINYGLTF_NO_STB_IMAGE_WRITE
 // Disable JSON dependency warnings - tinygltf will handle JSON internally
 #define TINYGLTF_NO_EXTERNAL_IMAGE
 // Include nlohmann/json before tinygltf and skip tinygltf's own json include
