@@ -114,9 +114,11 @@ cmake --build . --config Release
 
 ### Game Content (data/)
 All game content is moddable via JSON files, structured around the EVE Online manual:
-- 58+ ships (frigates to titans, Tech I and Tech II, plus capitals)
+- 86+ ships (frigates to titans, Tech I and Tech II, plus capitals)
   - Frigates, Destroyers, Cruisers, Battlecruisers, Battleships
+  - Interceptors, Covert Ops, Assault Frigates
   - Carriers, Dreadnoughts, Titans
+  - Industrial haulers, Mining Barges, Exhumers
   - Procedural 3D models with faction-specific designs
 - 70+ modules (weapons, defenses, utilities)
 - 100+ skills across 20 categories with attribute-based training

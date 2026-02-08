@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 8, 2026)**: Incursions system added with 8 encounters across 4 tiers (vanguard, assault, headquarters, mothership) and 6 incursion-specific NPC types. Mining crystals added with 30 crystal types (Tech I and Tech II for all 15 ore types). The game now has 127+ modules, 137 skills, and comprehensive content across all tiers.
+> **Update (February 8, 2026)**: Interceptors (8 ships: 4 combat + 4 fleet), Covert Ops frigates (4 ships), and Industrial ships (4 haulers) added. Incursions system added with 8 encounters across 4 tiers. Mining crystals added with 30 crystal types. The game now has 86 ships, 127+ modules, 137 skills, and comprehensive content across all tiers.
 
 ## Current Status (February 2026)
 
@@ -15,8 +15,8 @@
 - ✅ **Medium-Term**: External Model Loading, Standings System, Tech II Content, Epic Arcs, Faction/Officer Modules (February 2026)
 
 ### Project Highlights
-- **53 ships** across all classes (Frigates to Titans, including Command Ships)
-- **371 procedural ship models** (53 ships × 7 factions)
+- **86 ships** across all classes (Frigates to Titans, including Command Ships, Interceptors, Covert Ops, Industrials)
+- **602 procedural ship models** (86 ships × 7 factions)
 - **Custom model support**: .obj, .gltf, .glb formats
 - **127+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital, Mining Crystals)
 - **137 skills** with complete skill tree (including 14 Leadership skills)
@@ -85,7 +85,10 @@ From ROADMAP.md "In Progress" section:
 
 #### 2.1 Additional Tech II Variants
 - Second HAC per race (currently 4, could have 8)
-- Tech II Battlecruisers (Command Ships, etc.)
+- ✅ Tech II Battlecruisers (Command Ships) — 4 ships
+- ✅ Tech II Interceptors — 8 ships (4 combat, 4 fleet)
+- ✅ Covert Ops Frigates — 4 ships
+- ✅ Industrial Ships — 4 haulers
 - Estimated effort: 2-3 weeks
 
 #### 2.2 Additional Mission Content
@@ -254,6 +257,27 @@ From ROADMAP.md "In Progress" section:
     - ✅ Compatible with Modulated Strip Miners and Deep Core Strip Miners
     - ✅ Mercoxit crystals restricted to Deep Core Strip Miners only
 
+15. ✅ **Add Interceptor Frigates** (COMPLETED - February 2026)
+    - ✅ 4 Combat Interceptors (Claw, Crow, Taranis, Crusader)
+    - ✅ 4 Fleet Interceptors (Stiletto, Raptor, Ares, Malediction)
+    - ✅ High speed (400-470 m/s) and agility for fast tackle
+    - ✅ Fleet Interceptors with interdiction nullifier (bubble immunity)
+    - ✅ MWD signature bloom reduction bonuses
+    - ✅ Race-specific weapon and tank bonuses
+
+16. ✅ **Add Covert Ops Frigates** (COMPLETED - February 2026)
+    - ✅ 4 Covert Ops frigates (Cheetah, Buzzard, Helios, Anathema)
+    - ✅ Scan probe strength and deviation reduction bonuses
+    - ✅ Covert Ops cloaking device compatibility
+    - ✅ Hacking and virus coherence bonuses
+    - ✅ High CPU for fitting scanning modules
+
+17. ✅ **Add Industrial Ships** (COMPLETED - February 2026)
+    - ✅ 4 Industrial haulers (Hoarder, Badger, Iteron Mark V, Bestower)
+    - ✅ Large cargo capacity (3800-5800 m3 base)
+    - ✅ Cargo capacity bonuses per skill level
+    - ✅ Race-specific tank bonuses (shield/armor)
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -320,4 +344,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 8, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Incursions system and mining crystals added. Ready for Phase 8 planning.*
+*Status: Quick Wins, Medium-Term Tasks complete. Interceptors, Covert Ops, and Industrials added. Ready for Phase 8 planning.*
