@@ -516,10 +516,10 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 #### More Ships
 - [ ] Tech II ships (all classes)
 - [x] Battleships (4 races)
+- [x] Tech II Battleships (Marauders: Vargur, Golem, Kronos, Paladin)
 - [x] Battlecruisers (4 races)
 - [x] Tech II Frigates (Assault, Interceptor, Covert Ops)
 - [x] Tech II Cruisers (HAC, HIC, Recon, Logistics)
-- [x] Tech II Battleships (Marauders: Vargur, Golem, Kronos, Paladin)
 - [x] Industrial ships
 - [x] Mining barges
 - [x] Capital ships (Carriers, Dreadnoughts)
