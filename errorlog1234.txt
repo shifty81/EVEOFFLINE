@@ -1,0 +1,367 @@
+================================================
+EVE OFFLINE C++ Client - Visual Studio Build
+================================================
+
+Build Type: Release
+
+Configuring CMake for Visual Studio...
+
+Found vcpkg at C:\vcpkg
+
+Using generator: Visual Studio 17 2022
+
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.19045.
+-- The C compiler identification is MSVC 19.38.33145.0
+-- The CXX compiler identification is MSVC 19.38.33145.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Found Threads: TRUE
+-- Found OpenGL: opengl32
+-- OpenAL found - audio support enabled
+-- GLEW found - using system GLEW
+-- Using system GLEW (GLAD not needed)
+-- Using system nlohmann/json
+-- Using bundled STB image loader
+-- Using bundled tinyobjloader for .obj model loading
+-- Using bundled tinygltf for .gltf/.glb model loading
+-- Using system ImGui from vcpkg
+-- Building test suite...
+--
+-- EVE OFFLINE Client Configuration:
+--   C++ Standard: 17
+--   OpenGL:
+--   Use System Libraries: ON
+--   Build Tests: ON
+--
+-- Configuring done (6.0s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/GIT PROJECTS/EVEOFFLINE/cpp_client/build_vs
+
+CMake configuration successful!
+
+Building project...
+
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  main.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_phase46_advanced.cpp
+  test_audio_system.cpp
+  test_entity_sync.cpp
+  test_network.cpp
+  test_asteroid_field.cpp
+  test_deferred_rendering.cpp
+  test_lighting.cpp
+  test_enhanced_ui.cpp
+  application.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  window.cpp
+  application.cpp
+  window.cpp
+  application.cpp
+  window.cpp
+  audio_manager.cpp
+  shader.cpp
+  shader.cpp
+  shader.cpp
+  tcp_client.cpp
+  entity.cpp
+  game_client.cpp
+  audio_generator.cpp
+  test_post_processing.cpp
+  game_client.cpp
+  entity_manager.cpp
+  Generating Code...
+  game_client.cpp
+  protocol_handler.cpp
+  window.cpp
+  entity_message_parser.cpp
+  camera.cpp
+  camera.cpp
+  camera.cpp
+  mesh.cpp
+  mesh.cpp
+  shader.cpp
+  embedded_server.cpp
+  mesh.cpp
+  embedded_server.cpp
+  model.cpp
+  gbuffer.cpp
+  embedded_server.cpp
+  test_audio_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_audio_system.exe
+  instanced_renderer.cpp
+  session_manager.cpp
+  session_manager.cpp
+  Generating Code...
+  network_manager.cpp
+  session_manager.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(19,1): warning C4005: 'TINYGLTF_NO_INCLUDE_JSON': macro r
+edefinition [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(19,1):
+      'TINYGLTF_NO_INCLUDE_JSON' previously declared on the command line
+
+  lighting.cpp
+  asteroid_field_renderer.cpp
+  camera.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\external\tinygltf\tiny_gltf.h(1740,10): error C1083: Cannot open include file: 's
+tb_image_write.h': No such file or directory [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  lighting.cpp
+  entity.cpp
+  input_handler.cpp
+  lighting.cpp
+  entity.cpp
+  input_handler.cpp
+  test_server_responses.cpp
+  entity.cpp
+  entity_manager.cpp
+  input_handler.cpp
+  Generating Code...
+  entity_manager.cpp
+  Generating Code...
+  entity_manager.cpp
+  tcp_client.cpp
+  Generating Code...
+  ui_manager.cpp
+  post_processing.cpp
+  entity_message_parser.cpp
+  entity_message_parser.cpp
+  entity_message_parser.cpp
+  Generating Code...
+  eve_panels.cpp
+  protocol_handler.cpp
+  test_entity_sync.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_entity_sync.exe
+  eve_target_list.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  inventory_panel.cpp
+  file_logger.cpp
+  test_asteroid_field.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_asteroid_field.exe
+  test_shadow_mapping.cpp
+  file_logger.cpp
+  fitting_panel.cpp
+  test_deferred_rendering.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_deferred_rendering
+  .exe
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  window.cpp
+  mission_panel.cpp
+  window.cpp
+  file_logger.cpp
+  window.cpp
+  overview_panel.cpp
+  network_manager.cpp
+  test_ui_system.cpp
+  shader.cpp
+  shader.cpp
+  window.cpp
+  shader.cpp
+  test_post_processing.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_post_processing.exe
+  docking_manager.cpp
+  window.cpp
+  shader.cpp
+  ui_manager.cpp
+  market_panel.cpp
+  camera.cpp
+  Generating Code...
+  camera.cpp
+  entity.cpp
+  camera.cpp
+  mesh.cpp
+  renderer.cpp
+  Generating Code...
+  eve_panels.cpp
+  renderer.cpp
+  camera.cpp
+  shadow_map.cpp
+  eve_target_list.cpp
+  mesh.cpp
+  renderer.cpp
+  mesh.cpp
+  inventory_panel.cpp
+  model.cpp
+  model.cpp
+  fitting_panel.cpp
+  mesh.cpp
+  lighting.cpp
+  mission_panel.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(19,1): warning C4005: 'TINYGLTF_NO_INCLUDE_JSON': macro r
+edefinition [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(19,1):
+      'TINYGLTF_NO_INCLUDE_JSON' previously declared on the command line
+
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(19,1): warning C4005: 'TINYGLTF_NO_INCLUDE_JSON': macro r
+edefinition [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(19,1):
+      'TINYGLTF_NO_INCLUDE_JSON' previously declared on the command line
+
+  model.cpp
+  overview_panel.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\external\tinygltf\tiny_gltf.h(1740,10): error C1083: Cannot open include file: 's
+tb_image_write.h': No such file or directory [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxp
+roj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  texture.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\external\tinygltf\tiny_gltf.h(1740,10): error C1083: Cannot open include file: 's
+tb_image_write.h': No such file or directory [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  texture.cpp
+  input_handler.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(19,1): warning C4005: 'TINYGLTF_NO_INCLUDE_JSON': macro r
+edefinition [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+      C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(19,1):
+      'TINYGLTF_NO_INCLUDE_JSON' previously declared on the command line
+
+  particle_system.cpp
+  docking_manager.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\external\tinygltf\tiny_gltf.h(1740,10): error C1083: Cannot open include file: 's
+tb_image_write.h': No such file or directory [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  (compiling source file '../src/rendering/model.cpp')
+
+  texture.cpp
+  Generating Code...
+  test_server_responses.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_server_responses.exe
+  test_network.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_network.exe
+  particle_system.cpp
+  market_panel.cpp
+  healthbar_renderer.cpp
+  particle_system.cpp
+  healthbar_renderer.cpp
+  entity.cpp
+  visual_effects.cpp
+  healthbar_renderer.cpp
+  Generating Code...
+  test_shadow_mapping.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_shadow_mapping.exe
+  visual_effects.cpp
+  pbr_materials.cpp
+  visual_effects.cpp
+  pbr_materials.cpp
+  Generating Code...
+  pbr_materials.cpp
+  Generating Code...
+  test_ui_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_ui_system.exe
+  Generating Code...
+  Compiling...
+  lod_manager.cpp
+  Compiling...
+  lod_manager.cpp
+  Compiling...
+  lod_manager.cpp
+  frustum_culler.cpp
+  frustum_culler.cpp
+  frustum_culler.cpp
+  instanced_renderer.cpp
+  instanced_renderer.cpp
+  instanced_renderer.cpp
+  asteroid_field_renderer.cpp
+  asteroid_field_renderer.cpp
+  asteroid_field_renderer.cpp
+  lighting.cpp
+  lighting.cpp
+  lighting.cpp
+  shadow_map.cpp
+  shadow_map.cpp
+  shadow_map.cpp
+  gbuffer.cpp
+  gbuffer.cpp
+  gbuffer.cpp
+  post_processing.cpp
+  post_processing.cpp
+  post_processing.cpp
+  tcp_client.cpp
+  tcp_client.cpp
+  tcp_client.cpp
+  protocol_handler.cpp
+  protocol_handler.cpp
+  protocol_handler.cpp
+  network_manager.cpp
+  network_manager.cpp
+  network_manager.cpp
+  hud.cpp
+  hud.cpp
+  hud.cpp
+  input_handler.cpp
+  input_handler.cpp
+  input_handler.cpp
+  ui_manager.cpp
+  ui_manager.cpp
+  ui_manager.cpp
+  eve_panels.cpp
+  eve_panels.cpp
+  eve_panels.cpp
+  eve_target_list.cpp
+  eve_target_list.cpp
+  eve_target_list.cpp
+  entity_picker.cpp
+  entity_picker.cpp
+  entity_picker.cpp
+  context_menu.cpp
+  context_menu.cpp
+  context_menu.cpp
+  tactical_overlay.cpp
+  tactical_overlay.cpp
+  tactical_overlay.cpp
+  inventory_panel.cpp
+  inventory_panel.cpp
+  inventory_panel.cpp
+  Generating Code...
+  Generating Code...
+  Generating Code...
+  Compiling...
+  fitting_panel.cpp
+  Compiling...
+  fitting_panel.cpp
+  mission_panel.cpp
+  Compiling...
+  fitting_panel.cpp
+  mission_panel.cpp
+  module_browser_panel.cpp
+  mission_panel.cpp
+  module_browser_panel.cpp
+  module_browser_panel.cpp
+  market_panel.cpp
+  market_panel.cpp
+  overview_panel.cpp
+  market_panel.cpp
+  overview_panel.cpp
+  overview_panel.cpp
+  docking_manager.cpp
+  docking_manager.cpp
+  docking_manager.cpp
+  audio_manager.cpp
+  audio_manager.cpp
+  audio_manager.cpp
+  audio_generator.cpp
+  audio_generator.cpp
+  audio_generator.cpp
+  Generating Code...
+  Generating Code...
+  Generating Code...
+
+ERROR: Build failed!
+Press any key to continue . . .
