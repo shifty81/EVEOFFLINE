@@ -1,0 +1,595 @@
+================================================
+EVE OFFLINE C++ Client - Visual Studio Build
+================================================
+
+Build Type: Release
+
+Configuring CMake for Visual Studio...
+
+Found vcpkg at C:\vcpkg
+
+Using generator: Visual Studio 17 2022
+
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.19045.
+-- The C compiler identification is MSVC 19.38.33145.0
+-- The CXX compiler identification is MSVC 19.38.33145.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Found Threads: TRUE
+-- Found OpenGL: opengl32
+-- OpenAL found - audio support enabled
+-- GLEW found - using system GLEW
+-- Using system GLEW (GLAD not needed)
+-- Using system nlohmann/json
+-- Using bundled STB image loader
+-- Using bundled tinyobjloader for .obj model loading
+-- Using bundled tinygltf for .gltf/.glb model loading
+-- Using system ImGui from vcpkg
+-- Building test suite...
+--
+-- EVE OFFLINE Client Configuration:
+--   C++ Standard: 17
+--   OpenGL:
+--   Use System Libraries: ON
+--   Build Tests: ON
+--
+-- Configuring done (4.7s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/GIT PROJECTS/EVEOFFLINE/cpp_client/build_vs
+
+CMake configuration successful!
+
+Building project...
+
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  1>Checking Build System
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_asteroid_field.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_deferred_rendering.cpp
+  test_audio_system.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_network.cpp
+  test_enhanced_ui.cpp
+  main.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_server_responses.cpp
+  test_post_processing.cpp
+  test_shadow_mapping.cpp
+  test_phase46_advanced.cpp
+  window.cpp
+  application.cpp
+  tcp_client.cpp
+  window.cpp
+  window.cpp
+  audio_manager.cpp
+  application.cpp
+  shader.cpp
+  shader.cpp
+  tcp_client.cpp
+  application.cpp
+  shader.cpp
+  window.cpp
+  audio_generator.cpp
+  game_client.cpp
+  game_client.cpp
+  protocol_handler.cpp
+  shader.cpp
+  camera.cpp
+  Generating Code...
+  game_client.cpp
+  protocol_handler.cpp
+  camera.cpp
+  lighting.cpp
+  camera.cpp
+  mesh.cpp
+  embedded_server.cpp
+  mesh.cpp
+  embedded_server.cpp
+  network_manager.cpp
+  post_processing.cpp
+  camera.cpp
+  instanced_renderer.cpp
+  mesh.cpp
+  gbuffer.cpp
+  embedded_server.cpp
+  network_manager.cpp
+  session_manager.cpp
+  session_manager.cpp
+  Generating Code...
+  shadow_map.cpp
+  session_manager.cpp
+  asteroid_field_renderer.cpp
+  lighting.cpp
+  Generating Code...
+  entity.cpp
+  entity.cpp
+  lighting.cpp
+  input_handler.cpp
+  test_audio_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_audio_system.exe
+  test_entity_sync.cpp
+  input_handler.cpp
+  entity_manager.cpp
+  entity_manager.cpp
+  entity.cpp
+  Generating Code...
+  Generating Code...
+  input_handler.cpp
+  entity_manager.cpp
+  test_lighting.cpp
+  Generating Code...
+  entity_message_parser.cpp
+  entity_message_parser.cpp
+  Generating Code...
+  entity_message_parser.cpp
+  entity.cpp
+  window.cpp
+  entity_manager.cpp
+  shader.cpp
+  file_logger.cpp
+  file_logger.cpp
+  entity_message_parser.cpp
+  window.cpp
+  window.cpp
+  file_logger.cpp
+  camera.cpp
+  shader.cpp
+  window.cpp
+  shader.cpp
+  test_asteroid_field.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_asteroid_field.exe
+  mesh.cpp
+  shader.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_post_processing.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_post_processing.exe
+  test_shadow_mapping.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_shadow_mapping.exe
+  test_deferred_rendering.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_deferred_rendering
+  .exe
+  test_ui_system.cpp
+  model.cpp
+  Generating Code...
+  camera.cpp
+  renderer.cpp
+  camera.cpp
+  window.cpp
+  camera.cpp
+  renderer.cpp
+  renderer.cpp
+  ui_manager.cpp
+  mesh.cpp
+  test_entity_sync.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_entity_sync.exe
+  test_server_responses.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_server_responses.exe
+  mesh.cpp
+  test_network.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_network.exe
+  model.cpp
+  mesh.cpp
+  eve_panels.cpp
+  model.cpp
+  model.cpp
+  eve_target_list.cpp
+  inventory_panel.cpp
+  lighting.cpp
+  fitting_panel.cpp
+  input_handler.cpp
+  mission_panel.cpp
+  overview_panel.cpp
+  ui_manager.cpp
+  texture.cpp
+  docking_manager.cpp
+  eve_panels.cpp
+  texture.cpp
+  texture.cpp
+  particle_system.cpp
+  market_panel.cpp
+  eve_target_list.cpp
+  particle_system.cpp
+  particle_system.cpp
+  entity.cpp
+  inventory_panel.cpp
+  healthbar_renderer.cpp
+  Generating Code...
+  fitting_panel.cpp
+  healthbar_renderer.cpp
+  healthbar_renderer.cpp
+  mission_panel.cpp
+  visual_effects.cpp
+  overview_panel.cpp
+  visual_effects.cpp
+  visual_effects.cpp
+  pbr_materials.cpp
+  pbr_materials.cpp
+  docking_manager.cpp
+  pbr_materials.cpp
+  test_ui_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_ui_system.exe
+  Generating Code...
+  market_panel.cpp
+  Generating Code...
+  Generating Code...
+  entity.cpp
+  Generating Code...
+  test_lighting.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_lighting.exe
+  Compiling...
+  lod_manager.cpp
+  Compiling...
+  lod_manager.cpp
+  frustum_culler.cpp
+  Compiling...
+  lod_manager.cpp
+  frustum_culler.cpp
+  instanced_renderer.cpp
+  frustum_culler.cpp
+  instanced_renderer.cpp
+  instanced_renderer.cpp
+  asteroid_field_renderer.cpp
+  asteroid_field_renderer.cpp
+  asteroid_field_renderer.cpp
+  lighting.cpp
+  lighting.cpp
+  shadow_map.cpp
+  lighting.cpp
+  shadow_map.cpp
+  shadow_map.cpp
+  gbuffer.cpp
+  gbuffer.cpp
+  post_processing.cpp
+  gbuffer.cpp
+  post_processing.cpp
+  tcp_client.cpp
+  post_processing.cpp
+  tcp_client.cpp
+  tcp_client.cpp
+  protocol_handler.cpp
+  protocol_handler.cpp
+  protocol_handler.cpp
+  network_manager.cpp
+  network_manager.cpp
+  network_manager.cpp
+  hud.cpp
+  hud.cpp
+  input_handler.cpp
+  hud.cpp
+  input_handler.cpp
+  ui_manager.cpp
+  input_handler.cpp
+  ui_manager.cpp
+  ui_manager.cpp
+  eve_panels.cpp
+  eve_panels.cpp
+  eve_target_list.cpp
+  eve_panels.cpp
+  eve_target_list.cpp
+  entity_picker.cpp
+  eve_target_list.cpp
+  entity_picker.cpp
+  context_menu.cpp
+  entity_picker.cpp
+  context_menu.cpp
+  tactical_overlay.cpp
+  context_menu.cpp
+  tactical_overlay.cpp
+  tactical_overlay.cpp
+  inventory_panel.cpp
+  Generating Code...
+  inventory_panel.cpp
+  inventory_panel.cpp
+  Generating Code...
+  Generating Code...
+  Compiling...
+  fitting_panel.cpp
+  mission_panel.cpp
+  Compiling...
+  fitting_panel.cpp
+  module_browser_panel.cpp
+  Compiling...
+  fitting_panel.cpp
+  mission_panel.cpp
+  market_panel.cpp
+  mission_panel.cpp
+  module_browser_panel.cpp
+  overview_panel.cpp
+  module_browser_panel.cpp
+  market_panel.cpp
+  market_panel.cpp
+  overview_panel.cpp
+  overview_panel.cpp
+  docking_manager.cpp
+  docking_manager.cpp
+  audio_manager.cpp
+  docking_manager.cpp
+  audio_manager.cpp
+  audio_generator.cpp
+  audio_manager.cpp
+  audio_generator.cpp
+  Generating Code...
+  audio_generator.cpp
+  Generating Code...
+  Generating Code...
+texture.obj : error LNK2005: stbi_convert_iphone_png_to_rgb already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cp
+p_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_convert_iphone_png_to_rgb_thread already defined in model.obj [C:\GIT PROJECTS\EVEOFF
+LINE\cpp_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_failure_reason already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_hdr_to_ldr_gamma already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_hdr_to_ldr_scale already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_image_free already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_
+vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_info already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve
+_client.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_v
+s\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp
+_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cl
+ient\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\e
+ve_client.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cl
+ient\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_ldr_to_hdr_gamma already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_ldr_to_hdr_scale already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve
+_client.vcxproj]
+texture.obj : error LNK2005: stbi_load_16 already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\
+eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_load_16_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_c
+lient\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_load_16_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_file_16 already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client
+\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_load_gif_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cli
+ent\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_loadf already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\ev
+e_client.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cli
+ent\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\b
+uild_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client
+\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_set_flip_vertically_on_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_set_flip_vertically_on_load_thread already defined in model.obj [C:\GIT PROJECTS\EVEO
+FFLINE\cpp_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_set_unpremultiply_on_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cp
+p_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_set_unpremultiply_on_load_thread already defined in model.obj [C:\GIT PROJECTS\EVEOFF
+LINE\cpp_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_buffer already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc_guesssize already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE
+\cpp_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc_guesssize_headerflag already defined in model.obj [C:\GIT PROJECTS
+\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_noheader_buffer already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_noheader_malloc already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\eve_client.exe : fatal error LNK1169: one or more multiply d
+efined symbols found [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+texture.obj : error LNK2005: stbi_convert_iphone_png_to_rgb already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cp
+p_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_convert_iphone_png_to_rgb_thread already defined in model.obj [C:\GIT PROJECTS\EVEOFF
+LINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_failure_reason already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_hdr_to_ldr_gamma already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_hdr_to_ldr_scale already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_image_free already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_
+vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_info already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\tes
+t_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_v
+s\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp
+_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cl
+ient\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\t
+est_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cl
+ient\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_ldr_to_hdr_gamma already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_ldr_to_hdr_scale already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\tes
+t_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load_16 already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\
+test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load_16_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_c
+lient\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load_16_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_file_16 already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client
+\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_load_gif_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cli
+ent\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_loadf already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\te
+st_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cli
+ent\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\b
+uild_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client
+\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_set_flip_vertically_on_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_set_flip_vertically_on_load_thread already defined in model.obj [C:\GIT PROJECTS\EVEO
+FFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_set_unpremultiply_on_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cp
+p_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_set_unpremultiply_on_load_thread already defined in model.obj [C:\GIT PROJECTS\EVEOFF
+LINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_buffer already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc_guesssize already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE
+\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc_guesssize_headerflag already defined in model.obj [C:\GIT PROJECTS
+\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_noheader_buffer already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_noheader_malloc already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_phase46_advanced.exe : fatal error LNK1169: one or more
+ multiply defined symbols found [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+texture.obj : error LNK2005: stbi_convert_iphone_png_to_rgb already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cp
+p_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_convert_iphone_png_to_rgb_thread already defined in model.obj [C:\GIT PROJECTS\EVEOFF
+LINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_failure_reason already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_hdr_to_ldr_gamma already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_hdr_to_ldr_scale already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_image_free already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_
+vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_info already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\tes
+t_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_info_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_v
+s\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp
+_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_is_16_bit_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cl
+ient\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\t
+est_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cl
+ient\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_is_hdr_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_ldr_to_hdr_gamma already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_ldr_to_hdr_scale already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\tes
+t_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load_16 already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\
+test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load_16_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_c
+lient\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load_16_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clie
+nt\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\bu
+ild_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_file_16 already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client
+\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\
+build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_load_gif_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cli
+ent\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_loadf already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\te
+st_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_callbacks already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_cli
+ent\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_file already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\b
+uild_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_loadf_from_memory already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_client
+\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_set_flip_vertically_on_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_set_flip_vertically_on_load_thread already defined in model.obj [C:\GIT PROJECTS\EVEO
+FFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_set_unpremultiply_on_load already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cp
+p_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_set_unpremultiply_on_load_thread already defined in model.obj [C:\GIT PROJECTS\EVEOFF
+LINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_buffer already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\cpp_clien
+t\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc_guesssize already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE
+\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_malloc_guesssize_headerflag already defined in model.obj [C:\GIT PROJECTS
+\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_noheader_buffer already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\test_enhanced_ui.vcxproj]
+texture.obj : error LNK2005: stbi_zlib_decode_noheader_malloc already defined in model.obj [C:\GIT PROJECTS\EVEOFFLINE\
+cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_enhanced_ui.exe : fatal error LNK1169: one or more mult
+iply defined symbols found [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+
+ERROR: Build failed!
+Press any key to continue . . .
