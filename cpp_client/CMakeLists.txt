@@ -503,13 +503,33 @@ add_custom_command(TARGET eve_client POST_BUILD
     COMMENT "Copying shaders, assets, and UI resources next to executable"
 )
 
-# Copy extracted OBJ models next to executable for multi-config generators
+# Copy extracted OBJ models next to executable for multi-config generators.
+# Always register this post-build step.  The make_directory call ensures the
+# destination exists, and we only copy from OBJ_MODELS_DIR when it is present.
+add_custom_command(TARGET eve_client POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory
+        "$<TARGET_FILE_DIR:eve_client>/models/ships"
+    COMMENT "Ensuring models/ships directory exists next to executable"
+)
 if(EXISTS "${OBJ_MODELS_DIR}")
     add_custom_command(TARGET eve_client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${OBJ_MODELS_DIR}"
             "$<TARGET_FILE_DIR:eve_client>/models/ships"
-        COMMENT "Copying OBJ ship models next to executable"
+        COMMENT "Copying extracted OBJ ship models next to executable"
+    )
+endif()
+
+# Also copy any OBJ files placed directly in the source models/ships/ directory
+# so that users can drop .obj files there and have them picked up at build time.
+set(SRC_MODELS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/ships")
+file(GLOB SRC_OBJ_FILES CONFIGURE_DEPENDS "${SRC_MODELS_DIR}/*.obj")
+if(SRC_OBJ_FILES)
+    add_custom_command(TARGET eve_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${SRC_MODELS_DIR}"
+            "$<TARGET_FILE_DIR:eve_client>/models/ships"
+        COMMENT "Copying source OBJ ship models next to executable"
     )
 endif()
 
@@ -530,6 +550,11 @@ install(DIRECTORY assets/
 install(DIRECTORY ui_resources/
     DESTINATION ui_resources
     FILES_MATCHING PATTERN "*.rml" PATTERN "*.rcss"
+)
+
+install(DIRECTORY models/ships/
+    DESTINATION models/ships
+    FILES_MATCHING PATTERN "*.obj"
 )
 
 # Tests

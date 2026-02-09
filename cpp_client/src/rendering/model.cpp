@@ -6,6 +6,16 @@
 #include <fstream>
 #include <filesystem>
 
+#ifdef _WIN32
+#include <windows.h>
+#elif defined(__APPLE__)
+#include <mach-o/dyld.h>
+#include <climits>
+#else
+#include <unistd.h>
+#include <climits>
+#endif
+
 // Model loading libraries
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
@@ -27,6 +37,35 @@
 #include <tiny_gltf.h>
 
 namespace eve {
+
+// Returns the directory containing the running executable.
+static std::string getExecutableDir() {
+    std::filesystem::path exePath;
+#ifdef _WIN32
+    char buf[MAX_PATH];
+    DWORD len = GetModuleFileNameA(nullptr, buf, MAX_PATH);
+    if (len > 0 && len < MAX_PATH) {
+        exePath = buf;
+    }
+#elif defined(__APPLE__)
+    char buf[PATH_MAX];
+    uint32_t size = sizeof(buf);
+    if (_NSGetExecutablePath(buf, &size) == 0) {
+        exePath = std::filesystem::canonical(buf);
+    }
+#else
+    char buf[PATH_MAX];
+    ssize_t len = readlink("/proc/self/exe", buf, sizeof(buf) - 1);
+    if (len != -1) {
+        buf[len] = '\0';
+        exePath = buf;
+    }
+#endif
+    if (!exePath.empty()) {
+        return exePath.parent_path().string();
+    }
+    return "";
+}
 
 // Mathematical constants
 constexpr float PI = 3.14159265358979323846f;
@@ -313,7 +352,7 @@ void Model::addMesh(std::unique_ptr<Mesh> mesh) {
 }
 
 std::string Model::findOBJModelPath(const std::string& shipType, const std::string& faction) {
-    // Search directories relative to the executable for extracted OBJ models
+    // Search directories relative to the current working directory
     std::vector<std::string> searchDirs = {
         "models/ships",
         "../models/ships",
@@ -321,9 +360,27 @@ std::string Model::findOBJModelPath(const std::string& shipType, const std::stri
         "../bin/models/ships"
     };
 
+    // Also search relative to the executable directory so that OBJ files are
+    // found regardless of the current working directory (e.g. when the game is
+    // launched from an IDE or a different shell location).
+    std::string exeDir = getExecutableDir();
+    if (!exeDir.empty()) {
+        std::filesystem::path exeDirPath(exeDir);
+        // Models next to the executable (e.g. bin/models/ships)
+        searchDirs.push_back((exeDirPath / "models" / "ships").string());
+        // Multi-config generators (Visual Studio/Xcode) place the binary in
+        // a configuration subdirectory such as bin/Release/ or bin/Debug/.
+        // The models directory lives one level above that.
+        searchDirs.push_back((exeDirPath.parent_path() / "models" / "ships").string());
+    }
+
     // Convert faction to lowercase for filename matching
     std::string factionLower = faction;
     std::transform(factionLower.begin(), factionLower.end(), factionLower.begin(), ::tolower);
+
+    // Convert shipType to lowercase once before the directory loop
+    std::string shipTypeLower = shipType;
+    std::transform(shipTypeLower.begin(), shipTypeLower.end(), shipTypeLower.begin(), ::tolower);
 
     for (const auto& dir : searchDirs) {
         if (!std::filesystem::exists(dir)) continue;
@@ -341,10 +398,6 @@ std::string Model::findOBJModelPath(const std::string& shipType, const std::stri
                 std::transform(filenameLower.begin(), filenameLower.end(), filenameLower.begin(), ::tolower);
 
                 if (filenameLower.find(factionLower + "_") != 0) continue;
-
-                // Check if the ship name appears in the filename (case-insensitive)
-                std::string shipTypeLower = shipType;
-                std::transform(shipTypeLower.begin(), shipTypeLower.end(), shipTypeLower.begin(), ::tolower);
 
                 // Strip the .obj extension for matching
                 std::string baseLower = filenameLower.substr(0, filenameLower.size() - 4);
