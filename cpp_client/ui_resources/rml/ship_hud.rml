@@ -65,6 +65,11 @@
             margin-bottom: 2dp;
         }
 
+        .rack-section {
+            display: inline-block;
+            margin: 0 12dp;
+        }
+
         .rack-row:last-child {
             margin-bottom: 0;
         }
@@ -128,7 +133,11 @@
 
         <!-- Module rack: F1-F8 -->
         <div class="module-rack">
-            <div class="rack-label">HIGH&nbsp;&nbsp;&nbsp;MID&nbsp;&nbsp;&nbsp;LOW</div>
+            <div class="rack-label">
+                <span class="rack-section">HIGH</span>
+                <span class="rack-section">MID</span>
+                <span class="rack-section">LOW</span>
+            </div>
             <div class="rack-row">
                 <div class="module-slot" id="mod-f1"><span class="label">F1</span></div>
                 <div class="module-slot" id="mod-f2"><span class="label">F2</span></div>
