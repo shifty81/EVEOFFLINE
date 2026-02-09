@@ -247,7 +247,7 @@ void ShipGenerationRules::initializeGallenteRules() {
     rules.referenceTraits.minAspectLW = 1.035f;
     rules.referenceTraits.maxAspectLW = 10.442f;  // Widest range of any faction
     rules.referenceTraits.avgAspectLH = 3.664f;
-    rules.referenceTraits.avgVertexCount = 7327;   // Lowest — smoother surfaces
+    rules.referenceTraits.avgVertexCount = 7327;   // Lowest -- smoother surfaces
     rules.referenceTraits.avgFaceCount = 8031;
     rules.referenceTraits.detailDensityMultiplier = 1.18f;  // Low detail (smooth organic)
     
@@ -459,7 +459,7 @@ void ShipGenerationRules::initializeBattleshipRules() {
 void ShipGenerationRules::initializeCapitalRules() {
     ClassRules rules;
     
-    // Carrier — Reference traits from 9 analyzed carrier OBJ models
+    // Carrier -- Reference traits from 9 analyzed carrier OBJ models
     rules.shipClass = "Carrier";
     rules.minLength = 14.0f;
     rules.maxLength = 16.0f;
@@ -483,7 +483,7 @@ void ShipGenerationRules::initializeCapitalRules() {
     rules.referenceTraits.detailDensityMultiplier = 3.57f;
     m_classRules["Carrier"] = rules;
     
-    // Dreadnought — Reference traits from 5 analyzed dreadnought OBJ models
+    // Dreadnought -- Reference traits from 5 analyzed dreadnought OBJ models
     rules.shipClass = "Dreadnought";
     rules.minLength = 11.0f;
     rules.maxLength = 13.0f;
@@ -505,7 +505,7 @@ void ShipGenerationRules::initializeCapitalRules() {
     rules.referenceTraits.detailDensityMultiplier = 2.77f;
     m_classRules["Dreadnought"] = rules;
     
-    // Titan — Reference traits from 5 analyzed titan OBJ models
+    // Titan -- Reference traits from 5 analyzed titan OBJ models
     rules.shipClass = "Titan";
     rules.minLength = 23.0f;
     rules.maxLength = 27.0f;

@@ -146,7 +146,7 @@ ShipAssemblyConfig ShipPartLibrary::createVariedAssemblyConfig(
     
     // Set up deterministic RNG
     std::mt19937 rng(variation.seed != 0 ? variation.seed 
-                     : static_cast<unsigned int>(std::hash<std::string>{}(shipClass + faction)));
+                     : static_cast<unsigned int>(std::hash<std::string>{}(shipClass + "|" + faction)));
     std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
     
     // Look up reference model traits for this faction and class
