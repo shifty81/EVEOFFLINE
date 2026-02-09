@@ -2,224 +2,34 @@
  * @file rml_ui_manager.cpp
  * @brief RmlUi-based UI manager implementation for EVE OFFLINE.
  *
- * This file provides the RmlUi integration layer:
- *  - OpenGL 3.3 render interface (vertex/index buffer submission)
- *  - GLFW system interface (time, logging, clipboard)
- *  - GLFW file interface (asset loading from ui_resources/)
- *  - Custom element registration for circular gauges
- *  - Data model setup for live game state binding
+ * When built with -DUSE_RMLUI=ON, this uses RmlUi's official GLFW platform
+ * and OpenGL 3 renderer backends for production-quality UI rendering.
  *
- * The implementation is guarded by USE_RMLUI. When RmlUi is not available
- * the translation unit compiles to an empty stub so that the rest of the
- * client can still link.
+ * When USE_RMLUI is not defined, all methods compile as no-op stubs so the
+ * rest of the client can link without the RmlUi dependency.
  */
 
 #ifdef USE_RMLUI
 
 #include "ui/rml_ui_manager.h"
+#include "core/entity.h"
 
 #include <RmlUi/Core.h>
-#include <GL/glew.h>
+#include <RmlUi/Debugger.h>
+#include <RmlUi_Platform_GLFW.h>
+#include <RmlUi_Renderer_GL3.h>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-#include <fstream>
 #include <sstream>
 #include <cmath>
 #include <algorithm>
+#include <cstdio>
 
 namespace UI {
 
 // ============================================================================
-// RmlRenderInterface — OpenGL 3.3 backend for RmlUi
-// ============================================================================
-
-class RmlRenderInterface : public Rml::RenderInterface {
-public:
-    RmlRenderInterface() = default;
-    ~RmlRenderInterface() override = default;
-
-    void RenderGeometry(Rml::Vertex* vertices, int num_vertices,
-                        int* indices, int num_indices,
-                        Rml::TextureHandle texture,
-                        const Rml::Vector2f& translation) override
-    {
-        glPushMatrix();
-        glTranslatef(translation.x, translation.y, 0);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        if (texture) {
-            glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(texture));
-        } else {
-            glDisable(GL_TEXTURE_2D);
-        }
-
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        glVertexPointer(2, GL_FLOAT, sizeof(Rml::Vertex),
-                        &vertices[0].position);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Rml::Vertex),
-                       &vertices[0].colour);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(Rml::Vertex),
-                          &vertices[0].tex_coord);
-
-        glDrawElements(GL_TRIANGLES, num_indices, GL_UNSIGNED_INT, indices);
-
-        glDisableClientState(GL_VERTEX_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        if (texture) {
-            glDisable(GL_TEXTURE_2D);
-        }
-
-        glPopMatrix();
-    }
-
-    void EnableScissorRegion(bool enable) override {
-        if (enable) {
-            glEnable(GL_SCISSOR_TEST);
-        } else {
-            glDisable(GL_SCISSOR_TEST);
-        }
-    }
-
-    void SetScissorRegion(int x, int y, int width, int height) override {
-        // RmlUi gives top-left origin; OpenGL scissor uses bottom-left
-        GLint viewport[4];
-        glGetIntegerv(GL_VIEWPORT, viewport);
-        glScissor(x, viewport[3] - (y + height), width, height);
-    }
-
-    bool LoadTexture(Rml::TextureHandle& texture_handle,
-                     Rml::Vector2i& texture_dimensions,
-                     const Rml::String& source) override
-    {
-        // Placeholder — integrate with existing Texture class for full support
-        std::cout << "[RmlUI] LoadTexture: " << source << " (stub)\n";
-        texture_handle = 0;
-        texture_dimensions = {0, 0};
-        return false;
-    }
-
-    bool GenerateTexture(Rml::TextureHandle& texture_handle,
-                         const Rml::byte* source,
-                         const Rml::Vector2i& source_dimensions) override
-    {
-        GLuint tex = 0;
-        glGenTextures(1, &tex);
-        glBindTexture(GL_TEXTURE_2D, tex);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8,
-                     source_dimensions.x, source_dimensions.y,
-                     0, GL_RGBA, GL_UNSIGNED_BYTE, source);
-
-        texture_handle = static_cast<Rml::TextureHandle>(tex);
-        return true;
-    }
-
-    void ReleaseTexture(Rml::TextureHandle texture) override {
-        GLuint tex = static_cast<GLuint>(texture);
-        glDeleteTextures(1, &tex);
-    }
-};
-
-// ============================================================================
-// RmlSystemInterface — GLFW timing & logging
-// ============================================================================
-
-class RmlSystemInterface : public Rml::SystemInterface {
-public:
-    double GetElapsedTime() override {
-        return glfwGetTime();
-    }
-
-    bool LogMessage(Rml::Log::Type type, const Rml::String& message) override {
-        const char* prefix = "[RmlUI]";
-        switch (type) {
-            case Rml::Log::LT_ERROR:   std::cerr << prefix << " ERROR: ";   break;
-            case Rml::Log::LT_WARNING: std::cerr << prefix << " WARN: ";    break;
-            case Rml::Log::LT_INFO:    std::cout << prefix << " INFO: ";    break;
-            default:                   std::cout << prefix << " DEBUG: ";   break;
-        }
-        std::cout << message << "\n";
-        return true;
-    }
-};
-
-// ============================================================================
-// RmlFileInterface — load assets from ui_resources/
-// ============================================================================
-
-class RmlFileInterface : public Rml::FileInterface {
-public:
-    explicit RmlFileInterface(const std::string& basePath)
-        : basePath_(basePath) {}
-
-    Rml::FileHandle Open(const Rml::String& path) override {
-        std::string fullPath = basePath_ + "/" + path;
-        auto* file = new std::ifstream(fullPath, std::ios::binary);
-        if (!file->is_open()) {
-            delete file;
-            return 0;
-        }
-        return reinterpret_cast<Rml::FileHandle>(file);
-    }
-
-    void Close(Rml::FileHandle file) override {
-        auto* stream = reinterpret_cast<std::ifstream*>(file);
-        delete stream;
-    }
-
-    size_t Read(void* buffer, size_t size, Rml::FileHandle file) override {
-        auto* stream = reinterpret_cast<std::ifstream*>(file);
-        stream->read(static_cast<char*>(buffer), static_cast<std::streamsize>(size));
-        return static_cast<size_t>(stream->gcount());
-    }
-
-    bool Seek(Rml::FileHandle file, long offset, int origin) override {
-        auto* stream = reinterpret_cast<std::ifstream*>(file);
-        std::ios_base::seekdir dir;
-        switch (origin) {
-            case SEEK_SET: dir = std::ios::beg; break;
-            case SEEK_CUR: dir = std::ios::cur; break;
-            case SEEK_END: dir = std::ios::end; break;
-            default: return false;
-        }
-        stream->seekg(offset, dir);
-        return !stream->fail();
-    }
-
-    size_t Tell(Rml::FileHandle file) override {
-        auto* stream = reinterpret_cast<std::ifstream*>(file);
-        return static_cast<size_t>(stream->tellg());
-    }
-
-    size_t Length(Rml::FileHandle file) override {
-        auto* stream = reinterpret_cast<std::ifstream*>(file);
-        auto pos = stream->tellg();
-        stream->seekg(0, std::ios::end);
-        auto len = static_cast<size_t>(stream->tellg());
-        stream->seekg(pos);
-        return len;
-    }
-
-private:
-    std::string basePath_;
-};
-
-// ============================================================================
-// RmlUiManager implementation
+// RmlUiManager — uses official RmlUi GL3 + GLFW backends
 // ============================================================================
 
 RmlUiManager::RmlUiManager() = default;
@@ -239,39 +49,101 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
     window_ = window;
     resourcePath_ = resourcePath;
 
-    // Create interface implementations
-    renderInterface_ = std::make_unique<RmlRenderInterface>();
-    systemInterface_ = std::make_unique<RmlSystemInterface>();
-    fileInterface_ = std::make_unique<RmlFileInterface>(resourcePath);
+    // Initialize the GL3 function loader used by RmlUi's renderer
+    Rml::String gl_message;
+    if (!RmlGL3::Initialize(&gl_message)) {
+        std::cerr << "[RmlUiManager] Error: RmlGL3::Initialize failed: " << gl_message << "\n";
+        return false;
+    }
+    std::cout << "[RmlUiManager] " << gl_message << "\n";
 
-    // Set RmlUi interfaces
-    Rml::SetRenderInterface(renderInterface_.get());
+    // Create the system (platform) and render interfaces from RmlUi's backends
+    systemInterface_ = std::make_unique<SystemInterface_GLFW>();
+    systemInterface_->SetWindow(window);
+    renderInterface_ = std::make_unique<RenderInterface_GL3>();
+
+    if (!*renderInterface_) {
+        std::cerr << "[RmlUiManager] Error: RenderInterface_GL3 creation failed\n";
+        RmlGL3::Shutdown();
+        return false;
+    }
+
+    // Register interfaces with RmlUi core
     Rml::SetSystemInterface(systemInterface_.get());
-    Rml::SetFileInterface(fileInterface_.get());
+    Rml::SetRenderInterface(renderInterface_.get());
 
     // Initialize RmlUi core
     if (!Rml::Initialise()) {
         std::cerr << "[RmlUiManager] Error: Rml::Initialise() failed\n";
+        RmlGL3::Shutdown();
         return false;
     }
 
-    // Create context sized to the GLFW framebuffer
+    // Get framebuffer dimensions
     int fbWidth = 0, fbHeight = 0;
     glfwGetFramebufferSize(window_, &fbWidth, &fbHeight);
+    renderInterface_->SetViewport(fbWidth, fbHeight);
 
-    context_ = Rml::CreateContext("main",
-        Rml::Vector2i(fbWidth, fbHeight));
+    // Create main context
+    context_ = Rml::CreateContext("main", Rml::Vector2i(fbWidth, fbHeight));
     if (!context_) {
         std::cerr << "[RmlUiManager] Error: failed to create RmlUi context\n";
         Rml::Shutdown();
+        RmlGL3::Shutdown();
         return false;
     }
 
-    // Register custom elements (circular gauges, etc.)
-    RegisterCustomElements();
+    // Initialize the visual debugger (toggled with F8)
+    Rml::Debugger::Initialise(context_);
 
-    // Set up data model bindings
-    SetupDataBindings();
+    // Load fonts for UI rendering.
+    // RmlUi requires at least one font to render text. The first font loaded
+    // as a fallback will be used when no other font matches.
+    struct FontCandidate {
+        const char* path;
+        bool fallback;
+    };
+
+    // Try to load Lato (EVE Online's UI font), then common system fallbacks
+    FontCandidate regularFonts[] = {
+        {"/usr/share/fonts/truetype/lato/Lato-Regular.ttf", true},
+        {"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", true},
+        {"/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", true},
+        {"/usr/share/fonts/TTF/DejaVuSans.ttf", true},
+        {"C:\\Windows\\Fonts\\segoeui.ttf", true},
+        {"C:\\Windows\\Fonts\\arial.ttf", true},
+    };
+
+    bool fontLoaded = false;
+    for (const auto& font : regularFonts) {
+        if (Rml::LoadFontFace(font.path, font.fallback)) {
+            std::cout << "[RmlUiManager] Loaded font: " << font.path << "\n";
+            fontLoaded = true;
+            break;
+        }
+    }
+
+    // Try to load bold variant
+    const char* boldFonts[] = {
+        "/usr/share/fonts/truetype/lato/Lato-Bold.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "C:\\Windows\\Fonts\\segoeuib.ttf",
+        "C:\\Windows\\Fonts\\arialbd.ttf",
+    };
+    for (const auto* boldPath : boldFonts) {
+        if (Rml::LoadFontFace(boldPath, false)) {
+            std::cout << "[RmlUiManager] Loaded bold font: " << boldPath << "\n";
+            break;
+        }
+    }
+
+    if (!fontLoaded) {
+        std::cerr << "[RmlUiManager] Warning: no system fonts found, text may not render\n";
+    }
+
+    // Setup GLFW input callbacks
+    SetupInputCallbacks();
 
     // Load core documents
     if (!LoadDocuments()) {
@@ -289,6 +161,7 @@ void RmlUiManager::Shutdown() {
     documents_.clear();
 
     if (context_) {
+        Rml::Debugger::Shutdown();
         Rml::RemoveContext("main");
         context_ = nullptr;
     }
@@ -297,101 +170,84 @@ void RmlUiManager::Shutdown() {
 
     renderInterface_.reset();
     systemInterface_.reset();
-    fileInterface_.reset();
+
+    RmlGL3::Shutdown();
 
     initialized_ = false;
     std::cout << "[RmlUiManager] Shutdown complete\n";
 }
 
-// ----------------------------------------------------------------
-// Per-frame
-// ----------------------------------------------------------------
+// ---- Per-frame methods ----
 
 void RmlUiManager::ProcessInput() {
-    if (!initialized_ || !context_) return;
-    // Input forwarding is handled by GLFW callbacks registered
-    // during Initialize(). Full implementation will map GLFW key,
-    // mouse, and scroll events to context_->ProcessKey*,
-    // context_->ProcessMouseMove, etc.
+    // Input is handled via GLFW callbacks set up in SetupInputCallbacks()
 }
 
 void RmlUiManager::Update() {
     if (!initialized_ || !context_) return;
+
+    // Update HUD elements with current ship data
+    UpdateHudElements();
+
     context_->Update();
+}
+
+void RmlUiManager::BeginFrame() {
+    if (!initialized_ || !renderInterface_) return;
+    renderInterface_->BeginFrame();
 }
 
 void RmlUiManager::Render() {
     if (!initialized_ || !context_) return;
-
-    // Set up 2D orthographic projection for UI rendering
-    GLint viewport[4];
-    glGetIntegerv(GL_VIEWPORT, viewport);
-
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0, viewport[2], viewport[3], 0, -1, 1);
-
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    glDisable(GL_DEPTH_TEST);
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
     context_->Render();
-
-    glEnable(GL_DEPTH_TEST);
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
 }
 
-// ----------------------------------------------------------------
-// Ship Status
-// ----------------------------------------------------------------
+void RmlUiManager::EndFrame() {
+    if (!initialized_ || !renderInterface_) return;
+    renderInterface_->EndFrame();
+}
+
+// ---- Ship Status ----
+
+void RmlUiManager::SetShipStatus(const RmlShipData& data) {
+    shipData_ = data;
+}
 
 void RmlUiManager::SetShieldPercent(float pct) {
-    // Update via data model binding once fully integrated
-    (void)pct;
+    shipData_.shield_pct = pct;
 }
 
 void RmlUiManager::SetArmorPercent(float pct) {
-    (void)pct;
+    shipData_.armor_pct = pct;
 }
 
 void RmlUiManager::SetHullPercent(float pct) {
-    (void)pct;
+    shipData_.hull_pct = pct;
 }
 
 void RmlUiManager::SetCapacitorPercent(float pct) {
-    (void)pct;
+    shipData_.capacitor_pct = pct;
 }
 
 void RmlUiManager::SetVelocity(float velocity) {
-    (void)velocity;
+    shipData_.velocity = velocity;
 }
 
 void RmlUiManager::SetMaxVelocity(float maxVelocity) {
-    (void)maxVelocity;
+    shipData_.max_velocity = maxVelocity;
 }
 
 void RmlUiManager::SetShipStatus(float shieldPct, float armorPct, float hullPct,
                                   float capPct, float velocity, float maxVelocity) {
-    SetShieldPercent(shieldPct);
-    SetArmorPercent(armorPct);
-    SetHullPercent(hullPct);
-    SetCapacitorPercent(capPct);
-    SetVelocity(velocity);
-    SetMaxVelocity(maxVelocity);
+    shipData_.shield_pct = shieldPct;
+    shipData_.armor_pct = armorPct;
+    shipData_.hull_pct = hullPct;
+    shipData_.capacitor_pct = capPct;
+    shipData_.velocity = velocity;
+    shipData_.max_velocity = maxVelocity;
 }
 
-// ----------------------------------------------------------------
-// Target List
-// ----------------------------------------------------------------
+// ---- Target List ----
 
 void RmlUiManager::SetTarget(const std::string& id, const std::string& name,
                               float shieldPct, float armorPct, float hullPct,
@@ -399,6 +255,7 @@ void RmlUiManager::SetTarget(const std::string& id, const std::string& name,
     (void)id; (void)name;
     (void)shieldPct; (void)armorPct; (void)hullPct;
     (void)distance; (void)isHostile; (void)isActive;
+    // TODO: Dynamically update target list DOM elements
 }
 
 void RmlUiManager::RemoveTarget(const std::string& id) {
@@ -406,28 +263,78 @@ void RmlUiManager::RemoveTarget(const std::string& id) {
 }
 
 void RmlUiManager::ClearTargets() {
-    // Clear target list elements in the target document
 }
 
-// ----------------------------------------------------------------
-// Overview
-// ----------------------------------------------------------------
+// ---- Overview ----
 
 void RmlUiManager::UpdateOverviewData(
     const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities,
     const glm::vec3& playerPos)
 {
-    (void)entities; (void)playerPos;
-    // Rebuild overview table rows from entity data
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("overview");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* body = it->second->GetElementById("overview-body");
+    if (!body) return;
+
+    // Clear existing rows
+    while (body->HasChildNodes()) {
+        body->RemoveChild(body->GetFirstChild());
+    }
+
+    // Add a row for each entity
+    for (const auto& [id, entity] : entities) {
+        if (!entity) continue;
+
+        // Get entity position and compute distance
+        auto pos = entity->getPosition();
+        float dx = pos.x - playerPos.x;
+        float dy = pos.y - playerPos.y;
+        float dz = pos.z - playerPos.z;
+        float dist = std::sqrt(dx*dx + dy*dy + dz*dz);
+
+        // Format distance
+        char distStr[32];
+        if (dist > 1000.0f) {
+            std::snprintf(distStr, sizeof(distStr), "%.1f km", dist / 1000.0f);
+        } else {
+            std::snprintf(distStr, sizeof(distStr), "%.0f m", dist);
+        }
+
+        // Determine standing
+        std::string standingClass = "neutral";
+        std::string textClass = "text-neutral";
+        std::string entityType = entity->getShipType();
+
+        if (entityType == "npc" || entityType == "hostile") {
+            standingClass = "hostile";
+            textClass = "text-hostile";
+        } else if (entityType == "friendly" || entityType == "fleet") {
+            standingClass = "friendly";
+            textClass = "text-friendly";
+        }
+
+        // Create row via inner RML
+        std::string rowRml =
+            "<tr>"
+            "<td><span class=\"standing-dot " + standingClass + "\"></span></td>"
+            "<td class=\"" + textClass + "\">" + entity->getShipName() + "</td>"
+            "<td class=\"distance\">" + distStr + "</td>"
+            "<td class=\"entity-type\">" + entityType + "</td>"
+            "</tr>";
+
+        body->SetInnerRML(body->GetInnerRML() + rowRml);
+    }
 }
 
 void RmlUiManager::SetOverviewFilter(const std::string& filter) {
     (void)filter;
+    // TODO: Filter overview table rows by standing
 }
 
-// ----------------------------------------------------------------
-// Panel Visibility
-// ----------------------------------------------------------------
+// ---- Panel Visibility ----
 
 void RmlUiManager::SetDocumentVisible(const std::string& name, bool visible) {
     auto it = documents_.find(name);
@@ -452,18 +359,24 @@ void RmlUiManager::ToggleDocument(const std::string& name) {
     SetDocumentVisible(name, !IsDocumentVisible(name));
 }
 
-// ----------------------------------------------------------------
-// Combat Log
-// ----------------------------------------------------------------
+// ---- Combat Log ----
 
 void RmlUiManager::AddCombatLogMessage(const std::string& message) {
-    (void)message;
-    // Append a <div class="message"> to the combat log document
+    auto it = documents_.find("ship_hud");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* logBody = it->second->GetElementById("combat-log-body");
+    if (!logBody) return;
+
+    // Create a new message div
+    std::string msgRml = "<div class=\"message\">" + message + "</div>";
+    logBody->SetInnerRML(logBody->GetInnerRML() + msgRml);
+
+    // Scroll to bottom
+    logBody->SetScrollTop(logBody->GetScrollHeight());
 }
 
-// ----------------------------------------------------------------
-// Internal helpers
-// ----------------------------------------------------------------
+// ---- Internal helpers ----
 
 bool RmlUiManager::LoadDocuments() {
     if (!context_) return false;
@@ -475,9 +388,9 @@ bool RmlUiManager::LoadDocuments() {
     };
 
     std::vector<DocInfo> docs = {
-        {"ship_hud",  "rml/ship_hud.rml",  true},
-        {"overview",  "rml/overview.rml",   true},
-        {"fitting",   "rml/fitting.rml",    false},
+        {"ship_hud",  resourcePath_ + "/rml/ship_hud.rml",  true},
+        {"overview",  resourcePath_ + "/rml/overview.rml",   true},
+        {"fitting",   resourcePath_ + "/rml/fitting.rml",    false},
     };
 
     bool allOk = true;
@@ -488,7 +401,8 @@ bool RmlUiManager::LoadDocuments() {
             if (info.showByDefault) {
                 doc->Show();
             }
-            std::cout << "[RmlUiManager] Loaded document: " << info.name << "\n";
+            std::cout << "[RmlUiManager] Loaded document: " << info.name
+                      << " (" << info.path << ")\n";
         } else {
             std::cerr << "[RmlUiManager] Failed to load: " << info.path << "\n";
             allOk = false;
@@ -498,29 +412,122 @@ bool RmlUiManager::LoadDocuments() {
     return allOk;
 }
 
-void RmlUiManager::RegisterCustomElements() {
-    // Custom element instancers for circular gauges will be registered here.
-    // Example:
-    //   Rml::Factory::RegisterElementInstancer("shield-ring",
-    //       new ShieldRingInstancer());
-    //
-    // Each custom element overrides OnRender() to draw the block-ring gauge
-    // using OpenGL calls identical to the ImGui DrawBlockRingGauge() function
-    // in eve_panels.cpp, but now driven by RML attribute data-value.
-    std::cout << "[RmlUiManager] Custom elements registered (stubs)\n";
+void RmlUiManager::UpdateHudElements() {
+    auto it = documents_.find("ship_hud");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+
+    // Update health bar widths via style property
+    auto setBarWidth = [&](const char* id, float pct) {
+        auto* el = doc->GetElementById(id);
+        if (el) {
+            char style[64];
+            std::snprintf(style, sizeof(style), "width: %.1f%%", pct * 100.0f);
+            el->SetAttribute("style", Rml::String(style));
+        }
+    };
+
+    setBarWidth("shield-fill", shipData_.shield_pct);
+    setBarWidth("armor-fill", shipData_.armor_pct);
+    setBarWidth("hull-fill", shipData_.hull_pct);
+    setBarWidth("cap-fill", shipData_.capacitor_pct);
+
+    // Update speed text
+    auto* speedVal = doc->GetElementById("speed-value");
+    if (speedVal) {
+        char buf[32];
+        std::snprintf(buf, sizeof(buf), "%.0f", shipData_.velocity);
+        speedVal->SetInnerRML(buf);
+    }
+
+    auto* maxSpeedVal = doc->GetElementById("max-speed-value");
+    if (maxSpeedVal) {
+        char buf[32];
+        std::snprintf(buf, sizeof(buf), "%.0f", shipData_.max_velocity);
+        maxSpeedVal->SetInnerRML(buf);
+    }
+
+    // Update HP summary text
+    auto* shieldText = doc->GetElementById("shield-text");
+    if (shieldText) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%.0f", shipData_.shield_pct * 100.0f);
+        shieldText->SetInnerRML(buf);
+    }
+
+    auto* armorText = doc->GetElementById("armor-text");
+    if (armorText) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%.0f", shipData_.armor_pct * 100.0f);
+        armorText->SetInnerRML(buf);
+    }
+
+    auto* hullText = doc->GetElementById("hull-text");
+    if (hullText) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%.0f", shipData_.hull_pct * 100.0f);
+        hullText->SetInnerRML(buf);
+    }
+
+    auto* capText = doc->GetElementById("cap-text");
+    if (capText) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%.0f", shipData_.capacitor_pct * 100.0f);
+        capText->SetInnerRML(buf);
+    }
 }
 
-void RmlUiManager::SetupDataBindings() {
-    // Data model bindings allow RML templates to reference live game state
-    // via {{ship.shield_pct}}, {{ship.velocity}}, etc.
-    //
-    // Full implementation:
-    //   auto constructor = context_->CreateDataModel("ship");
-    //   constructor.Bind("shield_pct", &shipModel_.shieldPct);
-    //   constructor.Bind("velocity",   &shipModel_.velocity);
-    //   ...
-    //   shipModelHandle_ = constructor.GetModelHandle();
-    std::cout << "[RmlUiManager] Data bindings set up (stubs)\n";
+void RmlUiManager::SetupInputCallbacks() {
+    if (!window_ || !context_) return;
+
+    // Store context pointer for callbacks via GLFW user pointer
+    // Note: this may conflict with other GLFW user pointer usage.
+    // A more robust solution would use a callback registry.
+    struct RmlCallbackData {
+        Rml::Context* context;
+        RenderInterface_GL3* renderer;
+    };
+
+    // We use lambdas with captures stored globally for simplicity
+    static Rml::Context* s_context = context_;
+    static RenderInterface_GL3* s_renderer = renderInterface_.get();
+    static int s_active_mods = 0;
+
+    glfwSetKeyCallback(window_, [](GLFWwindow*, int key, int, int action, int mods) {
+        s_active_mods = mods;
+        RmlGLFW::ProcessKeyCallback(s_context, key, action, mods);
+    });
+
+    glfwSetCharCallback(window_, [](GLFWwindow*, unsigned int codepoint) {
+        RmlGLFW::ProcessCharCallback(s_context, codepoint);
+    });
+
+    glfwSetCursorPosCallback(window_, [](GLFWwindow* w, double xpos, double ypos) {
+        RmlGLFW::ProcessCursorPosCallback(s_context, w, xpos, ypos, s_active_mods);
+    });
+
+    glfwSetMouseButtonCallback(window_, [](GLFWwindow*, int button, int action, int mods) {
+        s_active_mods = mods;
+        RmlGLFW::ProcessMouseButtonCallback(s_context, button, action, mods);
+    });
+
+    glfwSetScrollCallback(window_, [](GLFWwindow*, double, double yoffset) {
+        RmlGLFW::ProcessScrollCallback(s_context, yoffset, s_active_mods);
+    });
+
+    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow*, int width, int height) {
+        s_renderer->SetViewport(width, height);
+        RmlGLFW::ProcessFramebufferSizeCallback(s_context, width, height);
+    });
+
+    glfwSetWindowContentScaleCallback(window_, [](GLFWwindow*, float xscale, float) {
+        RmlGLFW::ProcessContentScaleCallback(s_context, xscale);
+    });
+
+    glfwSetCursorEnterCallback(window_, [](GLFWwindow*, int entered) {
+        RmlGLFW::ProcessCursorEnterCallback(s_context, entered);
+    });
 }
 
 } // namespace UI
@@ -536,11 +543,6 @@ void RmlUiManager::SetupDataBindings() {
 
 namespace UI {
 
-// Provide complete type definitions so unique_ptr destructors compile
-class RmlRenderInterface {};
-class RmlSystemInterface {};
-class RmlFileInterface {};
-
 RmlUiManager::RmlUiManager() = default;
 RmlUiManager::~RmlUiManager() = default;
 
@@ -552,8 +554,11 @@ bool RmlUiManager::Initialize(GLFWwindow*, const std::string&) {
 void RmlUiManager::Shutdown() {}
 void RmlUiManager::ProcessInput() {}
 void RmlUiManager::Update() {}
+void RmlUiManager::BeginFrame() {}
 void RmlUiManager::Render() {}
+void RmlUiManager::EndFrame() {}
 
+void RmlUiManager::SetShipStatus(const RmlShipData&) {}
 void RmlUiManager::SetShieldPercent(float) {}
 void RmlUiManager::SetArmorPercent(float) {}
 void RmlUiManager::SetHullPercent(float) {}
@@ -576,10 +581,6 @@ void RmlUiManager::SetDocumentVisible(const std::string&, bool) {}
 bool RmlUiManager::IsDocumentVisible(const std::string&) const { return false; }
 void RmlUiManager::ToggleDocument(const std::string&) {}
 void RmlUiManager::AddCombatLogMessage(const std::string&) {}
-
-bool RmlUiManager::LoadDocuments() { return false; }
-void RmlUiManager::RegisterCustomElements() {}
-void RmlUiManager::SetupDataBindings() {}
 
 } // namespace UI
 

@@ -108,3 +108,6 @@ compile_commands.json
 *.ilk
 *.idb
 _codeql_build_dir/
+
+# External downloaded dependencies
+cpp_client/external/imgui/

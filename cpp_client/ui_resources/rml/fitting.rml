@@ -5,13 +5,50 @@
     <title>Fitting</title>
     <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
     <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
         #fitting {
             position: fixed;
-            top: 100dp;
+            top: 50dp;
             left: 50%;
             margin-left: -200dp;
             width: 400dp;
             height: 450dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
         }
 
         .fitting-content {
@@ -35,7 +72,6 @@
         .slot-section-label {
             font-size: 9dp;
             color: #8B949E;
-            text-transform: uppercase;
             margin-bottom: 2dp;
         }
 
@@ -49,16 +85,9 @@
             height: 40dp;
             margin: 2dp;
             background-color: #161B22CC;
-            border: 1dp dashed #28384899;
+            border: 1dp #28384899;
             border-radius: 4dp;
             text-align: center;
-            vertical-align: middle;
-            cursor: pointer;
-        }
-
-        .fitting-slot.filled {
-            border-style: solid;
-            border-color: #2A5A6A;
         }
 
         .fitting-slot:hover {
@@ -67,43 +96,47 @@
 
         .fitting-slot .slot-label {
             font-size: 8dp;
-            color: #8B949EAA;
+            color: #8B949E88;
             line-height: 40dp;
+        }
+
+        /* Separator */
+        .separator {
+            height: 1dp;
+            background-color: #1E2A36;
+            margin: 8dp 0dp;
         }
 
         /* Resource bars */
         .resource-section {
             margin-top: 8dp;
-            padding-top: 8dp;
-            border-top: 1dp #1E2A3680;
         }
 
         .resource-bar {
             margin-bottom: 4dp;
         }
 
-        .resource-bar .resource-label {
-            font-size: 10dp;
-            color: #8B949E;
+        .resource-label {
             display: inline-block;
             width: 80dp;
+            font-size: 10dp;
+            color: #8B949E;
         }
 
-        .resource-bar .resource-value {
+        .resource-value {
             font-size: 10dp;
             color: #E6EDF3;
             float: right;
         }
 
-        .resource-bar .bar-track {
+        .bar-track {
             height: 4dp;
-            background-color: #161B2280;
+            background-color: #161B22;
             border-radius: 2dp;
-            overflow: hidden;
             margin-top: 2dp;
         }
 
-        .resource-bar .bar-fill {
+        .bar-fill {
             height: 100%;
             border-radius: 2dp;
         }
@@ -115,37 +148,34 @@
         /* Stats section */
         .stats-section {
             margin-top: 8dp;
-            padding-top: 8dp;
-            border-top: 1dp #1E2A3680;
         }
 
         .stat-row {
             margin-bottom: 2dp;
         }
 
-        .stat-row .stat-name {
-            font-size: 10dp;
-            color: #8B949E;
+        .stat-name {
             display: inline-block;
             width: 120dp;
+            font-size: 10dp;
+            color: #8B949E;
         }
 
-        .stat-row .stat-value {
+        .stat-value {
             font-size: 10dp;
             color: #E6EDF3;
-            font-family: monospace;
         }
     </style>
 </head>
 <body>
-    <div id="fitting" class="panel-solid">
+    <div id="fitting">
         <div class="panel-header">
             <span class="title">FITTING</span>
-            <span class="window-btn" id="btn-close">×</span>
+            <span class="window-btn" id="btn-close">x</span>
         </div>
 
         <div class="fitting-content">
-            <div class="ship-name" data-value="{{fitting.ship_name}}">Rifter</div>
+            <div class="ship-name" id="ship-name">Rifter</div>
 
             <!-- High Slots -->
             <div class="slot-section">
@@ -178,59 +208,52 @@
                 </div>
             </div>
 
-            <hr/>
+            <div class="separator"></div>
 
             <!-- Resources: CPU, PowerGrid, Calibration -->
             <div class="resource-section">
                 <div class="resource-bar">
                     <span class="resource-label">CPU</span>
-                    <span class="resource-value">
-                        <span data-value="{{fitting.cpu_used}}">0</span> /
-                        <span data-value="{{fitting.cpu_max}}">0</span> tf
-                    </span>
+                    <span class="resource-value">125 / 180 tf</span>
                     <div class="bar-track">
-                        <div class="bar-fill cpu-fill" style="width: 0%;" data-width="{{fitting.cpu_pct}}"/>
+                        <div class="bar-fill cpu-fill" style="width: 69%;"></div>
                     </div>
                 </div>
                 <div class="resource-bar">
                     <span class="resource-label">Power Grid</span>
-                    <span class="resource-value">
-                        <span data-value="{{fitting.pg_used}}">0</span> /
-                        <span data-value="{{fitting.pg_max}}">0</span> MW
-                    </span>
+                    <span class="resource-value">32 / 45 MW</span>
                     <div class="bar-track">
-                        <div class="bar-fill pg-fill" style="width: 0%;" data-width="{{fitting.pg_pct}}"/>
+                        <div class="bar-fill pg-fill" style="width: 71%;"></div>
                     </div>
                 </div>
                 <div class="resource-bar">
                     <span class="resource-label">Calibration</span>
-                    <span class="resource-value">
-                        <span data-value="{{fitting.cal_used}}">0</span> /
-                        <span data-value="{{fitting.cal_max}}">400</span>
-                    </span>
+                    <span class="resource-value">250 / 400</span>
                     <div class="bar-track">
-                        <div class="bar-fill cal-fill" style="width: 0%;" data-width="{{fitting.cal_pct}}"/>
+                        <div class="bar-fill cal-fill" style="width: 62%;"></div>
                     </div>
                 </div>
             </div>
+
+            <div class="separator"></div>
 
             <!-- Stats -->
             <div class="stats-section">
                 <div class="stat-row">
                     <span class="stat-name">Effective HP</span>
-                    <span class="stat-value" data-value="{{fitting.ehp}}">0</span>
+                    <span class="stat-value">4,250</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-name">DPS</span>
-                    <span class="stat-value" data-value="{{fitting.dps}}">0</span>
+                    <span class="stat-value">185</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-name">Max Velocity</span>
-                    <span class="stat-value"><span data-value="{{fitting.max_vel}}">0</span> m/s</span>
+                    <span class="stat-value">380 m/s</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-name">Cap Stable</span>
-                    <span class="stat-value" data-value="{{fitting.cap_stable}}">Yes</span>
+                    <span class="stat-value" style="color: #33CC66;">Yes</span>
                 </div>
             </div>
         </div>

@@ -1,98 +1,97 @@
 <!-- EVE OFFLINE — Ship HUD Panel (RML)
-     Bottom-center display: circular gauges, speed readout, module rack.
-     Custom elements (capacitor-ring, shield-ring, etc.) are rendered by
-     C++ custom element classes registered with RmlUi. -->
+     Bottom-center display: health bars, speed readout, module rack.
+     All elements use IDs for C++ manipulation via RmlUiManager::UpdateHudElements(). -->
 <rml>
 <head>
     <title>Ship HUD</title>
     <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
     <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
         #ship-hud {
             position: fixed;
             bottom: 10dp;
             left: 50%;
-            margin-left: -150dp;
-            width: 300dp;
+            margin-left: -170dp;
+            width: 340dp;
             text-align: center;
-            background-color: transparent;
+            background-color: #0D111700;
         }
 
-        .gauge-container {
-            position: relative;
-            width: 220dp;
-            height: 220dp;
-            margin: 0 auto;
+        /* Health display area */
+        .health-display {
+            background-color: #080C12E0;
+            border: 1dp #283848;
+            border-radius: 4dp;
+            padding: 8dp 12dp;
+            margin-bottom: 4dp;
         }
 
-        .speed-readout {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            margin-top: -16dp;
-            margin-left: -40dp;
-            width: 80dp;
-            text-align: center;
+        .health-row {
+            margin-bottom: 3dp;
         }
 
-        .speed-readout .value {
-            font-size: 22dp;
-            font-weight: bold;
-            color: #D2EBF5F5;
-        }
-
-        .speed-readout .unit {
-            font-size: 10dp;
-            color: #829CAAAA;
-        }
-
-        .hp-summary {
-            font-size: 9dp;
-            color: #A0B4C8BB;
-            margin-top: 4dp;
-        }
-
-        /* Module rack below the gauges */
-        .module-rack {
-            margin-top: 8dp;
-            background-color: #0C1016CC;
-            border: 1dp #28384878;
-            border-radius: 3dp;
-            padding: 4dp 6dp;
-        }
-
-        .rack-row {
-            text-align: center;
-            margin-bottom: 2dp;
-        }
-
-        .rack-section {
-            display: inline-block;
-            margin: 0 12dp;
-        }
-
-        .rack-row:last-child {
+        .health-row:last-child {
             margin-bottom: 0;
         }
 
-        /* Motion command buttons */
-        .motion-cmds {
-            margin-top: 6dp;
-        }
-
-        .motion-cmds button {
-            width: 68dp;
-            height: 22dp;
+        .health-label {
+            display: inline-block;
+            width: 60dp;
             font-size: 10dp;
-            margin: 0 2dp;
+            color: #8B949E;
+            text-align: left;
         }
 
-        .motion-cmds button.active {
-            background-color: #26667ACC;
+        .health-bar-track {
+            display: inline-block;
+            width: 180dp;
+            height: 8dp;
+            background-color: #161B22;
+            border-radius: 2dp;
+            vertical-align: middle;
         }
 
-        .stop-btn {
-            width: 218dp;
-            margin-top: 2dp;
+        .health-bar-fill {
+            height: 100%;
+            border-radius: 2dp;
+        }
+
+        .shield-fill { background-color: #3399FF; }
+        .armor-fill  { background-color: #FFD040; }
+        .hull-fill   { background-color: #E64545; }
+        .cap-fill    { background-color: #FFE066; }
+
+        .health-pct {
+            display: inline-block;
+            width: 40dp;
+            font-size: 10dp;
+            color: #E6EDF3;
+            text-align: right;
+        }
+
+        /* Speed readout */
+        .speed-section {
+            background-color: #080C12D0;
+            border: 1dp #283848;
+            border-radius: 4dp;
+            padding: 6dp 12dp;
+            margin-bottom: 4dp;
+        }
+
+        .speed-value {
+            font-size: 28dp;
+            font-weight: bold;
+            color: #78E1F0;
+        }
+
+        .speed-unit {
+            font-size: 11dp;
+            color: #8B949ECC;
+            margin-left: 4dp;
         }
 
         .max-speed {
@@ -100,35 +99,140 @@
             color: #8B949E;
             margin-top: 2dp;
         }
+
+        /* Module rack */
+        .module-rack {
+            background-color: #0C1016CC;
+            border: 1dp #283848;
+            border-radius: 3dp;
+            padding: 4dp 6dp;
+            margin-bottom: 4dp;
+        }
+
+        .rack-label {
+            font-size: 8dp;
+            color: #8B949E88;
+            text-transform: uppercase;
+            margin-bottom: 2dp;
+        }
+
+        .rack-section {
+            display: inline-block;
+            margin: 0dp 12dp;
+        }
+
+        .rack-row {
+            text-align: center;
+        }
+
+        .module-slot {
+            display: inline-block;
+            width: 32dp;
+            height: 32dp;
+            margin: 2dp;
+            background-color: #161B22CC;
+            border: 1dp #283848;
+            border-radius: 4dp;
+            text-align: center;
+        }
+
+        .module-slot:hover {
+            border-color: #45D0E8;
+        }
+
+        .module-slot .label {
+            font-size: 9dp;
+            color: #C8DCF0DC;
+            line-height: 32dp;
+        }
+
+        /* Motion command buttons */
+        .motion-cmds {
+            margin-top: 4dp;
+        }
+
+        .motion-cmds button {
+            width: 68dp;
+            height: 24dp;
+            font-size: 10dp;
+            margin: 0dp 2dp 2dp 2dp;
+            background-color: #2A5A6A70;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+            color: #E6EDF3;
+        }
+
+        .motion-cmds button:hover {
+            background-color: #2A5A6AE6;
+            border-color: #45D0E8CC;
+        }
+
+        .motion-cmds button:active {
+            background-color: #45D0E8CC;
+        }
+
+        .stop-btn {
+            width: 218dp;
+        }
+
+        /* Combat log */
+        .combat-log {
+            background-color: #080C12D0;
+            border: 1dp #283848;
+            border-radius: 3dp;
+            padding: 4dp;
+            height: 80dp;
+            overflow: auto;
+            text-align: left;
+            margin-top: 4dp;
+        }
+
+        .combat-log .message {
+            font-size: 10dp;
+            color: #E6EDF3CC;
+            padding: 1dp 0dp;
+        }
     </style>
 </head>
 <body>
     <div id="ship-hud">
-        <!-- Circular gauge area — rendered by custom C++ elements -->
-        <div class="gauge-container">
-            <!--
-                These custom elements are registered via
-                Rml::Factory::RegisterElementInstancer() in rml_ui_manager.cpp.
-                They render concentric block-ring gauges using OpenGL.
-            -->
-            <shield-ring   data-value="{{ship.shield_pct}}"   />
-            <armor-ring    data-value="{{ship.armor_pct}}"     />
-            <hull-ring     data-value="{{ship.hull_pct}}"      />
-            <capacitor-ring data-value="{{ship.capacitor_pct}}"/>
-
-            <!-- Speed readout in the center -->
-            <div class="speed-readout">
-                <div class="value" data-value="{{ship.velocity}}">0</div>
-                <div class="unit">m/s</div>
+        <!-- Health bars -->
+        <div class="health-display">
+            <div class="health-row">
+                <span class="health-label">Shield</span>
+                <div class="health-bar-track">
+                    <div id="shield-fill" class="health-bar-fill shield-fill" style="width: 100%;"></div>
+                </div>
+                <span id="shield-text" class="health-pct">100</span>
+            </div>
+            <div class="health-row">
+                <span class="health-label">Armor</span>
+                <div class="health-bar-track">
+                    <div id="armor-fill" class="health-bar-fill armor-fill" style="width: 100%;"></div>
+                </div>
+                <span id="armor-text" class="health-pct">100</span>
+            </div>
+            <div class="health-row">
+                <span class="health-label">Hull</span>
+                <div class="health-bar-track">
+                    <div id="hull-fill" class="health-bar-fill hull-fill" style="width: 100%;"></div>
+                </div>
+                <span id="hull-text" class="health-pct">100</span>
+            </div>
+            <div class="health-row">
+                <span class="health-label">Capacitor</span>
+                <div class="health-bar-track">
+                    <div id="cap-fill" class="health-bar-fill cap-fill" style="width: 100%;"></div>
+                </div>
+                <span id="cap-text" class="health-pct">100</span>
             </div>
         </div>
 
-        <!-- HP/Capacitor summary text -->
-        <div class="hp-summary">
-            S:<span data-value="{{ship.shields}}">100</span>
-            A:<span data-value="{{ship.armor}}">100</span>
-            H:<span data-value="{{ship.hull}}">100</span>
-            C:<span data-value="{{ship.capacitor_pct}}">100</span>%
+        <!-- Speed readout -->
+        <div class="speed-section">
+            <span id="speed-value" class="speed-value">0</span>
+            <span class="speed-unit">m/s</span>
+            <div class="max-speed">Max: <span id="max-speed-value">100</span> m/s</div>
         </div>
 
         <!-- Module rack: F1-F8 -->
@@ -156,7 +260,11 @@
             <button id="btn-orbit">Orbit</button>
             <button id="btn-keep">Keep</button>
             <button class="stop-btn" id="btn-stop">STOP</button>
-            <div class="max-speed">Max: <span data-value="{{ship.max_velocity}}">0</span> m/s</div>
+        </div>
+
+        <!-- Combat log -->
+        <div class="combat-log" id="combat-log-body">
+            <div class="message">[System] HUD initialized</div>
         </div>
     </div>
 </body>
