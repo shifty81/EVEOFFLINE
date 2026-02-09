@@ -301,6 +301,8 @@ set(CLIENT_SOURCES
     src/rendering/renderer.cpp
     src/rendering/mesh.cpp
     src/rendering/model.cpp
+    src/rendering/ship_part_library.cpp
+    src/rendering/ship_generation_rules.cpp
     src/rendering/texture.cpp
     src/rendering/particle_system.cpp
     src/rendering/healthbar_renderer.cpp
