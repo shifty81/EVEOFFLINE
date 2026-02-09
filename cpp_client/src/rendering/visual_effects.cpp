@@ -194,7 +194,9 @@ void VisualEffects::renderBeams(const glm::mat4& viewMatrix, const glm::mat4& pr
         glm::vec3 rotationAxis = glm::cross(defaultDir, direction);
         
         if (glm::length(rotationAxis) > 0.001f) {
-            float angle = acos(glm::dot(defaultDir, direction));
+            // Clamp dot product to avoid NaN from floating-point precision errors
+            float dotProduct = glm::clamp(glm::dot(defaultDir, direction), -1.0f, 1.0f);
+            float angle = acos(dotProduct);
             model = glm::rotate(model, angle, glm::normalize(rotationAxis));
         }
         

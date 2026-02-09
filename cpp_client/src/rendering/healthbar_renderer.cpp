@@ -156,10 +156,12 @@ void HealthBarRenderer::drawBar(const glm::vec3& position, float value, const gl
     }
     
     // Draw border (white outline) using line rendering
+    // Note: This approach causes some overdraw, but is simple and works well for
+    // the small number of health bars typically rendered. For optimization, could
+    // generate separate line strip geometry to avoid state changes and overdraw.
     m_shader->setVec4("barColor", glm::vec4(1.0f, 1.0f, 1.0f, 0.8f));
     m_shader->setFloat("fillAmount", 1.0f);
     
-    // Enable line mode for border
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glLineWidth(2.0f);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

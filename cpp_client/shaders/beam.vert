@@ -6,11 +6,13 @@ layout (location = 1) in vec2 aTexCoord;
 out vec2 TexCoord;
 out vec3 WorldPos;
 
+uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
 void main() {
     TexCoord = aTexCoord;
-    WorldPos = aPos;
-    gl_Position = projection * view * vec4(aPos, 1.0);
+    vec4 worldPosition = model * vec4(aPos, 1.0);
+    WorldPos = worldPosition.xyz;
+    gl_Position = projection * view * worldPosition;
 }
