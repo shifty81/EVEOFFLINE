@@ -57,9 +57,10 @@ struct EntityVisual {
  * 
  * Rendering Pipeline Order:
  * 1. Clear framebuffer
- * 2. Render starfield (background)
- * 3. Render 3D entities with lighting
- * 4. Render health bars (overlay)
+ * 2. Render nebula background (procedural space clouds)
+ * 3. Render starfield (background)
+ * 4. Render 3D entities with lighting
+ * 5. Render health bars (overlay)
  * 
  * Uses OpenGL 3.3+ with separate shaders for different render passes.
  */
@@ -130,6 +131,22 @@ private:
     void setupStarfield();
     
     /**
+     * Setup nebula background quad
+     */
+    void setupNebula();
+    
+    /**
+     * Render procedural nebula background
+     * 
+     * Renders a full-screen quad with procedural noise-based nebula clouds.
+     * Creates subtle purple/blue/red space clouds for atmosphere.
+     * Must be rendered first (before starfield and entities).
+     * 
+     * @param camera Current camera for view direction reconstruction
+     */
+    void renderNebula(Camera& camera);
+    
+    /**
      * Render the starfield background
      * 
      * Renders star points using GL_POINTS with the starfield shader.
@@ -173,8 +190,13 @@ private:
 
     std::unique_ptr<Shader> m_basicShader;
     std::unique_ptr<Shader> m_starfieldShader;
+    std::unique_ptr<Shader> m_nebulaShader;
     std::unique_ptr<Shader> m_entityShader;
     std::unique_ptr<HealthBarRenderer> m_healthBarRenderer;
+    
+    // Nebula background data
+    unsigned int m_nebulaVAO;
+    unsigned int m_nebulaVBO;
     
     // Starfield data
     unsigned int m_starfieldVAO;

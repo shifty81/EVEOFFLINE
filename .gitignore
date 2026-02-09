@@ -109,5 +109,8 @@ compile_commands.json
 *.idb
 _codeql_build_dir/
 
+# Extracted OBJ ship models (large files, extract locally from data/ships/obj_models/obj_models.7z)
+cpp_client/models/ships/*.obj
+
 # External downloaded dependencies
 cpp_client/external/imgui/

@@ -457,6 +457,36 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shaders/
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/
      DESTINATION ${CMAKE_BINARY_DIR}/bin/assets)
 
+# Automatically extract OBJ ship models from 7z archive during build
+# Models are used instead of procedural generation for ships
+set(OBJ_MODELS_ARCHIVE "${CMAKE_CURRENT_SOURCE_DIR}/../data/ships/obj_models/obj_models.7z")
+set(OBJ_MODELS_DIR "${CMAKE_BINARY_DIR}/bin/models/ships")
+if(EXISTS "${OBJ_MODELS_ARCHIVE}")
+    find_program(P7ZIP_EXECUTABLE NAMES 7z 7za)
+    if(P7ZIP_EXECUTABLE)
+        if(NOT EXISTS "${OBJ_MODELS_DIR}")
+            message(STATUS "Extracting OBJ ship models from ${OBJ_MODELS_ARCHIVE}...")
+            file(MAKE_DIRECTORY "${OBJ_MODELS_DIR}")
+            execute_process(
+                COMMAND ${P7ZIP_EXECUTABLE} x "${OBJ_MODELS_ARCHIVE}" -o${OBJ_MODELS_DIR} -y
+                RESULT_VARIABLE EXTRACT_RESULT
+                OUTPUT_QUIET
+            )
+            if(EXTRACT_RESULT EQUAL 0)
+                message(STATUS "OBJ ship models extracted to ${OBJ_MODELS_DIR}")
+            else()
+                message(WARNING "Failed to extract OBJ ship models (exit code: ${EXTRACT_RESULT})")
+            endif()
+        else()
+            message(STATUS "OBJ ship models already extracted at ${OBJ_MODELS_DIR}")
+        endif()
+    else()
+        message(STATUS "7z not found - install p7zip-full (Linux) or 7-Zip (Windows) to auto-extract ship models")
+    endif()
+else()
+    message(STATUS "OBJ models archive not found at ${OBJ_MODELS_ARCHIVE}")
+endif()
+
 # For multi-config generators (e.g., Visual Studio, Xcode) the executable is
 # placed in a per-configuration subdirectory (e.g., bin/Release/).  Copy the
 # shaders and assets next to the executable so they can be found at runtime.
@@ -472,6 +502,16 @@ add_custom_command(TARGET eve_client POST_BUILD
         $<TARGET_FILE_DIR:eve_client>/ui_resources
     COMMENT "Copying shaders, assets, and UI resources next to executable"
 )
+
+# Copy extracted OBJ models next to executable for multi-config generators
+if(EXISTS "${OBJ_MODELS_DIR}")
+    add_custom_command(TARGET eve_client POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${OBJ_MODELS_DIR}"
+            "$<TARGET_FILE_DIR:eve_client>/models/ships"
+        COMMENT "Copying OBJ ship models next to executable"
+    )
+endif()
 
 # Installation
 install(TARGETS eve_client

@@ -6,13 +6,16 @@
 #include "core/entity.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_inverse.hpp>
 #include <iostream>
 #include <random>
 
 namespace eve {
 
 Renderer::Renderer()
-    : m_starfieldVAO(0)
+    : m_nebulaVAO(0)
+    , m_nebulaVBO(0)
+    , m_starfieldVAO(0)
     , m_starfieldVBO(0)
     , m_starCount(2000)
     , m_initialized(false)
@@ -20,6 +23,12 @@ Renderer::Renderer()
 }
 
 Renderer::~Renderer() {
+    if (m_nebulaVAO != 0) {
+        glDeleteVertexArrays(1, &m_nebulaVAO);
+    }
+    if (m_nebulaVBO != 0) {
+        glDeleteBuffers(1, &m_nebulaVBO);
+    }
     if (m_starfieldVAO != 0) {
         glDeleteVertexArrays(1, &m_starfieldVAO);
     }
@@ -61,6 +70,12 @@ bool Renderer::initialize() {
         return false;
     }
     
+    m_nebulaShader = std::make_unique<Shader>();
+    if (!m_nebulaShader->loadFromFiles("shaders/nebula.vert", "shaders/nebula.frag")) {
+        std::cerr << "Warning: Failed to load nebula shader - nebula disabled" << std::endl;
+        m_nebulaShader.reset();
+    }
+    
     m_entityShader = std::make_unique<Shader>();
     if (!m_entityShader->loadFromFiles("shaders/entity.vert", "shaders/entity.frag")) {
         std::cerr << "Failed to load entity shader" << std::endl;
@@ -73,6 +88,9 @@ bool Renderer::initialize() {
         std::cerr << "Failed to initialize health bar renderer" << std::endl;
         return false;
     }
+    
+    // Setup nebula background
+    setupNebula();
     
     // Setup starfield
     setupStarfield();
@@ -93,6 +111,9 @@ void Renderer::endFrame() {
 void Renderer::renderScene(Camera& camera) {
     if (!m_initialized) return;
     
+    // Render nebula background
+    renderNebula(camera);
+    
     // Render starfield
     renderStarfield(camera);
     
@@ -110,6 +131,49 @@ void Renderer::clear(const glm::vec4& color) {
 
 void Renderer::setViewport(int x, int y, int width, int height) {
     glViewport(x, y, width, height);
+}
+
+void Renderer::setupNebula() {
+    // Full-screen quad (two triangles in NDC)
+    float quadVertices[] = {
+        -1.0f, -1.0f,
+         1.0f, -1.0f,
+         1.0f,  1.0f,
+        -1.0f, -1.0f,
+         1.0f,  1.0f,
+        -1.0f,  1.0f
+    };
+
+    glGenVertexArrays(1, &m_nebulaVAO);
+    glGenBuffers(1, &m_nebulaVBO);
+
+    glBindVertexArray(m_nebulaVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_nebulaVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindVertexArray(0);
+    std::cout << "Nebula background setup complete" << std::endl;
+}
+
+void Renderer::renderNebula(Camera& camera) {
+    if (!m_nebulaShader || m_nebulaVAO == 0) return;
+
+    glDepthMask(GL_FALSE);
+    glDisable(GL_DEPTH_TEST);
+
+    m_nebulaShader->use();
+    glm::mat4 invViewProj = glm::inverse(camera.getProjectionMatrix() * camera.getViewMatrix());
+    m_nebulaShader->setMat4("invViewProj", invViewProj);
+
+    glBindVertexArray(m_nebulaVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    glBindVertexArray(0);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
 }
 
 void Renderer::setupStarfield() {
