@@ -1,6 +1,7 @@
 #include "rendering/ship_part_library.h"
 #include "rendering/model.h"
 #include "rendering/ship_generation_rules.h"
+#include "rendering/procedural_mesh_ops.h"
 #include <cmath>
 #include <iostream>
 #include <random>
@@ -439,6 +440,61 @@ ShipPart ShipPartLibrary::createConePart(float radius, float length, int segment
         part.indices.push_back(i + 1);
     }
     
+    return part;
+}
+
+// ==================== Extrusion-Based Part Creation ====================
+
+ShipPart ShipPartLibrary::createExtrudedHullPart(int sides, int segments,
+                                                  float segmentLength, float baseRadius,
+                                                  const std::vector<float>& radiusMultipliers,
+                                                  float scaleX, float scaleZ,
+                                                  const glm::vec4& color, ShipPartType type) {
+    ShipPart part;
+    part.type = type;
+
+    glm::vec3 col3(color.r, color.g, color.b);
+    TriangulatedMesh mesh = buildSegmentedHull(sides, segments, segmentLength,
+                                               baseRadius, radiusMultipliers,
+                                               scaleX, scaleZ, col3);
+    part.vertices = std::move(mesh.vertices);
+    part.indices  = std::move(mesh.indices);
+    return part;
+}
+
+ShipPart ShipPartLibrary::createBeveledPanelPart(int sides, float radius,
+                                                  float borderSize, float depth,
+                                                  const glm::vec4& color,
+                                                  ShipPartType type) {
+    ShipPart part;
+    part.type = type;
+
+    glm::vec3 col3(color.r, color.g, color.b);
+
+    PolyFace face = generatePolygonFace(sides, radius);
+    auto beveledFaces = bevelCutFace(face, borderSize, depth);
+    TriangulatedMesh mesh = triangulateFaces(beveledFaces, col3);
+
+    part.vertices = std::move(mesh.vertices);
+    part.indices  = std::move(mesh.indices);
+    return part;
+}
+
+ShipPart ShipPartLibrary::createPyramidDetailPart(int sides, float radius,
+                                                   float height,
+                                                   const glm::vec4& color,
+                                                   ShipPartType type) {
+    ShipPart part;
+    part.type = type;
+
+    glm::vec3 col3(color.r, color.g, color.b);
+
+    PolyFace face = generatePolygonFace(sides, radius);
+    auto pyramidFaces = pyramidizeFace(face, height);
+    TriangulatedMesh mesh = triangulateFaces(pyramidFaces, col3);
+
+    part.vertices = std::move(mesh.vertices);
+    part.indices  = std::move(mesh.indices);
     return part;
 }
 

@@ -6,6 +6,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 #include "rendering/mesh.h"
+#include "rendering/procedural_mesh_ops.h"
 
 namespace eve {
 
@@ -171,6 +172,16 @@ private:
     ShipPart createBoxPart(const glm::vec3& size, const glm::vec4& color, ShipPartType type);
     ShipPart createCylinderPart(float radius, float length, int segments, const glm::vec4& color, ShipPartType type);
     ShipPart createConePart(float radius, float length, int segments, const glm::vec4& color, ShipPartType type);
+
+    // Extrusion-based part creation (procedural_mesh_ops integration)
+    ShipPart createExtrudedHullPart(int sides, int segments, float segmentLength,
+                                    float baseRadius, const std::vector<float>& radiusMultipliers,
+                                    float scaleX, float scaleZ,
+                                    const glm::vec4& color, ShipPartType type);
+    ShipPart createBeveledPanelPart(int sides, float radius, float borderSize,
+                                    float depth, const glm::vec4& color, ShipPartType type);
+    ShipPart createPyramidDetailPart(int sides, float radius, float height,
+                                     const glm::vec4& color, ShipPartType type);
 };
 
 } // namespace eve
