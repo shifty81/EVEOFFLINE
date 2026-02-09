@@ -76,7 +76,7 @@ bool ParticleSystem::initialize() {
     
     // Load particle shaders
     m_shader = std::make_unique<Shader>();
-    if (!m_shader->load("shaders/particle.vert", "shaders/particle.frag")) {
+    if (!m_shader->loadFromFiles("shaders/particle.vert", "shaders/particle.frag")) {
         std::cerr << "Failed to load particle shaders" << std::endl;
         return false;
     }

@@ -36,7 +36,7 @@ bool VisualEffects::initialize() {
     
     // Load beam shaders
     m_beamShader = std::make_unique<Shader>();
-    if (!m_beamShader->load("shaders/beam.vert", "shaders/beam.frag")) {
+    if (!m_beamShader->loadFromFiles("shaders/beam.vert", "shaders/beam.frag")) {
         std::cerr << "Failed to load beam shaders" << std::endl;
         return false;
     }
