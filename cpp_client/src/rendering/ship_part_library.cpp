@@ -191,102 +191,148 @@ ShipAssemblyConfig ShipPartLibrary::createVariedAssemblyConfig(
 
 void ShipPartLibrary::createMinmatarParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
     // Minmatar: Asymmetric, rustic, exposed framework
+    // Uses extrusion-based hull generation matching the reference project
     
-    // Forward hull - angular nose
-    ShipPart forward = createConePart(0.3f, 1.0f, 6, primary, ShipPartType::HULL_FORWARD);
+    // Forward hull - angular extruded nose (6-sided, 3 segments, narrow)
+    auto fwdMults = generateRadiusMultipliers(3, 0.6f, 101u);
+    ShipPart forward = createExtrudedHullPart(6, 3, 0.35f, 0.6f, fwdMults,
+                                               0.8f, 1.0f, primary,
+                                               ShipPartType::HULL_FORWARD);
     forward.name = "Minmatar Angular Nose";
     forward.faction = "Minmatar";
     forward.isSymmetric = false;
     forward.attachmentPoint = glm::vec3(-1.0f, 0.0f, 0.0f);
     addPart("minmatar_forward_1", forward);
     
-    // Main hull - boxy with exposed framework
-    ShipPart main = createBoxPart(glm::vec3(2.0f, 0.8f, 0.6f), primary, ShipPartType::HULL_MAIN);
+    // Main hull - wider industrial body (6-sided, 5 segments)
+    auto mainMults = generateRadiusMultipliers(5, 1.0f, 102u);
+    ShipPart main = createExtrudedHullPart(6, 5, 0.4f, 1.0f, mainMults,
+                                            1.2f, 0.7f, primary,
+                                            ShipPartType::HULL_MAIN);
     main.name = "Minmatar Industrial Hull";
     main.faction = "Minmatar";
     main.isSymmetric = false;
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
     addPart("minmatar_main_1", main);
     
-    // Rear hull - engine mount
-    ShipPart rear = createBoxPart(glm::vec3(0.8f, 0.6f, 0.5f), secondary, ShipPartType::HULL_REAR);
+    // Rear hull - engine mount (6-sided, 2 segments)
+    auto rearMults = generateRadiusMultipliers(2, 0.8f, 103u);
+    ShipPart rear = createExtrudedHullPart(6, 2, 0.3f, 0.8f, rearMults,
+                                            0.9f, 0.7f, secondary,
+                                            ShipPartType::HULL_REAR);
     rear.name = "Minmatar Engine Mount";
     rear.faction = "Minmatar";
     rear.isSymmetric = false;
     rear.attachmentPoint = glm::vec3(1.0f, 0.0f, 0.0f);
     addPart("minmatar_rear_1", rear);
     
-    // Engine - cylindrical exhausts
+    // Engine - cylindrical exhausts (keep simple primitive for accent)
     ShipPart engine = createCylinderPart(0.2f, 0.5f, 8, accent, ShipPartType::ENGINE_MAIN);
     engine.name = "Minmatar Engine Exhaust";
     engine.faction = "Minmatar";
     engine.isSymmetric = true;
     addPart("minmatar_engine_1", engine);
+    
+    // Exposed framework panel (beveled detail)
+    ShipPart framework = createBeveledPanelPart(4, 0.4f, 0.3f, -0.15f,
+                                                 accent, ShipPartType::FRAMEWORK_EXPOSED);
+    framework.name = "Minmatar Exposed Framework";
+    framework.faction = "Minmatar";
+    framework.isSymmetric = false;
+    addPart("minmatar_framework_1", framework);
 }
 
 void ShipPartLibrary::createCaldariParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
     // Caldari: Blocky, angular, industrial
+    // Uses 4-sided extrusion for angular silhouettes
     
-    // Forward hull - blocky nose
-    ShipPart forward = createBoxPart(glm::vec3(1.2f, 0.6f, 0.5f), primary, ShipPartType::HULL_FORWARD);
+    // Forward hull - blocky extruded nose (4-sided, 3 segments)
+    auto fwdMults = generateRadiusMultipliers(3, 0.7f, 201u);
+    ShipPart forward = createExtrudedHullPart(4, 3, 0.4f, 0.7f, fwdMults,
+                                               1.0f, 0.8f, primary,
+                                               ShipPartType::HULL_FORWARD);
     forward.name = "Caldari Blocky Nose";
     forward.faction = "Caldari";
     forward.isSymmetric = true;
     forward.attachmentPoint = glm::vec3(-1.2f, 0.0f, 0.0f);
     addPart("caldari_forward_1", forward);
     
-    // Main hull - rectangular city-block style
-    ShipPart main = createBoxPart(glm::vec3(2.5f, 1.0f, 0.8f), primary, ShipPartType::HULL_MAIN);
+    // Main hull - rectangular body (4-sided, 6 segments)
+    auto mainMults = generateRadiusMultipliers(6, 1.0f, 202u);
+    ShipPart main = createExtrudedHullPart(4, 6, 0.45f, 1.0f, mainMults,
+                                            1.3f, 0.9f, primary,
+                                            ShipPartType::HULL_MAIN);
     main.name = "Caldari Industrial Hull";
     main.faction = "Caldari";
     main.isSymmetric = true;
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
     addPart("caldari_main_1", main);
     
-    // Rear hull - squared engine section
-    ShipPart rear = createBoxPart(glm::vec3(1.0f, 0.8f, 0.6f), secondary, ShipPartType::HULL_REAR);
+    // Rear hull - squared engine section (4-sided, 2 segments)
+    auto rearMults = generateRadiusMultipliers(2, 0.9f, 203u);
+    ShipPart rear = createExtrudedHullPart(4, 2, 0.35f, 0.9f, rearMults,
+                                            1.1f, 0.8f, secondary,
+                                            ShipPartType::HULL_REAR);
     rear.name = "Caldari Engine Section";
     rear.faction = "Caldari";
     rear.isSymmetric = true;
     rear.attachmentPoint = glm::vec3(1.25f, 0.0f, 0.0f);
     addPart("caldari_rear_1", rear);
     
-    // Engine - square exhausts
+    // Engine - square exhausts (keep primitive for accent)
     ShipPart engine = createBoxPart(glm::vec3(0.4f, 0.25f, 0.25f), accent, ShipPartType::ENGINE_MAIN);
     engine.name = "Caldari Square Engine";
     engine.faction = "Caldari";
     engine.isSymmetric = true;
     addPart("caldari_engine_1", engine);
+    
+    // Panel detail (beveled angular panel)
+    ShipPart panel = createBeveledPanelPart(4, 0.3f, 0.25f, -0.1f,
+                                             accent, ShipPartType::PANEL_DETAIL);
+    panel.name = "Caldari Angular Panel";
+    panel.faction = "Caldari";
+    panel.isSymmetric = true;
+    addPart("caldari_panel_1", panel);
 }
 
 void ShipPartLibrary::createGallenteParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
     // Gallente: Organic, smooth curves
+    // Uses high-sided extrusion (12-sided) for smooth organic shapes
     
-    // Forward hull - rounded nose
-    ShipPart forward = createConePart(0.4f, 1.2f, 12, primary, ShipPartType::HULL_FORWARD);
+    // Forward hull - smooth extruded nose (12-sided, 3 segments)
+    auto fwdMults = generateRadiusMultipliers(3, 0.6f, 301u);
+    ShipPart forward = createExtrudedHullPart(12, 3, 0.4f, 0.6f, fwdMults,
+                                               1.0f, 1.0f, primary,
+                                               ShipPartType::HULL_FORWARD);
     forward.name = "Gallente Smooth Nose";
     forward.faction = "Gallente";
     forward.isSymmetric = true;
     forward.attachmentPoint = glm::vec3(-1.2f, 0.0f, 0.0f);
     addPart("gallente_forward_1", forward);
     
-    // Main hull - organic ellipsoid
-    ShipPart main = createCylinderPart(0.5f, 2.5f, 16, primary, ShipPartType::HULL_MAIN);
+    // Main hull - organic ellipsoidal body (12-sided, 6 segments)
+    auto mainMults = generateRadiusMultipliers(6, 1.0f, 302u);
+    ShipPart main = createExtrudedHullPart(12, 6, 0.45f, 1.0f, mainMults,
+                                            1.1f, 0.9f, primary,
+                                            ShipPartType::HULL_MAIN);
     main.name = "Gallente Organic Hull";
     main.faction = "Gallente";
     main.isSymmetric = true;
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
     addPart("gallente_main_1", main);
     
-    // Rear hull - curved engine housing
-    ShipPart rear = createCylinderPart(0.4f, 1.0f, 12, secondary, ShipPartType::HULL_REAR);
+    // Rear hull - curved engine housing (12-sided, 2 segments)
+    auto rearMults = generateRadiusMultipliers(2, 0.8f, 303u);
+    ShipPart rear = createExtrudedHullPart(12, 2, 0.35f, 0.8f, rearMults,
+                                            1.0f, 0.9f, secondary,
+                                            ShipPartType::HULL_REAR);
     rear.name = "Gallente Engine Housing";
     rear.faction = "Gallente";
     rear.isSymmetric = true;
     rear.attachmentPoint = glm::vec3(1.25f, 0.0f, 0.0f);
     addPart("gallente_rear_1", rear);
     
-    // Engine - rounded exhausts
+    // Engine - rounded exhausts (keep primitive for accent)
     ShipPart engine = createCylinderPart(0.15f, 0.4f, 12, accent, ShipPartType::ENGINE_MAIN);
     engine.name = "Gallente Rounded Engine";
     engine.faction = "Gallente";
@@ -296,40 +342,51 @@ void ShipPartLibrary::createGallenteParts(const glm::vec4& primary, const glm::v
 
 void ShipPartLibrary::createAmarrParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
     // Amarr: Golden, ornate, with spires
+    // Uses 8-sided extrusion for balanced angular-but-refined shapes
     
-    // Forward hull - cathedral nose with spire
-    ShipPart forward = createConePart(0.35f, 1.5f, 8, primary, ShipPartType::HULL_FORWARD);
+    // Forward hull - cathedral extruded nose (8-sided, 4 segments)
+    auto fwdMults = generateRadiusMultipliers(4, 0.5f, 401u);
+    ShipPart forward = createExtrudedHullPart(8, 4, 0.4f, 0.5f, fwdMults,
+                                               0.9f, 1.0f, primary,
+                                               ShipPartType::HULL_FORWARD);
     forward.name = "Amarr Cathedral Nose";
     forward.faction = "Amarr";
     forward.isSymmetric = true;
     forward.attachmentPoint = glm::vec3(-1.5f, 0.0f, 0.0f);
     addPart("amarr_forward_1", forward);
     
-    // Main hull - ornate plated hull
-    ShipPart main = createBoxPart(glm::vec3(2.2f, 0.9f, 0.7f), primary, ShipPartType::HULL_MAIN);
+    // Main hull - ornate plated body (8-sided, 5 segments)
+    auto mainMults = generateRadiusMultipliers(5, 1.0f, 402u);
+    ShipPart main = createExtrudedHullPart(8, 5, 0.45f, 1.0f, mainMults,
+                                            1.1f, 0.8f, primary,
+                                            ShipPartType::HULL_MAIN);
     main.name = "Amarr Ornate Hull";
     main.faction = "Amarr";
     main.isSymmetric = true;
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
     addPart("amarr_main_1", main);
     
-    // Rear hull - golden engine section
-    ShipPart rear = createBoxPart(glm::vec3(0.9f, 0.75f, 0.6f), secondary, ShipPartType::HULL_REAR);
+    // Rear hull - golden engine section (8-sided, 2 segments)
+    auto rearMults = generateRadiusMultipliers(2, 0.8f, 403u);
+    ShipPart rear = createExtrudedHullPart(8, 2, 0.35f, 0.8f, rearMults,
+                                            1.0f, 0.85f, secondary,
+                                            ShipPartType::HULL_REAR);
     rear.name = "Amarr Engine Section";
     rear.faction = "Amarr";
     rear.isSymmetric = true;
     rear.attachmentPoint = glm::vec3(1.1f, 0.0f, 0.0f);
     addPart("amarr_rear_1", rear);
     
-    // Engine - golden exhausts
+    // Engine - golden exhausts (keep primitive for accent)
     ShipPart engine = createCylinderPart(0.18f, 0.45f, 8, accent, ShipPartType::ENGINE_MAIN);
     engine.name = "Amarr Golden Engine";
     engine.faction = "Amarr";
     engine.isSymmetric = true;
     addPart("amarr_engine_1", engine);
     
-    // Spire ornament - vertical emphasis
-    ShipPart spire = createConePart(0.1f, 0.8f, 6, accent, ShipPartType::SPIRE_ORNAMENT);
+    // Spire ornament - vertical pyramid emphasis
+    ShipPart spire = createPyramidDetailPart(6, 0.15f, 0.8f, accent,
+                                              ShipPartType::SPIRE_ORNAMENT);
     spire.name = "Amarr Decorative Spire";
     spire.faction = "Amarr";
     spire.isSymmetric = true;
