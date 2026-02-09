@@ -12,9 +12,21 @@ This document summarizes the modular procedural ship generation system implement
    - Manages library of reusable modular ship components
    - Stores parts organized by faction and type
    - Provides geometric primitives (box, cylinder, cone) for part creation
+   - Provides extrusion-based part creation (segmented hulls, beveled panels, pyramid details)
    - Creates assembly configurations for ship classes
 
-2. **ShipGenerationRules** (`ship_generation_rules.h/cpp`)
+2. **ProceduralMeshOps** (`procedural_mesh_ops.h/cpp`)
+   - N-sided polygon face generation (regular and irregular)
+   - Face extrusion along normals with scaling
+   - Face stitching to form closed prism-like surfaces
+   - Bevel cuts for recessed/protruding panel details
+   - Face pyramidization for spike/greeble details
+   - Quad face subdivision for fine detail work
+   - Bezier curve evaluation (linear, quadratic, cubic)
+   - Segmented hull builder for spaceship bodies
+   - Integrated from [AlexSanfilippo/ProceduralMeshGeneration](https://github.com/AlexSanfilippo/ProceduralMeshGeneration) (GPL-3.0)
+
+3. **ShipGenerationRules** (`ship_generation_rules.h/cpp`)
    - Enforces faction-specific design constraints
    - Validates class-specific requirements
    - Defines placement rules for weapons, engines, and components
@@ -274,10 +286,12 @@ model->addMesh(std::move(mesh));
 ```
 cpp_client/
 ├── include/rendering/
+│   ├── procedural_mesh_ops.h      // Extrusion-based mesh operations
 │   ├── ship_part_library.h       // Modular part management
 │   ├── ship_generation_rules.h   // Faction/class constraints
 │   └── model.h                    // Enhanced with detail functions
 ├── src/rendering/
+│   ├── procedural_mesh_ops.cpp   // Polygon, extrusion, bevel, stitch ops
 │   ├── ship_part_library.cpp     // 50+ parts, 4 factions
 │   ├── ship_generation_rules.cpp // Complete ruleset implementation
 │   └── model.cpp                  // Existing procedural generation
@@ -328,6 +342,7 @@ docs/
 | Component | Status | Notes |
 |-----------|--------|-------|
 | **ShipPartLibrary** | ✅ Complete | 50+ parts, all factions |
+| **ProceduralMeshOps** | ✅ Complete | Extrusion, bevel, stitch, bezier ops |
 | **ShipGenerationRules** | ✅ Complete | All factions and classes |
 | **CMake Integration** | ✅ Complete | Added to build system |
 | **Documentation** | ✅ Complete | Usage guide, naming guide |
@@ -366,12 +381,62 @@ bool valid = rules.validate("Minmatar", "Frigate", partCounts);
 auto model = Model::createShipModelWithRacialDesign("Drifter", "Minmatar");
 ```
 
+### Extrusion-Based Mesh Generation
+
+```cpp
+#include "rendering/procedural_mesh_ops.h"
+#include "rendering/ship_part_library.h"
+
+// Build a segmented hull directly
+auto radii = eve::generateRadiusMultipliers(6, 1.0f, 42);
+eve::TriangulatedMesh hull = eve::buildSegmentedHull(
+    8,      // octagonal cross-section
+    6,      // 6 segments
+    1.0f,   // segment length
+    1.0f,   // base radius
+    radii,  // per-segment radius variation
+    1.0f,   // scaleX
+    0.8f,   // scaleZ (slightly flattened)
+    glm::vec3(0.5f, 0.35f, 0.25f) // Minmatar brown
+);
+
+// Or use ShipPartLibrary helpers
+eve::ShipPartLibrary lib;
+lib.initialize();
+auto part = lib.createExtrudedHullPart(
+    8, 6, 1.0f, 1.0f, radii, 1.0f, 0.8f,
+    glm::vec4(0.5f, 0.35f, 0.25f, 1.0f),
+    eve::ShipPartType::HULL_MAIN
+);
+
+// Add beveled panel detail
+auto panel = lib.createBeveledPanelPart(
+    4, 0.5f, 0.3f, -0.1f,
+    glm::vec4(0.3f, 0.2f, 0.15f, 1.0f),
+    eve::ShipPartType::PANEL_DETAIL
+);
+
+// Add pyramid greeble detail
+auto greeble = lib.createPyramidDetailPart(
+    6, 0.15f, 0.3f,
+    glm::vec4(0.8f, 0.6f, 0.3f, 1.0f),
+    eve::ShipPartType::PANEL_DETAIL
+);
+
+// Low-level face operations for custom geometry
+eve::PolyFace base = eve::generatePolygonFace(6, 1.0f);
+eve::PolyFace extruded = eve::extrudeFace(base, 2.0f, 0.8f);
+auto walls = eve::stitchFaces(base, extruded);
+auto detailed = eve::bevelCutFace(walls[0], 0.25f, -0.1f);
+```
+
 ## References
 
 - Problem Statement: Original requirements document
 - EVE Online Design: Community references and visual guides
 - Fan Feedback: EVE University forums, player glossaries
 - Visual References: eveonlineships.com, ArtStation
+- Procedural Mesh Generation: [AlexSanfilippo/ProceduralMeshGeneration](https://github.com/AlexSanfilippo/ProceduralMeshGeneration) (GPL-3.0) — extrusion-based polygon manipulation techniques
 
 ---
 

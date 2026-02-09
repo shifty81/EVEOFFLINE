@@ -303,6 +303,7 @@ set(CLIENT_SOURCES
     src/rendering/model.cpp
     src/rendering/ship_part_library.cpp
     src/rendering/ship_generation_rules.cpp
+    src/rendering/procedural_mesh_ops.cpp
     src/rendering/texture.cpp
     src/rendering/particle_system.cpp
     src/rendering/healthbar_renderer.cpp
