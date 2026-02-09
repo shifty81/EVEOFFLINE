@@ -72,9 +72,11 @@ void EntityManager::updateEntityState(const std::string& id, const glm::vec3& po
     // Update existing entity
     it->second->updateFromState(position, velocity, rotation, health, capacitor);
     
-    // Update ship info if provided and not already set
-    if (!shipType.empty() && it->second->getShipType().empty()) {
-        it->second->updateFromSpawn(it->second->getPosition(), health, capacitor,
+    // Update ship info if provided and different from current
+    if (!shipType.empty() && it->second->getShipType() != shipType) {
+        // Preserve current position while updating ship info
+        glm::vec3 currentPos = it->second->getPosition();
+        it->second->updateFromSpawn(currentPos, health, capacitor,
                                     shipType, shipName, faction);
     }
     
