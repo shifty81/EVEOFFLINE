@@ -74,9 +74,12 @@ bool ParticleSystem::initialize() {
     
     glBindVertexArray(0);
     
-    // Load particle shader
+    // Load particle shaders
     m_shader = std::make_unique<Shader>();
-    // TODO: Load actual particle shaders
+    if (!m_shader->load("shaders/particle.vert", "shaders/particle.frag")) {
+        std::cerr << "Failed to load particle shaders" << std::endl;
+        return false;
+    }
     
     std::cout << "Particle system initialized (max: " << m_maxParticles << ")" << std::endl;
     return true;

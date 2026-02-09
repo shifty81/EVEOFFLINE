@@ -31,9 +31,12 @@ bool HealthBarRenderer::initialize() {
     // Create quad for rendering bars
     createQuad();
     
-    // Load shader
+    // Load health bar shaders
     m_shader = std::make_unique<Shader>();
-    // TODO: Load actual health bar shaders
+    if (!m_shader->load("shaders/healthbar.vert", "shaders/healthbar.frag")) {
+        std::cerr << "Failed to load health bar shaders" << std::endl;
+        return false;
+    }
     
     std::cout << "Health bar renderer initialized" << std::endl;
     return true;
@@ -152,10 +155,15 @@ void HealthBarRenderer::drawBar(const glm::vec3& position, float value, const gl
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
     
-    // Draw border (white outline)
+    // Draw border (white outline) using line rendering
     m_shader->setVec4("barColor", glm::vec4(1.0f, 1.0f, 1.0f, 0.8f));
     m_shader->setFloat("fillAmount", 1.0f);
-    // TODO: Draw border using line rendering
+    
+    // Enable line mode for border
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glLineWidth(2.0f);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
     glBindVertexArray(0);
 }

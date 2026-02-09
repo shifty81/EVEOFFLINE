@@ -12,6 +12,7 @@ VisualEffects::VisualEffects()
     : m_particleSystem(nullptr)
     , m_beamVAO(0)
     , m_beamVBO(0)
+    , m_time(0.0f)
 {
 }
 
@@ -30,15 +31,21 @@ bool VisualEffects::initialize() {
     // Create beam geometry
     createBeamGeometry();
     
-    // Load beam shader
+    // Load beam shaders
     m_beamShader = std::make_unique<Shader>();
-    // TODO: Load actual beam shaders
+    if (!m_beamShader->load("shaders/beam.vert", "shaders/beam.frag")) {
+        std::cerr << "Failed to load beam shaders" << std::endl;
+        return false;
+    }
     
     std::cout << "Visual effects system initialized" << std::endl;
     return true;
 }
 
 void VisualEffects::update(float deltaTime) {
+    // Update animation time
+    m_time += deltaTime;
+    
     // Update all beam effects
     for (auto& beam : m_beams) {
         beam.update(deltaTime);
@@ -181,13 +188,22 @@ void VisualEffects::renderBeams(const glm::mat4& viewMatrix, const glm::mat4& pr
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, beam.start);
         
-        // Align with direction (billboard towards end point)
-        // TODO: Proper beam orientation
+        // Align beam with direction using lookAt-style rotation
+        // Default beam points along +Z, rotate to point along direction
+        glm::vec3 defaultDir = glm::vec3(0.0f, 0.0f, 1.0f);
+        glm::vec3 rotationAxis = glm::cross(defaultDir, direction);
+        
+        if (glm::length(rotationAxis) > 0.001f) {
+            float angle = acos(glm::dot(defaultDir, direction));
+            model = glm::rotate(model, angle, glm::normalize(rotationAxis));
+        }
         
         model = glm::scale(model, glm::vec3(beam.width, length, beam.width));
         
         m_beamShader->setMat4("model", model);
         m_beamShader->setVec4("beamColor", color);
+        m_beamShader->setFloat("intensity", alpha);
+        m_beamShader->setFloat("pulseTime", m_time);
         
         glDrawArrays(GL_LINES, 0, 2);
     }
