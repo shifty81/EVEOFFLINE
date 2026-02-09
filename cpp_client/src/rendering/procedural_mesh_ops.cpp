@@ -1,4 +1,5 @@
 #include "rendering/procedural_mesh_ops.h"
+#include <algorithm>
 #include <random>
 #include <stdexcept>
 
@@ -120,13 +121,25 @@ PolyFace extrudeFace(const PolyFace& source, float distance,
                     ? glm::normalize(direction)
                     : source.normal;
     glm::vec3 offset = dir * distance;
-    glm::vec3 cen = source.centroid();
+
+    // Build a coordinate frame: the extrusion direction is the axis
+    // along which vertices are NOT scaled.  Only the cross-section
+    // (perpendicular) components are scaled, matching the reference
+    // project's approach where X/Z are scaled but Y (the extrusion
+    // axis) is left unchanged.  This prevents compounding centroid
+    // drift that produces "squiggly" hulls.
+    glm::vec3 dirN = glm::normalize(dir);
 
     PolyFace extruded;
     extruded.outerVertices.reserve(source.outerVertices.size());
     for (const auto& v : source.outerVertices) {
-        // Scale relative to centroid, then translate
-        glm::vec3 scaled = cen + (v - cen) * scale;
+        // Decompose vertex into component along extrusion axis and
+        // component in the cross-section plane.
+        float alongAxis = glm::dot(v, dirN);
+        glm::vec3 crossSection = v - dirN * alongAxis;
+
+        // Scale only the cross-section component
+        glm::vec3 scaled = dirN * alongAxis + crossSection * scale;
         extruded.outerVertices.push_back(scaled + offset);
     }
     extruded.recalculateNormal();
@@ -375,31 +388,151 @@ std::vector<float> generateRadiusMultipliers(int segments, float baseRadius,
 // Segmented hull builder
 // ────────────────────────────────────────────────────────────────────────
 
+// ────────────────────────────────────────────────────────────────────────
+// Internal helpers for nose, thruster and detail generation
+// (following the reference project's Spaceship.generate_nose,
+//  generate_thrusters and add_detail_to_faces approach)
+// ────────────────────────────────────────────────────────────────────────
+
+/**
+ * Generate a tapered nose cone by extruding from the front face.
+ * Mimics the reference project's generate_nose():
+ *   - Extrude forward by a random distance (0.25-1.5x segmentLength)
+ *   - Scale down to 10-30% of the face radius
+ *   - Stitch walls between original and tapered face
+ *   - Add the tapered cap face
+ */
+static void generateNose(const PolyFace& frontFace, float segmentLength,
+                          std::mt19937& rng,
+                          std::vector<PolyFace>& outFaces) {
+    std::uniform_real_distribution<float> dist01(0.0f, 1.0f);
+    float noseLength = segmentLength * (0.25f + dist01(rng) * 1.25f);
+    float noseScale  = dist01(rng) * 0.2f + 0.1f;
+
+    // The front face normal points away from the hull base.
+    // The nose extends in that same direction (outward/forward).
+    glm::vec3 noseDir = -frontFace.normal;
+
+    PolyFace noseTip = extrudeFace(frontFace, noseLength, noseScale, noseDir);
+
+    // Stitch from the nose tip to the original front face
+    auto walls = stitchFaces(noseTip, frontFace);
+    outFaces.insert(outFaces.end(), walls.begin(), walls.end());
+
+    // Reversed cap (nose tip, facing outward)
+    PolyFace cap = noseTip;
+    std::reverse(cap.outerVertices.begin(), cap.outerVertices.end());
+    cap.recalculateNormal();
+    outFaces.push_back(cap);
+}
+
+/**
+ * Generate thruster recesses in the rear face using recursive bevel cuts.
+ * Mimics the reference project's generate_thrusters():
+ *   - Bevel out a small ridge (0.25x segmentLength)
+ *   - Bevel in to create exhaust cavity (-0.5x segmentLength)
+ */
+static void generateThrusters(const PolyFace& rearFace, float segmentLength,
+                               std::vector<PolyFace>& outFaces) {
+    // First bevel: slight outward ridge
+    auto firstBevel = bevelCutFace(rearFace, 0.25f, segmentLength * 0.25f);
+    if (firstBevel.empty()) { outFaces.push_back(rearFace); return; }
+
+    PolyFace innerAfterFirst = firstBevel.back();
+    firstBevel.pop_back();
+    outFaces.insert(outFaces.end(), firstBevel.begin(), firstBevel.end());
+
+    // Second bevel: deep inward recess for thruster cavity
+    auto secondBevel = bevelCutFace(innerAfterFirst, 0.5f, -segmentLength * 0.5f);
+    outFaces.insert(outFaces.end(), secondBevel.begin(), secondBevel.end());
+}
+
+/**
+ * Apply symmetric surface details to the wall faces of the hull.
+ * Mimics the reference project's add_detail_to_faces():
+ *   - Group faces by segment and apply matched operations for symmetry
+ *   - Operations chosen by random instruction value:
+ *     < 0.25: subdivide + bevel cubbies
+ *     < 0.5:  pyramidize
+ *     < 0.75: bevel recess
+ *     else:   leave plain
+ */
+static void applyWallDetails(const std::vector<PolyFace>& wallFaces,
+                              int sides, int segments,
+                              std::mt19937& rng,
+                              std::vector<PolyFace>& outFaces) {
+    std::uniform_real_distribution<float> dist01(0.0f, 1.0f);
+
+    // Determine symmetry type (matching the reference)
+    int pairsPerSegment = (sides % 2 == 0) ? sides / 2 : sides;
+
+    // Generate per-segment instructions
+    std::vector<std::vector<float>> instructions(segments);
+    for (int s = 0; s < segments; ++s) {
+        instructions[s].resize(pairsPerSegment);
+        for (int p = 0; p < pairsPerSegment; ++p) {
+            instructions[s][p] = dist01(rng);
+        }
+    }
+
+    for (int s = 0; s < segments; ++s) {
+        for (int i = 0; i < sides; ++i) {
+            int faceIdx = s * sides + i;
+            if (faceIdx >= static_cast<int>(wallFaces.size())) break;
+
+            const PolyFace& face = wallFaces[faceIdx];
+            // Determine which instruction applies (symmetric pairing)
+            int instrIdx = (sides % 2 == 0) ? (i % pairsPerSegment) : i;
+            float instr = instructions[s][instrIdx];
+
+            if (instr < 0.25f) {
+                // Subdivide + bevel cubbies
+                auto strips = subdivideFaceLengthwise(face, 2);
+                for (const auto& strip : strips) {
+                    auto cubby = bevelCutFace(strip, 0.5f, -0.33f);
+                    outFaces.insert(outFaces.end(), cubby.begin(), cubby.end());
+                }
+            } else if (instr < 0.5f) {
+                // Pyramidize for aggressive surface detail
+                auto pyra = pyramidizeFace(face, 0.15f);
+                outFaces.insert(outFaces.end(), pyra.begin(), pyra.end());
+            } else if (instr < 0.75f) {
+                // Bevel recess
+                auto bevel = bevelCutFace(face, 0.25f, -0.2f);
+                outFaces.insert(outFaces.end(), bevel.begin(), bevel.end());
+            } else {
+                // Leave plain
+                outFaces.push_back(face);
+            }
+        }
+    }
+}
+
 TriangulatedMesh buildSegmentedHull(int sides, int segments,
                                     float segmentLength, float baseRadius,
                                     const std::vector<float>& radiusMultipliers,
                                     float scaleX, float scaleZ,
                                     const glm::vec3& color) {
-    // The hull is built along the +Y axis (forward direction).
-    // Start with a base polygon at Y = 0.
+    // The hull is built along the +Y axis (forward direction),
+    // following the reference project's coordinate convention.
     glm::vec3 fwd(0.0f, 1.0f, 0.0f);
     glm::vec3 centre(0.0f);
 
     PolyFace baseFace = generatePolygonFace(sides, baseRadius, centre, fwd,
                                             scaleX, scaleZ);
 
-    std::vector<PolyFace> capFaces;     // top/bottom cap faces
+    // Keep track of all cross-section rings for stitching
+    std::vector<PolyFace> rings;
+    rings.reserve(segments + 1);
+    rings.push_back(baseFace);
+
     std::vector<PolyFace> wallFaces;    // stitched wall quads
 
-    capFaces.push_back(baseFace);       // bottom cap
-
-    float currentRadius = baseRadius;
     PolyFace previous = baseFace;
 
     for (int i = 0; i < segments; ++i) {
         float mult = (i < static_cast<int>(radiusMultipliers.size()))
                      ? radiusMultipliers[i] : 1.0f;
-        currentRadius *= mult;
 
         // Extrude produces the next cross-section ring
         PolyFace next = extrudeFace(previous, segmentLength, mult, fwd);
@@ -408,16 +541,31 @@ TriangulatedMesh buildSegmentedHull(int sides, int segments,
         auto walls = stitchFaces(previous, next);
         wallFaces.insert(wallFaces.end(), walls.begin(), walls.end());
 
+        rings.push_back(next);
         previous = next;
     }
 
-    capFaces.push_back(previous);       // top cap (nose/rear)
+    // Determine a seed for detail RNG (use first multiplier bits or fallback)
+    unsigned int detailSeed = 42u;
+    if (!radiusMultipliers.empty()) {
+        union { float f; unsigned int u; } conv;
+        conv.f = radiusMultipliers[0];
+        detailSeed = conv.u;
+    }
+    std::mt19937 detailRng(detailSeed);
 
-    // Triangulate everything into one mesh
+    // -- Collect all output faces --
     std::vector<PolyFace> allFaces;
-    allFaces.reserve(capFaces.size() + wallFaces.size());
-    allFaces.insert(allFaces.end(), capFaces.begin(), capFaces.end());
-    allFaces.insert(allFaces.end(), wallFaces.begin(), wallFaces.end());
+    allFaces.reserve(wallFaces.size() + sides * 4 + 2);
+
+    // 1. Apply surface details to wall faces (matching reference approach)
+    applyWallDetails(wallFaces, sides, segments, detailRng, allFaces);
+
+    // 2. Generate nose from the first (front) face
+    generateNose(rings.front(), segmentLength, detailRng, allFaces);
+
+    // 3. Generate thrusters on the last (rear) face
+    generateThrusters(rings.back(), segmentLength, allFaces);
 
     return triangulateFaces(allFaces, color);
 }
