@@ -36,7 +36,7 @@ bool HealthBarRenderer::initialize() {
     
     // Load health bar shaders
     m_shader = std::make_unique<Shader>();
-    if (!m_shader->load("shaders/healthbar.vert", "shaders/healthbar.frag")) {
+    if (!m_shader->loadFromFiles("shaders/healthbar.vert", "shaders/healthbar.frag")) {
         std::cerr << "Failed to load health bar shaders" << std::endl;
         return false;
     }

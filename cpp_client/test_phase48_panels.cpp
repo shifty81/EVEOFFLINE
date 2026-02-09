@@ -14,6 +14,7 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <imgui.h>
 #include "rendering/window.h"
 #include "ui/ui_manager.h"
 #include "ui/dscan_panel.h"
