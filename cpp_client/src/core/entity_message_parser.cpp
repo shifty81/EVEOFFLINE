@@ -154,8 +154,14 @@ bool EntityMessageParser::parseStateUpdate(const std::string& dataJson, EntityMa
                 capacitor = parseCapacitor(entityData["capacitor"]);
             }
             
+            // Extract ship info (needed for correct model selection)
+            std::string shipType = entityData.value("ship_type", "");
+            std::string shipName = entityData.value("ship_name", "");
+            std::string faction = entityData.value("faction", "");
+            
             // Update entity state
-            entityManager.updateEntityState(entityId, position, velocity, rotation, health, capacitor);
+            entityManager.updateEntityState(entityId, position, velocity, rotation, health, capacitor,
+                                            shipType, shipName, faction);
         }
         
         // Process state update (remove entities not in update)

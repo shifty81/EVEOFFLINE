@@ -360,6 +360,19 @@ std::string GameSession::buildStateUpdate() const {
                  << "}";
         }
 
+        // Ship info (needed for correct model selection on the client)
+        auto* ship = entity->getComponent<components::Ship>();
+        if (ship) {
+            json << ",\"ship_type\":\"" << ship->ship_type << "\"";
+            json << ",\"ship_name\":\"" << ship->ship_name << "\"";
+        }
+
+        // Faction (needed for correct model coloring on the client)
+        auto* fac = entity->getComponent<components::Faction>();
+        if (fac) {
+            json << ",\"faction\":\"" << fac->faction_name << "\"";
+        }
+
         json << "}";
     }
 
@@ -471,7 +484,7 @@ std::string GameSession::createPlayerEntity(const std::string& player_id,
     auto ship = std::make_unique<components::Ship>();
     ship->ship_name  = tmpl ? tmpl->name       : "Rifter";
     ship->ship_class = tmpl ? tmpl->ship_class  : "Frigate";
-    ship->ship_type  = tmpl ? tmpl->ship_class  : "Frigate";
+    ship->ship_type  = tmpl ? tmpl->name        : "Rifter";
     ship->race       = tmpl ? tmpl->race        : "Minmatar";
     ship->cpu_max    = tmpl ? tmpl->cpu          : 125.0f;
     ship->powergrid_max = tmpl ? tmpl->powergrid : 37.0f;
@@ -557,7 +570,7 @@ void GameSession::spawnNPC(const std::string& id, const std::string& name,
     auto ship = std::make_unique<components::Ship>();
     ship->ship_name  = ship_name;
     ship->ship_class = "Frigate";
-    ship->ship_type  = "Frigate";
+    ship->ship_type  = ship_name;
     entity->addComponent(std::move(ship));
 
     auto fac = std::make_unique<components::Faction>();

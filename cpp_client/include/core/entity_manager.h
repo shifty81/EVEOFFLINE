@@ -43,7 +43,10 @@ public:
      */
     void updateEntityState(const std::string& id, const glm::vec3& position,
                            const glm::vec3& velocity, float rotation, const Health& health,
-                           const Capacitor& capacitor = Capacitor());
+                           const Capacitor& capacitor = Capacitor(),
+                           const std::string& shipType = "",
+                           const std::string& shipName = "",
+                           const std::string& faction = "");
 
     /**
      * Process state update message

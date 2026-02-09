@@ -365,7 +365,11 @@ void Model::draw() const {
 bool Model::isFrigate(const std::string& shipType) {
     static const std::vector<std::string> frigateNames = {
         "Frigate", "Rifter", "Merlin", "Tristan", "Punisher",
-        "Assault Frigate", "Jaguar", "Hawk", "Enyo", "Retribution", "Wolf", "Harpy"
+        "Assault Frigate", "Jaguar", "Hawk", "Enyo", "Retribution", "Wolf", "Harpy",
+        "Interceptor", "Claw", "Crow", "Taranis", "Crusader",
+        "Stiletto", "Raptor", "Ares", "Malediction",
+        "Covert Ops", "Cheetah", "Buzzard", "Helios", "Anathema",
+        "Stealth Bomber", "Hound", "Manticore", "Nemesis", "Purifier"
     };
     return std::any_of(frigateNames.begin(), frigateNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -373,7 +377,8 @@ bool Model::isFrigate(const std::string& shipType) {
 
 bool Model::isDestroyer(const std::string& shipType) {
     static const std::vector<std::string> destroyerNames = {
-        "Destroyer", "Thrasher", "Cormorant", "Catalyst", "Coercer"
+        "Destroyer", "Thrasher", "Cormorant", "Catalyst", "Coercer",
+        "Interdictor", "Sabre", "Flycatcher", "Eris", "Heretic"
     };
     return std::any_of(destroyerNames.begin(), destroyerNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -418,7 +423,8 @@ bool Model::isCommandShip(const std::string& shipType) {
 
 bool Model::isBattleship(const std::string& shipType) {
     static const std::vector<std::string> bsNames = {
-        "Battleship", "Tempest", "Raven", "Dominix", "Apocalypse"
+        "Battleship", "Tempest", "Raven", "Dominix", "Apocalypse",
+        "Marauder", "Vargur", "Golem", "Kronos", "Paladin"
     };
     return std::any_of(bsNames.begin(), bsNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -426,7 +432,8 @@ bool Model::isBattleship(const std::string& shipType) {
 
 bool Model::isMiningBarge(const std::string& shipType) {
     static const std::vector<std::string> miningNames = {
-        "Mining Barge", "Procurer", "Retriever", "Covetor", "Exhumer", "Hulk", "Mackinaw", "Skiff"
+        "Mining Barge", "Procurer", "Retriever", "Covetor", "Exhumer", "Hulk", "Mackinaw", "Skiff",
+        "Industrial", "Hoarder", "Badger", "Iteron", "Bestower"
     };
     return std::any_of(miningNames.begin(), miningNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
