@@ -23,12 +23,14 @@ void main() {
     float alpha = (core * 0.9 + glow * 0.4) * intensity;
     
     // Add pulse animation along beam length
-    // Pulse wave: frequency=10.0 cycles along beam, speed=5.0 units/sec, min=0.9, max=1.0
+    // Pulse wave oscillates between pulseMin (0.9) and pulseMax (1.0)
     const float pulseFrequency = 10.0;  // Number of waves along beam
     const float pulseSpeed = 5.0;       // Animation speed
     const float pulseMin = 0.9;         // Minimum brightness
-    const float pulseRange = 0.1;       // Brightness variation range
-    float pulse = sin(TexCoord.x * pulseFrequency - pulseTime * pulseSpeed) * pulseRange + (pulseMin + pulseRange * 0.5);
+    const float pulseMax = 1.0;         // Maximum brightness
+    const float pulseCenter = (pulseMin + pulseMax) * 0.5;  // Center value (0.95)
+    const float pulseAmplitude = (pulseMax - pulseMin) * 0.5;  // Half range (0.05)
+    float pulse = sin(TexCoord.x * pulseFrequency - pulseTime * pulseSpeed) * pulseAmplitude + pulseCenter;
     
     // Final color with pulse
     vec3 finalColor = beamColor.rgb * pulse;
