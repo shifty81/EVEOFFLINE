@@ -143,7 +143,8 @@ void DScanPanel::RenderContents() {
             ImGui::TableSetColumnIndex(2);
             char distText[32];
             if (r.distance < 1.0f) {
-                std::snprintf(distText, sizeof(distText), "%.0f km", r.distance * 149597.871f);
+                constexpr float KM_PER_AU = 149597.871f;
+                std::snprintf(distText, sizeof(distText), "%.0f km", r.distance * KM_PER_AU);
             } else {
                 std::snprintf(distText, sizeof(distText), "%.2f AU", r.distance);
             }

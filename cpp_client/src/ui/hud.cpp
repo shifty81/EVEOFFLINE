@@ -53,7 +53,7 @@ void HUD::setShipStatus(const UI::ShipStatus& status) {
 
 void HUD::addLogMessage(const std::string& message) {
     m_combatLog.push_back(message);
-    if (static_cast<int>(m_combatLog.size()) > MAX_LOG_MESSAGES) {
+    if (m_combatLog.size() > static_cast<size_t>(MAX_LOG_MESSAGES)) {
         m_combatLog.erase(m_combatLog.begin());
     }
 }
