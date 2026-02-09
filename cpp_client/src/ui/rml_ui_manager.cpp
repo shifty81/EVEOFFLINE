@@ -28,6 +28,9 @@
 
 namespace UI {
 
+// UTF-8 encoding of the superscript 3 character (³) for m³ display
+static constexpr const char* CUBIC_METER_SUFFIX = " m\xc2\xb3";
+
 // Data stored in GLFW window user pointer for input callback dispatch.
 struct RmlCallbackData {
     Rml::Context* context = nullptr;
@@ -600,7 +603,7 @@ void RmlUiManager::UpdateInventoryData(
     auto* capText = it->second->GetElementById("capacity-text");
     if (capText) {
         char buf[64];
-        std::snprintf(buf, sizeof(buf), "%.1f / %.1f m\xc2\xb3", capacityUsed, capacityMax);
+        std::snprintf(buf, sizeof(buf), "%.1f / %.1f%s", capacityUsed, capacityMax, CUBIC_METER_SUFFIX);
         capText->SetInnerRML(buf);
     }
 
@@ -620,7 +623,7 @@ void RmlUiManager::UpdateInventoryData(
     size_t count = std::min({names.size(), types.size(), quantities.size(), volumes.size()});
     for (size_t i = 0; i < count; ++i) {
         char volStr[32];
-        std::snprintf(volStr, sizeof(volStr), "%.1f m\xc2\xb3", volumes[i] * quantities[i]);
+        std::snprintf(volStr, sizeof(volStr), "%.1f%s", volumes[i] * quantities[i], CUBIC_METER_SUFFIX);
         char qtyStr[16];
         std::snprintf(qtyStr, sizeof(qtyStr), "%d", quantities[i]);
 
