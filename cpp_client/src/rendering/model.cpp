@@ -312,16 +312,11 @@ void Model::addMesh(std::unique_ptr<Mesh> mesh) {
 }
 
 std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const std::string& faction) {
-    // Check cache
-    std::string cacheKey = faction + "_" + shipType;
-    auto it = s_modelCache.find(cacheKey);
-    if (it != s_modelCache.end()) {
-        // Return a copy of cached model
-        auto copy = std::make_unique<Model>();
-        // TODO: Deep copy meshes
-        return copy;
-    }
-
+    // Note: Model cache is defined but not actively used
+    // Deep copying meshes with OpenGL buffers is complex, and procedural generation
+    // is fast enough that caching provides minimal performance benefit.
+    // For significant performance gains, consider instanced rendering instead.
+    
     // Get faction colors
     FactionColors colors = getFactionColors(faction);
 
