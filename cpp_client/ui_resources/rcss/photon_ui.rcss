@@ -130,9 +130,116 @@ scrollbarhorizontal sliderbar:hover {
 }
 
 /* ===================================================================
-   6. UTILITY CLASSES
+   6. TABS
+   =================================================================== */
+
+.tab {
+    display: inline-block;
+    padding: 6dp 10dp;
+    color: #8B949E;
+    font-size: 11dp;
+    border-bottom: 2dp #00000000;
+}
+
+.tab:hover {
+    color: #E6EDF3;
+}
+
+.tab.active {
+    color: #45D0E8;
+    border-bottom-color: #45D0E8;
+}
+
+/* ===================================================================
+   7. PANEL HEADER
+   =================================================================== */
+
+.panel-header {
+    background-color: #0A0E14;
+    height: 28dp;
+    padding: 4dp 8dp;
+    border-bottom: 1dp #1E2A36;
+}
+
+.panel-header .title {
+    font-size: 12dp;
+    font-weight: bold;
+    color: #45D0E8;
+}
+
+.panel-header .window-btn {
+    display: inline-block;
+    width: 20dp;
+    height: 20dp;
+    float: right;
+    margin-left: 2dp;
+    background-color: transparent;
+    border-width: 0dp;
+    color: #8B949E;
+    text-align: center;
+    font-size: 14dp;
+}
+
+.panel-header .window-btn:hover {
+    color: #45D0E8;
+}
+
+/* ===================================================================
+   8. TABLES
+   =================================================================== */
+
+table {
+    width: 100%;
+}
+
+thead {
+    background-color: #0A0E14;
+}
+
+thead td {
+    padding: 3dp 6dp;
+    font-size: 10dp;
+    font-weight: bold;
+    color: #8B949E;
+    border-bottom: 1dp #283848;
+}
+
+tbody tr {
+    height: 22dp;
+}
+
+tbody tr:hover {
+    background-color: #1A3A4A40;
+}
+
+tbody td {
+    padding: 2dp 6dp;
+    font-size: 11dp;
+}
+
+/* ===================================================================
+   9. TOOLTIPS
+   =================================================================== */
+
+.tooltip {
+    background-color: #1C2128F0;
+    border: 1dp #283848;
+    border-radius: 2dp;
+    padding: 4dp 8dp;
+    font-size: 10dp;
+    color: #E6EDF3;
+}
+
+/* ===================================================================
+   10. UTILITY CLASSES
    =================================================================== */
 
 .hidden { display: none; }
 .center { text-align: center; }
 .right  { text-align: right; }
+
+.separator {
+    height: 1dp;
+    background-color: #1E2A36;
+    margin: 8dp 0dp;
+}

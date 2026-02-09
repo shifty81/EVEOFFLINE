@@ -28,6 +28,8 @@
 #include "ui/rml_ui_manager.h"
 
 static bool g_showFitting = false;
+static bool g_showInventory = false;
+static bool g_showDScan = false;
 static bool g_showDebugger = false;
 
 static void glfwErrorCallback(int error, const char* description) {
@@ -38,6 +40,8 @@ int main() {
     std::cout << "=== EVE OFFLINE — RmlUi Photon UI Test ===" << std::endl;
     std::cout << "Controls:" << std::endl;
     std::cout << "  F1  - Toggle fitting panel" << std::endl;
+    std::cout << "  F2  - Toggle inventory panel" << std::endl;
+    std::cout << "  F3  - Toggle D-Scan panel" << std::endl;
     std::cout << "  F8  - Toggle RmlUi debugger" << std::endl;
     std::cout << "  ESC - Exit" << std::endl;
     std::cout << std::endl;
@@ -106,7 +110,11 @@ int main() {
     std::cout << "Displaying EVE Photon UI panels:" << std::endl;
     std::cout << "  - Ship HUD (bottom center) with health bars, speed, modules" << std::endl;
     std::cout << "  - Overview (top right) with entity table" << std::endl;
+    std::cout << "  - Target List (top center) with locked target cards" << std::endl;
+    std::cout << "  - Neocom (left sidebar) with service icons" << std::endl;
     std::cout << "  - Fitting (hidden, toggle with F1)" << std::endl;
+    std::cout << "  - Inventory (hidden, toggle with F2)" << std::endl;
+    std::cout << "  - D-Scan (hidden, toggle with F3)" << std::endl;
     std::cout << std::endl;
 
     // Add initial combat log messages
@@ -122,6 +130,28 @@ int main() {
     shipData.capacitor_pct = 0.7f;
     shipData.velocity = 45.5f;
     shipData.max_velocity = 380.0f;
+
+    // Demo locked targets
+    rmlUi->SetTarget("t1", "Serpentis Spy", 0.6f, 1.0f, 1.0f, 12400.0f, true, true);
+    rmlUi->SetTarget("t2", "Guristas Scout", 0.3f, 0.8f, 1.0f, 24500.0f, true, false);
+    rmlUi->SetTarget("t3", "Asteroid Belt I", 1.0f, 1.0f, 1.0f, 45200.0f, false, false);
+
+    // Demo inventory data
+    {
+        std::vector<std::string> names = {"200mm AutoCannon I", "Veldspar", "Tritanium", "1MN Afterburner I"};
+        std::vector<std::string> types = {"Weapon", "Ore", "Mineral", "Propulsion"};
+        std::vector<int> quantities = {2, 1500, 3200, 1};
+        std::vector<float> volumes = {5.0f, 0.1f, 0.01f, 5.0f};
+        rmlUi->UpdateInventoryData(names, types, quantities, volumes, 42.0f, 100.0f);
+    }
+
+    // Demo D-Scan results
+    {
+        std::vector<std::string> names = {"Serpentis Hideaway", "Asteroid Belt II", "Stargate (Jita)"};
+        std::vector<std::string> types = {"Combat Site", "Asteroid Belt", "Stargate"};
+        std::vector<float> distances = {0.5f, 2.3f, 8.1f};
+        rmlUi->UpdateDScanResults(names, types, distances);
+    }
 
     float startTime = static_cast<float>(glfwGetTime());
 
@@ -142,6 +172,24 @@ int main() {
             std::cout << "[UI] Fitting panel " << (g_showFitting ? "shown" : "hidden") << "\n";
         }
         f1WasPressed = f1Pressed;
+
+        static bool f2WasPressed = false;
+        bool f2Pressed = glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS;
+        if (f2Pressed && !f2WasPressed) {
+            g_showInventory = !g_showInventory;
+            rmlUi->SetDocumentVisible("inventory", g_showInventory);
+            std::cout << "[UI] Inventory panel " << (g_showInventory ? "shown" : "hidden") << "\n";
+        }
+        f2WasPressed = f2Pressed;
+
+        static bool f3WasPressed = false;
+        bool f3Pressed = glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS;
+        if (f3Pressed && !f3WasPressed) {
+            g_showDScan = !g_showDScan;
+            rmlUi->SetDocumentVisible("dscan", g_showDScan);
+            std::cout << "[UI] D-Scan panel " << (g_showDScan ? "shown" : "hidden") << "\n";
+        }
+        f3WasPressed = f3Pressed;
 
         float currentTime = static_cast<float>(glfwGetTime());
         float elapsed = currentTime - startTime;

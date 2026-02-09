@@ -1,0 +1,230 @@
+<!-- EVE OFFLINE — Directional Scanner Panel (RML)
+     D-Scan interface with angle/range controls and sortable results table. -->
+<rml>
+<head>
+    <title>D-Scan</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #dscan {
+            position: fixed;
+            top: 120dp;
+            right: 10dp;
+            width: 340dp;
+            height: 380dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* Controls section */
+        .scan-controls {
+            padding: 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .control-row {
+            margin-bottom: 4dp;
+        }
+
+        .control-label {
+            display: inline-block;
+            width: 60dp;
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .control-value {
+            font-size: 10dp;
+            color: #E6EDF3;
+            float: right;
+        }
+
+        .slider-track {
+            height: 4dp;
+            background-color: #161B22;
+            border-radius: 2dp;
+            margin-top: 3dp;
+        }
+
+        .slider-fill {
+            height: 100%;
+            border-radius: 2dp;
+            background-color: #45D0E8;
+        }
+
+        .scan-btn {
+            width: 100%;
+            height: 28dp;
+            font-size: 11dp;
+            margin-top: 6dp;
+            background-color: #2A5A6A90;
+            border: 1dp #45D0E866;
+            border-radius: 2dp;
+            color: #E6EDF3;
+        }
+
+        .scan-btn:hover {
+            background-color: #2A5A6AE6;
+            border-color: #45D0E8CC;
+        }
+
+        .scan-btn:active {
+            background-color: #45D0E8CC;
+        }
+
+        /* Results section */
+        .results-header {
+            padding: 4dp 8dp;
+            font-size: 10dp;
+            color: #8B949E;
+            background-color: #0A0E1480;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .results-count {
+            color: #E6EDF3;
+        }
+
+        .results-content {
+            height: 220dp;
+            overflow: auto;
+            padding: 4dp;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        thead {
+            background-color: #0A0E14;
+        }
+
+        thead td {
+            padding: 3dp 6dp;
+            font-size: 10dp;
+            font-weight: bold;
+            color: #8B949E;
+            border-bottom: 1dp #283848;
+        }
+
+        tbody tr {
+            height: 22dp;
+        }
+
+        tbody tr:hover {
+            background-color: #1A3A4A40;
+        }
+
+        tbody td {
+            padding: 2dp 6dp;
+            font-size: 11dp;
+        }
+
+        .result-type {
+            color: #8B949E;
+            font-size: 10dp;
+        }
+
+        .result-name {
+            color: #E6EDF3;
+        }
+
+        .result-distance {
+            color: #8B949E;
+            font-size: 10dp;
+            text-align: right;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40dp;
+            color: #8B949E;
+            font-size: 11dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="dscan">
+        <div class="panel-header">
+            <span class="title">DIRECTIONAL SCANNER</span>
+            <span class="window-btn" id="btn-close">x</span>
+        </div>
+
+        <!-- Scan controls -->
+        <div class="scan-controls">
+            <div class="control-row">
+                <span class="control-label">Angle</span>
+                <span class="control-value" id="angle-value">360°</span>
+                <div class="slider-track">
+                    <div class="slider-fill" id="angle-fill" style="width: 100%;"></div>
+                </div>
+            </div>
+            <div class="control-row">
+                <span class="control-label">Range</span>
+                <span class="control-value" id="range-value">14.3 AU</span>
+                <div class="slider-track">
+                    <div class="slider-fill" id="range-fill" style="width: 100%;"></div>
+                </div>
+            </div>
+            <button class="scan-btn" id="btn-scan">Scan  (V)</button>
+        </div>
+
+        <!-- Results header -->
+        <div class="results-header">
+            Results: <span class="results-count" id="results-count">0</span>
+        </div>
+
+        <!-- Results table -->
+        <div class="results-content">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Type</td>
+                        <td>Name</td>
+                        <td style="text-align: right;">Distance</td>
+                    </tr>
+                </thead>
+                <tbody id="dscan-body">
+                    <!-- Results populated from C++ -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</rml>

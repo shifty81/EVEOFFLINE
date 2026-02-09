@@ -203,6 +203,9 @@ void RmlUiManager::Update() {
     // Update HUD elements with current ship data
     UpdateHudElements();
 
+    // Update target list display
+    // (only rebuilds DOM when targets change via Set/Remove/ClearTargets)
+
     context_->Update();
 }
 
@@ -266,17 +269,45 @@ void RmlUiManager::SetShipStatus(float shieldPct, float armorPct, float hullPct,
 void RmlUiManager::SetTarget(const std::string& id, const std::string& name,
                               float shieldPct, float armorPct, float hullPct,
                               float distance, bool isHostile, bool isActive) {
-    (void)id; (void)name;
-    (void)shieldPct; (void)armorPct; (void)hullPct;
-    (void)distance; (void)isHostile; (void)isActive;
-    // TODO: Dynamically update target list DOM elements
+    // Update existing target or add new one
+    for (auto& t : targets_) {
+        if (t.id == id) {
+            t.name = name;
+            t.shieldPct = shieldPct;
+            t.armorPct = armorPct;
+            t.hullPct = hullPct;
+            t.distance = distance;
+            t.isHostile = isHostile;
+            t.isActive = isActive;
+            UpdateTargetListElements();
+            return;
+        }
+    }
+
+    TargetInfo info;
+    info.id = id;
+    info.name = name;
+    info.shieldPct = shieldPct;
+    info.armorPct = armorPct;
+    info.hullPct = hullPct;
+    info.distance = distance;
+    info.isHostile = isHostile;
+    info.isActive = isActive;
+    targets_.push_back(info);
+    UpdateTargetListElements();
 }
 
 void RmlUiManager::RemoveTarget(const std::string& id) {
-    (void)id;
+    targets_.erase(
+        std::remove_if(targets_.begin(), targets_.end(),
+            [&id](const TargetInfo& t) { return t.id == id; }),
+        targets_.end());
+    UpdateTargetListElements();
 }
 
 void RmlUiManager::ClearTargets() {
+    targets_.clear();
+    UpdateTargetListElements();
 }
 
 // ---- Overview ----
@@ -331,6 +362,13 @@ void RmlUiManager::UpdateOverviewData(
             textClass = "text-friendly";
         }
 
+        // Apply overview filter
+        if (!overviewFilter_.empty() && overviewFilter_ != "all") {
+            if (overviewFilter_ == "hostile" && standingClass != "hostile") continue;
+            if (overviewFilter_ == "friendly" && standingClass != "friendly") continue;
+            if (overviewFilter_ == "neutral" && standingClass != "neutral") continue;
+        }
+
         allRowsRml +=
             "<tr>"
             "<td><span class=\"standing-dot " + standingClass + "\"></span></td>"
@@ -344,8 +382,9 @@ void RmlUiManager::UpdateOverviewData(
 }
 
 void RmlUiManager::SetOverviewFilter(const std::string& filter) {
-    (void)filter;
-    // TODO: Filter overview table rows by standing
+    overviewFilter_ = filter;
+    // Re-render the overview with the new filter applied.
+    // The actual filtering is done in UpdateOverviewData() using overviewFilter_.
 }
 
 // ---- Panel Visibility ----
@@ -402,9 +441,13 @@ bool RmlUiManager::LoadDocuments() {
     };
 
     std::vector<DocInfo> docs = {
-        {"ship_hud",  resourcePath_ + "/rml/ship_hud.rml",  true},
-        {"overview",  resourcePath_ + "/rml/overview.rml",   true},
-        {"fitting",   resourcePath_ + "/rml/fitting.rml",    false},
+        {"ship_hud",     resourcePath_ + "/rml/ship_hud.rml",     true},
+        {"overview",     resourcePath_ + "/rml/overview.rml",      true},
+        {"fitting",      resourcePath_ + "/rml/fitting.rml",       false},
+        {"target_list",  resourcePath_ + "/rml/target_list.rml",   true},
+        {"inventory",    resourcePath_ + "/rml/inventory.rml",     false},
+        {"dscan",        resourcePath_ + "/rml/dscan.rml",         false},
+        {"neocom",       resourcePath_ + "/rml/neocom.rml",        true},
     };
 
     bool allOk = true;
@@ -490,6 +533,151 @@ void RmlUiManager::UpdateHudElements() {
         std::snprintf(buf, sizeof(buf), "%.0f", shipData_.capacitor_pct * 100.0f);
         capText->SetInnerRML(buf);
     }
+}
+
+void RmlUiManager::UpdateTargetListElements() {
+    auto it = documents_.find("target_list");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* container = it->second->GetElementById("target-cards");
+    if (!container) return;
+
+    // Build all target card RML
+    std::string cardsRml;
+    for (const auto& t : targets_) {
+        std::string cardClass = "target-card";
+        std::string nameClass = "target-name";
+        if (t.isActive) cardClass += " active";
+        if (t.isHostile) {
+            cardClass += " hostile";
+            nameClass += " hostile";
+        } else {
+            cardClass += " friendly";
+            nameClass += " friendly";
+        }
+
+        // Format distance
+        char distStr[32];
+        if (t.distance > 1000.0f) {
+            std::snprintf(distStr, sizeof(distStr), "%.1f km", t.distance / 1000.0f);
+        } else {
+            std::snprintf(distStr, sizeof(distStr), "%.0f m", t.distance);
+        }
+
+        char shieldW[16], armorW[16], hullW[16];
+        std::snprintf(shieldW, sizeof(shieldW), "%.1f%%", t.shieldPct * 100.0f);
+        std::snprintf(armorW, sizeof(armorW), "%.1f%%", t.armorPct * 100.0f);
+        std::snprintf(hullW, sizeof(hullW), "%.1f%%", t.hullPct * 100.0f);
+
+        cardsRml +=
+            "<div class=\"" + cardClass + "\">"
+            "<div class=\"" + nameClass + "\">" + t.name + "</div>"
+            "<div class=\"target-health\">"
+            "<div class=\"target-bar-track\"><div class=\"target-bar-fill target-shield-fill\" style=\"width: " + shieldW + ";\"></div></div>"
+            "<div class=\"target-bar-track\"><div class=\"target-bar-fill target-armor-fill\" style=\"width: " + armorW + ";\"></div></div>"
+            "<div class=\"target-bar-track\"><div class=\"target-bar-fill target-hull-fill\" style=\"width: " + hullW + ";\"></div></div>"
+            "</div>"
+            "<div class=\"target-distance\">" + distStr + "</div>"
+            "</div>";
+    }
+
+    container->SetInnerRML(cardsRml);
+}
+
+void RmlUiManager::UpdateInventoryData(
+    const std::vector<std::string>& names,
+    const std::vector<std::string>& types,
+    const std::vector<int>& quantities,
+    const std::vector<float>& volumes,
+    float capacityUsed, float capacityMax)
+{
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("inventory");
+    if (it == documents_.end() || !it->second) return;
+
+    // Update capacity display
+    auto* capText = it->second->GetElementById("capacity-text");
+    if (capText) {
+        char buf[64];
+        std::snprintf(buf, sizeof(buf), "%.1f / %.1f m\xc2\xb3", capacityUsed, capacityMax);
+        capText->SetInnerRML(buf);
+    }
+
+    auto* capFill = it->second->GetElementById("capacity-fill");
+    if (capFill && capacityMax > 0.0f) {
+        float pct = (capacityUsed / capacityMax) * 100.0f;
+        char style[64];
+        std::snprintf(style, sizeof(style), "width: %.1f%%", pct);
+        capFill->SetAttribute("style", Rml::String(style));
+    }
+
+    // Update item table
+    auto* body = it->second->GetElementById("inventory-body");
+    if (!body) return;
+
+    std::string rowsRml;
+    size_t count = std::min({names.size(), types.size(), quantities.size(), volumes.size()});
+    for (size_t i = 0; i < count; ++i) {
+        char volStr[32];
+        std::snprintf(volStr, sizeof(volStr), "%.1f m\xc2\xb3", volumes[i] * quantities[i]);
+        char qtyStr[16];
+        std::snprintf(qtyStr, sizeof(qtyStr), "%d", quantities[i]);
+
+        rowsRml +=
+            "<tr>"
+            "<td class=\"item-name\">" + names[i] + "</td>"
+            "<td class=\"item-type\">" + types[i] + "</td>"
+            "<td class=\"item-qty\">" + qtyStr + "</td>"
+            "<td class=\"item-volume\">" + volStr + "</td>"
+            "</tr>";
+    }
+
+    body->SetInnerRML(rowsRml);
+}
+
+void RmlUiManager::UpdateDScanResults(
+    const std::vector<std::string>& names,
+    const std::vector<std::string>& types,
+    const std::vector<float>& distances)
+{
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("dscan");
+    if (it == documents_.end() || !it->second) return;
+
+    // Update results count
+    size_t count = std::min({names.size(), types.size(), distances.size()});
+    auto* countEl = it->second->GetElementById("results-count");
+    if (countEl) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%zu", count);
+        countEl->SetInnerRML(buf);
+    }
+
+    // Update results table
+    auto* body = it->second->GetElementById("dscan-body");
+    if (!body) return;
+
+    std::string rowsRml;
+    for (size_t i = 0; i < count; ++i) {
+        char distStr[32];
+        if (distances[i] < 1.0f) {
+            constexpr float KM_PER_AU = 149597.871f;
+            std::snprintf(distStr, sizeof(distStr), "%.0f km", distances[i] * KM_PER_AU);
+        } else {
+            std::snprintf(distStr, sizeof(distStr), "%.2f AU", distances[i]);
+        }
+
+        rowsRml +=
+            "<tr>"
+            "<td class=\"result-type\">" + types[i] + "</td>"
+            "<td class=\"result-name\">" + names[i] + "</td>"
+            "<td class=\"result-distance\">" + distStr + "</td>"
+            "</tr>";
+    }
+
+    body->SetInnerRML(rowsRml);
 }
 
 void RmlUiManager::SetupInputCallbacks() {
@@ -604,6 +792,12 @@ void RmlUiManager::SetDocumentVisible(const std::string&, bool) {}
 bool RmlUiManager::IsDocumentVisible(const std::string&) const { return false; }
 void RmlUiManager::ToggleDocument(const std::string&) {}
 void RmlUiManager::AddCombatLogMessage(const std::string&) {}
+void RmlUiManager::UpdateInventoryData(
+    const std::vector<std::string>&, const std::vector<std::string>&,
+    const std::vector<int>&, const std::vector<float>&, float, float) {}
+void RmlUiManager::UpdateDScanResults(
+    const std::vector<std::string>&, const std::vector<std::string>&,
+    const std::vector<float>&) {}
 
 } // namespace UI
 
