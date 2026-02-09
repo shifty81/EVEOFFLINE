@@ -108,6 +108,9 @@ private:
     unsigned int m_beamVBO;
     std::unique_ptr<Shader> m_beamShader;
     
+    // Animation time tracker
+    float m_time;
+    
     // Helper methods
     void renderBeams(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix);
     void addBeam(const BeamEffect& beam);

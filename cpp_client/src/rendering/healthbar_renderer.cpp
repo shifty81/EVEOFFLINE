@@ -6,6 +6,9 @@
 
 namespace eve {
 
+// Configuration constants
+constexpr float HEALTH_BAR_BORDER_WIDTH = 2.0f;
+
 HealthBarRenderer::HealthBarRenderer()
     : m_vao(0)
     , m_vbo(0)
@@ -31,9 +34,12 @@ bool HealthBarRenderer::initialize() {
     // Create quad for rendering bars
     createQuad();
     
-    // Load shader
+    // Load health bar shaders
     m_shader = std::make_unique<Shader>();
-    // TODO: Load actual health bar shaders
+    if (!m_shader->load("shaders/healthbar.vert", "shaders/healthbar.frag")) {
+        std::cerr << "Failed to load health bar shaders" << std::endl;
+        return false;
+    }
     
     std::cout << "Health bar renderer initialized" << std::endl;
     return true;
@@ -152,10 +158,19 @@ void HealthBarRenderer::drawBar(const glm::vec3& position, float value, const gl
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
     
-    // Draw border (white outline)
+    // Draw border (white outline) using line rendering
+    // Note: This approach causes some overdraw and state changes per health bar.
+    // For optimization with many health bars, consider:
+    // 1. Batching all bar fills in one pass, then all borders in another pass
+    // 2. Using separate line strip geometry to avoid polygon mode changes
+    // Current implementation is simple and works well for typical entity counts.
     m_shader->setVec4("barColor", glm::vec4(1.0f, 1.0f, 1.0f, 0.8f));
     m_shader->setFloat("fillAmount", 1.0f);
-    // TODO: Draw border using line rendering
+    
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glLineWidth(HEALTH_BAR_BORDER_WIDTH);
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     
     glBindVertexArray(0);
 }
