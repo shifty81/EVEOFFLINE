@@ -89,6 +89,32 @@ struct ShipAssemblyConfig {
 };
 
 /**
+ * Parameters controlling procedural variation when generating ship variants.
+ * Values derived from measured ranges in the reference OBJ models
+ * (see docs/research/OBJ_MODEL_ANALYSIS.md).
+ */
+struct ShipVariationParams {
+    // Hull proportion jitter (0.0 = exact reference, 1.0 = full measured range)
+    float proportionJitter;
+    
+    // Scale jitter factor applied to overall size (e.g., 0.1 = ±10%)
+    float scaleJitter;
+    
+    // Surface greeble density multiplier (0.5 = half detail, 2.0 = double)
+    float detailMultiplier;
+    
+    // Seed for deterministic variation (0 = random)
+    unsigned int seed;
+    
+    ShipVariationParams()
+        : proportionJitter(0.3f)
+        , scaleJitter(0.1f)
+        , detailMultiplier(1.0f)
+        , seed(0)
+    {}
+};
+
+/**
  * Library of modular ship parts organized by faction and type
  * Manages the creation and storage of reusable ship components
  */
@@ -121,6 +147,15 @@ public:
      * Create a ship assembly configuration for a given ship class and faction
      */
     ShipAssemblyConfig createAssemblyConfig(const std::string& shipClass, const std::string& faction) const;
+    
+    /**
+     * Create a varied assembly configuration using reference model traits.
+     * Applies controlled randomness within the measured OBJ model ranges
+     * so that each generated ship is unique but faction-appropriate.
+     */
+    ShipAssemblyConfig createVariedAssemblyConfig(const std::string& shipClass,
+                                                   const std::string& faction,
+                                                   const ShipVariationParams& variation) const;
     
 private:
     // Storage for all parts, keyed by unique ID

@@ -1,7 +1,9 @@
 #include "rendering/ship_part_library.h"
 #include "rendering/model.h"
+#include "rendering/ship_generation_rules.h"
 #include <cmath>
 #include <iostream>
+#include <random>
 
 namespace eve {
 
@@ -130,6 +132,55 @@ ShipAssemblyConfig ShipPartLibrary::createAssemblyConfig(const std::string& ship
     } else if (shipClass == "Titan") {
         config.overallScale = 25.0f;
         config.proportions = glm::vec3(1.0f, 0.32f, 0.28f);
+    }
+    
+    return config;
+}
+
+ShipAssemblyConfig ShipPartLibrary::createVariedAssemblyConfig(
+    const std::string& shipClass, const std::string& faction,
+    const ShipVariationParams& variation) const {
+    
+    // Start from the base configuration
+    ShipAssemblyConfig config = createAssemblyConfig(shipClass, faction);
+    
+    // Set up deterministic RNG
+    std::mt19937 rng(variation.seed != 0 ? variation.seed 
+                     : static_cast<unsigned int>(std::hash<std::string>{}(shipClass + faction)));
+    std::uniform_real_distribution<float> dist(-1.0f, 1.0f);
+    
+    // Look up reference model traits for this faction and class
+    ShipGenerationRules rules;
+    rules.initialize();
+    ReferenceModelTraits factionRef = rules.getFactionReferenceTraits(faction);
+    ReferenceModelTraits classRef = rules.getClassReferenceTraits(shipClass);
+    
+    // Apply proportion jitter within the measured aspect ratio range
+    float jitter = variation.proportionJitter;
+    if (jitter > 0.0f) {
+        // Vary width proportion using the faction's measured L:W range
+        float lwRange = factionRef.maxAspectLW - factionRef.minAspectLW;
+        float lwOffset = dist(rng) * jitter * lwRange * 0.5f;
+        float targetLW = factionRef.avgAspectLW + lwOffset;
+        // Adjust width proportion: higher L:W -> narrower width
+        float widthFactor = factionRef.avgAspectLW / std::max(targetLW, 1.0f);
+        config.proportions.y *= widthFactor;
+        
+        // Vary height proportion using the faction's L:H ratio
+        float lhOffset = dist(rng) * jitter * 0.3f;
+        config.proportions.z *= (1.0f + lhOffset);
+    }
+    
+    // Apply scale jitter
+    if (variation.scaleJitter > 0.0f) {
+        float scaleFactor = 1.0f + dist(rng) * variation.scaleJitter;
+        config.overallScale *= scaleFactor;
+    }
+    
+    // Adjust asymmetry factor within faction-appropriate bounds
+    if (config.allowAsymmetry && jitter > 0.0f) {
+        float asymJitter = std::abs(dist(rng)) * jitter * 0.2f;
+        config.asymmetryFactor = std::min(config.asymmetryFactor + asymJitter, 1.0f);
     }
     
     return config;

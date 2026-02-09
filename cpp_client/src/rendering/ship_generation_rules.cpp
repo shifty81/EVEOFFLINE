@@ -184,6 +184,15 @@ void ShipGenerationRules::initializeMinmatarRules() {
     rules.allowsExposedFramework = true;
     rules.requiresOrnateDetails = false;
     
+    // Reference traits from 56 analyzed Minmatar OBJ models
+    rules.referenceTraits.avgAspectLW = 2.284f;
+    rules.referenceTraits.minAspectLW = 1.010f;
+    rules.referenceTraits.maxAspectLW = 5.755f;
+    rules.referenceTraits.avgAspectLH = 4.631f;  // Very flat/tall proportions
+    rules.referenceTraits.avgVertexCount = 12305;
+    rules.referenceTraits.avgFaceCount = 8701;
+    rules.referenceTraits.detailDensityMultiplier = 1.98f;  // High detail (exposed framework)
+    
     rules.mandatoryPartTypes = {"hull_main", "engine"};
     rules.minPartCounts["engine"] = 2;
     rules.maxPartCounts["panel_detail"] = 20;
@@ -203,6 +212,15 @@ void ShipGenerationRules::initializeCaldariRules() {
     rules.requiresAngularGeometry = true;  // Blocky, angular
     rules.allowsExposedFramework = false;
     rules.requiresOrnateDetails = false;
+    
+    // Reference traits from 61 analyzed Caldari OBJ models
+    rules.referenceTraits.avgAspectLW = 1.834f;  // Most compact/boxy of major factions
+    rules.referenceTraits.minAspectLW = 1.003f;
+    rules.referenceTraits.maxAspectLW = 5.094f;
+    rules.referenceTraits.avgAspectLH = 3.515f;
+    rules.referenceTraits.avgVertexCount = 10760;
+    rules.referenceTraits.avgFaceCount = 8812;
+    rules.referenceTraits.detailDensityMultiplier = 1.73f;  // Moderate angular detail
     
     rules.mandatoryPartTypes = {"hull_main", "engine"};
     rules.minPartCounts["engine"] = 2;
@@ -224,6 +242,15 @@ void ShipGenerationRules::initializeGallenteRules() {
     rules.allowsExposedFramework = false;
     rules.requiresOrnateDetails = false;
     
+    // Reference traits from 56 analyzed Gallente OBJ models
+    rules.referenceTraits.avgAspectLW = 2.278f;
+    rules.referenceTraits.minAspectLW = 1.035f;
+    rules.referenceTraits.maxAspectLW = 10.442f;  // Widest range of any faction
+    rules.referenceTraits.avgAspectLH = 3.664f;
+    rules.referenceTraits.avgVertexCount = 7327;   // Lowest — smoother surfaces
+    rules.referenceTraits.avgFaceCount = 8031;
+    rules.referenceTraits.detailDensityMultiplier = 1.18f;  // Low detail (smooth organic)
+    
     rules.mandatoryPartTypes = {"hull_main", "engine", "drone_bay"};
     rules.minPartCounts["engine"] = 2;
     rules.minPartCounts["drone_bay"] = 1;
@@ -244,6 +271,15 @@ void ShipGenerationRules::initializeAmarrRules() {
     rules.requiresAngularGeometry = false;
     rules.allowsExposedFramework = false;
     rules.requiresOrnateDetails = true;  // Cathedral-like details
+    
+    // Reference traits from 58 analyzed Amarr OBJ models
+    rules.referenceTraits.avgAspectLW = 2.199f;
+    rules.referenceTraits.minAspectLW = 1.020f;
+    rules.referenceTraits.maxAspectLW = 4.573f;
+    rules.referenceTraits.avgAspectLH = 3.954f;  // Tall due to vertical spires
+    rules.referenceTraits.avgVertexCount = 8955;
+    rules.referenceTraits.avgFaceCount = 7856;
+    rules.referenceTraits.detailDensityMultiplier = 1.44f;  // Moderate ornate detail
     
     rules.mandatoryPartTypes = {"hull_main", "engine", "spire"};
     rules.minPartCounts["engine"] = 2;
@@ -276,6 +312,15 @@ void ShipGenerationRules::initializeFrigateRules() {
     
     rules.detailDensity = 1.0f;
     
+    // Reference traits from 99 analyzed frigate OBJ models
+    rules.referenceTraits.avgAspectLW = 1.625f;
+    rules.referenceTraits.minAspectLW = 1.0f;
+    rules.referenceTraits.maxAspectLW = 4.0f;
+    rules.referenceTraits.avgAspectLH = 2.5f;
+    rules.referenceTraits.avgVertexCount = 6214;
+    rules.referenceTraits.avgFaceCount = 5812;
+    rules.referenceTraits.detailDensityMultiplier = 1.0f;  // Baseline
+    
     m_classRules["Frigate"] = rules;
 }
 
@@ -299,6 +344,15 @@ void ShipGenerationRules::initializeDestroyerRules() {
     rules.maxEngines = 4;
     
     rules.detailDensity = 1.2f;
+    
+    // Reference traits from 24 analyzed destroyer OBJ models
+    rules.referenceTraits.avgAspectLW = 2.470f;  // Long and narrow
+    rules.referenceTraits.minAspectLW = 1.3f;
+    rules.referenceTraits.maxAspectLW = 5.0f;
+    rules.referenceTraits.avgAspectLH = 4.0f;
+    rules.referenceTraits.avgVertexCount = 8832;
+    rules.referenceTraits.avgFaceCount = 7929;
+    rules.referenceTraits.detailDensityMultiplier = 1.42f;
     
     m_classRules["Destroyer"] = rules;
 }
@@ -324,6 +378,15 @@ void ShipGenerationRules::initializeCruiserRules() {
     
     rules.detailDensity = 1.5f;
     
+    // Reference traits from 59 analyzed cruiser OBJ models
+    rules.referenceTraits.avgAspectLW = 1.927f;
+    rules.referenceTraits.minAspectLW = 1.1f;
+    rules.referenceTraits.maxAspectLW = 5.0f;
+    rules.referenceTraits.avgAspectLH = 3.0f;
+    rules.referenceTraits.avgVertexCount = 9775;
+    rules.referenceTraits.avgFaceCount = 8675;
+    rules.referenceTraits.detailDensityMultiplier = 1.57f;
+    
     m_classRules["Cruiser"] = rules;
 }
 
@@ -347,6 +410,15 @@ void ShipGenerationRules::initializeBattlecruiserRules() {
     rules.maxEngines = 6;
     
     rules.detailDensity = 2.0f;
+    
+    // Reference traits from 20 analyzed battlecruiser OBJ models
+    rules.referenceTraits.avgAspectLW = 1.987f;
+    rules.referenceTraits.minAspectLW = 1.2f;
+    rules.referenceTraits.maxAspectLW = 4.0f;
+    rules.referenceTraits.avgAspectLH = 3.2f;
+    rules.referenceTraits.avgVertexCount = 9354;
+    rules.referenceTraits.avgFaceCount = 7814;
+    rules.referenceTraits.detailDensityMultiplier = 1.51f;
     
     m_classRules["Battlecruiser"] = rules;
 }
@@ -372,13 +444,22 @@ void ShipGenerationRules::initializeBattleshipRules() {
     
     rules.detailDensity = 2.5f;
     
+    // Reference traits from 33 analyzed battleship OBJ models
+    rules.referenceTraits.avgAspectLW = 2.209f;
+    rules.referenceTraits.minAspectLW = 1.3f;
+    rules.referenceTraits.maxAspectLW = 5.0f;
+    rules.referenceTraits.avgAspectLH = 3.8f;
+    rules.referenceTraits.avgVertexCount = 11790;
+    rules.referenceTraits.avgFaceCount = 11456;
+    rules.referenceTraits.detailDensityMultiplier = 1.90f;
+    
     m_classRules["Battleship"] = rules;
 }
 
 void ShipGenerationRules::initializeCapitalRules() {
     ClassRules rules;
     
-    // Carrier
+    // Carrier — Reference traits from 9 analyzed carrier OBJ models
     rules.shipClass = "Carrier";
     rules.minLength = 14.0f;
     rules.maxLength = 16.0f;
@@ -393,9 +474,16 @@ void ShipGenerationRules::initializeCapitalRules() {
     rules.minEngines = 4;
     rules.maxEngines = 6;
     rules.detailDensity = 3.0f;
+    rules.referenceTraits.avgAspectLW = 3.391f;  // Elongated flight decks
+    rules.referenceTraits.minAspectLW = 1.5f;
+    rules.referenceTraits.maxAspectLW = 5.0f;
+    rules.referenceTraits.avgAspectLH = 3.5f;
+    rules.referenceTraits.avgVertexCount = 22179;
+    rules.referenceTraits.avgFaceCount = 16161;
+    rules.referenceTraits.detailDensityMultiplier = 3.57f;
     m_classRules["Carrier"] = rules;
     
-    // Dreadnought
+    // Dreadnought — Reference traits from 5 analyzed dreadnought OBJ models
     rules.shipClass = "Dreadnought";
     rules.minLength = 11.0f;
     rules.maxLength = 13.0f;
@@ -408,9 +496,16 @@ void ShipGenerationRules::initializeCapitalRules() {
     rules.minEngines = 4;
     rules.maxEngines = 6;
     rules.detailDensity = 3.0f;
+    rules.referenceTraits.avgAspectLW = 2.576f;
+    rules.referenceTraits.minAspectLW = 1.5f;
+    rules.referenceTraits.maxAspectLW = 4.0f;
+    rules.referenceTraits.avgAspectLH = 3.2f;
+    rules.referenceTraits.avgVertexCount = 17227;
+    rules.referenceTraits.avgFaceCount = 12859;
+    rules.referenceTraits.detailDensityMultiplier = 2.77f;
     m_classRules["Dreadnought"] = rules;
     
-    // Titan
+    // Titan — Reference traits from 5 analyzed titan OBJ models
     rules.shipClass = "Titan";
     rules.minLength = 23.0f;
     rules.maxLength = 27.0f;
@@ -423,7 +518,30 @@ void ShipGenerationRules::initializeCapitalRules() {
     rules.minEngines = 8;
     rules.maxEngines = 12;
     rules.detailDensity = 4.0f;
+    rules.referenceTraits.avgAspectLW = 4.371f;  // Extremely elongated
+    rules.referenceTraits.minAspectLW = 2.0f;
+    rules.referenceTraits.maxAspectLW = 6.0f;
+    rules.referenceTraits.avgAspectLH = 4.5f;
+    rules.referenceTraits.avgVertexCount = 40257;
+    rules.referenceTraits.avgFaceCount = 26316;
+    rules.referenceTraits.detailDensityMultiplier = 6.48f;
     m_classRules["Titan"] = rules;
+}
+
+ReferenceModelTraits ShipGenerationRules::getFactionReferenceTraits(const std::string& faction) const {
+    auto it = m_factionRules.find(faction);
+    if (it != m_factionRules.end()) {
+        return it->second.referenceTraits;
+    }
+    return ReferenceModelTraits();
+}
+
+ReferenceModelTraits ShipGenerationRules::getClassReferenceTraits(const std::string& shipClass) const {
+    auto it = m_classRules.find(shipClass);
+    if (it != m_classRules.end()) {
+        return it->second.referenceTraits;
+    }
+    return ReferenceModelTraits();
 }
 
 } // namespace eve
