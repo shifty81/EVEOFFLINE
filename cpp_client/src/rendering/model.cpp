@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <fstream>
+#include <filesystem>
 
 // Model loading libraries
 #define TINYOBJLOADER_IMPLEMENTATION
@@ -311,12 +312,74 @@ void Model::addMesh(std::unique_ptr<Mesh> mesh) {
     m_meshes.push_back(std::move(mesh));
 }
 
+std::string Model::findOBJModelPath(const std::string& shipType, const std::string& faction) {
+    // Search directories relative to the executable for extracted OBJ models
+    std::vector<std::string> searchDirs = {
+        "models/ships",
+        "../models/ships",
+        "bin/models/ships",
+        "../bin/models/ships"
+    };
+
+    // Convert faction to lowercase for filename matching
+    std::string factionLower = faction;
+    std::transform(factionLower.begin(), factionLower.end(), factionLower.begin(), ::tolower);
+
+    for (const auto& dir : searchDirs) {
+        if (!std::filesystem::exists(dir)) continue;
+
+        // Try to find an OBJ file whose name ends with the ship type
+        // File convention: {faction}_{class}_{ShipName}.obj
+        try {
+            for (const auto& entry : std::filesystem::directory_iterator(dir)) {
+                if (!entry.is_regular_file()) continue;
+                std::string filename = entry.path().filename().string();
+                if (filename.size() < 4 || filename.substr(filename.size() - 4) != ".obj") continue;
+
+                // Check if filename starts with the faction (case-insensitive)
+                std::string filenameLower = filename;
+                std::transform(filenameLower.begin(), filenameLower.end(), filenameLower.begin(), ::tolower);
+
+                if (filenameLower.find(factionLower + "_") != 0) continue;
+
+                // Check if the ship name appears in the filename (case-insensitive)
+                std::string shipTypeLower = shipType;
+                std::transform(shipTypeLower.begin(), shipTypeLower.end(), shipTypeLower.begin(), ::tolower);
+
+                // Strip the .obj extension for matching
+                std::string baseLower = filenameLower.substr(0, filenameLower.size() - 4);
+
+                // Match by ship name at end of filename after last underscore
+                size_t lastUnderscore = baseLower.rfind('_');
+                if (lastUnderscore != std::string::npos) {
+                    std::string modelShipName = baseLower.substr(lastUnderscore + 1);
+                    if (modelShipName == shipTypeLower) {
+                        std::cout << "Found OBJ model: " << entry.path().string() << " for " << shipType << std::endl;
+                        return entry.path().string();
+                    }
+                }
+            }
+        } catch (const std::filesystem::filesystem_error& e) {
+            std::cerr << "Error scanning model directory " << dir << ": " << e.what() << std::endl;
+        }
+    }
+
+    return "";
+}
+
 std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const std::string& faction) {
-    // Note: Model cache is defined but not actively used
-    // Deep copying meshes with OpenGL buffers is complex, and procedural generation
-    // is fast enough that caching provides minimal performance benefit.
-    // For significant performance gains, consider instanced rendering instead.
-    
+    // Try to load from OBJ file first
+    std::string objPath = findOBJModelPath(shipType, faction);
+    if (!objPath.empty()) {
+        auto model = std::make_unique<Model>();
+        if (model->loadFromFile(objPath)) {
+            std::cout << "Using OBJ model for " << shipType << " (" << faction << ")" << std::endl;
+            return model;
+        }
+        std::cerr << "Failed to load OBJ model, falling back to procedural generation" << std::endl;
+    }
+
+    // Fall back to procedural generation
     // Get faction colors
     FactionColors colors = getFactionColors(faction);
 

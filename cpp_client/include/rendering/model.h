@@ -132,6 +132,16 @@ private:
     bool loadGLTF(const std::string& path);
 
     /**
+     * Find OBJ model file for a given ship type and faction
+     * Searches the models/ships directory for matching OBJ files.
+     * File naming convention: {faction}_{class}_{ShipName}.obj
+     * @param shipType The ship type/name (e.g., "Rifter", "Raven")
+     * @param faction The faction (e.g., "Minmatar", "Caldari")
+     * @return Path to OBJ file if found, empty string otherwise
+     */
+    static std::string findOBJModelPath(const std::string& shipType, const std::string& faction);
+
+    /**
      * Ship type classification helpers
      * These methods determine which procedural generation function to use
      * based on ship type string matching.
