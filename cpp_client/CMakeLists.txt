@@ -462,13 +462,13 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/assets/
 set(OBJ_MODELS_ARCHIVE "${CMAKE_CURRENT_SOURCE_DIR}/../data/ships/obj_models/obj_models.7z")
 set(OBJ_MODELS_DIR "${CMAKE_BINARY_DIR}/bin/models/ships")
 if(EXISTS "${OBJ_MODELS_ARCHIVE}")
-    find_program(7Z_EXECUTABLE NAMES 7z 7za)
-    if(7Z_EXECUTABLE)
+    find_program(P7ZIP_EXECUTABLE NAMES 7z 7za)
+    if(P7ZIP_EXECUTABLE)
         if(NOT EXISTS "${OBJ_MODELS_DIR}")
             message(STATUS "Extracting OBJ ship models from ${OBJ_MODELS_ARCHIVE}...")
             file(MAKE_DIRECTORY "${OBJ_MODELS_DIR}")
             execute_process(
-                COMMAND ${7Z_EXECUTABLE} x "${OBJ_MODELS_ARCHIVE}" -o${OBJ_MODELS_DIR} -y
+                COMMAND ${P7ZIP_EXECUTABLE} x "${OBJ_MODELS_ARCHIVE}" -o${OBJ_MODELS_DIR} -y
                 RESULT_VARIABLE EXTRACT_RESULT
                 OUTPUT_QUIET
             )
