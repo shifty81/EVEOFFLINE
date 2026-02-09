@@ -118,6 +118,18 @@ public:
     // ---- Combat Log ----
     void AddCombatLogMessage(const std::string& message);
 
+    // ---- Inventory ----
+    void UpdateInventoryData(const std::vector<std::string>& names,
+                             const std::vector<std::string>& types,
+                             const std::vector<int>& quantities,
+                             const std::vector<float>& volumes,
+                             float capacityUsed, float capacityMax);
+
+    // ---- D-Scan ----
+    void UpdateDScanResults(const std::vector<std::string>& names,
+                            const std::vector<std::string>& types,
+                            const std::vector<float>& distances);
+
     // ---- State Queries ----
     bool IsInitialized() const { return initialized_; }
 
@@ -137,9 +149,26 @@ private:
     // Ship data for updating elements
     RmlShipData shipData_;
 
+    // Target data for the target list
+    struct TargetInfo {
+        std::string id;
+        std::string name;
+        float shieldPct = 1.0f;
+        float armorPct = 1.0f;
+        float hullPct = 1.0f;
+        float distance = 0.0f;
+        bool isHostile = false;
+        bool isActive = false;
+    };
+    std::vector<TargetInfo> targets_;
+
+    // Overview filter state
+    std::string overviewFilter_ = "all";
+
     // Internal helpers
     bool LoadDocuments();
     void UpdateHudElements();
+    void UpdateTargetListElements();
     void SetupInputCallbacks();
 #endif
 };

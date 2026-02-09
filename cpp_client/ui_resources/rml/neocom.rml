@@ -1,0 +1,101 @@
+<!-- EVE OFFLINE — Neocom Sidebar (RML)
+     Vertical icon sidebar on the left edge with service buttons. -->
+<rml>
+<head>
+    <title>Neocom</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #neocom {
+            position: fixed;
+            top: 0dp;
+            left: 0dp;
+            width: 44dp;
+            height: 100%;
+            background-color: #090D13F0;
+            border-right: 1dp #1E2A36;
+        }
+
+        .neocom-toggle {
+            width: 36dp;
+            height: 22dp;
+            margin: 4dp;
+            font-size: 10dp;
+            background-color: #2A5A6A50;
+            border: 1dp #28384866;
+            border-radius: 2dp;
+            color: #8B949E;
+            text-align: center;
+        }
+
+        .neocom-toggle:hover {
+            color: #45D0E8;
+            border-color: #45D0E866;
+        }
+
+        .neocom-separator {
+            height: 1dp;
+            background-color: #1E2A36;
+            margin: 4dp;
+        }
+
+        /* Service buttons */
+        .neo-btn {
+            display: block;
+            width: 36dp;
+            height: 36dp;
+            margin: 2dp 4dp;
+            background-color: #161B2280;
+            border: 1dp #28384866;
+            border-radius: 4dp;
+            color: #8B949E;
+            font-size: 11dp;
+            text-align: center;
+        }
+
+        .neo-btn:hover {
+            background-color: #1A3A4ACC;
+            border-color: #45D0E899;
+            color: #45D0E8;
+        }
+
+        .neo-btn:active {
+            background-color: #45D0E840;
+        }
+
+        .neo-btn .icon {
+            font-size: 14dp;
+            line-height: 36dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="neocom">
+        <!-- Collapse/Expand toggle -->
+        <button class="neocom-toggle" id="btn-toggle">&gt;&gt;</button>
+
+        <div class="neocom-separator"></div>
+
+        <!-- Core service icons -->
+        <button class="neo-btn" id="neo-character"><span class="icon">C</span></button>
+        <button class="neo-btn" id="neo-inventory"><span class="icon">I</span></button>
+        <button class="neo-btn" id="neo-fitting"><span class="icon">F</span></button>
+        <button class="neo-btn" id="neo-market"><span class="icon">M</span></button>
+
+        <div class="neocom-separator"></div>
+
+        <button class="neo-btn" id="neo-map"><span class="icon">*</span></button>
+        <button class="neo-btn" id="neo-dscan"><span class="icon">D</span></button>
+        <button class="neo-btn" id="neo-missions"><span class="icon">J</span></button>
+
+        <div class="neocom-separator"></div>
+
+        <button class="neo-btn" id="neo-corporation"><span class="icon">G</span></button>
+        <button class="neo-btn" id="neo-settings"><span class="icon">S</span></button>
+    </div>
+</body>
+</rml>

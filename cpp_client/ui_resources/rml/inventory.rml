@@ -1,0 +1,253 @@
+<!-- EVE OFFLINE — Inventory Panel (RML)
+     Dual-view inventory: Cargo Hold and Station Hangar with item list
+     and capacity display. -->
+<rml>
+<head>
+    <title>Inventory</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #inventory {
+            position: fixed;
+            top: 80dp;
+            left: 60dp;
+            width: 360dp;
+            height: 400dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* View tabs */
+        .view-tabs {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 0dp 4dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .view-tab {
+            display: inline-block;
+            padding: 6dp 12dp;
+            color: #8B949E;
+            font-size: 11dp;
+            border-bottom: 2dp #00000000;
+        }
+
+        .view-tab:hover {
+            color: #E6EDF3;
+        }
+
+        .view-tab.active {
+            color: #45D0E8;
+            border-bottom-color: #45D0E8;
+        }
+
+        /* Capacity display */
+        .capacity-section {
+            padding: 6dp 8dp;
+            background-color: #0A0E1480;
+        }
+
+        .capacity-label {
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .capacity-value {
+            font-size: 10dp;
+            color: #E6EDF3;
+            float: right;
+        }
+
+        .capacity-bar-track {
+            height: 4dp;
+            background-color: #161B22;
+            border-radius: 2dp;
+            margin-top: 3dp;
+        }
+
+        .capacity-bar-fill {
+            height: 100%;
+            border-radius: 2dp;
+            background-color: #45D0E8;
+        }
+
+        .capacity-bar-fill.warning {
+            background-color: #FFB833;
+        }
+
+        .capacity-bar-fill.critical {
+            background-color: #FF3333;
+        }
+
+        /* Item list */
+        .item-list {
+            height: 270dp;
+            overflow: auto;
+            padding: 4dp;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        thead {
+            background-color: #0A0E14;
+        }
+
+        thead td {
+            padding: 3dp 6dp;
+            font-size: 10dp;
+            font-weight: bold;
+            color: #8B949E;
+            border-bottom: 1dp #283848;
+        }
+
+        tbody tr {
+            height: 22dp;
+        }
+
+        tbody tr:hover {
+            background-color: #1A3A4A40;
+        }
+
+        tbody td {
+            padding: 2dp 6dp;
+            font-size: 11dp;
+        }
+
+        .item-name {
+            color: #E6EDF3;
+        }
+
+        .item-type {
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .item-qty {
+            text-align: right;
+            color: #E6EDF3;
+        }
+
+        .item-volume {
+            font-size: 10dp;
+            color: #8B949E;
+            text-align: right;
+        }
+
+        /* Action bar */
+        .action-bar {
+            padding: 4dp 8dp;
+            background-color: #0A0E14;
+            border-top: 1dp #1E2A36;
+            text-align: right;
+        }
+
+        .action-bar button {
+            font-size: 10dp;
+            padding: 3dp 10dp;
+            margin-left: 4dp;
+        }
+
+        .btn-danger {
+            background-color: #CC333370;
+            border-color: #CC333399;
+        }
+
+        .btn-danger:hover {
+            background-color: #CC3333CC;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40dp;
+            color: #8B949E;
+            font-size: 11dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="inventory">
+        <div class="panel-header">
+            <span class="title">INVENTORY</span>
+            <span class="window-btn" id="btn-close">x</span>
+            <span class="window-btn" id="btn-minimize">-</span>
+        </div>
+
+        <!-- View mode tabs -->
+        <div class="view-tabs">
+            <span class="view-tab active" id="tab-cargo">Cargo Hold</span>
+            <span class="view-tab" id="tab-hangar">Station Hangar</span>
+        </div>
+
+        <!-- Capacity indicator -->
+        <div class="capacity-section">
+            <span class="capacity-label">Capacity</span>
+            <span class="capacity-value" id="capacity-text">0.0 / 100.0 m³</span>
+            <div class="capacity-bar-track">
+                <div class="capacity-bar-fill" id="capacity-fill" style="width: 0%;"></div>
+            </div>
+        </div>
+
+        <!-- Item list table -->
+        <div class="item-list">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Name</td>
+                        <td>Type</td>
+                        <td style="text-align: right;">Qty</td>
+                        <td style="text-align: right;">Volume</td>
+                    </tr>
+                </thead>
+                <tbody id="inventory-body">
+                    <!-- Items populated from C++ -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="action-bar">
+            <button id="btn-transfer">Transfer</button>
+            <button class="btn-danger" id="btn-jettison">Jettison</button>
+        </div>
+    </div>
+</body>
+</rml>

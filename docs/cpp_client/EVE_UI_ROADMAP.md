@@ -288,7 +288,7 @@ This document outlines the comprehensive plan to implement EVE Online's complete
   - Direction indicator
 
 #### Inventory Window
-- [ ] **Cargo Hold**
+- [x] **Cargo Hold** (RmlUi template)
   - Item list with icons
   - Stack counts
   - Volume bar (m³ used/max)
@@ -309,22 +309,14 @@ This document outlines the comprehensive plan to implement EVE Online's complete
   - View info
 
 #### Fitting Window
-- [ ] **Ship Display**
-  - 3D ship model (optional)
+- [x] **Ship Display** (RmlUi template)
   - Slot layout
+  - Resource bars (CPU, PG, Calibration)
+  - Stats display (EHP, DPS, Speed, Cap Stable)
+
+- [ ] **Advanced Fitting**
+  - 3D ship model (optional)
   - Drag modules to slots
-  
-- [ ] **Resources**
-  - CPU bar (used/max)
-  - PowerGrid bar (used/max)
-  - Calibration (for rigs)
-  
-- [ ] **Stats Display**
-  - EHP (Effective HP)
-  - DPS
-  - Capacitor stability
-  - Speed stats
-  - Targeting stats
   
 - [ ] **Saved Fits**
   - Save fitting
@@ -648,8 +640,9 @@ integration is available via `-DUSE_RMLUI=ON` with panel templates in
 
 Implementing EVE Online's complete UI is a major undertaking requiring 4-6 months of focused development. The phased approach allows for incremental delivery of working features while building toward the complete system.
 
-**Current Status**: Phase 4.5 Complete (HUD + Overview), Phase 4.6 Partial (Module Slots), Phase 4.8 Partial (D-Scan + Neocom)  
+**Current Status**: Phase 4.5 Complete (HUD + Overview), Phase 4.6 Partial (Module Slots), Phase 4.8 Partial (D-Scan + Neocom + Inventory + Fitting RmlUi templates)  
 **Next Priority**: Phase 4.7 (Context & Radial Menus), Phase 4.9 (Drone & Movement)  
+**RmlUi Panels Completed**: Ship HUD, Overview, Fitting, Target List, Inventory, D-Scan, Neocom  
 **Target Completion**: Q3 2026
 
 ---
