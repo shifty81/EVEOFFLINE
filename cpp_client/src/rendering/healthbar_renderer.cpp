@@ -6,6 +6,9 @@
 
 namespace eve {
 
+// Configuration constants
+constexpr float HEALTH_BAR_BORDER_WIDTH = 2.0f;
+
 HealthBarRenderer::HealthBarRenderer()
     : m_vao(0)
     , m_vbo(0)
@@ -163,7 +166,7 @@ void HealthBarRenderer::drawBar(const glm::vec3& position, float value, const gl
     m_shader->setFloat("fillAmount", 1.0f);
     
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glLineWidth(2.0f);
+    glLineWidth(HEALTH_BAR_BORDER_WIDTH);
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     

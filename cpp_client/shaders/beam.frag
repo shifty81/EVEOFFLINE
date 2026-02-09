@@ -28,7 +28,7 @@ void main() {
     const float pulseSpeed = 5.0;       // Animation speed
     const float pulseMin = 0.9;         // Minimum brightness
     const float pulseRange = 0.1;       // Brightness variation range
-    float pulse = sin(TexCoord.x * pulseFrequency - pulseTime * pulseSpeed) * pulseRange + pulseMin;
+    float pulse = sin(TexCoord.x * pulseFrequency - pulseTime * pulseSpeed) * pulseRange + (pulseMin + pulseRange * 0.5);
     
     // Final color with pulse
     vec3 finalColor = beamColor.rgb * pulse;

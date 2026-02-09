@@ -8,6 +8,9 @@
 
 namespace eve {
 
+// Numerical stability threshold for rotation axis calculations
+constexpr float ROTATION_AXIS_EPSILON = 0.001f;
+
 VisualEffects::VisualEffects()
     : m_particleSystem(nullptr)
     , m_beamVAO(0)
@@ -193,7 +196,7 @@ void VisualEffects::renderBeams(const glm::mat4& viewMatrix, const glm::mat4& pr
         glm::vec3 defaultDir = glm::vec3(0.0f, 0.0f, 1.0f);
         glm::vec3 rotationAxis = glm::cross(defaultDir, direction);
         
-        if (glm::length(rotationAxis) > 0.001f) {
+        if (glm::length(rotationAxis) > ROTATION_AXIS_EPSILON) {
             // Clamp dot product to avoid NaN from floating-point precision errors
             float dotProduct = glm::clamp(glm::dot(defaultDir, direction), -1.0f, 1.0f);
             float angle = acos(dotProduct);
