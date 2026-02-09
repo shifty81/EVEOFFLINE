@@ -549,6 +549,8 @@ if(BUILD_TESTS)
         src/ui/overview_panel.cpp
         src/ui/docking_manager.cpp
         src/ui/market_panel.cpp
+        src/ui/dscan_panel.cpp
+        src/ui/neocom_panel.cpp
         src/core/entity.cpp
         ${GLAD_SOURCES}
         ${IMGUI_SOURCES}
@@ -657,6 +659,8 @@ if(BUILD_TESTS)
         src/ui/overview_panel.cpp
         src/ui/docking_manager.cpp
         src/ui/market_panel.cpp
+        src/ui/dscan_panel.cpp
+        src/ui/neocom_panel.cpp
         src/core/entity.cpp
         ${IMGUI_SOURCES}
     )
