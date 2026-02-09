@@ -28,6 +28,13 @@
 
 namespace UI {
 
+// Data stored in GLFW window user pointer for input callback dispatch.
+struct RmlCallbackData {
+    Rml::Context* context = nullptr;
+    RenderInterface_GL3* renderer = nullptr;
+    int active_mods = 0;
+};
+
 // ============================================================================
 // RmlUiManager — uses official RmlUi GL3 + GLFW backends
 // ============================================================================
@@ -168,6 +175,13 @@ void RmlUiManager::Shutdown() {
 
     Rml::Shutdown();
 
+    // Clean up the callback data stored in the GLFW user pointer
+    if (window_) {
+        auto* cbData = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(window_));
+        delete cbData;
+        glfwSetWindowUserPointer(window_, nullptr);
+    }
+
     renderInterface_.reset();
     systemInterface_.reset();
 
@@ -284,7 +298,8 @@ void RmlUiManager::UpdateOverviewData(
         body->RemoveChild(body->GetFirstChild());
     }
 
-    // Add a row for each entity
+    // Build complete RML string first, then set it once to avoid O(n²) re-parsing
+    std::string allRowsRml;
     for (const auto& [id, entity] : entities) {
         if (!entity) continue;
 
@@ -316,17 +331,16 @@ void RmlUiManager::UpdateOverviewData(
             textClass = "text-friendly";
         }
 
-        // Create row via inner RML
-        std::string rowRml =
+        allRowsRml +=
             "<tr>"
             "<td><span class=\"standing-dot " + standingClass + "\"></span></td>"
             "<td class=\"" + textClass + "\">" + entity->getShipName() + "</td>"
             "<td class=\"distance\">" + distStr + "</td>"
             "<td class=\"entity-type\">" + entityType + "</td>"
             "</tr>";
-
-        body->SetInnerRML(body->GetInnerRML() + rowRml);
     }
+
+    body->SetInnerRML(allRowsRml);
 }
 
 void RmlUiManager::SetOverviewFilter(const std::string& filter) {
@@ -481,52 +495,61 @@ void RmlUiManager::UpdateHudElements() {
 void RmlUiManager::SetupInputCallbacks() {
     if (!window_ || !context_) return;
 
-    // Store context pointer for callbacks via GLFW user pointer
-    // Note: this may conflict with other GLFW user pointer usage.
-    // A more robust solution would use a callback registry.
-    struct RmlCallbackData {
-        Rml::Context* context;
-        RenderInterface_GL3* renderer;
-    };
+    // Store callback data via GLFW window user pointer to avoid statics.
+    auto* cbData = new RmlCallbackData();
+    cbData->context = context_;
+    cbData->renderer = renderInterface_.get();
+    glfwSetWindowUserPointer(window_, cbData);
 
-    // We use lambdas with captures stored globally for simplicity
-    static Rml::Context* s_context = context_;
-    static RenderInterface_GL3* s_renderer = renderInterface_.get();
-    static int s_active_mods = 0;
-
-    glfwSetKeyCallback(window_, [](GLFWwindow*, int key, int, int action, int mods) {
-        s_active_mods = mods;
-        RmlGLFW::ProcessKeyCallback(s_context, key, action, mods);
+    glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int, int action, int mods) {
+        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
+        if (!d) return;
+        d->active_mods = mods;
+        RmlGLFW::ProcessKeyCallback(d->context, key, action, mods);
     });
 
-    glfwSetCharCallback(window_, [](GLFWwindow*, unsigned int codepoint) {
-        RmlGLFW::ProcessCharCallback(s_context, codepoint);
+    glfwSetCharCallback(window_, [](GLFWwindow* w, unsigned int codepoint) {
+        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
+        if (!d) return;
+        RmlGLFW::ProcessCharCallback(d->context, codepoint);
     });
 
     glfwSetCursorPosCallback(window_, [](GLFWwindow* w, double xpos, double ypos) {
-        RmlGLFW::ProcessCursorPosCallback(s_context, w, xpos, ypos, s_active_mods);
+        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
+        if (!d) return;
+        RmlGLFW::ProcessCursorPosCallback(d->context, w, xpos, ypos, d->active_mods);
     });
 
-    glfwSetMouseButtonCallback(window_, [](GLFWwindow*, int button, int action, int mods) {
-        s_active_mods = mods;
-        RmlGLFW::ProcessMouseButtonCallback(s_context, button, action, mods);
+    glfwSetMouseButtonCallback(window_, [](GLFWwindow* w, int button, int action, int mods) {
+        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
+        if (!d) return;
+        d->active_mods = mods;
+        RmlGLFW::ProcessMouseButtonCallback(d->context, button, action, mods);
     });
 
-    glfwSetScrollCallback(window_, [](GLFWwindow*, double, double yoffset) {
-        RmlGLFW::ProcessScrollCallback(s_context, yoffset, s_active_mods);
+    glfwSetScrollCallback(window_, [](GLFWwindow* w, double, double yoffset) {
+        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
+        if (!d) return;
+        RmlGLFW::ProcessScrollCallback(d->context, yoffset, d->active_mods);
     });
 
-    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow*, int width, int height) {
-        s_renderer->SetViewport(width, height);
-        RmlGLFW::ProcessFramebufferSizeCallback(s_context, width, height);
+    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
+        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
+        if (!d) return;
+        d->renderer->SetViewport(width, height);
+        RmlGLFW::ProcessFramebufferSizeCallback(d->context, width, height);
     });
 
-    glfwSetWindowContentScaleCallback(window_, [](GLFWwindow*, float xscale, float) {
-        RmlGLFW::ProcessContentScaleCallback(s_context, xscale);
+    glfwSetWindowContentScaleCallback(window_, [](GLFWwindow* w, float xscale, float) {
+        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
+        if (!d) return;
+        RmlGLFW::ProcessContentScaleCallback(d->context, xscale);
     });
 
-    glfwSetCursorEnterCallback(window_, [](GLFWwindow*, int entered) {
-        RmlGLFW::ProcessCursorEnterCallback(s_context, entered);
+    glfwSetCursorEnterCallback(window_, [](GLFWwindow* w, int entered) {
+        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
+        if (!d) return;
+        RmlGLFW::ProcessCursorEnterCallback(d->context, entered);
     });
 }
 

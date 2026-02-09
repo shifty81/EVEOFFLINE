@@ -86,14 +86,20 @@ int main() {
     auto rmlUi = std::make_unique<UI::RmlUiManager>();
 
     if (!rmlUi->Initialize(window, "ui_resources")) {
-        std::cerr << "Failed to initialize RmlUi Manager\n";
-        // In non-USE_RMLUI builds, Initialize returns false
-        // which is expected — just print a message and exit cleanly
+#ifdef USE_RMLUI
+        std::cerr << "ERROR: RmlUi initialization failed.\n";
+        std::cerr << "Check that ui_resources/ directory exists with RML/RCSS files,\n";
+        std::cerr << "and that FreeType and font files are available.\n";
         glfwDestroyWindow(window);
         glfwTerminate();
+        return -1;
+#else
         std::cout << "\nNote: RmlUi integration requires building with -DUSE_RMLUI=ON\n";
         std::cout << "The stub (no-op) implementation was used.\n";
+        glfwDestroyWindow(window);
+        glfwTerminate();
         return 0;
+#endif
     }
 
     std::cout << "\nRmlUi initialized successfully!" << std::endl;
