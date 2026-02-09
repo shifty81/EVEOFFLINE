@@ -58,16 +58,27 @@ void EntityManager::destroyEntity(const std::string& id) {
 
 void EntityManager::updateEntityState(const std::string& id, const glm::vec3& position,
                                       const glm::vec3& velocity, float rotation, const Health& health,
-                                      const Capacitor& capacitor) {
+                                      const Capacitor& capacitor,
+                                      const std::string& shipType,
+                                      const std::string& shipName,
+                                      const std::string& faction) {
     auto it = m_entities.find(id);
     if (it == m_entities.end()) {
-        // Entity doesn't exist yet, spawn it
-        spawnEntity(id, position, health, capacitor);
+        // Entity doesn't exist yet, spawn it with ship info
+        spawnEntity(id, position, health, capacitor, shipType, shipName, faction);
         return;
     }
 
     // Update existing entity
     it->second->updateFromState(position, velocity, rotation, health, capacitor);
+    
+    // Update ship info if provided and different from current
+    if (!shipType.empty() && it->second->getShipType() != shipType) {
+        // Preserve current position while updating ship info
+        glm::vec3 currentPos = it->second->getPosition();
+        it->second->updateFromSpawn(currentPos, health, capacitor,
+                                    shipType, shipName, faction);
+    }
     
     // Notify callback
     if (m_onEntityUpdated) {
