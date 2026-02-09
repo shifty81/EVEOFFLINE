@@ -1,0 +1,271 @@
+<!-- EVE OFFLINE — Ship HUD Panel (RML)
+     Bottom-center display: health bars, speed readout, module rack.
+     All elements use IDs for C++ manipulation via RmlUiManager::UpdateHudElements(). -->
+<rml>
+<head>
+    <title>Ship HUD</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #ship-hud {
+            position: fixed;
+            bottom: 10dp;
+            left: 50%;
+            margin-left: -170dp;
+            width: 340dp;
+            text-align: center;
+            background-color: #0D111700;
+        }
+
+        /* Health display area */
+        .health-display {
+            background-color: #080C12E0;
+            border: 1dp #283848;
+            border-radius: 4dp;
+            padding: 8dp 12dp;
+            margin-bottom: 4dp;
+        }
+
+        .health-row {
+            margin-bottom: 3dp;
+        }
+
+        .health-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .health-label {
+            display: inline-block;
+            width: 60dp;
+            font-size: 10dp;
+            color: #8B949E;
+            text-align: left;
+        }
+
+        .health-bar-track {
+            display: inline-block;
+            width: 180dp;
+            height: 8dp;
+            background-color: #161B22;
+            border-radius: 2dp;
+            vertical-align: middle;
+        }
+
+        .health-bar-fill {
+            height: 100%;
+            border-radius: 2dp;
+        }
+
+        .shield-fill { background-color: #3399FF; }
+        .armor-fill  { background-color: #FFD040; }
+        .hull-fill   { background-color: #E64545; }
+        .cap-fill    { background-color: #FFE066; }
+
+        .health-pct {
+            display: inline-block;
+            width: 40dp;
+            font-size: 10dp;
+            color: #E6EDF3;
+            text-align: right;
+        }
+
+        /* Speed readout */
+        .speed-section {
+            background-color: #080C12D0;
+            border: 1dp #283848;
+            border-radius: 4dp;
+            padding: 6dp 12dp;
+            margin-bottom: 4dp;
+        }
+
+        .speed-value {
+            font-size: 28dp;
+            font-weight: bold;
+            color: #78E1F0;
+        }
+
+        .speed-unit {
+            font-size: 11dp;
+            color: #8B949ECC;
+            margin-left: 4dp;
+        }
+
+        .max-speed {
+            font-size: 10dp;
+            color: #8B949E;
+            margin-top: 2dp;
+        }
+
+        /* Module rack */
+        .module-rack {
+            background-color: #0C1016CC;
+            border: 1dp #283848;
+            border-radius: 3dp;
+            padding: 4dp 6dp;
+            margin-bottom: 4dp;
+        }
+
+        .rack-label {
+            font-size: 8dp;
+            color: #8B949E88;
+            text-transform: uppercase;
+            margin-bottom: 2dp;
+        }
+
+        .rack-section {
+            display: inline-block;
+            margin: 0dp 12dp;
+        }
+
+        .rack-row {
+            text-align: center;
+        }
+
+        .module-slot {
+            display: inline-block;
+            width: 32dp;
+            height: 32dp;
+            margin: 2dp;
+            background-color: #161B22CC;
+            border: 1dp #283848;
+            border-radius: 4dp;
+            text-align: center;
+        }
+
+        .module-slot:hover {
+            border-color: #45D0E8;
+        }
+
+        .module-slot .label {
+            font-size: 9dp;
+            color: #C8DCF0DC;
+            line-height: 32dp;
+        }
+
+        /* Motion command buttons */
+        .motion-cmds {
+            margin-top: 4dp;
+        }
+
+        .motion-cmds button {
+            width: 68dp;
+            height: 24dp;
+            font-size: 10dp;
+            margin: 0dp 2dp 2dp 2dp;
+            background-color: #2A5A6A70;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+            color: #E6EDF3;
+        }
+
+        .motion-cmds button:hover {
+            background-color: #2A5A6AE6;
+            border-color: #45D0E8CC;
+        }
+
+        .motion-cmds button:active {
+            background-color: #45D0E8CC;
+        }
+
+        .stop-btn {
+            width: 218dp;
+        }
+
+        /* Combat log */
+        .combat-log {
+            background-color: #080C12D0;
+            border: 1dp #283848;
+            border-radius: 3dp;
+            padding: 4dp;
+            height: 80dp;
+            overflow: auto;
+            text-align: left;
+            margin-top: 4dp;
+        }
+
+        .combat-log .message {
+            font-size: 10dp;
+            color: #E6EDF3CC;
+            padding: 1dp 0dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="ship-hud">
+        <!-- Health bars -->
+        <div class="health-display">
+            <div class="health-row">
+                <span class="health-label">Shield</span>
+                <div class="health-bar-track">
+                    <div id="shield-fill" class="health-bar-fill shield-fill" style="width: 100%;"></div>
+                </div>
+                <span id="shield-text" class="health-pct">100</span>
+            </div>
+            <div class="health-row">
+                <span class="health-label">Armor</span>
+                <div class="health-bar-track">
+                    <div id="armor-fill" class="health-bar-fill armor-fill" style="width: 100%;"></div>
+                </div>
+                <span id="armor-text" class="health-pct">100</span>
+            </div>
+            <div class="health-row">
+                <span class="health-label">Hull</span>
+                <div class="health-bar-track">
+                    <div id="hull-fill" class="health-bar-fill hull-fill" style="width: 100%;"></div>
+                </div>
+                <span id="hull-text" class="health-pct">100</span>
+            </div>
+            <div class="health-row">
+                <span class="health-label">Capacitor</span>
+                <div class="health-bar-track">
+                    <div id="cap-fill" class="health-bar-fill cap-fill" style="width: 100%;"></div>
+                </div>
+                <span id="cap-text" class="health-pct">100</span>
+            </div>
+        </div>
+
+        <!-- Speed readout -->
+        <div class="speed-section">
+            <span id="speed-value" class="speed-value">0</span>
+            <span class="speed-unit">m/s</span>
+            <div class="max-speed">Max: <span id="max-speed-value">100</span> m/s</div>
+        </div>
+
+        <!-- Module rack: F1-F8 -->
+        <div class="module-rack">
+            <div class="rack-label">
+                <span class="rack-section">HIGH</span>
+                <span class="rack-section">MID</span>
+                <span class="rack-section">LOW</span>
+            </div>
+            <div class="rack-row">
+                <div class="module-slot" id="mod-f1"><span class="label">F1</span></div>
+                <div class="module-slot" id="mod-f2"><span class="label">F2</span></div>
+                <div class="module-slot" id="mod-f3"><span class="label">F3</span></div>
+                <div class="module-slot" id="mod-f4"><span class="label">F4</span></div>
+                <div class="module-slot" id="mod-f5"><span class="label">F5</span></div>
+                <div class="module-slot" id="mod-f6"><span class="label">F6</span></div>
+                <div class="module-slot" id="mod-f7"><span class="label">F7</span></div>
+                <div class="module-slot" id="mod-f8"><span class="label">F8</span></div>
+            </div>
+        </div>
+
+        <!-- Motion command buttons -->
+        <div class="motion-cmds">
+            <button id="btn-approach">Approach</button>
+            <button id="btn-orbit">Orbit</button>
+            <button id="btn-keep">Keep</button>
+            <button class="stop-btn" id="btn-stop">STOP</button>
+        </div>
+
+        <!-- Combat log -->
+        <div class="combat-log" id="combat-log-body">
+            <div class="message">[System] HUD initialized</div>
+        </div>
+    </div>
+</body>
+</rml>

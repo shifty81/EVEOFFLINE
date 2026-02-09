@@ -1,0 +1,138 @@
+/*
+ * EVE OFFLINE — Photon UI Theme (RCSS)
+ *
+ * This stylesheet replicates EVE Online's Photon UI visual design for use
+ * with the RmlUi framework. All color values match the constants defined in
+ * docs/design/EVE_UI_STYLE_REFERENCE.md.
+ *
+ * RCSS is a CSS-like language supported by RmlUi. It follows CSS2 rules with
+ * select CSS3 extensions (transitions, transforms, border-radius, etc.).
+ *
+ * Note: RmlUi does not support all CSS3 properties. This stylesheet uses only
+ * properties supported by RmlUi 6.0 (see RmlUi documentation for details).
+ *
+ * Usage:
+ *   <link type="text/rcss" href="photon_ui.rcss"/>
+ */
+
+/* ===================================================================
+   1. ROOT / BODY — global defaults
+   =================================================================== */
+
+body {
+    font-family: Lato;
+    font-size: 12dp;
+    color: #E6EDF3;
+}
+
+/* ===================================================================
+   2. PANEL BASE
+   =================================================================== */
+
+.panel {
+    background-color: #0D111780;
+    border-width: 1dp;
+    border-color: #28384899;
+    border-radius: 2dp;
+    padding: 8dp;
+}
+
+.panel-solid {
+    background-color: #0D1117EB;
+    border-width: 1dp;
+    border-color: #28384899;
+    border-radius: 2dp;
+    padding: 8dp;
+}
+
+/* ===================================================================
+   3. TEXT STYLES
+   =================================================================== */
+
+.text-primary   { color: #E6EDF3; }
+.text-secondary { color: #8B949E; }
+.text-accent    { color: #45D0E8; }
+.text-hostile   { color: #CC3333; }
+.text-friendly  { color: #3399FF; }
+.text-neutral   { color: #AAAAAA; }
+.text-success   { color: #33CC66; }
+.text-warning   { color: #FFB833; }
+.text-danger    { color: #FF3333; }
+
+.text-large {
+    font-size: 16dp;
+    font-weight: bold;
+}
+
+.text-small {
+    font-size: 10dp;
+}
+
+/* ===================================================================
+   4. BUTTONS
+   =================================================================== */
+
+button {
+    background-color: #2A5A6A70;
+    border-width: 1dp;
+    border-color: #28384899;
+    border-radius: 2dp;
+    padding: 4dp 12dp;
+    color: #E6EDF3;
+    font-size: 11dp;
+}
+
+button:hover {
+    background-color: #2A5A6AE6;
+    border-color: #45D0E8CC;
+}
+
+button:active {
+    background-color: #45D0E8CC;
+}
+
+/* ===================================================================
+   5. SCROLLBARS
+   =================================================================== */
+
+scrollbarvertical {
+    width: 10dp;
+    background-color: #080C1250;
+}
+
+scrollbarvertical sliderbar {
+    background-color: #2A5A6A99;
+    border-radius: 4dp;
+    min-height: 20dp;
+}
+
+scrollbarvertical sliderbar:hover {
+    background-color: #2A5A6ACC;
+}
+
+scrollbarvertical sliderbar:active {
+    background-color: #45D0E8;
+}
+
+scrollbarhorizontal {
+    height: 10dp;
+    background-color: #080C1250;
+}
+
+scrollbarhorizontal sliderbar {
+    background-color: #2A5A6A99;
+    border-radius: 4dp;
+    min-width: 20dp;
+}
+
+scrollbarhorizontal sliderbar:hover {
+    background-color: #2A5A6ACC;
+}
+
+/* ===================================================================
+   6. UTILITY CLASSES
+   =================================================================== */
+
+.hidden { display: none; }
+.center { text-align: center; }
+.right  { text-align: right; }

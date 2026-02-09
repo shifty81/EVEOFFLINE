@@ -13,6 +13,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # Options
 option(BUILD_TESTS "Build test suite" ON)
 option(USE_SYSTEM_LIBS "Use system libraries instead of bundled" ON)  # Default to ON since they're available
+option(USE_RMLUI "Enable RmlUi for advanced Photon UI (replaces ImGui for game panels)" OFF)
 
 # Platform-specific settings
 if(WIN32)
@@ -213,6 +214,61 @@ if(NOT USE_VCPKG_IMGUI)
     endif()
 endif()
 
+# RmlUi (advanced UI framework — optional, replaces ImGui for game panels)
+# See docs/design/UI_FRAMEWORK_EVALUATION.md for rationale.
+# Uses RmlUi's official GLFW platform and OpenGL 3 renderer backends.
+set(RMLUI_AVAILABLE OFF)
+set(RMLUI_SOURCES "")
+set(RMLUI_BACKEND_SOURCES "")
+if(USE_RMLUI)
+    find_package(RmlUi QUIET)
+    if(RmlUi_FOUND)
+        message(STATUS "RmlUi found via system/vcpkg — advanced Photon UI enabled")
+        set(RMLUI_AVAILABLE ON)
+        add_definitions(-DUSE_RMLUI)
+    else()
+        # FetchContent fallback: clone from GitHub
+        include(FetchContent)
+        FetchContent_Declare(
+            RmlUi
+            GIT_REPOSITORY https://github.com/mikke89/RmlUi.git
+            GIT_TAG        6.0
+            GIT_SHALLOW    TRUE
+        )
+        # Build RmlUi as a static library; disable samples, tests, etc.
+        set(RMLUI_SAMPLES OFF CACHE BOOL "" FORCE)
+        set(RMLUI_TESTS OFF CACHE BOOL "" FORCE)
+        set(RMLUI_LUA_BINDINGS OFF CACHE BOOL "" FORCE)
+        set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+        FetchContent_MakeAvailable(RmlUi)
+        if(TARGET rmlui_core)
+            message(STATUS "RmlUi fetched via FetchContent — advanced Photon UI enabled")
+            set(RMLUI_AVAILABLE ON)
+            add_definitions(-DUSE_RMLUI)
+        else()
+            message(WARNING
+                "RmlUi not found and FetchContent failed.\n"
+                "  Install via vcpkg:  vcpkg install rmlui:x64-windows\n"
+                "  Or on Linux:        sudo apt install librmlui-dev\n"
+                "  Falling back to ImGui-only UI.")
+        endif()
+    endif()
+
+    # Set up RmlUi backend sources (GLFW platform + GL3 renderer)
+    if(RMLUI_AVAILABLE AND NOT RmlUi_FOUND)
+        set(RMLUI_BACKEND_DIR "${rmlui_SOURCE_DIR}/Backends")
+        set(RMLUI_BACKEND_SOURCES
+            ${RMLUI_BACKEND_DIR}/RmlUi_Platform_GLFW.cpp
+            ${RMLUI_BACKEND_DIR}/RmlUi_Renderer_GL3.cpp
+        )
+        # Include the backend headers
+        include_directories(${RMLUI_BACKEND_DIR})
+        message(STATUS "RmlUi backend sources: GLFW + GL3 from ${RMLUI_BACKEND_DIR}")
+    endif()
+else()
+    message(STATUS "RmlUi disabled (ImGui-only UI). Enable with -DUSE_RMLUI=ON")
+endif()
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -276,9 +332,11 @@ set(CLIENT_SOURCES
     src/ui/market_panel.cpp
     src/ui/overview_panel.cpp
     src/ui/docking_manager.cpp
+    src/ui/rml_ui_manager.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}
+    ${RMLUI_BACKEND_SOURCES}
 )
 
 set(CLIENT_HEADERS
@@ -326,6 +384,7 @@ set(CLIENT_HEADERS
     include/ui/market_panel.h
     include/ui/overview_panel.h
     include/ui/docking_manager.h
+    include/ui/rml_ui_manager.h
     ${AUDIO_HEADERS}
 )
 
@@ -354,6 +413,19 @@ endif()
 if(USE_VCPKG_IMGUI)
     target_link_libraries(eve_client imgui::imgui)
 endif()
+
+# Link RmlUi if available
+if(RMLUI_AVAILABLE)
+    if(RmlUi_FOUND)
+        target_link_libraries(eve_client RmlUi::RmlUi)
+    elseif(TARGET rmlui_core)
+        target_link_libraries(eve_client rmlui_core rmlui_debugger)
+    endif()
+endif()
+
+# Copy UI resources to build directory
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/ui_resources/
+     DESTINATION ${CMAKE_BINARY_DIR}/bin/ui_resources)
 
 # Link OpenAL if available
 if(OpenAL_FOUND)
@@ -389,7 +461,10 @@ add_custom_command(TARGET eve_client POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/assets
         $<TARGET_FILE_DIR:eve_client>/assets
-    COMMENT "Copying shaders and assets next to executable"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/ui_resources
+        $<TARGET_FILE_DIR:eve_client>/ui_resources
+    COMMENT "Copying shaders, assets, and UI resources next to executable"
 )
 
 # Installation
@@ -404,6 +479,11 @@ install(DIRECTORY shaders/
 
 install(DIRECTORY assets/
     DESTINATION assets
+)
+
+install(DIRECTORY ui_resources/
+    DESTINATION ui_resources
+    FILES_MATCHING PATTERN "*.rml" PATTERN "*.rcss"
 )
 
 # Tests
@@ -779,10 +859,51 @@ if(BUILD_TESTS)
     endif()
 endif()
 
+# RmlUi Test (only when RmlUi is enabled)
+if(BUILD_TESTS AND RMLUI_AVAILABLE)
+    add_executable(test_rmlui
+        test_rmlui.cpp
+        src/ui/rml_ui_manager.cpp
+        src/core/entity.cpp
+        ${RMLUI_BACKEND_SOURCES}
+    )
+    target_link_libraries(test_rmlui
+        Threads::Threads
+        OpenGL::GL
+        glfw
+        glm::glm
+    )
+    if(USE_GLEW)
+        target_link_libraries(test_rmlui GLEW::GLEW)
+    endif()
+    if(RmlUi_FOUND)
+        target_link_libraries(test_rmlui RmlUi::RmlUi)
+    elseif(TARGET rmlui_core)
+        target_link_libraries(test_rmlui rmlui_core rmlui_debugger)
+    endif()
+    if(WIN32)
+        target_link_libraries(test_rmlui ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_rmlui dl X11)
+    elseif(APPLE)
+        target_link_libraries(test_rmlui dl)
+        target_link_libraries(test_rmlui "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
+    # Copy UI resources for the test
+    add_custom_command(TARGET test_rmlui POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/ui_resources
+            $<TARGET_FILE_DIR:test_rmlui>/ui_resources
+        COMMENT "Copying UI resources for test_rmlui"
+    )
+    message(STATUS "RmlUi test: test_rmlui will be built")
+endif()
+
 message(STATUS "")
 message(STATUS "EVE OFFLINE Client Configuration:")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  OpenGL: ${OPENGL_VERSION}")
 message(STATUS "  Use System Libraries: ${USE_SYSTEM_LIBS}")
 message(STATUS "  Build Tests: ${BUILD_TESTS}")
+message(STATUS "  RmlUi Enabled: ${RMLUI_AVAILABLE}")
 message(STATUS "")

@@ -172,13 +172,41 @@ uiManager->Shutdown();
 
 ## Future Enhancements
 
+### UI Framework Migration: ImGui → RmlUi
+
+ImGui is insufficient for fully replicating EVE Online's Photon UI. The project
+is migrating to **RmlUi** (HTML/CSS-based UI framework) for all game-facing
+panels, while retaining ImGui for debug/developer overlays.
+
+See **docs/design/UI_FRAMEWORK_EVALUATION.md** for the full evaluation and
+rationale.
+
+**New files**:
+- `include/ui/rml_ui_manager.h` — RmlUi-based UI manager (replaces ImGui panels)
+- `src/ui/rml_ui_manager.cpp` — Implementation with OpenGL 3.3 render backend
+- `ui_resources/rcss/photon_ui.rcss` — Photon UI theme stylesheet (CSS-like)
+- `ui_resources/rml/ship_hud.rml` — HUD panel layout (HTML-like)
+- `ui_resources/rml/overview.rml` — Overview panel layout
+- `ui_resources/rml/fitting.rml` — Fitting window layout
+
+**Build with RmlUi**:
+```bash
+cmake .. -DUSE_RMLUI=ON
+```
+
+**Key advantages over ImGui**:
+- CSS-like stylesheets for theming (no C++ recompile to change colors)
+- CSS transitions and animations (hover effects, health bar easing)
+- HTML-like markup for panel layouts (designer-friendly)
+- Custom elements for circular gauges (capacitor ring, health arcs)
+- Data model binding for live game state display
+
 Potential additions (not yet implemented):
-- Draggable/resizable windows
-- Neocom menu (left sidebar)
-- Overview panel (right side)
-- Module rack (bottom center)
-- Capacitor ring display (circular)
-- Target lock displays
+- Draggable/resizable windows (built into RmlUi)
+- Neocom menu (left sidebar) — RML template ready
+- Module rack (bottom center) — RML template ready
+- Capacitor ring display (circular) — custom RmlUi element
+- Target lock displays — custom RmlUi element
 - Station services UI
 - Inventory windows
 - Fitting windows

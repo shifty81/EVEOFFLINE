@@ -1,0 +1,204 @@
+<!-- EVE OFFLINE — Overview Panel (RML)
+     Right-side panel with sortable entity table, filter tabs, and
+     color-coded standing indicators. -->
+<rml>
+<head>
+    <title>Overview</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #overview {
+            position: fixed;
+            top: 10dp;
+            right: 10dp;
+            width: 380dp;
+            height: 420dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* Filter tabs */
+        .tab-bar {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 0dp 4dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .tab {
+            display: inline-block;
+            padding: 6dp 10dp;
+            color: #8B949E;
+            font-size: 11dp;
+            border-bottom: 2dp #00000000;
+        }
+
+        .tab:hover {
+            color: #E6EDF3;
+        }
+
+        .tab.active {
+            color: #45D0E8;
+            border-bottom-color: #45D0E8;
+        }
+
+        /* Content area */
+        .overview-content {
+            height: 340dp;
+            overflow: auto;
+            padding: 4dp;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+        }
+
+        thead {
+            background-color: #0A0E14;
+        }
+
+        thead td {
+            padding: 3dp 6dp;
+            font-size: 10dp;
+            font-weight: bold;
+            color: #8B949E;
+            border-bottom: 1dp #283848;
+        }
+
+        tbody tr {
+            height: 22dp;
+        }
+
+        tbody tr:hover {
+            background-color: #1A3A4A40;
+        }
+
+        tbody td {
+            padding: 2dp 6dp;
+            font-size: 11dp;
+        }
+
+        /* Standing indicator dot */
+        .standing-dot {
+            display: inline-block;
+            width: 8dp;
+            height: 8dp;
+            border-radius: 4dp;
+            margin-right: 4dp;
+        }
+
+        .standing-dot.hostile   { background-color: #CC3333; }
+        .standing-dot.friendly  { background-color: #3399FF; }
+        .standing-dot.neutral   { background-color: #AAAAAA; }
+
+        .text-hostile   { color: #CC3333; }
+        .text-friendly  { color: #3399FF; }
+        .text-neutral   { color: #AAAAAA; }
+
+        .distance {
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .entity-type {
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .sort-arrow {
+            font-size: 8dp;
+            color: #45D0E8;
+            margin-left: 2dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="overview">
+        <!-- Header bar -->
+        <div class="panel-header">
+            <span class="title">OVERVIEW</span>
+            <span class="window-btn" id="btn-close">x</span>
+            <span class="window-btn" id="btn-minimize">-</span>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="tab-bar">
+            <span class="tab active" id="tab-all">All</span>
+            <span class="tab" id="tab-hostile">Hostile</span>
+            <span class="tab" id="tab-friendly">Friendly</span>
+            <span class="tab" id="tab-neutral">Neutral</span>
+        </div>
+
+        <!-- Entity table -->
+        <div class="overview-content">
+            <table>
+                <thead>
+                    <tr>
+                        <td style="width: 20dp;"></td>
+                        <td id="col-name">Name <span class="sort-arrow">v</span></td>
+                        <td id="col-distance">Distance</td>
+                        <td id="col-type">Type</td>
+                    </tr>
+                </thead>
+                <tbody id="overview-body">
+                    <!-- Example row (will be populated from C++) -->
+                    <tr>
+                        <td><span class="standing-dot hostile"></span></td>
+                        <td class="text-hostile">Serpentis Spy</td>
+                        <td class="distance">12.4 km</td>
+                        <td class="entity-type">Frigate</td>
+                    </tr>
+                    <tr>
+                        <td><span class="standing-dot neutral"></span></td>
+                        <td class="text-neutral">Asteroid Belt I</td>
+                        <td class="distance">45.2 km</td>
+                        <td class="entity-type">Asteroid</td>
+                    </tr>
+                    <tr>
+                        <td><span class="standing-dot friendly"></span></td>
+                        <td class="text-friendly">Stargate Alpha</td>
+                        <td class="distance">120.0 km</td>
+                        <td class="entity-type">Structure</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</rml>

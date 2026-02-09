@@ -1,0 +1,262 @@
+<!-- EVE OFFLINE — Fitting Window (RML)
+     Ship fitting display with slot layout, resource bars, and stats. -->
+<rml>
+<head>
+    <title>Fitting</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #fitting {
+            position: fixed;
+            top: 50dp;
+            left: 50%;
+            margin-left: -200dp;
+            width: 400dp;
+            height: 450dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        .fitting-content {
+            padding: 8dp;
+        }
+
+        /* Ship name header */
+        .ship-name {
+            font-size: 14dp;
+            font-weight: bold;
+            color: #78E1F0;
+            text-align: center;
+            margin-bottom: 8dp;
+        }
+
+        /* Slot sections */
+        .slot-section {
+            margin-bottom: 8dp;
+        }
+
+        .slot-section-label {
+            font-size: 9dp;
+            color: #8B949E;
+            margin-bottom: 2dp;
+        }
+
+        .slot-row {
+            text-align: center;
+        }
+
+        .fitting-slot {
+            display: inline-block;
+            width: 40dp;
+            height: 40dp;
+            margin: 2dp;
+            background-color: #161B22CC;
+            border: 1dp #28384899;
+            border-radius: 4dp;
+            text-align: center;
+        }
+
+        .fitting-slot:hover {
+            border-color: #45D0E8;
+        }
+
+        .fitting-slot .slot-label {
+            font-size: 8dp;
+            color: #8B949E88;
+            line-height: 40dp;
+        }
+
+        /* Separator */
+        .separator {
+            height: 1dp;
+            background-color: #1E2A36;
+            margin: 8dp 0dp;
+        }
+
+        /* Resource bars */
+        .resource-section {
+            margin-top: 8dp;
+        }
+
+        .resource-bar {
+            margin-bottom: 4dp;
+        }
+
+        .resource-label {
+            display: inline-block;
+            width: 80dp;
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .resource-value {
+            font-size: 10dp;
+            color: #E6EDF3;
+            float: right;
+        }
+
+        .bar-track {
+            height: 4dp;
+            background-color: #161B22;
+            border-radius: 2dp;
+            margin-top: 2dp;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 2dp;
+        }
+
+        .cpu-fill { background-color: #45D0E8; }
+        .pg-fill  { background-color: #FFB833; }
+        .cal-fill { background-color: #AA66FF; }
+
+        /* Stats section */
+        .stats-section {
+            margin-top: 8dp;
+        }
+
+        .stat-row {
+            margin-bottom: 2dp;
+        }
+
+        .stat-name {
+            display: inline-block;
+            width: 120dp;
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .stat-value {
+            font-size: 10dp;
+            color: #E6EDF3;
+        }
+    </style>
+</head>
+<body>
+    <div id="fitting">
+        <div class="panel-header">
+            <span class="title">FITTING</span>
+            <span class="window-btn" id="btn-close">x</span>
+        </div>
+
+        <div class="fitting-content">
+            <div class="ship-name" id="ship-name">Rifter</div>
+
+            <!-- High Slots -->
+            <div class="slot-section">
+                <div class="slot-section-label">High Slots</div>
+                <div class="slot-row" id="high-slots">
+                    <div class="fitting-slot"><span class="slot-label">H1</span></div>
+                    <div class="fitting-slot"><span class="slot-label">H2</span></div>
+                    <div class="fitting-slot"><span class="slot-label">H3</span></div>
+                    <div class="fitting-slot"><span class="slot-label">H4</span></div>
+                </div>
+            </div>
+
+            <!-- Mid Slots -->
+            <div class="slot-section">
+                <div class="slot-section-label">Mid Slots</div>
+                <div class="slot-row" id="mid-slots">
+                    <div class="fitting-slot"><span class="slot-label">M1</span></div>
+                    <div class="fitting-slot"><span class="slot-label">M2</span></div>
+                    <div class="fitting-slot"><span class="slot-label">M3</span></div>
+                </div>
+            </div>
+
+            <!-- Low Slots -->
+            <div class="slot-section">
+                <div class="slot-section-label">Low Slots</div>
+                <div class="slot-row" id="low-slots">
+                    <div class="fitting-slot"><span class="slot-label">L1</span></div>
+                    <div class="fitting-slot"><span class="slot-label">L2</span></div>
+                    <div class="fitting-slot"><span class="slot-label">L3</span></div>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <!-- Resources: CPU, PowerGrid, Calibration -->
+            <div class="resource-section">
+                <div class="resource-bar">
+                    <span class="resource-label">CPU</span>
+                    <span class="resource-value">125 / 180 tf</span>
+                    <div class="bar-track">
+                        <div class="bar-fill cpu-fill" style="width: 69%;"></div>
+                    </div>
+                </div>
+                <div class="resource-bar">
+                    <span class="resource-label">Power Grid</span>
+                    <span class="resource-value">32 / 45 MW</span>
+                    <div class="bar-track">
+                        <div class="bar-fill pg-fill" style="width: 71%;"></div>
+                    </div>
+                </div>
+                <div class="resource-bar">
+                    <span class="resource-label">Calibration</span>
+                    <span class="resource-value">250 / 400</span>
+                    <div class="bar-track">
+                        <div class="bar-fill cal-fill" style="width: 62%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <!-- Stats -->
+            <div class="stats-section">
+                <div class="stat-row">
+                    <span class="stat-name">Effective HP</span>
+                    <span class="stat-value">4,250</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-name">DPS</span>
+                    <span class="stat-value">185</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-name">Max Velocity</span>
+                    <span class="stat-value">380 m/s</span>
+                </div>
+                <div class="stat-row">
+                    <span class="stat-name">Cap Stable</span>
+                    <span class="stat-value" style="color: #33CC66;">Yes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</rml>
