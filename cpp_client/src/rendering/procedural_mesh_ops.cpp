@@ -33,6 +33,38 @@ glm::vec3 PolyFace::centroid() const {
 // Polygon generation
 // ────────────────────────────────────────────────────────────────────────
 
+/**
+ * Build a local 2D coordinate frame (tangent, binormal) on the plane
+ * perpendicular to @p normal, then compute the polygon vertex at index @p i
+ * for an N-sided polygon.
+ *
+ * Vertices are placed in clockwise winding order (negative index direction)
+ * so that the resulting face normal points in the expected direction when
+ * computed via cross product of the first two edges.
+ */
+static glm::vec3 computePolygonVertex(int i, int sides, float radius,
+                                      float scaleX, float scaleZ,
+                                      const glm::vec3& centre,
+                                      const glm::vec3& tangent,
+                                      const glm::vec3& binormal) {
+    float angleStep = 2.0f * kPI / static_cast<float>(sides);
+    float initialAngle = kPI / static_cast<float>(sides);
+    // Negative index produces clockwise winding for correct face normal
+    float angle = initialAngle + angleStep * static_cast<float>(-i - 1);
+    float x = std::cos(angle) * radius * scaleX;
+    float z = std::sin(angle) * radius * scaleZ;
+    return centre + tangent * x + binormal * z;
+}
+
+/** Build a tangent/binormal frame for a given normal direction. */
+static void buildTangentFrame(const glm::vec3& normal,
+                              glm::vec3& tangent, glm::vec3& binormal) {
+    glm::vec3 up = (std::abs(glm::dot(normal, glm::vec3(0, 1, 0))) < 0.99f)
+                   ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0);
+    tangent  = glm::normalize(glm::cross(up, normal));
+    binormal = glm::cross(normal, tangent);
+}
+
 PolyFace generatePolygonFace(int sides, float radius,
                              const glm::vec3& centre,
                              const glm::vec3& normal,
@@ -42,22 +74,14 @@ PolyFace generatePolygonFace(int sides, float radius,
     PolyFace face;
     face.normal = glm::normalize(normal);
 
-    float angleStep = 2.0f * kPI / static_cast<float>(sides);
-    float initialAngle = kPI / static_cast<float>(sides);
-
-    // Build a local coordinate frame on the polygon plane.
-    // Choose an arbitrary 'up' that isn't parallel to normal.
-    glm::vec3 up = (std::abs(glm::dot(face.normal, glm::vec3(0, 1, 0))) < 0.99f)
-                   ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0);
-    glm::vec3 tangent  = glm::normalize(glm::cross(up, face.normal));
-    glm::vec3 binormal = glm::cross(face.normal, tangent);
+    glm::vec3 tangent, binormal;
+    buildTangentFrame(face.normal, tangent, binormal);
 
     face.outerVertices.reserve(sides);
     for (int i = 0; i < sides; ++i) {
-        float angle = initialAngle + angleStep * static_cast<float>(-i - 1);
-        float x = std::cos(angle) * radius * scaleX;
-        float z = std::sin(angle) * radius * scaleZ;
-        face.outerVertices.push_back(centre + tangent * x + binormal * z);
+        face.outerVertices.push_back(
+            computePolygonVertex(i, sides, radius, scaleX, scaleZ,
+                                 centre, tangent, binormal));
     }
     return face;
 }
@@ -72,21 +96,15 @@ PolyFace generateIrregularPolygonFace(int sides,
     PolyFace face;
     face.normal = glm::normalize(normal);
 
-    float angleStep = 2.0f * kPI / static_cast<float>(sides);
-    float initialAngle = kPI / static_cast<float>(sides);
-
-    glm::vec3 up = (std::abs(glm::dot(face.normal, glm::vec3(0, 1, 0))) < 0.99f)
-                   ? glm::vec3(0, 1, 0) : glm::vec3(1, 0, 0);
-    glm::vec3 tangent  = glm::normalize(glm::cross(up, face.normal));
-    glm::vec3 binormal = glm::cross(face.normal, tangent);
+    glm::vec3 tangent, binormal;
+    buildTangentFrame(face.normal, tangent, binormal);
 
     face.outerVertices.reserve(sides);
     for (int i = 0; i < sides; ++i) {
         float r = (i < static_cast<int>(radii.size())) ? radii[i] : 1.0f;
-        float angle = initialAngle + angleStep * static_cast<float>(-i - 1);
-        float x = std::cos(angle) * r * scaleX;
-        float z = std::sin(angle) * r * scaleZ;
-        face.outerVertices.push_back(centre + tangent * x + binormal * z);
+        face.outerVertices.push_back(
+            computePolygonVertex(i, sides, r, scaleX, scaleZ,
+                                 centre, tangent, binormal));
     }
     face.recalculateNormal();
     return face;
@@ -327,13 +345,20 @@ TriangulatedMesh triangulateFaces(const std::vector<PolyFace>& faces,
 // Radius multiplier generation
 // ────────────────────────────────────────────────────────────────────────
 
+// Empirical scaling factors from the reference project's Spaceship class.
+// They control how quickly the max/min radius bounds grow with segment count,
+// producing natural-looking hull taper and bulge variation.
+static constexpr float kRadiusMaxGrowthRate = 0.1029f;
+static constexpr float kRadiusMinGrowthRate = 0.0294f;
+static constexpr float kRadiusMinFloor      = 0.5f;
+
 std::vector<float> generateRadiusMultipliers(int segments, float baseRadius,
                                              unsigned int seed) {
     std::mt19937 rng(seed != 0 ? seed : 42u);
     std::uniform_real_distribution<float> dist(0.0f, 1.0f);
 
-    float radiusMax = baseRadius * (0.1029f * segments) + baseRadius;
-    float radiusMin = baseRadius * (0.0294f * segments) + 0.5f;
+    float radiusMax = baseRadius * (kRadiusMaxGrowthRate * segments) + baseRadius;
+    float radiusMin = baseRadius * (kRadiusMinGrowthRate * segments) + kRadiusMinFloor;
 
     std::vector<float> multipliers;
     multipliers.reserve(segments);
