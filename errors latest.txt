@@ -1,0 +1,132 @@
+================================================
+EVE OFFLINE C++ Client - Visual Studio Build
+================================================
+
+Build Type: Release
+
+Configuring CMake for Visual Studio...
+
+Found vcpkg at C:\vcpkg
+
+Cleaning old CMake cache to avoid generator conflicts...
+
+Using generator: Visual Studio 17 2022
+
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.19045.
+-- The C compiler identification is MSVC 19.38.33145.0
+-- The CXX compiler identification is MSVC 19.38.33145.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Found Threads: TRUE
+-- Found OpenGL: opengl32
+-- OpenAL found - audio support enabled
+-- GLEW found - using system GLEW
+-- Using system GLEW (GLAD not needed)
+-- Using system nlohmann/json
+-- Using bundled STB image loader
+-- Using bundled tinyobjloader for .obj model loading
+-- Using bundled tinygltf for .gltf/.glb model loading
+-- Using system ImGui from vcpkg
+-- RmlUi disabled (ImGui-only UI). Enable with -DUSE_RMLUI=ON
+-- Building test suite...
+--
+-- EVE OFFLINE Client Configuration:
+--   C++ Standard: 17
+--   OpenGL:
+--   Use System Libraries: ON
+--   Build Tests: ON
+--   RmlUi Enabled: OFF
+--
+-- Configuring done (5.2s)
+-- Generating done (0.7s)
+-- Build files have been written to: C:/GIT PROJECTS/EVEOFFLINE/cpp_client/build_vs
+
+CMake configuration successful!
+
+Building project...
+
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  ship_part_library.cpp
+  test_asteroid_field.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_asteroid_field.exe
+  test_entity_sync.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_entity_sync.exe
+  test_deferred_rendering.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_deferred_rendering
+  .exe
+  test_audio_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_audio_system.exe
+  ship_part_library.cpp
+  ship_part_library.cpp
+  test_post_processing.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_post_processing.exe
+  test_server_responses.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_server_responses.exe
+  test_shadow_mapping.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_shadow_mapping.exe
+  test_network.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_network.exe
+  ship_part_library.cpp
+ui_manager.obj : error LNK2019: unresolved external symbol "public: __cdecl UI::DScanPanel::DScanPanel(void)" (??0DScan
+Panel@UI@@QEAA@XZ) referenced in function "class std::unique_ptr<class UI::DScanPanel,struct std::default_delete<class
+UI::DScanPanel> > __cdecl std::make_unique<class UI::DScanPanel,0>(void)" (??$make_unique@VDScanPanel@UI@@$$V$0A@@std@@
+YA?AV?$unique_ptr@VDScanPanel@UI@@U?$default_delete@VDScanPanel@UI@@@std@@@0@XZ) [C:\GIT PROJECTS\EVEOFFLINE\cpp_client
+\build_vs\test_lighting.vcxproj]
+ui_manager.obj : error LNK2019: unresolved external symbol "public: void __cdecl UI::DScanPanel::RenderContents(void)"
+(?RenderContents@DScanPanel@UI@@QEAAXXZ) referenced in function "void __cdecl std::invoke<class <lambda_ef0b746ce2d849c
+f3abfbd3be4a51e97> &>(class <lambda_ef0b746ce2d849cf3abfbd3be4a51e97> &)" (??$invoke@AEAV<lambda_ef0b746ce2d849cf3abfbd
+3be4a51e97>@@@std@@YAXAEAV<lambda_ef0b746ce2d849cf3abfbd3be4a51e97>@@@Z) [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_v
+s\test_lighting.vcxproj]
+ui_manager.obj : error LNK2019: unresolved external symbol "public: __cdecl UI::NeocomPanel::NeocomPanel(void)" (??0Neo
+comPanel@UI@@QEAA@XZ) referenced in function "class std::unique_ptr<class UI::NeocomPanel,struct std::default_delete<cl
+ass UI::NeocomPanel> > __cdecl std::make_unique<class UI::NeocomPanel,0>(void)" (??$make_unique@VNeocomPanel@UI@@$$V$0A
+@@std@@YA?AV?$unique_ptr@VNeocomPanel@UI@@U?$default_delete@VNeocomPanel@UI@@@std@@@0@XZ) [C:\GIT PROJECTS\EVEOFFLINE\c
+pp_client\build_vs\test_lighting.vcxproj]
+ui_manager.obj : error LNK2019: unresolved external symbol "public: void __cdecl UI::NeocomPanel::Render(void)" (?Rende
+r@NeocomPanel@UI@@QEAAXXZ) referenced in function "public: void __cdecl UI::UIManager::Render(void)" (?Render@UIManager
+@UI@@QEAAXXZ) [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_lighting.exe : fatal error LNK1120: 4 unresolved extern
+als [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  ship_generation_rules.cpp
+  ship_generation_rules.cpp
+  ship_generation_rules.cpp
+  ship_generation_rules.cpp
+  Generating Code...
+  Generating Code...
+  Generating Code...
+ui_manager.obj : error LNK2019: unresolved external symbol "public: __cdecl UI::DScanPanel::DScanPanel(void)" (??0DScan
+Panel@UI@@QEAA@XZ) referenced in function "class std::unique_ptr<class UI::DScanPanel,struct std::default_delete<class
+UI::DScanPanel> > __cdecl std::make_unique<class UI::DScanPanel,0>(void)" (??$make_unique@VDScanPanel@UI@@$$V$0A@@std@@
+YA?AV?$unique_ptr@VDScanPanel@UI@@U?$default_delete@VDScanPanel@UI@@@std@@@0@XZ) [C:\GIT PROJECTS\EVEOFFLINE\cpp_client
+\build_vs\test_ui_system.vcxproj]
+ui_manager.obj : error LNK2019: unresolved external symbol "public: void __cdecl UI::DScanPanel::RenderContents(void)"
+(?RenderContents@DScanPanel@UI@@QEAAXXZ) referenced in function "void __cdecl std::invoke<class <lambda_ef0b746ce2d849c
+f3abfbd3be4a51e97> &>(class <lambda_ef0b746ce2d849cf3abfbd3be4a51e97> &)" (??$invoke@AEAV<lambda_ef0b746ce2d849cf3abfbd
+3be4a51e97>@@@std@@YAXAEAV<lambda_ef0b746ce2d849cf3abfbd3be4a51e97>@@@Z) [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_v
+s\test_ui_system.vcxproj]
+  Generating Code...
+ui_manager.obj : error LNK2019: unresolved external symbol "public: __cdecl UI::NeocomPanel::NeocomPanel(void)" (??0Neo
+comPanel@UI@@QEAA@XZ) referenced in function "class std::unique_ptr<class UI::NeocomPanel,struct std::default_delete<cl
+ass UI::NeocomPanel> > __cdecl std::make_unique<class UI::NeocomPanel,0>(void)" (??$make_unique@VNeocomPanel@UI@@$$V$0A
+@@std@@YA?AV?$unique_ptr@VNeocomPanel@UI@@U?$default_delete@VNeocomPanel@UI@@@std@@@0@XZ) [C:\GIT PROJECTS\EVEOFFLINE\c
+pp_client\build_vs\test_ui_system.vcxproj]
+ui_manager.obj : error LNK2019: unresolved external symbol "public: void __cdecl UI::NeocomPanel::Render(void)" (?Rende
+r@NeocomPanel@UI@@QEAAXXZ) referenced in function "public: void __cdecl UI::UIManager::Render(void)" (?Render@UIManager
+@UI@@QEAAXXZ) [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_ui_system.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_ui_system.exe : fatal error LNK1120: 4 unresolved exter
+nals [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_ui_system.vcxproj]
+  test_phase46_advanced.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_phase46_advanced.exe
+  test_enhanced_ui.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_enhanced_ui.exe
+  test_phase48_panels.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_phase48_panels.exe
+LINK : fatal error LNK1104: cannot open file 'C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\eve_client.exe
+' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+
+ERROR: Build failed!
+Press any key to continue . . .
