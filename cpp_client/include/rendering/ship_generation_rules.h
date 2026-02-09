@@ -21,6 +21,34 @@ enum class FactionStyle {
 };
 
 /**
+ * Reference model traits measured from the 311 OBJ ship models in data/ships/obj_models.
+ * These values drive procedural generation to produce ships with realistic proportions
+ * and faction-distinctive silhouettes, while allowing controlled variation.
+ * See docs/research/OBJ_MODEL_ANALYSIS.md for the full analysis.
+ */
+struct ReferenceModelTraits {
+    // Aspect ratios measured from reference OBJ models
+    float avgAspectLW;      // Average length-to-width ratio
+    float minAspectLW;      // Minimum L:W observed
+    float maxAspectLW;      // Maximum L:W observed
+    float avgAspectLH;      // Average length-to-height ratio
+
+    // Complexity metrics from reference models
+    int avgVertexCount;     // Average vertex count for this faction/class
+    int avgFaceCount;       // Average face count
+
+    // Detail density multiplier relative to frigate baseline (1.0)
+    float detailDensityMultiplier;
+
+    ReferenceModelTraits()
+        : avgAspectLW(2.0f), minAspectLW(1.0f), maxAspectLW(5.0f)
+        , avgAspectLH(3.5f)
+        , avgVertexCount(8000), avgFaceCount(8000)
+        , detailDensityMultiplier(1.0f)
+    {}
+};
+
+/**
  * Ship generation rules that constrain and guide the procedural generation
  * Based on faction design language and ship class requirements
  */
@@ -56,6 +84,9 @@ public:
         bool requiresAngularGeometry;   // Caldari blockiness
         bool allowsExposedFramework;    // Minmatar industrial look
         bool requiresOrnateDetails;     // Amarr cathedral style
+
+        // Reference traits from analyzed OBJ models
+        ReferenceModelTraits referenceTraits;
         
         std::vector<std::string> mandatoryPartTypes;  // Parts that must be present
         std::map<std::string, int> minPartCounts;     // Minimum count for each part type
@@ -94,6 +125,9 @@ public:
         int maxEngines;
         
         float detailDensity;  // How many greebles/details to add
+
+        // Reference traits from analyzed OBJ models
+        ReferenceModelTraits referenceTraits;
         
         ClassRules()
             : minLength(1.0f), maxLength(10.0f)
@@ -154,6 +188,16 @@ public:
      * Check if an engine placement is valid (rear positioning)
      */
     bool isEnginePlacementValid(const glm::vec3& position, const glm::vec3& shipSize) const;
+    
+    /**
+     * Get reference model traits for a faction (measured from OBJ models)
+     */
+    ReferenceModelTraits getFactionReferenceTraits(const std::string& faction) const;
+    
+    /**
+     * Get reference model traits for a ship class (measured from OBJ models)
+     */
+    ReferenceModelTraits getClassReferenceTraits(const std::string& shipClass) const;
     
 private:
     std::map<std::string, FactionRules> m_factionRules;
