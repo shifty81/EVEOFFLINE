@@ -352,7 +352,7 @@ void Model::addMesh(std::unique_ptr<Mesh> mesh) {
 }
 
 std::string Model::findOBJModelPath(const std::string& shipType, const std::string& faction) {
-    // Search directories relative to CWD for extracted OBJ models
+    // Search directories relative to the current working directory
     std::vector<std::string> searchDirs = {
         "models/ships",
         "../models/ships",

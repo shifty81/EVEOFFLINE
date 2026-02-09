@@ -523,7 +523,7 @@ endif()
 # Also copy any OBJ files placed directly in the source models/ships/ directory
 # so that users can drop .obj files there and have them picked up at build time.
 set(SRC_MODELS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/ships")
-file(GLOB SRC_OBJ_FILES "${SRC_MODELS_DIR}/*.obj")
+file(GLOB SRC_OBJ_FILES CONFIGURE_DEPENDS "${SRC_MODELS_DIR}/*.obj")
 if(SRC_OBJ_FILES)
     add_custom_command(TARGET eve_client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
