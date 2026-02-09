@@ -7,6 +7,8 @@
 #include "ui/overview_panel.h"
 #include "ui/market_panel.h"
 #include "ui/docking_manager.h"
+#include "ui/dscan_panel.h"
+#include "ui/neocom_panel.h"
 #include "core/entity.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -34,6 +36,8 @@ UIManager::UIManager()
     m_overviewPanel = std::make_unique<OverviewPanel>();
     m_marketPanel = std::make_unique<MarketPanel>();
     m_dockingManager = std::make_unique<DockingManager>();
+    m_dscanPanel = std::make_unique<DScanPanel>();
+    m_neocomPanel = std::make_unique<NeocomPanel>();
 }
 
 UIManager::~UIManager() {
@@ -82,6 +86,16 @@ bool UIManager::Initialize(GLFWwindow* window) {
     // Setup dockable panels in the docking manager
     SetupDockablePanels();
     
+    // Wire Neocom callbacks to panel toggles
+    if (m_neocomPanel) {
+        m_neocomPanel->SetInventoryCallback([this]() { ToggleInventory(); });
+        m_neocomPanel->SetFittingCallback([this]() { ToggleFitting(); });
+        m_neocomPanel->SetMarketCallback([this]() { ToggleMarket(); });
+        m_neocomPanel->SetMissionsCallback([this]() { ToggleMission(); });
+        m_neocomPanel->SetDScanCallback([this]() { ToggleDScan(); });
+        m_neocomPanel->SetMapCallback([this]() { ToggleOverview(); });
+    }
+    
     std::cout << "[UIManager] ImGui initialized successfully" << std::endl;
     return true;
 }
@@ -107,6 +121,11 @@ void UIManager::EndFrame() {
 }
 
 void UIManager::Render() {
+    // === Neocom sidebar (always rendered first — left edge) ===
+    if (m_neocomPanel) {
+        m_neocomPanel->Render();
+    }
+    
     // === Ship HUD (bottom-center, like EVE Online) ===
     // The ship HUD is always rendered directly, not through the docking system
     if (show_ship_status_) {
@@ -173,12 +192,19 @@ void UIManager::SetupDockablePanels() {
             ImVec2(420, 50), ImVec2(450, 500));
     }
     
+    if (m_dscanPanel) {
+        m_dockingManager->RegisterPanel("dscan", "D-Scan",
+            [this]() { m_dscanPanel->RenderContents(); },
+            ImVec2(880, 460), ImVec2(350, 300));
+    }
+    
     // Set default visibility — Overview visible, others hidden by default
     m_dockingManager->SetPanelVisible("overview", true);
     m_dockingManager->SetPanelVisible("inventory", false);
     m_dockingManager->SetPanelVisible("fitting", false);
     m_dockingManager->SetPanelVisible("mission", false);
     m_dockingManager->SetPanelVisible("market", false);
+    m_dockingManager->SetPanelVisible("dscan", false);
     
     std::cout << "[UIManager] Dockable panels registered" << std::endl;
 }
@@ -543,6 +569,13 @@ void UIManager::ToggleMarket() {
     if (m_dockingManager) {
         bool vis = m_dockingManager->IsPanelVisible("market");
         m_dockingManager->SetPanelVisible("market", !vis);
+    }
+}
+
+void UIManager::ToggleDScan() {
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("dscan");
+        m_dockingManager->SetPanelVisible("dscan", !vis);
     }
 }
 

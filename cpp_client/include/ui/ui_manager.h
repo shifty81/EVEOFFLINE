@@ -24,6 +24,8 @@ class MissionPanel;
 class OverviewPanel;
 class MarketPanel;
 class DockingManager;
+class DScanPanel;
+class NeocomPanel;
 
 struct EVEColors {
     // Background colors — deep dark blue-black (Photon UI style)
@@ -139,6 +141,8 @@ public:
     MissionPanel* GetMissionPanel() { return m_missionPanel.get(); }
     OverviewPanel* GetOverviewPanel() { return m_overviewPanel.get(); }
     MarketPanel* GetMarketPanel() { return m_marketPanel.get(); }
+    DScanPanel* GetDScanPanel() { return m_dscanPanel.get(); }
+    NeocomPanel* GetNeocomPanel() { return m_neocomPanel.get(); }
     
     // Docking manager access
     DockingManager* GetDockingManager() { return m_dockingManager.get(); }
@@ -149,6 +153,7 @@ public:
     void ToggleMission();
     void ToggleOverview();
     void ToggleMarket();
+    void ToggleDScan();
     
     // Interface lock
     void SetInterfaceLocked(bool locked);
@@ -183,6 +188,10 @@ private:
     
     // Docking manager for panel docking/undocking/locking
     std::unique_ptr<DockingManager> m_dockingManager;
+    
+    // Phase 4.8 panels
+    std::unique_ptr<DScanPanel> m_dscanPanel;
+    std::unique_ptr<NeocomPanel> m_neocomPanel;
     
     // Panel visibility
     bool show_ship_status_;
