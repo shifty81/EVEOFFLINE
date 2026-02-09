@@ -553,5 +553,106 @@ void RenderCombatLog(const std::vector<std::string>& messages) {
     ImGui::EndChild();
 }
 
+// ============================================================================
+// RenderModuleRack — data-bound module rack with active/cooldown visuals
+// ============================================================================
+void RenderModuleRack(const ModuleSlotState slots[], int count) {
+    if (count <= 0) return;
+
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec2 windowPos = ImGui::GetCursorScreenPos();
+
+    float slotRadius = 16.0f;
+    float slotSpacing = 36.0f;
+    float rackWidth = count * slotSpacing;
+    float startX = windowPos.x + 10.0f;
+    float centerY = windowPos.y + slotRadius + 8.0f;
+
+    // Rack background
+    drawList->AddRectFilled(
+        ImVec2(startX - slotRadius - 4, centerY - slotRadius - 8),
+        ImVec2(startX + (count - 1) * slotSpacing + slotRadius + 4, centerY + slotRadius + 8),
+        IM_COL32(12, 16, 22, 210), 3.0f);
+    drawList->AddRect(
+        ImVec2(startX - slotRadius - 4, centerY - slotRadius - 8),
+        ImVec2(startX + (count - 1) * slotSpacing + slotRadius + 4, centerY + slotRadius + 8),
+        IM_COL32(40, 55, 72, 120), 3.0f, 0, 1.0f);
+
+    for (int i = 0; i < count; i++) {
+        const auto& s = slots[i];
+        ImVec2 slotPos(startX + i * slotSpacing, centerY);
+
+        // Slot type color
+        ImU32 activeCol, inactiveCol, emptyCol;
+        switch (s.slotType) {
+            case ModuleSlotState::HIGH:
+                activeCol   = IM_COL32(50, 180, 50, 230);
+                inactiveCol = IM_COL32(30, 65, 35, 200);
+                emptyCol    = IM_COL32(22, 35, 25, 140);
+                break;
+            case ModuleSlotState::MID:
+                activeCol   = IM_COL32(50, 120, 200, 230);
+                inactiveCol = IM_COL32(25, 40, 75, 200);
+                emptyCol    = IM_COL32(22, 30, 45, 140);
+                break;
+            case ModuleSlotState::LOW:
+                activeCol   = IM_COL32(200, 140, 40, 230);
+                inactiveCol = IM_COL32(70, 50, 20, 200);
+                emptyCol    = IM_COL32(45, 32, 18, 140);
+                break;
+        }
+
+        ImU32 bgColor;
+        if (!s.fitted) {
+            bgColor = emptyCol;
+        } else if (s.active) {
+            bgColor = activeCol;
+        } else {
+            bgColor = inactiveCol;
+        }
+
+        // Draw the slot circle
+        drawList->AddCircleFilled(slotPos, slotRadius, bgColor, 32);
+
+        ImU32 borderColor = IM_COL32(55, 75, 95, 160);
+        if (s.overheated) {
+            borderColor = IM_COL32(255, 100, 30, 220);  // Orange glow for overheat
+        } else if (s.active) {
+            borderColor = IM_COL32(0, 200, 230, 200);   // Teal glow for active
+        }
+        drawList->AddCircle(slotPos, slotRadius, borderColor, 32, s.active ? 2.0f : 1.0f);
+
+        // Cooldown overlay — clockwise arc from top
+        if (s.fitted && s.cooldown_pct > 0.0f) {
+            float angle = s.cooldown_pct * 2.0f * IM_PI;
+            drawList->PathArcTo(slotPos, slotRadius - 1.0f, -IM_PI / 2.0f, -IM_PI / 2.0f + angle, 24);
+            drawList->PathStroke(IM_COL32(0, 200, 230, 130), 0, 4.0f);
+        }
+
+        // F-key label
+        char fLabel[4];
+        snprintf(fLabel, sizeof(fLabel), "F%d", i + 1);
+        ImVec2 textSize = ImGui::CalcTextSize(fLabel);
+        drawList->AddText(ImVec2(slotPos.x - textSize.x / 2, slotPos.y - textSize.y / 2),
+                          IM_COL32(200, 220, 240, s.fitted ? 240 : 120), fLabel);
+
+        // Invisible button for interaction
+        ImVec2 topLeft(slotPos.x - slotRadius, slotPos.y - slotRadius);
+        ImGui::SetCursorScreenPos(topLeft);
+        char btnId[32];
+        snprintf(btnId, sizeof(btnId), "##modrack_%d", i);
+        ImGui::InvisibleButton(btnId, ImVec2(slotRadius * 2, slotRadius * 2));
+
+        // Tooltip on hover
+        if (s.fitted && ImGui::IsItemHovered()) {
+            ImGui::SetTooltip("%s%s", s.name.c_str(), s.active ? " [ACTIVE]" : "");
+        }
+    }
+
+    // Reserve layout space
+    ImGui::SetCursorScreenPos(ImVec2(windowPos.x, centerY + slotRadius + 12));
+    ImGui::Dummy(ImVec2(rackWidth + 20, 0));
+}
+
 } // namespace EVEPanels
 } // namespace UI

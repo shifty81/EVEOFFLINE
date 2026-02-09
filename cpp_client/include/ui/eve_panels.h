@@ -49,6 +49,25 @@ void GetHealthColorForPercent(float percent, float out_color[4], const float bas
 
 } // namespace EVEPanels
 
+/**
+ * Module slot state for the HUD module rack.
+ * Holds the data needed to render a single module slot with
+ * proper active/inactive/cooldown visuals.
+ */
+struct ModuleSlotState {
+    bool fitted = false;          // true if a module is in this slot
+    bool active = false;          // true if the module is currently activated
+    bool overheated = false;      // true if overheating
+    float cooldown_pct = 0.0f;    // 0.0 = ready, 1.0 = full cooldown
+    std::string name;             // Module short name (e.g. "AC II")
+    enum SlotType { HIGH, MID, LOW } slotType = HIGH;
+};
+
+/** Render the module rack using an array of slot states (up to 8). */
+namespace EVEPanels {
+void RenderModuleRack(const ModuleSlotState slots[], int count);
+} // namespace EVEPanels
+
 } // namespace UI
 
 #endif // EVE_PANELS_H

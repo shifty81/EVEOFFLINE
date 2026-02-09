@@ -332,6 +332,8 @@ set(CLIENT_SOURCES
     src/ui/market_panel.cpp
     src/ui/overview_panel.cpp
     src/ui/docking_manager.cpp
+    src/ui/dscan_panel.cpp
+    src/ui/neocom_panel.cpp
     src/ui/rml_ui_manager.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
@@ -384,6 +386,8 @@ set(CLIENT_HEADERS
     include/ui/market_panel.h
     include/ui/overview_panel.h
     include/ui/docking_manager.h
+    include/ui/dscan_panel.h
+    include/ui/neocom_panel.h
     include/ui/rml_ui_manager.h
     ${AUDIO_HEADERS}
 )
@@ -835,6 +839,40 @@ if(BUILD_TESTS)
     elseif(APPLE)
         target_link_libraries(test_phase46_advanced dl)
         target_link_libraries(test_phase46_advanced "-framework Cocoa -framework IOKit -framework CoreVideo")
+    endif()
+    
+    # Test: Phase 4.8 D-Scan, Neocom, Module Rack panels
+    add_executable(test_phase48_panels
+        test_phase48_panels.cpp
+        ${CLIENT_SOURCES_NO_MAIN}
+        ${CLIENT_HEADERS}
+    )
+    target_link_libraries(test_phase48_panels
+        Threads::Threads
+        OpenGL::GL
+        glfw
+        glm::glm
+    )
+    if(USE_GLEW)
+        target_link_libraries(test_phase48_panels GLEW::GLEW)
+    endif()
+    if(USE_VCPKG_IMGUI)
+        target_link_libraries(test_phase48_panels imgui::imgui)
+    endif()
+    if(OpenAL_FOUND)
+        target_link_libraries(test_phase48_panels ${OPENAL_LIBRARY})
+        target_include_directories(test_phase48_panels PRIVATE ${OPENAL_INCLUDE_DIR})
+    endif()
+    if(nlohmann_json_FOUND)
+        target_link_libraries(test_phase48_panels nlohmann_json::nlohmann_json)
+    endif()
+    if(WIN32)
+        target_link_libraries(test_phase48_panels ws2_32)
+    elseif(UNIX AND NOT APPLE)
+        target_link_libraries(test_phase48_panels dl X11)
+    elseif(APPLE)
+        target_link_libraries(test_phase48_panels dl)
+        target_link_libraries(test_phase48_panels "-framework Cocoa -framework IOKit -framework CoreVideo")
     endif()
     
     # Test: Phase 4.8 Server Response Handling
