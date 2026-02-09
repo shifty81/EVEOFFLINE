@@ -492,10 +492,17 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 
 ### UI Framework
 
-**ImGui Integration**:
-- Current: Basic ImGui windows
-- Required: Custom ImGui widgets
-- Advanced: Custom rendering for circles, arcs
+**RmlUi Integration** (Primary — game-facing panels):
+- Build with: `cmake .. -DUSE_RMLUI=ON`
+- Panel layouts: `ui_resources/rml/*.rml` (HTML-like markup)
+- Theme: `ui_resources/rcss/photon_ui.rcss` (CSS-like stylesheet)
+- Custom elements: Circular gauges via C++ `Rml::Element` subclasses
+- Data binding: Live game state via `{{ship.shield_pct}}` etc.
+- Manager: `RmlUiManager` class (`include/ui/rml_ui_manager.h`)
+
+**ImGui** (Secondary — debug/developer overlays):
+- Current: Basic ImGui windows (retained for dev tools)
+- Used for: Performance metrics, entity inspector, debug overlays
 
 **Window Manager**:
 ```cpp
@@ -623,7 +630,12 @@ Render (draw all UI)
 **Mitigation**: Profile early, optimize critical paths, consider C++ custom rendering.
 
 ### Risk: ImGui Limitations
-**Mitigation**: Extend ImGui with custom widgets or consider alternative UI framework.
+**Mitigation**: Migrate game-facing UI to **RmlUi** (HTML/CSS-based framework).
+ImGui is retained for debug/developer overlays only. See
+`docs/design/UI_FRAMEWORK_EVALUATION.md` for the full evaluation. New RmlUi
+integration is available via `-DUSE_RMLUI=ON` with panel templates in
+`cpp_client/ui_resources/` and a Photon UI stylesheet in
+`cpp_client/ui_resources/rcss/photon_ui.rcss`.
 
 ### Risk: Complexity
 **Mitigation**: Follow EVE's design closely, don't reinvent the wheel.

@@ -1,0 +1,631 @@
+/*
+ * EVE OFFLINE — Photon UI Theme (RCSS)
+ *
+ * This stylesheet replicates EVE Online's Photon UI visual design for use
+ * with the RmlUi framework. All color values match the constants defined in
+ * docs/design/EVE_UI_STYLE_REFERENCE.md and cpp_client/include/ui/ui_manager.h.
+ *
+ * RCSS is a CSS-like language supported by RmlUi. It follows CSS2 rules with
+ * select CSS3 extensions (transitions, transforms, border-radius, etc.).
+ *
+ * Usage:
+ *   <link type="text/rcss" href="photon_ui.rcss"/>
+ */
+
+/* ===================================================================
+   1. ROOT / BODY — global defaults
+   =================================================================== */
+
+body {
+    font-family: LatoLatin, sans-serif;
+    font-size: 12dp;
+    color: #E6EDF3;                      /* TEXT_PRIMARY */
+    background-color: transparent;
+}
+
+/* ===================================================================
+   2. PANEL BASE — shared window/panel styling
+   =================================================================== */
+
+.panel {
+    background-color: #0D111780;         /* BG_PRIMARY, 50% alpha */
+    border: 1dp #28384899;               /* BORDER_NORMAL */
+    border-radius: 2dp;
+    padding: 8dp;
+}
+
+.panel-solid {
+    background-color: #0D1117EB;         /* BG_PRIMARY, ~92% alpha */
+    border: 1dp #28384899;
+    border-radius: 2dp;
+    padding: 8dp;
+}
+
+/* ===================================================================
+   3. PANEL HEADER / TITLE BAR
+   =================================================================== */
+
+.panel-header {
+    background-color: #0A0E14;           /* BG_HEADER */
+    height: 28dp;
+    padding: 4dp 8dp;
+    border-bottom: 1dp #1E2A3680;        /* BORDER_SUBTLE */
+    font-size: 12dp;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #45D0E8;                      /* ACCENT_PRIMARY */
+}
+
+.panel-header .title {
+    display: inline;
+    vertical-align: middle;
+}
+
+.panel-header .window-btn {
+    width: 20dp;
+    height: 20dp;
+    float: right;
+    margin-left: 2dp;
+    background-color: transparent;
+    border: none;
+    color: #8B949E;                      /* TEXT_SECONDARY */
+    text-align: center;
+    cursor: pointer;
+}
+
+.panel-header .window-btn:hover {
+    color: #45D0E8;                      /* ACCENT_PRIMARY */
+    background-color: #1A3A4A50;         /* SELECTION */
+}
+
+/* ===================================================================
+   4. TEXT STYLES
+   =================================================================== */
+
+.text-primary   { color: #E6EDF3; }     /* TEXT_PRIMARY */
+.text-secondary { color: #8B949E; }     /* TEXT_SECONDARY */
+.text-disabled  { color: #484F5899; }   /* TEXT_DISABLED */
+.text-accent    { color: #45D0E8; }     /* ACCENT_PRIMARY */
+.text-hostile   { color: #CC3333; }     /* TARGET_HOSTILE */
+.text-friendly  { color: #3399FF; }     /* TARGET_FRIENDLY */
+.text-neutral   { color: #AAAAAA; }     /* TARGET_NEUTRAL */
+.text-success   { color: #33CC66; }     /* SUCCESS */
+.text-warning   { color: #FFB833; }     /* WARNING */
+.text-danger    { color: #FF3333; }     /* DANGER */
+
+.text-large {
+    font-size: 16dp;
+    font-weight: bold;
+}
+
+.text-small {
+    font-size: 10dp;
+}
+
+.text-tiny {
+    font-size: 8dp;
+    color: #8B949E;
+}
+
+.text-uppercase {
+    text-transform: uppercase;
+}
+
+/* ===================================================================
+   5. SEPARATOR
+   =================================================================== */
+
+hr, .separator {
+    margin: 4dp 0;
+    border: none;
+    border-top: 1dp #1E2A3680;           /* BORDER_SUBTLE */
+}
+
+/* ===================================================================
+   6. BUTTONS
+   =================================================================== */
+
+button, .btn {
+    background-color: #2A5A6A70;         /* ACCENT_DIM, 44% */
+    border: 1dp #28384899;
+    border-radius: 2dp;
+    padding: 4dp 12dp;
+    color: #E6EDF3;
+    font-size: 11dp;
+    cursor: pointer;
+    transition: background-color 150ms ease-out;
+}
+
+button:hover, .btn:hover {
+    background-color: #2A5A6AE6;         /* ACCENT_DIM, 90% */
+    border-color: #45D0E8CC;             /* BORDER_HIGHLIGHT */
+}
+
+button:active, .btn:active {
+    background-color: #45D0E8CC;         /* ACCENT_PRIMARY */
+}
+
+.btn-primary {
+    background-color: #45D0E8CC;
+    color: #0D1117;
+}
+
+.btn-primary:hover {
+    background-color: #78E1F0;
+}
+
+.btn-danger {
+    background-color: #CC333380;
+    border-color: #FF333399;
+}
+
+.btn-danger:hover {
+    background-color: #FF3333CC;
+}
+
+/* ===================================================================
+   7. TABS (Overview filter tabs, panel tabs)
+   =================================================================== */
+
+.tab-bar {
+    background-color: #0A0E14;
+    height: 28dp;
+    padding: 0 4dp;
+    border-bottom: 1dp #1E2A3680;
+}
+
+.tab {
+    display: inline-block;
+    padding: 6dp 12dp;
+    color: #8B949E;
+    font-size: 11dp;
+    cursor: pointer;
+    border-bottom: 2dp transparent;
+    transition: color 150ms ease-out, border-color 150ms ease-out;
+}
+
+.tab:hover {
+    color: #E6EDF3;
+    border-bottom-color: #2A5A6A;
+}
+
+.tab.active {
+    color: #45D0E8;
+    border-bottom: 2dp #45D0E8;
+}
+
+/* ===================================================================
+   8. TABLES (Overview, D-Scan, Market)
+   =================================================================== */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background-color: #0A0E14;
+}
+
+thead td, th {
+    padding: 3dp 6dp;
+    font-size: 10dp;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #8B949E;
+    border-bottom: 1dp #283848CC;
+    cursor: pointer;
+}
+
+tbody tr {
+    height: 22dp;
+    transition: background-color 100ms ease-out;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #161B2280;         /* BG_SECONDARY, 50% */
+}
+
+tbody tr:hover {
+    background-color: #1A3A4A80;         /* SELECTION */
+}
+
+tbody tr.selected {
+    background-color: #1A3A4ACC;
+    border-left: 3dp #45D0E8;
+}
+
+tbody td {
+    padding: 2dp 6dp;
+    font-size: 11dp;
+    vertical-align: middle;
+}
+
+/* ===================================================================
+   9. SCROLLBARS
+   =================================================================== */
+
+scrollbarvertical {
+    width: 10dp;
+    background-color: #080C1250;         /* BG_PANEL */
+}
+
+scrollbarvertical sliderbar {
+    background-color: #2A5A6A99;         /* ACCENT_DIM */
+    border-radius: 4dp;
+    min-height: 20dp;
+}
+
+scrollbarvertical sliderbar:hover {
+    background-color: #2A5A6ACC;
+}
+
+scrollbarvertical sliderbar:active {
+    background-color: #45D0E8;
+}
+
+scrollbarhorizontal {
+    height: 10dp;
+    background-color: #080C1250;
+}
+
+scrollbarhorizontal sliderbar {
+    background-color: #2A5A6A99;
+    border-radius: 4dp;
+    min-width: 20dp;
+}
+
+scrollbarhorizontal sliderbar:hover {
+    background-color: #2A5A6ACC;
+}
+
+/* ===================================================================
+   10. HEALTH BARS
+   =================================================================== */
+
+.health-bar {
+    height: 6dp;
+    background-color: #161B2280;
+    border-radius: 1dp;
+    overflow: hidden;
+}
+
+.health-bar .fill {
+    height: 100%;
+    border-radius: 1dp;
+    transition: width 200ms linear;
+}
+
+.health-bar.shield .fill  { background-color: #3399FF; }
+.health-bar.armor .fill   { background-color: #FFD040; }
+.health-bar.hull .fill    { background-color: #E64545; }
+.health-bar.cap .fill     { background-color: #FFE066; }
+
+.health-bar.cap.low .fill    { background-color: #FF9933; }
+.health-bar.cap.critical .fill { background-color: #FF3333; }
+
+/* Health bar labels */
+.health-label {
+    font-size: 10dp;
+    color: #8B949E;
+    margin-bottom: 1dp;
+}
+
+.health-value {
+    font-size: 10dp;
+    color: #E6EDF3;
+    float: right;
+}
+
+/* ===================================================================
+   11. HUD — SHIP STATUS (bottom-center)
+   =================================================================== */
+
+#ship-hud {
+    position: fixed;
+    bottom: 10dp;
+    left: 50%;
+    margin-left: -140dp;
+    width: 280dp;
+    background-color: transparent;
+    text-align: center;
+}
+
+#ship-hud .speed-value {
+    font-size: 20dp;
+    font-weight: bold;
+    color: #78E1F0;                      /* ACCENT_SECONDARY */
+}
+
+#ship-hud .speed-unit {
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+#ship-hud .hp-summary {
+    font-size: 9dp;
+    color: #A0B4C8AA;
+    margin-top: 4dp;
+}
+
+/* ===================================================================
+   12. MODULE RACK
+   =================================================================== */
+
+#module-rack {
+    position: fixed;
+    bottom: 300dp;
+    left: 50%;
+    margin-left: -130dp;
+    width: 260dp;
+    background-color: #0C1016CC;
+    border: 1dp #283848;
+    border-radius: 3dp;
+    padding: 4dp;
+    text-align: center;
+}
+
+.module-slot {
+    display: inline-block;
+    width: 32dp;
+    height: 32dp;
+    margin: 2dp;
+    background-color: #161B22CC;
+    border: 1dp #283848;
+    border-radius: 16dp;
+    text-align: center;
+    vertical-align: middle;
+    cursor: pointer;
+    transition: background-color 150ms ease-out, border-color 150ms ease-out;
+}
+
+.module-slot:hover {
+    border-color: #45D0E8;
+}
+
+.module-slot.active {
+    background-color: #2A5A6ACC;
+    border-color: #45D0E8;
+}
+
+.module-slot.overheated {
+    border-color: #FF6600;
+}
+
+.module-slot .label {
+    font-size: 9dp;
+    color: #C8DCF0DC;
+    line-height: 32dp;
+}
+
+.rack-label {
+    font-size: 8dp;
+    color: #78969EAA;
+    text-transform: uppercase;
+    margin-bottom: 2dp;
+}
+
+/* ===================================================================
+   13. TARGET LIST (top-center, horizontal)
+   =================================================================== */
+
+#target-list {
+    position: fixed;
+    top: 10dp;
+    left: 50%;
+    margin-left: -200dp;
+    width: 400dp;
+    text-align: center;
+}
+
+.target-icon {
+    display: inline-block;
+    width: 72dp;
+    height: 72dp;
+    margin: 0 4dp;
+    background-color: #0C1019E6;
+    border: 2dp #45D0E8;
+    border-radius: 36dp;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 150ms ease-out;
+}
+
+.target-icon.active-target {
+    border-color: #FFCC33;
+    border-width: 3dp;
+}
+
+.target-icon.hostile {
+    border-color: #CC3333;
+}
+
+.target-icon .target-name {
+    font-size: 9dp;
+    color: #E6EDF3;
+    margin-top: 20dp;
+}
+
+.target-icon .target-distance {
+    font-size: 8dp;
+    color: #8B949E;
+}
+
+/* ===================================================================
+   14. OVERVIEW PANEL
+   =================================================================== */
+
+#overview {
+    position: fixed;
+    top: 50dp;
+    right: 10dp;
+    width: 380dp;
+    height: 400dp;
+    min-width: 300dp;
+    min-height: 200dp;
+}
+
+/* ===================================================================
+   15. NEOCOM (left sidebar)
+   =================================================================== */
+
+#neocom {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 40dp;
+    height: 100%;
+    background-color: #0C1019E6;
+    border-right: 1dp #28384899;
+    padding: 4dp 0;
+}
+
+.neocom-icon {
+    width: 36dp;
+    height: 36dp;
+    margin: 2dp auto;
+    background-color: transparent;
+    border: none;
+    border-radius: 4dp;
+    text-align: center;
+    cursor: pointer;
+    color: #8B949ECC;
+    font-size: 18dp;
+    line-height: 36dp;
+    transition: background-color 150ms ease-out, color 150ms ease-out;
+}
+
+.neocom-icon:hover {
+    background-color: #1A3A4A80;
+    color: #45D0E8;
+}
+
+.neocom-icon.active {
+    background-color: #1A3A4ACC;
+    color: #45D0E8;
+}
+
+/* ===================================================================
+   16. CONTEXT MENU
+   =================================================================== */
+
+.context-menu {
+    background-color: #121820F2;         /* ~95% alpha */
+    border: 1dp #45D0E8;
+    border-radius: 4dp;
+    padding: 4dp 0;
+    min-width: 180dp;
+}
+
+.context-menu .menu-item {
+    height: 28dp;
+    padding: 4dp 8dp;
+    color: #E6EDF3;
+    font-size: 11dp;
+    cursor: pointer;
+    transition: background-color 100ms ease-out;
+}
+
+.context-menu .menu-item:hover {
+    background-color: #45D0E833;
+}
+
+.context-menu .menu-item.disabled {
+    color: #484F58;
+    cursor: default;
+}
+
+.context-menu .menu-item .submenu-arrow {
+    float: right;
+    color: #8B949E;
+}
+
+.context-menu .menu-separator {
+    height: 1dp;
+    background-color: #33333399;
+    margin: 2dp 8dp;
+}
+
+/* ===================================================================
+   17. TOOLTIPS
+   =================================================================== */
+
+.tooltip {
+    background-color: #1C2128F2;         /* BG_TOOLTIP */
+    border: 1dp #28384899;
+    border-radius: 2dp;
+    padding: 6dp 10dp;
+    font-size: 11dp;
+    color: #E6EDF3;
+    max-width: 300dp;
+}
+
+/* ===================================================================
+   18. INPUT FIELDS
+   =================================================================== */
+
+input.text {
+    background-color: #161B22B3;         /* BG_SECONDARY, 70% */
+    border: 1dp #28384899;
+    border-radius: 2dp;
+    padding: 4dp 6dp;
+    color: #E6EDF3;
+    font-size: 11dp;
+    transition: border-color 150ms ease-out;
+}
+
+input.text:focus {
+    border-color: #45D0E8CC;
+}
+
+input.text:hover {
+    border-color: #2A5A6ACC;
+}
+
+/* ===================================================================
+   19. COMBAT LOG
+   =================================================================== */
+
+#combat-log {
+    position: fixed;
+    bottom: 10dp;
+    left: 50dp;
+    width: 400dp;
+    height: 180dp;
+}
+
+#combat-log .message {
+    font-size: 11dp;
+    color: #E6EDF3;
+    padding: 1dp 0;
+}
+
+#combat-log .message .timestamp {
+    color: #8B949E;
+    font-size: 10dp;
+}
+
+#combat-log .message.damage {
+    color: #FF6633;
+}
+
+#combat-log .message.heal {
+    color: #33CC66;
+}
+
+/* ===================================================================
+   20. UTILITY CLASSES
+   =================================================================== */
+
+.hidden    { display: none; }
+.flex-row  { display: flex; flex-direction: row; }
+.flex-col  { display: flex; flex-direction: column; }
+.flex-grow { flex: 1; }
+.center    { text-align: center; }
+.right     { text-align: right; }
+.m-0       { margin: 0; }
+.p-0       { padding: 0; }
+.mt-4      { margin-top: 4dp; }
+.mb-4      { margin-bottom: 4dp; }
+.p-8       { padding: 8dp; }

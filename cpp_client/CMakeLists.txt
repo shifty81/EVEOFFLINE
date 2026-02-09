@@ -13,6 +13,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # Options
 option(BUILD_TESTS "Build test suite" ON)
 option(USE_SYSTEM_LIBS "Use system libraries instead of bundled" ON)  # Default to ON since they're available
+option(USE_RMLUI "Enable RmlUi for advanced Photon UI (replaces ImGui for game panels)" OFF)
 
 # Platform-specific settings
 if(WIN32)
@@ -213,6 +214,42 @@ if(NOT USE_VCPKG_IMGUI)
     endif()
 endif()
 
+# RmlUi (advanced UI framework — optional, replaces ImGui for game panels)
+# See docs/design/UI_FRAMEWORK_EVALUATION.md for rationale.
+set(RMLUI_AVAILABLE OFF)
+set(RMLUI_SOURCES "")
+if(USE_RMLUI)
+    find_package(RmlUi QUIET)
+    if(RmlUi_FOUND)
+        message(STATUS "RmlUi found — advanced Photon UI enabled")
+        set(RMLUI_AVAILABLE ON)
+        add_definitions(-DUSE_RMLUI)
+    else()
+        # Try FetchContent as fallback
+        include(FetchContent)
+        FetchContent_Declare(
+            RmlUi
+            GIT_REPOSITORY https://github.com/mikke89/RmlUi.git
+            GIT_TAG        6.0
+            GIT_SHALLOW    TRUE
+        )
+        FetchContent_MakeAvailable(RmlUi)
+        if(TARGET rmlui)
+            message(STATUS "RmlUi fetched via FetchContent — advanced Photon UI enabled")
+            set(RMLUI_AVAILABLE ON)
+            add_definitions(-DUSE_RMLUI)
+        else()
+            message(WARNING
+                "RmlUi not found and FetchContent failed.\n"
+                "  Install via vcpkg:  vcpkg install rmlui:x64-windows\n"
+                "  Or on Linux:        sudo apt install librmlui-dev\n"
+                "  Falling back to ImGui-only UI.")
+        endif()
+    endif()
+else()
+    message(STATUS "RmlUi disabled (ImGui-only UI). Enable with -DUSE_RMLUI=ON")
+endif()
+
 # Include directories
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -276,6 +313,7 @@ set(CLIENT_SOURCES
     src/ui/market_panel.cpp
     src/ui/overview_panel.cpp
     src/ui/docking_manager.cpp
+    src/ui/rml_ui_manager.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}
@@ -326,6 +364,7 @@ set(CLIENT_HEADERS
     include/ui/market_panel.h
     include/ui/overview_panel.h
     include/ui/docking_manager.h
+    include/ui/rml_ui_manager.h
     ${AUDIO_HEADERS}
 )
 
@@ -354,6 +393,19 @@ endif()
 if(USE_VCPKG_IMGUI)
     target_link_libraries(eve_client imgui::imgui)
 endif()
+
+# Link RmlUi if available
+if(RMLUI_AVAILABLE)
+    if(RmlUi_FOUND)
+        target_link_libraries(eve_client RmlUi::RmlUi)
+    elseif(TARGET rmlui)
+        target_link_libraries(eve_client rmlui)
+    endif()
+endif()
+
+# Copy UI resources to build directory
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/ui_resources/
+     DESTINATION ${CMAKE_BINARY_DIR}/bin/ui_resources)
 
 # Link OpenAL if available
 if(OpenAL_FOUND)
@@ -389,7 +441,10 @@ add_custom_command(TARGET eve_client POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/assets
         $<TARGET_FILE_DIR:eve_client>/assets
-    COMMENT "Copying shaders and assets next to executable"
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/ui_resources
+        $<TARGET_FILE_DIR:eve_client>/ui_resources
+    COMMENT "Copying shaders, assets, and UI resources next to executable"
 )
 
 # Installation
@@ -404,6 +459,11 @@ install(DIRECTORY shaders/
 
 install(DIRECTORY assets/
     DESTINATION assets
+)
+
+install(DIRECTORY ui_resources/
+    DESTINATION ui_resources
+    FILES_MATCHING PATTERN "*.rml" PATTERN "*.rcss"
 )
 
 # Tests

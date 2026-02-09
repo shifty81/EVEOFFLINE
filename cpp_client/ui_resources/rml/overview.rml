@@ -1,0 +1,106 @@
+<!-- EVE OFFLINE — Overview Panel (RML)
+     Right-side panel with sortable entity table, filter tabs, and
+     color-coded standing indicators. -->
+<rml>
+<head>
+    <title>Overview</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        #overview {
+            position: fixed;
+            top: 50dp;
+            right: 10dp;
+            width: 380dp;
+            height: 400dp;
+            min-width: 300dp;
+            min-height: 200dp;
+        }
+
+        .overview-content {
+            height: calc(100% - 60dp);
+            overflow-y: auto;
+        }
+
+        .sort-arrow {
+            font-size: 8dp;
+            color: #45D0E8;
+            margin-left: 2dp;
+        }
+
+        /* Standing indicator dot */
+        .standing-dot {
+            display: inline-block;
+            width: 8dp;
+            height: 8dp;
+            border-radius: 4dp;
+            margin-right: 4dp;
+            vertical-align: middle;
+        }
+
+        .standing-dot.hostile   { background-color: #CC3333; }
+        .standing-dot.friendly  { background-color: #3399FF; }
+        .standing-dot.neutral   { background-color: #AAAAAA; }
+        .standing-dot.corp      { background-color: #AA66FF; }
+        .standing-dot.fleet     { background-color: #66CC66; }
+
+        /* Distance formatting */
+        .distance {
+            font-family: monospace;
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        /* Entity type */
+        .entity-type {
+            font-size: 10dp;
+            color: #8B949E;
+        }
+    </style>
+</head>
+<body>
+    <div id="overview" class="panel-solid">
+        <!-- Header bar -->
+        <div class="panel-header">
+            <span class="title">OVERVIEW</span>
+            <span class="window-btn" id="btn-close">×</span>
+            <span class="window-btn" id="btn-minimize">–</span>
+            <span class="window-btn" id="btn-pin">📌</span>
+        </div>
+
+        <!-- Filter tabs -->
+        <div class="tab-bar">
+            <span class="tab active" id="tab-all">All</span>
+            <span class="tab" id="tab-hostile">Hostile</span>
+            <span class="tab" id="tab-friendly">Friendly</span>
+            <span class="tab" id="tab-neutral">Neutral</span>
+        </div>
+
+        <!-- Entity table -->
+        <div class="overview-content">
+            <table>
+                <thead>
+                    <tr>
+                        <td style="width: 20dp;"></td>
+                        <td id="col-name">Name <span class="sort-arrow">▼</span></td>
+                        <td id="col-distance">Distance</td>
+                        <td id="col-type">Type</td>
+                    </tr>
+                </thead>
+                <tbody id="overview-body">
+                    <!--
+                        Rows are populated dynamically from C++ via
+                        RmlUiManager::UpdateOverviewData(). Example row:
+
+                        <tr class="hostile">
+                            <td><span class="standing-dot hostile"/></td>
+                            <td class="text-hostile">Serpentis Spy</td>
+                            <td class="distance">12.4 km</td>
+                            <td class="entity-type">Frigate</td>
+                        </tr>
+                    -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</rml>

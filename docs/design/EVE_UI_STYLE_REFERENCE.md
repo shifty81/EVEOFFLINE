@@ -157,7 +157,15 @@ EVE's Neocom is a vertical toolbar on the left edge:
 
 ## 7. Implementation Notes
 
-### Where to Apply (C++ ImGui)
+### RmlUi (Primary — game-facing panels)
+- `cpp_client/ui_resources/rcss/photon_ui.rcss` — Complete Photon UI theme
+- `cpp_client/ui_resources/rml/ship_hud.rml` — HUD with circular gauges
+- `cpp_client/ui_resources/rml/overview.rml` — Overview table panel
+- `cpp_client/ui_resources/rml/fitting.rml` — Fitting window
+- `cpp_client/include/ui/rml_ui_manager.h` — RmlUi manager class
+- `cpp_client/src/ui/rml_ui_manager.cpp` — OpenGL render backend
+
+### ImGui (Secondary — debug overlays)
 - `cpp_client/include/ui/ui_manager.h` — `EVEColors` struct holds all color constants
 - `cpp_client/src/ui/ui_manager.cpp` — `SetupEVEStyle()` applies the ImGui theme
 - `cpp_client/src/ui/eve_panels.cpp` — Panel rendering with styled health bars, headers
