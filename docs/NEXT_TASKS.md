@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 10, 2026)**: Second HAC variants added (Muninn, Eagle, Deimos, Sacrilege). Tech II EWAR and Logistics modules verified complete. The game now has 102 ships, 159+ modules, 137 skills, and comprehensive content across all tiers. InventorySystem, LootSystem, and NpcDatabase added to C++ server with 60 new tests (521 total).
+> **Update (February 10, 2026)**: Second HAC variants added (Muninn, Eagle, Deimos, Sacrilege). Tech II EWAR and Logistics modules verified complete. The game now has 102 ships, 159+ modules, 137 skills, and comprehensive content across all tiers. InventorySystem, LootSystem, NpcDatabase, and DroneSystem added to C++ server with tests (554 total).
 
 ## Current Status (February 2026)
 
@@ -26,7 +26,7 @@
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **9 major gameplay systems** fully implemented (including Incursions)
-- **95+ test functions** all passing (415 assertions)
+- **95+ test functions** all passing (554 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture
@@ -349,6 +349,16 @@ From ROADMAP.md "In Progress" section:
     - ✅ Same lightweight JSON parser pattern as ShipDatabase
     - ✅ 30 test assertions, 100% pass rate
 
+28. ✅ **Add C++ Server DroneSystem** (COMPLETED - February 2026)
+    - ✅ DroneBay component with stored/deployed drone tracking, bandwidth and bay capacity
+    - ✅ DroneSystem with launch/recall/recallAll/getDeployedCount operations
+    - ✅ Bandwidth limit enforcement (drones rejected when bandwidth exceeded)
+    - ✅ Autonomous drone combat: per-tick damage to owner's locked target with cooldowns
+    - ✅ 3-layer damage (shields → armor → hull) with resistance calculations
+    - ✅ Destroyed drone removal (hp ≤ 0 drones cleaned up each tick)
+    - ✅ WorldPersistence serialization/deserialization for stored and deployed drones
+    - ✅ 33 test assertions, 100% pass rate
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -415,4 +425,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 10, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Logging, monitoring, and crash reporting added. InventorySystem, LootSystem, and NpcDatabase added. 102 ships, 159+ modules, 521 test assertions. Ready for Phase 8 planning.*
+*Status: Quick Wins, Medium-Term Tasks complete. Logging, monitoring, and crash reporting added. InventorySystem, LootSystem, NpcDatabase, and DroneSystem added. 102 ships, 159+ modules, 554 test assertions. Ready for Phase 8 planning.*
