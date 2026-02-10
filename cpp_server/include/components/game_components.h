@@ -616,6 +616,57 @@ public:
     COMPONENT_TYPE(MarketHub)
 };
 
+class Corporation : public ecs::Component {
+public:
+    std::string corp_id;
+    std::string corp_name;
+    std::string ticker;
+    std::string ceo_id;
+    float tax_rate = 0.05f;
+    std::vector<std::string> member_ids;
+    double corp_wallet = 0.0;
+
+    struct CorpHangarItem {
+        std::string item_id;
+        std::string name;
+        std::string type;
+        int quantity = 1;
+        float volume = 1.0f;
+    };
+
+    std::vector<CorpHangarItem> hangar_items;
+
+    COMPONENT_TYPE(Corporation)
+};
+
+class ContractBoard : public ecs::Component {
+public:
+    struct ContractItem {
+        std::string item_id;
+        std::string name;
+        int quantity = 1;
+        float volume = 1.0f;
+    };
+
+    struct Contract {
+        std::string contract_id;
+        std::string issuer_id;
+        std::string assignee_id;
+        std::string type;            // "item_exchange", "courier", "auction"
+        std::string status;          // "outstanding", "in_progress", "completed", "expired", "failed"
+        std::vector<ContractItem> items_offered;
+        std::vector<ContractItem> items_requested;
+        double isk_reward = 0.0;
+        double isk_collateral = 0.0;
+        float duration_remaining = -1.0f;
+        float days_to_complete = 3.0f;
+    };
+
+    std::vector<Contract> contracts;
+
+    COMPONENT_TYPE(ContractBoard)
+};
+
 } // namespace components
 } // namespace eve
 

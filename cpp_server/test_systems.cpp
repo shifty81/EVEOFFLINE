@@ -24,8 +24,10 @@
 #include "systems/loot_system.h"
 #include "systems/drone_system.h"
 #include "systems/insurance_system.h"
+#include "systems/corporation_system.h"
 #include "systems/bounty_system.h"
 #include "systems/market_system.h"
+#include "systems/contract_system.h"
 #include "data/world_persistence.h"
 #include "data/npc_database.h"
 #include "systems/movement_system.h"
@@ -3561,6 +3563,348 @@ void testMarketOrderExpiry() {
     assertTrue(marketSys.getOrderCount("station_1") == 0, "Order expired and removed");
 }
 
+// ==================== Corporation System Tests ====================
+
+void testCorpCreate() {
+    std::cout << "\n=== Corporation Create ===" << std::endl;
+    ecs::World world;
+    systems::CorporationSystem corpSys(&world);
+
+    auto* player = world.createEntity("player1");
+    auto* pc = addComp<components::Player>(player);
+    pc->player_id = "player1";
+    pc->character_name = "TestPilot";
+
+    assertTrue(corpSys.createCorporation("player1", "Test Corp", "TSTC"),
+               "Corporation created");
+
+    auto* corp_entity = world.getEntity("corp_test_corp");
+    assertTrue(corp_entity != nullptr, "Corp entity exists");
+
+    auto* corp = corp_entity->getComponent<components::Corporation>();
+    assertTrue(corp != nullptr, "Corporation component exists");
+    assertTrue(corp->ceo_id == "player1", "CEO is the creator");
+    assertTrue(corp->corp_name == "Test Corp", "Corp name set");
+    assertTrue(corp->ticker == "TSTC", "Ticker set");
+    assertTrue(corpSys.getMemberCount("corp_test_corp") == 1, "One member after creation");
+    assertTrue(pc->corporation == "Test Corp", "Player corporation updated");
+}
+
+void testCorpJoin() {
+    std::cout << "\n=== Corporation Join ===" << std::endl;
+    ecs::World world;
+    systems::CorporationSystem corpSys(&world);
+
+    auto* p1 = world.createEntity("player1");
+    auto* pc1 = addComp<components::Player>(p1);
+    pc1->player_id = "player1";
+
+    auto* p2 = world.createEntity("player2");
+    auto* pc2 = addComp<components::Player>(p2);
+    pc2->player_id = "player2";
+
+    corpSys.createCorporation("player1", "Join Corp", "JNCO");
+
+    assertTrue(corpSys.joinCorporation("player2", "corp_join_corp"),
+               "Player2 joins corp");
+    assertTrue(corpSys.getMemberCount("corp_join_corp") == 2, "Two members after join");
+    assertTrue(pc2->corporation == "Join Corp", "Player2 corporation updated");
+    assertTrue(!corpSys.joinCorporation("player2", "corp_join_corp"),
+               "Duplicate join rejected");
+}
+
+void testCorpLeave() {
+    std::cout << "\n=== Corporation Leave ===" << std::endl;
+    ecs::World world;
+    systems::CorporationSystem corpSys(&world);
+
+    auto* p1 = world.createEntity("player1");
+    auto* pc1 = addComp<components::Player>(p1);
+    pc1->player_id = "player1";
+
+    auto* p2 = world.createEntity("player2");
+    auto* pc2 = addComp<components::Player>(p2);
+    pc2->player_id = "player2";
+
+    corpSys.createCorporation("player1", "Leave Corp", "LVCO");
+    corpSys.joinCorporation("player2", "corp_leave_corp");
+
+    assertTrue(corpSys.leaveCorporation("player2", "corp_leave_corp"),
+               "Player2 leaves corp");
+    assertTrue(corpSys.getMemberCount("corp_leave_corp") == 1, "One member after leave");
+    assertTrue(pc2->corporation == "NPC Corp", "Player2 corporation reset");
+}
+
+void testCorpCeoCannotLeave() {
+    std::cout << "\n=== Corporation CEO Cannot Leave ===" << std::endl;
+    ecs::World world;
+    systems::CorporationSystem corpSys(&world);
+
+    auto* p1 = world.createEntity("player1");
+    auto* pc1 = addComp<components::Player>(p1);
+    pc1->player_id = "player1";
+
+    corpSys.createCorporation("player1", "CEO Corp", "CEOC");
+
+    assertTrue(!corpSys.leaveCorporation("player1", "corp_ceo_corp"),
+               "CEO cannot leave corporation");
+    assertTrue(corpSys.getMemberCount("corp_ceo_corp") == 1, "Member count unchanged");
+}
+
+void testCorpTaxRate() {
+    std::cout << "\n=== Corporation Tax Rate ===" << std::endl;
+    ecs::World world;
+    systems::CorporationSystem corpSys(&world);
+
+    auto* p1 = world.createEntity("player1");
+    auto* pc1 = addComp<components::Player>(p1);
+    pc1->player_id = "player1";
+
+    auto* p2 = world.createEntity("player2");
+    auto* pc2 = addComp<components::Player>(p2);
+    pc2->player_id = "player2";
+
+    corpSys.createCorporation("player1", "Tax Corp", "TAXC");
+    corpSys.joinCorporation("player2", "corp_tax_corp");
+
+    assertTrue(corpSys.setTaxRate("corp_tax_corp", "player1", 0.10f),
+               "CEO can set tax rate");
+    auto* corp = world.getEntity("corp_tax_corp")->getComponent<components::Corporation>();
+    assertTrue(approxEqual(corp->tax_rate, 0.10f), "Tax rate updated to 10%");
+
+    assertTrue(!corpSys.setTaxRate("corp_tax_corp", "player2", 0.20f),
+               "Non-CEO cannot set tax rate");
+    assertTrue(approxEqual(corp->tax_rate, 0.10f), "Tax rate unchanged");
+}
+
+void testCorpApplyTax() {
+    std::cout << "\n=== Corporation Apply Tax ===" << std::endl;
+    ecs::World world;
+    systems::CorporationSystem corpSys(&world);
+
+    auto* p1 = world.createEntity("player1");
+    auto* pc1 = addComp<components::Player>(p1);
+    pc1->player_id = "player1";
+
+    corpSys.createCorporation("player1", "Wallet Corp", "WLTC");
+    corpSys.setTaxRate("corp_wallet_corp", "player1", 0.10f);
+
+    double remaining = corpSys.applyTax("corp_wallet_corp", 1000.0);
+    assertTrue(approxEqual(static_cast<float>(remaining), 900.0f), "Remaining ISK after 10% tax");
+
+    auto* corp = world.getEntity("corp_wallet_corp")->getComponent<components::Corporation>();
+    assertTrue(approxEqual(static_cast<float>(corp->corp_wallet), 100.0f), "Corp wallet received tax");
+}
+
+void testSerializeDeserializeCorporation() {
+    std::cout << "\n=== Serialize/Deserialize Corporation ===" << std::endl;
+
+    ecs::World world;
+    auto* entity = world.createEntity("corp_test");
+    auto* corp = addComp<components::Corporation>(entity);
+    corp->corp_id = "corp_test";
+    corp->corp_name = "Serialize Corp";
+    corp->ticker = "SRLZ";
+    corp->ceo_id = "player1";
+    corp->tax_rate = 0.15f;
+    corp->corp_wallet = 50000.0;
+    corp->member_ids.push_back("player1");
+    corp->member_ids.push_back("player2");
+
+    components::Corporation::CorpHangarItem item;
+    item.item_id = "tritanium"; item.name = "Tritanium";
+    item.type = "ore"; item.quantity = 1000; item.volume = 0.01f;
+    corp->hangar_items.push_back(item);
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    assertTrue(persistence.deserializeWorld(&world2, json),
+               "Corporation deserialization succeeds");
+
+    auto* e2 = world2.getEntity("corp_test");
+    assertTrue(e2 != nullptr, "Corp entity recreated");
+
+    auto* corp2 = e2->getComponent<components::Corporation>();
+    assertTrue(corp2 != nullptr, "Corporation component recreated");
+    assertTrue(corp2->corp_name == "Serialize Corp", "corp_name preserved");
+    assertTrue(corp2->ticker == "SRLZ", "ticker preserved");
+    assertTrue(corp2->ceo_id == "player1", "ceo_id preserved");
+    assertTrue(approxEqual(corp2->tax_rate, 0.15f), "tax_rate preserved");
+    assertTrue(approxEqual(static_cast<float>(corp2->corp_wallet), 50000.0f), "corp_wallet preserved");
+    assertTrue(corp2->member_ids.size() == 2, "member_ids count preserved");
+    assertTrue(corp2->member_ids[0] == "player1", "member_ids[0] preserved");
+    assertTrue(corp2->member_ids[1] == "player2", "member_ids[1] preserved");
+    assertTrue(corp2->hangar_items.size() == 1, "hangar_items count preserved");
+    assertTrue(corp2->hangar_items[0].item_id == "tritanium", "hangar item_id preserved");
+    assertTrue(corp2->hangar_items[0].quantity == 1000, "hangar item quantity preserved");
+}
+
+// ==================== ContractSystem Tests ====================
+
+void testContractCreate() {
+    std::cout << "\n=== Contract Create ===" << std::endl;
+    ecs::World world;
+    systems::ContractSystem contractSys(&world);
+    auto* station = world.createEntity("station_1");
+    addComp<components::ContractBoard>(station);
+
+    assertTrue(contractSys.createContract("station_1", "player_1", "item_exchange", 50000.0, 3600.0f),
+               "Contract created successfully");
+    assertTrue(contractSys.getActiveContractCount("station_1") == 1, "Active contract count is 1");
+    assertTrue(contractSys.getContractsByStatus("station_1", "outstanding") == 1,
+               "Outstanding contract count is 1");
+}
+
+void testContractAccept() {
+    std::cout << "\n=== Contract Accept ===" << std::endl;
+    ecs::World world;
+    systems::ContractSystem contractSys(&world);
+    auto* station = world.createEntity("station_1");
+    addComp<components::ContractBoard>(station);
+
+    contractSys.createContract("station_1", "player_1", "courier", 100000.0, -1.0f);
+    auto* board = station->getComponent<components::ContractBoard>();
+    std::string cid = board->contracts[0].contract_id;
+
+    assertTrue(contractSys.acceptContract("station_1", cid, "player_2"),
+               "Contract accepted");
+    assertTrue(board->contracts[0].status == "in_progress", "Status changed to in_progress");
+    assertTrue(board->contracts[0].assignee_id == "player_2", "Assignee set correctly");
+    assertTrue(contractSys.getContractsByStatus("station_1", "outstanding") == 0,
+               "No outstanding contracts after accept");
+    assertTrue(contractSys.getContractsByStatus("station_1", "in_progress") == 1,
+               "One in_progress contract after accept");
+}
+
+void testContractComplete() {
+    std::cout << "\n=== Contract Complete ===" << std::endl;
+    ecs::World world;
+    systems::ContractSystem contractSys(&world);
+    auto* station = world.createEntity("station_1");
+    addComp<components::ContractBoard>(station);
+
+    auto* acceptor = world.createEntity("player_2");
+    auto* player = addComp<components::Player>(acceptor);
+    player->isk = 10000.0;
+
+    contractSys.createContract("station_1", "player_1", "item_exchange", 75000.0, -1.0f);
+    auto* board = station->getComponent<components::ContractBoard>();
+    std::string cid = board->contracts[0].contract_id;
+
+    contractSys.acceptContract("station_1", cid, "player_2");
+    assertTrue(contractSys.completeContract("station_1", cid), "Contract completed");
+    assertTrue(board->contracts[0].status == "completed", "Status is completed");
+    assertTrue(approxEqual(static_cast<float>(player->isk), 85000.0f), "ISK reward paid to acceptor");
+}
+
+void testContractExpiry() {
+    std::cout << "\n=== Contract Expiry ===" << std::endl;
+    ecs::World world;
+    systems::ContractSystem contractSys(&world);
+    auto* station = world.createEntity("station_1");
+    addComp<components::ContractBoard>(station);
+
+    contractSys.createContract("station_1", "player_1", "auction", 0.0, 10.0f);
+
+    contractSys.update(5.0f);
+    assertTrue(contractSys.getContractsByStatus("station_1", "outstanding") == 1,
+               "Contract still outstanding at 5s");
+
+    contractSys.update(6.0f);
+    assertTrue(contractSys.getContractsByStatus("station_1", "outstanding") == 0,
+               "No outstanding contracts after 11s");
+    assertTrue(contractSys.getContractsByStatus("station_1", "expired") == 1,
+               "Contract expired after 11s");
+}
+
+void testContractStatusQuery() {
+    std::cout << "\n=== Contract Status Query ===" << std::endl;
+    ecs::World world;
+    systems::ContractSystem contractSys(&world);
+    auto* station = world.createEntity("station_1");
+    addComp<components::ContractBoard>(station);
+
+    contractSys.createContract("station_1", "p1", "item_exchange", 1000.0, -1.0f);
+    contractSys.createContract("station_1", "p2", "courier", 2000.0, 5.0f);
+    contractSys.createContract("station_1", "p3", "auction", 3000.0, -1.0f);
+
+    auto* board = station->getComponent<components::ContractBoard>();
+    contractSys.acceptContract("station_1", board->contracts[0].contract_id, "buyer_1");
+    contractSys.completeContract("station_1", board->contracts[0].contract_id);
+
+    contractSys.update(6.0f); // expire the second contract
+
+    assertTrue(contractSys.getContractsByStatus("station_1", "completed") == 1,
+               "1 completed contract");
+    assertTrue(contractSys.getContractsByStatus("station_1", "expired") == 1,
+               "1 expired contract");
+    assertTrue(contractSys.getContractsByStatus("station_1", "outstanding") == 1,
+               "1 outstanding contract");
+    assertTrue(contractSys.getActiveContractCount("station_1") == 1,
+               "1 active contract (outstanding only)");
+}
+
+void testSerializeDeserializeContractBoard() {
+    std::cout << "\n=== Serialize/Deserialize ContractBoard ===" << std::endl;
+
+    ecs::World world;
+    auto* entity = world.createEntity("board_test");
+    auto* board = addComp<components::ContractBoard>(entity);
+
+    components::ContractBoard::Contract c;
+    c.contract_id = "contract_p1_0";
+    c.issuer_id = "p1";
+    c.assignee_id = "p2";
+    c.type = "courier";
+    c.status = "in_progress";
+    c.isk_reward = 50000.0;
+    c.isk_collateral = 10000.0;
+    c.duration_remaining = 100.0f;
+    c.days_to_complete = 7.0f;
+
+    components::ContractBoard::ContractItem offered;
+    offered.item_id = "trit"; offered.name = "Tritanium";
+    offered.quantity = 500; offered.volume = 0.01f;
+    c.items_offered.push_back(offered);
+
+    components::ContractBoard::ContractItem requested;
+    requested.item_id = "pye"; requested.name = "Pyerite";
+    requested.quantity = 100; requested.volume = 0.01f;
+    c.items_requested.push_back(requested);
+
+    board->contracts.push_back(c);
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    assertTrue(persistence.deserializeWorld(&world2, json),
+               "ContractBoard deserialization succeeds");
+
+    auto* e2 = world2.getEntity("board_test");
+    assertTrue(e2 != nullptr, "Board entity recreated");
+
+    auto* board2 = e2->getComponent<components::ContractBoard>();
+    assertTrue(board2 != nullptr, "ContractBoard component recreated");
+    assertTrue(board2->contracts.size() == 1, "Contract count preserved");
+    assertTrue(board2->contracts[0].contract_id == "contract_p1_0", "contract_id preserved");
+    assertTrue(board2->contracts[0].issuer_id == "p1", "issuer_id preserved");
+    assertTrue(board2->contracts[0].assignee_id == "p2", "assignee_id preserved");
+    assertTrue(board2->contracts[0].type == "courier", "type preserved");
+    assertTrue(board2->contracts[0].status == "in_progress", "status preserved");
+    assertTrue(approxEqual(static_cast<float>(board2->contracts[0].isk_reward), 50000.0f), "isk_reward preserved");
+    assertTrue(approxEqual(static_cast<float>(board2->contracts[0].isk_collateral), 10000.0f), "isk_collateral preserved");
+    assertTrue(approxEqual(board2->contracts[0].duration_remaining, 100.0f), "duration_remaining preserved");
+    assertTrue(approxEqual(board2->contracts[0].days_to_complete, 7.0f), "days_to_complete preserved");
+    assertTrue(board2->contracts[0].items_offered.size() == 1, "items_offered count preserved");
+    assertTrue(board2->contracts[0].items_offered[0].item_id == "trit", "offered item_id preserved");
+    assertTrue(board2->contracts[0].items_offered[0].quantity == 500, "offered quantity preserved");
+    assertTrue(board2->contracts[0].items_requested.size() == 1, "items_requested count preserved");
+    assertTrue(board2->contracts[0].items_requested[0].item_id == "pye", "requested item_id preserved");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -3743,6 +4087,23 @@ int main() {
     testMarketBuyFromMarket();
     testMarketPriceQueries();
     testMarketOrderExpiry();
+
+    // Corporation system tests
+    testCorpCreate();
+    testCorpJoin();
+    testCorpLeave();
+    testCorpCeoCannotLeave();
+    testCorpTaxRate();
+    testCorpApplyTax();
+    testSerializeDeserializeCorporation();
+
+    // Contract system tests
+    testContractCreate();
+    testContractAccept();
+    testContractComplete();
+    testContractExpiry();
+    testContractStatusQuery();
+    testSerializeDeserializeContractBoard();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
