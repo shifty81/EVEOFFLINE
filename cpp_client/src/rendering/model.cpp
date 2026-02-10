@@ -779,7 +779,7 @@ static int getFactionSides(const std::string& faction) {
  * proper winding order, and valid indices (always multiples of 3).
  *
  * Replaces the old manual vertex/index code that produced degenerate
- * triangles and squiggly rendering artefacts.
+ * triangles and squiggly rendering artifacts.
  */
 static std::unique_ptr<Model> buildShipFromParams(
     const HullParams& params,
