@@ -96,7 +96,7 @@ bool SkillSystem::trainSkillInstant(const std::string& entity_id,
     auto* skillset = entity->getComponent<components::SkillSet>();
     if (!skillset) return false;
 
-    if (level < 0 || level > 5) return false;
+    if (level < 1 || level > 5) return false;
 
     components::SkillSet::TrainedSkill skill;
     skill.skill_id = skill_id;

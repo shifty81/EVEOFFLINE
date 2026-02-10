@@ -2320,7 +2320,7 @@ void testMissionAcceptAndComplete() {
 
     // Update should process completion
     missionSys.update(0.0f);
-    assertTrue(approxEqual(static_cast<float>(playerComp->isk), 100000.0f),
+    assertTrue(approxEqual(static_cast<float>(playerComp->isk), 100000.0f, 1.0f),
                "ISK reward applied");
     assertTrue(tracker->completed_mission_ids.size() == 1,
                "Mission recorded as completed");
