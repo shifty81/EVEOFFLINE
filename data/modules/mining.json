@@ -416,7 +416,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Pyroxeres Processing": 4
+          "Ignaite Processing": 4
         }
       }
     },
@@ -465,7 +465,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Plagioclase Processing": 4
+          "Crystite Processing": 4
         }
       }
     },
@@ -514,7 +514,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Omber Processing": 4
+          "Shadite Processing": 4
         }
       }
     },
@@ -563,7 +563,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Kernite Processing": 4
+          "Corite Processing": 4
         }
       }
     },
@@ -612,7 +612,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Jaspet Processing": 4
+          "Lumine Processing": 4
         }
       }
     },
@@ -710,7 +710,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Hedbergite Processing": 4
+          "Glacite Processing": 4
         }
       }
     },
@@ -759,7 +759,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Gneiss Processing": 4
+          "Densite Processing": 4
         }
       }
     },
@@ -857,7 +857,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Crokite Processing": 4
+          "Pyranite Processing": 4
         }
       }
     },
@@ -906,7 +906,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Bistot Processing": 4
+          "Stellite Processing": 4
         }
       }
     },
@@ -955,7 +955,7 @@
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Arkonor Processing": 4
+          "Cosmite Processing": 4
         }
       }
     },
@@ -1001,7 +1001,7 @@
           "Mining": 5,
           "Deep Core Mining": 4,
           "Reprocessing": 5,
-          "Mercoxit Processing": 4
+          "Nexorite Processing": 4
         }
       }
     }

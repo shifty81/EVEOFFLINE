@@ -1597,7 +1597,7 @@ void testSerializeDeserializeStandings() {
     // Check corporation standings
     assertTrue(lstandings->corporation_standings.size() == 2, "Corporation standings count preserved");
     assertTrue(approxEqual(lstandings->corporation_standings["Republic Fleet"], 3.0f), "Corporation standing (Republic Fleet) preserved");
-    assertTrue(approxEqual(lstandings->corporation_standings["Venom Syndicate"], -7.5f), "Corporation standing (Serpentis) preserved");
+    assertTrue(approxEqual(lstandings->corporation_standings["Venom Syndicate"], -7.5f), "Corporation standing (Venom Syndicate) preserved");
     
     // Check faction standings
     assertTrue(lstandings->faction_standings.size() == 2, "Faction standings count preserved");
