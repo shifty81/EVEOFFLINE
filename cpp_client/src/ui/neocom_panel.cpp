@@ -12,9 +12,13 @@ bool NeocomPanel::RenderButton(const char* icon, const char* label, const char* 
     float buttonSize = 40.0f;
     float expandedWidth = 170.0f;
 
-    // Push hover highlight colors for EVE-style mouseover feedback
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.10f, 0.23f, 0.29f, 0.9f));  // Teal highlight
-    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.17f, 0.35f, 0.42f, 1.0f));   // Brighter on click
+    // Push Photon UI hover highlight colors
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(
+        EVEColors::SELECTION[0], EVEColors::SELECTION[1],
+        EVEColors::SELECTION[2], 0.9f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 1.0f));
 
     if (m_collapsed) {
         // Icon-only button
@@ -59,8 +63,10 @@ void NeocomPanel::Render() {
         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-    // Semi-transparent dark background
-    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.035f, 0.050f, 0.070f, 0.92f));
+    // Semi-transparent dark background — Photon UI Neocom
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(
+        EVEColors::BG_PANEL[0], EVEColors::BG_PANEL[1],
+        EVEColors::BG_PANEL[2], 0.92f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(6, 8));
 
     ImGui::Begin("##Neocom", nullptr, flags);

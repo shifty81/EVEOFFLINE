@@ -1,4 +1,5 @@
 #include "ui/overview_panel.h"
+#include "ui/ui_manager.h"
 #include "core/entity.h"
 #include <imgui.h>
 #include <algorithm>
@@ -152,9 +153,13 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     // Apply standing color
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rowColor[0], rowColor[1], rowColor[2], rowColor[3]));
     
-    // Enhance hover highlighting for rows
-    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.10f, 0.23f, 0.29f, 0.8f));
-    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.17f, 0.35f, 0.42f, 0.9f));
+    // Enhance hover highlighting with Photon UI teal accent
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(
+        EVEColors::SELECTION[0], EVEColors::SELECTION[1],
+        EVEColors::SELECTION[2], 0.8f));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 0.9f));
     
     ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | 
                                            ImGuiSelectableFlags_AllowItemOverlap;
@@ -171,7 +176,10 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     // Hover tooltip with entity details
     if (ImGui::IsItemHovered()) {
         ImGui::BeginTooltip();
-        ImGui::TextColored(ImVec4(0.271f, 0.816f, 0.910f, 1.0f), "%s", entry.name.c_str());
+        ImGui::TextColored(ImVec4(
+            EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+            EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]),
+            "%s", entry.name.c_str());
         ImGui::Text("Type: %s", entry.ship_type.c_str());
         ImGui::Text("Distance: %s", FormatDistance(entry.distance).c_str());
         ImGui::Text("Corp: %s", entry.corporation.c_str());

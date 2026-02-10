@@ -1,4 +1,5 @@
 #include "ui/market_panel.h"
+#include "ui/ui_manager.h"
 #include <imgui.h>
 #include <algorithm>
 #include <cstring>
@@ -80,11 +81,15 @@ void MarketPanel::SetAvailableItems(const std::vector<MarketItem>& items) {
 }
 
 void MarketPanel::RenderViewTabs() {
-    // Browse tab
+    // Browse tab — Photon UI active tab uses teal accent
     if (m_viewMode == 0) {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 0.8f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+            EVEColors::ACCENT_DIM[2], 0.8f));
     } else {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.15f, 0.2f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
+            EVEColors::BG_HEADER[2], 0.8f));
     }
     
     if (ImGui::Button("Browse", ImVec2(150, 30))) {
@@ -96,9 +101,13 @@ void MarketPanel::RenderViewTabs() {
     
     // Quick Trade tab
     if (m_viewMode == 2) {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 0.8f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+            EVEColors::ACCENT_DIM[2], 0.8f));
     } else {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.15f, 0.2f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
+            EVEColors::BG_HEADER[2], 0.8f));
     }
     
     if (ImGui::Button("Quick Trade", ImVec2(150, 30))) {
@@ -123,8 +132,10 @@ void MarketPanel::RenderSearchBar() {
     }
     
     ImGui::SameLine();
-    ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), 
-                       "(%zu items)", m_filteredItems.size());
+    ImGui::TextColored(ImVec4(
+        EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
+        EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+        "(%zu items)", m_filteredItems.size());
 }
 
 void MarketPanel::RenderBrowseView() {
@@ -161,8 +172,10 @@ void MarketPanel::RenderBrowseView() {
 
 void MarketPanel::RenderQuickTradeView() {
     if (m_selectedItemId.empty()) {
-        ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), 
-                          "Select an item from Browse view first");
+        ImGui::TextColored(ImVec4(
+            EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
+            EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+            "Select an item from Browse view first");
         return;
     }
     
@@ -177,7 +190,10 @@ void MarketPanel::RenderQuickTradeView() {
     
     if (!selectedItem) return;
     
-    ImGui::TextColored(ImVec4(0.2f, 0.8f, 1.0f, 1.0f), "Quick Trade: %s", selectedItem->name.c_str());
+    ImGui::TextColored(ImVec4(
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]),
+        "Quick Trade: %s", selectedItem->name.c_str());
     ImGui::Separator();
     ImGui::Spacing();
     
@@ -190,7 +206,9 @@ void MarketPanel::RenderQuickTradeView() {
     
     // Quick Buy section
     ImGui::BeginChild("QuickBuySection", ImVec2(0, 250), true);
-    ImGui::TextColored(ImVec4(0.2f, 1.0f, 0.4f, 1.0f), "Quick Buy");
+    ImGui::TextColored(ImVec4(
+        EVEColors::SUCCESS[0], EVEColors::SUCCESS[1],
+        EVEColors::SUCCESS[2], EVEColors::SUCCESS[3]), "QUICK BUY");
     ImGui::Separator();
     ImGui::Spacing();
     
@@ -227,7 +245,9 @@ void MarketPanel::RenderQuickTradeView() {
     
     // Quick Sell section
     ImGui::BeginChild("QuickSellSection", ImVec2(0, 0), true);
-    ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.2f, 1.0f), "Quick Sell");
+    ImGui::TextColored(ImVec4(
+        EVEColors::WARNING[0], EVEColors::WARNING[1],
+        EVEColors::WARNING[2], EVEColors::WARNING[3]), "QUICK SELL");
     ImGui::Separator();
     ImGui::Spacing();
     
@@ -263,8 +283,10 @@ void MarketPanel::RenderQuickTradeView() {
 
 void MarketPanel::RenderOrderBook() {
     if (m_selectedItemId.empty()) {
-        ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), 
-                          "Select an item to view orders");
+        ImGui::TextColored(ImVec4(
+            EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
+            EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+            "Select an item to view orders");
         return;
     }
     
@@ -287,13 +309,17 @@ void MarketPanel::RenderOrderBook() {
 }
 
 void MarketPanel::RenderBuyOrders() {
-    ImGui::TextColored(ImVec4(0.2f, 1.0f, 0.4f, 1.0f), "Buy Orders");
+    ImGui::TextColored(ImVec4(
+        EVEColors::SUCCESS[0], EVEColors::SUCCESS[1],
+        EVEColors::SUCCESS[2], EVEColors::SUCCESS[3]), "BUY ORDERS");
     ImGui::Separator();
     
     auto orders = GetItemBuyOrders();
     
     if (orders.empty()) {
-        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "No buy orders");
+        ImGui::TextColored(ImVec4(
+            EVEColors::TEXT_DISABLED[0], EVEColors::TEXT_DISABLED[1],
+            EVEColors::TEXT_DISABLED[2], 1.0f), "No buy orders");
         return;
     }
     
@@ -314,13 +340,17 @@ void MarketPanel::RenderBuyOrders() {
 }
 
 void MarketPanel::RenderSellOrders() {
-    ImGui::TextColored(ImVec4(1.0f, 0.4f, 0.2f, 1.0f), "Sell Orders");
+    ImGui::TextColored(ImVec4(
+        EVEColors::WARNING[0], EVEColors::WARNING[1],
+        EVEColors::WARNING[2], EVEColors::WARNING[3]), "SELL ORDERS");
     ImGui::Separator();
     
     auto orders = GetItemSellOrders();
     
     if (orders.empty()) {
-        ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "No sell orders");
+        ImGui::TextColored(ImVec4(
+            EVEColors::TEXT_DISABLED[0], EVEColors::TEXT_DISABLED[1],
+            EVEColors::TEXT_DISABLED[2], 1.0f), "No sell orders");
         return;
     }
     
@@ -352,10 +382,14 @@ void MarketPanel::RenderItemRow(const MarketItem& item, int index) {
     if (ImGui::IsItemHovered()) {
         ImGui::BeginTooltip();
         ImGui::Text("%s", item.name.c_str());
-        ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.0f), "%s - %s", 
-                          item.category.c_str(), item.group.c_str());
-        ImGui::TextColored(ImVec4(1.0f, 0.8f, 0.2f, 1.0f), "Base Price: %.2f ISK", 
-                          item.base_price);
+        ImGui::TextColored(ImVec4(
+            EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
+            EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+            "%s - %s", item.category.c_str(), item.group.c_str());
+        ImGui::TextColored(ImVec4(
+            EVEColors::WARNING[0], EVEColors::WARNING[1],
+            EVEColors::WARNING[2], EVEColors::WARNING[3]),
+            "Base Price: %.2f ISK", item.base_price);
         ImGui::EndTooltip();
     }
 }
