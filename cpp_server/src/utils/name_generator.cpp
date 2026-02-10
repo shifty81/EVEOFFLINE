@@ -109,9 +109,9 @@ void NameGenerator::initializeNameData() {
     
     // Asteroid types
     asteroid_types_ = {
-        "Dustite", "Ferrite", "Ignaite", "Crystite", "Shadite", "Corite",
-        "Lumine", "Sangite", "Glacite", "Densite", "Voidite", "Pyranite",
-        "Stellite", "Cosmite", "Nexorite", "Spodumain"
+        "Veldspar", "Scordite", "Pyroxeres", "Plagioclase", "Omber", "Kernite",
+        "Jaspet", "Hemorphite", "Hedbergite", "Gneiss", "Dark Ochre", "Crokite",
+        "Bistot", "Arkonor", "Mercoxit", "Spodumain"
     };
 }
 
