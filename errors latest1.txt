@@ -1,0 +1,789 @@
+================================================
+EVE OFFLINE C++ Client - Visual Studio Build
+================================================
+
+Build Type: Release
+
+Configuring CMake for Visual Studio...
+
+Found vcpkg at C:\vcpkg
+
+Using generator: Visual Studio 17 2022
+
+-- Selecting Windows SDK version 10.0.26100.0 to target Windows 10.0.19045.
+-- The C compiler identification is MSVC 19.38.33145.0
+-- The CXX compiler identification is MSVC 19.38.33145.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx64/x64/cl.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Failed
+-- Looking for pthread_create in pthreads
+-- Looking for pthread_create in pthreads - not found
+-- Looking for pthread_create in pthread
+-- Looking for pthread_create in pthread - not found
+-- Found Threads: TRUE
+-- Found OpenGL: opengl32
+-- OpenAL found - audio support enabled
+-- GLEW found - using system GLEW
+-- Using system GLEW (GLAD not needed)
+-- Using system nlohmann/json
+-- Using bundled STB image loader
+-- Using bundled tinyobjloader for .obj model loading
+-- Using bundled tinygltf for .gltf/.glb model loading
+-- Using system ImGui from vcpkg
+-- RmlUi disabled (ImGui-only UI). Enable with -DUSE_RMLUI=ON
+-- 7z not found - install p7zip-full (Linux) or 7-Zip (Windows) to auto-extract ship models
+-- Building test suite...
+--
+-- EVE OFFLINE Client Configuration:
+--   C++ Standard: 17
+--   OpenGL:
+--   Use System Libraries: ON
+--   Build Tests: ON
+--   RmlUi Enabled: OFF
+--
+-- Configuring done (6.5s)
+-- Generating done (0.2s)
+-- Build files have been written to: C:/GIT PROJECTS/EVEOFFLINE/cpp_client/build_vs
+
+CMake configuration successful!
+
+Building project...
+
+MSBuild version 17.14.40+3e7442088 for .NET Framework
+
+  Checking File Globs
+  1>Checking Build System
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  main.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  test_phase46_advanced.cpp
+  test_entity_sync.cpp
+  test_network.cpp
+  test_asteroid_field.cpp
+  test_audio_system.cpp
+  test_deferred_rendering.cpp
+  test_enhanced_ui.cpp
+  test_lighting.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  application.cpp
+  window.cpp
+  application.cpp
+  window.cpp
+  application.cpp
+  audio_manager.cpp
+  window.cpp
+  entity.cpp
+  shader.cpp
+  shader.cpp
+  shader.cpp
+  tcp_client.cpp
+  audio_generator.cpp
+  game_client.cpp
+  entity_manager.cpp
+  test_phase48_panels.cpp
+  game_client.cpp
+  game_client.cpp
+  Generating Code...
+  protocol_handler.cpp
+  application.cpp
+  entity_message_parser.cpp
+  camera.cpp
+  camera.cpp
+  camera.cpp
+  mesh.cpp
+  mesh.cpp
+  mesh.cpp
+  embedded_server.cpp
+  embedded_server.cpp
+  embedded_server.cpp
+  model.cpp
+  gbuffer.cpp
+  game_client.cpp
+  test_audio_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_audio_system.exe
+  instanced_renderer.cpp
+  session_manager.cpp
+  session_manager.cpp
+  session_manager.cpp
+  Generating Code...
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  network_manager.cpp
+  lighting.cpp
+  asteroid_field_renderer.cpp
+  entity.cpp
+  test_post_processing.cpp
+  entity.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,5): error C2065: 'HullParams': undeclared identifier
+[C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2146: syntax error: missing ';' before id
+entifier 'p' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  entity.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,15): error C3861: 'getFactionSides': identifier not f
+ound [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(521,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(522,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(523,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(527,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(528,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(529,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(531,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(532,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(533,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(535,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(536,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(537,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(539,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(540,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(541,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(543,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(544,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(545,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(547,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(548,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(549,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(551,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(552,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(553,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(555,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(556,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(557,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(559,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(560,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(561,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,32): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,12): error C3861: 'buildShipFromParams': identifier n
+ot found [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_lighting.vcxproj]
+  texture.cpp
+  input_handler.cpp
+  input_handler.cpp
+  entity_manager.cpp
+  embedded_server.cpp
+  entity_manager.cpp
+  Generating Code...
+  entity_manager.cpp
+  Generating Code...
+  lighting.cpp
+  Generating Code...
+  window.cpp
+  session_manager.cpp
+  entity_message_parser.cpp
+  entity_message_parser.cpp
+  entity_message_parser.cpp
+  input_handler.cpp
+  test_entity_sync.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_entity_sync.exe
+  shader.cpp
+  ui_manager.cpp
+  entity.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  entity_manager.cpp
+  file_logger.cpp
+  file_logger.cpp
+  eve_panels.cpp
+  file_logger.cpp
+  test_deferred_rendering.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_deferred_rendering
+  .exe
+  test_asteroid_field.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_asteroid_field.exe
+  test_server_responses.cpp
+  window.cpp
+  entity_message_parser.cpp
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  Building Custom Rule C:/GIT PROJECTS/EVEOFFLINE/cpp_client/CMakeLists.txt
+  window.cpp
+  eve_target_list.cpp
+  camera.cpp
+  test_shadow_mapping.cpp
+  window.cpp
+  shader.cpp
+  tcp_client.cpp
+  inventory_panel.cpp
+  lighting.cpp
+  shader.cpp
+  shader.cpp
+  test_ui_system.cpp
+  fitting_panel.cpp
+  window.cpp
+  post_processing.cpp
+  mission_panel.cpp
+  file_logger.cpp
+  protocol_handler.cpp
+  shader.cpp
+  camera.cpp
+  window.cpp
+  overview_panel.cpp
+  Generating Code...
+  test_network.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_network.exe
+  window.cpp
+  camera.cpp
+  renderer.cpp
+  camera.cpp
+  ui_manager.cpp
+  renderer.cpp
+  docking_manager.cpp
+  shader.cpp
+  renderer.cpp
+  camera.cpp
+  network_manager.cpp
+  mesh.cpp
+  market_panel.cpp
+  mesh.cpp
+  eve_panels.cpp
+  mesh.cpp
+  mesh.cpp
+  model.cpp
+  dscan_panel.cpp
+  model.cpp
+  shadow_map.cpp
+  eve_target_list.cpp
+  model.cpp
+  camera.cpp
+  neocom_panel.cpp
+  inventory_panel.cpp
+  renderer.cpp
+  lighting.cpp
+  Generating Code...
+  Generating Code...
+  fitting_panel.cpp
+  input_handler.cpp
+  mesh.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,5): error C2065: 'HullParams': undeclared identifier
+[C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2146: syntax error: missing ';' before id
+entifier 'p' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,15): error C3861: 'getFactionSides': identifier not f
+ound [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(521,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(522,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(523,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(527,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(528,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(529,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(531,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(532,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(533,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(535,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(536,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(537,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(539,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(540,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(541,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(543,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(544,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(545,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(547,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(548,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(549,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(551,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(552,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(553,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(555,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(556,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(557,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(559,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(560,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(561,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,32): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,12): error C3861: 'buildShipFromParams': identifier n
+ot found [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\eve_client.vcxproj]
+  ship_part_library.cpp
+  Generating Code...
+  mission_panel.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,5): error C2065: 'HullParams': undeclared identifier
+[C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2146: syntax error: missing ';' before id
+entifier 'p' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,15): error C3861: 'getFactionSides': identifier not f
+ound [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(521,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(522,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(523,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(527,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(528,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(529,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(531,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(532,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(533,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(535,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(536,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(537,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(539,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(540,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(541,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(543,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(544,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(545,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(547,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(548,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(549,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(551,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(552,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(553,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(555,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(556,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(557,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(559,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(560,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(561,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,32): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,12): error C3861: 'buildShipFromParams': identifier n
+ot found [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase46_advanced.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,5): error C2065: 'HullParams': undeclared identifier
+[C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  model.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2146: syntax error: missing ';' before id
+entifier 'p' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  ship_part_library.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,15): error C3861: 'getFactionSides': identifier not f
+ound [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(521,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(522,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(523,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(527,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(528,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(529,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(531,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(532,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(533,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(535,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(536,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(537,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(539,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(540,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(541,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(543,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(544,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(545,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(547,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(548,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(549,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(551,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(552,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(553,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(555,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(556,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(557,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(559,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(560,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(561,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,32): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,12): error C3861: 'buildShipFromParams': identifier n
+ot found [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_enhanced_ui.vcxproj]
+  ship_part_library.cpp
+  overview_panel.cpp
+  ship_generation_rules.cpp
+  ship_generation_rules.cpp
+  docking_manager.cpp
+  test_post_processing.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_post_processing.exe
+  ship_generation_rules.cpp
+  procedural_mesh_ops.cpp
+  procedural_mesh_ops.cpp
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,5): error C2065: 'HullParams': undeclared identifier
+[C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2146: syntax error: missing ';' before id
+entifier 'p' [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(519,16): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(520,15): error C3861: 'getFactionSides': identifier not f
+ound [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(521,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(522,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(523,5): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(527,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(528,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(529,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(531,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(532,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(533,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(535,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(536,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(537,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(539,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(540,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(541,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(543,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(544,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(545,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(547,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(548,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(549,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(551,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(552,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(553,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(555,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(556,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(557,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(559,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(560,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(561,9): error C2065: 'p': undeclared identifier [C:\GIT P
+ROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,32): error C2065: 'p': undeclared identifier [C:\GIT
+PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+C:\GIT PROJECTS\EVEOFFLINE\cpp_client\src\rendering\model.cpp(564,12): error C3861: 'buildShipFromParams': identifier n
+ot found [C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\test_phase48_panels.vcxproj]
+  ship_part_library.cpp
+  market_panel.cpp
+  dscan_panel.cpp
+  texture.cpp
+  texture.cpp
+  ship_generation_rules.cpp
+  procedural_mesh_ops.cpp
+  neocom_panel.cpp
+  particle_system.cpp
+  particle_system.cpp
+  test_server_responses.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_server_responses.exe
+  entity.cpp
+  procedural_mesh_ops.cpp
+  Generating Code...
+  Generating Code...
+  texture.cpp
+  Generating Code...
+  particle_system.cpp
+  texture.cpp
+  Compiling...
+  entity.cpp
+  particle_system.cpp
+  Generating Code...
+  Generating Code...
+  Generating Code...
+  test_shadow_mapping.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_shadow_mapping.exe
+  test_ui_system.vcxproj -> C:\GIT PROJECTS\EVEOFFLINE\cpp_client\build_vs\bin\Release\test_ui_system.exe
+  Compiling...
+  healthbar_renderer.cpp
+  visual_effects.cpp
+  pbr_materials.cpp
+  Compiling...
+  healthbar_renderer.cpp
+  Compiling...
+  healthbar_renderer.cpp
+  lod_manager.cpp
+  visual_effects.cpp
+  Compiling...
+  healthbar_renderer.cpp
+  visual_effects.cpp
+  frustum_culler.cpp
+  pbr_materials.cpp
+  visual_effects.cpp
+  instanced_renderer.cpp
+  pbr_materials.cpp
+  lod_manager.cpp
+  pbr_materials.cpp
+  asteroid_field_renderer.cpp
+  lod_manager.cpp
+  frustum_culler.cpp
+  lod_manager.cpp
+  instanced_renderer.cpp
+  lighting.cpp
+  frustum_culler.cpp
+  frustum_culler.cpp
+  instanced_renderer.cpp
+  shadow_map.cpp
+  asteroid_field_renderer.cpp
+  instanced_renderer.cpp
+  asteroid_field_renderer.cpp
+  gbuffer.cpp
+  lighting.cpp
+  asteroid_field_renderer.cpp
+  lighting.cpp
+  post_processing.cpp
+  shadow_map.cpp
+  lighting.cpp
+  shadow_map.cpp
+  tcp_client.cpp
+  gbuffer.cpp
+  shadow_map.cpp
+  gbuffer.cpp
+  post_processing.cpp
+  gbuffer.cpp
+  protocol_handler.cpp
+  post_processing.cpp
+  tcp_client.cpp
+  post_processing.cpp
+  tcp_client.cpp
+  tcp_client.cpp
+  protocol_handler.cpp
+  network_manager.cpp
+  protocol_handler.cpp
+  protocol_handler.cpp
+  network_manager.cpp
+  hud.cpp
+  network_manager.cpp
+  input_handler.cpp
+  network_manager.cpp
+  ui_manager.cpp
+  hud.cpp
+  hud.cpp
+  eve_panels.cpp
+  input_handler.cpp
+  hud.cpp
+  eve_target_list.cpp
+  ui_manager.cpp
+  input_handler.cpp
+  input_handler.cpp
+  entity_picker.cpp
+  ui_manager.cpp
+  ui_manager.cpp
+  eve_panels.cpp
+  Generating Code...
+  eve_target_list.cpp
+  eve_panels.cpp
+  eve_panels.cpp
+  eve_target_list.cpp
+  entity_picker.cpp
+  eve_target_list.cpp
+  entity_picker.cpp
+  Generating Code...
+  entity_picker.cpp
+  Generating Code...
+  Generating Code...
+  Compiling...
+  context_menu.cpp
+  tactical_overlay.cpp
+  inventory_panel.cpp
+  fitting_panel.cpp
+  Compiling...
+  context_menu.cpp
+  mission_panel.cpp
+  Compiling...
+  context_menu.cpp
+  tactical_overlay.cpp
+  module_browser_panel.cpp
+  Compiling...
+  context_menu.cpp
+  tactical_overlay.cpp
+  market_panel.cpp
+  inventory_panel.cpp
+  tactical_overlay.cpp
+  overview_panel.cpp
+  inventory_panel.cpp
+  fitting_panel.cpp
+  fitting_panel.cpp
+  mission_panel.cpp
+  inventory_panel.cpp
+  mission_panel.cpp
+  module_browser_panel.cpp
+  docking_manager.cpp
+  fitting_panel.cpp
+  module_browser_panel.cpp
+  market_panel.cpp
+  mission_panel.cpp
+  dscan_panel.cpp
+  market_panel.cpp
+  module_browser_panel.cpp
+  overview_panel.cpp
+  overview_panel.cpp
+  neocom_panel.cpp
+  market_panel.cpp
+  overview_panel.cpp
+  docking_manager.cpp
+  rml_ui_manager.cpp
+  docking_manager.cpp
+  dscan_panel.cpp
+  audio_manager.cpp
+  docking_manager.cpp
+  dscan_panel.cpp
+  neocom_panel.cpp
+  audio_generator.cpp
+  dscan_panel.cpp
+  neocom_panel.cpp
+  rml_ui_manager.cpp
+  Generating Code...
+  neocom_panel.cpp
+  rml_ui_manager.cpp
+  audio_manager.cpp
+  rml_ui_manager.cpp
+  audio_manager.cpp
+  audio_generator.cpp
+  audio_manager.cpp
+  audio_generator.cpp
+  Generating Code...
+  audio_generator.cpp
+  Generating Code...
+  Generating Code...
+
+ERROR: Build failed!
+Press any key to continue . . .
