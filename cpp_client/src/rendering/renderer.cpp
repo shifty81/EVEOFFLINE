@@ -235,9 +235,8 @@ void Renderer::renderStarfield(Camera& camera) {
     m_starfieldShader->setMat4("view", camera.getViewMatrix());
     m_starfieldShader->setMat4("projection", camera.getProjectionMatrix());
     
-    // Pass time for twinkling animation
-    static float starfieldTime = 0.0f;
-    starfieldTime += 0.016f;  // Approximate 60fps delta
+    // Pass time for twinkling animation (uses wall clock for frame-rate independent animation)
+    float starfieldTime = static_cast<float>(glfwGetTime());
     m_starfieldShader->setFloat("time", starfieldTime);
     
     glBindVertexArray(m_starfieldVAO);

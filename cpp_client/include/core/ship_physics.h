@@ -182,6 +182,7 @@ private:
     static constexpr float AU_IN_METERS = 149597870700.0f;  // 1 AU in meters
     static constexpr float MIN_WARP_DISTANCE = 150000.0f;  // Minimum 150km to warp
     static constexpr float WARP_EXIT_DISTANCE = 2500.0f;   // Land within 2500m of target
+    static constexpr float WARP_EXIT_SPEED_FRACTION = 0.25f;  // Exit warp at 25% max subwarp speed
 };
 
 } // namespace eve

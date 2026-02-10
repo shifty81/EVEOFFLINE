@@ -409,9 +409,9 @@ void ShipPhysics::updateWarp(float deltaTime) {
             // Check if arrived (within 2500m or exceeded total distance)
             float remainingDistance = m_warpDistanceTotal - m_warpDistanceTraveled;
             if (remainingDistance <= WARP_EXIT_DISTANCE || t >= 1.0f) {
-                // Exit warp — land near destination
-                m_position = m_navTarget + m_warpDirection * (-WARP_EXIT_DISTANCE * 0.5f);
-                m_velocity = m_warpDirection * m_stats.maxVelocity * 0.25f;  // Exit at low speed
+                // Exit warp — land offset behind destination (half of exit distance)
+                m_position = m_navTarget - m_warpDirection * (WARP_EXIT_DISTANCE * 0.5f);
+                m_velocity = m_warpDirection * m_stats.maxVelocity * WARP_EXIT_SPEED_FRACTION;
                 m_warpPhase = WarpPhase::NONE;
                 m_currentWarpSpeedAU = 0.0f;
                 m_warpProgress = 1.0f;

@@ -40,7 +40,7 @@ void SolarSystemScene::loadTestSystem() {
     sun.name = "Asakai - Star";
     sun.type = Celestial::Type::SUN;
     sun.position = glm::vec3(0.0f, 0.0f, 0.0f);
-    sun.radius = 500000.0f;  // 500km radius
+    sun.radius = 500000.0f;  // 500km radius (500,000 meters)
     sun.distanceFromSun_AU = 0.0f;
     sun.lightColor = glm::vec3(1.0f, 0.95f, 0.85f);  // Warm yellow-white
     sun.lightIntensity = 1.5f;

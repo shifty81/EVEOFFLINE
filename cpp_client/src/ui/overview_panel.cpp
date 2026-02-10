@@ -152,6 +152,10 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     // Apply standing color
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rowColor[0], rowColor[1], rowColor[2], rowColor[3]));
     
+    // Enhance hover highlighting for rows
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.10f, 0.23f, 0.29f, 0.8f));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.17f, 0.35f, 0.42f, 0.9f));
+    
     ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | 
                                            ImGuiSelectableFlags_AllowItemOverlap;
     
@@ -164,6 +168,16 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
         m_selectedEntity = entry.entity_id;
     }
     
+    // Hover tooltip with entity details
+    if (ImGui::IsItemHovered()) {
+        ImGui::BeginTooltip();
+        ImGui::TextColored(ImVec4(0.271f, 0.816f, 0.910f, 1.0f), "%s", entry.name.c_str());
+        ImGui::Text("Type: %s", entry.ship_type.c_str());
+        ImGui::Text("Distance: %s", FormatDistance(entry.distance).c_str());
+        ImGui::Text("Corp: %s", entry.corporation.c_str());
+        ImGui::EndTooltip();
+    }
+    
     // Double-click to align/warp
     if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
         if (m_onAlignTo) {
@@ -171,12 +185,12 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
         }
     }
     
-    // Right-click context menu (placeholder for future)
+    // Right-click context menu
     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
         ImGui::OpenPopup("EntityContextMenu");
     }
     
-    ImGui::PopStyleColor();
+    ImGui::PopStyleColor(3);
     
     // Distance column
     ImGui::TableSetColumnIndex(1);
