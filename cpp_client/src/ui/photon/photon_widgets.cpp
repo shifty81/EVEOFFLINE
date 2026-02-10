@@ -1,0 +1,601 @@
+#include "ui/photon/photon_widgets.h"
+
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+namespace photon {
+
+// ── Panel ───────────────────────────────────────────────────────────
+
+bool panelBegin(PhotonContext& ctx, const char* title,
+                Rect& bounds, const PanelFlags& flags,
+                bool* open) {
+    const Theme& t = ctx.theme();
+    auto& r = ctx.renderer();
+
+    ctx.pushID(title);
+
+    // Panel background (sharp-cornered dark translucent rect)
+    r.drawRect(bounds, t.bgPanel);
+
+    // Border
+    if (flags.drawBorder) {
+        r.drawRectOutline(bounds, t.borderSubtle, t.borderWidth);
+    }
+
+    // Header bar
+    if (flags.showHeader) {
+        float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
+        Rect headerRect = {bounds.x, bounds.y, bounds.w, hh};
+        r.drawRect(headerRect, t.bgHeader);
+
+        // Title text
+        float textY = bounds.y + (hh - 13.0f) * 0.5f;
+        r.drawText(title, {bounds.x + t.padding, textY}, t.textPrimary);
+
+        // Close button (×)
+        if (flags.showClose && open) {
+            float btnSz = 14.0f;
+            Rect closeRect = {bounds.right() - btnSz - 4.0f,
+                              bounds.y + (hh - btnSz) * 0.5f,
+                              btnSz, btnSz};
+            WidgetID closeID = ctx.currentID("_close");
+            bool hovered = ctx.isHovered(closeRect);
+            if (hovered) ctx.setHot(closeID);
+            Color closeBg = hovered ? t.danger.withAlpha(0.6f)
+                                    : t.bgSecondary;
+            r.drawRect(closeRect, closeBg);
+            r.drawText("x", {closeRect.x + 3.0f, closeRect.y + 1.0f},
+                       t.textPrimary);
+            if (ctx.buttonBehavior(closeRect, closeID)) {
+                *open = false;
+            }
+        }
+
+        // Minimize button (—)
+        if (flags.showMinimize) {
+            float btnSz = 14.0f;
+            float offset = (flags.showClose && open) ? 22.0f : 4.0f;
+            Rect minRect = {bounds.right() - btnSz - offset,
+                            bounds.y + (hh - btnSz) * 0.5f,
+                            btnSz, btnSz};
+            WidgetID minID = ctx.currentID("_min");
+            bool hovered = ctx.isHovered(minRect);
+            if (hovered) ctx.setHot(minID);
+            Color minBg = hovered ? t.hover : t.bgSecondary;
+            r.drawRect(minRect, minBg);
+            r.drawText("-", {minRect.x + 3.0f, minRect.y + 1.0f},
+                       t.textPrimary);
+        }
+
+        // Thin accent line under header
+        r.drawRect({bounds.x, bounds.y + hh - 1.0f, bounds.w, 1.0f},
+                   t.accentDim);
+    }
+
+    return true;  // panel is open (minimize state not yet tracked)
+}
+
+void panelEnd(PhotonContext& ctx) {
+    ctx.popID();
+}
+
+// ── Button ──────────────────────────────────────────────────────────
+
+bool button(PhotonContext& ctx, const char* label, const Rect& r) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    WidgetID id = ctx.currentID(label);
+    bool clicked = ctx.buttonBehavior(r, id);
+
+    Color bg = t.bgSecondary;
+    if (ctx.isActive(id))      bg = t.selection;
+    else if (ctx.isHot(id))    bg = t.hover;
+
+    rr.drawRect(r, bg);
+    rr.drawRectOutline(r, t.borderNormal);
+
+    float tw = rr.measureText(label);
+    float tx = r.x + (r.w - tw) * 0.5f;
+    float ty = r.y + (r.h - 13.0f) * 0.5f;
+    rr.drawText(label, {tx, ty}, t.textPrimary);
+
+    return clicked;
+}
+
+bool iconButton(PhotonContext& ctx, WidgetID id, const Rect& r,
+                const Color& iconColor) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    bool clicked = ctx.buttonBehavior(r, id);
+
+    Color bg = t.bgPrimary;
+    if (ctx.isActive(id))      bg = t.selection;
+    else if (ctx.isHot(id))    bg = t.hover;
+
+    rr.drawRect(r, bg);
+
+    // Draw a small filled circle as icon placeholder
+    Vec2 c = r.center();
+    float iconR = std::min(r.w, r.h) * 0.3f;
+    rr.drawCircle(c, iconR, iconColor);
+
+    return clicked;
+}
+
+// ── Progress Bar ────────────────────────────────────────────────────
+
+void progressBar(PhotonContext& ctx, const Rect& r,
+                 float fraction, const Color& fillColor,
+                 const char* label) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    // Background
+    rr.drawRect(r, t.bgSecondary.withAlpha(0.5f));
+    // Fill
+    float fill = std::max(0.0f, std::min(1.0f, fraction));
+    if (fill > 0.0f) {
+        rr.drawRect({r.x, r.y, r.w * fill, r.h}, fillColor);
+    }
+    // Border
+    rr.drawRectOutline(r, t.borderSubtle);
+
+    // Label text
+    if (label) {
+        float ty = r.y + (r.h - 13.0f) * 0.5f;
+        rr.drawText(label, {r.x + 4.0f, ty}, t.textPrimary);
+    }
+}
+
+// ── Ship Status Arcs ────────────────────────────────────────────────
+
+void shipStatusArcs(PhotonContext& ctx, Vec2 centre, float outerR,
+                    float shieldPct, float armorPct, float hullPct) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    // Arc layout (from screenshot):
+    // - Arcs sweep the TOP half only (π to 0, i.e. left-to-right)
+    // - Shield = outermost, Armor = middle, Hull = innermost
+    // - Ring thickness ~8px each with ~2px gap
+    float ringW = 8.0f;
+    float gap = 2.0f;
+
+    // Start/end angles: top semicircle = π to 0 (sweep right)
+    float startAngle = static_cast<float>(M_PI);
+    float endAngle   = 0.0f;
+
+    struct ArcDef {
+        float pct; Color full; Color empty; float innerR; float outerR;
+    };
+
+    float shieldInner = outerR - ringW;
+    float armorOuter  = shieldInner - gap;
+    float armorInner  = armorOuter - ringW;
+    float hullOuter   = armorInner - gap;
+    float hullInner   = hullOuter - ringW;
+
+    ArcDef arcs[] = {
+        {shieldPct, t.shield, t.bgSecondary.withAlpha(0.3f), shieldInner, outerR},
+        {armorPct,  t.armor,  t.bgSecondary.withAlpha(0.3f), armorInner,  armorOuter},
+        {hullPct,   t.hull,   t.bgSecondary.withAlpha(0.3f), hullInner,   hullOuter},
+    };
+
+    for (const auto& a : arcs) {
+        // Draw empty (background) arc
+        rr.drawArc(centre, a.innerR, a.outerR, startAngle, endAngle,
+                   a.empty, 32);
+        // Draw filled arc
+        if (a.pct > 0.001f) {
+            float fillEnd = startAngle + (endAngle - startAngle) * a.pct;
+            rr.drawArc(centre, a.innerR, a.outerR, startAngle, fillEnd,
+                       a.full, 32);
+        }
+    }
+
+    // Percentage labels (left of arcs, stacked vertically)
+    char buf[16];
+    float labelX = centre.x - outerR - 40.0f;
+    float labelBaseY = centre.y - outerR * 0.5f;
+
+    std::snprintf(buf, sizeof(buf), "%d%%", static_cast<int>(shieldPct * 100));
+    rr.drawText(buf, {labelX, labelBaseY}, t.shield);
+
+    std::snprintf(buf, sizeof(buf), "%d%%", static_cast<int>(armorPct * 100));
+    rr.drawText(buf, {labelX, labelBaseY + 16.0f}, t.armor);
+
+    std::snprintf(buf, sizeof(buf), "%d%%", static_cast<int>(hullPct * 100));
+    rr.drawText(buf, {labelX, labelBaseY + 32.0f}, t.hull);
+}
+
+// ── Capacitor Ring ──────────────────────────────────────────────────
+
+void capacitorRing(PhotonContext& ctx, Vec2 centre,
+                   float innerR, float outerR,
+                   float fraction, int segments) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    float gapAngle = 0.03f;  // small gap between segments
+    float totalAngle = 2.0f * static_cast<float>(M_PI);
+    float segAngle = totalAngle / segments - gapAngle;
+    int filledCount = static_cast<int>(fraction * segments + 0.5f);
+
+    for (int i = 0; i < segments; ++i) {
+        float a0 = totalAngle * i / segments;
+        float a1 = a0 + segAngle;
+        bool filled = (i < filledCount);
+        Color c = filled ? t.capacitor : t.bgSecondary.withAlpha(0.25f);
+        rr.drawArc(centre, innerR, outerR, a0, a1, c, 4);
+    }
+}
+
+// ── Module Slot ─────────────────────────────────────────────────────
+
+bool moduleSlot(PhotonContext& ctx, Vec2 centre, float radius,
+                bool active, float cooldownPct, const Color& color) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    Rect hitbox = {centre.x - radius, centre.y - radius,
+                   radius * 2, radius * 2};
+    WidgetID id = hashID("mod") ^ static_cast<uint32_t>(centre.x * 1000)
+                                ^ static_cast<uint32_t>(centre.y * 1000);
+    bool clicked = ctx.buttonBehavior(hitbox, id);
+
+    // Background circle
+    Color bg = active ? color.withAlpha(0.4f) : t.bgSecondary.withAlpha(0.6f);
+    if (ctx.isHot(id)) bg = t.hover;
+    rr.drawCircle(centre, radius, bg);
+
+    // Border ring
+    Color border = active ? color : t.borderNormal;
+    rr.drawCircleOutline(centre, radius, border, 1.5f);
+
+    // Cooldown sweep overlay (clockwise from top)
+    if (cooldownPct > 0.001f && cooldownPct < 1.0f) {
+        float startA = -static_cast<float>(M_PI) * 0.5f;  // top
+        float sweepA = 2.0f * static_cast<float>(M_PI) * cooldownPct;
+        rr.drawArc(centre, 0.0f, radius - 1.0f, startA, startA + sweepA,
+                   Color(0, 0, 0, 0.5f), 16);
+    }
+
+    // Active glow dot in centre
+    if (active) {
+        rr.drawCircle(centre, radius * 0.3f, color);
+    }
+
+    return clicked;
+}
+
+// ── Speed Indicator ─────────────────────────────────────────────────
+
+void speedIndicator(PhotonContext& ctx, Vec2 pos,
+                    float currentSpeed, float maxSpeed) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    // Background bar
+    float barW = 120.0f, barH = 20.0f;
+    Rect bar = {pos.x - barW * 0.5f, pos.y, barW, barH};
+    rr.drawRect(bar, t.bgSecondary.withAlpha(0.7f));
+    rr.drawRectOutline(bar, t.borderSubtle);
+
+    // Fill based on speed fraction
+    float frac = (maxSpeed > 0.0f) ? currentSpeed / maxSpeed : 0.0f;
+    frac = std::max(0.0f, std::min(1.0f, frac));
+    if (frac > 0.0f) {
+        rr.drawRect({bar.x, bar.y, bar.w * frac, bar.h},
+                    t.accentDim.withAlpha(0.5f));
+    }
+
+    // Speed text
+    char buf[32];
+    std::snprintf(buf, sizeof(buf), "%.1f m/s", currentSpeed);
+    float tw = rr.measureText(buf);
+    rr.drawText(buf, {pos.x - tw * 0.5f, pos.y + 3.0f}, t.textPrimary);
+
+    // +/- buttons
+    float btnSz = 16.0f;
+    Rect minus = {bar.x - btnSz - 4.0f, pos.y + 2.0f, btnSz, btnSz};
+    Rect plus  = {bar.right() + 4.0f,   pos.y + 2.0f, btnSz, btnSz};
+    button(ctx, "-", minus);
+    button(ctx, "+", plus);
+}
+
+// ── Overview ────────────────────────────────────────────────────────
+
+void overviewHeader(PhotonContext& ctx, const Rect& r,
+                    const std::vector<std::string>& tabs,
+                    int activeTab) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    // Header background
+    rr.drawRect(r, t.bgHeader);
+
+    // Tabs
+    float tabX = r.x + 4.0f;
+    float tabH = r.h - 4.0f;
+    for (int i = 0; i < static_cast<int>(tabs.size()); ++i) {
+        float tw = rr.measureText(tabs[i]) + 16.0f;
+        Rect tabRect = {tabX, r.y + 2.0f, tw, tabH};
+
+        if (i == activeTab) {
+            rr.drawRect(tabRect, t.selection);
+            rr.drawText(tabs[i], {tabX + 8.0f, r.y + 5.0f}, t.textPrimary);
+        } else {
+            rr.drawText(tabs[i], {tabX + 8.0f, r.y + 5.0f}, t.textSecondary);
+        }
+        tabX += tw + 2.0f;
+    }
+
+    // Bottom border
+    rr.drawRect({r.x, r.bottom() - 1.0f, r.w, 1.0f}, t.borderSubtle);
+}
+
+bool overviewRow(PhotonContext& ctx, const Rect& r,
+                 const OverviewEntry& entry, bool isAlternate) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    WidgetID id = hashID(entry.name.c_str());
+    bool clicked = ctx.buttonBehavior(r, id);
+
+    // Row background
+    Color bg = isAlternate ? t.bgSecondary.withAlpha(0.3f)
+                           : t.bgPanel.withAlpha(0.2f);
+    if (entry.selected) bg = t.selection;
+    else if (ctx.isHot(id)) bg = t.hover;
+    rr.drawRect(r, bg);
+
+    // Standing color indicator (small square, 4px)
+    rr.drawRect({r.x + 2.0f, r.y + 3.0f, 4.0f, r.h - 6.0f},
+                entry.standingColor);
+
+    // Columns: Distance | Name | Type | Velocity
+    float colX = r.x + 10.0f;
+    float textY = r.y + (r.h - 13.0f) * 0.5f;
+
+    // Distance
+    char distBuf[32];
+    if (entry.distance >= 1000.0f) {
+        std::snprintf(distBuf, sizeof(distBuf), "%.0f km", entry.distance / 1000.0f);
+    } else {
+        std::snprintf(distBuf, sizeof(distBuf), "%.0f m", entry.distance);
+    }
+    rr.drawText(distBuf, {colX, textY}, t.textSecondary);
+
+    // Name
+    colX += 80.0f;
+    rr.drawText(entry.name, {colX, textY}, t.textPrimary);
+
+    // Type
+    colX += 120.0f;
+    rr.drawText(entry.type, {colX, textY}, t.textSecondary);
+
+    return clicked;
+}
+
+// ── Target Card ─────────────────────────────────────────────────────
+
+bool targetCard(PhotonContext& ctx, const Rect& r,
+                const TargetCardInfo& info) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    WidgetID id = hashID(info.name.c_str());
+    bool clicked = ctx.buttonBehavior(r, id);
+
+    // Card background
+    Color bg = t.bgPanel;
+    if (info.isActive) bg = t.selection;
+    else if (ctx.isHot(id)) bg = t.hover;
+    rr.drawRect(r, bg);
+
+    // Border (red if hostile, blue if friendly)
+    Color borderColor = info.isHostile ? t.hostile : t.borderNormal;
+    if (info.isActive) borderColor = t.accentPrimary;
+    rr.drawRectOutline(r, borderColor, 2.0f);
+
+    // Mini shield/armor/hull bars (horizontal, stacked at bottom)
+    float barH = 3.0f;
+    float barW = r.w - 8.0f;
+    float barX = r.x + 4.0f;
+    float barY = r.bottom() - 16.0f;
+
+    rr.drawProgressBar({barX, barY, barW, barH}, info.shieldPct,
+                       t.shield, t.bgSecondary.withAlpha(0.3f));
+    rr.drawProgressBar({barX, barY + barH + 1.0f, barW, barH}, info.armorPct,
+                       t.armor, t.bgSecondary.withAlpha(0.3f));
+    rr.drawProgressBar({barX, barY + 2*(barH + 1.0f), barW, barH}, info.hullPct,
+                       t.hull, t.bgSecondary.withAlpha(0.3f));
+
+    // Name (truncated to fit)
+    std::string displayName = info.name;
+    if (rr.measureText(displayName) > r.w - 8.0f) {
+        while (displayName.size() > 3 &&
+               rr.measureText(displayName + "..") > r.w - 8.0f) {
+            displayName.pop_back();
+        }
+        displayName += "..";
+    }
+    rr.drawText(displayName, {r.x + 4.0f, r.bottom() - 30.0f},
+                t.textPrimary);
+
+    // Distance
+    char distBuf[32];
+    if (info.distance >= 1000.0f) {
+        std::snprintf(distBuf, sizeof(distBuf), "%.0f km", info.distance / 1000.0f);
+    } else {
+        std::snprintf(distBuf, sizeof(distBuf), "%.0f m", info.distance);
+    }
+    float tw = rr.measureText(distBuf);
+    rr.drawText(distBuf, {r.x + (r.w - tw) * 0.5f, r.y + 4.0f},
+                t.textSecondary);
+
+    return clicked;
+}
+
+// ── Selected Item Panel ─────────────────────────────────────────────
+
+void selectedItemPanel(PhotonContext& ctx, const Rect& r,
+                       const SelectedItemInfo& info) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    rr.drawRect(r, t.bgPanel);
+    rr.drawRectOutline(r, t.borderSubtle);
+
+    // Header: "Selected Item"
+    rr.drawRect({r.x, r.y, r.w, t.headerHeight}, t.bgHeader);
+    rr.drawText("Selected Item", {r.x + t.padding, r.y + 7.0f},
+                t.textSecondary);
+    rr.drawRect({r.x, r.y + t.headerHeight - 1.0f, r.w, 1.0f},
+                t.accentDim);
+
+    // Name
+    float textY = r.y + t.headerHeight + 8.0f;
+    rr.drawText(info.name, {r.x + t.padding, textY}, t.textPrimary);
+
+    // Distance
+    textY += 18.0f;
+    char distBuf[64];
+    std::snprintf(distBuf, sizeof(distBuf), "Distance: %.0f %s",
+                  info.distance, info.distanceUnit.c_str());
+    rr.drawText(distBuf, {r.x + t.padding, textY}, t.textSecondary);
+
+    // Action buttons row (orbit, approach, warp, look at, info)
+    float btnY = textY + 24.0f;
+    float btnSz = 24.0f;
+    float btnGap = 6.0f;
+    float btnX = r.x + t.padding;
+    const char* actions[] = {"O", ">>", "W", "i"};
+    for (int i = 0; i < 4; ++i) {
+        Rect btn = {btnX, btnY, btnSz, btnSz};
+        button(ctx, actions[i], btn);
+        btnX += btnSz + btnGap;
+    }
+}
+
+// ── Utility Widgets ─────────────────────────────────────────────────
+
+void label(PhotonContext& ctx, Vec2 pos, const std::string& text,
+           const Color& color) {
+    const Theme& t = ctx.theme();
+    Color c = (color.a > 0.01f) ? color : t.textPrimary;
+    ctx.renderer().drawText(text, pos, c);
+}
+
+void separator(PhotonContext& ctx, Vec2 start, float width) {
+    const Theme& t = ctx.theme();
+    ctx.renderer().drawRect({start.x, start.y, width, 1.0f}, t.borderSubtle);
+}
+
+bool treeNode(PhotonContext& ctx, const Rect& r,
+              const char* nodeLabel, bool* expanded) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    WidgetID id = ctx.currentID(nodeLabel);
+    bool clicked = ctx.buttonBehavior(r, id);
+
+    if (ctx.isHot(id)) {
+        rr.drawRect(r, t.hover);
+    }
+
+    // Triangle indicator
+    float triX = r.x + 4.0f;
+    float triY = r.y + r.h * 0.5f;
+    if (expanded && *expanded) {
+        // Down-pointing triangle (▼)
+        rr.drawLine({triX, triY - 4.0f}, {triX + 8.0f, triY - 4.0f},
+                    t.textSecondary, 1.0f);
+        rr.drawLine({triX, triY - 4.0f}, {triX + 4.0f, triY + 4.0f},
+                    t.textSecondary, 1.0f);
+        rr.drawLine({triX + 8.0f, triY - 4.0f}, {triX + 4.0f, triY + 4.0f},
+                    t.textSecondary, 1.0f);
+    } else {
+        // Right-pointing triangle (▶)
+        rr.drawLine({triX, triY - 5.0f}, {triX, triY + 5.0f},
+                    t.textSecondary, 1.0f);
+        rr.drawLine({triX, triY - 5.0f}, {triX + 8.0f, triY},
+                    t.textSecondary, 1.0f);
+        rr.drawLine({triX, triY + 5.0f}, {triX + 8.0f, triY},
+                    t.textSecondary, 1.0f);
+    }
+
+    // Label text
+    rr.drawText(nodeLabel, {r.x + 16.0f, r.y + (r.h - 13.0f) * 0.5f},
+                t.textPrimary);
+
+    if (clicked && expanded) {
+        *expanded = !(*expanded);
+    }
+    return expanded ? *expanded : false;
+}
+
+void scrollbar(PhotonContext& ctx, const Rect& track,
+               float scrollOffset, float contentHeight, float viewHeight) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    if (contentHeight <= viewHeight) return;
+
+    // Track background
+    rr.drawRect(track, t.bgSecondary.withAlpha(0.3f));
+
+    // Thumb
+    float thumbRatio = viewHeight / contentHeight;
+    float thumbH = std::max(20.0f, track.h * thumbRatio);
+    float scrollRange = contentHeight - viewHeight;
+    float thumbOffset = (scrollRange > 0.0f)
+        ? (scrollOffset / scrollRange) * (track.h - thumbH) : 0.0f;
+
+    Rect thumb = {track.x, track.y + thumbOffset, track.w, thumbH};
+    rr.drawRect(thumb, t.accentDim);
+}
+
+// ── Neocom Bar ──────────────────────────────────────────────────────
+
+void neocomBar(PhotonContext& ctx, float x, float width, float height,
+               int icons, const std::function<void(int)>& callback) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    // Full-height dark background
+    Rect bar = {x, 0, width, height};
+    rr.drawRect(bar, t.bgPrimary);
+    rr.drawRect({x + width - 1.0f, 0, 1.0f, height}, t.borderSubtle);
+
+    // Icon buttons (stacked vertically from top)
+    float iconSz = width - 4.0f;
+    float iconY = 8.0f;
+    float iconGap = 4.0f;
+
+    for (int i = 0; i < icons; ++i) {
+        Rect iconRect = {x + 2.0f, iconY, iconSz, iconSz};
+        WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
+
+        // Alternate icon colors for visual variety
+        Color iconColor = (i % 3 == 0) ? t.accentPrimary
+                        : (i % 3 == 1) ? t.textSecondary
+                                       : t.accentDim;
+
+        if (iconButton(ctx, iconID, iconRect, iconColor)) {
+            if (callback) callback(i);
+        }
+
+        iconY += iconSz + iconGap;
+    }
+}
+
+} // namespace photon
