@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 10, 2026)**: Major systems push — DroneSystem, InsuranceSystem, BountySystem, and MarketSystem added to C++ server. EVE-style UI theme defined. Master implementation plan created from baseline design document. 18 server systems, 599 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
+> **Update (February 10, 2026)**: Major systems push — DroneSystem, InsuranceSystem, BountySystem, MarketSystem, CorporationSystem, ContractSystem added to C++ server. EVE-style UI theme defined. Master implementation plan created from baseline design document. 20 server systems, 672 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
 
 ## Current Status (February 2026)
 
@@ -25,8 +25,8 @@
 - **10 mining missions** across levels 1-4
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
-- **18 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market)
-- **110+ test functions** all passing (599 assertions)
+- **18 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts)
+- **110+ test functions** all passing (672 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture
@@ -403,8 +403,25 @@ From ROADMAP.md "In Progress" section:
     - ✅ Custom UI strategy (retained-mode, docking, EVE theme)
     - ✅ Modular procedural ship generation plan
     - ✅ Implementation priority order
-    - ✅ Complete systems status table (18 systems, 599 tests)
+    - ✅ Complete systems status table (20 systems, 672 tests)
     - ✅ Gap analysis with remaining systems to implement
+
+34. ✅ **Add C++ Server CorporationSystem** (COMPLETED - February 2026)
+    - ✅ Corporation component with corp management, hangars, wallet, tax
+    - ✅ CorporationSystem with create/join/leave, CEO restriction, tax rate control
+    - ✅ Corporation tax application with wallet accumulation
+    - ✅ Corp hangar items with shared storage
+    - ✅ WorldPersistence serialization/deserialization support
+    - ✅ 37 test assertions, 100% pass rate
+
+35. ✅ **Add C++ Server ContractSystem** (COMPLETED - February 2026)
+    - ✅ ContractBoard component with item exchange, courier, and auction contract types
+    - ✅ ContractSystem with create/accept/complete contract lifecycle
+    - ✅ Duration-based contract expiry with per-tick countdown
+    - ✅ ISK reward payout on contract completion
+    - ✅ Contract status tracking (outstanding, in_progress, completed, expired)
+    - ✅ WorldPersistence serialization/deserialization support
+    - ✅ 36 test assertions, 100% pass rate
 
 ### Long-Term Goals (1-3 months each)
 
@@ -472,4 +489,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 10, 2026*
-*Status: All major server systems implemented. DroneSystem, InsuranceSystem, BountySystem, MarketSystem added. EVE-style UI theme defined. Master implementation plan created from baseline. 18 server systems, 102 ships, 159+ modules, 599 test assertions. Ready for AI economic actors and custom UI implementation.*
+*Status: All major server systems implemented. CorporationSystem, ContractSystem, DroneSystem, InsuranceSystem, BountySystem, MarketSystem added. EVE-style UI theme defined. Master implementation plan created from baseline. 20 server systems, 102 ships, 159+ modules, 672 test assertions. Ready for AI economic actors and custom UI implementation.*

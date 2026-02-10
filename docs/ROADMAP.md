@@ -124,7 +124,9 @@ Each AI owns ships, has a wallet, responds to market prices, and can die permane
 | InsuranceSystem | ✅ Complete | 21 assertions |
 | BountySystem | ✅ Complete | 14 assertions |
 | MarketSystem | ✅ Complete | 11 assertions |
-| **Total** | **18 systems** | **599 assertions** |
+| CorporationSystem | ✅ Complete | 37 assertions |
+| ContractSystem | ✅ Complete | 36 assertions |
+| **Total** | **20 systems** | **672 assertions** |
 
 ### Data Loaders Status
 
@@ -139,11 +141,9 @@ Each AI owns ships, has a wallet, responds to market prices, and can die permane
 
 | System | Priority | Description |
 |--------|----------|-------------|
-| CorporationSystem | High | Corp management, hangars, taxes in C++ |
 | PISystem | Medium | Planetary interaction, resource extraction |
 | ManufacturingSystem | Medium | Blueprint-based production |
 | ResearchSystem | Medium | Invention, T2 blueprint creation |
-| ContractSystem | Medium | Player-to-player contracts in C++ |
 | ChatSystem | Medium | Persistent channels, moderation |
 | CharacterCreationSystem | Low | Races, bloodlines, clones, implants |
 | TournamentSystem | Low | Competitive PvE events |
