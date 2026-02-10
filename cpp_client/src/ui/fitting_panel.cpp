@@ -1,4 +1,5 @@
 #include "ui/fitting_panel.h"
+#include "ui/ui_manager.h"
 #include <imgui.h>
 #include <algorithm>
 
@@ -75,8 +76,14 @@ void FittingPanel::SetFittingData(const FittingData& data) {
 }
 
 void FittingPanel::RenderShipInfo() {
-    ImGui::TextColored(ImVec4(0.9f, 0.95f, 1.0f, 1.0f), "Ship: %s", m_data.ship_name.c_str());
-    ImGui::TextColored(ImVec4(0.7f, 0.75f, 0.8f, 1.0f), "Type: %s", m_data.ship_type.c_str());
+    ImGui::TextColored(ImVec4(
+        EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
+        EVEColors::TEXT_PRIMARY[2], EVEColors::TEXT_PRIMARY[3]),
+        "Ship: %s", m_data.ship_name.c_str());
+    ImGui::TextColored(ImVec4(
+        EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
+        EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+        "Type: %s", m_data.ship_type.c_str());
 }
 
 void FittingPanel::RenderResourceBars() {
@@ -90,14 +97,18 @@ void FittingPanel::RenderResourceBar(const char* label, float used, float max, f
     
     float percent = max > 0.0f ? used / max : 0.0f;
     
-    // Color bar based on usage
+    // Color bar based on usage — Photon UI style
     ImVec4 barColor;
     if (percent > 1.0f) {
-        barColor = ImVec4(0.9f, 0.2f, 0.2f, 0.9f);  // Red if over capacity
+        barColor = ImVec4(EVEColors::DANGER[0], EVEColors::DANGER[1],
+                          EVEColors::DANGER[2], 0.9f);  // Red if over capacity
     } else if (percent > 0.9f) {
-        barColor = ImVec4(1.0f, 0.6f, 0.2f, 0.9f);  // Orange if near capacity
+        barColor = ImVec4(EVEColors::WARNING[0], EVEColors::WARNING[1],
+                          EVEColors::WARNING[2], 0.9f);  // Orange if near capacity
     } else {
-        barColor = ImVec4(0.2f, 0.6f, 0.8f, 0.9f);  // Blue if OK
+        barColor = ImVec4(EVEColors::ACCENT_PRIMARY[0] * 0.7f,
+                          EVEColors::ACCENT_PRIMARY[1] * 0.7f,
+                          EVEColors::ACCENT_PRIMARY[2] * 0.7f, 0.9f);  // Teal if OK
     }
     
     ImGui::PushStyleColor(ImGuiCol_PlotHistogram, barColor);
@@ -110,7 +121,9 @@ void FittingPanel::RenderResourceBar(const char* label, float used, float max, f
 
 void FittingPanel::RenderSlotSection(const char* title, const std::array<std::optional<ModuleInfo>, 8>& slots,
                                      const std::string& slot_type, int max_slots) {
-    ImGui::TextColored(ImVec4(0.35f, 0.65f, 1.0f, 1.0f), "%s", title);
+    ImGui::TextColored(ImVec4(
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]), "%s", title);
     ImGui::Spacing();
     
     // Display slots in a grid (2 columns)
@@ -129,7 +142,9 @@ void FittingPanel::RenderSlotSection(const char* title, const std::array<std::op
 }
 
 void FittingPanel::RenderRigSection() {
-    ImGui::TextColored(ImVec4(0.35f, 0.65f, 1.0f, 1.0f), "Rig Slots");
+    ImGui::TextColored(ImVec4(
+        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+        EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]), "Rig Slots");
     ImGui::Spacing();
     
     // Rigs displayed in single column
@@ -155,8 +170,10 @@ void FittingPanel::RenderModuleSlot(const std::optional<ModuleInfo>& module,
         
         // Module button (clickable)
         ImVec4 buttonColor = mod.is_online ? 
-            ImVec4(0.2f, 0.6f, 0.3f, 0.8f) :   // Green if online
-            ImVec4(0.3f, 0.3f, 0.3f, 0.8f);    // Gray if offline
+            ImVec4(EVEColors::SUCCESS[0] * 0.5f, EVEColors::SUCCESS[1] * 0.5f,
+                   EVEColors::SUCCESS[2] * 0.5f, 0.8f) :   // Green if online
+            ImVec4(EVEColors::BG_SECONDARY[0], EVEColors::BG_SECONDARY[1],
+                   EVEColors::BG_SECONDARY[2], 0.8f);       // Dark if offline
         
         ImGui::PushStyleColor(ImGuiCol_Button, buttonColor);
         
@@ -190,7 +207,9 @@ void FittingPanel::RenderModuleSlot(const std::optional<ModuleInfo>& module,
         
     } else {
         // Render empty slot
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.15f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::BG_PANEL[0], EVEColors::BG_PANEL[1],
+            EVEColors::BG_PANEL[2], 0.8f));
         
         if (ImGui::Button(("[Empty " + slot_type + " slot]").c_str(), ImVec2(280, 40))) {
             // Click to fit module (not implemented in UI, would show module browser)

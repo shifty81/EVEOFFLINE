@@ -1,4 +1,5 @@
 #include "ui/inventory_panel.h"
+#include "ui/ui_manager.h"
 #include <imgui.h>
 #include <algorithm>
 #include <cstring>  // for strncpy
@@ -75,11 +76,15 @@ void InventoryPanel::SetInventoryData(const InventoryData& data) {
 }
 
 void InventoryPanel::RenderViewButtons() {
-    // Cargo button
+    // Cargo button — Photon UI active tab uses teal accent
     if (m_viewMode == 0) {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 0.8f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+            EVEColors::ACCENT_DIM[2], 0.8f));
     } else {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.15f, 0.2f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
+            EVEColors::BG_HEADER[2], 0.8f));
     }
     
     if (ImGui::Button("Cargo Hold", ImVec2(150, 30))) {
@@ -92,9 +97,13 @@ void InventoryPanel::RenderViewButtons() {
     
     // Hangar button
     if (m_viewMode == 1) {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.6f, 0.8f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+            EVEColors::ACCENT_DIM[2], 0.8f));
     } else {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.15f, 0.2f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
+            EVEColors::BG_HEADER[2], 0.8f));
     }
     
     if (ImGui::Button("Station Hangar", ImVec2(150, 30))) {
@@ -112,7 +121,10 @@ void InventoryPanel::RenderCapacityDisplay() {
     // Right-aligned capacity text
     ImGui::Text("Capacity:");
     ImGui::SameLine();
-    ImGui::TextColored(ImVec4(0.7f, 0.75f, 0.8f, 1.0f), "%.1f / %.1f m³ (%.1f%%)", 
+    ImGui::TextColored(ImVec4(
+        EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
+        EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+        "%.1f / %.1f m\xc2\xb3 (%.1f%%)", 
                        used, capacity, percent);
     
     // Capacity bar
@@ -191,7 +203,9 @@ void InventoryPanel::RenderActionButtons() {
     
     // Jettison button (only available for cargo)
     if (m_viewMode == 0) {
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.2f, 0.1f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::DANGER[0] * 0.5f, EVEColors::DANGER[1] * 0.5f,
+            EVEColors::DANGER[2] * 0.5f, 0.8f));
         if (ImGui::Button("Jettison", ImVec2(120, 30))) {
             if (m_onJettison && hasSelection) {
                 const auto& items = GetCurrentItems();
@@ -273,8 +287,12 @@ void InventoryPanel::HandleDropTarget(bool is_cargo_view) {
 
 void InventoryPanel::RenderJettisonDropZone() {
     // Create a colored drop zone for jettisoning items
-    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.5f, 0.2f, 0.1f, 0.3f));
-    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.6f, 0.3f, 0.2f, 0.5f));
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+        EVEColors::DANGER[0] * 0.3f, EVEColors::DANGER[1] * 0.3f,
+        EVEColors::DANGER[2] * 0.3f, 0.3f));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(
+        EVEColors::DANGER[0] * 0.5f, EVEColors::DANGER[1] * 0.5f,
+        EVEColors::DANGER[2] * 0.5f, 0.5f));
     ImGui::Button("⚠️ Jettison Zone - Drop items here to jettison into space", ImVec2(-1, 40));
     ImGui::PopStyleColor(2);
     

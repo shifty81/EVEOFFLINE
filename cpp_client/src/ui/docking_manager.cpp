@@ -1,4 +1,5 @@
 #include "ui/docking_manager.h"
+#include "ui/ui_manager.h"
 #include <imgui.h>
 #include <algorithm>
 #include <iostream>
@@ -159,11 +160,16 @@ void DockingManager::RenderLockButton() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     if (ImGui::Begin("##LockButton", nullptr, flags)) {
         const char* icon = m_interfaceLocked ? "L" : "U";
+        // Photon UI: teal accent for unlocked, warning for locked
         ImVec4 color = m_interfaceLocked
-            ? ImVec4(0.8f, 0.2f, 0.2f, 1.0f)   // Red when locked
-            : ImVec4(0.3f, 0.8f, 0.3f, 1.0f);   // Green when unlocked
+            ? ImVec4(EVEColors::WARNING[0], EVEColors::WARNING[1],
+                     EVEColors::WARNING[2], EVEColors::WARNING[3])
+            : ImVec4(EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+                     EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]);
 
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.15f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
+            EVEColors::BG_PANEL[0], EVEColors::BG_PANEL[1],
+            EVEColors::BG_PANEL[2], 0.8f));
         ImGui::PushStyleColor(ImGuiCol_Text, color);
 
         if (ImGui::Button(icon, ImVec2(buttonSize - 4, buttonSize - 4))) {

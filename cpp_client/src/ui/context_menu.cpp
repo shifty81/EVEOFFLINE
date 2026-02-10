@@ -1,4 +1,5 @@
 #include "ui/context_menu.h"
+#include "ui/ui_manager.h"
 #include <imgui.h>
 #include <iostream>
 
@@ -38,11 +39,19 @@ void ContextMenu::Render() {
         return;
     }
     
-    // EVE-style menu colors
-    ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.1f, 0.1f, 0.1f, 0.95f));  // Dark background
-    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.9f, 0.9f, 0.9f, 1.0f));      // Light text
-    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.8f, 0.6f, 0.2f, 0.4f)); // Gold hover
-    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.8f, 0.6f, 0.2f, 0.6f));  // Gold active
+    // Photon UI menu colors — teal accent hover, dark blue-black background
+    ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(
+        EVEColors::BG_TOOLTIP[0], EVEColors::BG_TOOLTIP[1],
+        EVEColors::BG_TOOLTIP[2], EVEColors::BG_TOOLTIP[3]));
+    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(
+        EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
+        EVEColors::TEXT_PRIMARY[2], EVEColors::TEXT_PRIMARY[3]));
+    ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(
+        EVEColors::SELECTION[0], EVEColors::SELECTION[1],
+        EVEColors::SELECTION[2], EVEColors::SELECTION[3]));
+    ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(
+        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
+        EVEColors::ACCENT_DIM[2], 0.8f));
     
     if (m_menuType == ContextMenuType::ENTITY) {
         if (ImGui::BeginPopup("EntityContextMenu")) {
