@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 10, 2026)**: Second HAC variants added (Muninn, Eagle, Deimos, Sacrilege). Tech II EWAR and Logistics modules verified complete. The game now has 102 ships, 159+ modules, 137 skills, and comprehensive content across all tiers.
+> **Update (February 10, 2026)**: Second HAC variants added (Muninn, Eagle, Deimos, Sacrilege). Tech II EWAR and Logistics modules verified complete. The game now has 102 ships, 159+ modules, 137 skills, and comprehensive content across all tiers. InventorySystem, LootSystem, and NpcDatabase added to C++ server with 60 new tests (521 total).
 
 ## Current Status (February 2026)
 
@@ -326,6 +326,29 @@ From ROADMAP.md "In Progress" section:
     - ✅ Cruise Missile Launcher II (large missile)
     - ✅ Torpedo Launcher II (large missile)
 
+25. ✅ **Add C++ Server InventorySystem** (COMPLETED - February 2026)
+    - ✅ Inventory component with item storage, capacity tracking (m3)
+    - ✅ InventorySystem with add/remove/transfer/query operations
+    - ✅ Capacity limit enforcement (items rejected when cargo full)
+    - ✅ WorldPersistence serialization/deserialization support
+    - ✅ 19 test assertions, 100% pass rate
+
+26. ✅ **Add C++ Server LootSystem** (COMPLETED - February 2026)
+    - ✅ LootTable component with entries and ISK bounty
+    - ✅ LootSystem with wreck entity creation from LootTable
+    - ✅ Deterministic random loot generation (seeded RNG)
+    - ✅ Loot collection: item transfer + ISK payout to player
+    - ✅ WorldPersistence serialization/deserialization support
+    - ✅ 11 test assertions, 100% pass rate
+
+27. ✅ **Add NpcDatabase Data Loader** (COMPLETED - February 2026)
+    - ✅ NpcTemplate struct with full NPC stats (HP, weapons, resistances, loot)
+    - ✅ Loads 32 NPC templates from data/npcs/pirates.json
+    - ✅ Resistance conversion from percentage (0-100) to fraction (0.0-1.0)
+    - ✅ Weapon array parsing with damage, range, rate of fire
+    - ✅ Same lightweight JSON parser pattern as ShipDatabase
+    - ✅ 30 test assertions, 100% pass rate
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -392,4 +415,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 10, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Logging, monitoring, and crash reporting added. 102 ships, 159+ modules, 415 test assertions. Ready for Phase 8 planning.*
+*Status: Quick Wins, Medium-Term Tasks complete. Logging, monitoring, and crash reporting added. InventorySystem, LootSystem, and NpcDatabase added. 102 ships, 159+ modules, 521 test assertions. Ready for Phase 8 planning.*
