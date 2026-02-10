@@ -48,21 +48,21 @@ int main() {
     invData.hangar_used = 3421.5f;
     
     // Add cargo items
-    invData.cargo_items.push_back(UI::InventoryItem("ore_veldspar", "Veldspar", 2000, 0.01f, "ore", "mining"));
+    invData.cargo_items.push_back(UI::InventoryItem("ore_dustite", "Dustite", 2000, 0.01f, "ore", "mining"));
     invData.cargo_items.push_back(UI::InventoryItem("ore_plagioclase", "Plagioclase", 800, 0.035f, "ore", "mining"));
     invData.cargo_items.push_back(UI::InventoryItem("ammo_emp_s", "EMP S", 5000, 0.0003f, "ammo", "weapon"));
     invData.cargo_items.push_back(UI::InventoryItem("module_shield_ext", "Medium Shield Extender II", 2, 5.0f, "module", "shield"));
     invData.cargo_items.push_back(UI::InventoryItem("module_damage_ctrl", "Damage Control II", 1, 5.0f, "module", "tank"));
     
     // Add hangar items
-    invData.hangar_items.push_back(UI::InventoryItem("ship_rifter", "Rifter", 1, 2500.0f, "ship", "frigate"));
+    invData.hangar_items.push_back(UI::InventoryItem("ship_fang", "Fang", 1, 2500.0f, "ship", "frigate"));
     invData.hangar_items.push_back(UI::InventoryItem("ship_thrasher", "Thrasher", 1, 3500.0f, "ship", "destroyer"));
     invData.hangar_items.push_back(UI::InventoryItem("ship_stabber", "Stabber", 1, 15000.0f, "ship", "cruiser"));
     invData.hangar_items.push_back(UI::InventoryItem("module_shield_booster", "Large Shield Booster II", 10, 50.0f, "module", "shield"));
     invData.hangar_items.push_back(UI::InventoryItem("module_armor_plate", "1600mm Steel Plates II", 5, 120.0f, "module", "armor"));
     invData.hangar_items.push_back(UI::InventoryItem("ore_kernite", "Kernite", 15000, 1.2f, "ore", "mining"));
-    invData.hangar_items.push_back(UI::InventoryItem("mineral_tritanium", "Tritanium", 100000, 0.01f, "mineral", "materials"));
-    invData.hangar_items.push_back(UI::InventoryItem("mineral_pyerite", "Pyerite", 25000, 0.01f, "mineral", "materials"));
+    invData.hangar_items.push_back(UI::InventoryItem("mineral_ferrium", "Ferrium", 100000, 0.01f, "mineral", "materials"));
+    invData.hangar_items.push_back(UI::InventoryItem("mineral_ignium", "Ignium", 25000, 0.01f, "mineral", "materials"));
     
     inventoryPanel->SetInventoryData(invData);
     inventoryPanel->SetVisible(true);
@@ -196,32 +196,32 @@ int main() {
     
     // Populate market with demo items and orders
     std::vector<UI::MarketItem> items;
-    items.push_back(UI::MarketItem("ore_veldspar", "Veldspar", "Ore", "Common Ore", 10.5f));
+    items.push_back(UI::MarketItem("ore_dustite", "Dustite", "Ore", "Common Ore", 10.5f));
     items.push_back(UI::MarketItem("ore_plagioclase", "Plagioclase", "Ore", "Common Ore", 28.0f));
     items.push_back(UI::MarketItem("ore_kernite", "Kernite", "Ore", "Uncommon Ore", 125.0f));
-    items.push_back(UI::MarketItem("mineral_tritanium", "Tritanium", "Mineral", "Common Mineral", 5.2f));
-    items.push_back(UI::MarketItem("mineral_pyerite", "Pyerite", "Mineral", "Common Mineral", 7.8f));
-    items.push_back(UI::MarketItem("mineral_mexallon", "Mexallon", "Mineral", "Uncommon Mineral", 45.0f));
+    items.push_back(UI::MarketItem("mineral_ferrium", "Ferrium", "Mineral", "Common Mineral", 5.2f));
+    items.push_back(UI::MarketItem("mineral_ignium", "Ignium", "Mineral", "Common Mineral", 7.8f));
+    items.push_back(UI::MarketItem("mineral_allonium", "Allonium", "Mineral", "Uncommon Mineral", 45.0f));
     items.push_back(UI::MarketItem("ammo_emp_s", "EMP S", "Ammunition", "Small Ammo", 15.5f));
     items.push_back(UI::MarketItem("module_shield_ext", "Medium Shield Extender II", "Module", "Shield", 2500000.0f));
     items.push_back(UI::MarketItem("module_damage_gyro", "Gyrostabilizer II", "Module", "Damage", 1800000.0f));
-    items.push_back(UI::MarketItem("ship_rifter", "Rifter", "Ship", "Frigate", 450000.0f));
+    items.push_back(UI::MarketItem("ship_fang", "Fang", "Ship", "Frigate", 450000.0f));
     
     marketPanel->SetAvailableItems(items);
     
     // Add some buy orders
     std::vector<UI::MarketOrder> buyOrders;
-    buyOrders.push_back(UI::MarketOrder("buy_01", "Veldspar", "ore_veldspar", true, 10.2f, 50000, "Jita IV-4"));
-    buyOrders.push_back(UI::MarketOrder("buy_02", "Veldspar", "ore_veldspar", true, 9.8f, 100000, "Jita IV-4"));
-    buyOrders.push_back(UI::MarketOrder("buy_03", "Tritanium", "mineral_tritanium", true, 5.0f, 1000000, "Amarr VIII"));
-    buyOrders.push_back(UI::MarketOrder("buy_04", "Tritanium", "mineral_tritanium", true, 4.8f, 500000, "Dodixie"));
+    buyOrders.push_back(UI::MarketOrder("buy_01", "Dustite", "ore_dustite", true, 10.2f, 50000, "Thyrkstad Station"));
+    buyOrders.push_back(UI::MarketOrder("buy_02", "Dustite", "ore_dustite", true, 9.8f, 100000, "Thyrkstad Station"));
+    buyOrders.push_back(UI::MarketOrder("buy_03", "Ferrium", "mineral_ferrium", true, 5.0f, 1000000, "Solari Station"));
+    buyOrders.push_back(UI::MarketOrder("buy_04", "Ferrium", "mineral_ferrium", true, 4.8f, 500000, "Aurendis"));
     
     // Add some sell orders
     std::vector<UI::MarketOrder> sellOrders;
-    sellOrders.push_back(UI::MarketOrder("sell_01", "Veldspar", "ore_veldspar", false, 10.8f, 30000, "Jita IV-4"));
-    sellOrders.push_back(UI::MarketOrder("sell_02", "Veldspar", "ore_veldspar", false, 11.2f, 75000, "Jita IV-4"));
-    sellOrders.push_back(UI::MarketOrder("sell_03", "Tritanium", "mineral_tritanium", false, 5.5f, 800000, "Amarr VIII"));
-    sellOrders.push_back(UI::MarketOrder("sell_04", "Tritanium", "mineral_tritanium", false, 5.8f, 250000, "Rens VII"));
+    sellOrders.push_back(UI::MarketOrder("sell_01", "Dustite", "ore_dustite", false, 10.8f, 30000, "Thyrkstad Station"));
+    sellOrders.push_back(UI::MarketOrder("sell_02", "Dustite", "ore_dustite", false, 11.2f, 75000, "Thyrkstad Station"));
+    sellOrders.push_back(UI::MarketOrder("sell_03", "Ferrium", "mineral_ferrium", false, 5.5f, 800000, "Solari Station"));
+    sellOrders.push_back(UI::MarketOrder("sell_04", "Ferrium", "mineral_ferrium", false, 5.8f, 250000, "Kelheim Station"));
     
     marketPanel->SetBuyOrders(buyOrders);
     marketPanel->SetSellOrders(sellOrders);

@@ -52,7 +52,7 @@ void testBasicEntityOperations() {
     Health health(100, 200, 300);
     Capacitor cap(150.0f, 150.0f);
     manager.spawnEntity("entity-001", glm::vec3(10.0f, 20.0f, 30.0f), health, cap,
-                       "Rifter", "My Ship", "Minmatar");
+                       "Fang", "My Ship", "Keldari");
     
     auto entity = manager.getEntity("entity-001");
     if (entity) {
@@ -116,9 +116,9 @@ void testMessageParsing() {
         "entity_id": "uuid-123-456",
         "position": {"x": 100.0, "y": 200.0, "z": 300.0},
         "health": {"shield": 150, "armor": 250, "hull": 350},
-        "ship_type": "Merlin",
+        "ship_type": "Falk",
         "ship_name": "Test Ship",
-        "faction": "Caldari"
+        "faction": "Veyren"
     })";
     
     if (EntityMessageParser::parseSpawnEntity(spawnMsg, manager)) {

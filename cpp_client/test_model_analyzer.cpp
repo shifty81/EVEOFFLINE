@@ -266,10 +266,10 @@ void testLearnedHullGeneration(const ReferenceModelAnalyzer& analyzer) {
         const char* name;
     };
     FactionConfig factions[] = {
-        {4,  "Caldari-style (learned)"},
-        {6,  "Minmatar-style (learned)"},
-        {8,  "Amarr-style (learned)"},
-        {12, "Gallente-style (learned)"},
+        {4,  "Veyren-style (learned)"},
+        {6,  "Keldari-style (learned)"},
+        {8,  "Solari-style (learned)"},
+        {12, "Aurelian-style (learned)"},
     };
 
     int segments = 6;

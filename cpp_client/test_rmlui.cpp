@@ -132,13 +132,13 @@ int main() {
     shipData.max_velocity = 380.0f;
 
     // Demo locked targets
-    rmlUi->SetTarget("t1", "Serpentis Spy", 0.6f, 1.0f, 1.0f, 12400.0f, true, true);
-    rmlUi->SetTarget("t2", "Guristas Scout", 0.3f, 0.8f, 1.0f, 24500.0f, true, false);
+    rmlUi->SetTarget("t1", "Venom Syndicate Spy", 0.6f, 1.0f, 1.0f, 12400.0f, true, true);
+    rmlUi->SetTarget("t2", "Iron Corsairs Scout", 0.3f, 0.8f, 1.0f, 24500.0f, true, false);
     rmlUi->SetTarget("t3", "Asteroid Belt I", 1.0f, 1.0f, 1.0f, 45200.0f, false, false);
 
     // Demo inventory data
     {
-        std::vector<std::string> names = {"200mm AutoCannon I", "Veldspar", "Tritanium", "1MN Afterburner I"};
+        std::vector<std::string> names = {"200mm AutoCannon I", "Dustite", "Ferrium", "1MN Afterburner I"};
         std::vector<std::string> types = {"Weapon", "Ore", "Mineral", "Propulsion"};
         std::vector<int> quantities = {2, 1500, 3200, 1};
         std::vector<float> volumes = {5.0f, 0.1f, 0.01f, 5.0f};
@@ -147,7 +147,7 @@ int main() {
 
     // Demo D-Scan results
     {
-        std::vector<std::string> names = {"Serpentis Hideaway", "Asteroid Belt II", "Stargate (Jita)"};
+        std::vector<std::string> names = {"Venom Syndicate Hideaway", "Asteroid Belt II", "Stargate (Thyrkstad)"};
         std::vector<std::string> types = {"Combat Site", "Asteroid Belt", "Stargate"};
         std::vector<float> distances = {0.5f, 2.3f, 8.1f};
         rmlUi->UpdateDScanResults(names, types, distances);

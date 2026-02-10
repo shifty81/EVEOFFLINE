@@ -625,7 +625,7 @@ void UIManager::RenderStarMapPanel() {
     if (ImGui::Begin("Star Map (F10)", &m_showStarMap, ImGuiWindowFlags_None)) {
         // Map header with system info
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.271f, 0.816f, 0.910f, 1.0f));
-        ImGui::Text("STAR MAP - New Eden");
+        ImGui::Text("STAR MAP - Astralis");
         ImGui::PopStyleColor();
         
         ImGui::Separator();
@@ -671,10 +671,10 @@ void UIManager::RenderStarMapPanel() {
                 };
                 
                 MapNode nodes[] = {
-                    {"Jita",      0.5f, 0.4f,  1.0f, IM_COL32(69, 208, 232, 255)},
+                    {"Thyrkstad",      0.5f, 0.4f,  1.0f, IM_COL32(69, 208, 232, 255)},
                     {"Perimeter", 0.6f, 0.35f, 0.9f, IM_COL32(69, 208, 232, 200)},
-                    {"Amarr",     0.7f, 0.6f,  1.0f, IM_COL32(69, 208, 232, 255)},
-                    {"Dodixie",   0.3f, 0.55f, 0.9f, IM_COL32(69, 208, 232, 200)},
+                    {"Solari",     0.7f, 0.6f,  1.0f, IM_COL32(69, 208, 232, 255)},
+                    {"Aurendis",   0.3f, 0.55f, 0.9f, IM_COL32(69, 208, 232, 200)},
                     {"Rancer",    0.45f, 0.25f, 0.4f, IM_COL32(255, 165, 0, 255)},
                     {"Hek",       0.35f, 0.3f,  0.5f, IM_COL32(200, 200, 100, 255)},
                 };

@@ -156,54 +156,54 @@ void PBRMaterialLibrary::createEmissiveMaterials() {
 }
 
 void PBRMaterialLibrary::createFactionMaterials() {
-    // Minmatar - Rust and weathered metal
-    PBRMaterial minmatar;
-    minmatar.albedo = glm::vec3(0.5f, 0.35f, 0.25f);
-    minmatar.metallic = 0.7f;
-    minmatar.roughness = 0.6f;
-    addMaterial("Minmatar_hull", minmatar);
+    // Keldari - Rust and weathered metal
+    PBRMaterial keldari;
+    keldari.albedo = glm::vec3(0.5f, 0.35f, 0.25f);
+    keldari.metallic = 0.7f;
+    keldari.roughness = 0.6f;
+    addMaterial("Keldari_hull", keldari);
     
-    // Caldari - Polished steel and blue
-    PBRMaterial caldari;
-    caldari.albedo = glm::vec3(0.35f, 0.45f, 0.55f);
-    caldari.metallic = 0.9f;
-    caldari.roughness = 0.3f;
-    addMaterial("Caldari_hull", caldari);
+    // Veyren - Polished steel and blue
+    PBRMaterial veyren;
+    veyren.albedo = glm::vec3(0.35f, 0.45f, 0.55f);
+    veyren.metallic = 0.9f;
+    veyren.roughness = 0.3f;
+    addMaterial("Veyren_hull", veyren);
     
-    // Gallente - Green-gray composite
-    PBRMaterial gallente;
-    gallente.albedo = glm::vec3(0.3f, 0.4f, 0.35f);
-    gallente.metallic = 0.6f;
-    gallente.roughness = 0.4f;
-    addMaterial("Gallente_hull", gallente);
+    // Aurelian - Green-gray composite
+    PBRMaterial aurelian;
+    aurelian.albedo = glm::vec3(0.3f, 0.4f, 0.35f);
+    aurelian.metallic = 0.6f;
+    aurelian.roughness = 0.4f;
+    addMaterial("Aurelian_hull", aurelian);
     
-    // Amarr - Gold and brass
-    PBRMaterial amarr;
-    amarr.albedo = glm::vec3(0.6f, 0.55f, 0.45f);
-    amarr.metallic = 0.95f;
-    amarr.roughness = 0.2f;
-    addMaterial("Amarr_hull", amarr);
+    // Solari - Gold and brass
+    PBRMaterial solari;
+    solari.albedo = glm::vec3(0.6f, 0.55f, 0.45f);
+    solari.metallic = 0.95f;
+    solari.roughness = 0.2f;
+    addMaterial("Solari_hull", solari);
     
-    // Serpentis - Dark purple
-    PBRMaterial serpentis;
-    serpentis.albedo = glm::vec3(0.4f, 0.25f, 0.45f);
-    serpentis.metallic = 0.7f;
-    serpentis.roughness = 0.35f;
-    addMaterial("Serpentis_hull", serpentis);
+    // Venom Syndicate - Dark purple
+    PBRMaterial venomSyndicate;
+    venomSyndicate.albedo = glm::vec3(0.4f, 0.25f, 0.45f);
+    venomSyndicate.metallic = 0.7f;
+    venomSyndicate.roughness = 0.35f;
+    addMaterial("Venom_Syndicate_hull", venomSyndicate);
     
-    // Guristas - Dark red
-    PBRMaterial guristas;
-    guristas.albedo = glm::vec3(0.5f, 0.2f, 0.2f);
-    guristas.metallic = 0.8f;
-    guristas.roughness = 0.4f;
-    addMaterial("Guristas_hull", guristas);
+    // Iron Corsairs - Dark red
+    PBRMaterial ironCorsairs;
+    ironCorsairs.albedo = glm::vec3(0.5f, 0.2f, 0.2f);
+    ironCorsairs.metallic = 0.8f;
+    ironCorsairs.roughness = 0.4f;
+    addMaterial("Iron_Corsairs_hull", ironCorsairs);
     
-    // Blood Raiders - Crimson
-    PBRMaterial bloodRaiders;
-    bloodRaiders.albedo = glm::vec3(0.4f, 0.15f, 0.15f);
-    bloodRaiders.metallic = 0.75f;
-    bloodRaiders.roughness = 0.3f;
-    addMaterial("Blood Raiders_hull", bloodRaiders);
+    // Crimson Order - Crimson
+    PBRMaterial crimsonOrder;
+    crimsonOrder.albedo = glm::vec3(0.4f, 0.15f, 0.15f);
+    crimsonOrder.metallic = 0.75f;
+    crimsonOrder.roughness = 0.3f;
+    addMaterial("Crimson_Order_hull", crimsonOrder);
 }
 
 } // namespace eve

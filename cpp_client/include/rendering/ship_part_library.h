@@ -27,8 +27,8 @@ enum class ShipPartType {
     WEAPON_DRONE_BAY,  // Drone bay
     PANEL_DETAIL,      // Hull panel greeble
     ANTENNA_ARRAY,     // Communication arrays
-    SPIRE_ORNAMENT,    // Amarr-style spires
-    FRAMEWORK_EXPOSED  // Minmatar-style exposed framework
+    SPIRE_ORNAMENT,    // Solari-style spires
+    FRAMEWORK_EXPOSED  // Keldari-style exposed framework
 };
 
 /**
@@ -61,7 +61,7 @@ struct ShipPart {
  */
 struct ShipAssemblyConfig {
     std::string shipClass;         // "Frigate", "Cruiser", "Battleship", etc.
-    std::string faction;           // "Minmatar", "Caldari", "Gallente", "Amarr"
+    std::string faction;           // "Keldari", "Veyren", "Aurelian", "Solari"
     
     // Part selection
     std::string hullForwardId;
@@ -77,8 +77,8 @@ struct ShipAssemblyConfig {
     glm::vec3 proportions;         // Length, width, height multipliers
     
     // Assembly rules
-    bool enforceSymmetry;          // Amarr/Caldari symmetry requirement
-    bool allowAsymmetry;           // Minmatar asymmetry allowance
+    bool enforceSymmetry;          // Solari/Veyren symmetry requirement
+    bool allowAsymmetry;           // Keldari asymmetry allowance
     float asymmetryFactor;         // 0.0 = perfect symmetry, 1.0 = maximum asymmetry
     
     ShipAssemblyConfig()
@@ -178,10 +178,10 @@ private:
     std::map<std::string, ShipPart> m_parts;
     
     // Helper methods to create faction-specific parts
-    void createMinmatarParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent);
-    void createCaldariParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent);
-    void createGallenteParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent);
-    void createAmarrParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent);
+    void createKeldariParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent);
+    void createVeyrenParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent);
+    void createAurelianParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent);
+    void createSolariParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent);
     
     // Helper to create basic geometric primitives
     ShipPart createBoxPart(const glm::vec3& size, const glm::vec4& color, ShipPartType type);

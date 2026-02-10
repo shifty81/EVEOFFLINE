@@ -143,17 +143,17 @@ std::string ReferenceModelAnalyzer::inferFaction(const std::string& filename) {
     std::string lower = filename;
     std::transform(lower.begin(), lower.end(), lower.begin(), ::tolower);
 
-    if (lower.find("amarr") != std::string::npos) return "Amarr";
-    if (lower.find("caldari") != std::string::npos) return "Caldari";
-    if (lower.find("gallente") != std::string::npos) return "Gallente";
-    if (lower.find("minmatar") != std::string::npos) return "Minmatar";
+    if (lower.find("solari") != std::string::npos) return "Solari";
+    if (lower.find("veyren") != std::string::npos) return "Veyren";
+    if (lower.find("aurelian") != std::string::npos) return "Aurelian";
+    if (lower.find("keldari") != std::string::npos) return "Keldari";
     if (lower.find("triglavian") != std::string::npos) return "Triglavian";
-    if (lower.find("sansha") != std::string::npos) return "Sansha";
+    if (lower.find("hollow") != std::string::npos) return "Hollow";
     if (lower.find("angel") != std::string::npos) return "Angel";
     if (lower.find("ore") != std::string::npos) return "ORE";
-    if (lower.find("vulcan") != std::string::npos) return "Amarr";  // Vulcan class -> Amarr style
+    if (lower.find("vulcan") != std::string::npos) return "Solari";  // Vulcan class -> Solari style
     if (lower.find("intergalactic") != std::string::npos ||
-        lower.find("spaceship") != std::string::npos) return "Gallente";  // Sleek spaceship -> Gallente
+        lower.find("spaceship") != std::string::npos) return "Aurelian";  // Sleek spaceship -> Aurelian
     return "Unknown";
 }
 

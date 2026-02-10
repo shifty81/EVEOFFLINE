@@ -22,31 +22,31 @@ void ShipPartLibrary::initialize() {
     std::cout << "Initializing Ship Part Library..." << std::endl;
     
     // Get faction colors (reuse from Model class)
-    // Minmatar
+    // Keldari
     glm::vec4 minPrimary(0.5f, 0.35f, 0.25f, 1.0f);
     glm::vec4 minSecondary(0.3f, 0.2f, 0.15f, 1.0f);
     glm::vec4 minAccent(0.8f, 0.6f, 0.3f, 1.0f);
     
-    // Caldari
+    // Veyren
     glm::vec4 calPrimary(0.35f, 0.45f, 0.55f, 1.0f);
     glm::vec4 calSecondary(0.2f, 0.25f, 0.35f, 1.0f);
     glm::vec4 calAccent(0.5f, 0.7f, 0.9f, 1.0f);
     
-    // Gallente
+    // Aurelian
     glm::vec4 galPrimary(0.3f, 0.4f, 0.35f, 1.0f);
     glm::vec4 galSecondary(0.2f, 0.3f, 0.25f, 1.0f);
     glm::vec4 galAccent(0.4f, 0.7f, 0.5f, 1.0f);
     
-    // Amarr
+    // Solari
     glm::vec4 amaPrimary(0.6f, 0.55f, 0.45f, 1.0f);
     glm::vec4 amaSecondary(0.4f, 0.35f, 0.25f, 1.0f);
     glm::vec4 amaAccent(0.9f, 0.8f, 0.5f, 1.0f);
     
     // Create parts for each faction
-    createMinmatarParts(minPrimary, minSecondary, minAccent);
-    createCaldariParts(calPrimary, calSecondary, calAccent);
-    createGallenteParts(galPrimary, galSecondary, galAccent);
-    createAmarrParts(amaPrimary, amaSecondary, amaAccent);
+    createKeldariParts(minPrimary, minSecondary, minAccent);
+    createVeyrenParts(calPrimary, calSecondary, calAccent);
+    createAurelianParts(galPrimary, galSecondary, galAccent);
+    createSolariParts(amaPrimary, amaSecondary, amaAccent);
     
     std::cout << "Ship Part Library initialized with " << m_parts.size() << " parts" << std::endl;
 }
@@ -79,34 +79,34 @@ ShipAssemblyConfig ShipPartLibrary::createAssemblyConfig(const std::string& ship
     config.faction = faction;
     
     // Set up assembly based on faction and class
-    if (faction == "Minmatar") {
+    if (faction == "Keldari") {
         config.enforceSymmetry = false;
         config.allowAsymmetry = true;
         config.asymmetryFactor = 0.3f;
-        config.hullForwardId = "minmatar_forward_1";
-        config.hullMainId = "minmatar_main_1";
-        config.hullRearId = "minmatar_rear_1";
-    } else if (faction == "Caldari") {
+        config.hullForwardId = "keldari_forward_1";
+        config.hullMainId = "keldari_main_1";
+        config.hullRearId = "keldari_rear_1";
+    } else if (faction == "Veyren") {
         config.enforceSymmetry = true;
         config.allowAsymmetry = false;
         config.asymmetryFactor = 0.0f;
-        config.hullForwardId = "caldari_forward_1";
-        config.hullMainId = "caldari_main_1";
-        config.hullRearId = "caldari_rear_1";
-    } else if (faction == "Gallente") {
+        config.hullForwardId = "veyren_forward_1";
+        config.hullMainId = "veyren_main_1";
+        config.hullRearId = "veyren_rear_1";
+    } else if (faction == "Aurelian") {
         config.enforceSymmetry = true;
         config.allowAsymmetry = false;
         config.asymmetryFactor = 0.0f;
-        config.hullForwardId = "gallente_forward_1";
-        config.hullMainId = "gallente_main_1";
-        config.hullRearId = "gallente_rear_1";
-    } else if (faction == "Amarr") {
+        config.hullForwardId = "aurelian_forward_1";
+        config.hullMainId = "aurelian_main_1";
+        config.hullRearId = "aurelian_rear_1";
+    } else if (faction == "Solari") {
         config.enforceSymmetry = true;
         config.allowAsymmetry = false;
         config.asymmetryFactor = 0.0f;
-        config.hullForwardId = "amarr_forward_1";
-        config.hullMainId = "amarr_main_1";
-        config.hullRearId = "amarr_rear_1";
+        config.hullForwardId = "solari_forward_1";
+        config.hullMainId = "solari_main_1";
+        config.hullRearId = "solari_rear_1";
     }
     
     // Set scale based on ship class
@@ -190,8 +190,8 @@ ShipAssemblyConfig ShipPartLibrary::createVariedAssemblyConfig(
 
 // ==================== Faction-Specific Part Creation ====================
 
-void ShipPartLibrary::createMinmatarParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
-    // Minmatar: Asymmetric, rustic, exposed framework
+void ShipPartLibrary::createKeldariParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
+    // Keldari: Asymmetric, rustic, exposed framework
     // Uses extrusion-based hull generation matching the reference project
     
     // Forward hull - angular extruded nose (6-sided, 3 segments, narrow)
@@ -199,52 +199,52 @@ void ShipPartLibrary::createMinmatarParts(const glm::vec4& primary, const glm::v
     ShipPart forward = createExtrudedHullPart(6, 3, 0.35f, 0.6f, fwdMults,
                                                0.8f, 1.0f, primary,
                                                ShipPartType::HULL_FORWARD);
-    forward.name = "Minmatar Angular Nose";
-    forward.faction = "Minmatar";
+    forward.name = "Keldari Angular Nose";
+    forward.faction = "Keldari";
     forward.isSymmetric = false;
     forward.attachmentPoint = glm::vec3(-1.0f, 0.0f, 0.0f);
-    addPart("minmatar_forward_1", forward);
+    addPart("keldari_forward_1", forward);
     
     // Main hull - wider industrial body (6-sided, 5 segments)
     auto mainMults = generateRadiusMultipliers(5, 1.0f, 102u);
     ShipPart main = createExtrudedHullPart(6, 5, 0.4f, 1.0f, mainMults,
                                             1.2f, 0.7f, primary,
                                             ShipPartType::HULL_MAIN);
-    main.name = "Minmatar Industrial Hull";
-    main.faction = "Minmatar";
+    main.name = "Keldari Industrial Hull";
+    main.faction = "Keldari";
     main.isSymmetric = false;
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-    addPart("minmatar_main_1", main);
+    addPart("keldari_main_1", main);
     
     // Rear hull - engine mount (6-sided, 2 segments)
     auto rearMults = generateRadiusMultipliers(2, 0.8f, 103u);
     ShipPart rear = createExtrudedHullPart(6, 2, 0.3f, 0.8f, rearMults,
                                             0.9f, 0.7f, secondary,
                                             ShipPartType::HULL_REAR);
-    rear.name = "Minmatar Engine Mount";
-    rear.faction = "Minmatar";
+    rear.name = "Keldari Engine Mount";
+    rear.faction = "Keldari";
     rear.isSymmetric = false;
     rear.attachmentPoint = glm::vec3(1.0f, 0.0f, 0.0f);
-    addPart("minmatar_rear_1", rear);
+    addPart("keldari_rear_1", rear);
     
     // Engine - cylindrical exhausts (keep simple primitive for accent)
     ShipPart engine = createCylinderPart(0.2f, 0.5f, 8, accent, ShipPartType::ENGINE_MAIN);
-    engine.name = "Minmatar Engine Exhaust";
-    engine.faction = "Minmatar";
+    engine.name = "Keldari Engine Exhaust";
+    engine.faction = "Keldari";
     engine.isSymmetric = true;
-    addPart("minmatar_engine_1", engine);
+    addPart("keldari_engine_1", engine);
     
     // Exposed framework panel (beveled detail)
     ShipPart framework = createBeveledPanelPart(4, 0.4f, 0.3f, -0.15f,
                                                  accent, ShipPartType::FRAMEWORK_EXPOSED);
-    framework.name = "Minmatar Exposed Framework";
-    framework.faction = "Minmatar";
+    framework.name = "Keldari Exposed Framework";
+    framework.faction = "Keldari";
     framework.isSymmetric = false;
-    addPart("minmatar_framework_1", framework);
+    addPart("keldari_framework_1", framework);
 }
 
-void ShipPartLibrary::createCaldariParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
-    // Caldari: Blocky, angular, industrial
+void ShipPartLibrary::createVeyrenParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
+    // Veyren: Blocky, angular, industrial
     // Uses 4-sided extrusion for angular silhouettes
     
     // Forward hull - blocky extruded nose (4-sided, 3 segments)
@@ -252,52 +252,52 @@ void ShipPartLibrary::createCaldariParts(const glm::vec4& primary, const glm::ve
     ShipPart forward = createExtrudedHullPart(4, 3, 0.4f, 0.7f, fwdMults,
                                                1.0f, 0.8f, primary,
                                                ShipPartType::HULL_FORWARD);
-    forward.name = "Caldari Blocky Nose";
-    forward.faction = "Caldari";
+    forward.name = "Veyren Blocky Nose";
+    forward.faction = "Veyren";
     forward.isSymmetric = true;
     forward.attachmentPoint = glm::vec3(-1.2f, 0.0f, 0.0f);
-    addPart("caldari_forward_1", forward);
+    addPart("veyren_forward_1", forward);
     
     // Main hull - rectangular body (4-sided, 6 segments)
     auto mainMults = generateRadiusMultipliers(6, 1.0f, 202u);
     ShipPart main = createExtrudedHullPart(4, 6, 0.45f, 1.0f, mainMults,
                                             1.3f, 0.9f, primary,
                                             ShipPartType::HULL_MAIN);
-    main.name = "Caldari Industrial Hull";
-    main.faction = "Caldari";
+    main.name = "Veyren Industrial Hull";
+    main.faction = "Veyren";
     main.isSymmetric = true;
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-    addPart("caldari_main_1", main);
+    addPart("veyren_main_1", main);
     
     // Rear hull - squared engine section (4-sided, 2 segments)
     auto rearMults = generateRadiusMultipliers(2, 0.9f, 203u);
     ShipPart rear = createExtrudedHullPart(4, 2, 0.35f, 0.9f, rearMults,
                                             1.1f, 0.8f, secondary,
                                             ShipPartType::HULL_REAR);
-    rear.name = "Caldari Engine Section";
-    rear.faction = "Caldari";
+    rear.name = "Veyren Engine Section";
+    rear.faction = "Veyren";
     rear.isSymmetric = true;
     rear.attachmentPoint = glm::vec3(1.25f, 0.0f, 0.0f);
-    addPart("caldari_rear_1", rear);
+    addPart("veyren_rear_1", rear);
     
     // Engine - square exhausts (keep primitive for accent)
     ShipPart engine = createBoxPart(glm::vec3(0.4f, 0.25f, 0.25f), accent, ShipPartType::ENGINE_MAIN);
-    engine.name = "Caldari Square Engine";
-    engine.faction = "Caldari";
+    engine.name = "Veyren Square Engine";
+    engine.faction = "Veyren";
     engine.isSymmetric = true;
-    addPart("caldari_engine_1", engine);
+    addPart("veyren_engine_1", engine);
     
     // Panel detail (beveled angular panel)
     ShipPart panel = createBeveledPanelPart(4, 0.3f, 0.25f, -0.1f,
                                              accent, ShipPartType::PANEL_DETAIL);
-    panel.name = "Caldari Angular Panel";
-    panel.faction = "Caldari";
+    panel.name = "Veyren Angular Panel";
+    panel.faction = "Veyren";
     panel.isSymmetric = true;
-    addPart("caldari_panel_1", panel);
+    addPart("veyren_panel_1", panel);
 }
 
-void ShipPartLibrary::createGallenteParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
-    // Gallente: Organic, smooth curves
+void ShipPartLibrary::createAurelianParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
+    // Aurelian: Organic, smooth curves
     // Uses high-sided extrusion (12-sided) for smooth organic shapes
     
     // Forward hull - smooth extruded nose (12-sided, 3 segments)
@@ -305,44 +305,44 @@ void ShipPartLibrary::createGallenteParts(const glm::vec4& primary, const glm::v
     ShipPart forward = createExtrudedHullPart(12, 3, 0.4f, 0.6f, fwdMults,
                                                1.0f, 1.0f, primary,
                                                ShipPartType::HULL_FORWARD);
-    forward.name = "Gallente Smooth Nose";
-    forward.faction = "Gallente";
+    forward.name = "Aurelian Smooth Nose";
+    forward.faction = "Aurelian";
     forward.isSymmetric = true;
     forward.attachmentPoint = glm::vec3(-1.2f, 0.0f, 0.0f);
-    addPart("gallente_forward_1", forward);
+    addPart("aurelian_forward_1", forward);
     
     // Main hull - organic ellipsoidal body (12-sided, 6 segments)
     auto mainMults = generateRadiusMultipliers(6, 1.0f, 302u);
     ShipPart main = createExtrudedHullPart(12, 6, 0.45f, 1.0f, mainMults,
                                             1.1f, 0.9f, primary,
                                             ShipPartType::HULL_MAIN);
-    main.name = "Gallente Organic Hull";
-    main.faction = "Gallente";
+    main.name = "Aurelian Organic Hull";
+    main.faction = "Aurelian";
     main.isSymmetric = true;
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-    addPart("gallente_main_1", main);
+    addPart("aurelian_main_1", main);
     
     // Rear hull - curved engine housing (12-sided, 2 segments)
     auto rearMults = generateRadiusMultipliers(2, 0.8f, 303u);
     ShipPart rear = createExtrudedHullPart(12, 2, 0.35f, 0.8f, rearMults,
                                             1.0f, 0.9f, secondary,
                                             ShipPartType::HULL_REAR);
-    rear.name = "Gallente Engine Housing";
-    rear.faction = "Gallente";
+    rear.name = "Aurelian Engine Housing";
+    rear.faction = "Aurelian";
     rear.isSymmetric = true;
     rear.attachmentPoint = glm::vec3(1.25f, 0.0f, 0.0f);
-    addPart("gallente_rear_1", rear);
+    addPart("aurelian_rear_1", rear);
     
     // Engine - rounded exhausts (keep primitive for accent)
     ShipPart engine = createCylinderPart(0.15f, 0.4f, 12, accent, ShipPartType::ENGINE_MAIN);
-    engine.name = "Gallente Rounded Engine";
-    engine.faction = "Gallente";
+    engine.name = "Aurelian Rounded Engine";
+    engine.faction = "Aurelian";
     engine.isSymmetric = true;
-    addPart("gallente_engine_1", engine);
+    addPart("aurelian_engine_1", engine);
 }
 
-void ShipPartLibrary::createAmarrParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
-    // Amarr: Golden, ornate, with spires
+void ShipPartLibrary::createSolariParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
+    // Solari: Golden, ornate, with spires
     // Uses 8-sided extrusion for balanced angular-but-refined shapes
     
     // Forward hull - cathedral extruded nose (8-sided, 4 segments)
@@ -350,48 +350,48 @@ void ShipPartLibrary::createAmarrParts(const glm::vec4& primary, const glm::vec4
     ShipPart forward = createExtrudedHullPart(8, 4, 0.4f, 0.5f, fwdMults,
                                                0.9f, 1.0f, primary,
                                                ShipPartType::HULL_FORWARD);
-    forward.name = "Amarr Cathedral Nose";
-    forward.faction = "Amarr";
+    forward.name = "Solari Cathedral Nose";
+    forward.faction = "Solari";
     forward.isSymmetric = true;
     forward.attachmentPoint = glm::vec3(-1.5f, 0.0f, 0.0f);
-    addPart("amarr_forward_1", forward);
+    addPart("solari_forward_1", forward);
     
     // Main hull - ornate plated body (8-sided, 5 segments)
     auto mainMults = generateRadiusMultipliers(5, 1.0f, 402u);
     ShipPart main = createExtrudedHullPart(8, 5, 0.45f, 1.0f, mainMults,
                                             1.1f, 0.8f, primary,
                                             ShipPartType::HULL_MAIN);
-    main.name = "Amarr Ornate Hull";
-    main.faction = "Amarr";
+    main.name = "Solari Ornate Hull";
+    main.faction = "Solari";
     main.isSymmetric = true;
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
-    addPart("amarr_main_1", main);
+    addPart("solari_main_1", main);
     
     // Rear hull - golden engine section (8-sided, 2 segments)
     auto rearMults = generateRadiusMultipliers(2, 0.8f, 403u);
     ShipPart rear = createExtrudedHullPart(8, 2, 0.35f, 0.8f, rearMults,
                                             1.0f, 0.85f, secondary,
                                             ShipPartType::HULL_REAR);
-    rear.name = "Amarr Engine Section";
-    rear.faction = "Amarr";
+    rear.name = "Solari Engine Section";
+    rear.faction = "Solari";
     rear.isSymmetric = true;
     rear.attachmentPoint = glm::vec3(1.1f, 0.0f, 0.0f);
-    addPart("amarr_rear_1", rear);
+    addPart("solari_rear_1", rear);
     
     // Engine - golden exhausts (keep primitive for accent)
     ShipPart engine = createCylinderPart(0.18f, 0.45f, 8, accent, ShipPartType::ENGINE_MAIN);
-    engine.name = "Amarr Golden Engine";
-    engine.faction = "Amarr";
+    engine.name = "Solari Golden Engine";
+    engine.faction = "Solari";
     engine.isSymmetric = true;
-    addPart("amarr_engine_1", engine);
+    addPart("solari_engine_1", engine);
     
     // Spire ornament - vertical pyramid emphasis
     ShipPart spire = createPyramidDetailPart(6, 0.15f, 0.8f, accent,
                                               ShipPartType::SPIRE_ORNAMENT);
-    spire.name = "Amarr Decorative Spire";
-    spire.faction = "Amarr";
+    spire.name = "Solari Decorative Spire";
+    spire.faction = "Solari";
     spire.isSymmetric = true;
-    addPart("amarr_spire_1", spire);
+    addPart("solari_spire_1", spire);
 }
 
 // ==================== Geometric Primitive Helpers ====================
@@ -568,19 +568,19 @@ void ShipPartLibrary::createPartsFromLearnedModels(const ReferenceModelAnalyzer&
 
     // Determine faction color scheme
     glm::vec4 primary, secondary, accent;
-    if (faction == "Minmatar") {
+    if (faction == "Keldari") {
         primary   = glm::vec4(0.5f, 0.35f, 0.25f, 1.0f);
         secondary = glm::vec4(0.3f, 0.2f, 0.15f, 1.0f);
         accent    = glm::vec4(0.8f, 0.6f, 0.3f, 1.0f);
-    } else if (faction == "Caldari") {
+    } else if (faction == "Veyren") {
         primary   = glm::vec4(0.35f, 0.45f, 0.55f, 1.0f);
         secondary = glm::vec4(0.2f, 0.25f, 0.35f, 1.0f);
         accent    = glm::vec4(0.5f, 0.7f, 0.9f, 1.0f);
-    } else if (faction == "Gallente") {
+    } else if (faction == "Aurelian") {
         primary   = glm::vec4(0.3f, 0.4f, 0.35f, 1.0f);
         secondary = glm::vec4(0.2f, 0.3f, 0.25f, 1.0f);
         accent    = glm::vec4(0.4f, 0.7f, 0.5f, 1.0f);
-    } else if (faction == "Amarr") {
+    } else if (faction == "Solari") {
         primary   = glm::vec4(0.6f, 0.55f, 0.45f, 1.0f);
         secondary = glm::vec4(0.4f, 0.35f, 0.25f, 1.0f);
         accent    = glm::vec4(0.9f, 0.8f, 0.5f, 1.0f);
@@ -593,9 +593,9 @@ void ShipPartLibrary::createPartsFromLearnedModels(const ReferenceModelAnalyzer&
 
     // Determine polygon sides from faction style
     int factionSides = 6;
-    if (faction == "Caldari")  factionSides = 4;
-    if (faction == "Amarr")    factionSides = 8;
-    if (faction == "Gallente") factionSides = 12;
+    if (faction == "Veyren")  factionSides = 4;
+    if (faction == "Solari")    factionSides = 8;
+    if (faction == "Aurelian") factionSides = 12;
 
     auto params = analyzer.computeLearnedParams();
 
@@ -615,7 +615,7 @@ void ShipPartLibrary::createPartsFromLearnedModels(const ReferenceModelAnalyzer&
             primary, ShipPartType::HULL_FORWARD);
         forward.name = partIdPrefix + faction + " Learned Forward Hull";
         forward.faction = faction;
-        forward.isSymmetric = (faction != "Minmatar");
+        forward.isSymmetric = (faction != "Keldari");
         forward.attachmentPoint = glm::vec3(-1.0f, 0.0f, 0.0f);
         addPart(partIdPrefix + faction + "_forward_1", forward);
     }
@@ -632,7 +632,7 @@ void ShipPartLibrary::createPartsFromLearnedModels(const ReferenceModelAnalyzer&
             primary, ShipPartType::HULL_MAIN);
         main.name = partIdPrefix + faction + " Learned Main Hull";
         main.faction = faction;
-        main.isSymmetric = (faction != "Minmatar");
+        main.isSymmetric = (faction != "Keldari");
         main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
         addPart(partIdPrefix + faction + "_main_1", main);
     }
@@ -651,7 +651,7 @@ void ShipPartLibrary::createPartsFromLearnedModels(const ReferenceModelAnalyzer&
             secondary, ShipPartType::HULL_REAR);
         rear.name = partIdPrefix + faction + " Learned Rear Hull";
         rear.faction = faction;
-        rear.isSymmetric = (faction != "Minmatar");
+        rear.isSymmetric = (faction != "Keldari");
         rear.attachmentPoint = glm::vec3(1.0f, 0.0f, 0.0f);
         addPart(partIdPrefix + faction + "_rear_1", rear);
     }
@@ -674,7 +674,7 @@ void ShipPartLibrary::createPartsFromLearnedModels(const ReferenceModelAnalyzer&
             accent, ShipPartType::PANEL_DETAIL);
         panel.name = partIdPrefix + faction + " Learned Panel";
         panel.faction = faction;
-        panel.isSymmetric = (faction != "Minmatar");
+        panel.isSymmetric = (faction != "Keldari");
         addPart(partIdPrefix + faction + "_panel_1", panel);
     }
 

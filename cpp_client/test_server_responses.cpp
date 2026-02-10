@@ -143,7 +143,7 @@ void testResponseStructures() {
     InventoryResponse invResp;
     invResp.success = true;
     invResp.message = "Transfer completed";
-    invResp.itemId = "ore_veldspar";
+    invResp.itemId = "ore_dustite";
     invResp.quantity = 1000;
     assertTrue(invResp.success && invResp.quantity == 1000, "InventoryResponse structure");
     
@@ -160,7 +160,7 @@ void testResponseStructures() {
     MarketResponse mktResp;
     mktResp.success = true;
     mktResp.message = "Transaction completed";
-    mktResp.itemId = "ore_veldspar";
+    mktResp.itemId = "ore_dustite";
     mktResp.quantity = 5000;
     mktResp.price = 5.5;
     mktResp.totalCost = 27500.0;
@@ -174,7 +174,7 @@ void testMessageCreation() {
     ProtocolHandler handler;
     
     // Test inventory messages
-    std::string invMsg = handler.createInventoryTransferMessage("ore_veldspar", 1000, true, false);
+    std::string invMsg = handler.createInventoryTransferMessage("ore_dustite", 1000, true, false);
     assertTrue(!invMsg.empty() && invMsg.find("inventory_transfer") != std::string::npos, 
                "Creates inventory transfer message");
     
@@ -184,7 +184,7 @@ void testMessageCreation() {
                "Creates module fit message");
     
     // Test market messages
-    std::string mktMsg = handler.createMarketBuyMessage("ore_veldspar", 5000, 5.5);
+    std::string mktMsg = handler.createMarketBuyMessage("ore_dustite", 5000, 5.5);
     assertTrue(!mktMsg.empty() && mktMsg.find("market_transaction") != std::string::npos, 
                "Creates market buy message");
 }

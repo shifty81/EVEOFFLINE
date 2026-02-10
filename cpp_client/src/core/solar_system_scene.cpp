@@ -101,7 +101,7 @@ void SolarSystemScene::loadTestSystem() {
     // Station
     Celestial station;
     station.id = "station_1";
-    station.name = "Asakai III - Blood Raider Assembly Plant";
+    station.name = "Asakai III - Crimson Order Assembly Plant";
     station.type = Celestial::Type::STATION;
     station.position = glm::vec3(-28.0f * AU_IN_METERS, 500.0f, 5.2f * AU_IN_METERS);
     station.radius = 5000.0f;
@@ -462,9 +462,9 @@ void SolarSystemScene::generateSystem(uint32_t seed, const std::string& systemNa
 
     // --- Stations: 1-3 (almost always at least 1) ---
     static const char* stationPrefixes[] = {
-        "Caldari Navy Assembly Plant", "Gallente Federation Bureau",
-        "Amarr Imperial Academy", "Minmatar Fleet Logistics",
-        "Blood Raider Assembly Plant", "Serpentis Corporation Depot",
+        "Veyren Navy Assembly Plant", "Aurelian Federation Bureau",
+        "Solari Imperial Academy", "Keldari Fleet Logistics",
+        "Crimson Order Assembly Plant", "Venom Syndicate Corporation Depot",
         "ORE Refinery", "Sisters of EVE Bureau",
     };
     std::uniform_int_distribution<int> stationCountDist(1, 3);

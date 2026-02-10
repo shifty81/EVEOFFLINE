@@ -471,8 +471,8 @@ int OverviewPanel::CalculateStanding(const std::string& faction, bool is_player)
     }
     
     // Pirate factions are hostile
-    if (faction == "Serpentis" || faction == "Guristas" || 
-        faction == "Blood Raiders" || faction == "Sansha's Nation" ||
+    if (faction == "Venom Syndicate" || faction == "Iron Corsairs" || 
+        faction == "Crimson Order" || faction == "Hollow's Nation" ||
         faction == "Angel Cartel" || faction == "Mordu's Legion") {
         return -5;
     }
@@ -484,13 +484,13 @@ int OverviewPanel::CalculateStanding(const std::string& faction, bool is_player)
     
     // Empire factions and corporations are neutral by default
     // In a full implementation, this would check player's standings with the faction
-    if (faction == "Caldari" || faction == "Gallente" || 
-        faction == "Amarr" || faction == "Minmatar") {
+    if (faction == "Veyren" || faction == "Aurelian" || 
+        faction == "Solari" || faction == "Keldari") {
         return 0;
     }
     
-    // CONCORD and other friendly factions
-    if (faction == "CONCORD" || faction == "ORE" || faction == "Sisters of EVE") {
+    // AEGIS and other friendly factions
+    if (faction == "AEGIS" || faction == "ORE" || faction == "Sisters of EVE") {
         return 5;
     }
     
