@@ -551,6 +551,24 @@ public:
     COMPONENT_TYPE(DroneBay)
 };
 
+/**
+ * @brief Insurance policy on a ship
+ */
+class InsurancePolicy : public ecs::Component {
+public:
+    std::string policy_id;
+    std::string ship_type;
+    std::string tier = "basic";    // "basic", "standard", "platinum"
+    float coverage_fraction = 0.5f; // fraction of ship value paid out
+    double premium_paid = 0.0;     // ISK paid for policy
+    double payout_value = 0.0;     // ISK paid out on loss
+    float duration_remaining = -1.0f; // seconds, -1 = permanent
+    bool active = true;
+    bool claimed = false;
+
+    COMPONENT_TYPE(InsurancePolicy)
+};
+
 } // namespace components
 } // namespace eve
 

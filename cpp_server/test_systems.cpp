@@ -24,6 +24,7 @@
 #include "systems/inventory_system.h"
 #include "systems/loot_system.h"
 #include "systems/drone_system.h"
+#include "systems/insurance_system.h"
 #include "data/world_persistence.h"
 #include "data/npc_database.h"
 #include "systems/movement_system.h"
@@ -3294,6 +3295,101 @@ void testSerializeDeserializeDroneBay() {
     assertTrue(approxEqual(bay2->deployed_drones[0].current_hp, 30.0f), "Deployed drone current_hp preserved");
 }
 
+// ==================== Insurance System Tests ====================
+
+void testInsurancePurchase() {
+    std::cout << "\n=== Insurance Purchase ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 1000000.0;
+
+    assertTrue(insSys.purchaseInsurance("player_ship", "basic", 500000.0),
+               "Basic insurance purchased");
+    auto* policy = ship->getComponent<components::InsurancePolicy>();
+    assertTrue(policy != nullptr, "InsurancePolicy component created");
+    assertTrue(policy->tier == "basic", "Policy tier is basic");
+    assertTrue(approxEqual(static_cast<float>(policy->coverage_fraction), 0.5f), "Basic coverage is 50%");
+    assertTrue(approxEqual(static_cast<float>(policy->payout_value), 250000.0f), "Payout is 50% of ship value");
+    assertTrue(player->isk < 1000000.0, "Premium deducted from ISK");
+    assertTrue(policy->active, "Policy is active");
+}
+
+void testInsuranceClaim() {
+    std::cout << "\n=== Insurance Claim ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 1000000.0;
+
+    insSys.purchaseInsurance("player_ship", "standard", 500000.0);
+    double isk_after_purchase = player->isk;
+
+    double payout = insSys.claimInsurance("player_ship");
+    assertTrue(payout > 0.0, "Claim returns positive payout");
+    assertTrue(approxEqual(static_cast<float>(payout), 350000.0f), "Standard pays 70% of ship value");
+    assertTrue(approxEqual(static_cast<float>(player->isk), static_cast<float>(isk_after_purchase + payout)),
+               "ISK increased by payout");
+
+    auto* policy = ship->getComponent<components::InsurancePolicy>();
+    assertTrue(policy->claimed, "Policy marked as claimed");
+
+    double second_claim = insSys.claimInsurance("player_ship");
+    assertTrue(approxEqual(static_cast<float>(second_claim), 0.0f), "Double claim returns 0");
+}
+
+void testInsurancePlatinum() {
+    std::cout << "\n=== Insurance Platinum ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 1000000.0;
+
+    assertTrue(insSys.purchaseInsurance("player_ship", "platinum", 500000.0),
+               "Platinum insurance purchased");
+    auto* policy = ship->getComponent<components::InsurancePolicy>();
+    assertTrue(approxEqual(static_cast<float>(policy->coverage_fraction), 1.0f), "Platinum coverage is 100%");
+    assertTrue(approxEqual(static_cast<float>(policy->payout_value), 500000.0f), "Platinum payout is full value");
+}
+
+void testInsuranceExpiry() {
+    std::cout << "\n=== Insurance Expiry ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 1000000.0;
+
+    insSys.purchaseInsurance("player_ship", "basic", 500000.0);
+    auto* policy = ship->getComponent<components::InsurancePolicy>();
+    policy->duration_remaining = 10.0f; // 10 seconds
+
+    insSys.update(5.0f);
+    assertTrue(policy->active, "Policy still active at 5s");
+    assertTrue(insSys.hasActivePolicy("player_ship"), "hasActivePolicy returns true");
+
+    insSys.update(6.0f);
+    assertTrue(!policy->active, "Policy expired after 11s");
+    assertTrue(!insSys.hasActivePolicy("player_ship"), "hasActivePolicy returns false after expiry");
+}
+
+void testInsuranceInsufficientFunds() {
+    std::cout << "\n=== Insurance Insufficient Funds ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 100.0; // Not enough
+
+    assertTrue(!insSys.purchaseInsurance("player_ship", "basic", 500000.0),
+               "Insurance rejected with insufficient funds");
+    assertTrue(ship->getComponent<components::InsurancePolicy>() == nullptr,
+               "No policy created on failure");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -3302,7 +3398,7 @@ int main() {
     std::cout << "Capacitor, Shield, Weapon, Targeting," << std::endl;
     std::cout << "ShipDB, WormholeDB, Wormhole, Fleet," << std::endl;
     std::cout << "Mission, Skill, Module, Inventory," << std::endl;
-    std::cout << "Loot, NpcDB, Drone," << std::endl;
+    std::cout << "Loot, NpcDB, Drone, Insurance," << std::endl;
     std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
     std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
@@ -3457,6 +3553,13 @@ int main() {
     testDroneCombatUpdate();
     testDroneDestroyedRemoval();
     testSerializeDeserializeDroneBay();
+
+    // Insurance system tests
+    testInsurancePurchase();
+    testInsuranceClaim();
+    testInsurancePlatinum();
+    testInsuranceExpiry();
+    testInsuranceInsufficientFunds();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
