@@ -102,6 +102,20 @@ public:
     // === Entity Visual Management ===
     
     /**
+     * Configure the solar system sun for rendering.
+     * Call each frame with the current system's sun data.
+     * @param position World position of the sun
+     * @param color Light color of the sun
+     * @param radius Physical radius of the sun in meters
+     */
+    void setSunState(const glm::vec3& position, const glm::vec3& color, float radius);
+
+    /**
+     * Disable sun rendering (e.g. when no solar system is loaded)
+     */
+    void disableSun();
+
+    /**
      * Create visual representation for an entity
      * @param entity The entity to create visuals for
      * @return true if successful
@@ -188,6 +202,23 @@ private:
      */
     void renderHealthBars(Camera& camera);
 
+    /**
+     * Setup sun sphere geometry for solar system rendering
+     */
+    void setupSunMesh();
+
+    /**
+     * Render the solar system sun as a bright glowing sphere at the origin.
+     * Uses additive blending for a luminous glow effect.
+     * 
+     * @param camera Current camera for view/projection matrices
+     * @param sunPosition World position of the sun
+     * @param sunColor Light color of the sun
+     * @param sunRadius Physical radius of the sun in meters
+     */
+    void renderSun(Camera& camera, const glm::vec3& sunPosition,
+                   const glm::vec3& sunColor, float sunRadius);
+
     std::unique_ptr<Shader> m_basicShader;
     std::unique_ptr<Shader> m_starfieldShader;
     std::unique_ptr<Shader> m_nebulaShader;
@@ -202,6 +233,18 @@ private:
     unsigned int m_starfieldVAO;
     unsigned int m_starfieldVBO;
     int m_starCount;
+
+    // Sun sphere data
+    unsigned int m_sunVAO;
+    unsigned int m_sunVBO;
+    unsigned int m_sunEBO;
+    int m_sunIndexCount;
+
+    // Sun rendering state (set externally by scene)
+    bool m_sunEnabled;
+    glm::vec3 m_sunPosition;
+    glm::vec3 m_sunColor;
+    float m_sunRadius;
 
     // Entity visuals
     std::unordered_map<std::string, EntityVisual> m_entityVisuals;

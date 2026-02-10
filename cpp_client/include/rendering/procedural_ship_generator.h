@@ -66,9 +66,9 @@ struct ProceduralShipParams {
     float widthScale     = 1.0f;    // Stretch/compress along X
     float heightScale    = 1.0f;    // Stretch/compress along Y
 
-    // Extrusion detail
-    int   extrusionCount = 3;       // Number of faces to extrude for greebles
-    float extrusionDepth = 0.15f;   // Maximum extrusion distance (fraction of size)
+    // Extrusion detail — conservative defaults for clean small-ship silhouettes
+    int   extrusionCount = 2;       // Number of faces to extrude for greebles
+    float extrusionDepth = 0.10f;   // Maximum extrusion distance (fraction of size)
 
     // Noise displacement
     float noiseAmplitude = 0.0f;    // Surface noise strength (0 = off)

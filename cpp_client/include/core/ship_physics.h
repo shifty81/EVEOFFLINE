@@ -210,7 +210,7 @@ private:
     // Constants
     static constexpr float SPACE_FRICTION = 0.5f;  // Simulated space friction
     static constexpr float WARP_ALIGN_THRESHOLD = 0.75f;  // 75% of max velocity
-    static constexpr float ACCELERATION_CONSTANT = 500000.0f;  // EVE's constant
+    static constexpr float ACCELERATION_CONSTANT = 250000.0f;  // Reduced for slower, more realistic align time
     static constexpr float AU_IN_METERS = 149597870700.0f;  // 1 AU in meters
     static constexpr float MIN_WARP_DISTANCE = 150000.0f;  // Minimum 150km to warp
     static constexpr float WARP_EXIT_DISTANCE = 2500.0f;   // Land within 2500m of target

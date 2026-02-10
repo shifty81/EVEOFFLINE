@@ -466,9 +466,30 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
             params.seed = static_cast<unsigned int>(
                 std::hash<std::string>{}(shipType + "_" + faction));
             params.enforceSymmetry = true;
-            params.extrusionCount = 5;
-            params.engineCount = 2;
-            params.weaponCount = 2;
+
+            // Scale procedural detail by ship class — small ships get less
+            // noise and fewer extrusions for cleaner silhouettes
+            if (shipClass == "frigate") {
+                params.extrusionCount = 2;          // Minimal greebles
+                params.extrusionDepth = 0.08f;      // Shallow extrusions
+                params.noiseAmplitude = 0.0f;       // No noise for clean look
+                params.engineCount = 2;
+                params.weaponCount = 1;
+                params.antennaCount = 0;
+            } else if (shipClass == "destroyer") {
+                params.extrusionCount = 3;
+                params.extrusionDepth = 0.10f;
+                params.noiseAmplitude = 0.0f;
+                params.engineCount = 2;
+                params.weaponCount = 2;
+                params.antennaCount = 0;
+            } else {
+                params.extrusionCount = 5;
+                params.extrusionDepth = 0.15f;
+                params.engineCount = 2;
+                params.weaponCount = 2;
+                params.antennaCount = 0;
+            }
 
             // Faction-specific colour
             FactionColors fc = getFactionColors(faction);
@@ -544,10 +565,16 @@ struct HullParams {
  * More sides = smoother silhouette.
  */
 static int getFactionSides(const std::string& faction) {
+    // Original EVE factions
     if (faction.find("Caldari") != std::string::npos) return 4;   // Blocky/angular
     if (faction.find("Minmatar") != std::string::npos) return 6;  // Industrial/angular
     if (faction.find("Amarr") != std::string::npos) return 8;     // Refined/ornate
     if (faction.find("Gallente") != std::string::npos) return 12; // Smooth/organic
+    // New PVE factions (matching their analog's design language)
+    if (faction.find("Core Nexus") != std::string::npos) return 4;           // Caldari analog — blocky
+    if (faction.find("Rust-Scrap") != std::string::npos) return 6;           // Minmatar analog — industrial
+    if (faction.find("Sanctum Hegemony") != std::string::npos) return 8;     // Amarr analog — ornate
+    if (faction.find("Vanguard Republic") != std::string::npos) return 12;   // Gallente analog — smooth
     return 6; // Default
 }
 
@@ -603,15 +630,15 @@ std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string&
     p.scaleX = config.proportions.y / config.proportions.x;
     p.scaleZ = config.proportions.z / config.proportions.x;
 
-    // Map ship class to segment count and dimensions
+    // Map ship class to segment count and dimensions — small ships tuned for clean silhouettes
     if (shipClass == "Frigate") {
-        p.segments = 4;
-        p.segmentLength = config.overallScale / 4.0f;
-        p.baseRadius = config.overallScale * 0.13f;
-    } else if (shipClass == "Destroyer") {
         p.segments = 5;
-        p.segmentLength = config.overallScale / 5.0f;
-        p.baseRadius = config.overallScale * 0.08f;
+        p.segmentLength = config.overallScale / 5.5f;   // Tighter segments
+        p.baseRadius = config.overallScale * 0.09f;      // Sleeker radius
+    } else if (shipClass == "Destroyer") {
+        p.segments = 6;
+        p.segmentLength = config.overallScale / 6.0f;
+        p.baseRadius = config.overallScale * 0.065f;     // Thinner, more elongated
     } else if (shipClass == "Cruiser") {
         p.segments = 6;
         p.segmentLength = config.overallScale / 6.0f;
@@ -775,6 +802,7 @@ bool Model::isAsteroid(const std::string& shipType) {
 
 FactionColors Model::getFactionColors(const std::string& faction) {
     static const std::map<std::string, FactionColors> colorMap = {
+        // === Original EVE Online factions ===
         {"Minmatar", {
             glm::vec4(0.5f, 0.35f, 0.25f, 1.0f),  // Rust brown
             glm::vec4(0.3f, 0.2f, 0.15f, 1.0f),   // Dark brown
@@ -795,6 +823,28 @@ FactionColors Model::getFactionColors(const std::string& faction) {
             glm::vec4(0.4f, 0.35f, 0.25f, 1.0f),  // Dark gold
             glm::vec4(0.9f, 0.8f, 0.5f, 1.0f)     // Bright gold
         }},
+        // === New PVE factions (from game design doc) ===
+        {"Sanctum Hegemony", {                      // Amarr analog
+            glm::vec4(0.7f, 0.6f, 0.35f, 1.0f),   // Polished gold
+            glm::vec4(0.45f, 0.38f, 0.2f, 1.0f),   // Dark gold
+            glm::vec4(0.95f, 0.85f, 0.45f, 1.0f)  // Bright gold shine
+        }},
+        {"Core Nexus", {                            // Caldari analog
+            glm::vec4(0.3f, 0.35f, 0.42f, 1.0f),  // Dark steel grey
+            glm::vec4(0.15f, 0.18f, 0.25f, 1.0f),  // Near-black blue
+            glm::vec4(0.45f, 0.55f, 0.7f, 1.0f)   // Muted blue accent
+        }},
+        {"Vanguard Republic", {                     // Gallente analog
+            glm::vec4(0.25f, 0.4f, 0.38f, 1.0f),  // Teal-green
+            glm::vec4(0.15f, 0.28f, 0.25f, 1.0f),  // Dark teal
+            glm::vec4(0.35f, 0.65f, 0.55f, 1.0f)  // Light sea-green
+        }},
+        {"Rust-Scrap Coalition", {                  // Minmatar analog
+            glm::vec4(0.55f, 0.25f, 0.2f, 1.0f),  // Rusty red
+            glm::vec4(0.2f, 0.12f, 0.1f, 1.0f),   // Dark rust/black
+            glm::vec4(0.75f, 0.4f, 0.25f, 1.0f)   // Orange-rust accent
+        }},
+        // === Pirate/NPC factions ===
         {"Serpentis", {
             glm::vec4(0.4f, 0.25f, 0.45f, 1.0f),  // Purple
             glm::vec4(0.2f, 0.15f, 0.25f, 1.0f),  // Dark purple
@@ -866,7 +916,8 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
     ShipDesignTraits traits;
     
     // Determine faction design style
-    if (faction.find("Caldari") != std::string::npos) {
+    if (faction.find("Caldari") != std::string::npos ||
+        faction.find("Core Nexus") != std::string::npos) {
         traits.style = ShipDesignTraits::DesignStyle::CALDARI_BLOCKY;
         traits.isBlocky = true;
         traits.isOrganic = false;
@@ -874,7 +925,8 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.hasSpires = false;
         traits.hasExposedFramework = false;
         traits.asymmetryFactor = 0.0f;
-    } else if (faction.find("Amarr") != std::string::npos) {
+    } else if (faction.find("Amarr") != std::string::npos ||
+               faction.find("Sanctum Hegemony") != std::string::npos) {
         traits.style = ShipDesignTraits::DesignStyle::AMARR_ORNATE;
         traits.hasSpires = true;
         traits.isBlocky = false;
@@ -882,7 +934,8 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.isAsymmetric = false;
         traits.hasExposedFramework = false;
         traits.asymmetryFactor = 0.0f;
-    } else if (faction.find("Gallente") != std::string::npos) {
+    } else if (faction.find("Gallente") != std::string::npos ||
+               faction.find("Vanguard Republic") != std::string::npos) {
         traits.style = ShipDesignTraits::DesignStyle::GALLENTE_ORGANIC;
         traits.isOrganic = true;
         traits.isBlocky = false;
@@ -890,7 +943,8 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.hasSpires = false;
         traits.hasExposedFramework = false;
         traits.asymmetryFactor = 0.0f;
-    } else if (faction.find("Minmatar") != std::string::npos) {
+    } else if (faction.find("Minmatar") != std::string::npos ||
+               faction.find("Rust-Scrap") != std::string::npos) {
         traits.style = ShipDesignTraits::DesignStyle::MINMATAR_ASYMMETRIC;
         traits.isAsymmetric = true;
         traits.hasExposedFramework = true;
@@ -1081,15 +1135,15 @@ void Model::addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsig
 
 // ==================== Ship Model Creation Functions ====================
 
-// Ship model creation functions
+// Ship model creation functions — small class ships tuned for clean, tight silhouettes
 std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
     HullParams p;
     p.sides = 6;
-    p.segments = 4;
-    p.segmentLength = 0.85f;
-    p.baseRadius = 0.45f;
-    p.scaleX = 1.0f;
-    p.scaleZ = 0.8f;
+    p.segments = 5;           // One more segment for better shape definition
+    p.segmentLength = 0.7f;   // Shorter segments for tighter proportions
+    p.baseRadius = 0.3f;      // Smaller radius for sleeker frigate silhouette
+    p.scaleX = 1.1f;          // Slightly wider than tall
+    p.scaleZ = 0.65f;         // Flatter profile — more spaceship-like
     p.seed = 100u;
     return buildShipFromParams(p, colors);
 }
@@ -1097,11 +1151,11 @@ std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
 std::unique_ptr<Model> Model::createDestroyerModel(const FactionColors& colors) {
     HullParams p;
     p.sides = 6;
-    p.segments = 5;
-    p.segmentLength = 1.0f;
-    p.baseRadius = 0.35f;
-    p.scaleX = 0.8f;
-    p.scaleZ = 0.7f;
+    p.segments = 6;           // More segments for elongated destroyer look
+    p.segmentLength = 0.8f;   // Slightly longer segments
+    p.baseRadius = 0.25f;     // Thinner than frigate — more elongated
+    p.scaleX = 0.9f;          // Slightly narrower
+    p.scaleZ = 0.6f;          // Flat profile
     p.seed = 200u;
     return buildShipFromParams(p, colors);
 }

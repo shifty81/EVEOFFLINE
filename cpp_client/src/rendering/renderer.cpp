@@ -9,6 +9,12 @@
 #include <glm/gtc/matrix_inverse.hpp>
 #include <iostream>
 #include <random>
+#define _USE_MATH_DEFINES
+#include <cmath>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 namespace eve {
 
@@ -18,6 +24,14 @@ Renderer::Renderer()
     , m_starfieldVAO(0)
     , m_starfieldVBO(0)
     , m_starCount(4000)
+    , m_sunVAO(0)
+    , m_sunVBO(0)
+    , m_sunEBO(0)
+    , m_sunIndexCount(0)
+    , m_sunEnabled(false)
+    , m_sunPosition(0.0f)
+    , m_sunColor(1.0f, 0.95f, 0.85f)
+    , m_sunRadius(500000.0f)
     , m_initialized(false)
 {
 }
@@ -34,6 +48,15 @@ Renderer::~Renderer() {
     }
     if (m_starfieldVBO != 0) {
         glDeleteBuffers(1, &m_starfieldVBO);
+    }
+    if (m_sunVAO != 0) {
+        glDeleteVertexArrays(1, &m_sunVAO);
+    }
+    if (m_sunVBO != 0) {
+        glDeleteBuffers(1, &m_sunVBO);
+    }
+    if (m_sunEBO != 0) {
+        glDeleteBuffers(1, &m_sunEBO);
     }
 }
 
@@ -95,6 +118,9 @@ bool Renderer::initialize() {
     // Setup starfield
     setupStarfield();
     
+    // Setup sun sphere
+    setupSunMesh();
+    
     m_initialized = true;
     std::cout << "Renderer initialized successfully" << std::endl;
     return true;
@@ -116,6 +142,11 @@ void Renderer::renderScene(Camera& camera) {
     
     // Render starfield
     renderStarfield(camera);
+    
+    // Render solar system sun (before entities, after background)
+    if (m_sunEnabled) {
+        renderSun(camera, m_sunPosition, m_sunColor, m_sunRadius);
+    }
     
     // Render entities
     renderEntities(camera);
@@ -378,6 +409,122 @@ void Renderer::renderHealthBars(Camera& camera) {
     }
     
     m_healthBarRenderer->end();
+}
+
+void Renderer::setSunState(const glm::vec3& position, const glm::vec3& color, float radius) {
+    m_sunEnabled = true;
+    m_sunPosition = position;
+    m_sunColor = color;
+    m_sunRadius = radius;
+}
+
+void Renderer::disableSun() {
+    m_sunEnabled = false;
+}
+
+void Renderer::setupSunMesh() {
+    // Generate a UV sphere for the sun
+    const int stacks = 16;
+    const int slices = 24;
+    
+    std::vector<float> vertices;
+    std::vector<unsigned int> indices;
+    
+    // Generate vertices
+    for (int i = 0; i <= stacks; ++i) {
+        float phi = static_cast<float>(M_PI) * static_cast<float>(i) / stacks;
+        for (int j = 0; j <= slices; ++j) {
+            float theta = 2.0f * static_cast<float>(M_PI) * static_cast<float>(j) / slices;
+            
+            float x = std::sin(phi) * std::cos(theta);
+            float y = std::cos(phi);
+            float z = std::sin(phi) * std::sin(theta);
+            
+            // Position (unit sphere — scaled in render)
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+            // Normal (same as position for unit sphere)
+            vertices.push_back(x);
+            vertices.push_back(y);
+            vertices.push_back(z);
+        }
+    }
+    
+    // Generate indices
+    for (int i = 0; i < stacks; ++i) {
+        for (int j = 0; j < slices; ++j) {
+            unsigned int first = static_cast<unsigned int>(i * (slices + 1) + j);
+            unsigned int second = first + static_cast<unsigned int>(slices + 1);
+            
+            indices.push_back(first);
+            indices.push_back(second);
+            indices.push_back(first + 1);
+            
+            indices.push_back(second);
+            indices.push_back(second + 1);
+            indices.push_back(first + 1);
+        }
+    }
+    
+    m_sunIndexCount = static_cast<int>(indices.size());
+    
+    glGenVertexArrays(1, &m_sunVAO);
+    glGenBuffers(1, &m_sunVBO);
+    glGenBuffers(1, &m_sunEBO);
+    
+    glBindVertexArray(m_sunVAO);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, m_sunVBO);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+    
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_sunEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+    
+    // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    
+    // Normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    
+    glBindVertexArray(0);
+    
+    std::cout << "Sun mesh setup complete (" << m_sunIndexCount / 3 << " triangles)" << std::endl;
+}
+
+void Renderer::renderSun(Camera& camera, const glm::vec3& sunPosition,
+                          const glm::vec3& sunColor, float sunRadius) {
+    if (m_sunVAO == 0 || !m_entityShader) return;
+    
+    m_entityShader->use();
+    m_entityShader->setMat4("view", camera.getViewMatrix());
+    m_entityShader->setMat4("projection", camera.getProjectionMatrix());
+    
+    // Sun is self-illuminating — set light to point from the camera so the
+    // entire visible surface is bright (emissive look)
+    glm::vec3 toCam = glm::normalize(camera.getPosition() - sunPosition);
+    m_entityShader->setVec3("lightDir", toCam);
+    m_entityShader->setVec3("lightColor", sunColor * 1.5f);
+    m_entityShader->setVec3("viewPos", camera.getPosition());
+    
+    // Create model matrix: translate to sun position, scale by radius
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, sunPosition);
+    model = glm::scale(model, glm::vec3(sunRadius));
+    m_entityShader->setMat4("model", model);
+    
+    // Draw the sun sphere with additive blending for glow
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+    
+    glBindVertexArray(m_sunVAO);
+    glDrawElements(GL_TRIANGLES, m_sunIndexCount, GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+    
+    // Restore normal blending
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 } // namespace eve
