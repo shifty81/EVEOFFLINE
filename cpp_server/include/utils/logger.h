@@ -31,7 +31,7 @@ enum class LogLevel {
  *   auto& log = Logger::instance();
  *   log.init("./logs");            // opens ./logs/server.log
  *   log.setLevel(LogLevel::INFO);
- *   log.info("Server started on port {}", 8765);
+ *   log.info("Server started on port " + std::to_string(8765));
  */
 class Logger {
 public:

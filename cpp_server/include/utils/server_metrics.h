@@ -71,7 +71,7 @@ private:
     // Tick timing – current window
     double tick_sum_ms_ = 0.0;
     double tick_max_ms_ = 0.0;
-    double tick_min_ms_ = 1e9;
+    double tick_min_ms_ = 0.0;
     uint64_t tick_count_window_ = 0;
     uint64_t tick_count_total_ = 0;
 

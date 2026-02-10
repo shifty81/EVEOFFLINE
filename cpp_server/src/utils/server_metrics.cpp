@@ -21,8 +21,13 @@ void ServerMetrics::recordTickEnd() {
 
     std::lock_guard<std::mutex> lock(mutex_);
     tick_sum_ms_ += ms;
-    tick_max_ms_ = std::max(tick_max_ms_, ms);
-    tick_min_ms_ = std::min(tick_min_ms_, ms);
+    if (tick_count_window_ == 0) {
+        tick_min_ms_ = ms;
+        tick_max_ms_ = ms;
+    } else {
+        tick_max_ms_ = std::max(tick_max_ms_, ms);
+        tick_min_ms_ = std::min(tick_min_ms_, ms);
+    }
     ++tick_count_window_;
     ++tick_count_total_;
 }
@@ -133,7 +138,7 @@ void ServerMetrics::resetWindow() {
     std::lock_guard<std::mutex> lock(mutex_);
     tick_sum_ms_ = 0.0;
     tick_max_ms_ = 0.0;
-    tick_min_ms_ = 1e9;
+    tick_min_ms_ = 0.0;
     tick_count_window_ = 0;
 }
 
