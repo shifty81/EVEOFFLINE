@@ -606,7 +606,7 @@ void ShipPartLibrary::createPartsFromLearnedModels(const ReferenceModelAnalyzer&
     {
         int fwdSegments = 3;
         auto fwdMults = analyzer.generateLearnedRadiusMultipliers(fwdSegments, 101u);
-        float fwdScale = (params.blendedProfile.size() > 2) ? params.blendedProfile[1] : 0.6f;
+        float fwdScale = (params.blendedProfile.size() > 1) ? params.blendedProfile[1] : 0.6f;
 
         ShipPart forward = createExtrudedHullPart(
             factionSides, fwdSegments, 0.35f,

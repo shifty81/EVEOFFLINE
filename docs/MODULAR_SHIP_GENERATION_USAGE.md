@@ -291,6 +291,92 @@ See `docs/SHIP_NAMING_GUIDE.md` for complete mapping.
 - LOD (Level of Detail) can be applied per-part
 - Detail density scales with ship class
 
+## Learning from Reference Models
+
+The `ReferenceModelAnalyzer` can analyze uploaded OBJ ship models and extract
+geometric traits that feed into the procedural generation system. This allows
+the engine to "learn" proportions, cross-section profiles, and silhouettes
+from real 3D models and generate new ships that mimic those characteristics.
+
+### Analyzing Models
+
+```cpp
+#include "rendering/reference_model_analyzer.h"
+
+eve::ReferenceModelAnalyzer analyzer;
+
+// Analyze individual OBJ files
+analyzer.analyzeOBJ("models/spaceship.obj");
+
+// Or analyze all OBJs in a directory
+analyzer.analyzeDirectory("models/reference/");
+
+// Or extract and analyze from archives (.zip, .rar, .7z)
+analyzer.analyzeArchive("testing/99-intergalactic_spaceship-obj.rar",
+                        "/tmp/extracted_models");
+analyzer.analyzeArchive("testing/qy0sx26192io-VulcanDkyrClass.zip",
+                        "/tmp/extracted_models");
+```
+
+### Examining Learned Traits
+
+```cpp
+// Get traits for each analyzed model
+for (size_t i = 0; i < analyzer.getModelCount(); ++i) {
+    const auto& traits = analyzer.getModelTraits(i);
+    std::cout << traits.name << ": "
+              << "L:W=" << traits.aspectLW
+              << " L:H=" << traits.aspectLH
+              << " verts=" << traits.vertexCount
+              << std::endl;
+    // traits.crossSectionProfile contains the shape profile
+    // traits.radiusMultipliers can feed into buildSegmentedHull()
+}
+
+// Compute blended parameters from all analyzed models
+auto params = analyzer.computeLearnedParams();
+// params.blendedProfile     — averaged cross-section shape
+// params.blendedRadiusMultipliers — for buildSegmentedHull()
+// params.avgAspectLW/LH    — proportion constraints
+```
+
+### Generating Ships from Learned Models
+
+```cpp
+// Create ship parts that mimic the analyzed models
+eve::ShipPartLibrary partLibrary;
+partLibrary.initialize();  // Load standard faction parts first
+
+// Add learned parts for each faction
+partLibrary.createPartsFromLearnedModels(analyzer, "Amarr", "learned_");
+partLibrary.createPartsFromLearnedModels(analyzer, "Caldari", "learned_");
+
+// Or generate hulls directly using learned radius multipliers
+auto mults = analyzer.generateLearnedRadiusMultipliers(6, /*seed=*/42u);
+auto hull = eve::buildSegmentedHull(
+    8,        // sides (Amarr-style)
+    6,        // segments
+    1.0f,     // segment length
+    params.avgBaseRadius,
+    mults,    // learned from reference models
+    1.0f, 1.0f,
+    glm::vec3(0.6f, 0.55f, 0.45f)  // Amarr gold
+);
+```
+
+### Uploaded Reference Models
+
+The `testing/` directory contains the following reference models:
+
+| Archive | Model | Vertices | Faces | Aspect L:W | Style |
+|---------|-------|----------|-------|-----------|-------|
+| `99-intergalactic_spaceship-obj.rar` | Intergalactic Spaceship | 27,515 | 55,120 | 1.65 | Symmetric, wide body |
+| `qy0sx26192io-VulcanDkyrClass.zip` | Vulcan Dkyr Class | 86,164 | 80,836 | 2.09 | Elongated, multi-part |
+| `24-textures.zip` | Texture maps | — | — | — | PBR textures for spaceship |
+
+These models are automatically extracted during CMake configuration (if 7z is
+available) or at runtime by the `ReferenceModelAnalyzer`.
+
 ---
 
-*Last Updated: February 9, 2026*
+*Last Updated: February 10, 2026*

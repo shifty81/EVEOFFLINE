@@ -52,7 +52,8 @@ std::string findTestingDir() {
     };
 
     // Also try absolute path from the repository root
-    std::string repoRoot = std::getenv("REPO_ROOT") ? std::getenv("REPO_ROOT") : "";
+    const char* envRoot = std::getenv("REPO_ROOT");
+    std::string repoRoot = envRoot ? envRoot : "";
     if (!repoRoot.empty()) {
         candidates.insert(candidates.begin(), repoRoot + "/testing");
     }

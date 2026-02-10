@@ -151,9 +151,9 @@ std::string ReferenceModelAnalyzer::inferFaction(const std::string& filename) {
     if (lower.find("sansha") != std::string::npos) return "Sansha";
     if (lower.find("angel") != std::string::npos) return "Angel";
     if (lower.find("ore") != std::string::npos) return "ORE";
-    if (lower.find("vulcan") != std::string::npos) return "Amarr";  // Vulcan class → Amarr style
+    if (lower.find("vulcan") != std::string::npos) return "Amarr";  // Vulcan class -> Amarr style
     if (lower.find("intergalactic") != std::string::npos ||
-        lower.find("spaceship") != std::string::npos) return "Gallente";  // Sleek spaceship → Gallente
+        lower.find("spaceship") != std::string::npos) return "Gallente";  // Sleek spaceship -> Gallente
     return "Unknown";
 }
 
@@ -318,6 +318,22 @@ int ReferenceModelAnalyzer::analyzeArchive(const std::string& archivePath,
         return 0;
     }
 
+    // Validate paths contain no shell metacharacters to prevent injection
+    auto isPathSafe = [](const std::string& path) -> bool {
+        for (char c : path) {
+            if (c == ';' || c == '|' || c == '&' || c == '$' ||
+                c == '`' || c == '\n' || c == '\r') {
+                return false;
+            }
+        }
+        return true;
+    };
+
+    if (!isPathSafe(archivePath) || !isPathSafe(extractDir)) {
+        std::cerr << "[ReferenceModelAnalyzer] Invalid characters in path" << std::endl;
+        return 0;
+    }
+
     // Create extraction directory
     fs::create_directories(extractDir);
 
@@ -325,11 +341,15 @@ int ReferenceModelAnalyzer::analyzeArchive(const std::string& archivePath,
     std::string ext = fs::path(archivePath).extension().string();
     std::transform(ext.begin(), ext.end(), ext.begin(), ::tolower);
 
+    // Use canonical paths to ensure we operate on real filesystem locations
+    std::string safeArchive = fs::canonical(archivePath).string();
+    std::string safeExtract = fs::canonical(extractDir).string();
+
     std::string cmd;
     if (ext == ".zip") {
-        cmd = "unzip -o -q \"" + archivePath + "\" -d \"" + extractDir + "\" 2>/dev/null";
+        cmd = "unzip -o -q \"" + safeArchive + "\" -d \"" + safeExtract + "\" 2>/dev/null";
     } else if (ext == ".rar" || ext == ".7z") {
-        cmd = "7z x \"" + archivePath + "\" -o\"" + extractDir + "\" -y -bso0 -bsp0 2>/dev/null";
+        cmd = "7z x \"" + safeArchive + "\" -o\"" + safeExtract + "\" -y -bso0 -bsp0 2>/dev/null";
     } else {
         std::cerr << "[ReferenceModelAnalyzer] Unsupported archive format: " << ext << std::endl;
         return 0;
