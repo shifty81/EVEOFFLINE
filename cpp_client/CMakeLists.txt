@@ -341,6 +341,9 @@ set(CLIENT_SOURCES
     src/ui/neocom_panel.cpp
     src/ui/rml_ui_manager.cpp
     src/ui/radial_menu.cpp
+    src/ui/photon/photon_renderer.cpp
+    src/ui/photon/photon_context.cpp
+    src/ui/photon/photon_widgets.cpp
     src/core/solar_system_scene.cpp
     src/core/ship_physics.cpp
     ${GLAD_SOURCES}
@@ -398,6 +401,10 @@ set(CLIENT_HEADERS
     include/ui/neocom_panel.h
     include/ui/rml_ui_manager.h
     include/ui/radial_menu.h
+    include/ui/photon/photon_types.h
+    include/ui/photon/photon_renderer.h
+    include/ui/photon/photon_context.h
+    include/ui/photon/photon_widgets.h
     include/core/solar_system_scene.h
     include/core/ship_physics.h
     ${AUDIO_HEADERS}
@@ -670,6 +677,9 @@ if(BUILD_TESTS)
         src/ui/market_panel.cpp
         src/ui/dscan_panel.cpp
         src/ui/neocom_panel.cpp
+        src/ui/photon/photon_renderer.cpp
+        src/ui/photon/photon_context.cpp
+        src/ui/photon/photon_widgets.cpp
         src/core/entity.cpp
         ${GLAD_SOURCES}
         ${IMGUI_SOURCES}
@@ -780,6 +790,9 @@ if(BUILD_TESTS)
         src/ui/market_panel.cpp
         src/ui/dscan_panel.cpp
         src/ui/neocom_panel.cpp
+        src/ui/photon/photon_renderer.cpp
+        src/ui/photon/photon_context.cpp
+        src/ui/photon/photon_widgets.cpp
         src/core/entity.cpp
         ${IMGUI_SOURCES}
     )

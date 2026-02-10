@@ -113,5 +113,9 @@ _codeql_build_dir/
 # Extracted OBJ ship models (large files, extract locally from data/ships/obj_models/obj_models.7z)
 cpp_client/models/ships/*.obj
 
+# Extracted reference models and textures (extract from testing/ archives at build time)
+cpp_client/assets/reference_models/
+
 # External downloaded dependencies
 cpp_client/external/imgui/
+3drenderon.png
