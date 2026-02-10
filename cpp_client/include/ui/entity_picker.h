@@ -5,6 +5,11 @@
 #include <string>
 #include <vector>
 
+namespace eve {
+    class Camera;
+    class Entity;
+}
+
 namespace UI {
 
 /**

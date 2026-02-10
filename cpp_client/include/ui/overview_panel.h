@@ -8,6 +8,10 @@
 #include <memory>
 #include <glm/glm.hpp>
 
+namespace eve {
+    class Entity;
+}
+
 namespace UI {
 
 // Overview entity entry
