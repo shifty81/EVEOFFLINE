@@ -1,9 +1,9 @@
 {
-  "serpentis_scout": {
-    "id": "serpentis_scout",
-    "name": "Serpentis Scout",
+  "venom_syndicate_scout": {
+    "id": "venom_syndicate_scout",
+    "name": "Venom Syndicate Scout",
     "type": "frigate",
-    "faction": "Serpentis",
+    "faction": "Venom Syndicate",
     "hull_hp": 300,
     "armor_hp": 250,
     "shield_hp": 350,
@@ -46,14 +46,14 @@
     "loot_table": [
       "scrap_metal",
       "hybrid_charges",
-      "serpentis_dogtag"
+      "venom_syndicate_dogtag"
     ]
   },
-  "serpentis_soldier": {
-    "id": "serpentis_soldier",
-    "name": "Serpentis Soldier",
+  "venom_syndicate_soldier": {
+    "id": "venom_syndicate_soldier",
+    "name": "Venom Syndicate Soldier",
     "type": "cruiser",
-    "faction": "Serpentis",
+    "faction": "Venom Syndicate",
     "hull_hp": 1200,
     "armor_hp": 950,
     "shield_hp": 1400,
@@ -94,16 +94,16 @@
       }
     },
     "loot_table": [
-      "serpentis_components",
+      "venom_syndicate_components",
       "hybrid_weapons",
-      "serpentis_dogtag_advanced"
+      "venom_syndicate_dogtag_advanced"
     ]
   },
-  "guristas_thrasher": {
-    "id": "guristas_thrasher",
-    "name": "Guristas Thrasher",
+  "iron_corsairs_cleaver": {
+    "id": "iron_corsairs_cleaver",
+    "name": "Iron Corsairs Cleaver",
     "type": "frigate",
-    "faction": "Guristas",
+    "faction": "Iron Corsairs",
     "hull_hp": 320,
     "armor_hp": 220,
     "shield_hp": 450,
@@ -145,14 +145,14 @@
     "loot_table": [
       "scrap_metal",
       "light_missiles",
-      "guristas_dogtag"
+      "iron_corsairs_dogtag"
     ]
   },
-  "guristas_frigate": {
-    "id": "guristas_frigate",
-    "name": "Guristas Pithii Assaulter",
+  "iron_corsairs_frigate": {
+    "id": "iron_corsairs_frigate",
+    "name": "Iron Corsairs Ironscale Assaulter",
     "type": "frigate",
-    "faction": "Guristas",
+    "faction": "Iron Corsairs",
     "hull_hp": 320,
     "armor_hp": 220,
     "shield_hp": 450,
@@ -194,14 +194,14 @@
     "loot_table": [
       "scrap_metal",
       "light_missiles",
-      "guristas_dogtag"
+      "iron_corsairs_dogtag"
     ]
   },
-  "blood_raiders_corpse": {
-    "id": "blood_raiders_corpse",
-    "name": "Blood Raiders Corpse",
+  "crimson_order_corpse": {
+    "id": "crimson_order_corpse",
+    "name": "Crimson Order Corpse",
     "type": "frigate",
-    "faction": "Blood Raiders",
+    "faction": "Crimson Order",
     "hull_hp": 280,
     "armor_hp": 400,
     "shield_hp": 280,
@@ -244,18 +244,18 @@
     "loot_table": [
       "scrap_metal",
       "frequency_crystals",
-      "blood_raiders_dogtag"
+      "crimson_order_dogtag"
     ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 15
     }
   },
-  "blood_raiders_frigate": {
-    "id": "blood_raiders_frigate",
-    "name": "Blood Raiders Corpii Seeker",
+  "crimson_order_frigate": {
+    "id": "crimson_order_frigate",
+    "name": "Crimson Order Bloodthorn Seeker",
     "type": "frigate",
-    "faction": "Blood Raiders",
+    "faction": "Crimson Order",
     "hull_hp": 280,
     "armor_hp": 400,
     "shield_hp": 280,
@@ -298,18 +298,18 @@
     "loot_table": [
       "scrap_metal",
       "frequency_crystals",
-      "blood_raiders_dogtag"
+      "crimson_order_dogtag"
     ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 15
     }
   },
-  "serpentis_destroyer": {
-    "id": "serpentis_destroyer",
-    "name": "Serpentis Eliminator",
+  "venom_syndicate_destroyer": {
+    "id": "venom_syndicate_destroyer",
+    "name": "Venom Syndicate Eliminator",
     "type": "destroyer",
-    "faction": "Serpentis",
+    "faction": "Venom Syndicate",
     "hull_hp": 550,
     "armor_hp": 500,
     "shield_hp": 600,
@@ -350,16 +350,16 @@
       }
     },
     "loot_table": [
-      "serpentis_components",
+      "venom_syndicate_components",
       "hybrid_charges",
-      "serpentis_dogtag"
+      "venom_syndicate_dogtag"
     ]
   },
-  "guristas_destroyer": {
-    "id": "guristas_destroyer",
-    "name": "Guristas Destroyer",
+  "iron_corsairs_destroyer": {
+    "id": "iron_corsairs_destroyer",
+    "name": "Iron Corsairs Destroyer",
     "type": "destroyer",
-    "faction": "Guristas",
+    "faction": "Iron Corsairs",
     "hull_hp": 520,
     "armor_hp": 420,
     "shield_hp": 750,
@@ -399,16 +399,16 @@
       }
     },
     "loot_table": [
-      "guristas_components",
+      "iron_corsairs_components",
       "light_missiles",
-      "guristas_dogtag"
+      "iron_corsairs_dogtag"
     ]
   },
-  "blood_raiders_cruiser": {
-    "id": "blood_raiders_cruiser",
-    "name": "Blood Raiders Apostle",
+  "crimson_order_cruiser": {
+    "id": "crimson_order_cruiser",
+    "name": "Crimson Order Apostle",
     "type": "cruiser",
-    "faction": "Blood Raiders",
+    "faction": "Crimson Order",
     "hull_hp": 1400,
     "armor_hp": 1600,
     "shield_hp": 1100,
@@ -449,20 +449,20 @@
       }
     },
     "loot_table": [
-      "blood_raiders_components",
+      "crimson_order_components",
       "frequency_crystals",
-      "blood_raiders_dogtag_advanced"
+      "crimson_order_dogtag_advanced"
     ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 45
     }
   },
-  "sansha_frigate": {
-    "id": "sansha_frigate",
-    "name": "Sansha's Centii Enslaver",
+  "hollow_frigate": {
+    "id": "hollow_frigate",
+    "name": "Hollow's Voidmaw Enslaver",
     "type": "frigate",
-    "faction": "Sansha's Nation",
+    "faction": "Hollow Collective",
     "hull_hp": 290,
     "armor_hp": 380,
     "shield_hp": 280,
@@ -503,16 +503,16 @@
       }
     },
     "loot_table": [
-      "sansha_components",
+      "hollow_components",
       "frequency_crystals",
-      "sansha_dogtag"
+      "hollow_dogtag"
     ]
   },
-  "sansha_cruiser": {
-    "id": "sansha_cruiser",
-    "name": "Sansha's Centii Butcher",
+  "hollow_cruiser": {
+    "id": "hollow_cruiser",
+    "name": "Hollow's Voidmaw Butcher",
     "type": "cruiser",
-    "faction": "Sansha's Nation",
+    "faction": "Hollow Collective",
     "hull_hp": 1500,
     "armor_hp": 1800,
     "shield_hp": 1200,
@@ -553,9 +553,9 @@
       }
     },
     "loot_table": [
-      "sansha_components_advanced",
+      "hollow_components_advanced",
       "frequency_crystals",
-      "sansha_dogtag_advanced"
+      "hollow_dogtag_advanced"
     ],
     "special": {
       "tracking_disruptor": true,
@@ -565,9 +565,9 @@
   },
   "angel_frigate": {
     "id": "angel_frigate",
-    "name": "Angel Cartel Gistii Thug",
+    "name": "Shadow Pact Shadowfang Thug",
     "type": "frigate",
-    "faction": "Angel Cartel",
+    "faction": "Shadow Pact",
     "hull_hp": 310,
     "armor_hp": 360,
     "shield_hp": 300,
@@ -615,9 +615,9 @@
   },
   "angel_cruiser": {
     "id": "angel_cruiser",
-    "name": "Angel Cartel Gistii Raider",
+    "name": "Shadow Pact Shadowfang Raider",
     "type": "cruiser",
-    "faction": "Angel Cartel",
+    "faction": "Shadow Pact",
     "hull_hp": 1450,
     "armor_hp": 1500,
     "shield_hp": 1350,
@@ -663,11 +663,11 @@
       "angel_dogtag_advanced"
     ]
   },
-  "rogue_drone_frigate": {
-    "id": "rogue_drone_frigate",
-    "name": "Rogue Drone Hivemind Alvi",
+  "rogue_construct_frigate": {
+    "id": "rogue_construct_frigate",
+    "name": "Rogue Construct Swarmcore Dronekin",
     "type": "frigate",
-    "faction": "Rogue Drones",
+    "faction": "Rogue Constructs",
     "hull_hp": 340,
     "armor_hp": 340,
     "shield_hp": 340,
@@ -717,11 +717,11 @@
       "repair_rate": 8
     }
   },
-  "rogue_drone_cruiser": {
-    "id": "rogue_drone_cruiser",
-    "name": "Rogue Drone Mother Alvatis",
+  "rogue_construct_cruiser": {
+    "id": "rogue_construct_cruiser",
+    "name": "Rogue Construct Mother Hivemeld",
     "type": "cruiser",
-    "faction": "Rogue Drones",
+    "faction": "Rogue Constructs",
     "hull_hp": 1600,
     "armor_hp": 1600,
     "shield_hp": 1600,
@@ -773,11 +773,11 @@
       "repair_rate": 25
     }
   },
-  "serpentis_battlecruiser": {
-    "id": "serpentis_battlecruiser",
-    "name": "Serpentis Supremacy",
+  "venom_syndicate_battlecruiser": {
+    "id": "venom_syndicate_battlecruiser",
+    "name": "Venom Syndicate Supremacy",
     "type": "battlecruiser",
-    "faction": "Serpentis",
+    "faction": "Venom Syndicate",
     "hull_hp": 2800,
     "armor_hp": 2400,
     "shield_hp": 3200,
@@ -818,16 +818,16 @@
       }
     },
     "loot_table": [
-      "serpentis_components_rare",
+      "venom_syndicate_components_rare",
       "medium_hybrid_weapons",
-      "serpentis_officer_dogtag"
+      "venom_syndicate_officer_dogtag"
     ]
   },
-  "guristas_battlecruiser": {
-    "id": "guristas_battlecruiser",
-    "name": "Guristas Warlord",
+  "iron_corsairs_battlecruiser": {
+    "id": "iron_corsairs_battlecruiser",
+    "name": "Iron Corsairs Warlord",
     "type": "battlecruiser",
-    "faction": "Guristas",
+    "faction": "Iron Corsairs",
     "hull_hp": 2650,
     "armor_hp": 2200,
     "shield_hp": 3500,
@@ -867,16 +867,16 @@
       }
     },
     "loot_table": [
-      "guristas_components_rare",
+      "iron_corsairs_components_rare",
       "heavy_missiles",
-      "guristas_officer_dogtag"
+      "iron_corsairs_officer_dogtag"
     ]
   },
-  "blood_raiders_battlecruiser": {
-    "id": "blood_raiders_battlecruiser",
-    "name": "Blood Raiders Prophet",
+  "crimson_order_battlecruiser": {
+    "id": "crimson_order_battlecruiser",
+    "name": "Crimson Order Prophet",
     "type": "battlecruiser",
-    "faction": "Blood Raiders",
+    "faction": "Crimson Order",
     "hull_hp": 2900,
     "armor_hp": 3400,
     "shield_hp": 2600,
@@ -917,20 +917,20 @@
       }
     },
     "loot_table": [
-      "blood_raiders_components_rare",
+      "crimson_order_components_rare",
       "medium_energy_weapons",
-      "blood_raiders_officer_dogtag"
+      "crimson_order_officer_dogtag"
     ],
     "special": {
       "energy_neutralizer": true,
       "cap_drain": 75
     }
   },
-  "sansha_battlecruiser": {
-    "id": "sansha_battlecruiser",
-    "name": "Sansha's Centii Manslayer",
+  "hollow_battlecruiser": {
+    "id": "hollow_battlecruiser",
+    "name": "Hollow's Voidmaw Manslayer",
     "type": "battlecruiser",
-    "faction": "Sansha's Nation",
+    "faction": "Hollow Collective",
     "hull_hp": 3100,
     "armor_hp": 3600,
     "shield_hp": 2800,
@@ -971,9 +971,9 @@
       }
     },
     "loot_table": [
-      "sansha_components_rare",
+      "hollow_components_rare",
       "medium_energy_weapons",
-      "sansha_officer_dogtag"
+      "hollow_officer_dogtag"
     ],
     "special": {
       "tracking_disruptor": true,
@@ -983,9 +983,9 @@
   },
   "angel_battlecruiser": {
     "id": "angel_battlecruiser",
-    "name": "Angel Cartel Gistum Centurion",
+    "name": "Shadow Pact Duskrend Centurion",
     "type": "battlecruiser",
-    "faction": "Angel Cartel",
+    "faction": "Shadow Pact",
     "hull_hp": 3000,
     "armor_hp": 3200,
     "shield_hp": 3000,
@@ -1031,11 +1031,11 @@
       "angel_officer_dogtag"
     ]
   },
-  "serpentis_battleship": {
-    "id": "serpentis_battleship",
-    "name": "Serpentis Dominator",
+  "venom_syndicate_battleship": {
+    "id": "venom_syndicate_battleship",
+    "name": "Venom Syndicate Dominator",
     "type": "battleship",
-    "faction": "Serpentis",
+    "faction": "Venom Syndicate",
     "hull_hp": 5800,
     "armor_hp": 5200,
     "shield_hp": 6500,
@@ -1076,16 +1076,16 @@
       }
     },
     "loot_table": [
-      "serpentis_components_faction",
+      "venom_syndicate_components_faction",
       "large_hybrid_weapons",
-      "serpentis_faction_dogtag"
+      "venom_syndicate_faction_dogtag"
     ]
   },
-  "guristas_battleship": {
-    "id": "guristas_battleship",
-    "name": "Guristas Dreadnought",
+  "iron_corsairs_battleship": {
+    "id": "iron_corsairs_battleship",
+    "name": "Iron Corsairs Dreadnought",
     "type": "battleship",
-    "faction": "Guristas",
+    "faction": "Iron Corsairs",
     "hull_hp": 5500,
     "armor_hp": 4800,
     "shield_hp": 7200,
@@ -1125,16 +1125,16 @@
       }
     },
     "loot_table": [
-      "guristas_components_faction",
+      "iron_corsairs_components_faction",
       "cruise_missiles",
-      "guristas_faction_dogtag"
+      "iron_corsairs_faction_dogtag"
     ]
   },
-  "blood_raiders_battleship": {
-    "id": "blood_raiders_battleship",
-    "name": "Blood Raiders Bhaalgorn",
+  "crimson_order_battleship": {
+    "id": "crimson_order_battleship",
+    "name": "Crimson Order Sanguinax",
     "type": "battleship",
-    "faction": "Blood Raiders",
+    "faction": "Crimson Order",
     "hull_hp": 6200,
     "armor_hp": 7400,
     "shield_hp": 5600,
@@ -1175,9 +1175,9 @@
       }
     },
     "loot_table": [
-      "blood_raiders_components_faction",
+      "crimson_order_components_faction",
       "large_energy_weapons",
-      "blood_raiders_faction_dogtag"
+      "crimson_order_faction_dogtag"
     ],
     "special": {
       "energy_neutralizer": true,
@@ -1185,11 +1185,11 @@
       "web": true
     }
   },
-  "sansha_battleship": {
-    "id": "sansha_battleship",
-    "name": "Sansha's True Nightmare",
+  "hollow_battleship": {
+    "id": "hollow_battleship",
+    "name": "Hollow's True Dreadmaw",
     "type": "battleship",
-    "faction": "Sansha's Nation",
+    "faction": "Hollow Collective",
     "hull_hp": 6600,
     "armor_hp": 7800,
     "shield_hp": 6000,
@@ -1230,9 +1230,9 @@
       }
     },
     "loot_table": [
-      "sansha_components_faction",
+      "hollow_components_faction",
       "large_energy_weapons",
-      "sansha_faction_dogtag"
+      "hollow_faction_dogtag"
     ],
     "special": {
       "tracking_disruptor": true,
@@ -1243,9 +1243,9 @@
   },
   "angel_battleship": {
     "id": "angel_battleship",
-    "name": "Angel Cartel Machariel",
+    "name": "Shadow Pact Duskwing",
     "type": "battleship",
-    "faction": "Angel Cartel",
+    "faction": "Shadow Pact",
     "hull_hp": 6400,
     "armor_hp": 6800,
     "shield_hp": 6600,
@@ -1294,11 +1294,11 @@
       "web": true
     }
   },
-  "mordus_legion_frigate": {
-    "id": "mordus_legion_frigate",
-    "name": "Mordus Legion Pith Reaver",
+  "stormwatch_legion_frigate": {
+    "id": "stormwatch_legion_frigate",
+    "name": "Stormwatch Legion Stormclaw Reaver",
     "type": "frigate",
-    "faction": "Mordu's Legion",
+    "faction": "Stormwatch Legion",
     "hull_hp": 350,
     "armor_hp": 280,
     "shield_hp": 420,
@@ -1338,20 +1338,20 @@
       }
     },
     "loot_table": [
-      "mordus_components",
+      "stormwatch_components",
       "light_missiles",
-      "mordus_dogtag"
+      "stormwatch_dogtag"
     ],
     "special": {
       "warp_disruptor": true,
       "disruptor_range": 24000
     }
   },
-  "mordus_legion_cruiser": {
-    "id": "mordus_legion_cruiser",
-    "name": "Mordus Legion Pith Eliminator",
+  "stormwatch_legion_cruiser": {
+    "id": "stormwatch_legion_cruiser",
+    "name": "Stormwatch Legion Stormclaw Eliminator",
     "type": "cruiser",
-    "faction": "Mordu's Legion",
+    "faction": "Stormwatch Legion",
     "hull_hp": 1500,
     "armor_hp": 1200,
     "shield_hp": 1800,
@@ -1391,20 +1391,20 @@
       }
     },
     "loot_table": [
-      "mordus_components_advanced",
+      "stormwatch_components_advanced",
       "heavy_missiles",
-      "mordus_dogtag_advanced"
+      "stormwatch_dogtag_advanced"
     ],
     "special": {
       "warp_disruptor": true,
       "disruptor_range": 36000
     }
   },
-  "mordus_legion_battlecruiser": {
-    "id": "mordus_legion_battlecruiser",
-    "name": "Mordus Legion Pith Warlord",
+  "stormwatch_legion_battlecruiser": {
+    "id": "stormwatch_legion_battlecruiser",
+    "name": "Stormwatch Legion Stormclaw Warlord",
     "type": "battlecruiser",
-    "faction": "Mordu's Legion",
+    "faction": "Stormwatch Legion",
     "hull_hp": 3200,
     "armor_hp": 2600,
     "shield_hp": 3800,
@@ -1444,20 +1444,20 @@
       }
     },
     "loot_table": [
-      "mordus_components_rare",
+      "stormwatch_components_rare",
       "heavy_missiles",
-      "mordus_officer_dogtag"
+      "stormwatch_officer_dogtag"
     ],
     "special": {
       "warp_disruptor": true,
       "disruptor_range": 48000
     }
   },
-  "mordus_legion_battleship": {
-    "id": "mordus_legion_battleship",
-    "name": "Mordus Legion Pith Usurper",
+  "stormwatch_legion_battleship": {
+    "id": "stormwatch_legion_battleship",
+    "name": "Stormwatch Legion Stormclaw Usurper",
     "type": "battleship",
-    "faction": "Mordu's Legion",
+    "faction": "Stormwatch Legion",
     "hull_hp": 6000,
     "armor_hp": 5000,
     "shield_hp": 7500,
@@ -1497,9 +1497,9 @@
       }
     },
     "loot_table": [
-      "mordus_components_faction",
+      "stormwatch_components_faction",
       "cruise_missiles",
-      "mordus_faction_dogtag"
+      "stormwatch_faction_dogtag"
     ],
     "special": {
       "warp_disruptor": true,
@@ -1508,9 +1508,9 @@
   },
   "soe_frigate": {
     "id": "soe_frigate",
-    "name": "Sisters of EVE Seeker",
+    "name": "Astral Sisterhood Seeker",
     "type": "frigate",
-    "faction": "Sisters of EVE",
+    "faction": "Astral Sisterhood",
     "hull_hp": 300,
     "armor_hp": 350,
     "shield_hp": 300,
@@ -1562,9 +1562,9 @@
   },
   "soe_cruiser": {
     "id": "soe_cruiser",
-    "name": "Sisters of EVE Purifier",
+    "name": "Astral Sisterhood Sanctifier",
     "type": "cruiser",
-    "faction": "Sisters of EVE",
+    "faction": "Astral Sisterhood",
     "hull_hp": 1300,
     "armor_hp": 1700,
     "shield_hp": 1300,
@@ -1625,9 +1625,9 @@
   },
   "soe_battleship": {
     "id": "soe_battleship",
-    "name": "Sisters of EVE Nestor",
+    "name": "Astral Sisterhood Starhaven",
     "type": "battleship",
-    "faction": "Sisters of EVE",
+    "faction": "Astral Sisterhood",
     "hull_hp": 5500,
     "armor_hp": 7000,
     "shield_hp": 5000,

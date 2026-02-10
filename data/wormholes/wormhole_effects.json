@@ -54,8 +54,8 @@
       "bomb_damage": 1.86
     }
   },
-  "wolf_rayet": {
-    "name": "Wolf-Rayet",
+  "direwolf_rayet": {
+    "name": "Direwolf-Rayet",
     "description": "Increases armor HP and small weapon damage, decreases shield resistances",
     "modifiers": {
       "armor_hp_multiplier": 1.86,

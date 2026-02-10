@@ -5,59 +5,98 @@
       "description": "Rocky planet with minimal atmosphere",
       "base_cpu": 1675,
       "base_powergrid": 6000,
-      "resources": ["base_metals", "noble_metals", "heavy_metals", "non_cs_crystals"]
+      "resources": [
+        "base_metals",
+        "noble_metals",
+        "heavy_metals",
+        "non_cs_crystals"
+      ]
     },
     "temperate": {
       "name": "Temperate",
       "description": "Earth-like planet with moderate climate",
       "base_cpu": 1675,
       "base_powergrid": 6000,
-      "resources": ["aqueous_liquids", "carbon_compounds", "micro_organisms", "complex_organisms"]
+      "resources": [
+        "aqueous_liquids",
+        "carbon_compounds",
+        "micro_organisms",
+        "complex_organisms"
+      ]
     },
     "oceanic": {
       "name": "Oceanic",
       "description": "Planet covered mostly by water",
       "base_cpu": 1675,
       "base_powergrid": 6000,
-      "resources": ["aqueous_liquids", "micro_organisms", "complex_organisms", "planktic_colonies"]
+      "resources": [
+        "aqueous_liquids",
+        "micro_organisms",
+        "complex_organisms",
+        "planktic_colonies"
+      ]
     },
     "lava": {
       "name": "Lava",
       "description": "Volcanic planet with extreme heat",
       "base_cpu": 1675,
       "base_powergrid": 6000,
-      "resources": ["base_metals", "heavy_metals", "non_cs_crystals", "felsic_magma"]
+      "resources": [
+        "base_metals",
+        "heavy_metals",
+        "non_cs_crystals",
+        "felsic_magma"
+      ]
     },
     "gas": {
       "name": "Gas",
       "description": "Gas giant with no solid surface",
       "base_cpu": 1675,
       "base_powergrid": 6000,
-      "resources": ["noble_gas", "ionic_solutions", "suspended_plasma", "reactive_gas"]
+      "resources": [
+        "noble_gas",
+        "ionic_solutions",
+        "suspended_plasma",
+        "reactive_gas"
+      ]
     },
     "ice": {
       "name": "Ice",
       "description": "Frozen planet with ice-covered surface",
       "base_cpu": 1675,
       "base_powergrid": 6000,
-      "resources": ["aqueous_liquids", "noble_gas", "heavy_water", "glacial_mass"]
+      "resources": [
+        "aqueous_liquids",
+        "noble_gas",
+        "heavy_water",
+        "frost_mass"
+      ]
     },
     "storm": {
       "name": "Storm",
       "description": "Planet with violent atmospheric storms",
       "base_cpu": 1675,
       "base_powergrid": 6000,
-      "resources": ["ionic_solutions", "suspended_plasma", "noble_gas", "reactive_gas"]
+      "resources": [
+        "ionic_solutions",
+        "suspended_plasma",
+        "noble_gas",
+        "reactive_gas"
+      ]
     },
     "plasma": {
       "name": "Plasma",
       "description": "Planet with extreme electromagnetic activity",
       "base_cpu": 1675,
       "base_powergrid": 6000,
-      "resources": ["suspended_plasma", "ionic_solutions", "noble_metals", "non_cs_crystals"]
+      "resources": [
+        "suspended_plasma",
+        "ionic_solutions",
+        "noble_metals",
+        "non_cs_crystals"
+      ]
     }
   },
-  
   "raw_resources": {
     "aqueous_liquids": {
       "name": "Aqueous Liquids",
@@ -164,21 +203,22 @@
       "description": "Deuterium-enriched water",
       "color": "#29B6F6"
     },
-    "glacial_mass": {
-      "name": "Glacial Mass",
+    "frost_mass": {
+      "name": "Frost Mass",
       "tier": 0,
       "volume": 0.01,
       "description": "Frozen water and ice formations",
       "color": "#E1F5FE"
     }
   },
-  
   "processed_tier1": {
     "bacteria": {
       "name": "Bacteria",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"micro_organisms": 3000},
+      "inputs": {
+        "micro_organisms": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -186,7 +226,9 @@
       "name": "Biofuels",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"carbon_compounds": 3000},
+      "inputs": {
+        "carbon_compounds": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -194,7 +236,10 @@
       "name": "Biomass",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"planktic_colonies": 3000, "micro_organisms": 3000},
+      "inputs": {
+        "planktic_colonies": 3000,
+        "micro_organisms": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -202,7 +247,9 @@
       "name": "Chiral Structures",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"non_cs_crystals": 3000},
+      "inputs": {
+        "non_cs_crystals": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -210,7 +257,9 @@
       "name": "Electrolytes",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"ionic_solutions": 3000},
+      "inputs": {
+        "ionic_solutions": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -218,7 +267,9 @@
       "name": "Industrial Fibers",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"carbon_compounds": 3000},
+      "inputs": {
+        "carbon_compounds": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -226,7 +277,9 @@
       "name": "Oxidizing Compound",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"reactive_gas": 3000},
+      "inputs": {
+        "reactive_gas": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -234,7 +287,9 @@
       "name": "Oxygen",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"noble_gas": 3000},
+      "inputs": {
+        "noble_gas": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -242,7 +297,9 @@
       "name": "Plasmoids",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"suspended_plasma": 3000},
+      "inputs": {
+        "suspended_plasma": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -250,7 +307,9 @@
       "name": "Precious Metals",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"noble_metals": 3000},
+      "inputs": {
+        "noble_metals": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -258,7 +317,9 @@
       "name": "Proteins",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"complex_organisms": 3000},
+      "inputs": {
+        "complex_organisms": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -266,7 +327,9 @@
       "name": "Reactive Metals",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"base_metals": 3000},
+      "inputs": {
+        "base_metals": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -274,7 +337,9 @@
       "name": "Silicon",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"felsic_magma": 3000},
+      "inputs": {
+        "felsic_magma": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -282,7 +347,9 @@
       "name": "Toxic Metals",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"heavy_metals": 3000},
+      "inputs": {
+        "heavy_metals": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     },
@@ -290,18 +357,22 @@
       "name": "Water",
       "tier": 1,
       "volume": 0.01,
-      "inputs": {"aqueous_liquids": 3000},
+      "inputs": {
+        "aqueous_liquids": 3000
+      },
       "output_quantity": 20,
       "cycle_time": 1800
     }
   },
-  
   "processed_tier2": {
     "biocells": {
       "name": "Biocells",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"biofuels": 10, "precious_metals": 10},
+      "inputs": {
+        "biofuels": 10,
+        "precious_metals": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -309,7 +380,10 @@
       "name": "Construction Blocks",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"reactive_metals": 10, "toxic_metals": 10},
+      "inputs": {
+        "reactive_metals": 10,
+        "toxic_metals": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -317,7 +391,10 @@
       "name": "Consumer Electronics",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"toxic_metals": 10, "chiral_structures": 10},
+      "inputs": {
+        "toxic_metals": 10,
+        "chiral_structures": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -325,7 +402,10 @@
       "name": "Coolant",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"water": 10, "electrolytes": 10},
+      "inputs": {
+        "water": 10,
+        "electrolytes": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -333,7 +413,10 @@
       "name": "Enriched Uranium",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"precious_metals": 10, "toxic_metals": 10},
+      "inputs": {
+        "precious_metals": 10,
+        "toxic_metals": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -341,7 +424,10 @@
       "name": "Fertilizer",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"bacteria": 10, "proteins": 10},
+      "inputs": {
+        "bacteria": 10,
+        "proteins": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -349,7 +435,10 @@
       "name": "Genetically Enhanced Livestock",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"proteins": 10, "biomass": 10},
+      "inputs": {
+        "proteins": 10,
+        "biomass": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -357,7 +446,10 @@
       "name": "Mechanical Parts",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"precious_metals": 10, "reactive_metals": 10},
+      "inputs": {
+        "precious_metals": 10,
+        "reactive_metals": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -365,7 +457,10 @@
       "name": "Microfiber Shielding",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"industrial_fibers": 10, "silicon": 10},
+      "inputs": {
+        "industrial_fibers": 10,
+        "silicon": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -373,7 +468,10 @@
       "name": "Miniature Electronics",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"chiral_structures": 10, "silicon": 10},
+      "inputs": {
+        "chiral_structures": 10,
+        "silicon": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -381,7 +479,10 @@
       "name": "Nanites",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"bacteria": 10, "reactive_metals": 10},
+      "inputs": {
+        "bacteria": 10,
+        "reactive_metals": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -389,7 +490,10 @@
       "name": "Oxides",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"oxygen": 10, "oxidizing_compound": 10},
+      "inputs": {
+        "oxygen": 10,
+        "oxidizing_compound": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -397,7 +501,10 @@
       "name": "Polyaramids",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"industrial_fibers": 10, "oxidizing_compound": 10},
+      "inputs": {
+        "industrial_fibers": 10,
+        "oxidizing_compound": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -405,7 +512,10 @@
       "name": "Polytextiles",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"biofuels": 10, "industrial_fibers": 10},
+      "inputs": {
+        "biofuels": 10,
+        "industrial_fibers": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -413,7 +523,10 @@
       "name": "Rocket Fuel",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"plasmoids": 10, "electrolytes": 10},
+      "inputs": {
+        "plasmoids": 10,
+        "electrolytes": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -421,7 +534,10 @@
       "name": "Silicate Glass",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"oxidizing_compound": 10, "silicon": 10},
+      "inputs": {
+        "oxidizing_compound": 10,
+        "silicon": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -429,7 +545,10 @@
       "name": "Superconductors",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"plasmoids": 10, "water": 10},
+      "inputs": {
+        "plasmoids": 10,
+        "water": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -437,7 +556,10 @@
       "name": "Supertensile Plastics",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"oxygen": 10, "biomass": 10},
+      "inputs": {
+        "oxygen": 10,
+        "biomass": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -445,7 +567,10 @@
       "name": "Test Cultures",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"water": 10, "bacteria": 10},
+      "inputs": {
+        "water": 10,
+        "bacteria": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -453,7 +578,10 @@
       "name": "Transmitter",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"chiral_structures": 10, "plasmoids": 10},
+      "inputs": {
+        "chiral_structures": 10,
+        "plasmoids": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     },
@@ -461,18 +589,24 @@
       "name": "Viral Agent",
       "tier": 2,
       "volume": 0.38,
-      "inputs": {"biomass": 10, "bacteria": 10},
+      "inputs": {
+        "biomass": 10,
+        "bacteria": 10
+      },
       "output_quantity": 5,
       "cycle_time": 3600
     }
   },
-  
   "processed_tier3": {
     "biotech_research_reports": {
       "name": "Biotech Research Reports",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"nanites": 5, "gen_enhanced_livestock": 5, "test_cultures": 5},
+      "inputs": {
+        "nanites": 5,
+        "gen_enhanced_livestock": 5,
+        "test_cultures": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -480,7 +614,10 @@
       "name": "Camera Drones",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"rocket_fuel": 5, "silicate_glass": 5},
+      "inputs": {
+        "rocket_fuel": 5,
+        "silicate_glass": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -488,7 +625,10 @@
       "name": "Condensates",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"coolant": 5, "oxides": 5},
+      "inputs": {
+        "coolant": 5,
+        "oxides": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -496,7 +636,11 @@
       "name": "Cryoprotectant Solution",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"test_cultures": 5, "fertilizer": 5, "synthetic_oil": 5},
+      "inputs": {
+        "test_cultures": 5,
+        "fertilizer": 5,
+        "synthetic_oil": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -504,7 +648,10 @@
       "name": "Data Chips",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"microfiber_shielding": 5, "supertensile_plastics": 5},
+      "inputs": {
+        "microfiber_shielding": 5,
+        "supertensile_plastics": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -512,7 +659,11 @@
       "name": "Gel-Matrix Biopaste",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"biocells": 5, "oxides": 5, "superconductors": 5},
+      "inputs": {
+        "biocells": 5,
+        "oxides": 5,
+        "superconductors": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -520,7 +671,10 @@
       "name": "Guidance Systems",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"transmitter": 5, "water_cooled_cpu": 5},
+      "inputs": {
+        "transmitter": 5,
+        "water_cooled_cpu": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -528,7 +682,11 @@
       "name": "Hazmat Detection Systems",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"polytextiles": 5, "transmitter": 5, "viral_agent": 5},
+      "inputs": {
+        "polytextiles": 5,
+        "transmitter": 5,
+        "viral_agent": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -536,7 +694,10 @@
       "name": "Hermetic Membranes",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"gen_enhanced_livestock": 5, "polyaramids": 5},
+      "inputs": {
+        "gen_enhanced_livestock": 5,
+        "polyaramids": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -544,7 +705,10 @@
       "name": "High-Tech Transmitters",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"polyaramids": 5, "transmitter": 5},
+      "inputs": {
+        "polyaramids": 5,
+        "transmitter": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -552,7 +716,10 @@
       "name": "Industrial Explosives",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"fertilizer": 5, "polytextiles": 5},
+      "inputs": {
+        "fertilizer": 5,
+        "polytextiles": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -560,7 +727,10 @@
       "name": "Livestock",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"biofuels": 5, "proteins": 5},
+      "inputs": {
+        "biofuels": 5,
+        "proteins": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -568,7 +738,10 @@
       "name": "Mechanical Parts (Advanced)",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"mechanical_parts": 5, "nanites": 5},
+      "inputs": {
+        "mechanical_parts": 5,
+        "nanites": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -576,7 +749,10 @@
       "name": "Neocoms",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"biocells": 5, "silicate_glass": 5},
+      "inputs": {
+        "biocells": 5,
+        "silicate_glass": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -584,7 +760,10 @@
       "name": "Nuclear Reactors",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"enriched_uranium": 5, "microfiber_shielding": 5},
+      "inputs": {
+        "enriched_uranium": 5,
+        "microfiber_shielding": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -592,7 +771,11 @@
       "name": "Planetary Vehicles",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"mechanical_parts": 5, "miniature_electronics": 5, "supertensile_plastics": 5},
+      "inputs": {
+        "mechanical_parts": 5,
+        "miniature_electronics": 5,
+        "supertensile_plastics": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -600,7 +783,10 @@
       "name": "Rocket Fuel (Advanced)",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"polytextiles": 5, "rocket_fuel": 5},
+      "inputs": {
+        "polytextiles": 5,
+        "rocket_fuel": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -608,7 +794,10 @@
       "name": "Smartfab Units",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"construction_blocks": 5, "miniature_electronics": 5},
+      "inputs": {
+        "construction_blocks": 5,
+        "miniature_electronics": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -616,7 +805,11 @@
       "name": "Supercomputers",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"consumer_electronics": 5, "coolant": 5, "water_cooled_cpu": 5},
+      "inputs": {
+        "consumer_electronics": 5,
+        "coolant": 5,
+        "water_cooled_cpu": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -624,7 +817,11 @@
       "name": "Synthetic Oil",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"electrolytes": 5, "oxygen": 5, "reactive_metals": 10},
+      "inputs": {
+        "electrolytes": 5,
+        "oxygen": 5,
+        "reactive_metals": 10
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -632,7 +829,10 @@
       "name": "Transcranial Microcontrollers",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"biocells": 5, "nanites": 5},
+      "inputs": {
+        "biocells": 5,
+        "nanites": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -640,7 +840,10 @@
       "name": "Ukomi Superconductors",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"superconductors": 5, "synthetic_oil": 5},
+      "inputs": {
+        "superconductors": 5,
+        "synthetic_oil": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -648,7 +851,10 @@
       "name": "Vaccines",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"gen_enhanced_livestock": 5, "viral_agent": 5},
+      "inputs": {
+        "gen_enhanced_livestock": 5,
+        "viral_agent": 5
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     },
@@ -656,18 +862,24 @@
       "name": "Water-Cooled CPU",
       "tier": 3,
       "volume": 1.5,
-      "inputs": {"reactive_metals": 5, "water": 10},
+      "inputs": {
+        "reactive_metals": 5,
+        "water": 10
+      },
       "output_quantity": 1,
       "cycle_time": 7200
     }
   },
-  
   "processed_tier4": {
     "broadcast_node": {
       "name": "Broadcast Node",
       "tier": 4,
       "volume": 6,
-      "inputs": {"data_chips": 2, "high_tech_transmitters": 2, "neocoms": 2},
+      "inputs": {
+        "data_chips": 2,
+        "high_tech_transmitters": 2,
+        "neocoms": 2
+      },
       "output_quantity": 1,
       "cycle_time": 14400
     },
@@ -675,7 +887,11 @@
       "name": "Integrity Response Drones",
       "tier": 4,
       "volume": 6,
-      "inputs": {"gel_matrix_biopaste": 2, "hazmat_detection_systems": 2, "planetary_vehicles": 2},
+      "inputs": {
+        "gel_matrix_biopaste": 2,
+        "hazmat_detection_systems": 2,
+        "planetary_vehicles": 2
+      },
       "output_quantity": 1,
       "cycle_time": 14400
     },
@@ -683,7 +899,11 @@
       "name": "Nano-Factory",
       "tier": 4,
       "volume": 6,
-      "inputs": {"industrial_explosives": 2, "reactive_metals": 5, "ukomi_superconductors": 2},
+      "inputs": {
+        "industrial_explosives": 2,
+        "reactive_metals": 5,
+        "ukomi_superconductors": 2
+      },
       "output_quantity": 1,
       "cycle_time": 14400
     },
@@ -691,7 +911,11 @@
       "name": "Organic Mortar Applicators",
       "tier": 4,
       "volume": 6,
-      "inputs": {"condensates": 2, "bacteria": 5, "vaccines": 2},
+      "inputs": {
+        "condensates": 2,
+        "bacteria": 5,
+        "vaccines": 2
+      },
       "output_quantity": 1,
       "cycle_time": 14400
     },
@@ -699,7 +923,11 @@
       "name": "Recursive Computing Module",
       "tier": 4,
       "volume": 6,
-      "inputs": {"guidance_systems": 2, "synthetic_oil": 5, "transcranial_microcontrollers": 2},
+      "inputs": {
+        "guidance_systems": 2,
+        "synthetic_oil": 5,
+        "transcranial_microcontrollers": 2
+      },
       "output_quantity": 1,
       "cycle_time": 14400
     },
@@ -707,7 +935,11 @@
       "name": "Self-Harmonizing Power Core",
       "tier": 4,
       "volume": 6,
-      "inputs": {"camera_drones": 2, "hermetic_membranes": 2, "nuclear_reactors": 2},
+      "inputs": {
+        "camera_drones": 2,
+        "hermetic_membranes": 2,
+        "nuclear_reactors": 2
+      },
       "output_quantity": 1,
       "cycle_time": 14400
     },
@@ -715,7 +947,11 @@
       "name": "Sterile Conduits",
       "tier": 4,
       "volume": 6,
-      "inputs": {"smartfab_units": 2, "test_cultures": 5, "vaccines": 2},
+      "inputs": {
+        "smartfab_units": 2,
+        "test_cultures": 5,
+        "vaccines": 2
+      },
       "output_quantity": 1,
       "cycle_time": 14400
     },
@@ -723,7 +959,11 @@
       "name": "Wetware Mainframe",
       "tier": 4,
       "volume": 6,
-      "inputs": {"biotech_research_reports": 2, "cryoprotectant_solution": 2, "supercomputers": 2},
+      "inputs": {
+        "biotech_research_reports": 2,
+        "cryoprotectant_solution": 2,
+        "supercomputers": 2
+      },
       "output_quantity": 1,
       "cycle_time": 14400
     }

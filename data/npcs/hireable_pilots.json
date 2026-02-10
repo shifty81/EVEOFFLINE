@@ -1,129 +1,219 @@
 {
-    "hireable_pilots": {
-        "combat_pilots": [
-            {
-                "name_pool": ["Kael Orion", "Ryx Darkstar", "Zara Blackwood", "Marcus Steele", "Vex Ironheart", "Lyra Stormwind", "Dex Ashford", "Nova Ironclad", "Jace Thornwall", "Sera Frostblade"],
-                "specialization": "combat",
-                "personality_weights": {"aggressive": 0.4, "balanced": 0.35, "cautious": 0.25},
-                "starting_skills": {
-                    "gunnery": 2,
-                    "missiles": 1,
-                    "spaceship_command": 2,
-                    "navigation": 1,
-                    "shield_management": 1
-                }
-            }
+  "hireable_pilots": {
+    "combat_pilots": [
+      {
+        "name_pool": [
+          "Kael Orion",
+          "Ryx Darkstar",
+          "Zara Blackwood",
+          "Marcus Steele",
+          "Vex Ironheart",
+          "Lyra Stormwind",
+          "Dex Ashford",
+          "Nova Ironclad",
+          "Jace Thornwall",
+          "Sera Frostblade"
         ],
-        "miner_pilots": [
-            {
-                "name_pool": ["Helia Sunstone", "Bram Deeprock", "Orin Stonecutter", "Mira Asterfield", "Galen Mineralight", "Tessa Oreweaver", "Durn Rockbreaker", "Pyra Crystalvein", "Silo Dustgrind", "Vela Moondust"],
-                "specialization": "miner",
-                "personality_weights": {"efficient": 0.5, "cautious": 0.3, "balanced": 0.2},
-                "starting_skills": {
-                    "mining": 3,
-                    "astrogeology": 2,
-                    "mining_upgrades": 1,
-                    "spaceship_command": 1,
-                    "ice_harvesting": 1
-                }
-            }
-        ],
-        "hauler_pilots": [
-            {
-                "name_pool": ["Cargo Cal", "Ferrus Haul", "Indie Freight", "Rex Loadmaster", "Boxy Cargohold", "Sven Routemaster", "Dell Wayfinder", "Iris Caravan", "Huck Longroute", "Mabel Dockhand"],
-                "specialization": "hauler",
-                "personality_weights": {"efficient": 0.4, "cautious": 0.4, "balanced": 0.2},
-                "starting_skills": {
-                    "spaceship_command": 2,
-                    "navigation": 2,
-                    "trade": 1,
-                    "industry": 1
-                }
-            }
-        ],
-        "scout_pilots": [
-            {
-                "name_pool": ["Shade Whisper", "Cleo Nightrunner", "Finn Edgewalker", "Nyx Shadowstep", "Echo Recon", "Wren Silentpath", "Ash Voidgazer", "Drift Starwhisper", "Pike Farsight", "Misty Horizonscan"],
-                "specialization": "scout",
-                "personality_weights": {"cautious": 0.5, "efficient": 0.3, "balanced": 0.2},
-                "starting_skills": {
-                    "astrometrics": 3,
-                    "navigation": 2,
-                    "spaceship_command": 2,
-                    "survey": 1,
-                    "electronic_warfare": 1
-                }
-            }
-        ],
-        "trader_pilots": [
-            {
-                "name_pool": ["Merch Goldberg", "Isa Coinsworth", "Tally Ledger", "Buck Profitwise", "Quinn Marketmaker", "Sage Tradeline", "Lux Arbitrage", "Cred Dealsworth", "Vera Pricewatch", "Niko Marginmaker"],
-                "specialization": "trader",
-                "personality_weights": {"efficient": 0.6, "balanced": 0.3, "cautious": 0.1},
-                "starting_skills": {
-                    "trade": 3,
-                    "retail": 2,
-                    "accounting": 2,
-                    "navigation": 1,
-                    "spaceship_command": 1
-                }
-            }
-        ],
-        "industrialist_pilots": [
-            {
-                "name_pool": ["Forge Hammersmith", "Pria Assemblyline", "Bolt Weldwright", "Cera Fabricator", "Dane Blueprinter", "Mira Refiner", "Rook Componentmaker", "Thea Schematica", "Lars Factoryhand", "Ivy Supplychain"],
-                "specialization": "industrialist",
-                "personality_weights": {"efficient": 0.5, "balanced": 0.4, "cautious": 0.1},
-                "starting_skills": {
-                    "industry": 3,
-                    "production_efficiency": 2,
-                    "planetology": 2,
-                    "science": 1,
-                    "spaceship_command": 1
-                }
-            }
-        ]
-    },
-    "pilot_skill_levels": {
-        "1": {
-            "label": "Novice",
-            "salary_per_hour": 10000,
-            "hiring_fee": 100000,
-            "efficiency_modifier": 0.6,
-            "description": "Fresh recruit. Basic task execution. Requires close supervision."
+        "specialization": "combat",
+        "personality_weights": {
+          "aggressive": 0.4,
+          "balanced": 0.35,
+          "cautious": 0.25
         },
-        "2": {
-            "label": "Competent",
-            "salary_per_hour": 25000,
-            "hiring_fee": 500000,
-            "efficiency_modifier": 0.75,
-            "description": "Experienced enough for routine tasks. Can optimize routes."
-        },
-        "3": {
-            "label": "Skilled",
-            "salary_per_hour": 50000,
-            "hiring_fee": 1500000,
-            "efficiency_modifier": 0.85,
-            "description": "Reliable operator. Can handle complex multi-step tasks."
-        },
-        "4": {
-            "label": "Expert",
-            "salary_per_hour": 100000,
-            "hiring_fee": 5000000,
-            "efficiency_modifier": 0.95,
-            "description": "Highly capable. Can multi-task and make smart decisions."
-        },
-        "5": {
-            "label": "Elite",
-            "salary_per_hour": 250000,
-            "hiring_fee": 20000000,
-            "efficiency_modifier": 1.0,
-            "description": "Top-tier pilot. Perfect execution, autonomous decision-making."
+        "starting_skills": {
+          "gunnery": 2,
+          "missiles": 1,
+          "spaceship_command": 2,
+          "navigation": 1,
+          "shield_management": 1
         }
+      }
+    ],
+    "miner_pilots": [
+      {
+        "name_pool": [
+          "Helia Sunstone",
+          "Bram Deeprock",
+          "Orin Stonecutter",
+          "Mira Asterfield",
+          "Galen Mineralight",
+          "Tessa Oreweaver",
+          "Durn Rockbreaker",
+          "Pyra Crystalvein",
+          "Silo Dustgrind",
+          "Vela Moondust"
+        ],
+        "specialization": "miner",
+        "personality_weights": {
+          "efficient": 0.5,
+          "cautious": 0.3,
+          "balanced": 0.2
+        },
+        "starting_skills": {
+          "mining": 3,
+          "astrogeology": 2,
+          "mining_upgrades": 1,
+          "spaceship_command": 1,
+          "ice_harvesting": 1
+        }
+      }
+    ],
+    "hauler_pilots": [
+      {
+        "name_pool": [
+          "Cargo Cal",
+          "Ferrus Haul",
+          "Indie Freight",
+          "Rex Loadmaster",
+          "Boxy Cargohold",
+          "Sven Routemaster",
+          "Dell Wayfinder",
+          "Iris Caravan",
+          "Huck Longroute",
+          "Mabel Dockhand"
+        ],
+        "specialization": "hauler",
+        "personality_weights": {
+          "efficient": 0.4,
+          "cautious": 0.4,
+          "balanced": 0.2
+        },
+        "starting_skills": {
+          "spaceship_command": 2,
+          "navigation": 2,
+          "trade": 1,
+          "industry": 1
+        }
+      }
+    ],
+    "scout_pilots": [
+      {
+        "name_pool": [
+          "Shade Whisper",
+          "Cleo Nightrunner",
+          "Finn Edgewalker",
+          "Nyx Shadowstep",
+          "Echo Recon",
+          "Wren Silentpath",
+          "Ash Voidgazer",
+          "Drift Starwhisper",
+          "Pike Farsight",
+          "Misty Horizonscan"
+        ],
+        "specialization": "scout",
+        "personality_weights": {
+          "cautious": 0.5,
+          "efficient": 0.3,
+          "balanced": 0.2
+        },
+        "starting_skills": {
+          "astrometrics": 3,
+          "navigation": 2,
+          "spaceship_command": 2,
+          "survey": 1,
+          "electronic_warfare": 1
+        }
+      }
+    ],
+    "trader_pilots": [
+      {
+        "name_pool": [
+          "Merch Goldberg",
+          "Isa Coinsworth",
+          "Tally Ledger",
+          "Buck Profitwise",
+          "Quinn Marketmaker",
+          "Sage Tradeline",
+          "Lux Arbitrage",
+          "Cred Dealsworth",
+          "Vera Pricewatch",
+          "Niko Marginmaker"
+        ],
+        "specialization": "trader",
+        "personality_weights": {
+          "efficient": 0.6,
+          "balanced": 0.3,
+          "cautious": 0.1
+        },
+        "starting_skills": {
+          "trade": 3,
+          "retail": 2,
+          "accounting": 2,
+          "navigation": 1,
+          "spaceship_command": 1
+        }
+      }
+    ],
+    "industrialist_pilots": [
+      {
+        "name_pool": [
+          "Forge Hammersmith",
+          "Pria Assemblyline",
+          "Bolt Weldwright",
+          "Cera Fabricator",
+          "Dane Blueprinter",
+          "Mira Refiner",
+          "Watchkeep Componentmaker",
+          "Thea Schematica",
+          "Lars Factoryhand",
+          "Ivy Supplychain"
+        ],
+        "specialization": "industrialist",
+        "personality_weights": {
+          "efficient": 0.5,
+          "balanced": 0.4,
+          "cautious": 0.1
+        },
+        "starting_skills": {
+          "industry": 3,
+          "production_efficiency": 2,
+          "planetology": 2,
+          "science": 1,
+          "spaceship_command": 1
+        }
+      }
+    ]
+  },
+  "pilot_skill_levels": {
+    "1": {
+      "label": "Novice",
+      "salary_per_hour": 10000,
+      "hiring_fee": 100000,
+      "efficiency_modifier": 0.6,
+      "description": "Fresh recruit. Basic task execution. Requires close supervision."
     },
-    "wing_limits": {
-        "max_wing_size": 26,
-        "max_npc_pilots": 25,
-        "description": "A wing can have up to 26 members total: the player commander plus up to 25 NPC pilots or other real players."
+    "2": {
+      "label": "Competent",
+      "salary_per_hour": 25000,
+      "hiring_fee": 500000,
+      "efficiency_modifier": 0.75,
+      "description": "Experienced enough for routine tasks. Can optimize routes."
+    },
+    "3": {
+      "label": "Skilled",
+      "salary_per_hour": 50000,
+      "hiring_fee": 1500000,
+      "efficiency_modifier": 0.85,
+      "description": "Reliable operator. Can handle complex multi-step tasks."
+    },
+    "4": {
+      "label": "Expert",
+      "salary_per_hour": 100000,
+      "hiring_fee": 5000000,
+      "efficiency_modifier": 0.95,
+      "description": "Highly capable. Can multi-task and make smart decisions."
+    },
+    "5": {
+      "label": "Elite",
+      "salary_per_hour": 250000,
+      "hiring_fee": 20000000,
+      "efficiency_modifier": 1.0,
+      "description": "Top-tier pilot. Perfect execution, autonomous decision-making."
     }
+  },
+  "wing_limits": {
+    "max_wing_size": 26,
+    "max_npc_pilots": 25,
+    "description": "A wing can have up to 26 members total: the player commander plus up to 25 NPC pilots or other real players."
+  }
 }

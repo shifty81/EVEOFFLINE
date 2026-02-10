@@ -263,7 +263,7 @@
       "gas_yield": 20,
       "volume": 5,
       "base_price": 2000000,
-      "description": "Tech II gas harvester with doubled yield. Essential for efficient fullerite extraction.",
+      "description": "Tech II gas harvester with doubled yield. Essential for efficient nebuline extraction.",
       "requirements": {
         "skills": {
           "Mining": 5,
@@ -273,121 +273,145 @@
     }
   },
   "mining_crystals": {
-    "veldspar_mining_crystal_i": {
-      "id": "veldspar_mining_crystal_i",
-      "name": "Veldspar Mining Crystal I",
+    "dustite_mining_crystal_i": {
+      "id": "dustite_mining_crystal_i",
+      "name": "Dustite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "veldspar",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "dustite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 25000,
-      "description": "Tech I mining crystal tuned for Veldspar. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Dustite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "veldspar_mining_crystal_ii": {
-      "id": "veldspar_mining_crystal_ii",
-      "name": "Veldspar Mining Crystal II",
+    "dustite_mining_crystal_ii": {
+      "id": "dustite_mining_crystal_ii",
+      "name": "Dustite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "veldspar",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "dustite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 150000,
-      "description": "Tech II mining crystal tuned for Veldspar. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Dustite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Veldspar Processing": 4
+          "Dustite Processing": 4
         }
       }
     },
-    "scordite_mining_crystal_i": {
-      "id": "scordite_mining_crystal_i",
-      "name": "Scordite Mining Crystal I",
+    "ferrite_mining_crystal_i": {
+      "id": "ferrite_mining_crystal_i",
+      "name": "Ferrite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "scordite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "ferrite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 28000,
-      "description": "Tech I mining crystal tuned for Scordite. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Ferrite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "scordite_mining_crystal_ii": {
-      "id": "scordite_mining_crystal_ii",
-      "name": "Scordite Mining Crystal II",
+    "ferrite_mining_crystal_ii": {
+      "id": "ferrite_mining_crystal_ii",
+      "name": "Ferrite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "scordite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "ferrite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 165000,
-      "description": "Tech II mining crystal tuned for Scordite. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Ferrite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Scordite Processing": 4
+          "Ferrite Processing": 4
         }
       }
     },
-    "pyroxeres_mining_crystal_i": {
-      "id": "pyroxeres_mining_crystal_i",
-      "name": "Pyroxeres Mining Crystal I",
+    "ignaite_mining_crystal_i": {
+      "id": "ignaite_mining_crystal_i",
+      "name": "Ignaite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "pyroxeres",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "ignaite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 35000,
-      "description": "Tech I mining crystal tuned for Pyroxeres. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Ignaite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "pyroxeres_mining_crystal_ii": {
-      "id": "pyroxeres_mining_crystal_ii",
-      "name": "Pyroxeres Mining Crystal II",
+    "ignaite_mining_crystal_ii": {
+      "id": "ignaite_mining_crystal_ii",
+      "name": "Ignaite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "pyroxeres",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "ignaite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 185000,
-      "description": "Tech II mining crystal tuned for Pyroxeres. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Ignaite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -396,39 +420,47 @@
         }
       }
     },
-    "plagioclase_mining_crystal_i": {
-      "id": "plagioclase_mining_crystal_i",
-      "name": "Plagioclase Mining Crystal I",
+    "crystite_mining_crystal_i": {
+      "id": "crystite_mining_crystal_i",
+      "name": "Crystite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "plagioclase",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "crystite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 40000,
-      "description": "Tech I mining crystal tuned for Plagioclase. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Crystite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "plagioclase_mining_crystal_ii": {
-      "id": "plagioclase_mining_crystal_ii",
-      "name": "Plagioclase Mining Crystal II",
+    "crystite_mining_crystal_ii": {
+      "id": "crystite_mining_crystal_ii",
+      "name": "Crystite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "plagioclase",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "crystite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 200000,
-      "description": "Tech II mining crystal tuned for Plagioclase. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Crystite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -437,39 +469,47 @@
         }
       }
     },
-    "omber_mining_crystal_i": {
-      "id": "omber_mining_crystal_i",
-      "name": "Omber Mining Crystal I",
+    "shadite_mining_crystal_i": {
+      "id": "shadite_mining_crystal_i",
+      "name": "Shadite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "omber",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "shadite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 50000,
-      "description": "Tech I mining crystal tuned for Omber. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Shadite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "omber_mining_crystal_ii": {
-      "id": "omber_mining_crystal_ii",
-      "name": "Omber Mining Crystal II",
+    "shadite_mining_crystal_ii": {
+      "id": "shadite_mining_crystal_ii",
+      "name": "Shadite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "omber",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "shadite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 250000,
-      "description": "Tech II mining crystal tuned for Omber. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Shadite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -478,39 +518,47 @@
         }
       }
     },
-    "kernite_mining_crystal_i": {
-      "id": "kernite_mining_crystal_i",
-      "name": "Kernite Mining Crystal I",
+    "corite_mining_crystal_i": {
+      "id": "corite_mining_crystal_i",
+      "name": "Corite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "kernite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "corite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 55000,
-      "description": "Tech I mining crystal tuned for Kernite. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Corite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "kernite_mining_crystal_ii": {
-      "id": "kernite_mining_crystal_ii",
-      "name": "Kernite Mining Crystal II",
+    "corite_mining_crystal_ii": {
+      "id": "corite_mining_crystal_ii",
+      "name": "Corite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "kernite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "corite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 275000,
-      "description": "Tech II mining crystal tuned for Kernite. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Corite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -519,39 +567,47 @@
         }
       }
     },
-    "jaspet_mining_crystal_i": {
-      "id": "jaspet_mining_crystal_i",
-      "name": "Jaspet Mining Crystal I",
+    "lumine_mining_crystal_i": {
+      "id": "lumine_mining_crystal_i",
+      "name": "Lumine Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "jaspet",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "lumine",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 65000,
-      "description": "Tech I mining crystal tuned for Jaspet. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Lumine. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "jaspet_mining_crystal_ii": {
-      "id": "jaspet_mining_crystal_ii",
-      "name": "Jaspet Mining Crystal II",
+    "lumine_mining_crystal_ii": {
+      "id": "lumine_mining_crystal_ii",
+      "name": "Lumine Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "jaspet",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "lumine",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 300000,
-      "description": "Tech II mining crystal tuned for Jaspet. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Lumine. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -560,80 +616,96 @@
         }
       }
     },
-    "hemorphite_mining_crystal_i": {
-      "id": "hemorphite_mining_crystal_i",
-      "name": "Hemorphite Mining Crystal I",
+    "sangite_mining_crystal_i": {
+      "id": "sangite_mining_crystal_i",
+      "name": "Sangite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "hemorphite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "sangite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 70000,
-      "description": "Tech I mining crystal tuned for Hemorphite. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Sangite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "hemorphite_mining_crystal_ii": {
-      "id": "hemorphite_mining_crystal_ii",
-      "name": "Hemorphite Mining Crystal II",
+    "sangite_mining_crystal_ii": {
+      "id": "sangite_mining_crystal_ii",
+      "name": "Sangite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "hemorphite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "sangite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 325000,
-      "description": "Tech II mining crystal tuned for Hemorphite. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Sangite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
           "Reprocessing": 5,
-          "Hemorphite Processing": 4
+          "Hemorphium Processing": 4
         }
       }
     },
-    "hedbergite_mining_crystal_i": {
-      "id": "hedbergite_mining_crystal_i",
-      "name": "Hedbergite Mining Crystal I",
+    "glacite_mining_crystal_i": {
+      "id": "glacite_mining_crystal_i",
+      "name": "Glacite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "hedbergite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "glacite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 75000,
-      "description": "Tech I mining crystal tuned for Hedbergite. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Glacite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "hedbergite_mining_crystal_ii": {
-      "id": "hedbergite_mining_crystal_ii",
-      "name": "Hedbergite Mining Crystal II",
+    "glacite_mining_crystal_ii": {
+      "id": "glacite_mining_crystal_ii",
+      "name": "Glacite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "hedbergite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "glacite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 350000,
-      "description": "Tech II mining crystal tuned for Hedbergite. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Glacite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -642,39 +714,47 @@
         }
       }
     },
-    "gneiss_mining_crystal_i": {
-      "id": "gneiss_mining_crystal_i",
-      "name": "Gneiss Mining Crystal I",
+    "densite_mining_crystal_i": {
+      "id": "densite_mining_crystal_i",
+      "name": "Densite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "gneiss",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "densite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 80000,
-      "description": "Tech I mining crystal tuned for Gneiss. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Densite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "gneiss_mining_crystal_ii": {
-      "id": "gneiss_mining_crystal_ii",
-      "name": "Gneiss Mining Crystal II",
+    "densite_mining_crystal_ii": {
+      "id": "densite_mining_crystal_ii",
+      "name": "Densite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "gneiss",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "densite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 375000,
-      "description": "Tech II mining crystal tuned for Gneiss. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Densite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -683,39 +763,47 @@
         }
       }
     },
-    "dark_ochre_mining_crystal_i": {
-      "id": "dark_ochre_mining_crystal_i",
-      "name": "Dark Ochre Mining Crystal I",
+    "voidite_mining_crystal_i": {
+      "id": "voidite_mining_crystal_i",
+      "name": "Voidite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "dark_ochre",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "voidite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 85000,
-      "description": "Tech I mining crystal tuned for Dark Ochre. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Voidite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "dark_ochre_mining_crystal_ii": {
-      "id": "dark_ochre_mining_crystal_ii",
-      "name": "Dark Ochre Mining Crystal II",
+    "voidite_mining_crystal_ii": {
+      "id": "voidite_mining_crystal_ii",
+      "name": "Voidite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "dark_ochre",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "voidite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 400000,
-      "description": "Tech II mining crystal tuned for Dark Ochre. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Voidite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -724,39 +812,47 @@
         }
       }
     },
-    "crokite_mining_crystal_i": {
-      "id": "crokite_mining_crystal_i",
-      "name": "Crokite Mining Crystal I",
+    "pyranite_mining_crystal_i": {
+      "id": "pyranite_mining_crystal_i",
+      "name": "Pyranite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "crokite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "pyranite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 95000,
-      "description": "Tech I mining crystal tuned for Crokite. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Pyranite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "crokite_mining_crystal_ii": {
-      "id": "crokite_mining_crystal_ii",
-      "name": "Crokite Mining Crystal II",
+    "pyranite_mining_crystal_ii": {
+      "id": "pyranite_mining_crystal_ii",
+      "name": "Pyranite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "crokite",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "pyranite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 450000,
-      "description": "Tech II mining crystal tuned for Crokite. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Pyranite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -765,39 +861,47 @@
         }
       }
     },
-    "bistot_mining_crystal_i": {
-      "id": "bistot_mining_crystal_i",
-      "name": "Bistot Mining Crystal I",
+    "stellite_mining_crystal_i": {
+      "id": "stellite_mining_crystal_i",
+      "name": "Stellite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "bistot",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "stellite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 100000,
-      "description": "Tech I mining crystal tuned for Bistot. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Stellite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "bistot_mining_crystal_ii": {
-      "id": "bistot_mining_crystal_ii",
-      "name": "Bistot Mining Crystal II",
+    "stellite_mining_crystal_ii": {
+      "id": "stellite_mining_crystal_ii",
+      "name": "Stellite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "bistot",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "stellite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 475000,
-      "description": "Tech II mining crystal tuned for Bistot. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Stellite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -806,39 +910,47 @@
         }
       }
     },
-    "arkonor_mining_crystal_i": {
-      "id": "arkonor_mining_crystal_i",
-      "name": "Arkonor Mining Crystal I",
+    "cosmite_mining_crystal_i": {
+      "id": "cosmite_mining_crystal_i",
+      "name": "Cosmite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "arkonor",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "cosmite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.01,
       "volume": 1,
       "base_price": 110000,
-      "description": "Tech I mining crystal tuned for Arkonor. Improves yield by 62.5% when used with Modulated Strip Miners."
+      "description": "Tech I mining crystal tuned for Cosmite. Improves yield by 62.5% when used with Modulated Strip Miners."
     },
-    "arkonor_mining_crystal_ii": {
-      "id": "arkonor_mining_crystal_ii",
-      "name": "Arkonor Mining Crystal II",
+    "cosmite_mining_crystal_ii": {
+      "id": "cosmite_mining_crystal_ii",
+      "name": "Cosmite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_miner_ii", "strip_miner_ii", "modulated_deep_core_strip_miner_ii"],
-      "ore_type": "arkonor",
+      "compatible_modules": [
+        "modulated_miner_ii",
+        "strip_miner_ii",
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "cosmite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.03,
       "volume": 1,
       "base_price": 500000,
-      "description": "Tech II mining crystal tuned for Arkonor. Improves yield by 75% but has increased volatility.",
+      "description": "Tech II mining crystal tuned for Cosmite. Improves yield by 75% but has increased volatility.",
       "requirements": {
         "skills": {
           "Mining": 4,
@@ -847,39 +959,43 @@
         }
       }
     },
-    "mercoxit_mining_crystal_i": {
-      "id": "mercoxit_mining_crystal_i",
-      "name": "Mercoxit Mining Crystal I",
+    "nexorite_mining_crystal_i": {
+      "id": "nexorite_mining_crystal_i",
+      "name": "Nexorite Mining Crystal I",
       "type": "mining_crystal",
       "tech_level": 1,
       "meta_level": 0,
       "slot": "ammo",
-      "compatible_modules": ["modulated_deep_core_strip_miner_ii"],
-      "ore_type": "mercoxit",
+      "compatible_modules": [
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "nexorite",
       "bonuses": {
         "mining_yield": 0.625
       },
       "volatility": 0.02,
       "volume": 1,
       "base_price": 250000,
-      "description": "Tech I mining crystal tuned for Mercoxit. Only compatible with Deep Core Strip Miners. Required for efficient Mercoxit extraction."
+      "description": "Tech I mining crystal tuned for Nexorite. Only compatible with Deep Core Strip Miners. Required for efficient Nexorite extraction."
     },
-    "mercoxit_mining_crystal_ii": {
-      "id": "mercoxit_mining_crystal_ii",
-      "name": "Mercoxit Mining Crystal II",
+    "nexorite_mining_crystal_ii": {
+      "id": "nexorite_mining_crystal_ii",
+      "name": "Nexorite Mining Crystal II",
       "type": "mining_crystal",
       "tech_level": 2,
       "meta_level": 5,
       "slot": "ammo",
-      "compatible_modules": ["modulated_deep_core_strip_miner_ii"],
-      "ore_type": "mercoxit",
+      "compatible_modules": [
+        "modulated_deep_core_strip_miner_ii"
+      ],
+      "ore_type": "nexorite",
       "bonuses": {
         "mining_yield": 0.75
       },
       "volatility": 0.05,
       "volume": 1,
       "base_price": 750000,
-      "description": "Tech II mining crystal tuned for Mercoxit. Maximum yield but high volatility. Only compatible with Deep Core Strip Miners.",
+      "description": "Tech II mining crystal tuned for Nexorite. Maximum yield but high volatility. Only compatible with Deep Core Strip Miners.",
       "requirements": {
         "skills": {
           "Mining": 5,

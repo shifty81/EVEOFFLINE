@@ -1,69 +1,89 @@
 {
   "angel_threat": {
     "id": "angel_threat",
-    "name": "Angel Cartel Threat",
+    "name": "Shadow Pact Threat",
     "level": 2,
     "type": "combat",
     "agent": "Security Chief Anderson",
-    "faction": "Republic Fleet",
-    "description": "Angel Cartel forces have been spotted near our trade routes. Remove them.",
-    "briefing": "Angel Cartel has become emboldened. Show them we won't tolerate their presence here.",
+    "faction": "Keldari Tribal",
+    "description": "Shadow Pact forces have been spotted near our trade routes. Remove them.",
+    "briefing": "Shadow Pact has become emboldened. Show them we won't tolerate their presence here.",
     "objectives": [
-      {"type": "destroy", "target": "angel_frigate", "count": 6}
+      {
+        "type": "destroy",
+        "target": "angel_frigate",
+        "count": 6
+      }
     ],
     "rewards": {
       "isk": 180000,
       "loyalty_points": 450,
       "standing_gain": 0.02,
-      "items": ["projectile_ammo"]
+      "items": [
+        "projectile_ammo"
+      ]
     },
-    "location": "hek",
+    "location": "kelheim",
     "spawn_distance": 22000,
     "time_limit": 5400,
     "difficulty": "medium"
   },
-  "sansha_incursion": {
-    "id": "sansha_incursion",
-    "name": "Sansha's Nation Scouts",
+  "hollow_incursion": {
+    "id": "hollow_incursion",
+    "name": "Hollow Collective Scouts",
     "level": 2,
     "type": "combat",
     "agent": "Admiral Winters",
     "faction": "Imperial Navy",
-    "description": "Sansha's Nation has sent scouts into our territory. Eliminate them before they report back.",
-    "briefing": "Sansha's Nation is probing our defenses. We must respond decisively.",
+    "description": "Hollow Collective has sent scouts into our territory. Eliminate them before they report back.",
+    "briefing": "Hollow Collective is probing our defenses. We must respond decisively.",
     "objectives": [
-      {"type": "destroy", "target": "sansha_frigate", "count": 5}
+      {
+        "type": "destroy",
+        "target": "hollow_frigate",
+        "count": 5
+      }
     ],
     "rewards": {
       "isk": 190000,
       "loyalty_points": 470,
       "standing_gain": 0.025,
-      "items": ["frequency_crystals", "armor_plate"]
+      "items": [
+        "frequency_crystals",
+        "armor_plate"
+      ]
     },
-    "location": "jita",
+    "location": "thyrkstad",
     "spawn_distance": 20000,
     "time_limit": 5400,
     "difficulty": "medium"
   },
-  "rogue_drone_cleanup": {
-    "id": "rogue_drone_cleanup",
-    "name": "Rogue Drone Cleanup",
+  "rogue_construct_cleanup": {
+    "id": "rogue_construct_cleanup",
+    "name": "Rogue Construct Cleanup",
     "level": 2,
     "type": "combat",
     "agent": "Drone Control Officer",
-    "faction": "Federation Navy",
-    "description": "Rogue drones have infested a nearby sector. Clear them out.",
-    "briefing": "These rogue drones are a menace to navigation. Exterminate them all.",
+    "faction": "Aurelian Grand",
+    "description": "Rogue Constructs have infested a nearby sector. Clear them out.",
+    "briefing": "These rogue constructs are a menace to navigation. Exterminate them all.",
     "objectives": [
-      {"type": "destroy", "target": "rogue_drone_frigate", "count": 8}
+      {
+        "type": "destroy",
+        "target": "rogue_construct_frigate",
+        "count": 8
+      }
     ],
     "rewards": {
       "isk": 160000,
       "loyalty_points": 420,
       "standing_gain": 0.02,
-      "items": ["drone_compounds", "salvaged_materials"]
+      "items": [
+        "drone_compounds",
+        "salvaged_materials"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "spawn_distance": 18000,
     "time_limit": 5400,
     "difficulty": "medium"
@@ -74,20 +94,31 @@
     "level": 2,
     "type": "exploration",
     "agent": "Research Director Kim",
-    "faction": "Federation Navy",
+    "faction": "Aurelian Grand",
     "description": "We've located an ancient site. Scan the area and retrieve any valuable artifacts.",
     "briefing": "These archaeological sites often contain valuable technology. Be thorough in your scan.",
     "objectives": [
-      {"type": "scan", "target": "exploration_site", "count": 1},
-      {"type": "retrieve", "item": "ancient_artifact", "count": 3}
+      {
+        "type": "scan",
+        "target": "exploration_site",
+        "count": 1
+      },
+      {
+        "type": "retrieve",
+        "item": "ancient_artifact",
+        "count": 3
+      }
     ],
     "rewards": {
       "isk": 200000,
       "loyalty_points": 500,
       "standing_gain": 0.025,
-      "items": ["salvaged_materials", "rare_ore"]
+      "items": [
+        "salvaged_materials",
+        "rare_ore"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "time_limit": 6000,
     "difficulty": "medium"
   },
@@ -101,16 +132,26 @@
     "description": "We need rare ores for a special project. Mine the specified ore from the designated asteroid belt.",
     "briefing": "These ores are essential for our new manufacturing process. Mine carefully.",
     "objectives": [
-      {"type": "mine", "resource": "kernite", "amount": 1000},
-      {"type": "mine", "resource": "plagioclase", "amount": 500}
+      {
+        "type": "mine",
+        "resource": "corite",
+        "amount": 1000
+      },
+      {
+        "type": "mine",
+        "resource": "crystite",
+        "amount": 500
+      }
     ],
     "rewards": {
       "isk": 210000,
       "loyalty_points": 480,
       "standing_gain": 0.02,
-      "items": ["mining_drone"]
+      "items": [
+        "mining_drone"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "time_limit": 7200,
     "difficulty": "medium"
   },
@@ -120,20 +161,31 @@
     "level": 2,
     "type": "combat",
     "agent": "Lieutenant Commander Silva",
-    "faction": "Federation Navy",
-    "description": "Serpentis destroyers have been ambushing our mining operations. Put a stop to it.",
+    "faction": "Aurelian Grand",
+    "description": "Venom Syndicate destroyers have been ambushing our mining operations. Put a stop to it.",
     "briefing": "These destroyers are faster and better armed than frigates. You'll need a cruiser or well-fitted destroyer.",
     "objectives": [
-      {"type": "destroy", "target": "serpentis_destroyer", "count": 2},
-      {"type": "destroy", "target": "serpentis_scout", "count": 3}
+      {
+        "type": "destroy",
+        "target": "venom_syndicate_destroyer",
+        "count": 2
+      },
+      {
+        "type": "destroy",
+        "target": "venom_syndicate_scout",
+        "count": 3
+      }
     ],
     "rewards": {
       "isk": 240000,
       "loyalty_points": 580,
       "standing_gain": 0.028,
-      "items": ["hybrid_charges", "medium_shield_booster"]
+      "items": [
+        "hybrid_charges",
+        "medium_shield_booster"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "spawn_distance": 25000,
     "time_limit": 6000,
     "difficulty": "medium"
@@ -144,20 +196,31 @@
     "level": 2,
     "type": "combat",
     "agent": "Commander Rodriguez",
-    "faction": "Caldari Navy",
+    "faction": "Veyren Fleet",
     "description": "We've detected enemy cruisers in the area. Engage and destroy.",
     "briefing": "Cruisers are tough opponents. Make sure your ship is properly fitted before engaging.",
     "objectives": [
-      {"type": "destroy", "target": "angel_cruiser", "count": 1},
-      {"type": "destroy", "target": "angel_frigate", "count": 4}
+      {
+        "type": "destroy",
+        "target": "angel_cruiser",
+        "count": 1
+      },
+      {
+        "type": "destroy",
+        "target": "angel_frigate",
+        "count": 4
+      }
     ],
     "rewards": {
       "isk": 280000,
       "loyalty_points": 650,
       "standing_gain": 0.032,
-      "items": ["projectile_ammo", "tracking_enhancer"]
+      "items": [
+        "projectile_ammo",
+        "tracking_enhancer"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "spawn_distance": 28000,
     "time_limit": 6300,
     "difficulty": "hard"

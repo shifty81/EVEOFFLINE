@@ -1,9 +1,9 @@
 {
-  "sleeper_drone_c1": {
-    "id": "sleeper_drone_c1",
-    "name": "Emergent Patroller",
+  "dormant_drone_c1": {
+    "id": "dormant_drone_c1",
+    "name": "Nascent Patroller",
     "type": "frigate",
-    "faction": "Sleepers",
+    "faction": "Dormants",
     "hull_hp": 400,
     "armor_hp": 350,
     "shield_hp": 450,
@@ -16,7 +16,7 @@
     "awareness_range": 100000,
     "weapons": [
       {
-        "type": "sleeper_turret",
+        "type": "dormant_turret",
         "damage": 35,
         "damage_type": "em",
         "optimal_range": 5000,
@@ -25,17 +25,35 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "armor": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sleeper_component", "ancient_salvage"]
+    "loot_table": [
+      "dormant_component",
+      "ancient_salvage"
+    ]
   },
-  "sleeper_sentinel_c1": {
-    "id": "sleeper_sentinel_c1",
-    "name": "Awakened Patroller",
+  "dormant_sentinel_c1": {
+    "id": "dormant_sentinel_c1",
+    "name": "Stirring Patroller",
     "type": "cruiser",
-    "faction": "Sleepers",
+    "faction": "Dormants",
     "hull_hp": 1500,
     "armor_hp": 1200,
     "shield_hp": 1800,
@@ -48,7 +66,7 @@
     "awareness_range": 100000,
     "weapons": [
       {
-        "type": "sleeper_turret",
+        "type": "dormant_turret",
         "damage": 80,
         "damage_type": "thermal",
         "optimal_range": 12000,
@@ -57,17 +75,36 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "armor": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sleeper_component", "ancient_salvage", "neural_network_analyzer"]
+    "loot_table": [
+      "dormant_component",
+      "ancient_salvage",
+      "neural_network_analyzer"
+    ]
   },
-  "sleeper_drone_c3": {
-    "id": "sleeper_drone_c3",
-    "name": "Emergent Warden",
+  "dormant_drone_c3": {
+    "id": "dormant_drone_c3",
+    "name": "Nascent Warden",
     "type": "frigate",
-    "faction": "Sleepers",
+    "faction": "Dormants",
     "hull_hp": 600,
     "armor_hp": 500,
     "shield_hp": 650,
@@ -80,7 +117,7 @@
     "awareness_range": 120000,
     "weapons": [
       {
-        "type": "sleeper_turret",
+        "type": "dormant_turret",
         "damage": 50,
         "damage_type": "kinetic",
         "optimal_range": 6000,
@@ -89,17 +126,36 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "armor": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sleeper_component", "ancient_salvage", "sleeper_data_library"]
+    "loot_table": [
+      "dormant_component",
+      "ancient_salvage",
+      "dormant_data_library"
+    ]
   },
-  "sleeper_upholder_c3": {
-    "id": "sleeper_upholder_c3",
-    "name": "Sleepless Warden",
+  "dormant_upholder_c3": {
+    "id": "dormant_upholder_c3",
+    "name": "Timeless Warden",
     "type": "battleship",
-    "faction": "Sleepers",
+    "faction": "Dormants",
     "hull_hp": 4000,
     "armor_hp": 3500,
     "shield_hp": 5000,
@@ -112,7 +168,7 @@
     "awareness_range": 150000,
     "weapons": [
       {
-        "type": "sleeper_turret",
+        "type": "dormant_turret",
         "damage": 200,
         "damage_type": "explosive",
         "optimal_range": 25000,
@@ -121,17 +177,37 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "armor": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sleeper_component", "ancient_salvage", "neural_network_analyzer", "sleeper_data_library"]
+    "loot_table": [
+      "dormant_component",
+      "ancient_salvage",
+      "neural_network_analyzer",
+      "dormant_data_library"
+    ]
   },
-  "sleeper_upholder_c5": {
-    "id": "sleeper_upholder_c5",
-    "name": "Sleepless Preserver",
+  "dormant_upholder_c5": {
+    "id": "dormant_upholder_c5",
+    "name": "Timeless Preserver",
     "type": "battleship",
-    "faction": "Sleepers",
+    "faction": "Dormants",
     "hull_hp": 8000,
     "armor_hp": 7000,
     "shield_hp": 10000,
@@ -144,7 +220,7 @@
     "awareness_range": 200000,
     "weapons": [
       {
-        "type": "sleeper_turret",
+        "type": "dormant_turret",
         "damage": 400,
         "damage_type": "em",
         "optimal_range": 40000,
@@ -153,10 +229,31 @@
       }
     ],
     "resistances": {
-      "shield": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "armor": {"em": 70, "thermal": 70, "kinetic": 70, "explosive": 70},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "armor": {
+        "em": 70,
+        "thermal": 70,
+        "kinetic": 70,
+        "explosive": 70
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     },
-    "loot_table": ["sleeper_component", "ancient_salvage", "neural_network_analyzer", "sleeper_data_library", "ancient_coordinates_database"]
+    "loot_table": [
+      "dormant_component",
+      "ancient_salvage",
+      "neural_network_analyzer",
+      "dormant_data_library",
+      "ancient_coordinates_database"
+    ]
   }
 }

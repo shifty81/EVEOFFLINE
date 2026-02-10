@@ -6,7 +6,10 @@
         "name": "Minor Annex",
         "security_range": "0.7 to 1.0",
         "ship_restriction": "frigates_and_destroyers",
-        "npc_types": ["frigate", "destroyer"],
+        "npc_types": [
+          "frigate",
+          "destroyer"
+        ],
         "rooms": 2,
         "description": "Basic deadspace sites suitable for new players in frigates.",
         "loot_tier": "basic",
@@ -16,7 +19,11 @@
         "name": "Standard Compound",
         "security_range": "0.5 to 0.7",
         "ship_restriction": "cruisers_and_below",
-        "npc_types": ["frigate", "destroyer", "cruiser"],
+        "npc_types": [
+          "frigate",
+          "destroyer",
+          "cruiser"
+        ],
         "rooms": 3,
         "description": "Moderate deadspace sites requiring cruiser-class vessels.",
         "loot_tier": "standard",
@@ -26,7 +33,10 @@
         "name": "Major Outpost",
         "security_range": "0.3 to 0.5",
         "ship_restriction": "battlecruisers_and_below",
-        "npc_types": ["cruiser", "battlecruiser"],
+        "npc_types": [
+          "cruiser",
+          "battlecruiser"
+        ],
         "rooms": 4,
         "description": "Challenging deadspace sites with heavy NPC presence.",
         "loot_tier": "advanced",
@@ -36,7 +46,10 @@
         "name": "Stronghold",
         "security_range": "0.1 to 0.4",
         "ship_restriction": "battleships_and_below",
-        "npc_types": ["battlecruiser", "battleship"],
+        "npc_types": [
+          "battlecruiser",
+          "battleship"
+        ],
         "rooms": 5,
         "description": "Dangerous deadspace sites requiring battleship-class vessels with proper tank.",
         "loot_tier": "rare",
@@ -46,7 +59,10 @@
         "name": "Pirate Stronghold",
         "security_range": "0.0 to 0.2",
         "ship_restriction": "none",
-        "npc_types": ["battleship", "commander"],
+        "npc_types": [
+          "battleship",
+          "commander"
+        ],
         "rooms": 6,
         "description": "Extremely dangerous complexes in null-sec space. May contain officer spawns with faction loot.",
         "loot_tier": "faction",
@@ -54,18 +70,24 @@
       }
     },
     "complex_templates": {
-      "serpentis_hideout": {
-        "id": "serpentis_hideout",
-        "name": "Serpentis Hideout",
-        "faction": "Serpentis",
+      "venom_syndicate_hideout": {
+        "id": "venom_syndicate_hideout",
+        "name": "Venom Syndicate Hideout",
+        "faction": "Venom Syndicate",
         "difficulty": "level_1",
         "rooms": [
           {
             "room_number": 1,
-            "name": "Outer Perimeter",
+            "name": "Outer Rimward",
             "npcs": [
-              { "type": "serpentis_scout", "count": 3 },
-              { "type": "serpentis_soldier", "count": 2 }
+              {
+                "type": "venom_syndicate_scout",
+                "count": 3
+              },
+              {
+                "type": "venom_syndicate_soldier",
+                "count": 2
+              }
             ],
             "has_gate": true
           },
@@ -73,27 +95,43 @@
             "room_number": 2,
             "name": "Inner Sanctum",
             "npcs": [
-              { "type": "serpentis_soldier", "count": 4 },
-              { "type": "serpentis_lieutenant", "count": 1 }
+              {
+                "type": "venom_syndicate_soldier",
+                "count": 4
+              },
+              {
+                "type": "venom_syndicate_lieutenant",
+                "count": 1
+              }
             ],
             "has_gate": false,
             "loot_container": true,
-            "possible_loot": ["small_hybrid_ammo", "light_shield_booster", "isk_bounty"]
+            "possible_loot": [
+              "small_hybrid_ammo",
+              "light_shield_booster",
+              "isk_bounty"
+            ]
           }
         ]
       },
-      "guristas_base": {
-        "id": "guristas_base",
-        "name": "Guristas Guerilla Grounds",
-        "faction": "Guristas",
+      "iron_corsairs_base": {
+        "id": "iron_corsairs_base",
+        "name": "Iron Corsairs Guerilla Grounds",
+        "faction": "Iron Corsairs",
         "difficulty": "level_2",
         "rooms": [
           {
             "room_number": 1,
             "name": "Patrol Area",
             "npcs": [
-              { "type": "guristas_scout", "count": 4 },
-              { "type": "guristas_soldier", "count": 3 }
+              {
+                "type": "iron_corsairs_scout",
+                "count": 4
+              },
+              {
+                "type": "iron_corsairs_soldier",
+                "count": 3
+              }
             ],
             "has_gate": true
           },
@@ -101,8 +139,14 @@
             "room_number": 2,
             "name": "Supply Depot",
             "npcs": [
-              { "type": "guristas_soldier", "count": 5 },
-              { "type": "guristas_cruiser", "count": 2 }
+              {
+                "type": "iron_corsairs_soldier",
+                "count": 5
+              },
+              {
+                "type": "iron_corsairs_cruiser",
+                "count": 2
+              }
             ],
             "has_gate": true
           },
@@ -110,27 +154,44 @@
             "room_number": 3,
             "name": "Command Center",
             "npcs": [
-              { "type": "guristas_cruiser", "count": 3 },
-              { "type": "guristas_commander", "count": 1 }
+              {
+                "type": "iron_corsairs_cruiser",
+                "count": 3
+              },
+              {
+                "type": "iron_corsairs_commander",
+                "count": 1
+              }
             ],
             "has_gate": false,
             "loot_container": true,
-            "possible_loot": ["medium_missile_ammo", "shield_extender", "isk_bounty", "blueprint_copy"]
+            "possible_loot": [
+              "medium_missile_ammo",
+              "shield_extender",
+              "isk_bounty",
+              "blueprint_copy"
+            ]
           }
         ]
       },
-      "blood_raider_fortress": {
-        "id": "blood_raider_fortress",
-        "name": "Blood Raider Fortress",
-        "faction": "Blood Raiders",
+      "crimson_order_fortress": {
+        "id": "crimson_order_fortress",
+        "name": "Crimson Order Fortress",
+        "faction": "Crimson Order",
         "difficulty": "level_3",
         "rooms": [
           {
             "room_number": 1,
             "name": "Outer Defense Ring",
             "npcs": [
-              { "type": "blood_raider_scout", "count": 5 },
-              { "type": "blood_raider_soldier", "count": 4 }
+              {
+                "type": "crimson_order_scout",
+                "count": 5
+              },
+              {
+                "type": "crimson_order_soldier",
+                "count": 4
+              }
             ],
             "has_gate": true
           },
@@ -138,8 +199,14 @@
             "room_number": 2,
             "name": "Inner Barricade",
             "npcs": [
-              { "type": "blood_raider_soldier", "count": 4 },
-              { "type": "blood_raider_cruiser", "count": 3 }
+              {
+                "type": "crimson_order_soldier",
+                "count": 4
+              },
+              {
+                "type": "crimson_order_cruiser",
+                "count": 3
+              }
             ],
             "has_gate": true
           },
@@ -147,8 +214,14 @@
             "room_number": 3,
             "name": "Cathedral of the Damned",
             "npcs": [
-              { "type": "blood_raider_cruiser", "count": 3 },
-              { "type": "blood_raider_battlecruiser", "count": 2 }
+              {
+                "type": "crimson_order_cruiser",
+                "count": 3
+              },
+              {
+                "type": "crimson_order_battlecruiser",
+                "count": 2
+              }
             ],
             "has_gate": true
           },
@@ -156,27 +229,44 @@
             "room_number": 4,
             "name": "Sanctum of Blood",
             "npcs": [
-              { "type": "blood_raider_battlecruiser", "count": 2 },
-              { "type": "blood_raider_commander", "count": 1 }
+              {
+                "type": "crimson_order_battlecruiser",
+                "count": 2
+              },
+              {
+                "type": "crimson_order_commander",
+                "count": 1
+              }
             ],
             "has_gate": false,
             "loot_container": true,
-            "possible_loot": ["energy_turret_upgrade", "armor_hardener", "isk_bounty", "faction_module"]
+            "possible_loot": [
+              "energy_turret_upgrade",
+              "armor_hardener",
+              "isk_bounty",
+              "faction_module"
+            ]
           }
         ]
       },
-      "sansha_citadel": {
-        "id": "sansha_citadel",
-        "name": "Sansha's Citadel",
-        "faction": "Sansha",
+      "hollow_citadel": {
+        "id": "hollow_citadel",
+        "name": "Hollow's Citadel",
+        "faction": "Hollow",
         "difficulty": "level_4",
         "rooms": [
           {
             "room_number": 1,
             "name": "Outer Garrison",
             "npcs": [
-              { "type": "sansha_soldier", "count": 6 },
-              { "type": "sansha_cruiser", "count": 3 }
+              {
+                "type": "hollow_soldier",
+                "count": 6
+              },
+              {
+                "type": "hollow_cruiser",
+                "count": 3
+              }
             ],
             "has_gate": true
           },
@@ -184,8 +274,14 @@
             "room_number": 2,
             "name": "Slave Pens",
             "npcs": [
-              { "type": "sansha_cruiser", "count": 4 },
-              { "type": "sansha_battlecruiser", "count": 2 }
+              {
+                "type": "hollow_cruiser",
+                "count": 4
+              },
+              {
+                "type": "hollow_battlecruiser",
+                "count": 2
+              }
             ],
             "has_gate": true
           },
@@ -193,8 +289,14 @@
             "room_number": 3,
             "name": "Inner Sanctum",
             "npcs": [
-              { "type": "sansha_battlecruiser", "count": 3 },
-              { "type": "sansha_battleship", "count": 2 }
+              {
+                "type": "hollow_battlecruiser",
+                "count": 3
+              },
+              {
+                "type": "hollow_battleship",
+                "count": 2
+              }
             ],
             "has_gate": true
           },
@@ -202,8 +304,14 @@
             "room_number": 4,
             "name": "War Room",
             "npcs": [
-              { "type": "sansha_battleship", "count": 3 },
-              { "type": "sansha_commander", "count": 1 }
+              {
+                "type": "hollow_battleship",
+                "count": 3
+              },
+              {
+                "type": "hollow_commander",
+                "count": 1
+              }
             ],
             "has_gate": true
           },
@@ -211,27 +319,44 @@
             "room_number": 5,
             "name": "True Power Core",
             "npcs": [
-              { "type": "sansha_battleship", "count": 2 },
-              { "type": "sansha_officer", "count": 1 }
+              {
+                "type": "hollow_battleship",
+                "count": 2
+              },
+              {
+                "type": "hollow_officer",
+                "count": 1
+              }
             ],
             "has_gate": false,
             "loot_container": true,
-            "possible_loot": ["faction_module", "deadspace_module", "isk_bounty", "implant"]
+            "possible_loot": [
+              "faction_module",
+              "deadspace_module",
+              "isk_bounty",
+              "implant"
+            ]
           }
         ]
       },
-      "angel_cartel_haven": {
-        "id": "angel_cartel_haven",
-        "name": "Angel Cartel Haven",
-        "faction": "Angel Cartel",
+      "shadow_pact_haven": {
+        "id": "shadow_pact_haven",
+        "name": "Shadow Pact Haven",
+        "faction": "Shadow Pact",
         "difficulty": "level_5",
         "rooms": [
           {
             "room_number": 1,
             "name": "Outer Patrol",
             "npcs": [
-              { "type": "angel_soldier", "count": 6 },
-              { "type": "angel_cruiser", "count": 4 }
+              {
+                "type": "angel_soldier",
+                "count": 6
+              },
+              {
+                "type": "angel_cruiser",
+                "count": 4
+              }
             ],
             "has_gate": true
           },
@@ -239,8 +364,14 @@
             "room_number": 2,
             "name": "Defense Grid",
             "npcs": [
-              { "type": "angel_cruiser", "count": 5 },
-              { "type": "angel_battlecruiser", "count": 3 }
+              {
+                "type": "angel_cruiser",
+                "count": 5
+              },
+              {
+                "type": "angel_battlecruiser",
+                "count": 3
+              }
             ],
             "has_gate": true
           },
@@ -248,8 +379,14 @@
             "room_number": 3,
             "name": "Smuggler's Den",
             "npcs": [
-              { "type": "angel_battlecruiser", "count": 4 },
-              { "type": "angel_battleship", "count": 2 }
+              {
+                "type": "angel_battlecruiser",
+                "count": 4
+              },
+              {
+                "type": "angel_battleship",
+                "count": 2
+              }
             ],
             "has_gate": true
           },
@@ -257,8 +394,14 @@
             "room_number": 4,
             "name": "Command Nexus",
             "npcs": [
-              { "type": "angel_battleship", "count": 4 },
-              { "type": "angel_commander", "count": 1 }
+              {
+                "type": "angel_battleship",
+                "count": 4
+              },
+              {
+                "type": "angel_commander",
+                "count": 1
+              }
             ],
             "has_gate": true
           },
@@ -266,21 +409,40 @@
             "room_number": 5,
             "name": "War Fleet Assembly",
             "npcs": [
-              { "type": "angel_battleship", "count": 3 },
-              { "type": "angel_commander", "count": 2 }
+              {
+                "type": "angel_battleship",
+                "count": 3
+              },
+              {
+                "type": "angel_commander",
+                "count": 2
+              }
             ],
             "has_gate": true
           },
           {
             "room_number": 6,
-            "name": "Domination Throne",
+            "name": "Pact Ascendant Throne",
             "npcs": [
-              { "type": "angel_battleship", "count": 2 },
-              { "type": "angel_officer", "count": 1 }
+              {
+                "type": "angel_battleship",
+                "count": 2
+              },
+              {
+                "type": "angel_officer",
+                "count": 1
+              }
             ],
             "has_gate": false,
             "loot_container": true,
-            "possible_loot": ["faction_module", "deadspace_module", "officer_module", "isk_bounty", "implant", "blueprint_original"]
+            "possible_loot": [
+              "faction_module",
+              "deadspace_module",
+              "officer_module",
+              "isk_bounty",
+              "implant",
+              "blueprint_original"
+            ]
           }
         ]
       }

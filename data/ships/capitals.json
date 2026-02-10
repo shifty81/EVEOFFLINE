@@ -1,10 +1,10 @@
 {
-  "archon": {
-    "id": "archon",
-    "name": "Archon",
+  "solarius": {
+    "id": "solarius",
+    "name": "Solarius",
     "class": "Carrier",
-    "race": "Amarr",
-    "description": "The Archon is an Amarr carrier, capable of deploying fighter squadrons and providing remote assistance to fleet members.",
+    "race": "Solari",
+    "description": "The Solarius is an Solari carrier, capable of deploying fighter squadrons and providing remote assistance to fleet members.",
     "hull_hp": 45000,
     "armor_hp": 85000,
     "shield_hp": 35000,
@@ -33,17 +33,32 @@
       "fighter_velocity": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "thanatos": {
-    "id": "thanatos",
-    "name": "Thanatos",
+  "lumiere": {
+    "id": "lumiere",
+    "name": "Lumiere",
     "class": "Carrier",
-    "race": "Gallente",
-    "description": "The Thanatos is a Gallente carrier with exceptional drone capacity and armor repair capabilities.",
+    "race": "Aurelian",
+    "description": "The Lumiere is a Aurelian carrier with exceptional drone capacity and armor repair capabilities.",
     "hull_hp": 48000,
     "armor_hp": 90000,
     "shield_hp": 32000,
@@ -74,17 +89,32 @@
       "armor_hitpoints": 4
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "chimera": {
-    "id": "chimera",
-    "name": "Chimera",
+  "draknar": {
+    "id": "draknar",
+    "name": "Draknar",
     "class": "Carrier",
-    "race": "Caldari",
-    "description": "The Chimera is a shield-tanked Caldari carrier known for its defensive capabilities.",
+    "race": "Veyren",
+    "description": "The Draknar is a shield-tanked Veyren carrier known for its defensive capabilities.",
     "hull_hp": 42000,
     "armor_hp": 40000,
     "shield_hp": 95000,
@@ -113,17 +143,32 @@
       "shield_hitpoints": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "nidhoggur": {
-    "id": "nidhoggur",
-    "name": "Nidhoggur",
+  "ironprow": {
+    "id": "ironprow",
+    "name": "Ironprow",
     "class": "Carrier",
-    "race": "Minmatar",
-    "description": "The Nidhoggur is a versatile Minmatar carrier with balanced tank and fighter capabilities.",
+    "race": "Keldari",
+    "description": "The Ironprow is a versatile Keldari carrier with balanced tank and fighter capabilities.",
     "hull_hp": 46000,
     "armor_hp": 65000,
     "shield_hp": 58000,
@@ -152,17 +197,32 @@
       "capital_armor_repairer_amount": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "revelation": {
-    "id": "revelation",
-    "name": "Revelation",
+  "sanctum": {
+    "id": "sanctum",
+    "name": "Sanctum",
     "class": "Dreadnought",
-    "race": "Amarr",
-    "description": "The Revelation is an Amarr dreadnought mounting devastating capital energy turrets.",
+    "race": "Solari",
+    "description": "The Sanctum is an Solari dreadnought mounting devastating capital energy turrets.",
     "hull_hp": 85000,
     "armor_hp": 180000,
     "shield_hp": 48000,
@@ -182,7 +242,9 @@
     "max_targeting_range": 180000,
     "shield_recharge_time": 12000,
     "capacitor_recharge_time": 6500,
-    "special_abilities": ["siege_mode"],
+    "special_abilities": [
+      "siege_mode"
+    ],
     "bonuses": {
       "capital_energy_turret_damage": 5,
       "capital_energy_turret_cap_use": -5,
@@ -190,17 +252,32 @@
       "siege_module_duration": -5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "moros": {
-    "id": "moros",
-    "name": "Moros",
+  "bastion_royal": {
+    "id": "bastion_royal",
+    "name": "Bastion Royal",
     "class": "Dreadnought",
-    "race": "Gallente",
-    "description": "The Moros is a Gallente dreadnought with powerful capital hybrid turrets and exceptional armor.",
+    "race": "Aurelian",
+    "description": "The Bastion Royal is a Aurelian dreadnought with powerful capital hybrid turrets and exceptional armor.",
     "hull_hp": 90000,
     "armor_hp": 190000,
     "shield_hp": 45000,
@@ -220,7 +297,9 @@
     "max_targeting_range": 175000,
     "shield_recharge_time": 12500,
     "capacitor_recharge_time": 6400,
-    "special_abilities": ["siege_mode"],
+    "special_abilities": [
+      "siege_mode"
+    ],
     "bonuses": {
       "capital_hybrid_turret_damage": 5,
       "capital_hybrid_turret_tracking": 5,
@@ -228,17 +307,32 @@
       "siege_module_damage": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "phoenix": {
-    "id": "phoenix",
-    "name": "Phoenix",
+  "valkyr": {
+    "id": "valkyr",
+    "name": "Valkyr",
     "class": "Dreadnought",
-    "race": "Caldari",
-    "description": "The Phoenix is a shield-tanked Caldari dreadnought armed with devastating capital missiles.",
+    "race": "Veyren",
+    "description": "The Valkyr is a shield-tanked Veyren dreadnought armed with devastating capital missiles.",
     "hull_hp": 82000,
     "armor_hp": 85000,
     "shield_hp": 175000,
@@ -258,7 +352,9 @@
     "max_targeting_range": 190000,
     "shield_recharge_time": 10000,
     "capacitor_recharge_time": 6700,
-    "special_abilities": ["siege_mode"],
+    "special_abilities": [
+      "siege_mode"
+    ],
     "bonuses": {
       "capital_missile_launcher_damage": 5,
       "capital_missile_velocity": 10,
@@ -266,17 +362,32 @@
       "siege_module_rate_of_fire": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "naglfar": {
-    "id": "naglfar",
-    "name": "Naglfar",
+  "thornwall": {
+    "id": "thornwall",
+    "name": "Thornwall",
     "class": "Dreadnought",
-    "race": "Minmatar",
-    "description": "The Naglfar is a Minmatar dreadnought featuring capital projectile weapons with exceptional alpha damage.",
+    "race": "Keldari",
+    "description": "The Thornwall is a Keldari dreadnought featuring capital projectile weapons with exceptional alpha damage.",
     "hull_hp": 88000,
     "armor_hp": 145000,
     "shield_hp": 95000,
@@ -296,7 +407,9 @@
     "max_targeting_range": 178000,
     "shield_recharge_time": 11000,
     "capacitor_recharge_time": 6200,
-    "special_abilities": ["siege_mode"],
+    "special_abilities": [
+      "siege_mode"
+    ],
     "bonuses": {
       "capital_projectile_turret_damage": 5,
       "capital_projectile_falloff": 7.5,
@@ -304,17 +417,32 @@
       "velocity": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "avatar": {
-    "id": "avatar",
-    "name": "Avatar",
+  "empyrean": {
+    "id": "empyrean",
+    "name": "Empyrean",
     "class": "Titan",
-    "race": "Amarr",
-    "description": "The Avatar is an Amarr titan, the most powerful ship class in New Eden, capable of bridging fleets and wielding a devastating doomsday weapon.",
+    "race": "Solari",
+    "description": "The Empyrean is an Solari titan, the most powerful ship class in Astralis, capable of bridging fleets and wielding a devastating doomsday weapon.",
     "hull_hp": 350000,
     "armor_hp": 750000,
     "shield_hp": 185000,
@@ -336,7 +464,10 @@
     "max_targeting_range": 350000,
     "shield_recharge_time": 35000,
     "capacitor_recharge_time": 18000,
-    "special_abilities": ["doomsday_weapon", "jump_portal_generation"],
+    "special_abilities": [
+      "doomsday_weapon",
+      "jump_portal_generation"
+    ],
     "bonuses": {
       "capital_energy_turret_damage": 5,
       "armor_hitpoints": 5,
@@ -344,17 +475,32 @@
       "doomsday_operation": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "erebus": {
-    "id": "erebus",
-    "name": "Erebus",
+  "grandeur": {
+    "id": "grandeur",
+    "name": "Grandeur",
     "class": "Titan",
-    "race": "Gallente",
-    "description": "The Erebus is a Gallente titan, featuring massive hybrid turrets and unparalleled armor strength.",
+    "race": "Aurelian",
+    "description": "The Grandeur is a Aurelian titan, featuring massive hybrid turrets and unparalleled armor strength.",
     "hull_hp": 380000,
     "armor_hp": 800000,
     "shield_hp": 170000,
@@ -376,7 +522,10 @@
     "max_targeting_range": 345000,
     "shield_recharge_time": 36000,
     "capacitor_recharge_time": 17800,
-    "special_abilities": ["doomsday_weapon", "jump_portal_generation"],
+    "special_abilities": [
+      "doomsday_weapon",
+      "jump_portal_generation"
+    ],
     "bonuses": {
       "capital_hybrid_turret_damage": 5,
       "armor_hitpoints": 6,
@@ -384,17 +533,32 @@
       "doomsday_damage": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "leviathan": {
-    "id": "leviathan",
-    "name": "Leviathan",
+  "jormundur": {
+    "id": "jormundur",
+    "name": "Jormundur",
     "class": "Titan",
-    "race": "Caldari",
-    "description": "The Leviathan is a Caldari titan with massive shield capacity and devastating capital missiles.",
+    "race": "Veyren",
+    "description": "The Jormundur is a Veyren titan with massive shield capacity and devastating capital missiles.",
     "hull_hp": 340000,
     "armor_hp": 350000,
     "shield_hp": 725000,
@@ -416,7 +580,10 @@
     "max_targeting_range": 360000,
     "shield_recharge_time": 32000,
     "capacitor_recharge_time": 18500,
-    "special_abilities": ["doomsday_weapon", "jump_portal_generation"],
+    "special_abilities": [
+      "doomsday_weapon",
+      "jump_portal_generation"
+    ],
     "bonuses": {
       "capital_missile_launcher_damage": 5,
       "shield_hitpoints": 6,
@@ -424,17 +591,32 @@
       "doomsday_recharge_time": -5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "ragnarok": {
-    "id": "ragnarok",
-    "name": "Ragnarok",
+  "worldbreaker": {
+    "id": "worldbreaker",
+    "name": "Worldbreaker",
     "class": "Titan",
-    "race": "Minmatar",
-    "description": "The Ragnarok is a Minmatar titan known for its speed and devastating projectile firepower.",
+    "race": "Keldari",
+    "description": "The Worldbreaker is a Keldari titan known for its speed and devastating projectile firepower.",
     "hull_hp": 365000,
     "armor_hp": 600000,
     "shield_hp": 385000,
@@ -456,7 +638,10 @@
     "max_targeting_range": 340000,
     "shield_recharge_time": 33000,
     "capacitor_recharge_time": 17500,
-    "special_abilities": ["doomsday_weapon", "jump_portal_generation"],
+    "special_abilities": [
+      "doomsday_weapon",
+      "jump_portal_generation"
+    ],
     "bonuses": {
       "capital_projectile_turret_damage": 5,
       "velocity": 5,
@@ -464,9 +649,24 @@
       "doomsday_range": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   }
 }

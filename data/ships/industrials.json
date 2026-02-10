@@ -1,11 +1,11 @@
 {
-  "hoarder": {
-    "id": "hoarder",
-    "name": "Hoarder",
+  "packrunner": {
+    "id": "packrunner",
+    "name": "Packrunner",
     "class": "Industrial",
     "tech_level": 1,
-    "race": "Minmatar",
-    "description": "The Hoarder is a Minmatar industrial ship designed for hauling cargo across the stars. Its projectile defense systems help deter would-be attackers.",
+    "race": "Keldari",
+    "description": "The Packrunner is a Keldari industrial ship designed for hauling cargo across the stars. Its projectile defense systems help deter would-be attackers.",
     "hull_hp": 2200,
     "armor_hp": 2800,
     "shield_hp": 2500,
@@ -30,18 +30,33 @@
       "projectile_damage": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "badger": {
-    "id": "badger",
-    "name": "Badger",
+  "drifthauler": {
+    "id": "drifthauler",
+    "name": "Drifthauler",
     "class": "Industrial",
     "tech_level": 1,
-    "race": "Caldari",
-    "description": "The Badger is a Caldari industrial vessel built for reliable cargo transport. Its shield tank provides solid protection against hostile encounters.",
+    "race": "Veyren",
+    "description": "The Drifthauler is a Veyren industrial vessel built for reliable cargo transport. Its shield tank provides solid protection against hostile encounters.",
     "hull_hp": 2500,
     "armor_hp": 2200,
     "shield_hp": 3800,
@@ -66,18 +81,33 @@
       "shield_hp": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "iteron_mark_v": {
-    "id": "iteron_mark_v",
-    "name": "Iteron Mark V",
+  "marchand_v": {
+    "id": "marchand_v",
+    "name": "Marchand V",
     "class": "Industrial",
     "tech_level": 1,
-    "race": "Gallente",
-    "description": "The Iteron Mark V is the largest Tech I hauler available, a Gallente industrial ship prized for its enormous cargo bay.",
+    "race": "Aurelian",
+    "description": "The Marchand V is the largest Tech I hauler available, a Aurelian industrial ship prized for its enormous cargo bay.",
     "hull_hp": 2800,
     "armor_hp": 3200,
     "shield_hp": 2200,
@@ -102,18 +132,33 @@
       "armor_hp": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 60},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 60
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "bestower": {
-    "id": "bestower",
-    "name": "Bestower",
+  "wayfarer_hauler": {
+    "id": "wayfarer_hauler",
+    "name": "Wayfarer Hauler",
     "class": "Industrial",
     "tech_level": 1,
-    "race": "Amarr",
-    "description": "The Bestower is an Amarr industrial ship with a strong armor tank, ideal for hauling valuable cargo through dangerous space.",
+    "race": "Solari",
+    "description": "The Wayfarer Hauler is an Solari industrial ship with a strong armor tank, ideal for hauling valuable cargo through dangerous space.",
     "hull_hp": 2600,
     "armor_hp": 3600,
     "shield_hp": 2000,
@@ -138,9 +183,24 @@
       "armor_resistances": 4
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   }
 }

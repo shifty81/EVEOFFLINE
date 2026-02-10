@@ -1,10 +1,10 @@
 {
-  "cyclone": {
-    "id": "cyclone",
-    "name": "Cyclone",
+  "galeforce": {
+    "id": "galeforce",
+    "name": "Galeforce",
     "class": "Battlecruiser",
-    "race": "Minmatar",
-    "description": "The Cyclone is a versatile missile battlecruiser with a good balance of speed and firepower.",
+    "race": "Keldari",
+    "description": "The Galeforce is a versatile missile battlecruiser with a good balance of speed and firepower.",
     "hull_hp": 3200,
     "armor_hp": 3500,
     "shield_hp": 3800,
@@ -31,17 +31,32 @@
       "missile_range": 10
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "ferox": {
-    "id": "ferox",
-    "name": "Ferox",
+  "fenvar": {
+    "id": "fenvar",
+    "name": "Fenvar",
     "class": "Battlecruiser",
-    "race": "Caldari",
-    "description": "The Ferox is a shield-tanked hybrid weapon platform with excellent range and damage projection.",
+    "race": "Veyren",
+    "description": "The Fenvar is a shield-tanked hybrid weapon platform with excellent range and damage projection.",
     "hull_hp": 3400,
     "armor_hp": 3000,
     "shield_hp": 4500,
@@ -68,17 +83,32 @@
       "hybrid_weapon_range": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "brutix": {
-    "id": "brutix",
-    "name": "Brutix",
+  "marquis": {
+    "id": "marquis",
+    "name": "Marquis",
     "class": "Battlecruiser",
-    "race": "Gallente",
-    "description": "The Brutix is a close-range brawler with powerful blasters and drone support.",
+    "race": "Aurelian",
+    "description": "The Marquis is a close-range brawler with powerful blasters and drone support.",
     "hull_hp": 3300,
     "armor_hp": 4200,
     "shield_hp": 3200,
@@ -107,17 +137,32 @@
       "armor_hp": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 60},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 60
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "harbinger": {
-    "id": "harbinger",
-    "name": "Harbinger",
+  "herald": {
+    "id": "herald",
+    "name": "Herald",
     "class": "Battlecruiser",
-    "race": "Amarr",
-    "description": "The Harbinger is a laser-focused battlecruiser with exceptional armor and energy weapon bonuses.",
+    "race": "Solari",
+    "description": "The Herald is a laser-focused battlecruiser with exceptional armor and energy weapon bonuses.",
     "hull_hp": 3500,
     "armor_hp": 4800,
     "shield_hp": 2900,
@@ -144,9 +189,24 @@
       "energy_weapon_optimal": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   }
 }

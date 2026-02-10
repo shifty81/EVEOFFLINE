@@ -1,24 +1,24 @@
 {
   "base_prices": {
-    "tritanium": 5.0,
-    "pyerite": 10.0,
-    "mexallon": 50.0,
-    "isogen": 100.0,
-    "nocxium": 500.0,
-    "zydrine": 1000.0,
-    "megacyte": 2000.0,
-    "rifter": 350000.0,
-    "merlin": 380000.0,
-    "tristan": 390000.0,
-    "punisher": 360000.0,
-    "thrasher": 850000.0,
-    "cormorant": 900000.0,
-    "catalyst": 920000.0,
-    "coercer": 880000.0,
-    "stabber": 2500000.0,
-    "caracal": 2800000.0,
-    "vexor": 2900000.0,
-    "maller": 2700000.0,
+    "ferrium": 5.0,
+    "ignium": 10.0,
+    "allonium": 50.0,
+    "isodium": 100.0,
+    "noctium": 500.0,
+    "zyrium": 1000.0,
+    "megrium": 2000.0,
+    "fang": 350000.0,
+    "falk": 380000.0,
+    "revel": 390000.0,
+    "sentinel": 360000.0,
+    "cleaver": 850000.0,
+    "skarn": 900000.0,
+    "vaillant": 920000.0,
+    "adjudicator": 880000.0,
+    "strider": 2500000.0,
+    "brynjar": 2800000.0,
+    "chevalier": 2900000.0,
+    "bastion": 2700000.0,
     "150mm_autocannon_i": 25000.0,
     "200mm_autocannon_i": 50000.0,
     "light_missile_launcher_i": 30000.0,
@@ -34,28 +34,28 @@
   },
   "trade_hubs": [
     {
-      "location_id": "jita_4_4",
-      "name": "Jita IV - Moon 4 - Caldari Navy Assembly Plant",
-      "system": "jita",
-      "description": "The largest trade hub in New Eden"
+      "location_id": "thyrkstad_4_4",
+      "name": "Thyrkstad IV - Moon 4 - Veyren Fleet Assembly Yard",
+      "system": "thyrkstad",
+      "description": "The largest trade hub in Astralis"
     },
     {
-      "location_id": "amarr_8_emperor",
-      "name": "Amarr VIII (Oris) - Emperor Family Academy",
-      "system": "amarr",
-      "description": "Major Amarr trade hub"
+      "location_id": "solari_8_emperor",
+      "name": "Solari VIII (Oris) - Emperor Family Academy",
+      "system": "solari",
+      "description": "Major Solari trade hub"
     },
     {
-      "location_id": "dodixie_ix_navy",
-      "name": "Dodixie IX - Moon 20 - Federation Navy Assembly Plant",
-      "system": "dodixie",
-      "description": "Major Gallente trade hub"
+      "location_id": "aurendis_ix_navy",
+      "name": "Aurendis IX - Moon 20 - Aurelian Grand Assembly Plant",
+      "system": "aurendis",
+      "description": "Major Aurelian trade hub"
     },
     {
-      "location_id": "rens_vi_brutor",
-      "name": "Rens VI - Moon 8 - Brutor Tribe Treasury",
+      "location_id": "rens_vi_tormund",
+      "name": "Rens VI - Moon 8 - Tormund Tribe Treasury",
       "system": "rens",
-      "description": "Major Minmatar trade hub"
+      "description": "Major Keldari trade hub"
     }
   ],
   "market_fees": {

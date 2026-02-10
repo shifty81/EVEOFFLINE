@@ -106,9 +106,24 @@
     "size": "small",
     "cpu": 25,
     "powergrid": 1,
-    "hull_resist_bonus": {"em": 12.5, "thermal": 12.5, "kinetic": 12.5, "explosive": 12.5},
-    "armor_resist_bonus": {"em": 12.5, "thermal": 12.5, "kinetic": 12.5, "explosive": 12.5},
-    "shield_resist_bonus": {"em": 12.5, "thermal": 12.5, "kinetic": 12.5, "explosive": 12.5},
+    "hull_resist_bonus": {
+      "em": 12.5,
+      "thermal": 12.5,
+      "kinetic": 12.5,
+      "explosive": 12.5
+    },
+    "armor_resist_bonus": {
+      "em": 12.5,
+      "thermal": 12.5,
+      "kinetic": 12.5,
+      "explosive": 12.5
+    },
+    "shield_resist_bonus": {
+      "em": 12.5,
+      "thermal": 12.5,
+      "kinetic": 12.5,
+      "explosive": 12.5
+    },
     "volume": 5,
     "meta_level": 0
   },
@@ -233,7 +248,7 @@
     "rate_of_fire": 5.5,
     "optimal_range": 14000,
     "falloff_range": 10000,
-    "tracking_speed": 0.20,
+    "tracking_speed": 0.2,
     "ammo_type": "hybrid_charge_m",
     "volume": 10,
     "meta_level": 0
@@ -253,7 +268,7 @@
     "rate_of_fire": 4.0,
     "optimal_range": 6000,
     "falloff_range": 3000,
-    "tracking_speed": 0.30,
+    "tracking_speed": 0.3,
     "ammo_type": "frequency_crystal",
     "volume": 10,
     "meta_level": 5

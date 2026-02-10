@@ -5,20 +5,32 @@
     "level": 4,
     "type": "combat",
     "agent": "Admiral Blackwood",
-    "faction": "Caldari Navy",
+    "faction": "Veyren Fleet",
     "description": "High-threat elite cruiser squadron detected. Only experienced pilots should accept this mission.",
     "briefing": "These cruisers are commanded by veteran pirates with heavy modifications. You'll need a battlecruiser or battleship to succeed.",
     "objectives": [
-      {"type": "destroy", "target": "serpentis_soldier", "count": 2},
-      {"type": "destroy", "target": "blood_raiders_cruiser", "count": 1}
+      {
+        "type": "destroy",
+        "target": "venom_syndicate_soldier",
+        "count": 2
+      },
+      {
+        "type": "destroy",
+        "target": "crimson_order_cruiser",
+        "count": 1
+      }
     ],
     "rewards": {
       "isk": 550000,
       "loyalty_points": 1200,
       "standing_gain": 0.05,
-      "items": ["medium_armor_repairer", "damage_control", "gyrostabilizer"]
+      "items": [
+        "medium_armor_repairer",
+        "damage_control",
+        "gyrostabilizer"
+      ]
     },
-    "location": "rancer",
+    "location": "duskfall",
     "spawn_distance": 45000,
     "time_limit": 9000,
     "difficulty": "very_hard"
@@ -29,21 +41,37 @@
     "level": 4,
     "type": "combat",
     "agent": "Grand Admiral Vance",
-    "faction": "Republic Fleet",
+    "faction": "Keldari Tribal",
     "description": "A major pirate operation is underway. We need all available pilots to engage.",
     "briefing": "This is a coordinated strike. Expect heavy resistance from multiple factions.",
     "objectives": [
-      {"type": "destroy", "target": "angel_frigate", "count": 4},
-      {"type": "destroy", "target": "angel_cruiser", "count": 2},
-      {"type": "destroy", "target": "sansha_cruiser", "count": 1}
+      {
+        "type": "destroy",
+        "target": "angel_frigate",
+        "count": 4
+      },
+      {
+        "type": "destroy",
+        "target": "angel_cruiser",
+        "count": 2
+      },
+      {
+        "type": "destroy",
+        "target": "hollow_cruiser",
+        "count": 1
+      }
     ],
     "rewards": {
       "isk": 680000,
       "loyalty_points": 1500,
       "standing_gain": 0.06,
-      "items": ["medium_projectile_turret", "large_shield_extender", "tracking_computer"]
+      "items": [
+        "medium_projectile_turret",
+        "large_shield_extender",
+        "tracking_computer"
+      ]
     },
-    "location": "rancer",
+    "location": "duskfall",
     "spawn_distance": 50000,
     "time_limit": 10800,
     "difficulty": "very_hard"
@@ -54,120 +82,198 @@
     "level": 4,
     "type": "combat",
     "agent": "Fleet Admiral Korsakov",
-    "faction": "Caldari Navy",
-    "description": "A Serpentis battleship has been terrorizing local shipping. Take it down.",
+    "faction": "Veyren Fleet",
+    "description": "A Venom Syndicate battleship has been terrorizing local shipping. Take it down.",
     "briefing": "This is one of their capital ships. Bring your best battleship and prepare for a tough fight.",
     "objectives": [
-      {"type": "destroy", "target": "serpentis_battleship", "count": 1},
-      {"type": "destroy", "target": "serpentis_battlecruiser", "count": 2},
-      {"type": "destroy", "target": "serpentis_destroyer", "count": 3}
+      {
+        "type": "destroy",
+        "target": "venom_syndicate_battleship",
+        "count": 1
+      },
+      {
+        "type": "destroy",
+        "target": "venom_syndicate_battlecruiser",
+        "count": 2
+      },
+      {
+        "type": "destroy",
+        "target": "venom_syndicate_destroyer",
+        "count": 3
+      }
     ],
     "rewards": {
       "isk": 1250000,
       "loyalty_points": 2500,
       "standing_gain": 0.08,
-      "items": ["large_hybrid_turret", "magnetic_field_stabilizer_ii", "adaptive_invulnerability_field"]
+      "items": [
+        "large_hybrid_turret",
+        "magnetic_field_stabilizer_ii",
+        "adaptive_invulnerability_field"
+      ]
     },
-    "location": "rancer",
+    "location": "duskfall",
     "spawn_distance": 55000,
     "time_limit": 12000,
     "difficulty": "extreme"
   },
-  "guristas_dreadnought": {
-    "id": "guristas_dreadnought",
-    "name": "Guristas Dreadnought Strike",
+  "iron_corsairs_dreadnought": {
+    "id": "iron_corsairs_dreadnought",
+    "name": "Iron Corsairs Dreadnought Strike",
     "level": 4,
     "type": "combat",
     "agent": "Supreme Commander Ishikawa",
-    "faction": "Caldari Navy",
-    "description": "Guristas have deployed a dreadnought-class battleship. This is a Code Red situation.",
+    "faction": "Veyren Fleet",
+    "description": "Iron Corsairs have deployed a dreadnought-class battleship. This is a Code Red situation.",
     "briefing": "This ship can annihilate entire convoys. Only our best pilots have a chance. Fit for long-range engagement.",
     "objectives": [
-      {"type": "destroy", "target": "guristas_battleship", "count": 1},
-      {"type": "destroy", "target": "guristas_battlecruiser", "count": 3}
+      {
+        "type": "destroy",
+        "target": "iron_corsairs_battleship",
+        "count": 1
+      },
+      {
+        "type": "destroy",
+        "target": "iron_corsairs_battlecruiser",
+        "count": 3
+      }
     ],
     "rewards": {
       "isk": 1480000,
       "loyalty_points": 2800,
       "standing_gain": 0.09,
-      "items": ["cruise_missile_launcher", "ballistic_control_system_ii", "missile_guidance_enhancer"]
+      "items": [
+        "cruise_missile_launcher",
+        "ballistic_control_system_ii",
+        "missile_guidance_enhancer"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "spawn_distance": 60000,
     "time_limit": 12600,
     "difficulty": "extreme"
   },
-  "blood_raiders_flagship": {
-    "id": "blood_raiders_flagship",
-    "name": "Blood Raiders Flagship",
+  "crimson_order_flagship": {
+    "id": "crimson_order_flagship",
+    "name": "Crimson Order Flagship",
     "level": 4,
     "type": "combat",
     "agent": "Cardinal Salvatore",
     "faction": "Imperial Navy",
-    "description": "Blood Raiders have sent their flagship to intimidate us. Show them the Empire's strength.",
-    "briefing": "The Bhaalgorn-class battleship is their most fearsome weapon. It can drain your capacitor dry in seconds. Bring neut-resistant ships.",
+    "description": "Crimson Order have sent their flagship to intimidate us. Show them the Empire's strength.",
+    "briefing": "The Sanguinax-class battleship is their most fearsome weapon. It can drain your capacitor dry in seconds. Bring neut-resistant ships.",
     "objectives": [
-      {"type": "destroy", "target": "blood_raiders_battleship", "count": 1},
-      {"type": "destroy", "target": "blood_raiders_battlecruiser", "count": 2},
-      {"type": "destroy", "target": "blood_raiders_cruiser", "count": 2}
+      {
+        "type": "destroy",
+        "target": "crimson_order_battleship",
+        "count": 1
+      },
+      {
+        "type": "destroy",
+        "target": "crimson_order_battlecruiser",
+        "count": 2
+      },
+      {
+        "type": "destroy",
+        "target": "crimson_order_cruiser",
+        "count": 2
+      }
     ],
     "rewards": {
       "isk": 1650000,
       "loyalty_points": 3100,
       "standing_gain": 0.1,
-      "items": ["large_energy_turret", "heat_sink_ii", "energized_adaptive_nano_membrane"]
+      "items": [
+        "large_energy_turret",
+        "heat_sink_ii",
+        "energized_adaptive_nano_membrane"
+      ]
     },
-    "location": "jita",
+    "location": "thyrkstad",
     "spawn_distance": 58000,
     "time_limit": 13200,
     "difficulty": "extreme"
   },
-  "sansha_incursion_capital": {
-    "id": "sansha_incursion_capital",
-    "name": "Sansha's Incursion Capital",
+  "hollow_incursion_capital": {
+    "id": "hollow_incursion_capital",
+    "name": "Hollow's Incursion Capital",
     "level": 4,
     "type": "combat",
     "agent": "Lord Admiral Maximillian",
     "faction": "Imperial Navy",
-    "description": "Sansha's Nation has deployed a capital-class battleship. This represents an existential threat.",
-    "briefing": "The True Nightmare is their most advanced battleship. It combines overwhelming firepower with sophisticated EWAR. Do not engage alone.",
+    "description": "Hollow Collective has deployed a capital-class battleship. This represents an existential threat.",
+    "briefing": "The True Dreadmaw is their most advanced battleship. It combines overwhelming firepower with sophisticated EWAR. Do not engage alone.",
     "objectives": [
-      {"type": "destroy", "target": "sansha_battleship", "count": 1},
-      {"type": "destroy", "target": "sansha_battlecruiser", "count": 3},
-      {"type": "destroy", "target": "sansha_cruiser", "count": 2}
+      {
+        "type": "destroy",
+        "target": "hollow_battleship",
+        "count": 1
+      },
+      {
+        "type": "destroy",
+        "target": "hollow_battlecruiser",
+        "count": 3
+      },
+      {
+        "type": "destroy",
+        "target": "hollow_cruiser",
+        "count": 2
+      }
     ],
     "rewards": {
       "isk": 1850000,
       "loyalty_points": 3500,
       "standing_gain": 0.12,
-      "items": ["large_energy_turret", "heat_sink_ii", "armor_explosive_hardener_ii", "tracking_computer_ii"]
+      "items": [
+        "large_energy_turret",
+        "heat_sink_ii",
+        "armor_explosive_hardener_ii",
+        "tracking_computer_ii"
+      ]
     },
-    "location": "jita",
+    "location": "thyrkstad",
     "spawn_distance": 62000,
     "time_limit": 14400,
     "difficulty": "extreme"
   },
-  "angel_machariel_hunt": {
-    "id": "angel_machariel_hunt",
-    "name": "Hunt for the Machariel",
+  "angel_duskwing_hunt": {
+    "id": "angel_duskwing_hunt",
+    "name": "Hunt for the Duskwing",
     "level": 4,
     "type": "combat",
     "agent": "War Marshal Khedrin",
-    "faction": "Republic Fleet",
-    "description": "An Angel Cartel Machariel has been spotted in our space. This legendary ship must be destroyed.",
-    "briefing": "The Machariel is fast for a battleship and hits like a freight train. It will web you down and tear you apart. Bring your A-game.",
+    "faction": "Keldari Tribal",
+    "description": "An Shadow Pact Duskwing has been spotted in our space. This legendary ship must be destroyed.",
+    "briefing": "The Duskwing is fast for a battleship and hits like a freight train. It will web you down and tear you apart. Bring your A-game.",
     "objectives": [
-      {"type": "destroy", "target": "angel_battleship", "count": 1},
-      {"type": "destroy", "target": "angel_battlecruiser", "count": 2},
-      {"type": "destroy", "target": "angel_cruiser", "count": 3}
+      {
+        "type": "destroy",
+        "target": "angel_battleship",
+        "count": 1
+      },
+      {
+        "type": "destroy",
+        "target": "angel_battlecruiser",
+        "count": 2
+      },
+      {
+        "type": "destroy",
+        "target": "angel_cruiser",
+        "count": 3
+      }
     ],
     "rewards": {
       "isk": 2100000,
       "loyalty_points": 4000,
       "standing_gain": 0.15,
-      "items": ["large_projectile_turret", "gyrostabilizer_ii", "tracking_enhancer_ii", "shield_boost_amplifier"]
+      "items": [
+        "large_projectile_turret",
+        "gyrostabilizer_ii",
+        "tracking_enhancer_ii",
+        "shield_boost_amplifier"
+      ]
     },
-    "location": "hek",
+    "location": "kelheim",
     "spawn_distance": 65000,
     "time_limit": 15000,
     "difficulty": "extreme"
@@ -178,24 +284,46 @@
     "level": 4,
     "type": "combat",
     "agent": "Supreme Commander Valkear",
-    "faction": "Caldari Navy",
+    "faction": "Veyren Fleet",
     "description": "Multiple pirate factions have formed an unprecedented alliance. Break their fleet.",
     "briefing": "This is the largest pirate gathering we've ever seen. Three battleships supported by numerous escorts. You'll need a fleet or an exceptionally well-fitted battleship.",
     "objectives": [
-      {"type": "destroy", "target": "serpentis_battleship", "count": 1},
-      {"type": "destroy", "target": "guristas_battleship", "count": 1},
-      {"type": "destroy", "target": "blood_raiders_battlecruiser", "count": 2},
-      {"type": "destroy", "target": "angel_battlecruiser", "count": 2}
+      {
+        "type": "destroy",
+        "target": "venom_syndicate_battleship",
+        "count": 1
+      },
+      {
+        "type": "destroy",
+        "target": "iron_corsairs_battleship",
+        "count": 1
+      },
+      {
+        "type": "destroy",
+        "target": "crimson_order_battlecruiser",
+        "count": 2
+      },
+      {
+        "type": "destroy",
+        "target": "angel_battlecruiser",
+        "count": 2
+      }
     ],
     "rewards": {
       "isk": 2850000,
       "loyalty_points": 5500,
       "standing_gain": 0.2,
-      "items": ["large_hybrid_turret", "magnetic_field_stabilizer_ii", "large_shield_booster_ii", "omnidirectional_tracking_link", "federation_navy_stasis_webifier"]
+      "items": [
+        "large_hybrid_turret",
+        "magnetic_field_stabilizer_ii",
+        "large_shield_booster_ii",
+        "omnidirectional_tracking_link",
+        "aurelian_grand_stasis_webifier"
+      ]
     },
-    "location": "rancer",
+    "location": "duskfall",
     "spawn_distance": 70000,
     "time_limit": 18000,
-    "difficulty": "nightmare"
+    "difficulty": "dreadmaw"
   }
 }

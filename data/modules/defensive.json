@@ -117,7 +117,9 @@
     "cpu": 25,
     "powergrid": 1,
     "capacitor_use": 18,
-    "resist_bonus": {"em": 30},
+    "resist_bonus": {
+      "em": 30
+    },
     "activation_time": 12.0,
     "volume": 5,
     "meta_level": 0
@@ -131,7 +133,9 @@
     "cpu": 25,
     "powergrid": 1,
     "capacitor_use": 18,
-    "resist_bonus": {"thermal": 30},
+    "resist_bonus": {
+      "thermal": 30
+    },
     "activation_time": 12.0,
     "volume": 5,
     "meta_level": 0
@@ -145,7 +149,9 @@
     "cpu": 25,
     "powergrid": 1,
     "capacitor_use": 18,
-    "resist_bonus": {"kinetic": 30},
+    "resist_bonus": {
+      "kinetic": 30
+    },
     "activation_time": 12.0,
     "volume": 5,
     "meta_level": 0
@@ -159,7 +165,9 @@
     "cpu": 25,
     "powergrid": 1,
     "capacitor_use": 18,
-    "resist_bonus": {"explosive": 30},
+    "resist_bonus": {
+      "explosive": 30
+    },
     "activation_time": 12.0,
     "volume": 5,
     "meta_level": 0
@@ -172,7 +180,9 @@
     "size": "small",
     "cpu": 22,
     "powergrid": 1,
-    "resist_bonus": {"em": 20},
+    "resist_bonus": {
+      "em": 20
+    },
     "volume": 5,
     "meta_level": 0
   },
@@ -184,7 +194,9 @@
     "size": "small",
     "cpu": 22,
     "powergrid": 1,
-    "resist_bonus": {"thermal": 20},
+    "resist_bonus": {
+      "thermal": 20
+    },
     "volume": 5,
     "meta_level": 0
   },
@@ -196,7 +208,9 @@
     "size": "small",
     "cpu": 22,
     "powergrid": 1,
-    "resist_bonus": {"kinetic": 20},
+    "resist_bonus": {
+      "kinetic": 20
+    },
     "volume": 5,
     "meta_level": 0
   },
@@ -208,7 +222,9 @@
     "size": "small",
     "cpu": 22,
     "powergrid": 1,
-    "resist_bonus": {"explosive": 20},
+    "resist_bonus": {
+      "explosive": 20
+    },
     "volume": 5,
     "meta_level": 0
   },

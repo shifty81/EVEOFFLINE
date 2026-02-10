@@ -1,10 +1,10 @@
 {
-  "tempest": {
-    "id": "tempest",
-    "name": "Tempest",
+  "gale": {
+    "id": "gale",
+    "name": "Gale",
     "class": "Battleship",
-    "race": "Minmatar",
-    "description": "The Tempest is a versatile battleship combining projectile weapons with flexible fitting options.",
+    "race": "Keldari",
+    "description": "The Gale is a versatile battleship combining projectile weapons with flexible fitting options.",
     "hull_hp": 6500,
     "armor_hp": 7200,
     "shield_hp": 7800,
@@ -31,17 +31,32 @@
       "ship_velocity": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "raven": {
-    "id": "raven",
-    "name": "Raven",
+  "strix": {
+    "id": "strix",
+    "name": "Strix",
     "class": "Battleship",
-    "race": "Caldari",
-    "description": "The Raven is a missile-focused battleship with massive shield capacity and missile damage bonuses.",
+    "race": "Veyren",
+    "description": "The Strix is a missile-focused battleship with massive shield capacity and missile damage bonuses.",
     "hull_hp": 6800,
     "armor_hp": 6500,
     "shield_hp": 9500,
@@ -68,17 +83,32 @@
       "shield_resistances": 4
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "dominix": {
-    "id": "dominix",
-    "name": "Dominix",
+  "sovereign": {
+    "id": "sovereign",
+    "name": "Sovereign",
     "class": "Battleship",
-    "race": "Gallente",
-    "description": "The Dominix is a drone-centric battleship with massive armor and powerful drone bonuses.",
+    "race": "Aurelian",
+    "description": "The Sovereign is a drone-centric battleship with massive armor and powerful drone bonuses.",
     "hull_hp": 6700,
     "armor_hp": 8500,
     "shield_hp": 7000,
@@ -107,17 +137,32 @@
       "drone_control_range": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 60},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 60
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "apocalypse": {
-    "id": "apocalypse",
-    "name": "Apocalypse",
+  "exarch": {
+    "id": "exarch",
+    "name": "Exarch",
     "class": "Battleship",
-    "race": "Amarr",
-    "description": "The Apocalypse is a heavily-armored laser platform with devastating energy weapon capabilities.",
+    "race": "Solari",
+    "description": "The Exarch is a heavily-armored laser platform with devastating energy weapon capabilities.",
     "hull_hp": 7000,
     "armor_hp": 9200,
     "shield_hp": 6500,
@@ -144,9 +189,24 @@
       "armor_resistances": 4
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   }
 }

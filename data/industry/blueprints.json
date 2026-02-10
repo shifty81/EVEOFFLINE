@@ -1,38 +1,38 @@
 {
   "blueprints": {
-    "rifter_blueprint": {
-      "blueprint_id": "rifter_blueprint",
+    "fang_blueprint": {
+      "blueprint_id": "fang_blueprint",
       "item_type": "ship",
-      "item_id": "rifter",
+      "item_id": "fang",
       "material_efficiency": 0,
       "time_efficiency": 0,
       "runs": -1,
       "materials": {
-        "tritanium": 30000,
-        "pyerite": 8000,
-        "mexallon": 2000,
-        "isogen": 500,
-        "nocxium": 100,
-        "zydrine": 20,
-        "megacyte": 5
+        "ferrium": 30000,
+        "ignium": 8000,
+        "allonium": 2000,
+        "isodium": 500,
+        "noctium": 100,
+        "zyrium": 20,
+        "megrium": 5
       },
       "manufacturing_time": 7200
     },
-    "merlin_blueprint": {
-      "blueprint_id": "merlin_blueprint",
+    "falk_blueprint": {
+      "blueprint_id": "falk_blueprint",
       "item_type": "ship",
-      "item_id": "merlin",
+      "item_id": "falk",
       "material_efficiency": 0,
       "time_efficiency": 0,
       "runs": -1,
       "materials": {
-        "tritanium": 32000,
-        "pyerite": 9000,
-        "mexallon": 2500,
-        "isogen": 600,
-        "nocxium": 120,
-        "zydrine": 25,
-        "megacyte": 8
+        "ferrium": 32000,
+        "ignium": 9000,
+        "allonium": 2500,
+        "isodium": 600,
+        "noctium": 120,
+        "zyrium": 25,
+        "megrium": 8
       },
       "manufacturing_time": 7200
     },
@@ -44,9 +44,9 @@
       "time_efficiency": 0,
       "runs": -1,
       "materials": {
-        "tritanium": 500,
-        "pyerite": 200,
-        "mexallon": 50
+        "ferrium": 500,
+        "ignium": 200,
+        "allonium": 50
       },
       "manufacturing_time": 600
     },
@@ -58,10 +58,10 @@
       "time_efficiency": 0,
       "runs": -1,
       "materials": {
-        "tritanium": 300,
-        "pyerite": 150,
-        "mexallon": 100,
-        "isogen": 50
+        "ferrium": 300,
+        "ignium": 150,
+        "allonium": 100,
+        "isodium": 50
       },
       "manufacturing_time": 600
     },
@@ -73,10 +73,10 @@
       "time_efficiency": 0,
       "runs": -1,
       "materials": {
-        "tritanium": 200,
-        "pyerite": 100,
-        "mexallon": 50,
-        "isogen": 25
+        "ferrium": 200,
+        "ignium": 100,
+        "allonium": 50,
+        "isodium": 25
       },
       "manufacturing_time": 300
     },
@@ -88,58 +88,58 @@
       "time_efficiency": 0,
       "runs": -1,
       "materials": {
-        "tritanium": 10,
-        "pyerite": 5
+        "ferrium": 10,
+        "ignium": 5
       },
       "manufacturing_time": 60
     }
   },
   "materials": {
-    "tritanium": {
-      "item_id": "tritanium",
-      "name": "Tritanium",
+    "ferrium": {
+      "item_id": "ferrium",
+      "name": "Ferrium",
       "volume": 0.01,
       "base_price": 5.0,
       "description": "The most common ore mineral"
     },
-    "pyerite": {
-      "item_id": "pyerite",
-      "name": "Pyerite",
+    "ignium": {
+      "item_id": "ignium",
+      "name": "Ignium",
       "volume": 0.01,
       "base_price": 10.0,
       "description": "Common ore mineral used in manufacturing"
     },
-    "mexallon": {
-      "item_id": "mexallon",
-      "name": "Mexallon",
+    "allonium": {
+      "item_id": "allonium",
+      "name": "Allonium",
       "volume": 0.01,
       "base_price": 50.0,
       "description": "Mid-tier ore mineral"
     },
-    "isogen": {
-      "item_id": "isogen",
-      "name": "Isogen",
+    "isodium": {
+      "item_id": "isodium",
+      "name": "Isodium",
       "volume": 0.01,
       "base_price": 100.0,
       "description": "Mid-tier ore mineral"
     },
-    "nocxium": {
-      "item_id": "nocxium",
-      "name": "Nocxium",
+    "noctium": {
+      "item_id": "noctium",
+      "name": "Noctium",
       "volume": 0.01,
       "base_price": 500.0,
       "description": "High-tier ore mineral"
     },
-    "zydrine": {
-      "item_id": "zydrine",
-      "name": "Zydrine",
+    "zyrium": {
+      "item_id": "zyrium",
+      "name": "Zyrium",
       "volume": 0.01,
       "base_price": 1000.0,
       "description": "High-tier ore mineral"
     },
-    "megacyte": {
-      "item_id": "megacyte",
-      "name": "Megacyte",
+    "megrium": {
+      "item_id": "megrium",
+      "name": "Megrium",
       "volume": 0.01,
       "base_price": 2000.0,
       "description": "Rare ore mineral"

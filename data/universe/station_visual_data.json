@@ -1,16 +1,41 @@
 {
   "station_visual_data": {
     "npc_stations": {
-      "amarr": {
-        "faction": "Amarr Empire",
+      "solari": {
+        "faction": "Solari Dominion",
         "style": "cathedral",
-        "primary_color": [0.8, 0.6, 0.2],
-        "secondary_color": [0.9, 0.8, 0.5],
-        "accent_color": [1.0, 0.85, 0.3],
+        "primary_color": [
+          0.8,
+          0.6,
+          0.2
+        ],
+        "secondary_color": [
+          0.9,
+          0.8,
+          0.5
+        ],
+        "accent_color": [
+          1.0,
+          0.85,
+          0.3
+        ],
         "materials": {
-          "hull": {"metallic": 0.7, "roughness": 0.3},
-          "panels": {"metallic": 0.9, "roughness": 0.2},
-          "lights": {"emissive": [1.0, 0.8, 0.3], "intensity": 2.0}
+          "hull": {
+            "metallic": 0.7,
+            "roughness": 0.3
+          },
+          "panels": {
+            "metallic": 0.9,
+            "roughness": 0.2
+          },
+          "lights": {
+            "emissive": [
+              1.0,
+              0.8,
+              0.3
+            ],
+            "intensity": 2.0
+          }
         },
         "architecture": {
           "spires": true,
@@ -27,16 +52,41 @@
         },
         "size_multiplier": 1.2
       },
-      "caldari": {
-        "faction": "Caldari State",
+      "veyren": {
+        "faction": "Veyren Combine",
         "style": "industrial",
-        "primary_color": [0.4, 0.45, 0.5],
-        "secondary_color": [0.5, 0.55, 0.6],
-        "accent_color": [0.2, 0.4, 0.6],
+        "primary_color": [
+          0.4,
+          0.45,
+          0.5
+        ],
+        "secondary_color": [
+          0.5,
+          0.55,
+          0.6
+        ],
+        "accent_color": [
+          0.2,
+          0.4,
+          0.6
+        ],
         "materials": {
-          "hull": {"metallic": 0.8, "roughness": 0.5},
-          "panels": {"metallic": 0.6, "roughness": 0.6},
-          "lights": {"emissive": [0.3, 0.5, 0.8], "intensity": 1.5}
+          "hull": {
+            "metallic": 0.8,
+            "roughness": 0.5
+          },
+          "panels": {
+            "metallic": 0.6,
+            "roughness": 0.6
+          },
+          "lights": {
+            "emissive": [
+              0.3,
+              0.5,
+              0.8
+            ],
+            "intensity": 1.5
+          }
         },
         "architecture": {
           "spires": false,
@@ -53,17 +103,45 @@
         },
         "size_multiplier": 1.0
       },
-      "gallente": {
-        "faction": "Gallente Federation",
+      "aurelian": {
+        "faction": "Aurelian Federation",
         "style": "organic",
-        "primary_color": [0.2, 0.4, 0.3],
-        "secondary_color": [0.3, 0.6, 0.5],
-        "accent_color": [0.4, 0.8, 0.6],
+        "primary_color": [
+          0.2,
+          0.4,
+          0.3
+        ],
+        "secondary_color": [
+          0.3,
+          0.6,
+          0.5
+        ],
+        "accent_color": [
+          0.4,
+          0.8,
+          0.6
+        ],
         "materials": {
-          "hull": {"metallic": 0.5, "roughness": 0.4},
-          "panels": {"metallic": 0.3, "roughness": 0.3},
-          "glass": {"transmission": 0.8, "roughness": 0.1},
-          "lights": {"emissive": [0.3, 0.8, 0.5], "intensity": 1.8}
+          "hull": {
+            "metallic": 0.5,
+            "roughness": 0.4
+          },
+          "panels": {
+            "metallic": 0.3,
+            "roughness": 0.3
+          },
+          "glass": {
+            "transmission": 0.8,
+            "roughness": 0.1
+          },
+          "lights": {
+            "emissive": [
+              0.3,
+              0.8,
+              0.5
+            ],
+            "intensity": 1.8
+          }
         },
         "architecture": {
           "spires": false,
@@ -80,17 +158,45 @@
         },
         "size_multiplier": 1.1
       },
-      "minmatar": {
-        "faction": "Minmatar Republic",
+      "keldari": {
+        "faction": "Keldari Republic",
         "style": "rusted_industrial",
-        "primary_color": [0.4, 0.3, 0.25],
-        "secondary_color": [0.5, 0.4, 0.3],
-        "accent_color": [0.6, 0.3, 0.2],
+        "primary_color": [
+          0.4,
+          0.3,
+          0.25
+        ],
+        "secondary_color": [
+          0.5,
+          0.4,
+          0.3
+        ],
+        "accent_color": [
+          0.6,
+          0.3,
+          0.2
+        ],
         "materials": {
-          "hull": {"metallic": 0.6, "roughness": 0.8},
-          "rust": {"metallic": 0.3, "roughness": 0.9},
-          "panels": {"metallic": 0.7, "roughness": 0.7},
-          "lights": {"emissive": [0.8, 0.4, 0.2], "intensity": 1.2}
+          "hull": {
+            "metallic": 0.6,
+            "roughness": 0.8
+          },
+          "rust": {
+            "metallic": 0.3,
+            "roughness": 0.9
+          },
+          "panels": {
+            "metallic": 0.7,
+            "roughness": 0.7
+          },
+          "lights": {
+            "emissive": [
+              0.8,
+              0.4,
+              0.2
+            ],
+            "intensity": 1.2
+          }
         },
         "architecture": {
           "spires": false,
@@ -113,18 +219,39 @@
         "type": "medium_citadel",
         "size_class": "medium",
         "docking_capacity": 50,
-        "primary_color": [0.5, 0.5, 0.55],
-        "accent_color": [0.3, 0.6, 0.8],
+        "primary_color": [
+          0.5,
+          0.5,
+          0.55
+        ],
+        "accent_color": [
+          0.3,
+          0.6,
+          0.8
+        ],
         "materials": {
-          "hull": {"metallic": 0.8, "roughness": 0.4},
-          "energy_bands": {"emissive": [0.3, 0.6, 1.0], "intensity": 3.0}
+          "hull": {
+            "metallic": 0.8,
+            "roughness": 0.4
+          },
+          "energy_bands": {
+            "emissive": [
+              0.3,
+              0.6,
+              1.0
+            ],
+            "intensity": 3.0
+          }
         },
         "features": {
           "modular_design": true,
           "docking_arms": 4,
           "defense_platforms": 2,
           "tethering_range": 30000,
-          "animated_elements": ["rotating_sections", "extending_arms"]
+          "animated_elements": [
+            "rotating_sections",
+            "extending_arms"
+          ]
         },
         "dimensions": {
           "length": 5000,
@@ -136,18 +263,40 @@
         "type": "large_citadel",
         "size_class": "large",
         "docking_capacity": 150,
-        "primary_color": [0.5, 0.5, 0.55],
-        "accent_color": [0.3, 0.6, 0.8],
+        "primary_color": [
+          0.5,
+          0.5,
+          0.55
+        ],
+        "accent_color": [
+          0.3,
+          0.6,
+          0.8
+        ],
         "materials": {
-          "hull": {"metallic": 0.85, "roughness": 0.35},
-          "energy_bands": {"emissive": [0.3, 0.6, 1.0], "intensity": 4.0}
+          "hull": {
+            "metallic": 0.85,
+            "roughness": 0.35
+          },
+          "energy_bands": {
+            "emissive": [
+              0.3,
+              0.6,
+              1.0
+            ],
+            "intensity": 4.0
+          }
         },
         "features": {
           "modular_design": true,
           "docking_arms": 8,
           "defense_platforms": 6,
           "tethering_range": 50000,
-          "animated_elements": ["rotating_sections", "extending_arms", "shield_generators"]
+          "animated_elements": [
+            "rotating_sections",
+            "extending_arms",
+            "shield_generators"
+          ]
         },
         "dimensions": {
           "length": 10000,
@@ -159,18 +308,41 @@
         "type": "xl_citadel",
         "size_class": "xl",
         "docking_capacity": 500,
-        "primary_color": [0.5, 0.5, 0.55],
-        "accent_color": [0.3, 0.6, 0.8],
+        "primary_color": [
+          0.5,
+          0.5,
+          0.55
+        ],
+        "accent_color": [
+          0.3,
+          0.6,
+          0.8
+        ],
         "materials": {
-          "hull": {"metallic": 0.9, "roughness": 0.3},
-          "energy_bands": {"emissive": [0.3, 0.6, 1.0], "intensity": 5.0}
+          "hull": {
+            "metallic": 0.9,
+            "roughness": 0.3
+          },
+          "energy_bands": {
+            "emissive": [
+              0.3,
+              0.6,
+              1.0
+            ],
+            "intensity": 5.0
+          }
         },
         "features": {
           "modular_design": true,
           "docking_arms": 16,
           "defense_platforms": 12,
           "tethering_range": 100000,
-          "animated_elements": ["rotating_sections", "extending_arms", "shield_generators", "weapon_turrets"],
+          "animated_elements": [
+            "rotating_sections",
+            "extending_arms",
+            "shield_generators",
+            "weapon_turrets"
+          ],
           "supercapital_capable": true
         },
         "dimensions": {
@@ -183,18 +355,39 @@
         "type": "refinery",
         "size_class": "medium",
         "docking_capacity": 30,
-        "primary_color": [0.55, 0.5, 0.45],
-        "accent_color": [0.8, 0.5, 0.2],
+        "primary_color": [
+          0.55,
+          0.5,
+          0.45
+        ],
+        "accent_color": [
+          0.8,
+          0.5,
+          0.2
+        ],
         "materials": {
-          "hull": {"metallic": 0.7, "roughness": 0.5},
-          "refinery_glow": {"emissive": [1.0, 0.5, 0.2], "intensity": 2.5}
+          "hull": {
+            "metallic": 0.7,
+            "roughness": 0.5
+          },
+          "refinery_glow": {
+            "emissive": [
+              1.0,
+              0.5,
+              0.2
+            ],
+            "intensity": 2.5
+          }
         },
         "features": {
           "modular_design": true,
           "docking_arms": 4,
           "moon_drill": true,
           "refining_arrays": 6,
-          "animated_elements": ["rotating_drill", "processing_beams"]
+          "animated_elements": [
+            "rotating_drill",
+            "processing_beams"
+          ]
         },
         "dimensions": {
           "length": 6000,
@@ -231,36 +424,102 @@
       "approach_speed_limit": 100,
       "rotation_align_time": 3.0,
       "docking_sequence": [
-        {"action": "request_permission", "duration": 0.5},
-        {"action": "approach_bay", "duration": 5.0},
-        {"action": "align_rotation", "duration": 3.0},
-        {"action": "extend_docking_clamps", "duration": 2.0},
-        {"action": "pull_ship_inside", "duration": 4.0},
-        {"action": "seal_bay_doors", "duration": 2.0}
+        {
+          "action": "request_permission",
+          "duration": 0.5
+        },
+        {
+          "action": "approach_bay",
+          "duration": 5.0
+        },
+        {
+          "action": "align_rotation",
+          "duration": 3.0
+        },
+        {
+          "action": "extend_docking_clamps",
+          "duration": 2.0
+        },
+        {
+          "action": "pull_ship_inside",
+          "duration": 4.0
+        },
+        {
+          "action": "seal_bay_doors",
+          "duration": 2.0
+        }
       ],
       "undocking_sequence": [
-        {"action": "power_up_systems", "duration": 2.0},
-        {"action": "release_clamps", "duration": 1.5},
-        {"action": "push_ship_out", "duration": 4.0},
-        {"action": "engine_ignition", "duration": 1.0},
-        {"action": "maneuver_clear", "duration": 3.0}
+        {
+          "action": "power_up_systems",
+          "duration": 2.0
+        },
+        {
+          "action": "release_clamps",
+          "duration": 1.5
+        },
+        {
+          "action": "push_ship_out",
+          "duration": 4.0
+        },
+        {
+          "action": "engine_ignition",
+          "duration": 1.0
+        },
+        {
+          "action": "maneuver_clear",
+          "duration": 3.0
+        }
       ]
     },
     "interior_zones": {
       "hangar": {
-        "ambient_light": [0.3, 0.3, 0.35],
-        "main_lights": {"color": [1.0, 1.0, 0.95], "intensity": 2.0},
-        "accent_lights": {"intensity": 1.5},
-        "features": ["service_platforms", "cargo_cranes", "holographic_displays"]
+        "ambient_light": [
+          0.3,
+          0.3,
+          0.35
+        ],
+        "main_lights": {
+          "color": [
+            1.0,
+            1.0,
+            0.95
+          ],
+          "intensity": 2.0
+        },
+        "accent_lights": {
+          "intensity": 1.5
+        },
+        "features": [
+          "service_platforms",
+          "cargo_cranes",
+          "holographic_displays"
+        ]
       },
-      "capsuleer_quarters": {
-        "ambient_light": [0.2, 0.25, 0.3],
+      "starhelm_quarters": {
+        "ambient_light": [
+          0.2,
+          0.25,
+          0.3
+        ],
         "luxury_level": "high",
-        "features": ["viewing_windows", "meeting_rooms", "bars"]
+        "features": [
+          "viewing_windows",
+          "meeting_rooms",
+          "bars"
+        ]
       },
       "operational": {
-        "ambient_light": [0.15, 0.2, 0.25],
-        "features": ["control_rooms", "engineering", "medical_bays"]
+        "ambient_light": [
+          0.15,
+          0.2,
+          0.25
+        ],
+        "features": [
+          "control_rooms",
+          "engineering",
+          "medical_bays"
+        ]
       }
     }
   }

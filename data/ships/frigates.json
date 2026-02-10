@@ -1,10 +1,10 @@
 {
-  "rifter": {
-    "id": "rifter",
-    "name": "Rifter",
+  "fang": {
+    "id": "fang",
+    "name": "Fang",
     "class": "Frigate",
-    "race": "Minmatar",
-    "description": "The Rifter is a versatile combat frigate, popular among capsuleers for its speed and firepower.",
+    "race": "Keldari",
+    "description": "The Fang is a versatile combat frigate, popular among starhelms for its speed and firepower.",
     "hull_hp": 350,
     "armor_hp": 400,
     "shield_hp": 450,
@@ -30,17 +30,32 @@
       "tracking_speed": 7.5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "merlin": {
-    "id": "merlin",
-    "name": "Merlin",
+  "falk": {
+    "id": "falk",
+    "name": "Falk",
     "class": "Frigate",
-    "race": "Caldari",
-    "description": "The Merlin is a shield-tanked combat frigate known for its durability.",
+    "race": "Veyren",
+    "description": "The Falk is a shield-tanked combat frigate known for its durability.",
     "hull_hp": 420,
     "armor_hp": 280,
     "shield_hp": 720,
@@ -65,17 +80,32 @@
       "shield_resistances": 4
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "tristan": {
-    "id": "tristan",
-    "name": "Tristan",
+  "revel": {
+    "id": "revel",
+    "name": "Revel",
     "class": "Frigate",
-    "race": "Gallente",
-    "description": "The Tristan excels at drone combat and electronic warfare.",
+    "race": "Aurelian",
+    "description": "The Revel excels at drone combat and electronic warfare.",
     "hull_hp": 380,
     "armor_hp": 450,
     "shield_hp": 400,
@@ -102,17 +132,32 @@
       "drone_damage": 10
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 60},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 60
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "punisher": {
-    "id": "punisher",
-    "name": "Punisher",
+  "sentinel": {
+    "id": "sentinel",
+    "name": "Sentinel",
     "class": "Frigate",
-    "race": "Amarr",
-    "description": "The Punisher is an armor-tanked laser platform with impressive durability.",
+    "race": "Solari",
+    "description": "The Sentinel is an armor-tanked laser platform with impressive durability.",
     "hull_hp": 400,
     "armor_hp": 650,
     "shield_hp": 320,
@@ -138,9 +183,24 @@
       "capacitor_use_reduction": 10
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   }
 }
