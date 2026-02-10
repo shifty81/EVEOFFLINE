@@ -712,11 +712,12 @@ bool Model::isCruiser(const std::string& shipType) {
 
 bool Model::isTech2Cruiser(const std::string& shipType) {
     static const std::vector<std::string> tech2Names = {
-        "Heavy Assault Cruiser", "Vagabond", "Cerberus", "Ishtar", "Zealot",
-        "Heavy Interdiction Cruiser", "Broadsword", "Onyx", "Phobos", "Devoter",
-        "Force Recon Ship", "Huginn", "Rapier", "Falcon", "Arazu", "Pilgrim",
-        "Combat Recon Ship", "Rook", "Lachesis", "Curse",
-        "Logistics Cruiser", "Scimitar", "Basilisk", "Oneiros", "Guardian"
+        "Heavy Assault Cruiser", "Wanderer", "Hydralisk", "Imperatrice", "Ardent",
+        "Gunnolf", "Valdris", "Cavalier", "Inquisitor",
+        "Heavy Interdiction Cruiser", "Ironclamp", "Frostlok", "Grappleur", "Warden",
+        "Force Recon Ship", "Farseer", "Ghostblade", "Skygaze", "Surveillant", "Wayfarer",
+        "Combat Recon Ship", "Watchkeep", "Arbitre", "Maledictus",
+        "Logistics Cruiser", "Lifeblood", "Restorer", "Soigneur", "Protector"
     };
     return std::any_of(tech2Names.begin(), tech2Names.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -724,7 +725,7 @@ bool Model::isTech2Cruiser(const std::string& shipType) {
 
 bool Model::isBattlecruiser(const std::string& shipType) {
     static const std::vector<std::string> bcNames = {
-        "Battlecruiser", "Cyclone", "Ferox", "Brutix", "Harbinger"
+        "Battlecruiser", "Galeforce", "Fenvar", "Marquis", "Herald"
     };
     return std::any_of(bcNames.begin(), bcNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -732,7 +733,7 @@ bool Model::isBattlecruiser(const std::string& shipType) {
 
 bool Model::isCommandShip(const std::string& shipType) {
     static const std::vector<std::string> csNames = {
-        "Command Ship", "Claymore", "Vulture", "Astarte", "Absolution"
+        "Command Ship", "Warleader", "Jarl", "Commandant", "Paragon"
     };
     return std::any_of(csNames.begin(), csNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -740,8 +741,8 @@ bool Model::isCommandShip(const std::string& shipType) {
 
 bool Model::isBattleship(const std::string& shipType) {
     static const std::vector<std::string> bsNames = {
-        "Battleship", "Tempest", "Raven", "Dominix", "Apocalypse",
-        "Marauder", "Vargur", "Golem", "Kronos", "Paladin"
+        "Battleship", "Gale", "Strix", "Sovereign", "Exarch",
+        "Marauder", "Ironheart", "Monolith", "Majeste", "Solarius Prime"
     };
     return std::any_of(bsNames.begin(), bsNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -749,8 +750,8 @@ bool Model::isBattleship(const std::string& shipType) {
 
 bool Model::isMiningBarge(const std::string& shipType) {
     static const std::vector<std::string> miningNames = {
-        "Mining Barge", "Procurer", "Retriever", "Covetor", "Exhumer", "Hulk", "Mackinaw", "Skiff",
-        "Industrial", "Hoarder", "Badger", "Iteron", "Bestower"
+        "Mining Barge", "Ironbore", "Deepscoop", "Yieldmaster", "Exhumer", "Excavon", "Vasthold", "Coreshield",
+        "Industrial", "Packrunner", "Drifthauler", "Marchand", "Wayfarer Hauler"
     };
     return std::any_of(miningNames.begin(), miningNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -758,8 +759,8 @@ bool Model::isMiningBarge(const std::string& shipType) {
 
 bool Model::isCarrier(const std::string& shipType) {
     static const std::vector<std::string> carrierNames = {
-        "Carrier", "Archon", "Thanatos", "Chimera", "Nidhoggur",
-        "Supercarrier", "Hel", "Nyx", "Wyvern", "Aeon"
+        "Carrier", "Solarius", "Lumiere", "Draknar", "Ironprow",
+        "Supercarrier"
     };
     return std::any_of(carrierNames.begin(), carrierNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -767,7 +768,7 @@ bool Model::isCarrier(const std::string& shipType) {
 
 bool Model::isDreadnought(const std::string& shipType) {
     static const std::vector<std::string> dreadNames = {
-        "Dreadnought", "Revelation", "Moros", "Phoenix", "Naglfar"
+        "Dreadnought", "Sanctum", "Bastion Royal", "Valkyr", "Thornwall"
     };
     return std::any_of(dreadNames.begin(), dreadNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -775,7 +776,7 @@ bool Model::isDreadnought(const std::string& shipType) {
 
 bool Model::isTitan(const std::string& shipType) {
     static const std::vector<std::string> titanNames = {
-        "Titan", "Avatar", "Erebus", "Leviathan", "Ragnarok"
+        "Titan", "Empyrean", "Grandeur", "Jormundur", "Worldbreaker"
     };
     return std::any_of(titanNames.begin(), titanNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -783,7 +784,7 @@ bool Model::isTitan(const std::string& shipType) {
 
 bool Model::isStation(const std::string& shipType) {
     static const std::vector<std::string> stationNames = {
-        "Station", "Citadel", "Keepstar", "Fortizar", "Astrahus",
+        "Station", "Citadel", "Bastion", "Fortress", "Beacon",
         "Outpost", "Refinery", "Engineering Complex"
     };
     return std::any_of(stationNames.begin(), stationNames.end(),
@@ -792,9 +793,9 @@ bool Model::isStation(const std::string& shipType) {
 
 bool Model::isAsteroid(const std::string& shipType) {
     static const std::vector<std::string> asteroidNames = {
-        "Asteroid", "Dustite", "Ferrite", "Pyroxeres", "Plagioclase",
-        "Omber", "Kernite", "Jaspet", "Hemorphite", "Hedbergite",
-        "Gneiss", "Dark Ochre", "Crokite", "Bistot", "Arkonor", "Mercoxit"
+        "Asteroid", "Dustite", "Ferrite", "Ignaite", "Crystite",
+        "Shadite", "Corite", "Lumine", "Sangite", "Glacite",
+        "Densite", "Voidite", "Pyranite", "Stellite", "Cosmite", "Nexorite"
     };
     return std::any_of(asteroidNames.begin(), asteroidNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -1286,17 +1287,17 @@ std::unique_ptr<Model> Model::createAsteroidModel(const std::string& oreType) {
         asteroidColor = glm::vec3(0.6f, 0.4f, 0.2f);
     } else if (oreType.find("Ferrite") != std::string::npos) {
         asteroidColor = glm::vec3(0.5f, 0.5f, 0.55f);
-    } else if (oreType.find("Pyroxeres") != std::string::npos) {
+    } else if (oreType.find("Ignaite") != std::string::npos) {
         asteroidColor = glm::vec3(0.7f, 0.3f, 0.2f);
-    } else if (oreType.find("Plagioclase") != std::string::npos) {
+    } else if (oreType.find("Crystite") != std::string::npos) {
         asteroidColor = glm::vec3(0.3f, 0.5f, 0.4f);
-    } else if (oreType.find("Omber") != std::string::npos) {
+    } else if (oreType.find("Shadite") != std::string::npos) {
         asteroidColor = glm::vec3(0.8f, 0.6f, 0.3f);
-    } else if (oreType.find("Kernite") != std::string::npos) {
+    } else if (oreType.find("Corite") != std::string::npos) {
         asteroidColor = glm::vec3(0.3f, 0.6f, 0.7f);
-    } else if (oreType.find("Jaspet") != std::string::npos) {
+    } else if (oreType.find("Lumine") != std::string::npos) {
         asteroidColor = glm::vec3(0.6f, 0.2f, 0.3f);
-    } else if (oreType.find("Hemorphite") != std::string::npos) {
+    } else if (oreType.find("Sangite") != std::string::npos) {
         asteroidColor = glm::vec3(0.9f, 0.3f, 0.2f);
     }
 

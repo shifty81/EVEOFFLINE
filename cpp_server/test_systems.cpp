@@ -1572,7 +1572,7 @@ void testSerializeDeserializeStandings() {
     standings->personal_standings["npc_pirate_001"] = -5.0f;
     standings->personal_standings["player_friend"] = 8.5f;
     standings->corporation_standings["Republic Fleet"] = 3.0f;
-    standings->corporation_standings["Serpentis"] = -7.5f;
+    standings->corporation_standings["Venom Syndicate"] = -7.5f;
     standings->faction_standings["Keldari"] = 2.5f;
     standings->faction_standings["Solari"] = -1.5f;
     entity->addComponent(std::move(standings));
@@ -1597,7 +1597,7 @@ void testSerializeDeserializeStandings() {
     // Check corporation standings
     assertTrue(lstandings->corporation_standings.size() == 2, "Corporation standings count preserved");
     assertTrue(approxEqual(lstandings->corporation_standings["Republic Fleet"], 3.0f), "Corporation standing (Republic Fleet) preserved");
-    assertTrue(approxEqual(lstandings->corporation_standings["Serpentis"], -7.5f), "Corporation standing (Serpentis) preserved");
+    assertTrue(approxEqual(lstandings->corporation_standings["Venom Syndicate"], -7.5f), "Corporation standing (Serpentis) preserved");
     
     // Check faction standings
     assertTrue(lstandings->faction_standings.size() == 2, "Faction standings count preserved");

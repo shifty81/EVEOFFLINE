@@ -87,7 +87,7 @@ public:
      * and applies faction-specific colors. Ships are generated with appropriate scale
      * and complexity for their class.
      * 
-     * @param shipType The type/class of ship (e.g., "Fang", "Moa", "Raven")
+     * @param shipType The type/class of ship (e.g., "Fang", "Ironscale", "Strix")
      * @param faction The faction (e.g., "Veyren", "Aurelian", "Keldari", "Solari")
      * @return Unique pointer to generated Model, or generic model if type unknown
      */
@@ -135,7 +135,7 @@ private:
      * Find OBJ model file for a given ship type and faction
      * Searches the models/ships directory for matching OBJ files.
      * File naming convention: {faction}_{class}_{ShipName}.obj
-     * @param shipType The ship type/name (e.g., "Fang", "Raven")
+     * @param shipType The ship type/name (e.g., "Fang", "Strix")
      * @param faction The faction (e.g., "Keldari", "Veyren")
      * @return Path to OBJ file if found, empty string otherwise
      */
