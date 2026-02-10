@@ -117,8 +117,9 @@ From ROADMAP.md "In Progress" section:
 - Multi-threaded server processing
 
 #### 3.2 DevOps & Deployment
-- CI/CD pipeline expansion
-- Docker containerization
+- ✅ CI/CD pipeline — GitHub Actions for server (build + 362 tests) and client
+- ✅ Automated testing on PR — Server tests run on push and pull requests
+- ✅ Docker containerization — Multi-stage Dockerfile for dedicated server
 - Cloud deployment guides
 - Server monitoring and analytics
 
