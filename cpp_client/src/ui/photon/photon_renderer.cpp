@@ -8,6 +8,7 @@
 // We only need a few GL calls; forward-declare to avoid pulling in
 // a platform-specific GL header that may conflict with GLFW/GLAD.
 #ifdef _WIN32
+#define NOMINMAX
 #include <windows.h>
 #endif
 
