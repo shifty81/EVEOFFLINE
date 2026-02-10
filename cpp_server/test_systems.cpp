@@ -20,12 +20,15 @@
 #include "systems/fleet_system.h"
 #include "data/world_persistence.h"
 #include "systems/movement_system.h"
+#include "utils/logger.h"
+#include "utils/server_metrics.h"
 #include <iostream>
 #include <cassert>
 #include <string>
 #include <cmath>
 #include <memory>
 #include <fstream>
+#include <thread>
 
 using namespace eve;
 
@@ -2055,6 +2058,223 @@ void testMovementMultipleCollisionZones() {
     assertTrue(distToPlanet >= 6000.0f, "Ship pushed outside planet collision zone");
 }
 
+// ==================== Logger Tests ====================
+
+void testLoggerLevels() {
+    std::cout << "\n=== Logger Levels ===" << std::endl;
+    
+    auto& log = utils::Logger::instance();
+    
+    // Disable console output so tests don't clutter the terminal
+    log.setConsoleOutput(false);
+    
+    log.setLevel(utils::LogLevel::INFO);
+    assertTrue(log.getLevel() == utils::LogLevel::INFO, "Log level set to INFO");
+    
+    log.setLevel(utils::LogLevel::DEBUG);
+    assertTrue(log.getLevel() == utils::LogLevel::DEBUG, "Log level set to DEBUG");
+    
+    log.setLevel(utils::LogLevel::ERROR);
+    assertTrue(log.getLevel() == utils::LogLevel::ERROR, "Log level set to ERROR");
+    
+    log.setLevel(utils::LogLevel::WARN);
+    assertTrue(log.getLevel() == utils::LogLevel::WARN, "Log level set to WARN");
+    
+    log.setLevel(utils::LogLevel::FATAL);
+    assertTrue(log.getLevel() == utils::LogLevel::FATAL, "Log level set to FATAL");
+    
+    // Re-enable console output
+    log.setConsoleOutput(true);
+    // Reset to INFO for other tests
+    log.setLevel(utils::LogLevel::INFO);
+}
+
+void testLoggerFileOutput() {
+    std::cout << "\n=== Logger File Output ===" << std::endl;
+    
+    auto& log = utils::Logger::instance();
+    log.setConsoleOutput(false);
+    
+    // Shut down any previously opened file
+    log.shutdown();
+    assertTrue(!log.isFileOpen(), "No file open after shutdown");
+    
+    // Init with a temp directory
+    bool ok = log.init("/tmp/eve_test_logs");
+    assertTrue(ok, "Logger init succeeds");
+    assertTrue(log.isFileOpen(), "Log file is open after init");
+    
+    // Write some log entries
+    log.setLevel(utils::LogLevel::DEBUG);
+    log.debug("test debug message");
+    log.info("test info message");
+    log.warn("test warn message");
+    log.error("test error message");
+    
+    log.shutdown();
+    assertTrue(!log.isFileOpen(), "Log file closed after shutdown");
+    
+    // Verify the file was actually written
+    std::ifstream f("/tmp/eve_test_logs/server.log");
+    assertTrue(f.is_open(), "Log file exists on disk");
+    
+    std::string content((std::istreambuf_iterator<char>(f)),
+                         std::istreambuf_iterator<char>());
+    assertTrue(content.find("[DEBUG]") != std::string::npos, "Log contains DEBUG entry");
+    assertTrue(content.find("[INFO]") != std::string::npos, "Log contains INFO entry");
+    assertTrue(content.find("[WARN]") != std::string::npos, "Log contains WARN entry");
+    assertTrue(content.find("[ERROR]") != std::string::npos, "Log contains ERROR entry");
+    assertTrue(content.find("test debug message") != std::string::npos, "Log contains debug text");
+    assertTrue(content.find("test info message") != std::string::npos, "Log contains info text");
+    f.close();
+    
+    // Clean up
+    std::remove("/tmp/eve_test_logs/server.log");
+    
+    // Re-enable console
+    log.setConsoleOutput(true);
+    log.setLevel(utils::LogLevel::INFO);
+}
+
+void testLoggerLevelFiltering() {
+    std::cout << "\n=== Logger Level Filtering ===" << std::endl;
+    
+    auto& log = utils::Logger::instance();
+    log.setConsoleOutput(false);
+    log.shutdown();
+    
+    bool ok = log.init("/tmp/eve_test_logs", "filter_test.log");
+    assertTrue(ok, "Logger init for filter test succeeds");
+    
+    // Set level to WARN — DEBUG and INFO should be filtered out
+    log.setLevel(utils::LogLevel::WARN);
+    log.debug("should_not_appear_debug");
+    log.info("should_not_appear_info");
+    log.warn("should_appear_warn");
+    log.error("should_appear_error");
+    
+    log.shutdown();
+    
+    std::ifstream f("/tmp/eve_test_logs/filter_test.log");
+    assertTrue(f.is_open(), "Filter test log file exists");
+    
+    std::string content((std::istreambuf_iterator<char>(f)),
+                         std::istreambuf_iterator<char>());
+    assertTrue(content.find("should_not_appear_debug") == std::string::npos,
+               "DEBUG filtered out at WARN level");
+    assertTrue(content.find("should_not_appear_info") == std::string::npos,
+               "INFO filtered out at WARN level");
+    assertTrue(content.find("should_appear_warn") != std::string::npos,
+               "WARN passes at WARN level");
+    assertTrue(content.find("should_appear_error") != std::string::npos,
+               "ERROR passes at WARN level");
+    f.close();
+    
+    std::remove("/tmp/eve_test_logs/filter_test.log");
+    log.setConsoleOutput(true);
+    log.setLevel(utils::LogLevel::INFO);
+}
+
+// ==================== ServerMetrics Tests ====================
+
+void testMetricsTickTiming() {
+    std::cout << "\n=== Metrics Tick Timing ===" << std::endl;
+    
+    utils::ServerMetrics metrics;
+    
+    assertTrue(metrics.getTotalTicks() == 0, "No ticks recorded initially");
+    assertTrue(metrics.getAvgTickMs() == 0.0, "Avg tick 0 with no data");
+    assertTrue(metrics.getMaxTickMs() == 0.0, "Max tick 0 with no data");
+    assertTrue(metrics.getMinTickMs() == 0.0, "Min tick 0 with no data");
+    
+    // Record a few ticks with a known sleep
+    for (int i = 0; i < 5; ++i) {
+        metrics.recordTickStart();
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+        metrics.recordTickEnd();
+    }
+    
+    assertTrue(metrics.getTotalTicks() == 5, "5 ticks recorded");
+    assertTrue(metrics.getAvgTickMs() >= 1.0, "Average tick >= 1ms");
+    assertTrue(metrics.getMaxTickMs() >= 1.0, "Max tick >= 1ms");
+    assertTrue(metrics.getMinTickMs() >= 1.0, "Min tick >= 1ms");
+    assertTrue(metrics.getMaxTickMs() >= metrics.getMinTickMs(), "Max >= Min");
+}
+
+void testMetricsCounters() {
+    std::cout << "\n=== Metrics Counters ===" << std::endl;
+    
+    utils::ServerMetrics metrics;
+    
+    assertTrue(metrics.getEntityCount() == 0, "Entity count starts at 0");
+    assertTrue(metrics.getPlayerCount() == 0, "Player count starts at 0");
+    
+    metrics.setEntityCount(42);
+    metrics.setPlayerCount(3);
+    
+    assertTrue(metrics.getEntityCount() == 42, "Entity count set to 42");
+    assertTrue(metrics.getPlayerCount() == 3, "Player count set to 3");
+}
+
+void testMetricsUptime() {
+    std::cout << "\n=== Metrics Uptime ===" << std::endl;
+    
+    utils::ServerMetrics metrics;
+    
+    assertTrue(metrics.getUptimeSeconds() >= 0.0, "Uptime is non-negative");
+    
+    std::string uptime = metrics.getUptimeString();
+    assertTrue(!uptime.empty(), "Uptime string is not empty");
+    assertTrue(uptime.find("d") != std::string::npos, "Uptime contains 'd'");
+    assertTrue(uptime.find("h") != std::string::npos, "Uptime contains 'h'");
+    assertTrue(uptime.find("m") != std::string::npos, "Uptime contains 'm'");
+    assertTrue(uptime.find("s") != std::string::npos, "Uptime contains 's'");
+}
+
+void testMetricsSummary() {
+    std::cout << "\n=== Metrics Summary ===" << std::endl;
+    
+    utils::ServerMetrics metrics;
+    metrics.setEntityCount(10);
+    metrics.setPlayerCount(2);
+    
+    metrics.recordTickStart();
+    std::this_thread::sleep_for(std::chrono::milliseconds(1));
+    metrics.recordTickEnd();
+    
+    std::string s = metrics.summary();
+    assertTrue(!s.empty(), "Summary is not empty");
+    assertTrue(s.find("[Metrics]") != std::string::npos, "Summary contains [Metrics]");
+    assertTrue(s.find("entities=10") != std::string::npos, "Summary contains entity count");
+    assertTrue(s.find("players=2") != std::string::npos, "Summary contains player count");
+    assertTrue(s.find("uptime") != std::string::npos, "Summary contains uptime");
+    assertTrue(s.find("ticks=") != std::string::npos, "Summary contains tick count");
+}
+
+void testMetricsResetWindow() {
+    std::cout << "\n=== Metrics Reset Window ===" << std::endl;
+    
+    utils::ServerMetrics metrics;
+    
+    // Record some ticks
+    for (int i = 0; i < 3; ++i) {
+        metrics.recordTickStart();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        metrics.recordTickEnd();
+    }
+    
+    assertTrue(metrics.getTotalTicks() == 3, "3 ticks before reset");
+    assertTrue(metrics.getAvgTickMs() > 0.0, "Avg > 0 before reset");
+    
+    metrics.resetWindow();
+    
+    // Total ticks should remain, but window stats reset
+    assertTrue(metrics.getTotalTicks() == 3, "Total ticks preserved after reset");
+    assertTrue(metrics.getAvgTickMs() == 0.0, "Avg reset to 0 after window reset");
+    assertTrue(metrics.getMaxTickMs() == 0.0, "Max reset to 0 after window reset");
+    assertTrue(metrics.getMinTickMs() == 0.0, "Min reset to 0 after window reset");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -2062,7 +2282,8 @@ int main() {
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
     std::cout << "Capacitor, Shield, Weapon, Targeting," << std::endl;
     std::cout << "ShipDB, WormholeDB, Wormhole, Fleet," << std::endl;
-    std::cout << "WorldPersistence, Interdictors, StealthBombers" << std::endl;
+    std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
+    std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -2148,6 +2369,18 @@ int main() {
     testMovementCollisionZoneVelocityKilled();
     testMovementOutsideCollisionZoneUnaffected();
     testMovementMultipleCollisionZones();
+    
+    // Logger tests
+    testLoggerLevels();
+    testLoggerFileOutput();
+    testLoggerLevelFiltering();
+    
+    // ServerMetrics tests
+    testMetricsTickTiming();
+    testMetricsCounters();
+    testMetricsUptime();
+    testMetricsSummary();
+    testMetricsResetWindow();
     
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

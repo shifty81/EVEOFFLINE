@@ -1,11 +1,17 @@
 #include "server.h"
+#include "utils/logger.h"
 #include <iostream>
 #include <csignal>
 #include <memory>
+#include <exception>
 
 static std::unique_ptr<eve::Server> g_server;
 
 void signalHandler(int signal) {
+    const char* name = (signal == SIGINT)  ? "SIGINT"  :
+                       (signal == SIGTERM) ? "SIGTERM" : "UNKNOWN";
+    eve::utils::Logger::instance().info(
+        std::string("Received signal ") + name + ", shutting down...");
     if (g_server) {
         g_server->stop();
     }
@@ -22,16 +28,25 @@ int main(int argc, char* argv[]) {
     std::signal(SIGINT, signalHandler);
     std::signal(SIGTERM, signalHandler);
     
-    // Create and initialize server
-    g_server = std::make_unique<eve::Server>(config_path);
-    
-    if (!g_server->initialize()) {
-        std::cerr << "Failed to initialize server" << std::endl;
+    try {
+        // Create and initialize server
+        g_server = std::make_unique<eve::Server>(config_path);
+        
+        if (!g_server->initialize()) {
+            eve::utils::Logger::instance().fatal("Failed to initialize server");
+            return 1;
+        }
+        
+        // Run server (blocks until stopped)
+        g_server->run();
+    } catch (const std::exception& e) {
+        eve::utils::Logger::instance().fatal(
+            std::string("Unhandled exception: ") + e.what());
+        return 1;
+    } catch (...) {
+        eve::utils::Logger::instance().fatal("Unhandled unknown exception");
         return 1;
     }
-    
-    // Run server (blocks until stopped)
-    g_server->run();
     
     return 0;
 }
