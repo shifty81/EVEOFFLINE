@@ -173,7 +173,7 @@ bool ShipGenerationRules::isEnginePlacementValid(const glm::vec3& position, cons
 
 void ShipGenerationRules::initializeKeldariRules() {
     FactionRules rules;
-    rules.style = FactionStyle::MINMATAR;
+    rules.style = FactionStyle::KELDARI;
     rules.requiresSymmetry = false;
     rules.allowsAsymmetry = true;
     rules.minAsymmetryFactor = 0.2f;
@@ -202,7 +202,7 @@ void ShipGenerationRules::initializeKeldariRules() {
 
 void ShipGenerationRules::initializeVeyrenRules() {
     FactionRules rules;
-    rules.style = FactionStyle::CALDARI;
+    rules.style = FactionStyle::VEYREN;
     rules.requiresSymmetry = true;
     rules.allowsAsymmetry = false;
     rules.minAsymmetryFactor = 0.0f;
@@ -231,7 +231,7 @@ void ShipGenerationRules::initializeVeyrenRules() {
 
 void ShipGenerationRules::initializeAurelianRules() {
     FactionRules rules;
-    rules.style = FactionStyle::GALLENTE;
+    rules.style = FactionStyle::AURELIAN;
     rules.requiresSymmetry = true;
     rules.allowsAsymmetry = false;
     rules.minAsymmetryFactor = 0.0f;
@@ -261,7 +261,7 @@ void ShipGenerationRules::initializeAurelianRules() {
 
 void ShipGenerationRules::initializeSolariRules() {
     FactionRules rules;
-    rules.style = FactionStyle::AMARR;
+    rules.style = FactionStyle::SOLARI;
     rules.requiresSymmetry = true;
     rules.allowsAsymmetry = false;
     rules.minAsymmetryFactor = 0.0f;

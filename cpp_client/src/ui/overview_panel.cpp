@@ -472,13 +472,13 @@ int OverviewPanel::CalculateStanding(const std::string& faction, bool is_player)
     
     // Pirate factions are hostile
     if (faction == "Venom Syndicate" || faction == "Iron Corsairs" || 
-        faction == "Crimson Order" || faction == "Hollow's Nation" ||
-        faction == "Angel Cartel" || faction == "Mordu's Legion") {
+        faction == "Crimson Order" || faction == "Hollow Collective" ||
+        faction == "Shadow Pact" || faction == "Stormwatch Legion") {
         return -5;
     }
     
     // Rogue drones are hostile
-    if (faction == "Rogue Drones") {
+    if (faction == "Rogue Constructs") {
         return -5;
     }
     

@@ -60,11 +60,12 @@ void OBJSeedMesh::normalizeScale(float targetLength) {
 // ─────────────────────────────────────────────────────────────────────
 
 ProceduralShipGenerator::ProceduralShipGenerator() {
-    // Set default reference asset paths
+    // Set default reference asset paths — archives live in testing/,
+    // extracted content goes to assets/reference_models/
     m_assetConfig.objArchivePath     = "testing/99-intergalactic_spaceship-obj.rar";
     m_assetConfig.textureArchivePath = "testing/24-textures.zip";
-    m_assetConfig.extractedObjDir    = "models/ships";
-    m_assetConfig.extractedTextureDir = "textures";
+    m_assetConfig.extractedObjDir    = "assets/reference_models";
+    m_assetConfig.extractedTextureDir = "assets/reference_models/textures";
 }
 
 ProceduralShipGenerator::~ProceduralShipGenerator() = default;
@@ -854,6 +855,9 @@ std::string ProceduralShipGenerator::findSeedOBJ(const std::string& faction,
     // Search directories for OBJ files from reference assets
     std::vector<std::string> searchDirs = {
         m_assetConfig.extractedObjDir,
+        "assets/reference_models",
+        "../assets/reference_models",
+        "cpp_client/assets/reference_models",
         "models/ships",
         "../models/ships",
         "data/ships/obj_models"
@@ -861,9 +865,6 @@ std::string ProceduralShipGenerator::findSeedOBJ(const std::string& faction,
 
     for (const auto& dir : searchDirs) {
         // Try faction-specific match first
-        std::string pattern = dir + "/" + faction + "_" + shipClass;
-        // Simple existence check via ifstream
-        // In practice, would use directory iteration; for now, try common names
         std::vector<std::string> candidates = {
             dir + "/" + faction + "_" + shipClass + ".obj",
             dir + "/" + shipClass + ".obj"
@@ -873,6 +874,35 @@ std::string ProceduralShipGenerator::findSeedOBJ(const std::string& faction,
             if (test.good()) {
                 return candidate;
             }
+        }
+    }
+
+    // Fall back to known reference models shipped with the project.
+    // The Intergalactic Spaceship OBJ serves as a high-quality seed for
+    // smaller ship classes (frigates through cruisers).  The Vulcan Dkyr
+    // Class OBJ is a heavier capital-style mesh suited for battleships,
+    // carriers, dreadnoughts, and titans.
+    std::vector<std::string> prefixes = {
+        m_assetConfig.extractedObjDir,
+        "assets/reference_models",
+        "../assets/reference_models",
+        "cpp_client/assets/reference_models"
+    };
+
+    bool isCapital = (shipClass == "Battleship" || shipClass == "Carrier" ||
+                      shipClass == "Dreadnought" || shipClass == "Titan" ||
+                      shipClass == "Marauder");
+
+    for (const auto& prefix : prefixes) {
+        std::string path;
+        if (isCapital) {
+            path = prefix + "/Vulcan Dkyr Class/VulcanDKyrClass.obj";
+        } else {
+            path = prefix + "/Intergalactic_Spaceship-(Wavefront).obj";
+        }
+        std::ifstream test(path);
+        if (test.good()) {
+            return path;
         }
     }
 

@@ -22,15 +22,15 @@ struct FactionColors {
 
 /**
  * Ship design characteristics for enhanced procedural generation
- * Based on EVE Online faction design languages
+ * Based on faction design languages (Veyren, Solari, Aurelian, Keldari)
  */
 struct ShipDesignTraits {
     // Faction design language
     enum class DesignStyle {
-        CALDARI_BLOCKY,      // Angular, industrial, city-block architecture
-        AMARR_ORNATE,        // Golden spires, cathedral-like, vertical emphasis
-        GALLENTE_ORGANIC,    // Smooth curves, flowing forms, drone aesthetics
-        MINMATAR_ASYMMETRIC  // Irregular, exposed framework, welded-together look
+        VEYREN_BLOCKY,       // Angular, industrial, city-block architecture
+        SOLARI_ORNATE,       // Golden spires, cathedral-like, vertical emphasis
+        AURELIAN_ORGANIC,    // Smooth curves, flowing forms, drone aesthetics
+        KELDARI_ASYMMETRIC   // Irregular, exposed framework, welded-together look
     };
     
     DesignStyle style;

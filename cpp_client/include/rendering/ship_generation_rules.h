@@ -12,10 +12,10 @@ namespace eve {
  * Faction design styles for ship generation rules
  */
 enum class FactionStyle {
-    MINMATAR,    // Asymmetric, rustic, exposed framework, vertical emphasis
-    CALDARI,     // Blocky, angular, industrial, functional
-    GALLENTE,    // Organic, smooth curves, drone-focused
-    AMARR,       // Symmetric, ornate, golden spires, cathedral-like
+    KELDARI,     // Asymmetric, rustic, exposed framework, vertical emphasis
+    VEYREN,      // Blocky, angular, industrial, functional
+    AURELIAN,    // Organic, smooth curves, drone-focused
+    SOLARI,      // Symmetric, ornate, golden spires, cathedral-like
     PIRATE,      // Aggressive, modified designs
     ORE          // Utility, mining-focused
 };
@@ -93,7 +93,7 @@ public:
         std::map<std::string, int> maxPartCounts;     // Maximum count for each part type
         
         FactionRules()
-            : style(FactionStyle::CALDARI)
+            : style(FactionStyle::VEYREN)
             , requiresSymmetry(true)
             , allowsAsymmetry(false)
             , minAsymmetryFactor(0.0f)

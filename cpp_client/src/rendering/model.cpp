@@ -919,7 +919,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
     // Determine faction design style
     if (faction.find("Veyren") != std::string::npos ||
         faction.find("Core Nexus") != std::string::npos) {
-        traits.style = ShipDesignTraits::DesignStyle::CALDARI_BLOCKY;
+        traits.style = ShipDesignTraits::DesignStyle::VEYREN_BLOCKY;
         traits.isBlocky = true;
         traits.isOrganic = false;
         traits.isAsymmetric = false;
@@ -928,7 +928,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.asymmetryFactor = 0.0f;
     } else if (faction.find("Solari") != std::string::npos ||
                faction.find("Sanctum Hegemony") != std::string::npos) {
-        traits.style = ShipDesignTraits::DesignStyle::AMARR_ORNATE;
+        traits.style = ShipDesignTraits::DesignStyle::SOLARI_ORNATE;
         traits.hasSpires = true;
         traits.isBlocky = false;
         traits.isOrganic = false;
@@ -937,7 +937,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.asymmetryFactor = 0.0f;
     } else if (faction.find("Aurelian") != std::string::npos ||
                faction.find("Vanguard Republic") != std::string::npos) {
-        traits.style = ShipDesignTraits::DesignStyle::GALLENTE_ORGANIC;
+        traits.style = ShipDesignTraits::DesignStyle::AURELIAN_ORGANIC;
         traits.isOrganic = true;
         traits.isBlocky = false;
         traits.isAsymmetric = false;
@@ -946,7 +946,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.asymmetryFactor = 0.0f;
     } else if (faction.find("Keldari") != std::string::npos ||
                faction.find("Rust-Scrap") != std::string::npos) {
-        traits.style = ShipDesignTraits::DesignStyle::MINMATAR_ASYMMETRIC;
+        traits.style = ShipDesignTraits::DesignStyle::KELDARI_ASYMMETRIC;
         traits.isAsymmetric = true;
         traits.hasExposedFramework = true;
         traits.isBlocky = false;
@@ -955,7 +955,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.asymmetryFactor = 0.3f;
     } else {
         // Default traits for unknown factions
-        traits.style = ShipDesignTraits::DesignStyle::CALDARI_BLOCKY;
+        traits.style = ShipDesignTraits::DesignStyle::VEYREN_BLOCKY;
         traits.isBlocky = false;
         traits.isOrganic = false;
         traits.isAsymmetric = false;
