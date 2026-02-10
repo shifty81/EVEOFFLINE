@@ -61,6 +61,7 @@ set(SERVER_SOURCES
     src/systems/inventory_system.cpp
     src/systems/loot_system.cpp
     src/systems/insurance_system.cpp
+    src/systems/corporation_system.cpp
     src/systems/bounty_system.cpp
     src/systems/market_system.cpp
     src/systems/drone_system.cpp
@@ -101,6 +102,7 @@ set(SERVER_HEADERS
     include/systems/inventory_system.h
     include/systems/loot_system.h
     include/systems/insurance_system.h
+    include/systems/corporation_system.h
     include/systems/bounty_system.h
     include/systems/market_system.h
     include/systems/drone_system.h
@@ -203,6 +205,7 @@ if(BUILD_TESTS)
         src/systems/inventory_system.cpp
         src/systems/loot_system.cpp
         src/systems/insurance_system.cpp
+        src/systems/corporation_system.cpp
         src/systems/bounty_system.cpp
         src/systems/market_system.cpp
         src/systems/drone_system.cpp

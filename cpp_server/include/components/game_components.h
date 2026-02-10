@@ -616,6 +616,29 @@ public:
     COMPONENT_TYPE(MarketHub)
 };
 
+class Corporation : public ecs::Component {
+public:
+    std::string corp_id;
+    std::string corp_name;
+    std::string ticker;
+    std::string ceo_id;
+    float tax_rate = 0.05f;
+    std::vector<std::string> member_ids;
+    double corp_wallet = 0.0;
+
+    struct CorpHangarItem {
+        std::string item_id;
+        std::string name;
+        std::string type;
+        int quantity = 1;
+        float volume = 1.0f;
+    };
+
+    std::vector<CorpHangarItem> hangar_items;
+
+    COMPONENT_TYPE(Corporation)
+};
+
 } // namespace components
 } // namespace eve
 

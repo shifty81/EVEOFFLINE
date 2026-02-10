@@ -391,6 +391,37 @@ std::string WorldPersistence::serializeEntity(
         json << "]}";
     }
 
+    // Corporation
+    auto* corp = entity->getComponent<components::Corporation>();
+    if (corp) {
+        json << ",\"corporation_data\":{"
+             << "\"corp_id\":\"" << escapeJson(corp->corp_id) << "\""
+             << ",\"corp_name\":\"" << escapeJson(corp->corp_name) << "\""
+             << ",\"ticker\":\"" << escapeJson(corp->ticker) << "\""
+             << ",\"ceo_id\":\"" << escapeJson(corp->ceo_id) << "\""
+             << ",\"tax_rate\":" << corp->tax_rate
+             << ",\"corp_wallet\":" << corp->corp_wallet
+             << ",\"member_ids\":[";
+        bool first_mid = true;
+        for (const auto& mid : corp->member_ids) {
+            if (!first_mid) json << ",";
+            first_mid = false;
+            json << "\"" << escapeJson(mid) << "\"";
+        }
+        json << "],\"hangar_items\":[";
+        bool first_hi = true;
+        for (const auto& item : corp->hangar_items) {
+            if (!first_hi) json << ",";
+            first_hi = false;
+            json << "{\"item_id\":\"" << escapeJson(item.item_id) << "\""
+                 << ",\"name\":\"" << escapeJson(item.name) << "\""
+                 << ",\"type\":\"" << escapeJson(item.type) << "\""
+                 << ",\"quantity\":" << item.quantity
+                 << ",\"volume\":" << item.volume << "}";
+        }
+        json << "]}";
+    }
+
     // DroneBay
     auto* db = entity->getComponent<components::DroneBay>();
     if (db) {
@@ -807,6 +838,78 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
             }
         }
         entity->addComponent(std::move(lt));
+    }
+
+    // Corporation
+    std::string corp_json = extractObject(json, "corporation_data");
+    if (!corp_json.empty()) {
+        auto corp = std::make_unique<components::Corporation>();
+        corp->corp_id    = extractString(corp_json, "corp_id");
+        corp->corp_name  = extractString(corp_json, "corp_name");
+        corp->ticker     = extractString(corp_json, "ticker");
+        corp->ceo_id     = extractString(corp_json, "ceo_id");
+        corp->tax_rate   = extractFloat(corp_json, "\"tax_rate\":", 0.05f);
+        corp->corp_wallet = extractDouble(corp_json, "\"corp_wallet\":", 0.0);
+
+        // Parse member_ids string array
+        std::string mid_key = "\"member_ids\"";
+        size_t mid_pos = corp_json.find(mid_key);
+        if (mid_pos != std::string::npos) {
+            size_t arr_s = corp_json.find("[", mid_pos);
+            size_t arr_e = corp_json.find("]", arr_s);
+            if (arr_s != std::string::npos && arr_e != std::string::npos) {
+                std::string arr_content = corp_json.substr(arr_s + 1, arr_e - arr_s - 1);
+                size_t q1 = 0;
+                while ((q1 = arr_content.find("\"", q1)) != std::string::npos) {
+                    size_t q2 = arr_content.find("\"", q1 + 1);
+                    if (q2 == std::string::npos) break;
+                    corp->member_ids.push_back(arr_content.substr(q1 + 1, q2 - q1 - 1));
+                    q1 = q2 + 1;
+                }
+            }
+        }
+
+        // Parse hangar_items array
+        std::string hi_key = "\"hangar_items\"";
+        size_t hi_pos = corp_json.find(hi_key);
+        if (hi_pos != std::string::npos) {
+            size_t arr_start = corp_json.find("[", hi_pos);
+            if (arr_start != std::string::npos) {
+                int bracket_depth = 1;
+                size_t arr_end = arr_start + 1;
+                while (arr_end < corp_json.size() && bracket_depth > 0) {
+                    if (corp_json[arr_end] == '[') ++bracket_depth;
+                    else if (corp_json[arr_end] == ']') --bracket_depth;
+                    if (bracket_depth > 0) ++arr_end;
+                }
+                if (bracket_depth == 0) {
+                    std::string content = corp_json.substr(arr_start + 1, arr_end - arr_start - 1);
+                    int depth = 0;
+                    size_t obj_start = std::string::npos;
+                    for (size_t i = 0; i < content.size(); ++i) {
+                        if (content[i] == '{') {
+                            if (depth == 0) obj_start = i;
+                            ++depth;
+                        } else if (content[i] == '}') {
+                            --depth;
+                            if (depth == 0 && obj_start != std::string::npos) {
+                                std::string ij = content.substr(obj_start, i - obj_start + 1);
+                                components::Corporation::CorpHangarItem item;
+                                item.item_id  = extractString(ij, "item_id");
+                                item.name     = extractString(ij, "name");
+                                item.type     = extractString(ij, "type");
+                                item.quantity = extractInt(ij, "\"quantity\":");
+                                item.volume   = extractFloat(ij, "\"volume\":", 1.0f);
+                                corp->hangar_items.push_back(item);
+                                obj_start = std::string::npos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        entity->addComponent(std::move(corp));
     }
 
     // DroneBay
