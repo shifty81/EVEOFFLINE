@@ -1,0 +1,15 @@
+.git
+.github
+build
+build_vs
+cpp_client
+docs
+testing
+archive
+*.pdf
+*.zip
+*.rar
+*.txt
+*.md
+*.bat
+*.py

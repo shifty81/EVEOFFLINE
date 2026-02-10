@@ -68,5 +68,14 @@ docs: ## Show documentation location
 	@echo ""
 	@ls -1 docs/*.md 2>/dev/null || true
 
+.PHONY: test
+test: test-server ## Run all tests
+
+.PHONY: test-server
+test-server: ## Build and run C++ server tests
+	@mkdir -p cpp_server/build
+	cd cpp_server/build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTS=ON -DUSE_STEAM_SDK=OFF && cmake --build . --config Release --target test_systems -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+	cd cpp_server/build && ./bin/test_systems
+
 .PHONY: all
 all: clean build ## Clean and build everything
