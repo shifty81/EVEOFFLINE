@@ -6,12 +6,14 @@
 #include "core/entity.h"
 #include "core/embedded_server.h"
 #include "core/session_manager.h"
+#include "core/solar_system_scene.h"
 #include "ui/input_handler.h"
 #include "ui/ui_manager.h"
 #include "ui/entity_picker.h"
 #include "ui/inventory_panel.h"
 #include "ui/fitting_panel.h"
 #include "ui/market_panel.h"
+#include "ui/overview_panel.h"
 #include <GLFW/glfw3.h>
 #include <imgui.h>
 #include <iostream>
@@ -48,6 +50,7 @@ Application::Application(const std::string& title, int width, int height)
     m_sessionManager = std::make_unique<SessionManager>();
     m_uiManager = std::make_unique<UI::UIManager>();
     m_entityPicker = std::make_unique<UI::EntityPicker>();
+    m_solarSystem = std::make_unique<SolarSystemScene>();
     
     // Initialize
     initialize();
@@ -169,6 +172,16 @@ void Application::initialize() {
     // Spawn local player entity so ship is always visible (PVE mode)
     spawnLocalPlayerEntity();
     spawnDemoNPCEntities();
+    
+    // Load the solar system (with sun, planets, stations etc.)
+    m_solarSystem->loadTestSystem();
+    
+    // Set up sun rendering from solar system data
+    const auto* sun = m_solarSystem->getSun();
+    if (sun) {
+        m_renderer->setSunState(sun->position, sun->lightColor, sun->radius);
+        std::cout << "[PVE] Sun configured at origin with radius " << sun->radius << "m" << std::endl;
+    }
     
     // Set initial camera to orbit around player
     m_camera->setDistance(200.0f);
@@ -317,6 +330,39 @@ void Application::setupUICallbacks() {
     });
     
     std::cout << "  - Response callbacks wired for all panels" << std::endl;
+    
+    // === Wire up overview panel movement callbacks ===
+    auto* overviewPanel = m_uiManager->GetOverviewPanel();
+    if (overviewPanel) {
+        overviewPanel->SetApproachCallback([this](const std::string& entityId) {
+            commandApproach(entityId);
+        });
+        overviewPanel->SetOrbitCallback([this](const std::string& entityId, int distance) {
+            commandOrbit(entityId, static_cast<float>(distance));
+        });
+        overviewPanel->SetKeepAtRangeCallback([this](const std::string& entityId, int distance) {
+            commandKeepAtRange(entityId, static_cast<float>(distance));
+        });
+        overviewPanel->SetAlignToCallback([this](const std::string& entityId) {
+            commandAlignTo(entityId);
+        });
+        overviewPanel->SetWarpToCallback([this](const std::string& entityId, int distance) {
+            commandWarpTo(entityId);
+            std::cout << "[Warp] Warping to " << entityId << " at " << distance << "m" << std::endl;
+        });
+        overviewPanel->SetLockTargetCallback([this](const std::string& entityId) {
+            targetEntity(entityId, true);
+        });
+        overviewPanel->SetLookAtCallback([this](const std::string& entityId) {
+            // Look At: point camera toward entity
+            auto entity = m_gameClient->getEntityManager().getEntity(entityId);
+            if (entity) {
+                m_camera->setTarget(entity->getPosition());
+            }
+        });
+        std::cout << "  - Overview panel movement callbacks wired" << std::endl;
+    }
+    
     std::cout << "UI callbacks setup complete" << std::endl;
 }
 
@@ -363,6 +409,13 @@ void Application::update(float deltaTime) {
         
         // Camera follows player ship
         m_camera->setTarget(playerEntity->getPosition());
+        
+        // Update overview panel with celestial objects from solar system
+        auto* overviewPanel = m_uiManager->GetOverviewPanel();
+        if (overviewPanel && m_solarSystem) {
+            overviewPanel->UpdateCelestials(m_solarSystem->getCelestials(),
+                                            playerEntity->getPosition());
+        }
     }
 }
 

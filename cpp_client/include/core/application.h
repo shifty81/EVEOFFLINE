@@ -15,6 +15,7 @@ class InputHandler;
 class Camera;
 class EmbeddedServer;
 class SessionManager;
+class SolarSystemScene;
 
 } // namespace eve
 
@@ -221,6 +222,7 @@ private:
     std::unique_ptr<SessionManager> m_sessionManager;
     std::unique_ptr<UI::UIManager> m_uiManager;
     std::unique_ptr<UI::EntityPicker> m_entityPicker;
+    std::unique_ptr<SolarSystemScene> m_solarSystem;
 
     bool m_running;
     float m_lastFrameTime;
