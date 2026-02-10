@@ -1,10 +1,9 @@
 /**
- * Test CapacitorSystem, ShieldRechargeSystem, WeaponSystem, and BountySystem
+ * Test all ECS systems for the C++ server
  * 
- * Tests the three new dedicated ECS systems for the C++ server:
- * - CapacitorSystem: capacitor recharge and consumption
- * - ShieldRechargeSystem: passive shield regeneration
- * - WeaponSystem: weapon cooldowns, auto-fire, capacitor cost, damage cascade
+ * Tests dedicated ECS systems including Capacitor, Shield, Weapon,
+ * Targeting, Wormhole, Fleet, Mission, Skill, Module, Inventory,
+ * Loot, Drone, Insurance, Bounty, Market, and more.
  */
 
 #include "ecs/world.h"
@@ -26,6 +25,7 @@
 #include "systems/drone_system.h"
 #include "systems/insurance_system.h"
 #include "systems/bounty_system.h"
+#include "systems/market_system.h"
 #include "data/world_persistence.h"
 #include "data/npc_database.h"
 #include "systems/movement_system.h"
@@ -3457,6 +3457,110 @@ void testBountyNonexistentPlayer() {
     assertTrue(approxEqual(static_cast<float>(bountySys.getTotalBounty("fake_player")), 0.0f), "Zero bounty for nonexistent");
 }
 
+// ==================== MarketSystem Tests ====================
+
+void testMarketPlaceSellOrder() {
+    std::cout << "\n=== Market Place Sell Order ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller = world.createEntity("seller_1");
+    auto* pc = addComp<components::Player>(seller);
+    pc->isk = 100000.0;
+
+    std::string oid = marketSys.placeSellOrder("station_1", "seller_1", "tritanium", "Tritanium", 100, 5.0);
+    assertTrue(!oid.empty(), "Sell order created");
+    assertTrue(marketSys.getOrderCount("station_1") == 1, "One order on station");
+    assertTrue(pc->isk < 100000.0, "Broker fee deducted from seller");
+}
+
+void testMarketBuyFromMarket() {
+    std::cout << "\n=== Market Buy From Market ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller = world.createEntity("seller_1");
+    auto* seller_pc = addComp<components::Player>(seller);
+    seller_pc->isk = 100000.0;
+
+    auto* buyer = world.createEntity("buyer_1");
+    auto* buyer_pc = addComp<components::Player>(buyer);
+    buyer_pc->isk = 100000.0;
+
+    marketSys.placeSellOrder("station_1", "seller_1", "tritanium", "Tritanium", 100, 5.0);
+
+    int bought = marketSys.buyFromMarket("station_1", "buyer_1", "tritanium", 50);
+    assertTrue(bought == 50, "Bought 50 units");
+    assertTrue(buyer_pc->isk < 100000.0, "Buyer ISK decreased");
+    assertTrue(seller_pc->isk > 100000.0 - 100000.0 * 0.02, "Seller ISK increased from sale");
+}
+
+void testMarketPriceQueries() {
+    std::cout << "\n=== Market Price Queries ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller1 = world.createEntity("seller_1");
+    auto* pc1 = addComp<components::Player>(seller1);
+    pc1->isk = 1000000.0;
+
+    auto* seller2 = world.createEntity("seller_2");
+    auto* pc2 = addComp<components::Player>(seller2);
+    pc2->isk = 1000000.0;
+
+    auto* buyer1 = world.createEntity("buyer_1");
+    auto* bpc = addComp<components::Player>(buyer1);
+    bpc->isk = 1000000.0;
+
+    marketSys.placeSellOrder("station_1", "seller_1", "tritanium", "Tritanium", 100, 5.0);
+    marketSys.placeSellOrder("station_1", "seller_2", "tritanium", "Tritanium", 50, 4.5);
+    marketSys.placeBuyOrder("station_1", "buyer_1", "tritanium", "Tritanium", 200, 4.0);
+
+    double lowest = marketSys.getLowestSellPrice("station_1", "tritanium");
+    assertTrue(approxEqual(static_cast<float>(lowest), 4.5f), "Lowest sell is 4.5");
+
+    double highest = marketSys.getHighestBuyPrice("station_1", "tritanium");
+    assertTrue(approxEqual(static_cast<float>(highest), 4.0f), "Highest buy is 4.0");
+
+    double no_item = marketSys.getLowestSellPrice("station_1", "nonexistent");
+    assertTrue(no_item < 0, "No sell price for nonexistent item");
+}
+
+void testMarketOrderExpiry() {
+    std::cout << "\n=== Market Order Expiry ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller = world.createEntity("seller_1");
+    auto* pc = addComp<components::Player>(seller);
+    pc->isk = 1000000.0;
+
+    marketSys.placeSellOrder("station_1", "seller_1", "tritanium", "Tritanium", 100, 5.0);
+    assertTrue(marketSys.getOrderCount("station_1") == 1, "One active order");
+
+    // Set order duration
+    hub->orders[0].duration_remaining = 5.0f;
+
+    marketSys.update(6.0f);
+    assertTrue(marketSys.getOrderCount("station_1") == 0, "Order expired and removed");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -3465,7 +3569,7 @@ int main() {
     std::cout << "Capacitor, Shield, Weapon, Targeting," << std::endl;
     std::cout << "ShipDB, WormholeDB, Wormhole, Fleet," << std::endl;
     std::cout << "Mission, Skill, Module, Inventory," << std::endl;
-    std::cout << "Loot, NpcDB, Drone, Insurance, Bounty," << std::endl;
+    std::cout << "Loot, NpcDB, Drone, Insurance, Bounty, Market," << std::endl;
     std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
     std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
@@ -3633,6 +3737,12 @@ int main() {
     testBountyMultipleKills();
     testBountyLedgerRecordLimit();
     testBountyNonexistentPlayer();
+
+    // Market system tests
+    testMarketPlaceSellOrder();
+    testMarketBuyFromMarket();
+    testMarketPriceQueries();
+    testMarketOrderExpiry();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

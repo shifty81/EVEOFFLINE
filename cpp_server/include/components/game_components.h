@@ -590,6 +590,32 @@ public:
     COMPONENT_TYPE(BountyLedger)
 };
 
+/**
+ * @brief Market order tracking for stations
+ */
+class MarketHub : public ecs::Component {
+public:
+    struct Order {
+        std::string order_id;
+        std::string item_id;
+        std::string item_name;
+        std::string owner_id;       // entity that placed the order
+        bool is_buy_order = false;   // true = buy, false = sell
+        double price_per_unit = 0.0;
+        int quantity = 1;
+        int quantity_remaining = 1;
+        float duration_remaining = -1.0f;  // seconds, -1 = permanent
+        bool fulfilled = false;
+    };
+
+    std::string station_id;
+    std::vector<Order> orders;
+    double broker_fee_rate = 0.02;  // 2% broker fee
+    double sales_tax_rate = 0.04;   // 4% sales tax
+
+    COMPONENT_TYPE(MarketHub)
+};
+
 } // namespace components
 } // namespace eve
 
