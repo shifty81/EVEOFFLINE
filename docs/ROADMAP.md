@@ -695,9 +695,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] CI/CD pipeline (GitHub Actions) — Server and Client workflows
 - [x] Automated testing on PR — Server tests (362 assertions) run on push/PR
 - [x] Docker containerization — Multi-stage Dockerfile for dedicated server
+- [x] Crash reporting and logging — Structured Logger with levels, file output, and crash-safe exception handling
+- [x] Server monitoring and analytics — ServerMetrics tracking tick timing, entity/player counts, and uptime
 - [ ] Cloud deployment guides (AWS, GCP, Azure)
-- [ ] Server monitoring and analytics
-- [ ] Crash reporting and logging
 
 #### Community & Modding
 - [ ] Mod manager utility

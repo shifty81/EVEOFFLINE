@@ -26,7 +26,7 @@
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **9 major gameplay systems** fully implemented (including Incursions)
-- **95+ test functions** all passing
+- **95+ test functions** all passing (415 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture
@@ -120,8 +120,9 @@ From ROADMAP.md "In Progress" section:
 - ✅ CI/CD pipeline — GitHub Actions for server (build + 362 tests) and client
 - ✅ Automated testing on PR — Server tests run on push and pull requests
 - ✅ Docker containerization — Multi-stage Dockerfile for dedicated server
+- ✅ Crash reporting and logging — Structured Logger with levels (DEBUG–FATAL), file output, and exception handling in main()
+- ✅ Server monitoring and analytics — ServerMetrics tracking tick timing, entity/player counts, uptime, periodic stats logging
 - Cloud deployment guides
-- Server monitoring and analytics
 
 #### 3.3 Additional Game Systems
 - PvP toggle option (optional for those who want it)
@@ -391,4 +392,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 10, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Second HAC variants added (Muninn, Eagle, Deimos, Sacrilege). Tech II EWAR and Logistics modules verified complete. 102 ships, 159+ modules. Ready for Phase 8 planning.*
+*Status: Quick Wins, Medium-Term Tasks complete. Logging, monitoring, and crash reporting added. 102 ships, 159+ modules, 415 test assertions. Ready for Phase 8 planning.*

@@ -12,6 +12,7 @@
 #include "game_session.h"
 #include "systems/targeting_system.h"
 #include "data/world_persistence.h"
+#include "utils/server_metrics.h"
 
 namespace eve {
 
@@ -42,6 +43,9 @@ public:
     // World persistence
     bool saveWorld();
     bool loadWorld();
+
+    // Metrics
+    const utils::ServerMetrics& getMetrics() const { return metrics_; }
     
 private:
     std::unique_ptr<ServerConfig> config_;
@@ -51,6 +55,7 @@ private:
     std::unique_ptr<ecs::World> game_world_;
     std::unique_ptr<GameSession> game_session_;
     data::WorldPersistence world_persistence_;
+    utils::ServerMetrics metrics_;
     systems::TargetingSystem* targeting_system_ = nullptr;
     
     std::atomic<bool> running_;

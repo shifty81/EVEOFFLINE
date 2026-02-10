@@ -7,6 +7,7 @@
 #include "systems/capacitor_system.h"
 #include "systems/shield_recharge_system.h"
 #include "systems/weapon_system.h"
+#include "utils/logger.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -19,8 +20,8 @@ Server::Server(const std::string& config_path)
     
     config_ = std::make_unique<ServerConfig>();
     if (!config_->loadFromFile(config_path)) {
-        std::cerr << "Warning: Could not load config from " << config_path 
-                  << ", using defaults" << std::endl;
+        utils::Logger::instance().warn(
+            "Could not load config from " + config_path + ", using defaults");
     }
     
     // Initialize game world
@@ -45,16 +46,22 @@ void Server::initializeGameWorld() {
     game_world_->addSystem(std::make_unique<systems::WeaponSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::CombatSystem>(game_world_.get()));
     
-    std::cout << "Game world initialized with " << game_world_->getEntityCount() << " entities" << std::endl;
-    std::cout << "Systems: Capacitor, ShieldRecharge, AI, Targeting, Movement, Weapon, Combat" << std::endl;
+    auto& log = utils::Logger::instance();
+    log.info("Game world initialized with " +
+             std::to_string(game_world_->getEntityCount()) + " entities");
+    log.info("Systems: Capacitor, ShieldRecharge, AI, Targeting, Movement, Weapon, Combat");
 }
 
 bool Server::initialize() {
-    std::cout << "==================================" << std::endl;
-    std::cout << "EVE OFFLINE Dedicated Server" << std::endl;
-    std::cout << "==================================" << std::endl;
-    std::cout << "Version: 1.0.0" << std::endl;
-    std::cout << std::endl;
+    auto& log = utils::Logger::instance();
+
+    // Initialize file logging using the configured log_path
+    log.init(config_->log_path);
+
+    log.info("==================================");
+    log.info("EVE OFFLINE Dedicated Server");
+    log.info("==================================");
+    log.info("Version: 1.0.0");
     
     // Initialize TCP server
     tcp_server_ = std::make_unique<network::TCPServer>(
@@ -64,27 +71,28 @@ bool Server::initialize() {
     );
     
     if (!tcp_server_->initialize()) {
-        std::cerr << "Failed to initialize TCP server" << std::endl;
+        log.error("Failed to initialize TCP server");
         return false;
     }
     
-    std::cout << "Server listening on " << config_->host << ":" << config_->port << std::endl;
+    log.info("Server listening on " + config_->host + ":" +
+             std::to_string(config_->port));
     
     // Initialize Steam if enabled
     if (config_->use_steam) {
         steam_auth_ = std::make_unique<auth::SteamAuth>();
         if (steam_auth_->initialize(config_->steam_app_id)) {
-            std::cout << "Steam integration enabled" << std::endl;
+            log.info("Steam integration enabled");
             
             if (config_->steam_server_browser) {
                 steam_auth_->registerServer(
                     config_->server_name,
                     "Space"
                 );
-                std::cout << "Registered with Steam server browser" << std::endl;
+                log.info("Registered with Steam server browser");
             }
         } else {
-            std::cout << "Warning: Steam initialization failed, continuing without Steam" << std::endl;
+            log.warn("Steam initialization failed, continuing without Steam");
             config_->use_steam = false;
         }
     }
@@ -93,23 +101,23 @@ bool Server::initialize() {
     if (config_->use_whitelist) {
         whitelist_ = std::make_unique<auth::Whitelist>();
         if (whitelist_->loadFromFile("config/whitelist.json")) {
-            std::cout << "Whitelist enabled with " 
-                     << whitelist_->getSteamNames().size() << " Steam names" << std::endl;
+            log.info("Whitelist enabled with " +
+                     std::to_string(whitelist_->getSteamNames().size()) +
+                     " Steam names");
         } else {
-            std::cout << "Warning: Could not load whitelist, creating empty whitelist" << std::endl;
+            log.warn("Could not load whitelist, creating empty whitelist");
         }
     }
     
-    std::cout << std::endl;
-    std::cout << "Server Configuration:" << std::endl;
-    std::cout << "  Server Name: " << config_->server_name << std::endl;
-    std::cout << "  Public Server: " << (config_->public_server ? "Yes" : "No") << std::endl;
-    std::cout << "  Persistent World: " << (config_->persistent_world ? "Yes" : "No") << std::endl;
-    std::cout << "  Whitelist: " << (config_->use_whitelist ? "Enabled" : "Disabled") << std::endl;
-    std::cout << "  Steam Integration: " << (config_->use_steam ? "Enabled" : "Disabled") << std::endl;
-    std::cout << "  Max Players: " << config_->max_connections << std::endl;
-    std::cout << "  Tick Rate: " << config_->tick_rate << " Hz" << std::endl;
-    std::cout << std::endl;
+    log.info("Server Configuration:");
+    log.info("  Server Name: " + config_->server_name);
+    log.info("  Public Server: " + std::string(config_->public_server ? "Yes" : "No"));
+    log.info("  Persistent World: " + std::string(config_->persistent_world ? "Yes" : "No"));
+    log.info("  Whitelist: " + std::string(config_->use_whitelist ? "Enabled" : "Disabled"));
+    log.info("  Steam Integration: " + std::string(config_->use_steam ? "Enabled" : "Disabled"));
+    log.info("  Max Players: " + std::to_string(config_->max_connections));
+    log.info("  Tick Rate: " + std::to_string(static_cast<int>(config_->tick_rate)) + " Hz");
+    log.info("  Log Path: " + config_->log_path);
     
     // Initialize game world and systems
     initializeGameWorld();
@@ -125,16 +133,15 @@ bool Server::initialize() {
 
 void Server::start() {
     if (running_) {
-        std::cerr << "Server is already running" << std::endl;
+        utils::Logger::instance().warn("Server is already running");
         return;
     }
     
     running_ = true;
     tcp_server_->start();
     
-    std::cout << "Server started! Ready for connections." << std::endl;
-    std::cout << "Press Ctrl+C to stop the server." << std::endl;
-    std::cout << std::endl;
+    utils::Logger::instance().info("Server started! Ready for connections.");
+    utils::Logger::instance().info("Press Ctrl+C to stop the server.");
 }
 
 void Server::stop() {
@@ -142,7 +149,9 @@ void Server::stop() {
         return;
     }
     
-    std::cout << std::endl << "Stopping server..." << std::endl;
+    auto& log = utils::Logger::instance();
+    log.info("Stopping server...");
+    log.info(metrics_.summary());
     running_ = false;
     
     if (tcp_server_) {
@@ -153,7 +162,8 @@ void Server::stop() {
         steam_auth_->shutdown();
     }
     
-    std::cout << "Server stopped." << std::endl;
+    log.info("Server stopped.");
+    log.shutdown();
 }
 
 void Server::run() {
@@ -170,6 +180,7 @@ void Server::mainLoop() {
     
     while (running_) {
         auto frame_start = std::chrono::steady_clock::now();
+        metrics_.recordTickStart();
         
         // Update game world (ECS systems)
         game_world_->update(tick_duration);
@@ -192,6 +203,13 @@ void Server::mainLoop() {
                 last_save_time = now;
             }
         }
+
+        metrics_.recordTickEnd();
+
+        // Update entity / player counters and emit periodic stats
+        metrics_.setEntityCount(static_cast<int>(game_world_->getEntityCount()));
+        metrics_.setPlayerCount(getPlayerCount());
+        metrics_.logSummaryIfDue(60.0);
         
         // Sleep for remaining tick time
         auto frame_end = std::chrono::steady_clock::now();
@@ -232,14 +250,14 @@ bool Server::saveWorld() {
         ret = mkdir(config_->save_path.c_str(), 0755);
 #endif
         if (ret != 0) {
-            std::cerr << "[AutoSave] Failed to create save directory: "
-                      << config_->save_path << std::endl;
+            utils::Logger::instance().error(
+                "[AutoSave] Failed to create save directory: " + config_->save_path);
             return false;
         }
     }
 
     std::string filepath = config_->save_path + "/world_state.json";
-    std::cout << "[AutoSave] Saving world state..." << std::endl;
+    utils::Logger::instance().info("[AutoSave] Saving world state...");
     return world_persistence_.saveWorld(game_world_.get(), filepath);
 }
 

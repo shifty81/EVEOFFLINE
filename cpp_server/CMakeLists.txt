@@ -42,6 +42,8 @@ set(SERVER_SOURCES
     src/auth/steam_auth.cpp
     src/auth/whitelist.cpp
     src/utils/name_generator.cpp
+    src/utils/logger.cpp
+    src/utils/server_metrics.cpp
     src/ecs/entity.cpp
     src/ecs/world.cpp
     src/systems/movement_system.cpp
@@ -67,6 +69,8 @@ set(SERVER_HEADERS
     include/auth/steam_auth.h
     include/auth/whitelist.h
     include/utils/name_generator.h
+    include/utils/logger.h
+    include/utils/server_metrics.h
     include/ecs/component.h
     include/ecs/entity.h
     include/ecs/system.h
@@ -173,6 +177,8 @@ if(BUILD_TESTS)
         src/systems/wormhole_system.cpp
         src/systems/fleet_system.cpp
         src/data/world_persistence.cpp
+        src/utils/logger.cpp
+        src/utils/server_metrics.cpp
     )
 
     add_executable(test_systems
