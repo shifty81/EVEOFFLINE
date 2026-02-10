@@ -236,8 +236,8 @@ void ParticleSystem::createWarpTunnel(const glm::vec3& position, const glm::vec3
         glm::vec3 perpendicular2 = glm::cross(normalized, perpendicular1);
         
         p.position = position + normalized * distance + 
-                     perpendicular1 * (radius * cos(angle)) +
-                     perpendicular2 * (radius * sin(angle));
+                     perpendicular1 * (radius * std::cos(angle)) +
+                     perpendicular2 * (radius * std::sin(angle));
         p.velocity = normalized * randomFloat(5.0f, 15.0f);
         p.color = glm::vec4(0.5f, 0.5f, 1.0f, 0.8f); // Blue warp color
         p.life = randomFloat(1.0f, 2.0f);

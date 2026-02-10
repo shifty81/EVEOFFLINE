@@ -124,9 +124,9 @@ PolyFace extrudeFace(const PolyFace& source, float distance,
 
     // Build a coordinate frame: the extrusion direction is the axis
     // along which vertices are NOT scaled.  Only the cross-section
-    // (perpendicular) components are scaled, matching the reference
-    // project's approach where X/Z are scaled but Y (the extrusion
-    // axis) is left unchanged.  This prevents compounding centroid
+    // (perpendicular) components are scaled.  With +Z as the hull
+    // forward axis, X and Y (the cross-section) are scaled while Z
+    // (the extrusion axis) is left unchanged.  This prevents compounding centroid
     // drift that produces "squiggly" hulls.
     glm::vec3 dirN = glm::normalize(dir);
 
@@ -513,9 +513,10 @@ TriangulatedMesh buildSegmentedHull(int sides, int segments,
                                     const std::vector<float>& radiusMultipliers,
                                     float scaleX, float scaleZ,
                                     const glm::vec3& color) {
-    // The hull is built along the +Y axis (forward direction),
-    // following the reference project's coordinate convention.
-    glm::vec3 fwd(0.0f, 1.0f, 0.0f);
+    // The hull is built along the +Z axis (forward direction),
+    // matching the game's coordinate convention where +Z is forward,
+    // +Y is up, and rotation happens around Y.
+    glm::vec3 fwd(0.0f, 0.0f, 1.0f);
     glm::vec3 centre(0.0f);
 
     PolyFace baseFace = generatePolygonFace(sides, baseRadius, centre, fwd,

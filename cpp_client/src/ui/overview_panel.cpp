@@ -163,7 +163,7 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
         EVEColors::ACCENT_DIM[2], 0.9f));
     
     ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | 
-                                           ImGuiSelectableFlags_AllowItemOverlap;
+                                           ImGuiSelectableFlags_AllowOverlap;
     
     if (ImGui::Selectable(entry.name.c_str(), isSelected, selectableFlags, ImVec2(0, 0))) {
         // Single click - select entity
