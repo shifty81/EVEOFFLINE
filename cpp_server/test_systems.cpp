@@ -621,25 +621,25 @@ void testShipDatabaseCapitalShips() {
     }
     
     // Verify capital ships are loaded
-    const data::ShipTemplate* archon = db.getShip("archon");
-    if (archon) {
-        assertTrue(archon->name == "Archon", "Archon name correct");
-        assertTrue(archon->ship_class == "Carrier", "Archon class is Carrier");
-        assertTrue(archon->race == "Solari", "Archon race is Solari");
-        assertTrue(archon->hull_hp > 10000.0f, "Archon has high hull HP");
-        assertTrue(archon->armor_hp > 50000.0f, "Archon has high armor HP");
+    const data::ShipTemplate* solarius = db.getShip("solarius");
+    if (solarius) {
+        assertTrue(solarius->name == "Solarius", "Solarius name correct");
+        assertTrue(solarius->ship_class == "Carrier", "Solarius class is Carrier");
+        assertTrue(solarius->race == "Solari", "Solarius race is Solari");
+        assertTrue(solarius->hull_hp > 10000.0f, "Solarius has high hull HP");
+        assertTrue(solarius->armor_hp > 50000.0f, "Solarius has high armor HP");
     } else {
-        assertTrue(false, "Archon carrier found in database");
+        assertTrue(false, "Solarius carrier found in database");
     }
     
     // Verify titan is loaded
-    const data::ShipTemplate* avatar = db.getShip("avatar");
-    if (avatar) {
-        assertTrue(avatar->name == "Avatar", "Avatar name correct");
-        assertTrue(avatar->ship_class == "Titan", "Avatar class is Titan");
-        assertTrue(avatar->hull_hp > 100000.0f, "Avatar has very high hull HP");
+    const data::ShipTemplate* empyrean = db.getShip("empyrean");
+    if (empyrean) {
+        assertTrue(empyrean->name == "Empyrean", "Empyrean name correct");
+        assertTrue(empyrean->ship_class == "Titan", "Empyrean class is Titan");
+        assertTrue(empyrean->hull_hp > 100000.0f, "Empyrean has very high hull HP");
     } else {
-        assertTrue(false, "Avatar titan found in database");
+        assertTrue(false, "Empyrean titan found in database");
     }
     
     // Verify multiple ship categories loaded
@@ -649,13 +649,13 @@ void testShipDatabaseCapitalShips() {
     bool hasMarauder = false, hasIndustrial = false;
     bool hasInterdictor = false, hasStealthBomber = false;
     for (const auto& id : ids) {
-        if (id == "archon") hasCapital = true;
-        if (id == "tempest") hasBattleship = true;
+        if (id == "solarius") hasCapital = true;
+        if (id == "gale") hasBattleship = true;
         if (id == "fang") hasFrigate = true;
         if (id == "wanderer") hasTech2Cruiser = true;
-        if (id == "procurer") hasMiningBarge = true;
+        if (id == "ironbore") hasMiningBarge = true;
         if (id == "ironheart") hasMarauder = true;
-        if (id == "badger") hasIndustrial = true;
+        if (id == "drifthauler") hasIndustrial = true;
         if (id == "gripshard") hasInterdictor = true;
         if (id == "shadowfang") hasStealthBomber = true;
     }
@@ -706,10 +706,10 @@ void testShipDatabaseMarauders() {
         assertTrue(majeste->race == "Aurelian", "Majeste race is Aurelian");
     }
     
-    const data::ShipTemplate* archon_prime = db.getShip("archon_prime");
-    assertTrue(archon_prime != nullptr, "Archon Prime marauder found in database");
-    if (archon_prime) {
-        assertTrue(archon_prime->race == "Solari", "Archon Prime race is Solari");
+    const data::ShipTemplate* solarius_prime = db.getShip("solarius_prime");
+    assertTrue(solarius_prime != nullptr, "Solarius Prime marauder found in database");
+    if (solarius_prime) {
+        assertTrue(solarius_prime->race == "Solari", "Solarius Prime race is Solari");
     }
 }
 
@@ -874,7 +874,7 @@ void testWormholeDatabaseGetClass() {
         assertTrue(c1->wormhole_class == 1, "C1 wormhole class is 1");
         assertTrue(c1->difficulty == "easy", "C1 difficulty is easy");
         assertTrue(c1->max_ship_class == "Battlecruiser", "C1 max ship is Battlecruiser");
-        assertTrue(!c1->sleeper_spawns.empty(), "C1 has sleeper spawns");
+        assertTrue(!c1->dormant_spawns.empty(), "C1 has dormant spawns");
         assertTrue(c1->salvage_value_multiplier > 0.0f, "C1 has salvage multiplier");
     } else {
         assertTrue(false, "C1 wormhole class found");
@@ -1038,14 +1038,14 @@ void testSolarSystemComponent() {
     solar->system_name = "J123456";
     solar->wormhole_class = 3;
     solar->effect_name = "magnetar";
-    solar->sleepers_spawned = false;
+    solar->dormants_spawned = false;
     
     assertTrue(solar->wormhole_class == 3, "SolarSystem wormhole class set correctly");
     assertTrue(solar->effect_name == "magnetar", "SolarSystem effect set correctly");
-    assertTrue(!solar->sleepers_spawned, "Sleepers not yet spawned");
+    assertTrue(!solar->dormants_spawned, "Dormants not yet spawned");
     
-    solar->sleepers_spawned = true;
-    assertTrue(solar->sleepers_spawned, "Sleepers marked as spawned");
+    solar->dormants_spawned = true;
+    assertTrue(solar->dormants_spawned, "Dormants marked as spawned");
 }
 
 // ==================== FleetSystem Tests ====================
@@ -1850,7 +1850,7 @@ void testSerializeDeserializeWormholeAndSolarSystem() {
     ss->system_name = "J123456";
     ss->wormhole_class = 3;
     ss->effect_name = "magnetar";
-    ss->sleepers_spawned = true;
+    ss->dormants_spawned = true;
     entity->addComponent(std::move(ss));
 
     auto* wh_entity = world.createEntity("wh_conn_1");
@@ -1879,7 +1879,7 @@ void testSerializeDeserializeWormholeAndSolarSystem() {
     assertTrue(lss->system_id == "j123456", "System ID preserved");
     assertTrue(lss->wormhole_class == 3, "Wormhole class preserved");
     assertTrue(lss->effect_name == "magnetar", "Effect name preserved");
-    assertTrue(lss->sleepers_spawned == true, "Sleepers spawned preserved");
+    assertTrue(lss->dormants_spawned == true, "Dormants spawned preserved");
 
     auto* lwh_entity = world2.getEntity("wh_conn_1");
     assertTrue(lwh_entity != nullptr, "WormholeConnection entity loaded");

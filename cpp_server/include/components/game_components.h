@@ -94,8 +94,8 @@ class Ship : public ecs::Component {
 public:
     std::string ship_type = "Frigate";
     std::string ship_class = "Frigate";
-    std::string ship_name = "Rifter";
-    std::string race = "Minmatar";
+    std::string ship_name = "Fang";
+    std::string race = "Keldari";
     
     // Fitting resources
     float cpu = 0.0f;
@@ -190,7 +190,7 @@ public:
  */
 class Faction : public ecs::Component {
 public:
-    std::string faction_name = "Neutral";  // Caldari, Gallente, Amarr, Minmatar, Serpentis, etc.
+    std::string faction_name = "Neutral";  // Veyren, Aurelian, Solari, Keldari, Venom Syndicate, etc.
     std::map<std::string, float> standings;  // faction_name: standing (-10 to +10)
     
     COMPONENT_TYPE(Faction)
@@ -283,7 +283,7 @@ public:
  * @brief Solar system properties for wormhole space
  *
  * Tracks the wormhole class (C1-C6), active system-wide effects,
- * and whether sleeper NPCs have already been spawned.
+ * and whether dormant NPCs have already been spawned.
  */
 class SolarSystem : public ecs::Component {
 public:
@@ -291,7 +291,7 @@ public:
     std::string system_name;
     int wormhole_class = 0;               // 0 = k-space, 1-6 = wormhole class
     std::string effect_name;              // e.g. "magnetar", "pulsar", "" for none
-    bool sleepers_spawned = false;
+    bool dormants_spawned = false;
     
     COMPONENT_TYPE(SolarSystem)
 };

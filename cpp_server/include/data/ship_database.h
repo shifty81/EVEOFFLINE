@@ -19,7 +19,7 @@ struct ShipTemplate {
     std::string id;
     std::string name;
     std::string ship_class;   // e.g. "Frigate", "Cruiser"
-    std::string race;         // e.g. "Minmatar", "Caldari"
+    std::string race;         // e.g. "Keldari", "Veyren"
     std::string description;
 
     // Health pools

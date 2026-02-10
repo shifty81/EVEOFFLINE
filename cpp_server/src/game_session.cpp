@@ -482,10 +482,10 @@ std::string GameSession::createPlayerEntity(const std::string& player_id,
 
     // Ship info
     auto ship = std::make_unique<components::Ship>();
-    ship->ship_name  = tmpl ? tmpl->name       : "Rifter";
+    ship->ship_name  = tmpl ? tmpl->name       : "Fang";
     ship->ship_class = tmpl ? tmpl->ship_class  : "Frigate";
-    ship->ship_type  = tmpl ? tmpl->name        : "Rifter";
-    ship->race       = tmpl ? tmpl->race        : "Minmatar";
+    ship->ship_type  = tmpl ? tmpl->name        : "Fang";
+    ship->race       = tmpl ? tmpl->race        : "Keldari";
     ship->cpu_max    = tmpl ? tmpl->cpu          : 125.0f;
     ship->powergrid_max = tmpl ? tmpl->powergrid : 37.0f;
     ship->signature_radius    = tmpl ? tmpl->signature_radius    : 35.0f;
@@ -505,22 +505,22 @@ std::string GameSession::createPlayerEntity(const std::string& player_id,
 
     // Faction
     auto faction = std::make_unique<components::Faction>();
-    faction->faction_name = tmpl ? tmpl->race : "Minmatar";
+    faction->faction_name = tmpl ? tmpl->race : "Keldari";
     entity->addComponent(std::move(faction));
 
     // Standings - Initialize with default faction standings
     auto standings = std::make_unique<components::Standings>();
     // Set default standings for major factions (-10 to +10)
     // Player starts neutral with most factions
-    standings->faction_standings["Caldari"] = 0.0f;
-    standings->faction_standings["Gallente"] = 0.0f;
-    standings->faction_standings["Amarr"] = 0.0f;
-    standings->faction_standings["Minmatar"] = 0.0f;
+    standings->faction_standings["Veyren"] = 0.0f;
+    standings->faction_standings["Aurelian"] = 0.0f;
+    standings->faction_standings["Solari"] = 0.0f;
+    standings->faction_standings["Keldari"] = 0.0f;
     // Pirate factions are hostile by default
-    standings->faction_standings["Serpentis"] = -5.0f;
-    standings->faction_standings["Guristas"] = -5.0f;
-    standings->faction_standings["Blood Raiders"] = -5.0f;
-    standings->faction_standings["Sansha's Nation"] = -5.0f;
+    standings->faction_standings["Venom Syndicate"] = -5.0f;
+    standings->faction_standings["Iron Corsairs"] = -5.0f;
+    standings->faction_standings["Crimson Order"] = -5.0f;
+    standings->faction_standings["Hollow Collective"] = -5.0f;
     entity->addComponent(std::move(standings));
 
     // Capacitor
@@ -538,11 +538,11 @@ std::string GameSession::createPlayerEntity(const std::string& player_id,
 // ---------------------------------------------------------------------------
 
 void GameSession::spawnInitialNPCs() {
-    spawnNPC("npc_serpentis_1", "Serpentis Spy",       "Catalyst",  "Serpentis",
+    spawnNPC("npc_venom_1", "Venom Syndicate Spy",       "Vipere",  "Venom Syndicate",
              1000.0f,  0.0f, -500.0f);
-    spawnNPC("npc_guristas_1", "Guristas Scout",      "Merlin",    "Guristas",
+    spawnNPC("npc_corsairs_1", "Iron Corsairs Scout",      "Falk",    "Iron Corsairs",
              -800.0f,  0.0f,  600.0f);
-    spawnNPC("npc_blood_1",    "Blood Raider Seeker", "Punisher",  "Blood Raiders",
+    spawnNPC("npc_crimson_1",    "Crimson Order Seeker", "Sentinel",  "Crimson Order",
              500.0f,   0.0f,  1200.0f);
 }
 
@@ -580,19 +580,19 @@ void GameSession::spawnNPC(const std::string& id, const std::string& name,
     // Standings - NPCs have faction standings based on their faction
     auto standings = std::make_unique<components::Standings>();
     // Pirate NPCs are hostile to players
-    if (faction_name == "Serpentis" || faction_name == "Guristas" || 
-        faction_name == "Blood Raiders" || faction_name == "Sansha's Nation") {
+    if (faction_name == "Venom Syndicate" || faction_name == "Iron Corsairs" || 
+        faction_name == "Crimson Order" || faction_name == "Hollow Collective") {
         // Hostile to all empire factions
-        standings->faction_standings["Caldari"] = -5.0f;
-        standings->faction_standings["Gallente"] = -5.0f;
-        standings->faction_standings["Amarr"] = -5.0f;
-        standings->faction_standings["Minmatar"] = -5.0f;
+        standings->faction_standings["Veyren"] = -5.0f;
+        standings->faction_standings["Aurelian"] = -5.0f;
+        standings->faction_standings["Solari"] = -5.0f;
+        standings->faction_standings["Keldari"] = -5.0f;
     } else {
         // Empire NPCs are neutral to players by default
-        standings->faction_standings["Caldari"] = 0.0f;
-        standings->faction_standings["Gallente"] = 0.0f;
-        standings->faction_standings["Amarr"] = 0.0f;
-        standings->faction_standings["Minmatar"] = 0.0f;
+        standings->faction_standings["Veyren"] = 0.0f;
+        standings->faction_standings["Aurelian"] = 0.0f;
+        standings->faction_standings["Solari"] = 0.0f;
+        standings->faction_standings["Keldari"] = 0.0f;
     }
     entity->addComponent(std::move(standings));
 

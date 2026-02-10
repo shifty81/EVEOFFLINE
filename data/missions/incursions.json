@@ -1009,7 +1009,7 @@
       "awareness_range": 250000,
       "weapons": [
         {
-          "type": "fighter_bshadite",
+          "type": "fighter_bomber",
           "damage": 500,
           "damage_type": "em",
           "optimal_range": 80000,
@@ -1066,7 +1066,7 @@
       "awareness_range": 300000,
       "weapons": [
         {
-          "type": "fighter_bshadite",
+          "type": "fighter_bomber",
           "damage": 800,
           "damage_type": "em",
           "optimal_range": 100000,
@@ -1134,7 +1134,7 @@
       "awareness_range": 500000,
       "weapons": [
         {
-          "type": "fighter_bshadite",
+          "type": "fighter_bomber",
           "damage": 1500,
           "damage_type": "em",
           "optimal_range": 150000,

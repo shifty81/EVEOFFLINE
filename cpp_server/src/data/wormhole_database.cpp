@@ -105,8 +105,8 @@ int WormholeDatabase::loadClasses(const std::string& filepath) {
         std::string sc_arr = extractArray(block, "static_connections");
         if (!sc_arr.empty()) tmpl.static_connections = parseStringArray(sc_arr);
 
-        // Sleeper spawns
-        std::string spawns_arr = extractArray(block, "sleeper_spawns");
+        // Dormant NPC spawns
+        std::string spawns_arr = extractArray(block, "dormant_spawns");
         if (!spawns_arr.empty()) {
             // Each element is { ... }
             size_t sp = 0;
@@ -120,13 +120,13 @@ int WormholeDatabase::loadClasses(const std::string& filepath) {
                 }
                 std::string obj = spawns_arr.substr(obj_start, obj_end - obj_start + 1);
 
-                SleeperSpawn spawn;
+                DormantSpawn spawn;
                 spawn.id        = extractString(obj, "id");
                 spawn.name      = extractString(obj, "name");
                 spawn.type      = extractString(obj, "type");
                 spawn.count_min = extractInt(obj, "count_min", 1);
                 spawn.count_max = extractInt(obj, "count_max", 2);
-                if (!spawn.id.empty()) tmpl.sleeper_spawns.push_back(std::move(spawn));
+                if (!spawn.id.empty()) tmpl.dormant_spawns.push_back(std::move(spawn));
 
                 sp = obj_end + 1;
             }
