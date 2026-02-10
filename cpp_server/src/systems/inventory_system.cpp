@@ -83,26 +83,21 @@ bool InventorySystem::transferItem(const std::string& from_id,
     if (!from_inv || !to_inv) return false;
 
     // Find item in source
-    for (auto& item : from_inv->items) {
-        if (item.item_id == item_id) {
-            if (item.quantity < quantity) return false;
+    for (auto it = from_inv->items.begin(); it != from_inv->items.end(); ++it) {
+        if (it->item_id == item_id) {
+            if (it->quantity < quantity) return false;
 
-            float total_volume = item.volume * quantity;
+            float total_volume = it->volume * quantity;
             if (to_inv->freeCapacity() < total_volume) return false;
 
             // Add to destination
-            if (!addItem(to_id, item_id, item.name, item.type, quantity, item.volume))
+            if (!addItem(to_id, item_id, it->name, it->type, quantity, it->volume))
                 return false;
 
             // Remove from source
-            item.quantity -= quantity;
-            if (item.quantity <= 0) {
-                from_inv->items.erase(
-                    std::remove_if(from_inv->items.begin(), from_inv->items.end(),
-                                   [&](const components::Inventory::Item& i) {
-                                       return i.item_id == item_id && i.quantity <= 0;
-                                   }),
-                    from_inv->items.end());
+            it->quantity -= quantity;
+            if (it->quantity <= 0) {
+                from_inv->items.erase(it);
             }
             return true;
         }

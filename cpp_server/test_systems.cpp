@@ -2886,7 +2886,7 @@ void testLootGenerate() {
 
     auto* wreck_lt = wreck->getComponent<components::LootTable>();
     assertTrue(wreck_lt != nullptr, "Wreck has LootTable for ISK");
-    assertTrue(wreck_lt->isk_drop > 14999.0 && wreck_lt->isk_drop < 15001.0,
+    assertTrue(approxEqual(static_cast<float>(wreck_lt->isk_drop), 15000.0f),
                "ISK bounty preserved on wreck");
 }
 
@@ -2924,7 +2924,7 @@ void testLootCollect() {
     bool collected = lootSys.collectLoot(wreck_id, "player1");
     assertTrue(collected, "Loot collected successfully");
     assertTrue(player_inv->items.size() >= 1, "Player received items");
-    assertTrue(player_comp->isk > 124999.0 && player_comp->isk < 125001.0,
+    assertTrue(approxEqual(static_cast<float>(player_comp->isk), 125000.0f),
                "Player ISK increased by bounty");
 }
 

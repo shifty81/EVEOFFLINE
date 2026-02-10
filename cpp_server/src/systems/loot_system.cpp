@@ -1,7 +1,6 @@
 #include "systems/loot_system.h"
 #include "ecs/world.h"
 #include "components/game_components.h"
-#include <random>
 #include <algorithm>
 
 namespace eve {
@@ -20,12 +19,9 @@ void LootSystem::setRandomSeed(uint32_t seed) {
 }
 
 float LootSystem::nextRandom() {
-    // Use mt19937 seeded deterministically so tests are repeatable
-    std::mt19937 gen(seed_);
-    std::uniform_real_distribution<float> dist(0.0f, 1.0f);
-    float val = dist(gen);
-    seed_ = gen();  // advance seed for next call
-    return val;
+    // Advance seed deterministically
+    seed_ = seed_ * 1103515245u + 12345u;
+    return static_cast<float>((seed_ >> 16) & 0x7FFF) / 32767.0f;
 }
 
 std::string LootSystem::generateLoot(const std::string& entity_id) {
