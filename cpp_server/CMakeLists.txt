@@ -65,6 +65,7 @@ set(SERVER_SOURCES
     src/systems/bounty_system.cpp
     src/systems/market_system.cpp
     src/systems/drone_system.cpp
+    src/systems/contract_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -106,6 +107,7 @@ set(SERVER_HEADERS
     include/systems/bounty_system.h
     include/systems/market_system.h
     include/systems/drone_system.h
+    include/systems/contract_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -209,6 +211,7 @@ if(BUILD_TESTS)
         src/systems/bounty_system.cpp
         src/systems/market_system.cpp
         src/systems/drone_system.cpp
+        src/systems/contract_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

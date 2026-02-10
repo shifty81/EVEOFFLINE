@@ -465,6 +465,48 @@ std::string WorldPersistence::serializeEntity(
         json << "]}";
     }
 
+    // ContractBoard
+    auto* cb = entity->getComponent<components::ContractBoard>();
+    if (cb) {
+        json << ",\"contract_board\":{\"contracts\":[";
+        bool first_c = true;
+        for (const auto& c : cb->contracts) {
+            if (!first_c) json << ",";
+            first_c = false;
+            json << "{\"contract_id\":\"" << escapeJson(c.contract_id) << "\""
+                 << ",\"issuer_id\":\"" << escapeJson(c.issuer_id) << "\""
+                 << ",\"assignee_id\":\"" << escapeJson(c.assignee_id) << "\""
+                 << ",\"type\":\"" << escapeJson(c.type) << "\""
+                 << ",\"status\":\"" << escapeJson(c.status) << "\""
+                 << ",\"isk_reward\":" << c.isk_reward
+                 << ",\"isk_collateral\":" << c.isk_collateral
+                 << ",\"duration_remaining\":" << c.duration_remaining
+                 << ",\"days_to_complete\":" << c.days_to_complete
+                 << ",\"items_offered\":[";
+            bool first_io = true;
+            for (const auto& item : c.items_offered) {
+                if (!first_io) json << ",";
+                first_io = false;
+                json << "{\"item_id\":\"" << escapeJson(item.item_id) << "\""
+                     << ",\"name\":\"" << escapeJson(item.name) << "\""
+                     << ",\"quantity\":" << item.quantity
+                     << ",\"volume\":" << item.volume << "}";
+            }
+            json << "],\"items_requested\":[";
+            bool first_ir = true;
+            for (const auto& item : c.items_requested) {
+                if (!first_ir) json << ",";
+                first_ir = false;
+                json << "{\"item_id\":\"" << escapeJson(item.item_id) << "\""
+                     << ",\"name\":\"" << escapeJson(item.name) << "\""
+                     << ",\"quantity\":" << item.quantity
+                     << ",\"volume\":" << item.volume << "}";
+            }
+            json << "]}";
+        }
+        json << "]}";
+    }
+
     json << "}";
     return json.str();
 }
@@ -971,6 +1013,99 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
         parseDrones("deployed", db->deployed_drones);
 
         entity->addComponent(std::move(db));
+    }
+
+    // ContractBoard
+    std::string cb_json = extractObject(json, "contract_board");
+    if (!cb_json.empty()) {
+        auto cb = std::make_unique<components::ContractBoard>();
+
+        std::string contracts_key = "\"contracts\"";
+        size_t ck_pos = cb_json.find(contracts_key);
+        if (ck_pos != std::string::npos) {
+            size_t arr_start = cb_json.find("[", ck_pos);
+            if (arr_start != std::string::npos) {
+                int bracket_depth = 1;
+                size_t arr_end = arr_start + 1;
+                while (arr_end < cb_json.size() && bracket_depth > 0) {
+                    if (cb_json[arr_end] == '[') ++bracket_depth;
+                    else if (cb_json[arr_end] == ']') --bracket_depth;
+                    if (bracket_depth > 0) ++arr_end;
+                }
+                if (bracket_depth == 0) {
+                    std::string content = cb_json.substr(arr_start + 1, arr_end - arr_start - 1);
+                    int depth = 0;
+                    size_t obj_start = std::string::npos;
+                    for (size_t i = 0; i < content.size(); ++i) {
+                        if (content[i] == '{') {
+                            if (depth == 0) obj_start = i;
+                            ++depth;
+                        } else if (content[i] == '}') {
+                            --depth;
+                            if (depth == 0 && obj_start != std::string::npos) {
+                                std::string cj = content.substr(obj_start, i - obj_start + 1);
+                                components::ContractBoard::Contract contract;
+                                contract.contract_id       = extractString(cj, "contract_id");
+                                contract.issuer_id         = extractString(cj, "issuer_id");
+                                contract.assignee_id       = extractString(cj, "assignee_id");
+                                contract.type              = extractString(cj, "type");
+                                contract.status            = extractString(cj, "status");
+                                contract.isk_reward        = extractDouble(cj, "\"isk_reward\":", 0.0);
+                                contract.isk_collateral    = extractDouble(cj, "\"isk_collateral\":", 0.0);
+                                contract.duration_remaining = extractFloat(cj, "\"duration_remaining\":", -1.0f);
+                                contract.days_to_complete  = extractFloat(cj, "\"days_to_complete\":", 3.0f);
+
+                                auto parseItems = [&](const std::string& key,
+                                                      std::vector<components::ContractBoard::ContractItem>& out) {
+                                    std::string k = "\"" + key + "\"";
+                                    size_t kp = cj.find(k);
+                                    if (kp == std::string::npos) return;
+                                    size_t as = cj.find("[", kp);
+                                    if (as == std::string::npos) return;
+                                    int bd = 1;
+                                    size_t ae = as + 1;
+                                    while (ae < cj.size() && bd > 0) {
+                                        if (cj[ae] == '[') ++bd;
+                                        else if (cj[ae] == ']') --bd;
+                                        if (bd > 0) ++ae;
+                                    }
+                                    if (bd != 0) return;
+                                    std::string ic = cj.substr(as + 1, ae - as - 1);
+                                    int id2 = 0;
+                                    size_t os2 = std::string::npos;
+                                    for (size_t j = 0; j < ic.size(); ++j) {
+                                        if (ic[j] == '{') {
+                                            if (id2 == 0) os2 = j;
+                                            ++id2;
+                                        } else if (ic[j] == '}') {
+                                            --id2;
+                                            if (id2 == 0 && os2 != std::string::npos) {
+                                                std::string ij = ic.substr(os2, j - os2 + 1);
+                                                components::ContractBoard::ContractItem item;
+                                                item.item_id  = extractString(ij, "item_id");
+                                                item.name     = extractString(ij, "name");
+                                                item.quantity = extractInt(ij, "\"quantity\":");
+                                                item.volume   = extractFloat(ij, "\"volume\":", 1.0f);
+                                                out.push_back(item);
+                                                os2 = std::string::npos;
+                                            }
+                                        }
+                                    }
+                                };
+
+                                parseItems("items_offered", contract.items_offered);
+                                parseItems("items_requested", contract.items_requested);
+
+                                cb->contracts.push_back(contract);
+                                obj_start = std::string::npos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        entity->addComponent(std::move(cb));
     }
 
     return true;
