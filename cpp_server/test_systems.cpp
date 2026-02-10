@@ -1,10 +1,9 @@
 /**
- * Test CapacitorSystem, ShieldRechargeSystem, and WeaponSystem
+ * Test all ECS systems for the C++ server
  * 
- * Tests the three new dedicated ECS systems for the C++ server:
- * - CapacitorSystem: capacitor recharge and consumption
- * - ShieldRechargeSystem: passive shield regeneration
- * - WeaponSystem: weapon cooldowns, auto-fire, capacitor cost, damage cascade
+ * Tests dedicated ECS systems including Capacitor, Shield, Weapon,
+ * Targeting, Wormhole, Fleet, Mission, Skill, Module, Inventory,
+ * Loot, Drone, Insurance, Bounty, Market, and more.
  */
 
 #include "ecs/world.h"
@@ -23,6 +22,10 @@
 #include "systems/module_system.h"
 #include "systems/inventory_system.h"
 #include "systems/loot_system.h"
+#include "systems/drone_system.h"
+#include "systems/insurance_system.h"
+#include "systems/bounty_system.h"
+#include "systems/market_system.h"
 #include "data/world_persistence.h"
 #include "data/npc_database.h"
 #include "systems/movement_system.h"
@@ -3057,6 +3060,507 @@ void testNpcDatabaseNonexistent() {
     assertTrue(result == nullptr, "Nonexistent NPC returns nullptr");
 }
 
+// ==================== DroneSystem Tests ====================
+
+void testDroneLaunch() {
+    std::cout << "\n=== Drone Launch ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+
+    auto* ship = world.createEntity("player_ship");
+    auto* bay = addComp<components::DroneBay>(ship);
+    bay->bay_capacity = 25.0f;
+    bay->max_bandwidth = 25;
+
+    components::DroneBay::DroneInfo d;
+    d.drone_id = "hobgoblin"; d.name = "Hobgoblin I";
+    d.type = "light_combat_drone"; d.damage_type = "thermal";
+    d.damage = 25.0f; d.rate_of_fire = 3.0f; d.optimal_range = 5000.0f;
+    d.hitpoints = 45.0f; d.current_hp = 45.0f; d.bandwidth_use = 5; d.volume = 5.0f;
+    bay->stored_drones.push_back(d);
+
+    assertTrue(droneSys.launchDrone("player_ship", "hobgoblin"),
+               "Drone launched successfully");
+    assertTrue(bay->deployed_drones.size() == 1, "One drone deployed");
+    assertTrue(bay->stored_drones.empty(), "Bay empty after launch");
+    assertTrue(droneSys.getDeployedCount("player_ship") == 1, "getDeployedCount returns 1");
+}
+
+void testDroneRecall() {
+    std::cout << "\n=== Drone Recall ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+
+    auto* ship = world.createEntity("player_ship");
+    auto* bay = addComp<components::DroneBay>(ship);
+
+    components::DroneBay::DroneInfo d;
+    d.drone_id = "warrior"; d.name = "Warrior I";
+    d.type = "light_combat_drone"; d.damage_type = "explosive";
+    d.damage = 22.0f; d.bandwidth_use = 5; d.volume = 5.0f;
+    d.hitpoints = 38.0f; d.current_hp = 38.0f;
+    bay->stored_drones.push_back(d);
+
+    droneSys.launchDrone("player_ship", "warrior");
+    assertTrue(bay->deployed_drones.size() == 1, "Drone deployed before recall");
+
+    assertTrue(droneSys.recallDrone("player_ship", "warrior"),
+               "Drone recalled successfully");
+    assertTrue(bay->deployed_drones.empty(), "No deployed drones after recall");
+    assertTrue(bay->stored_drones.size() == 1, "Drone back in bay");
+}
+
+void testDroneRecallAll() {
+    std::cout << "\n=== Drone Recall All ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+
+    auto* ship = world.createEntity("player_ship");
+    auto* bay = addComp<components::DroneBay>(ship);
+    bay->max_bandwidth = 25;
+
+    // Add 3 drones
+    for (int i = 0; i < 3; ++i) {
+        components::DroneBay::DroneInfo d;
+        d.drone_id = "drone_" + std::to_string(i);
+        d.name = "Test Drone " + std::to_string(i);
+        d.type = "light_combat_drone"; d.damage_type = "thermal";
+        d.damage = 10.0f; d.bandwidth_use = 5; d.volume = 5.0f;
+        d.hitpoints = 40.0f; d.current_hp = 40.0f;
+        bay->stored_drones.push_back(d);
+    }
+
+    // Launch all 3
+    droneSys.launchDrone("player_ship", "drone_0");
+    droneSys.launchDrone("player_ship", "drone_1");
+    droneSys.launchDrone("player_ship", "drone_2");
+    assertTrue(bay->deployed_drones.size() == 3, "3 drones deployed");
+
+    int recalled = droneSys.recallAll("player_ship");
+    assertTrue(recalled == 3, "recallAll returns 3");
+    assertTrue(bay->deployed_drones.empty(), "No deployed drones after recallAll");
+    assertTrue(bay->stored_drones.size() == 3, "All drones back in bay");
+}
+
+void testDroneBandwidthLimit() {
+    std::cout << "\n=== Drone Bandwidth Limit ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+
+    auto* ship = world.createEntity("player_ship");
+    auto* bay = addComp<components::DroneBay>(ship);
+    bay->max_bandwidth = 10;  // Only 10 Mbit/s
+
+    // Add two drones each using 5 bandwidth (exactly max), then a third
+    for (int i = 0; i < 3; ++i) {
+        components::DroneBay::DroneInfo d;
+        d.drone_id = "drone_" + std::to_string(i);
+        d.name = "Test Drone " + std::to_string(i);
+        d.type = "light_combat_drone"; d.damage_type = "kinetic";
+        d.damage = 10.0f; d.bandwidth_use = 5; d.volume = 5.0f;
+        d.hitpoints = 40.0f; d.current_hp = 40.0f;
+        bay->stored_drones.push_back(d);
+    }
+
+    assertTrue(droneSys.launchDrone("player_ship", "drone_0"), "First drone fits bandwidth");
+    assertTrue(droneSys.launchDrone("player_ship", "drone_1"), "Second drone fits bandwidth");
+    assertTrue(!droneSys.launchDrone("player_ship", "drone_2"),
+               "Third drone exceeds bandwidth limit");
+    assertTrue(bay->deployed_drones.size() == 2, "Only 2 drones deployed");
+    assertTrue(bay->stored_drones.size() == 1, "One drone remains in bay");
+}
+
+void testDroneCombatUpdate() {
+    std::cout << "\n=== Drone Combat Update ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+
+    // Create player ship with drone
+    auto* ship = world.createEntity("player_ship");
+    auto* bay = addComp<components::DroneBay>(ship);
+    auto* target_comp = addComp<components::Target>(ship);
+
+    components::DroneBay::DroneInfo d;
+    d.drone_id = "hobgoblin"; d.name = "Hobgoblin I";
+    d.type = "light_combat_drone"; d.damage_type = "thermal";
+    d.damage = 25.0f; d.rate_of_fire = 3.0f; d.optimal_range = 5000.0f;
+    d.hitpoints = 45.0f; d.current_hp = 45.0f; d.bandwidth_use = 5;
+    bay->stored_drones.push_back(d);
+    droneSys.launchDrone("player_ship", "hobgoblin");
+
+    // Create target NPC
+    auto* npc = world.createEntity("npc_target");
+    auto* hp = addComp<components::Health>(npc);
+    hp->shield_hp = 100.0f; hp->shield_max = 100.0f;
+    hp->armor_hp = 100.0f; hp->armor_max = 100.0f;
+    hp->hull_hp = 100.0f; hp->hull_max = 100.0f;
+
+    // Lock the target
+    target_comp->locked_targets.push_back("npc_target");
+
+    // First tick: drone fires (cooldown == 0 initially)
+    droneSys.update(0.1f);
+    assertTrue(hp->shield_hp < 100.0f, "Drone dealt damage to shields");
+    float shield_after = hp->shield_hp;
+
+    // Second tick: drone is on cooldown, no additional damage
+    droneSys.update(0.1f);
+    assertTrue(approxEqual(hp->shield_hp, shield_after),
+               "Drone on cooldown, no additional damage");
+
+    // Wait out the cooldown (3.0 seconds)
+    droneSys.update(3.0f);
+    // Cooldown just expired this tick; drone fires on next update
+    droneSys.update(0.01f);
+    assertTrue(hp->shield_hp < shield_after, "Drone fires again after cooldown");
+}
+
+void testDroneDestroyedRemoval() {
+    std::cout << "\n=== Drone Destroyed Removal ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+
+    auto* ship = world.createEntity("player_ship");
+    auto* bay = addComp<components::DroneBay>(ship);
+
+    components::DroneBay::DroneInfo d;
+    d.drone_id = "hobgoblin"; d.name = "Hobgoblin I";
+    d.type = "light_combat_drone"; d.damage_type = "thermal";
+    d.damage = 25.0f; d.bandwidth_use = 5; d.volume = 5.0f;
+    d.hitpoints = 45.0f; d.current_hp = 45.0f;
+    bay->stored_drones.push_back(d);
+    droneSys.launchDrone("player_ship", "hobgoblin");
+    assertTrue(bay->deployed_drones.size() == 1, "Drone deployed");
+
+    // Simulate drone being destroyed
+    bay->deployed_drones[0].current_hp = 0.0f;
+
+    droneSys.update(1.0f);
+    assertTrue(bay->deployed_drones.empty(), "Destroyed drone removed from deployed list");
+}
+
+void testSerializeDeserializeDroneBay() {
+    std::cout << "\n=== Serialize/Deserialize DroneBay ===" << std::endl;
+
+    ecs::World world;
+    auto* entity = world.createEntity("drone_ship");
+    auto* bay = addComp<components::DroneBay>(entity);
+    bay->bay_capacity = 50.0f;
+    bay->max_bandwidth = 50;
+
+    // Add stored drone
+    components::DroneBay::DroneInfo stored;
+    stored.drone_id = "ogre"; stored.name = "Ogre I";
+    stored.type = "heavy_combat_drone"; stored.damage_type = "thermal";
+    stored.damage = 55.0f; stored.rate_of_fire = 6.0f;
+    stored.optimal_range = 3000.0f; stored.hitpoints = 120.0f;
+    stored.current_hp = 120.0f; stored.bandwidth_use = 25; stored.volume = 25.0f;
+    bay->stored_drones.push_back(stored);
+
+    // Add deployed drone
+    components::DroneBay::DroneInfo deployed;
+    deployed.drone_id = "hobgoblin"; deployed.name = "Hobgoblin I";
+    deployed.type = "light_combat_drone"; deployed.damage_type = "thermal";
+    deployed.damage = 25.0f; deployed.rate_of_fire = 3.0f;
+    deployed.optimal_range = 5000.0f; deployed.hitpoints = 45.0f;
+    deployed.current_hp = 30.0f; deployed.bandwidth_use = 5; deployed.volume = 5.0f;
+    bay->deployed_drones.push_back(deployed);
+
+    // Serialize
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    // Deserialize into new world
+    ecs::World world2;
+    assertTrue(persistence.deserializeWorld(&world2, json),
+               "DroneBay deserialization succeeds");
+
+    auto* e2 = world2.getEntity("drone_ship");
+    assertTrue(e2 != nullptr, "Entity recreated");
+
+    auto* bay2 = e2->getComponent<components::DroneBay>();
+    assertTrue(bay2 != nullptr, "DroneBay component recreated");
+    assertTrue(approxEqual(bay2->bay_capacity, 50.0f), "bay_capacity preserved");
+    assertTrue(bay2->max_bandwidth == 50, "max_bandwidth preserved");
+    assertTrue(bay2->stored_drones.size() == 1, "One stored drone");
+    assertTrue(bay2->stored_drones[0].drone_id == "ogre", "Stored drone id preserved");
+    assertTrue(approxEqual(bay2->stored_drones[0].damage, 55.0f), "Stored drone damage preserved");
+    assertTrue(bay2->deployed_drones.size() == 1, "One deployed drone");
+    assertTrue(bay2->deployed_drones[0].drone_id == "hobgoblin", "Deployed drone id preserved");
+    assertTrue(approxEqual(bay2->deployed_drones[0].current_hp, 30.0f), "Deployed drone current_hp preserved");
+}
+
+// ==================== Insurance System Tests ====================
+
+void testInsurancePurchase() {
+    std::cout << "\n=== Insurance Purchase ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 1000000.0;
+
+    assertTrue(insSys.purchaseInsurance("player_ship", "basic", 500000.0),
+               "Basic insurance purchased");
+    auto* policy = ship->getComponent<components::InsurancePolicy>();
+    assertTrue(policy != nullptr, "InsurancePolicy component created");
+    assertTrue(policy->tier == "basic", "Policy tier is basic");
+    assertTrue(approxEqual(static_cast<float>(policy->coverage_fraction), 0.5f), "Basic coverage is 50%");
+    assertTrue(approxEqual(static_cast<float>(policy->payout_value), 250000.0f), "Payout is 50% of ship value");
+    assertTrue(player->isk < 1000000.0, "Premium deducted from ISK");
+    assertTrue(policy->active, "Policy is active");
+}
+
+void testInsuranceClaim() {
+    std::cout << "\n=== Insurance Claim ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 1000000.0;
+
+    insSys.purchaseInsurance("player_ship", "standard", 500000.0);
+    double isk_after_purchase = player->isk;
+
+    double payout = insSys.claimInsurance("player_ship");
+    assertTrue(payout > 0.0, "Claim returns positive payout");
+    assertTrue(approxEqual(static_cast<float>(payout), 350000.0f), "Standard pays 70% of ship value");
+    assertTrue(approxEqual(static_cast<float>(player->isk), static_cast<float>(isk_after_purchase + payout)),
+               "ISK increased by payout");
+
+    auto* policy = ship->getComponent<components::InsurancePolicy>();
+    assertTrue(policy->claimed, "Policy marked as claimed");
+
+    double second_claim = insSys.claimInsurance("player_ship");
+    assertTrue(approxEqual(static_cast<float>(second_claim), 0.0f), "Double claim returns 0");
+}
+
+void testInsurancePlatinum() {
+    std::cout << "\n=== Insurance Platinum ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 1000000.0;
+
+    assertTrue(insSys.purchaseInsurance("player_ship", "platinum", 500000.0),
+               "Platinum insurance purchased");
+    auto* policy = ship->getComponent<components::InsurancePolicy>();
+    assertTrue(approxEqual(static_cast<float>(policy->coverage_fraction), 1.0f), "Platinum coverage is 100%");
+    assertTrue(approxEqual(static_cast<float>(policy->payout_value), 500000.0f), "Platinum payout is full value");
+}
+
+void testInsuranceExpiry() {
+    std::cout << "\n=== Insurance Expiry ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 1000000.0;
+
+    insSys.purchaseInsurance("player_ship", "basic", 500000.0);
+    auto* policy = ship->getComponent<components::InsurancePolicy>();
+    policy->duration_remaining = 10.0f; // 10 seconds
+
+    insSys.update(5.0f);
+    assertTrue(policy->active, "Policy still active at 5s");
+    assertTrue(insSys.hasActivePolicy("player_ship"), "hasActivePolicy returns true");
+
+    insSys.update(6.0f);
+    assertTrue(!policy->active, "Policy expired after 11s");
+    assertTrue(!insSys.hasActivePolicy("player_ship"), "hasActivePolicy returns false after expiry");
+}
+
+void testInsuranceInsufficientFunds() {
+    std::cout << "\n=== Insurance Insufficient Funds ===" << std::endl;
+    ecs::World world;
+    systems::InsuranceSystem insSys(&world);
+    auto* ship = world.createEntity("player_ship");
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 100.0; // Not enough
+
+    assertTrue(!insSys.purchaseInsurance("player_ship", "basic", 500000.0),
+               "Insurance rejected with insufficient funds");
+    assertTrue(ship->getComponent<components::InsurancePolicy>() == nullptr,
+               "No policy created on failure");
+}
+
+// ==================== BountySystem Tests ====================
+
+void testBountyProcessKill() {
+    std::cout << "\n=== Bounty Process Kill ===" << std::endl;
+    ecs::World world;
+    systems::BountySystem bountySys(&world);
+    
+    auto* player = world.createEntity("player_1");
+    auto* pc = addComp<components::Player>(player);
+    pc->isk = 100000.0;
+    
+    double bounty = bountySys.processKill("player_1", "npc_pirate_1", "Venom Scout", 12500.0, "Venom Syndicate");
+    assertTrue(approxEqual(static_cast<float>(bounty), 12500.0f), "Bounty returned correctly");
+    assertTrue(approxEqual(static_cast<float>(pc->isk), 112500.0f), "ISK increased by bounty");
+    assertTrue(bountySys.getTotalKills("player_1") == 1, "Kill count is 1");
+    assertTrue(approxEqual(static_cast<float>(bountySys.getTotalBounty("player_1")), 12500.0f), "Total bounty correct");
+}
+
+void testBountyMultipleKills() {
+    std::cout << "\n=== Bounty Multiple Kills ===" << std::endl;
+    ecs::World world;
+    systems::BountySystem bountySys(&world);
+    
+    auto* player = world.createEntity("player_1");
+    auto* pc = addComp<components::Player>(player);
+    pc->isk = 0.0;
+    
+    bountySys.processKill("player_1", "npc_1", "Scout", 10000.0);
+    bountySys.processKill("player_1", "npc_2", "Cruiser", 50000.0);
+    bountySys.processKill("player_1", "npc_3", "Battleship", 150000.0);
+    
+    assertTrue(bountySys.getTotalKills("player_1") == 3, "3 kills recorded");
+    assertTrue(approxEqual(static_cast<float>(bountySys.getTotalBounty("player_1")), 210000.0f), "Total bounty is 210K");
+    assertTrue(approxEqual(static_cast<float>(pc->isk), 210000.0f), "ISK matches total bounty");
+}
+
+void testBountyLedgerRecordLimit() {
+    std::cout << "\n=== Bounty Ledger Record Limit ===" << std::endl;
+    ecs::World world;
+    systems::BountySystem bountySys(&world);
+    
+    auto* player = world.createEntity("player_1");
+    addComp<components::Player>(player);
+    
+    for (int i = 0; i < 60; ++i) {
+        bountySys.processKill("player_1", "npc_" + std::to_string(i), "NPC " + std::to_string(i), 1000.0);
+    }
+    
+    auto* ledger = player->getComponent<components::BountyLedger>();
+    assertTrue(ledger != nullptr, "Ledger exists");
+    assertTrue(static_cast<int>(ledger->recent_kills.size()) <= components::BountyLedger::MAX_RECENT,
+               "Recent kills capped at MAX_RECENT");
+    assertTrue(ledger->total_kills == 60, "Total kills tracks all 60");
+}
+
+void testBountyNonexistentPlayer() {
+    std::cout << "\n=== Bounty Nonexistent Player ===" << std::endl;
+    ecs::World world;
+    systems::BountySystem bountySys(&world);
+    
+    double bounty = bountySys.processKill("fake_player", "npc_1", "Scout", 10000.0);
+    assertTrue(approxEqual(static_cast<float>(bounty), 0.0f), "No bounty for nonexistent player");
+    assertTrue(bountySys.getTotalKills("fake_player") == 0, "Zero kills for nonexistent");
+    assertTrue(approxEqual(static_cast<float>(bountySys.getTotalBounty("fake_player")), 0.0f), "Zero bounty for nonexistent");
+}
+
+// ==================== MarketSystem Tests ====================
+
+void testMarketPlaceSellOrder() {
+    std::cout << "\n=== Market Place Sell Order ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller = world.createEntity("seller_1");
+    auto* pc = addComp<components::Player>(seller);
+    pc->isk = 100000.0;
+
+    std::string oid = marketSys.placeSellOrder("station_1", "seller_1", "tritanium", "Tritanium", 100, 5.0);
+    assertTrue(!oid.empty(), "Sell order created");
+    assertTrue(marketSys.getOrderCount("station_1") == 1, "One order on station");
+    assertTrue(pc->isk < 100000.0, "Broker fee deducted from seller");
+}
+
+void testMarketBuyFromMarket() {
+    std::cout << "\n=== Market Buy From Market ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller = world.createEntity("seller_1");
+    auto* seller_pc = addComp<components::Player>(seller);
+    seller_pc->isk = 100000.0;
+
+    auto* buyer = world.createEntity("buyer_1");
+    auto* buyer_pc = addComp<components::Player>(buyer);
+    buyer_pc->isk = 100000.0;
+
+    marketSys.placeSellOrder("station_1", "seller_1", "tritanium", "Tritanium", 100, 5.0);
+
+    int bought = marketSys.buyFromMarket("station_1", "buyer_1", "tritanium", 50);
+    assertTrue(bought == 50, "Bought 50 units");
+    assertTrue(buyer_pc->isk < 100000.0, "Buyer ISK decreased");
+    assertTrue(seller_pc->isk > 100000.0 - 100000.0 * 0.02, "Seller ISK increased from sale");
+}
+
+void testMarketPriceQueries() {
+    std::cout << "\n=== Market Price Queries ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller1 = world.createEntity("seller_1");
+    auto* pc1 = addComp<components::Player>(seller1);
+    pc1->isk = 1000000.0;
+
+    auto* seller2 = world.createEntity("seller_2");
+    auto* pc2 = addComp<components::Player>(seller2);
+    pc2->isk = 1000000.0;
+
+    auto* buyer1 = world.createEntity("buyer_1");
+    auto* bpc = addComp<components::Player>(buyer1);
+    bpc->isk = 1000000.0;
+
+    marketSys.placeSellOrder("station_1", "seller_1", "tritanium", "Tritanium", 100, 5.0);
+    marketSys.placeSellOrder("station_1", "seller_2", "tritanium", "Tritanium", 50, 4.5);
+    marketSys.placeBuyOrder("station_1", "buyer_1", "tritanium", "Tritanium", 200, 4.0);
+
+    double lowest = marketSys.getLowestSellPrice("station_1", "tritanium");
+    assertTrue(approxEqual(static_cast<float>(lowest), 4.5f), "Lowest sell is 4.5");
+
+    double highest = marketSys.getHighestBuyPrice("station_1", "tritanium");
+    assertTrue(approxEqual(static_cast<float>(highest), 4.0f), "Highest buy is 4.0");
+
+    double no_item = marketSys.getLowestSellPrice("station_1", "nonexistent");
+    assertTrue(no_item < 0, "No sell price for nonexistent item");
+}
+
+void testMarketOrderExpiry() {
+    std::cout << "\n=== Market Order Expiry ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller = world.createEntity("seller_1");
+    auto* pc = addComp<components::Player>(seller);
+    pc->isk = 1000000.0;
+
+    marketSys.placeSellOrder("station_1", "seller_1", "tritanium", "Tritanium", 100, 5.0);
+    assertTrue(marketSys.getOrderCount("station_1") == 1, "One active order");
+
+    // Set order duration
+    hub->orders[0].duration_remaining = 5.0f;
+
+    marketSys.update(6.0f);
+    assertTrue(marketSys.getOrderCount("station_1") == 0, "Order expired and removed");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -3065,7 +3569,7 @@ int main() {
     std::cout << "Capacitor, Shield, Weapon, Targeting," << std::endl;
     std::cout << "ShipDB, WormholeDB, Wormhole, Fleet," << std::endl;
     std::cout << "Mission, Skill, Module, Inventory," << std::endl;
-    std::cout << "Loot, NpcDB," << std::endl;
+    std::cout << "Loot, NpcDB, Drone, Insurance, Bounty, Market," << std::endl;
     std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
     std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
@@ -3211,6 +3715,34 @@ int main() {
     testNpcDatabaseResistances();
     testNpcDatabaseIds();
     testNpcDatabaseNonexistent();
+
+    // Drone system tests
+    testDroneLaunch();
+    testDroneRecall();
+    testDroneRecallAll();
+    testDroneBandwidthLimit();
+    testDroneCombatUpdate();
+    testDroneDestroyedRemoval();
+    testSerializeDeserializeDroneBay();
+
+    // Insurance system tests
+    testInsurancePurchase();
+    testInsuranceClaim();
+    testInsurancePlatinum();
+    testInsuranceExpiry();
+    testInsuranceInsufficientFunds();
+
+    // Bounty system tests
+    testBountyProcessKill();
+    testBountyMultipleKills();
+    testBountyLedgerRecordLimit();
+    testBountyNonexistentPlayer();
+
+    // Market system tests
+    testMarketPlaceSellOrder();
+    testMarketBuyFromMarket();
+    testMarketPriceQueries();
+    testMarketOrderExpiry();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

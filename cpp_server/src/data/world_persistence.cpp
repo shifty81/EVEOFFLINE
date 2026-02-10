@@ -391,6 +391,49 @@ std::string WorldPersistence::serializeEntity(
         json << "]}";
     }
 
+    // DroneBay
+    auto* db = entity->getComponent<components::DroneBay>();
+    if (db) {
+        json << ",\"drone_bay\":{"
+             << "\"bay_capacity\":" << db->bay_capacity
+             << ",\"max_bandwidth\":" << db->max_bandwidth
+             << ",\"stored\":[";
+        bool first_s = true;
+        for (const auto& d : db->stored_drones) {
+            if (!first_s) json << ",";
+            first_s = false;
+            json << "{\"drone_id\":\"" << escapeJson(d.drone_id) << "\""
+                 << ",\"name\":\"" << escapeJson(d.name) << "\""
+                 << ",\"type\":\"" << escapeJson(d.type) << "\""
+                 << ",\"damage_type\":\"" << escapeJson(d.damage_type) << "\""
+                 << ",\"damage\":" << d.damage
+                 << ",\"rate_of_fire\":" << d.rate_of_fire
+                 << ",\"optimal_range\":" << d.optimal_range
+                 << ",\"hitpoints\":" << d.hitpoints
+                 << ",\"current_hp\":" << d.current_hp
+                 << ",\"bandwidth_use\":" << d.bandwidth_use
+                 << ",\"volume\":" << d.volume << "}";
+        }
+        json << "],\"deployed\":[";
+        bool first_d = true;
+        for (const auto& d : db->deployed_drones) {
+            if (!first_d) json << ",";
+            first_d = false;
+            json << "{\"drone_id\":\"" << escapeJson(d.drone_id) << "\""
+                 << ",\"name\":\"" << escapeJson(d.name) << "\""
+                 << ",\"type\":\"" << escapeJson(d.type) << "\""
+                 << ",\"damage_type\":\"" << escapeJson(d.damage_type) << "\""
+                 << ",\"damage\":" << d.damage
+                 << ",\"rate_of_fire\":" << d.rate_of_fire
+                 << ",\"optimal_range\":" << d.optimal_range
+                 << ",\"hitpoints\":" << d.hitpoints
+                 << ",\"current_hp\":" << d.current_hp
+                 << ",\"bandwidth_use\":" << d.bandwidth_use
+                 << ",\"volume\":" << d.volume << "}";
+        }
+        json << "]}";
+    }
+
     json << "}";
     return json.str();
 }
@@ -764,6 +807,67 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
             }
         }
         entity->addComponent(std::move(lt));
+    }
+
+    // DroneBay
+    std::string db_json = extractObject(json, "drone_bay");
+    if (!db_json.empty()) {
+        auto db = std::make_unique<components::DroneBay>();
+        db->bay_capacity  = extractFloat(db_json, "\"bay_capacity\":", 25.0f);
+        db->max_bandwidth = extractInt(db_json, "\"max_bandwidth\":", 25);
+
+        // Helper lambda to parse a drone array
+        auto parseDrones = [&](const std::string& array_key,
+                               std::vector<components::DroneBay::DroneInfo>& out) {
+            std::string key_search = "\"" + array_key + "\"";
+            size_t key_pos = db_json.find(key_search);
+            if (key_pos == std::string::npos) return;
+            size_t arr_start = db_json.find("[", key_pos);
+            // Find matching close bracket
+            if (arr_start == std::string::npos) return;
+            int bracket_depth = 1;
+            size_t arr_end = arr_start + 1;
+            while (arr_end < db_json.size() && bracket_depth > 0) {
+                if (db_json[arr_end] == '[') ++bracket_depth;
+                else if (db_json[arr_end] == ']') --bracket_depth;
+                if (bracket_depth > 0) ++arr_end;
+            }
+            if (bracket_depth != 0) return;
+
+            std::string content = db_json.substr(arr_start + 1, arr_end - arr_start - 1);
+            int depth = 0;
+            size_t obj_start = std::string::npos;
+            for (size_t i = 0; i < content.size(); ++i) {
+                if (content[i] == '{') {
+                    if (depth == 0) obj_start = i;
+                    ++depth;
+                } else if (content[i] == '}') {
+                    --depth;
+                    if (depth == 0 && obj_start != std::string::npos) {
+                        std::string dj = content.substr(obj_start, i - obj_start + 1);
+                        components::DroneBay::DroneInfo info;
+                        info.drone_id      = extractString(dj, "drone_id");
+                        info.name          = extractString(dj, "name");
+                        info.type          = extractString(dj, "type");
+                        info.damage_type   = extractString(dj, "damage_type");
+                        info.damage        = extractFloat(dj, "\"damage\":", 0.0f);
+                        info.rate_of_fire  = extractFloat(dj, "\"rate_of_fire\":", 3.0f);
+                        info.optimal_range = extractFloat(dj, "\"optimal_range\":", 5000.0f);
+                        info.hitpoints     = extractFloat(dj, "\"hitpoints\":", 45.0f);
+                        info.current_hp    = extractFloat(dj, "\"current_hp\":", 45.0f);
+                        info.bandwidth_use = extractInt(dj, "\"bandwidth_use\":", 5);
+                        info.volume        = extractFloat(dj, "\"volume\":", 5.0f);
+                        out.push_back(info);
+                        obj_start = std::string::npos;
+                    }
+                }
+            }
+        };
+
+        parseDrones("stored",  db->stored_drones);
+        parseDrones("deployed", db->deployed_drones);
+
+        entity->addComponent(std::move(db));
     }
 
     return true;

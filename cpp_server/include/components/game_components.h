@@ -503,6 +503,119 @@ public:
     COMPONENT_TYPE(LootTable)
 };
 
+/**
+ * @brief Drone bay and deployed drone management
+ *
+ * Tracks which drones are stored in the drone bay and which are
+ * currently deployed in space.  Enforces bandwidth and bay capacity.
+ */
+class DroneBay : public ecs::Component {
+public:
+    struct DroneInfo {
+        std::string drone_id;
+        std::string name;
+        std::string type;          // "light_combat_drone", "medium_combat_drone", etc.
+        std::string damage_type;   // "em", "thermal", "kinetic", "explosive"
+        float damage = 0.0f;
+        float rate_of_fire = 3.0f; // seconds between shots
+        float cooldown = 0.0f;     // current cooldown timer
+        float optimal_range = 5000.0f;
+        float hitpoints = 45.0f;
+        float current_hp = 45.0f;
+        int bandwidth_use = 5;
+        float volume = 5.0f;       // m3 per drone
+    };
+
+    std::vector<DroneInfo> stored_drones;    // drones in bay (not deployed)
+    std::vector<DroneInfo> deployed_drones;  // drones in space
+
+    float bay_capacity = 25.0f;     // m3 total bay capacity
+    int max_bandwidth = 25;         // Mbit/s bandwidth limit
+
+    int usedBandwidth() const {
+        int total = 0;
+        for (const auto& d : deployed_drones)
+            total += d.bandwidth_use;
+        return total;
+    }
+
+    float usedBayVolume() const {
+        float total = 0.0f;
+        for (const auto& d : stored_drones)
+            total += d.volume;
+        for (const auto& d : deployed_drones)
+            total += d.volume;
+        return total;
+    }
+
+    COMPONENT_TYPE(DroneBay)
+};
+
+/**
+ * @brief Insurance policy on a ship
+ */
+class InsurancePolicy : public ecs::Component {
+public:
+    std::string policy_id;
+    std::string ship_type;
+    std::string tier = "basic";    // "basic", "standard", "platinum"
+    float coverage_fraction = 0.5f; // fraction of ship value paid out
+    double premium_paid = 0.0;     // ISK paid for policy
+    double payout_value = 0.0;     // ISK paid out on loss
+    float duration_remaining = -1.0f; // seconds, -1 = permanent
+    bool active = true;
+    bool claimed = false;
+
+    COMPONENT_TYPE(InsurancePolicy)
+};
+
+/**
+ * @brief Tracks bounty rewards earned by a player
+ */
+class BountyLedger : public ecs::Component {
+public:
+    double total_bounty_earned = 0.0;
+    int total_kills = 0;
+    
+    struct BountyRecord {
+        std::string target_id;
+        std::string target_name;
+        double bounty_amount = 0.0;
+        std::string faction;
+    };
+    
+    std::vector<BountyRecord> recent_kills;  // last N kills
+    static constexpr int MAX_RECENT = 50;
+    
+    COMPONENT_TYPE(BountyLedger)
+};
+
+/**
+ * @brief Market order tracking for stations
+ */
+class MarketHub : public ecs::Component {
+public:
+    struct Order {
+        std::string order_id;
+        std::string item_id;
+        std::string item_name;
+        std::string owner_id;       // entity that placed the order
+        bool is_buy_order = false;   // true = buy, false = sell
+        double price_per_unit = 0.0;
+        int quantity = 1;
+        int quantity_remaining = 1;
+        float duration_remaining = -1.0f;  // seconds, -1 = permanent
+        bool fulfilled = false;
+    };
+
+    std::string station_id;
+    std::vector<Order> orders;
+    double broker_fee_rate = 0.02;  // 2% broker fee
+    double sales_tax_rate = 0.04;   // 4% sales tax
+
+    COMPONENT_TYPE(MarketHub)
+};
+
 } // namespace components
 } // namespace eve
 
