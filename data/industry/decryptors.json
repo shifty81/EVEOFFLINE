@@ -3,7 +3,7 @@
     {
       "id": "decryptor_attainment",
       "name": "Decryptor - Attainment",
-      "probability_modifier": 0.80,
+      "probability_modifier": 0.8,
       "runs_modifier": 4,
       "me_modifier": 1,
       "te_modifier": 2,
@@ -12,7 +12,7 @@
     {
       "id": "decryptor_augmentation",
       "name": "Decryptor - Augmentation",
-      "probability_modifier": -0.10,
+      "probability_modifier": -0.1,
       "runs_modifier": 9,
       "me_modifier": 2,
       "te_modifier": 0,
@@ -21,7 +21,7 @@
     {
       "id": "decryptor_optimized_attainment",
       "name": "Decryptor - Optimized Attainment",
-      "probability_modifier": 0.90,
+      "probability_modifier": 0.9,
       "runs_modifier": 2,
       "me_modifier": 1,
       "te_modifier": -2,
@@ -39,7 +39,7 @@
     {
       "id": "decryptor_process_decryption",
       "name": "Decryptor - Process Decryption",
-      "probability_modifier": 0.60,
+      "probability_modifier": 0.6,
       "runs_modifier": 1,
       "me_modifier": 3,
       "te_modifier": 6,
@@ -48,7 +48,7 @@
     {
       "id": "decryptor_symmetry",
       "name": "Decryptor - Symmetry",
-      "probability_modifier": 0.10,
+      "probability_modifier": 0.1,
       "runs_modifier": 2,
       "me_modifier": 1,
       "te_modifier": 8,
@@ -57,7 +57,7 @@
     {
       "id": "decryptor_parity",
       "name": "Decryptor - Parity",
-      "probability_modifier": 0.50,
+      "probability_modifier": 0.5,
       "runs_modifier": 3,
       "me_modifier": -2,
       "te_modifier": 1,
@@ -66,7 +66,7 @@
     {
       "id": "decryptor_war_strategon",
       "name": "War Strategon",
-      "probability_modifier": 0.40,
+      "probability_modifier": 0.4,
       "runs_modifier": 0,
       "me_modifier": 2,
       "te_modifier": 4,
@@ -75,7 +75,7 @@
     {
       "id": "decryptor_occult_data",
       "name": "Occult Data",
-      "probability_modifier": 0.90,
+      "probability_modifier": 0.9,
       "runs_modifier": 0,
       "me_modifier": 0,
       "te_modifier": 0,
@@ -84,7 +84,7 @@
     {
       "id": "decryptor_accelerant",
       "name": "Decryptor - Accelerant",
-      "probability_modifier": 0.20,
+      "probability_modifier": 0.2,
       "runs_modifier": 1,
       "me_modifier": 0,
       "te_modifier": 10,

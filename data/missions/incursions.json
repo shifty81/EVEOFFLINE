@@ -1,8 +1,13 @@
 {
   "incursion_info": {
-    "description": "Incursions are large-scale Sansha's Nation invasions of known space. They require coordinated fleet efforts to repel and offer substantial ISK and loyalty point rewards.",
+    "description": "Incursions are large-scale Hollow Collective invasions of known space. They require coordinated fleet efforts to repel and offer substantial ISK and loyalty point rewards.",
     "mechanic": "Incursions spawn in constellation-sized areas, reducing system security and spawning encounter sites. Players must complete encounters to reduce the incursion influence bar. Once influence reaches 0%, the mothership site spawns for the final battle.",
-    "site_types": ["vanguard", "assault", "headquarters", "mothership"],
+    "site_types": [
+      "vanguard",
+      "assault",
+      "headquarters",
+      "mothership"
+    ],
     "fleet_sizes": {
       "vanguard": 10,
       "assault": 20,
@@ -27,8 +32,8 @@
       "id": "nation_mining_colony",
       "name": "Nation Mining Colony",
       "type": "vanguard",
-      "description": "A small Sansha mining operation has been established. Destroy the mining units and clear the defending forces.",
-      "briefing": "Vanguard-class encounter. Expect Sansha frigates and cruisers with heavy tracking disruption. A fleet of 10 pilots in battlecruisers or battleships is recommended. Focus fire on the Sansha Overseers first to break their command links.",
+      "description": "A small Hollow mining operation has been established. Destroy the mining units and clear the defending forces.",
+      "briefing": "Vanguard-class encounter. Expect Hollow frigates and cruisers with heavy tracking disruption. A fleet of 10 pilots in battlecruisers or battleships is recommended. Focus fire on the Hollow Overseers first to break their command links.",
       "difficulty": "hard",
       "recommended_fleet_size": 10,
       "recommended_ship_class": "Battlecruiser",
@@ -38,52 +43,87 @@
           "wave_number": 1,
           "trigger": "on_warp_in",
           "npcs": [
-            {"type": "sansha_frigate", "count": 6},
-            {"type": "sansha_cruiser", "count": 3},
-            {"type": "sansha_overseer", "count": 1}
+            {
+              "type": "hollow_frigate",
+              "count": 6
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 3
+            },
+            {
+              "type": "hollow_overseer",
+              "count": 1
+            }
           ]
         },
         {
           "wave_number": 2,
           "trigger": "overseer_destroyed",
           "npcs": [
-            {"type": "sansha_frigate", "count": 4},
-            {"type": "sansha_cruiser", "count": 4},
-            {"type": "sansha_battlecruiser", "count": 2}
+            {
+              "type": "hollow_frigate",
+              "count": 4
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 4
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 2
+            }
           ]
         },
         {
           "wave_number": 3,
           "trigger": "all_destroyed",
           "npcs": [
-            {"type": "sansha_cruiser", "count": 3},
-            {"type": "sansha_battlecruiser", "count": 2},
-            {"type": "sansha_battleship", "count": 1}
+            {
+              "type": "hollow_cruiser",
+              "count": 3
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 2
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 1
+            }
           ]
         }
       ],
       "objectives": [
-        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
-        {"type": "destroy", "target": "sansha_mining_unit", "count": 3, "description": "Destroy Sansha Mining Units"}
+        {
+          "type": "destroy_all",
+          "description": "Destroy all Hollow forces"
+        },
+        {
+          "type": "destroy",
+          "target": "hollow_mining_unit",
+          "count": 3,
+          "description": "Destroy Hollow Mining Units"
+        }
       ],
       "rewards": {
         "isk": 10000000,
         "loyalty_points": 3500,
-        "concord_lp": 3500,
+        "aegis_lp": 3500,
         "standing_gain": 0.05
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module"
+        "true_hollow_module"
       ]
     },
     "override_transfer_array": {
       "id": "override_transfer_array",
       "name": "Override Transfer Array",
       "type": "vanguard",
-      "description": "Sansha forces are using a transfer array to beam reinforcements into the constellation. Destroy the array and its defenders.",
-      "briefing": "Vanguard-class encounter. The transfer array is shielded and will only become vulnerable once the defending fleet is destroyed. Sansha forces will use energy neutralizers aggressively. Bring cap-stable fits or cap boosters.",
+      "description": "Hollow forces are using a transfer array to beam reinforcements into the constellation. Destroy the array and its defenders.",
+      "briefing": "Vanguard-class encounter. The transfer array is shielded and will only become vulnerable once the defending fleet is destroyed. Hollow forces will use energy neutralizers aggressively. Bring cap-stable fits or cap boosters.",
       "difficulty": "hard",
       "recommended_fleet_size": 10,
       "recommended_ship_class": "Battlecruiser",
@@ -93,43 +133,72 @@
           "wave_number": 1,
           "trigger": "on_warp_in",
           "npcs": [
-            {"type": "sansha_frigate", "count": 5},
-            {"type": "sansha_cruiser", "count": 4},
-            {"type": "sansha_battlecruiser", "count": 1}
+            {
+              "type": "hollow_frigate",
+              "count": 5
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 4
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 1
+            }
           ]
         },
         {
           "wave_number": 2,
           "trigger": "battlecruiser_destroyed",
           "npcs": [
-            {"type": "sansha_frigate", "count": 3},
-            {"type": "sansha_cruiser", "count": 3},
-            {"type": "sansha_battlecruiser", "count": 2},
-            {"type": "sansha_battleship", "count": 1}
+            {
+              "type": "hollow_frigate",
+              "count": 3
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 3
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 2
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 1
+            }
           ]
         }
       ],
       "objectives": [
-        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
-        {"type": "destroy", "target": "sansha_transfer_array", "count": 1, "description": "Destroy the Transfer Array"}
+        {
+          "type": "destroy_all",
+          "description": "Destroy all Hollow forces"
+        },
+        {
+          "type": "destroy",
+          "target": "hollow_transfer_array",
+          "count": 1,
+          "description": "Destroy the Transfer Array"
+        }
       ],
       "rewards": {
         "isk": 10000000,
         "loyalty_points": 3500,
-        "concord_lp": 3500,
+        "aegis_lp": 3500,
         "standing_gain": 0.05
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module"
+        "true_hollow_module"
       ]
     },
     "nation_commander_outpost": {
       "id": "nation_commander_outpost",
       "name": "Nation Commander Outpost",
       "type": "vanguard",
-      "description": "A Sansha field commander has set up an outpost to coordinate regional operations. Eliminate the commander and destroy the outpost.",
+      "description": "A Hollow field commander has set up an outpost to coordinate regional operations. Eliminate the commander and destroy the outpost.",
       "briefing": "Vanguard-class encounter. The commander's battleship has very high resistances and uses tracking disruption. Logistics support is recommended. Focus fire is essential to break through the remote repair chain.",
       "difficulty": "hard",
       "recommended_fleet_size": 10,
@@ -140,35 +209,58 @@
           "wave_number": 1,
           "trigger": "on_warp_in",
           "npcs": [
-            {"type": "sansha_frigate", "count": 4},
-            {"type": "sansha_cruiser", "count": 3}
+            {
+              "type": "hollow_frigate",
+              "count": 4
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 3
+            }
           ]
         },
         {
           "wave_number": 2,
           "trigger": "all_destroyed",
           "npcs": [
-            {"type": "sansha_cruiser", "count": 4},
-            {"type": "sansha_battlecruiser", "count": 2},
-            {"type": "sansha_commander", "count": 1}
+            {
+              "type": "hollow_cruiser",
+              "count": 4
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 2
+            },
+            {
+              "type": "hollow_commander",
+              "count": 1
+            }
           ]
         }
       ],
       "objectives": [
-        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
-        {"type": "destroy", "target": "sansha_commander", "count": 1, "description": "Eliminate the Nation Commander"}
+        {
+          "type": "destroy_all",
+          "description": "Destroy all Hollow forces"
+        },
+        {
+          "type": "destroy",
+          "target": "hollow_commander",
+          "count": 1,
+          "description": "Eliminate the Nation Commander"
+        }
       ],
       "rewards": {
         "isk": 12000000,
         "loyalty_points": 4000,
-        "concord_lp": 4000,
+        "aegis_lp": 4000,
         "standing_gain": 0.07
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module",
-        "sansha_bpc"
+        "true_hollow_module",
+        "hollow_bpc"
       ]
     },
     "true_power_provisional_headquarters": {
@@ -176,7 +268,7 @@
       "name": "True Power Provisional Headquarters",
       "type": "assault",
       "description": "A True Power headquarters has been established to direct the incursion. A coordinated assault fleet is required to destroy it.",
-      "briefing": "Assault-class encounter. Expect overwhelming numbers of Sansha forces including battleships and logistics cruisers. A 20-pilot fleet with dedicated logistics is mandatory. EM and thermal damage recommended. The headquarters structure has a reinforcement timer.",
+      "briefing": "Assault-class encounter. Expect overwhelming numbers of Hollow forces including battleships and logistics cruisers. A 20-pilot fleet with dedicated logistics is mandatory. EM and thermal damage recommended. The headquarters structure has a reinforcement timer.",
       "difficulty": "extreme",
       "recommended_fleet_size": 20,
       "recommended_ship_class": "Battleship",
@@ -186,58 +278,105 @@
           "wave_number": 1,
           "trigger": "on_warp_in",
           "npcs": [
-            {"type": "sansha_frigate", "count": 8},
-            {"type": "sansha_cruiser", "count": 6},
-            {"type": "sansha_battlecruiser", "count": 4},
-            {"type": "sansha_battleship", "count": 2}
+            {
+              "type": "hollow_frigate",
+              "count": 8
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 6
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 4
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 2
+            }
           ]
         },
         {
           "wave_number": 2,
           "trigger": "half_destroyed",
           "npcs": [
-            {"type": "sansha_frigate", "count": 6},
-            {"type": "sansha_cruiser", "count": 4},
-            {"type": "sansha_battlecruiser", "count": 3},
-            {"type": "sansha_battleship", "count": 3},
-            {"type": "sansha_logistics_cruiser", "count": 2}
+            {
+              "type": "hollow_frigate",
+              "count": 6
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 4
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 3
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 3
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 2
+            }
           ]
         },
         {
           "wave_number": 3,
           "trigger": "all_destroyed",
           "npcs": [
-            {"type": "sansha_cruiser", "count": 4},
-            {"type": "sansha_battleship", "count": 4},
-            {"type": "sansha_logistics_cruiser", "count": 2},
-            {"type": "sansha_commander", "count": 1}
+            {
+              "type": "hollow_cruiser",
+              "count": 4
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 4
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 2
+            },
+            {
+              "type": "hollow_commander",
+              "count": 1
+            }
           ]
         }
       ],
       "objectives": [
-        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
-        {"type": "destroy", "target": "true_power_headquarters", "count": 1, "description": "Destroy the Provisional Headquarters"}
+        {
+          "type": "destroy_all",
+          "description": "Destroy all Hollow forces"
+        },
+        {
+          "type": "destroy",
+          "target": "true_power_headquarters",
+          "count": 1,
+          "description": "Destroy the Provisional Headquarters"
+        }
       ],
       "rewards": {
         "isk": 25000000,
         "loyalty_points": 7000,
-        "concord_lp": 7000,
-        "standing_gain": 0.10
+        "aegis_lp": 7000,
+        "standing_gain": 0.1
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module",
-        "concord_module",
-        "sansha_bpc"
+        "true_hollow_module",
+        "aegis_module",
+        "hollow_bpc"
       ]
     },
     "nation_staging_point": {
       "id": "nation_staging_point",
       "name": "Nation Staging Point",
       "type": "assault",
-      "description": "Sansha forces are staging for a major push from this location. Destroy the staging infrastructure and eliminate the defending fleet.",
-      "briefing": "Assault-class encounter. Heavy energy neutralizer and warp disruption presence. Capital-class remote repairs on Sansha battleships. Requires coordinated alpha strikes to break through reps. 20-pilot fleet minimum with at least 3 logistics.",
+      "description": "Hollow forces are staging for a major push from this location. Destroy the staging infrastructure and eliminate the defending fleet.",
+      "briefing": "Assault-class encounter. Heavy energy neutralizer and warp disruption presence. Capital-class remote repairs on Hollow battleships. Requires coordinated alpha strikes to break through reps. 20-pilot fleet minimum with at least 3 logistics.",
       "difficulty": "extreme",
       "recommended_fleet_size": 20,
       "recommended_ship_class": "Battleship",
@@ -247,56 +386,97 @@
           "wave_number": 1,
           "trigger": "on_warp_in",
           "npcs": [
-            {"type": "sansha_frigate", "count": 10},
-            {"type": "sansha_cruiser", "count": 5},
-            {"type": "sansha_battlecruiser", "count": 3},
-            {"type": "sansha_battleship", "count": 2}
+            {
+              "type": "hollow_frigate",
+              "count": 10
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 5
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 3
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 2
+            }
           ]
         },
         {
           "wave_number": 2,
           "trigger": "half_destroyed",
           "npcs": [
-            {"type": "sansha_frigate", "count": 5},
-            {"type": "sansha_cruiser", "count": 6},
-            {"type": "sansha_battleship", "count": 4},
-            {"type": "sansha_logistics_cruiser", "count": 3}
+            {
+              "type": "hollow_frigate",
+              "count": 5
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 6
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 4
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 3
+            }
           ]
         },
         {
           "wave_number": 3,
           "trigger": "all_destroyed",
           "npcs": [
-            {"type": "sansha_battleship", "count": 5},
-            {"type": "sansha_logistics_cruiser", "count": 2},
-            {"type": "sansha_commander", "count": 1}
+            {
+              "type": "hollow_battleship",
+              "count": 5
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 2
+            },
+            {
+              "type": "hollow_commander",
+              "count": 1
+            }
           ]
         }
       ],
       "objectives": [
-        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
-        {"type": "destroy", "target": "sansha_staging_beacon", "count": 3, "description": "Destroy Staging Beacons"}
+        {
+          "type": "destroy_all",
+          "description": "Destroy all Hollow forces"
+        },
+        {
+          "type": "destroy",
+          "target": "hollow_staging_beacon",
+          "count": 3,
+          "description": "Destroy Staging Beacons"
+        }
       ],
       "rewards": {
         "isk": 28000000,
         "loyalty_points": 7500,
-        "concord_lp": 7500,
-        "standing_gain": 0.10
+        "aegis_lp": 7500,
+        "standing_gain": 0.1
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module",
-        "concord_module",
-        "sansha_bpc"
+        "true_hollow_module",
+        "aegis_module",
+        "hollow_bpc"
       ]
     },
     "true_creations_research_center": {
       "id": "true_creations_research_center",
       "name": "True Creations Research Center",
       "type": "headquarters",
-      "description": "A major True Creations research facility is manufacturing Sansha combat drones and implants. This is a high-priority target requiring a large fleet operation.",
-      "briefing": "Headquarters-class encounter. The research center is defended by multiple waves of heavy Sansha forces including capital-class entities. A 40-pilot fleet with significant logistics support is required. The facility must be destroyed after clearing all defenders. Expect heavy EM/thermal damage.",
+      "description": "A major True Creations research facility is manufacturing Hollow combat drones and implants. This is a high-priority target requiring a large fleet operation.",
+      "briefing": "Headquarters-class encounter. The research center is defended by multiple waves of heavy Hollow forces including capital-class entities. A 40-pilot fleet with significant logistics support is required. The facility must be destroyed after clearing all defenders. Expect heavy EM/thermal damage.",
       "difficulty": "extreme",
       "recommended_fleet_size": 40,
       "recommended_ship_class": "Battleship",
@@ -306,51 +486,101 @@
           "wave_number": 1,
           "trigger": "on_warp_in",
           "npcs": [
-            {"type": "sansha_frigate", "count": 12},
-            {"type": "sansha_cruiser", "count": 8},
-            {"type": "sansha_battlecruiser", "count": 6},
-            {"type": "sansha_battleship", "count": 4},
-            {"type": "sansha_logistics_cruiser", "count": 3}
+            {
+              "type": "hollow_frigate",
+              "count": 12
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 8
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 6
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 4
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 3
+            }
           ]
         },
         {
           "wave_number": 2,
           "trigger": "half_destroyed",
           "npcs": [
-            {"type": "sansha_frigate", "count": 8},
-            {"type": "sansha_cruiser", "count": 6},
-            {"type": "sansha_battleship", "count": 6},
-            {"type": "sansha_logistics_cruiser", "count": 4},
-            {"type": "sansha_commander", "count": 2}
+            {
+              "type": "hollow_frigate",
+              "count": 8
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 6
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 6
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 4
+            },
+            {
+              "type": "hollow_commander",
+              "count": 2
+            }
           ]
         },
         {
           "wave_number": 3,
           "trigger": "all_destroyed",
           "npcs": [
-            {"type": "sansha_battleship", "count": 8},
-            {"type": "sansha_logistics_cruiser", "count": 3},
-            {"type": "sansha_commander", "count": 2},
-            {"type": "sansha_nation_carrier", "count": 1}
+            {
+              "type": "hollow_battleship",
+              "count": 8
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 3
+            },
+            {
+              "type": "hollow_commander",
+              "count": 2
+            },
+            {
+              "type": "hollow_nation_carrier",
+              "count": 1
+            }
           ]
         }
       ],
       "objectives": [
-        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
-        {"type": "destroy", "target": "true_creations_research_center", "count": 1, "description": "Destroy the Research Center"}
+        {
+          "type": "destroy_all",
+          "description": "Destroy all Hollow forces"
+        },
+        {
+          "type": "destroy",
+          "target": "true_creations_research_center",
+          "count": 1,
+          "description": "Destroy the Research Center"
+        }
       ],
       "rewards": {
         "isk": 60000000,
         "loyalty_points": 14000,
-        "concord_lp": 14000,
+        "aegis_lp": 14000,
         "standing_gain": 0.15
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module",
-        "concord_module",
-        "sansha_bpc",
+        "true_hollow_module",
+        "aegis_module",
+        "hollow_bpc",
         "implant_set_slave"
       ]
     },
@@ -358,7 +588,7 @@
       "id": "kundalini_manifest",
       "name": "Kundalini Manifest",
       "type": "headquarters",
-      "description": "The primary Sansha Nation command ship has been located. This massive vessel coordinates the entire incursion and must be destroyed to break the invasion.",
+      "description": "The primary Hollow Nation command ship has been located. This massive vessel coordinates the entire incursion and must be destroyed to break the invasion.",
       "briefing": "Headquarters-class encounter. The Kundalini Manifest is a supercarrier-class vessel with extreme defenses and fighter support. A full 40-pilot battleship fleet with heavy logistics and EWAR support is required. Destroying this vessel significantly reduces incursion influence.",
       "difficulty": "extreme",
       "recommended_fleet_size": 40,
@@ -369,50 +599,97 @@
           "wave_number": 1,
           "trigger": "on_warp_in",
           "npcs": [
-            {"type": "sansha_frigate", "count": 15},
-            {"type": "sansha_cruiser", "count": 10},
-            {"type": "sansha_battlecruiser", "count": 6},
-            {"type": "sansha_battleship", "count": 5},
-            {"type": "sansha_logistics_cruiser", "count": 4}
+            {
+              "type": "hollow_frigate",
+              "count": 15
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 10
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 6
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 5
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 4
+            }
           ]
         },
         {
           "wave_number": 2,
           "trigger": "half_destroyed",
           "npcs": [
-            {"type": "sansha_cruiser", "count": 8},
-            {"type": "sansha_battleship", "count": 8},
-            {"type": "sansha_logistics_cruiser", "count": 4},
-            {"type": "sansha_commander", "count": 3}
+            {
+              "type": "hollow_cruiser",
+              "count": 8
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 8
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 4
+            },
+            {
+              "type": "hollow_commander",
+              "count": 3
+            }
           ]
         },
         {
           "wave_number": 3,
           "trigger": "all_destroyed",
           "npcs": [
-            {"type": "sansha_battleship", "count": 6},
-            {"type": "sansha_commander", "count": 2},
-            {"type": "sansha_nation_carrier", "count": 1},
-            {"type": "kundalini_manifest", "count": 1}
+            {
+              "type": "hollow_battleship",
+              "count": 6
+            },
+            {
+              "type": "hollow_commander",
+              "count": 2
+            },
+            {
+              "type": "hollow_nation_carrier",
+              "count": 1
+            },
+            {
+              "type": "kundalini_manifest",
+              "count": 1
+            }
           ]
         }
       ],
       "objectives": [
-        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
-        {"type": "destroy", "target": "kundalini_manifest", "count": 1, "description": "Destroy the Kundalini Manifest"}
+        {
+          "type": "destroy_all",
+          "description": "Destroy all Hollow forces"
+        },
+        {
+          "type": "destroy",
+          "target": "kundalini_manifest",
+          "count": 1,
+          "description": "Destroy the Kundalini Manifest"
+        }
       ],
       "rewards": {
         "isk": 80000000,
         "loyalty_points": 18000,
-        "concord_lp": 18000,
-        "standing_gain": 0.20
+        "aegis_lp": 18000,
+        "standing_gain": 0.2
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module",
-        "concord_module",
-        "sansha_bpc",
+        "true_hollow_module",
+        "aegis_module",
+        "hollow_bpc",
         "implant_set_slave",
         "faction_module"
       ]
@@ -421,7 +698,7 @@
       "id": "nation_mothership",
       "name": "Nation Mothership",
       "type": "mothership",
-      "description": "The Sansha Nation mothership has been located — the command vessel directing the entire incursion. Destroying it will end the incursion and liberate the constellation.",
+      "description": "The Hollow Nation mothership has been located — the command vessel directing the entire incursion. Destroying it will end the incursion and liberate the constellation.",
       "briefing": "Mothership-class encounter. This is the final encounter of the incursion. The mothership is a titan-class vessel with massive hit points and devastating weapons. An 80-pilot fleet including capitals is required. This encounter only spawns when the incursion influence reaches 0%. Completing this encounter ends the incursion entirely.",
       "difficulty": "legendary",
       "recommended_fleet_size": 80,
@@ -432,51 +709,101 @@
           "wave_number": 1,
           "trigger": "on_warp_in",
           "npcs": [
-            {"type": "sansha_frigate", "count": 20},
-            {"type": "sansha_cruiser", "count": 15},
-            {"type": "sansha_battlecruiser", "count": 10},
-            {"type": "sansha_battleship", "count": 8},
-            {"type": "sansha_logistics_cruiser", "count": 6},
-            {"type": "sansha_commander", "count": 4}
+            {
+              "type": "hollow_frigate",
+              "count": 20
+            },
+            {
+              "type": "hollow_cruiser",
+              "count": 15
+            },
+            {
+              "type": "hollow_battlecruiser",
+              "count": 10
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 8
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 6
+            },
+            {
+              "type": "hollow_commander",
+              "count": 4
+            }
           ]
         },
         {
           "wave_number": 2,
           "trigger": "half_destroyed",
           "npcs": [
-            {"type": "sansha_cruiser", "count": 10},
-            {"type": "sansha_battleship", "count": 12},
-            {"type": "sansha_logistics_cruiser", "count": 6},
-            {"type": "sansha_commander", "count": 3},
-            {"type": "sansha_nation_carrier", "count": 2}
+            {
+              "type": "hollow_cruiser",
+              "count": 10
+            },
+            {
+              "type": "hollow_battleship",
+              "count": 12
+            },
+            {
+              "type": "hollow_logistics_cruiser",
+              "count": 6
+            },
+            {
+              "type": "hollow_commander",
+              "count": 3
+            },
+            {
+              "type": "hollow_nation_carrier",
+              "count": 2
+            }
           ]
         },
         {
           "wave_number": 3,
           "trigger": "all_destroyed",
           "npcs": [
-            {"type": "sansha_battleship", "count": 8},
-            {"type": "sansha_nation_carrier", "count": 2},
-            {"type": "sansha_nation_mothership", "count": 1}
+            {
+              "type": "hollow_battleship",
+              "count": 8
+            },
+            {
+              "type": "hollow_nation_carrier",
+              "count": 2
+            },
+            {
+              "type": "hollow_nation_mothership",
+              "count": 1
+            }
           ]
         }
       ],
       "objectives": [
-        {"type": "destroy_all", "description": "Destroy all Sansha forces"},
-        {"type": "destroy", "target": "sansha_nation_mothership", "count": 1, "description": "Destroy the Nation Mothership"}
+        {
+          "type": "destroy_all",
+          "description": "Destroy all Hollow forces"
+        },
+        {
+          "type": "destroy",
+          "target": "hollow_nation_mothership",
+          "count": 1,
+          "description": "Destroy the Nation Mothership"
+        }
       ],
       "rewards": {
         "isk": 200000000,
         "loyalty_points": 50000,
-        "concord_lp": 50000,
-        "standing_gain": 0.50
+        "aegis_lp": 50000,
+        "standing_gain": 0.5
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module",
-        "concord_module",
-        "sansha_bpc",
+        "true_hollow_module",
+        "aegis_module",
+        "hollow_bpc",
         "implant_set_slave",
         "faction_module",
         "officer_module"
@@ -484,11 +811,11 @@
     }
   },
   "incursion_npcs": {
-    "sansha_overseer": {
-      "id": "sansha_overseer",
-      "name": "Sansha's Overseer",
+    "hollow_overseer": {
+      "id": "hollow_overseer",
+      "name": "Hollow's Overseer",
       "type": "cruiser",
-      "faction": "Sansha's Nation",
+      "faction": "Hollow Collective",
       "hull_hp": 2800,
       "armor_hp": 3500,
       "shield_hp": 2200,
@@ -509,20 +836,42 @@
         }
       ],
       "ewar": [
-        {"type": "tracking_disruption", "strength": 0.30, "range": 40000}
+        {
+          "type": "tracking_disruption",
+          "strength": 0.3,
+          "range": 40000
+        }
       ],
       "resistances": {
-        "shield": {"em": 20, "thermal": 50, "kinetic": 40, "explosive": 30},
-        "armor": {"em": 60, "thermal": 55, "kinetic": 25, "explosive": 20},
-        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+        "shield": {
+          "em": 20,
+          "thermal": 50,
+          "kinetic": 40,
+          "explosive": 30
+        },
+        "armor": {
+          "em": 60,
+          "thermal": 55,
+          "kinetic": 25,
+          "explosive": 20
+        },
+        "hull": {
+          "em": 33,
+          "thermal": 33,
+          "kinetic": 33,
+          "explosive": 33
+        }
       },
-      "loot_table": ["sansha_dogtag", "salvage_material"]
+      "loot_table": [
+        "hollow_dogtag",
+        "salvage_material"
+      ]
     },
-    "sansha_logistics_cruiser": {
-      "id": "sansha_logistics_cruiser",
-      "name": "Sansha's Logistics",
+    "hollow_logistics_cruiser": {
+      "id": "hollow_logistics_cruiser",
+      "name": "Hollow's Logistics",
       "type": "cruiser",
-      "faction": "Sansha's Nation",
+      "faction": "Hollow Collective",
       "hull_hp": 2000,
       "armor_hp": 4000,
       "shield_hp": 1800,
@@ -549,17 +898,35 @@
         "cycle_time": 5.0
       },
       "resistances": {
-        "shield": {"em": 20, "thermal": 50, "kinetic": 40, "explosive": 30},
-        "armor": {"em": 65, "thermal": 60, "kinetic": 30, "explosive": 25},
-        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+        "shield": {
+          "em": 20,
+          "thermal": 50,
+          "kinetic": 40,
+          "explosive": 30
+        },
+        "armor": {
+          "em": 65,
+          "thermal": 60,
+          "kinetic": 30,
+          "explosive": 25
+        },
+        "hull": {
+          "em": 33,
+          "thermal": 33,
+          "kinetic": 33,
+          "explosive": 33
+        }
       },
-      "loot_table": ["sansha_dogtag", "salvage_material"]
+      "loot_table": [
+        "hollow_dogtag",
+        "salvage_material"
+      ]
     },
-    "sansha_commander": {
-      "id": "sansha_commander",
-      "name": "Sansha's Nation Commander",
+    "hollow_commander": {
+      "id": "hollow_commander",
+      "name": "Hollow Collective Commander",
       "type": "battleship",
-      "faction": "Sansha's Nation",
+      "faction": "Hollow Collective",
       "hull_hp": 8000,
       "armor_hp": 12000,
       "shield_hp": 6000,
@@ -588,21 +955,49 @@
         }
       ],
       "ewar": [
-        {"type": "tracking_disruption", "strength": 0.40, "range": 50000},
-        {"type": "energy_neutralizer", "amount": 200, "range": 25000, "cycle_time": 8.0}
+        {
+          "type": "tracking_disruption",
+          "strength": 0.4,
+          "range": 50000
+        },
+        {
+          "type": "energy_neutralizer",
+          "amount": 200,
+          "range": 25000,
+          "cycle_time": 8.0
+        }
       ],
       "resistances": {
-        "shield": {"em": 30, "thermal": 55, "kinetic": 45, "explosive": 35},
-        "armor": {"em": 70, "thermal": 65, "kinetic": 35, "explosive": 30},
-        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+        "shield": {
+          "em": 30,
+          "thermal": 55,
+          "kinetic": 45,
+          "explosive": 35
+        },
+        "armor": {
+          "em": 70,
+          "thermal": 65,
+          "kinetic": 35,
+          "explosive": 30
+        },
+        "hull": {
+          "em": 33,
+          "thermal": 33,
+          "kinetic": 33,
+          "explosive": 33
+        }
       },
-      "loot_table": ["sansha_dogtag", "salvage_material", "true_sansha_module"]
+      "loot_table": [
+        "hollow_dogtag",
+        "salvage_material",
+        "true_hollow_module"
+      ]
     },
-    "sansha_nation_carrier": {
-      "id": "sansha_nation_carrier",
-      "name": "Sansha's Nation Carrier",
+    "hollow_nation_carrier": {
+      "id": "hollow_nation_carrier",
+      "name": "Hollow Collective Carrier",
       "type": "capital",
-      "faction": "Sansha's Nation",
+      "faction": "Hollow Collective",
       "hull_hp": 30000,
       "armor_hp": 50000,
       "shield_hp": 20000,
@@ -629,17 +1024,37 @@
         "cycle_time": 8.0
       },
       "resistances": {
-        "shield": {"em": 35, "thermal": 55, "kinetic": 50, "explosive": 40},
-        "armor": {"em": 75, "thermal": 70, "kinetic": 40, "explosive": 35},
-        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+        "shield": {
+          "em": 35,
+          "thermal": 55,
+          "kinetic": 50,
+          "explosive": 40
+        },
+        "armor": {
+          "em": 75,
+          "thermal": 70,
+          "kinetic": 40,
+          "explosive": 35
+        },
+        "hull": {
+          "em": 33,
+          "thermal": 33,
+          "kinetic": 33,
+          "explosive": 33
+        }
       },
-      "loot_table": ["sansha_dogtag", "salvage_material", "true_sansha_module", "concord_module"]
+      "loot_table": [
+        "hollow_dogtag",
+        "salvage_material",
+        "true_hollow_module",
+        "aegis_module"
+      ]
     },
     "kundalini_manifest": {
       "id": "kundalini_manifest",
       "name": "Kundalini Manifest",
       "type": "capital",
-      "faction": "Sansha's Nation",
+      "faction": "Hollow Collective",
       "hull_hp": 60000,
       "armor_hp": 80000,
       "shield_hp": 40000,
@@ -668,20 +1083,46 @@
         }
       ],
       "ewar": [
-        {"type": "energy_neutralizer", "amount": 500, "range": 40000, "cycle_time": 6.0}
+        {
+          "type": "energy_neutralizer",
+          "amount": 500,
+          "range": 40000,
+          "cycle_time": 6.0
+        }
       ],
       "resistances": {
-        "shield": {"em": 40, "thermal": 60, "kinetic": 55, "explosive": 45},
-        "armor": {"em": 80, "thermal": 75, "kinetic": 45, "explosive": 40},
-        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+        "shield": {
+          "em": 40,
+          "thermal": 60,
+          "kinetic": 55,
+          "explosive": 45
+        },
+        "armor": {
+          "em": 80,
+          "thermal": 75,
+          "kinetic": 45,
+          "explosive": 40
+        },
+        "hull": {
+          "em": 33,
+          "thermal": 33,
+          "kinetic": 33,
+          "explosive": 33
+        }
       },
-      "loot_table": ["sansha_dogtag", "salvage_material", "true_sansha_module", "concord_module", "implant_set_slave"]
+      "loot_table": [
+        "hollow_dogtag",
+        "salvage_material",
+        "true_hollow_module",
+        "aegis_module",
+        "implant_set_slave"
+      ]
     },
-    "sansha_nation_mothership": {
-      "id": "sansha_nation_mothership",
-      "name": "Sansha's Nation Mothership",
+    "hollow_nation_mothership": {
+      "id": "hollow_nation_mothership",
+      "name": "Hollow Collective Mothership",
       "type": "titan",
-      "faction": "Sansha's Nation",
+      "faction": "Hollow Collective",
       "hull_hp": 200000,
       "armor_hp": 300000,
       "shield_hp": 150000,
@@ -710,19 +1151,43 @@
         }
       ],
       "ewar": [
-        {"type": "energy_neutralizer", "amount": 1000, "range": 60000, "cycle_time": 5.0},
-        {"type": "warp_disruption_field", "strength": 100, "range": 100000}
+        {
+          "type": "energy_neutralizer",
+          "amount": 1000,
+          "range": 60000,
+          "cycle_time": 5.0
+        },
+        {
+          "type": "warp_disruption_field",
+          "strength": 100,
+          "range": 100000
+        }
       ],
       "resistances": {
-        "shield": {"em": 50, "thermal": 65, "kinetic": 60, "explosive": 50},
-        "armor": {"em": 85, "thermal": 80, "kinetic": 50, "explosive": 45},
-        "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+        "shield": {
+          "em": 50,
+          "thermal": 65,
+          "kinetic": 60,
+          "explosive": 50
+        },
+        "armor": {
+          "em": 85,
+          "thermal": 80,
+          "kinetic": 50,
+          "explosive": 45
+        },
+        "hull": {
+          "em": 33,
+          "thermal": 33,
+          "kinetic": 33,
+          "explosive": 33
+        }
       },
       "loot_table": [
-        "sansha_dogtag",
+        "hollow_dogtag",
         "salvage_material",
-        "true_sansha_module",
-        "concord_module",
+        "true_hollow_module",
+        "aegis_module",
         "implant_set_slave",
         "faction_module",
         "officer_module"

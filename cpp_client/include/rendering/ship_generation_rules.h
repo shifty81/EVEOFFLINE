@@ -79,11 +79,11 @@ public:
         bool allowsAsymmetry;
         float minAsymmetryFactor;
         float maxAsymmetryFactor;
-        bool requiresVerticalElements;  // Minmatar/Amarr verticality
-        bool requiresOrganicCurves;     // Gallente smoothness
-        bool requiresAngularGeometry;   // Caldari blockiness
-        bool allowsExposedFramework;    // Minmatar industrial look
-        bool requiresOrnateDetails;     // Amarr cathedral style
+        bool requiresVerticalElements;  // Keldari/Solari verticality
+        bool requiresOrganicCurves;     // Aurelian smoothness
+        bool requiresAngularGeometry;   // Veyren blockiness
+        bool allowsExposedFramework;    // Keldari industrial look
+        bool requiresOrnateDetails;     // Solari cathedral style
 
         // Reference traits from analyzed OBJ models
         ReferenceModelTraits referenceTraits;
@@ -205,10 +205,10 @@ private:
     std::vector<Rule> m_globalRules;
     
     // Initialize specific faction rules
-    void initializeMinmatarRules();
-    void initializeCaldariRules();
-    void initializeGallenteRules();
-    void initializeAmarrRules();
+    void initializeKeldariRules();
+    void initializeVeyrenRules();
+    void initializeAurelianRules();
+    void initializeSolariRules();
     
     // Initialize class rules
     void initializeFrigateRules();

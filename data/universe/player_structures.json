@@ -1,6 +1,6 @@
 {
   "player_structures_2026": {
-    "description": "EVE Online 2026 player-owned structures following Equinox and Catalyst expansions",
+    "description": "EVE Online 2026 player-owned structures following Equinox and Vaillant expansions",
     "nullsec_strategic": {
       "orbital_skyhook": {
         "name": "Orbital Skyhook",
@@ -16,7 +16,10 @@
         "functionality": {
           "primary_role": "Passive PI harvesting",
           "income_stream": "Replaces older, less efficient planetary interaction methods",
-          "resources_produced": ["planetary_commodities", "raw_materials"],
+          "resources_produced": [
+            "planetary_commodities",
+            "raw_materials"
+          ],
           "harvest_cycle": "continuous",
           "management_required": "active"
         },
@@ -24,7 +27,11 @@
           "active_management": true,
           "can_be_stolen": true,
           "raiding_mechanics": "Enemies can siphon harvested resources",
-          "defense_options": ["reinforcement_timers", "defensive_modules", "fleet_defense"],
+          "defense_options": [
+            "reinforcement_timers",
+            "defensive_modules",
+            "fleet_defense"
+          ],
           "risk_level": "high"
         },
         "strategic_value": {
@@ -51,9 +58,21 @@
           "customization_focus": "Balance between industrial output and defensive capabilities"
         },
         "upgrades": {
-          "industrial": ["mining_anomalies", "gas_sites", "ore_prospecting"],
-          "military": ["combat_anomalies", "defensive_bonuses", "cyno_jammer"],
-          "economic": ["ratting_sites", "exploration_signatures", "manufacturing_bonuses"]
+          "industrial": [
+            "mining_anomalies",
+            "gas_sites",
+            "ore_prospecting"
+          ],
+          "military": [
+            "combat_anomalies",
+            "defensive_bonuses",
+            "cyno_jammer"
+          ],
+          "economic": [
+            "ratting_sites",
+            "exploration_signatures",
+            "manufacturing_bonuses"
+          ]
         },
         "defense": {
           "reinforcement_cycles": 3,
@@ -71,7 +90,7 @@
         "name": "Metenox Moon Drill",
         "type": "nullsec_structure",
         "category": "moon_mining",
-        "description": "Specialized, automated moon mining structure for smaller, less-populated, or 'dead end' systems",
+        "description": "Specialized, automated moon mining structure for sbastion, less-populated, or 'dead end' systems",
         "deployment": {
           "location": "moon_orbit",
           "anchoring_time": "12_hours",
@@ -89,7 +108,11 @@
           "lower_cost": "Cheaper than Tatara",
           "reduced_manning": "Requires fewer operators",
           "automated_operation": "Can run with minimal supervision",
-          "ideal_for": ["remote_systems", "dead_end_pockets", "small_corporations"]
+          "ideal_for": [
+            "remote_systems",
+            "dead_end_pockets",
+            "small_corporations"
+          ]
         },
         "defense": {
           "reinforcement_cycles": 2,
@@ -110,7 +133,10 @@
         "category": "moon_mining",
         "description": "Medium-sized refinery with 2026 updates supporting new ore types and faster mining cycles",
         "updates_2026": {
-          "new_ore_support": ["prismaticite", "enhanced_moon_ores"],
+          "new_ore_support": [
+            "prismaticite",
+            "enhanced_moon_ores"
+          ],
           "faster_cycles": "20% reduction in extraction time",
           "enhanced_yield": "Improved ore processing efficiency",
           "compression_modules": "New specialized compression for asteroid, ice, and gas"
@@ -122,10 +148,26 @@
           "fitting_system": "Modular structure fitting similar to ships"
         },
         "fitting_modules": {
-          "reprocessing_efficiency": ["basic_reprocessing", "advanced_reprocessing", "perfect_reprocessing"],
-          "compression_modules": ["asteroid_compression", "ice_compression", "gas_compression"],
-          "defensive_modules": ["shield_hardeners", "armor_repairers", "point_defense"],
-          "utility_modules": ["mining_survey_chipset", "yield_enhancement", "cycle_acceleration"]
+          "reprocessing_efficiency": [
+            "basic_reprocessing",
+            "advanced_reprocessing",
+            "perfect_reprocessing"
+          ],
+          "compression_modules": [
+            "asteroid_compression",
+            "ice_compression",
+            "gas_compression"
+          ],
+          "defensive_modules": [
+            "shield_hardeners",
+            "armor_repairers",
+            "point_defense"
+          ],
+          "utility_modules": [
+            "mining_survey_chipset",
+            "yield_enhancement",
+            "cycle_acceleration"
+          ]
         }
       },
       "tatara_2026": {
@@ -134,7 +176,11 @@
         "category": "large_scale_mining",
         "description": "Large refinery with significant 2026 updates for industrial-scale operations",
         "updates_2026": {
-          "new_ore_support": ["prismaticite", "enhanced_moon_ores", "rare_minerals"],
+          "new_ore_support": [
+            "prismaticite",
+            "enhanced_moon_ores",
+            "rare_minerals"
+          ],
           "faster_cycles": "30% reduction in extraction time",
           "enhanced_yield": "Maximum ore processing efficiency",
           "compression_modules": "Advanced compression with bonus yields"
@@ -166,30 +212,68 @@
         },
         "cpu_cost": 150,
         "powergrid_cost": 250,
-        "fitting_requirements": ["athanor", "tatara", "metenox_drill"]
+        "fitting_requirements": [
+          "athanor",
+          "tatara",
+          "metenox_drill"
+        ]
       },
       "industry_fitting_system": {
         "name": "Industry Fitting System",
         "type": "game_mechanic",
         "description": "2026 update allowing structures to be fitted similar to ships",
         "features": {
-          "fitting_slots": ["high_slots", "mid_slots", "low_slots", "rig_slots"],
+          "fitting_slots": [
+            "high_slots",
+            "mid_slots",
+            "low_slots",
+            "rig_slots"
+          ],
           "cpu_powergrid": "Structures have CPU and PowerGrid like ships",
-          "specialized_modules": ["compression", "refining", "defensive", "utility"],
+          "specialized_modules": [
+            "compression",
+            "refining",
+            "defensive",
+            "utility"
+          ],
           "customization": "Tailor structure efficiency for specific operations"
         },
         "example_fits": {
           "mining_focus": {
-            "high": ["moon_drill", "mining_survey_chipset"],
-            "mid": ["ore_scanner", "yield_enhancer"],
-            "low": ["reprocessing_efficiency", "compression_module"],
-            "rig": ["mining_optimization_rig", "refining_efficiency_rig"]
+            "high": [
+              "moon_drill",
+              "mining_survey_chipset"
+            ],
+            "mid": [
+              "ore_scanner",
+              "yield_enhancer"
+            ],
+            "low": [
+              "reprocessing_efficiency",
+              "compression_module"
+            ],
+            "rig": [
+              "mining_optimization_rig",
+              "refining_efficiency_rig"
+            ]
           },
           "defensive_focus": {
-            "high": ["point_defense_battery", "missile_launcher"],
-            "mid": ["shield_hardeners", "remote_shield_boosters"],
-            "low": ["damage_control", "reinforced_bulkheads"],
-            "rig": ["defense_optimization_rig", "armor_resistance_rig"]
+            "high": [
+              "point_defense_battery",
+              "missile_launcher"
+            ],
+            "mid": [
+              "shield_hardeners",
+              "remote_shield_boosters"
+            ],
+            "low": [
+              "damage_control",
+              "reinforced_bulkheads"
+            ],
+            "rig": [
+              "defense_optimization_rig",
+              "armor_resistance_rig"
+            ]
           }
         }
       }
@@ -202,7 +286,10 @@
         "description": "Wormhole-exclusive structure for storing 'Grain' to provide system-wide harvesting bonuses",
         "deployment": {
           "location": "wormhole_systems_only",
-          "excluded_from": ["shattered_wormholes", "drifter_wormholes"],
+          "excluded_from": [
+            "shattered_wormholes",
+            "dfang_wormholes"
+          ],
           "anchoring_time": "6_hours",
           "fuel_required": false
         },
@@ -224,7 +311,11 @@
           "system_wide": "Affects all mining in the system"
         },
         "gameplay_impact": {
-          "encourages": ["collaboration", "high_risk_high_reward", "active_participation"],
+          "encourages": [
+            "collaboration",
+            "high_risk_high_reward",
+            "active_participation"
+          ],
           "risk_level": "high",
           "reward_potential": "significant_for_dedicated_groups"
         }
@@ -234,22 +325,34 @@
         "type": "game_mechanic",
         "description": "2026 updates to Upwell structures in wormhole space",
         "fuel_reduction": {
-          "affected_wormholes": ["C1", "C2", "C3"],
+          "affected_wormholes": [
+            "C1",
+            "C2",
+            "C3"
+          ],
           "reduction_amount": "30% lower fuel costs",
           "rationale": "Encourage new player habitation in lower-class wormholes"
         },
         "asset_safety_partial": {
-          "affected_wormholes": ["C1", "C2", "C3"],
+          "affected_wormholes": [
+            "C1",
+            "C2",
+            "C3"
+          ],
           "description": "Major change - partial asset safety now available",
           "mechanics": {
-            "structure_destruction": "Assets moved to nearest low-sec NPC station",
+            "structure_destruction": "Assets moved to nefleurett low-sec NPC station",
             "recovery_cost": "15% of asset value",
             "alternative": "Can still be dropped as loot if container destroyed"
           },
           "impact": "Reduces penalty for losing structure, encourages habitation"
         },
         "higher_class_unchanged": {
-          "affected_wormholes": ["C4", "C5", "C6"],
+          "affected_wormholes": [
+            "C4",
+            "C5",
+            "C6"
+          ],
           "asset_safety": false,
           "description": "No asset safety - full loot drop on structure destruction",
           "rationale": "Maintains high-stakes environment for experienced players"
@@ -257,8 +360,8 @@
       }
     },
     "other_deployables": {
-      "concord_rogue_analysis_beacon": {
-        "name": "CONCORD Rogue Analysis Beacon (CRAB)",
+      "aegis_rogue_analysis_beacon": {
+        "name": "AEGIS Rogue Analysis Beacon (CRAB)",
         "type": "deployable",
         "category": "combat",
         "description": "Used in nullsec to bait and fight NPCs for high-tier loot",
@@ -313,7 +416,11 @@
           "size": "minimal",
           "services": "basic_only",
           "profile": "low_detection",
-          "ideal_for": ["solo_players", "small_gangs", "nomadic_lifestyle"]
+          "ideal_for": [
+            "solo_players",
+            "small_gangs",
+            "nomadic_lifestyle"
+          ]
         },
         "testing_status": {
           "phase": "early_2026",
@@ -323,7 +430,11 @@
       }
     },
     "structure_summary_table": {
-      "columns": ["Structure", "Type", "Primary Role"],
+      "columns": [
+        "Structure",
+        "Type",
+        "Primary Role"
+      ],
       "rows": [
         {
           "structure": "Orbital Skyhook",
@@ -351,7 +462,7 @@
           "primary_role": "Fitted with specialized mining/industry modules"
         },
         {
-          "structure": "CONCORD CRAB",
+          "structure": "AEGIS CRAB",
           "type": "Nullsec Deployable",
           "primary_role": "Bait NPCs for high-tier loot"
         },

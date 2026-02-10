@@ -1,9 +1,9 @@
 {
-  "serpentis_fleet_commander": {
-    "id": "serpentis_fleet_commander",
-    "name": "Serpentis Fleet Commander",
+  "venom_syndicate_fleet_commander": {
+    "id": "venom_syndicate_fleet_commander",
+    "name": "Venom Syndicate Fleet Commander",
     "type": "battleship",
-    "faction": "Serpentis",
+    "faction": "Venom Syndicate",
     "hull_hp": 8000,
     "armor_hp": 12000,
     "shield_hp": 10000,
@@ -49,8 +49,8 @@
       }
     },
     "loot_table": [
-      "federation_navy_magnetic_field_stabilizer",
-      "serpentis_faction_dogtag",
+      "aurelian_grand_magnetic_field_stabilizer",
+      "venom_syndicate_faction_dogtag",
       "large_hybrid_weapons"
     ],
     "special": {
@@ -58,11 +58,11 @@
       "remote_repair": true
     }
   },
-  "guristas_fleet_commander": {
-    "id": "guristas_fleet_commander",
-    "name": "Guristas Fleet Commander",
+  "iron_corsairs_fleet_commander": {
+    "id": "iron_corsairs_fleet_commander",
+    "name": "Iron Corsairs Fleet Commander",
     "type": "battleship",
-    "faction": "Guristas",
+    "faction": "Iron Corsairs",
     "hull_hp": 8500,
     "armor_hp": 10000,
     "shield_hp": 14000,
@@ -107,8 +107,8 @@
       }
     },
     "loot_table": [
-      "caldari_navy_ballistic_control_system",
-      "guristas_faction_dogtag",
+      "veyren_fleet_ballistic_control_system",
+      "iron_corsairs_faction_dogtag",
       "cruise_missiles"
     ],
     "special": {
@@ -116,11 +116,11 @@
       "target_painter": true
     }
   },
-  "blood_raider_fleet_commander": {
-    "id": "blood_raider_fleet_commander",
-    "name": "Blood Raider Fleet Commander",
+  "crimson_order_fleet_commander": {
+    "id": "crimson_order_fleet_commander",
+    "name": "Crimson Order Fleet Commander",
     "type": "battleship",
-    "faction": "Blood Raiders",
+    "faction": "Crimson Order",
     "hull_hp": 7500,
     "armor_hp": 14000,
     "shield_hp": 8000,
@@ -167,7 +167,7 @@
     },
     "loot_table": [
       "imperial_navy_heat_sink",
-      "blood_raiders_faction_dogtag",
+      "crimson_order_faction_dogtag",
       "large_energy_weapons"
     ],
     "special": {
@@ -176,11 +176,11 @@
       "web": true
     }
   },
-  "angel_cartel_fleet_commander": {
-    "id": "angel_cartel_fleet_commander",
-    "name": "Angel Cartel Fleet Commander",
+  "shadow_pact_fleet_commander": {
+    "id": "shadow_pact_fleet_commander",
+    "name": "Shadow Pact Fleet Commander",
     "type": "battleship",
-    "faction": "Angel Cartel",
+    "faction": "Shadow Pact",
     "hull_hp": 9000,
     "armor_hp": 11000,
     "shield_hp": 12000,
@@ -226,7 +226,7 @@
       }
     },
     "loot_table": [
-      "republic_fleet_gyrostabilizer",
+      "keldari_tribal_gyrostabilizer",
       "angel_faction_dogtag",
       "large_projectile_weapons"
     ],
@@ -235,11 +235,11 @@
       "target_painter": true
     }
   },
-  "tobias_kruzhor": {
-    "id": "tobias_kruzhor",
-    "name": "Tobias Kruzhor",
+  "vargus_thornbane": {
+    "id": "vargus_thornbane",
+    "name": "Vargus Thornbane",
     "type": "battleship",
-    "faction": "Guristas",
+    "faction": "Iron Corsairs",
     "hull_hp": 15000,
     "armor_hp": 18000,
     "shield_hp": 25000,
@@ -285,8 +285,8 @@
     },
     "loot_table": [
       "tobias_modified_shield_booster",
-      "guristas_officer_dogtag",
-      "pith_x_type_shield_booster",
+      "iron_corsairs_officer_dogtag",
+      "stormclaw_x_type_shield_booster",
       "cruise_missiles"
     ],
     "special": {
@@ -296,11 +296,11 @@
       "web": true
     }
   },
-  "draclira_merlonne": {
-    "id": "draclira_merlonne",
-    "name": "Draclira Merlonne",
+  "seraphine_blackveil": {
+    "id": "seraphine_blackveil",
+    "name": "Seraphine Blackveil",
     "type": "battleship",
-    "faction": "Blood Raiders",
+    "faction": "Crimson Order",
     "hull_hp": 16000,
     "armor_hp": 28000,
     "shield_hp": 14000,
@@ -347,7 +347,7 @@
     },
     "loot_table": [
       "draclira_modified_energy_neutralizer",
-      "blood_raiders_officer_dogtag",
+      "crimson_order_officer_dogtag",
       "corpus_x_type_armor_repairer",
       "large_energy_weapons"
     ],
@@ -358,11 +358,11 @@
       "warp_scrambler": true
     }
   },
-  "cormack_vaaja": {
-    "id": "cormack_vaaja",
-    "name": "Cormack Vaaja",
+  "theron_darkfang": {
+    "id": "theron_darkfang",
+    "name": "Theron Darkfang",
     "type": "battleship",
-    "faction": "Serpentis",
+    "faction": "Venom Syndicate",
     "hull_hp": 14000,
     "armor_hp": 22000,
     "shield_hp": 16000,
@@ -409,8 +409,8 @@
     },
     "loot_table": [
       "cormack_modified_armor_repairer",
-      "serpentis_officer_dogtag",
-      "shadow_serpentis_magnetic_field_stabilizer",
+      "venom_syndicate_officer_dogtag",
+      "deep_venom_magnetic_field_stabilizer",
       "large_hybrid_weapons"
     ],
     "special": {
@@ -419,11 +419,11 @@
       "warp_scrambler": true
     }
   },
-  "hakim_stormare": {
-    "id": "hakim_stormare",
-    "name": "Hakim Stormare",
+  "korath_ironstorm": {
+    "id": "korath_ironstorm",
+    "name": "Korath Ironstorm",
     "type": "battleship",
-    "faction": "Angel Cartel",
+    "faction": "Shadow Pact",
     "hull_hp": 16000,
     "armor_hp": 20000,
     "shield_hp": 20000,
@@ -471,7 +471,7 @@
     "loot_table": [
       "hakim_modified_target_painter",
       "angel_officer_dogtag",
-      "domination_tracking_enhancer",
+      "pact_ascendant_tracking_enhancer",
       "large_projectile_weapons"
     ],
     "special": {

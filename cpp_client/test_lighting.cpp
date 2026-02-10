@@ -163,7 +163,7 @@ int main() {
     };
     
     for (const auto& pos : positions) {
-        testObjects.push_back(Model::createShipModel("frigate", "caldari"));
+        testObjects.push_back(Model::createShipModel("frigate", "veyren"));
     }
     
     std::cout << "\nControls:" << std::endl;

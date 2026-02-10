@@ -131,9 +131,9 @@
       "training_multiplier": 3
     },
     {
-      "id": "amarr_encryption_methods",
-      "name": "Amarr Encryption Methods",
-      "description": "Understanding of Amarr data encryption. Required for invention of Amarr Tech II items. Each level increases invention success by 1%.",
+      "id": "solari_encryption_methods",
+      "name": "Solari Encryption Methods",
+      "description": "Understanding of Solari data encryption. Required for invention of Solari Tech II items. Each level increases invention success by 1%.",
       "rank": 3,
       "primary_attribute": "intelligence",
       "secondary_attribute": "memory",
@@ -144,9 +144,9 @@
       "training_multiplier": 3
     },
     {
-      "id": "caldari_encryption_methods",
-      "name": "Caldari Encryption Methods",
-      "description": "Understanding of Caldari data encryption. Required for invention of Caldari Tech II items. Each level increases invention success by 1%.",
+      "id": "veyren_encryption_methods",
+      "name": "Veyren Encryption Methods",
+      "description": "Understanding of Veyren data encryption. Required for invention of Veyren Tech II items. Each level increases invention success by 1%.",
       "rank": 3,
       "primary_attribute": "intelligence",
       "secondary_attribute": "memory",
@@ -157,9 +157,9 @@
       "training_multiplier": 3
     },
     {
-      "id": "gallente_encryption_methods",
-      "name": "Gallente Encryption Methods",
-      "description": "Understanding of Gallente data encryption. Required for invention of Gallente Tech II items. Each level increases invention success by 1%.",
+      "id": "aurelian_encryption_methods",
+      "name": "Aurelian Encryption Methods",
+      "description": "Understanding of Aurelian data encryption. Required for invention of Aurelian Tech II items. Each level increases invention success by 1%.",
       "rank": 3,
       "primary_attribute": "intelligence",
       "secondary_attribute": "memory",
@@ -170,9 +170,9 @@
       "training_multiplier": 3
     },
     {
-      "id": "minmatar_encryption_methods",
-      "name": "Minmatar Encryption Methods",
-      "description": "Understanding of Minmatar data encryption. Required for invention of Minmatar Tech II items. Each level increases invention success by 1%.",
+      "id": "keldari_encryption_methods",
+      "name": "Keldari Encryption Methods",
+      "description": "Understanding of Keldari data encryption. Required for invention of Keldari Tech II items. Each level increases invention success by 1%.",
       "rank": 3,
       "primary_attribute": "intelligence",
       "secondary_attribute": "memory",

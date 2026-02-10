@@ -245,7 +245,7 @@ public:
      * Find a suitable seed OBJ from the reference asset directory,
      * matching faction and ship class where possible.
      *
-     * @param faction   Faction name (e.g. "Caldari").
+     * @param faction   Faction name (e.g. "Veyren").
      * @param shipClass Ship class (e.g. "frigate", "cruiser").
      * @return          Path to OBJ file, or empty string if none found.
      */

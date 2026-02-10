@@ -1,11 +1,11 @@
 {
-  "vargur": {
-    "id": "vargur",
-    "name": "Vargur",
+  "ironheart": {
+    "id": "ironheart",
+    "name": "Ironheart",
     "class": "Marauder",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Vargur is a Minmatar Marauder-class battleship built for sustained PVE combat. It features a bonus to Bastion Module effectiveness, massively boosted projectile weapon damage, and improved tractor beam range.",
+    "race": "Keldari",
+    "description": "The Ironheart is a Keldari Marauder-class battleship built for sustained PVE combat. It features a bonus to Bastion Module effectiveness, massively boosted projectile weapon damage, and improved tractor beam range.",
     "hull_hp": 8500,
     "armor_hp": 9000,
     "shield_hp": 10500,
@@ -36,18 +36,33 @@
       "micro_jump_drive_cooldown": -50
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 65, "thermal": 40, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 65,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
-  "golem": {
-    "id": "golem",
-    "name": "Golem",
+  "monolith": {
+    "id": "monolith",
+    "name": "Monolith",
     "class": "Marauder",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Golem is a Caldari Marauder-class battleship designed for long-range missile bombardment. Its Bastion Module provides massive shield tanking capability while dealing devastating cruise missile and torpedo damage.",
+    "race": "Veyren",
+    "description": "The Monolith is a Veyren Marauder-class battleship designed for long-range missile bombardment. Its Bastion Module provides massive shield tanking capability while dealing devastating cruise missile and torpedo damage.",
     "hull_hp": 8800,
     "armor_hp": 8000,
     "shield_hp": 12500,
@@ -79,18 +94,33 @@
       "micro_jump_drive_cooldown": -50
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 55, "thermal": 50, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 50,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
-  "kronos": {
-    "id": "kronos",
-    "name": "Kronos",
+  "majeste": {
+    "id": "majeste",
+    "name": "Majeste",
     "class": "Marauder",
     "tech_level": 2,
-    "race": "Gallente",
-    "description": "The Kronos is a Gallente Marauder-class battleship excelling in close-range hybrid turret combat. Its Bastion Module provides tremendous armor repair capability, and its blasters deliver the highest DPS of any subcapital ship.",
+    "race": "Aurelian",
+    "description": "The Majeste is a Aurelian Marauder-class battleship excelling in close-range hybrid turret combat. Its Bastion Module provides tremendous armor repair capability, and its blasters deliver the highest DPS of any subcapital ship.",
     "hull_hp": 8600,
     "armor_hp": 11000,
     "shield_hp": 9000,
@@ -123,18 +153,33 @@
       "micro_jump_drive_cooldown": -50
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 55, "thermal": 40, "kinetic": 30, "explosive": 65},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 65
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
-  "paladin": {
-    "id": "paladin",
-    "name": "Paladin",
+  "solarius_prime": {
+    "id": "solarius_prime",
+    "name": "Solarius Prime",
     "class": "Marauder",
     "tech_level": 2,
-    "race": "Amarr",
-    "description": "The Paladin is an Amarr Marauder-class battleship built around devastating energy turret platforms. Its Bastion Module dramatically increases armor resistances and repair amount, making it nearly impervious while locked in place.",
+    "race": "Solari",
+    "description": "The Solarius Prime is an Solari Marauder-class battleship built around devastating energy turret platforms. Its Bastion Module dramatically increases armor resistances and repair amount, making it nearly impervious while locked in place.",
     "hull_hp": 9000,
     "armor_hp": 12000,
     "shield_hp": 8500,
@@ -165,9 +210,24 @@
       "micro_jump_drive_cooldown": -50
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 25, "kinetic": 45, "explosive": 55},
-      "armor": {"em": 55, "thermal": 40, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 25,
+        "kinetic": 45,
+        "explosive": 55
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   }
 }

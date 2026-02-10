@@ -923,22 +923,22 @@ void Application::spawnLocalPlayerEntity() {
     
     std::cout << "[PVE] Spawning local player ship..." << std::endl;
     
-    // Create player entity at origin with a Rifter (Minmatar frigate)
+    // Create player entity at origin with a Fang (Keldari frigate)
     Health playerHealth(1500, 800, 500);  // Shield, Armor, Hull
-    Capacitor playerCapacitor(250.0f, 250.0f);  // Rifter capacitor: 250 GJ
+    Capacitor playerCapacitor(250.0f, 250.0f);  // Fang capacitor: 250 GJ
     
     m_gameClient->getEntityManager().spawnEntity(
         m_localPlayerId,
         glm::vec3(0.0f, 0.0f, 0.0f),
         playerHealth,
         playerCapacitor,
-        "Rifter",
+        "Fang",
         "Your Ship",
-        "Minmatar"
+        "Keldari"
     );
     
     m_localPlayerSpawned = true;
-    std::cout << "[PVE] Local player ship spawned as Rifter" << std::endl;
+    std::cout << "[PVE] Local player ship spawned as Fang" << std::endl;
 }
 
 void Application::spawnDemoNPCEntities() {
@@ -947,7 +947,7 @@ void Application::spawnDemoNPCEntities() {
     // Spawn some NPC enemies for the PVE demo
     // These would normally come from the server in missions/anomalies
     
-    // Blood Raider pirate (hostile NPC)
+    // Crimson Order pirate (hostile NPC)
     Health npc1Health(800, 600, 400);
     Capacitor npc1Cap(500.0f, 500.0f);
     m_gameClient->getEntityManager().spawnEntity(
@@ -956,11 +956,11 @@ void Application::spawnDemoNPCEntities() {
         npc1Health,
         npc1Cap,
         "Cruiser",
-        "Blood Raider",
-        "Blood Raiders"
+        "Crimson Order",
+        "Crimson Order"
     );
     
-    // Serpentis frigate
+    // Venom Syndicate frigate
     Health npc2Health(400, 300, 200);
     Capacitor npc2Cap(300.0f, 300.0f);
     m_gameClient->getEntityManager().spawnEntity(
@@ -969,11 +969,11 @@ void Application::spawnDemoNPCEntities() {
         npc2Health,
         npc2Cap,
         "Frigate",
-        "Serpentis Scout",
-        "Serpentis"
+        "Venom Syndicate Scout",
+        "Venom Syndicate"
     );
     
-    // Guristas destroyer
+    // Iron Corsairs destroyer
     Health npc3Health(600, 500, 350);
     Capacitor npc3Cap(400.0f, 400.0f);
     m_gameClient->getEntityManager().spawnEntity(
@@ -982,8 +982,8 @@ void Application::spawnDemoNPCEntities() {
         npc3Health,
         npc3Cap,
         "Destroyer",
-        "Guristas Watchman",
-        "Guristas"
+        "Iron Corsairs Watchman",
+        "Iron Corsairs"
     );
     
     std::cout << "[PVE] 3 NPC entities spawned" << std::endl;

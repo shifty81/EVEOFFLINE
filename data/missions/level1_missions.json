@@ -1,17 +1,17 @@
 {
-  "destroy_serpentis_rats": {
-    "id": "destroy_serpentis_rats",
-    "name": "Serpentis Infestation",
+  "destroy_venom_syndicate_rats": {
+    "id": "destroy_venom_syndicate_rats",
+    "name": "Venom Syndicate Infestation",
     "level": 1,
     "type": "combat",
     "agent": "Commander Jorak",
-    "faction": "Caldari Navy",
-    "description": "Serpentis pirates have been raiding our supply convoys. Eliminate the threat.",
-    "briefing": "Pilot, we've identified a Serpentis presence in the nearby asteroid belt. Your mission is to eliminate all hostile ships. We're counting on you.",
+    "faction": "Veyren Fleet",
+    "description": "Venom Syndicate pirates have been raiding our supply convoys. Eliminate the threat.",
+    "briefing": "Pilot, we've identified a Venom Syndicate presence in the nearby asteroid belt. Your mission is to eliminate all hostile ships. We're counting on you.",
     "objectives": [
       {
         "type": "destroy",
-        "target": "serpentis_scout",
+        "target": "venom_syndicate_scout",
         "count": 5
       }
     ],
@@ -21,23 +21,23 @@
       "standing_gain": 0.01,
       "items": []
     },
-    "location": "perimeter",
+    "location": "rimward",
     "spawn_distance": 15000,
     "time_limit": 3600
   },
-  "mine_veldspar": {
-    "id": "mine_veldspar",
+  "mine_dustite": {
+    "id": "mine_dustite",
     "name": "Mining Operation",
     "level": 1,
     "type": "mining",
     "agent": "Mining Foreman Kara",
-    "faction": "Caldari Provisions",
-    "description": "We need raw materials for our manufacturing operations. Mine some veldspar ore.",
-    "briefing": "We're running low on veldspar. Head to the asteroid belts and bring back 1000 units.",
+    "faction": "Veyren Provisions",
+    "description": "We need raw materials for our manufacturing operations. Mine some dustite ore.",
+    "briefing": "We're running low on dustite. Head to the asteroid belts and bring back 1000 units.",
     "objectives": [
       {
         "type": "mine",
-        "target": "veldspar",
+        "target": "dustite",
         "quantity": 1000
       }
     ],
@@ -47,7 +47,7 @@
       "standing_gain": 0.005,
       "items": []
     },
-    "location": "perimeter",
+    "location": "rimward",
     "time_limit": 7200
   },
   "courier_delivery": {
@@ -56,15 +56,15 @@
     "level": 1,
     "type": "courier",
     "agent": "Logistics Officer Tanaka",
-    "faction": "Caldari Navy",
-    "description": "Transport important documents to our station in Hek.",
-    "briefing": "These documents contain sensitive intelligence. Deliver them to Hek station safely.",
+    "faction": "Veyren Fleet",
+    "description": "Transport important documents to our station in Kelheim.",
+    "briefing": "These documents contain sensitive intelligence. Deliver them to Kelheim station safely.",
     "objectives": [
       {
         "type": "transport",
         "item": "classified_documents",
-        "from": "jita",
-        "to": "hek",
+        "from": "thyrkstad",
+        "to": "kelheim",
         "volume": 10
       }
     ],
@@ -74,7 +74,9 @@
       "standing_gain": 0.015,
       "items": []
     },
-    "cargo_provided": {"classified_documents": 1},
+    "cargo_provided": {
+      "classified_documents": 1
+    },
     "time_limit": 5400
   },
   "supply_run": {
@@ -83,35 +85,42 @@
     "level": 1,
     "type": "courier",
     "agent": "Logistics Officer Chen",
-    "faction": "Caldari Provisions",
+    "faction": "Veyren Provisions",
     "description": "Our outpost needs emergency supplies. Deliver these materials quickly.",
-    "briefing": "Time is of the essence. These supplies are urgently needed at our Hek station.",
+    "briefing": "Time is of the essence. These supplies are urgently needed at our Kelheim station.",
     "objectives": [
-      {"type": "transport", "item": "medical_supplies", "count": 50, "destination": "hek"}
+      {
+        "type": "transport",
+        "item": "medical_supplies",
+        "count": 50,
+        "destination": "kelheim"
+      }
     ],
     "rewards": {
       "isk": 120000,
       "loyalty_points": 300,
       "standing_gain": 0.015
     },
-    "location": "jita",
-    "cargo_provided": {"medical_supplies": 50},
+    "location": "thyrkstad",
+    "cargo_provided": {
+      "medical_supplies": 50
+    },
     "time_limit": 4800,
     "difficulty": "easy"
   },
-  "blood_raider_patrol": {
-    "id": "blood_raider_patrol",
-    "name": "Blood Raider Patrol",
+  "crimson_order_patrol": {
+    "id": "crimson_order_patrol",
+    "name": "Crimson Order Patrol",
     "level": 1,
     "type": "combat",
     "agent": "Security Officer Martinez",
     "faction": "Imperial Navy",
-    "description": "Blood Raiders have been spotted near our mining operations. Drive them off.",
-    "briefing": "A small Blood Raider patrol is harassing our miners. Show them we won't tolerate their presence.",
+    "description": "Crimson Order have been spotted near our mining operations. Drive them off.",
+    "briefing": "A small Crimson Order patrol is harassing our miners. Show them we won't tolerate their presence.",
     "objectives": [
       {
         "type": "destroy",
-        "target": "blood_raiders_corpse",
+        "target": "crimson_order_corpse",
         "count": 4
       }
     ],
@@ -119,26 +128,28 @@
       "isk": 65000,
       "loyalty_points": 180,
       "standing_gain": 0.012,
-      "items": ["frequency_crystals"]
+      "items": [
+        "frequency_crystals"
+      ]
     },
-    "location": "jita",
+    "location": "thyrkstad",
     "spawn_distance": 16000,
     "time_limit": 3800,
     "difficulty": "easy"
   },
-  "guristas_scouts": {
-    "id": "guristas_scouts",
-    "name": "Guristas Reconnaissance",
+  "iron_corsairs_scouts": {
+    "id": "iron_corsairs_scouts",
+    "name": "Iron Corsairs Reconnaissance",
     "level": 1,
     "type": "combat",
     "agent": "Patrol Commander Sato",
-    "faction": "Caldari Navy",
-    "description": "Guristas scouts are probing our defenses. Eliminate them.",
+    "faction": "Veyren Fleet",
+    "description": "Iron Corsairs scouts are probing our defenses. Eliminate them.",
     "briefing": "These scouts are gathering intelligence for a larger force. Take them out before they can report back.",
     "objectives": [
       {
         "type": "destroy",
-        "target": "guristas_thrasher",
+        "target": "iron_corsairs_cleaver",
         "count": 5
       }
     ],
@@ -146,9 +157,11 @@
       "isk": 55000,
       "loyalty_points": 165,
       "standing_gain": 0.011,
-      "items": ["light_missiles"]
+      "items": [
+        "light_missiles"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "spawn_distance": 17000,
     "time_limit": 3900,
     "difficulty": "easy"
@@ -159,13 +172,13 @@
     "level": 1,
     "type": "trade",
     "agent": "Procurement Officer Voss",
-    "faction": "Caldari Provisions",
+    "faction": "Veyren Provisions",
     "description": "We need specific items for our operations. Acquire them from the market and deliver them to us.",
-    "briefing": "Pilot, our stocks of tritanium are running low. We need you to acquire 500 units of tritanium and bring them to this station. You can buy them on the market or mine and refine the ore yourself.",
+    "briefing": "Pilot, our stocks of ferrium are running low. We need you to acquire 500 units of ferrium and bring them to this station. You can buy them on the market or mine and refine the ore yourself.",
     "objectives": [
       {
         "type": "deliver",
-        "target": "tritanium",
+        "target": "ferrium",
         "quantity": 500
       }
     ],
@@ -175,7 +188,7 @@
       "standing_gain": 0.015,
       "items": []
     },
-    "location": "jita",
+    "location": "thyrkstad",
     "time_limit": 7200,
     "difficulty": "easy",
     "notes": "Trade missions provide better standing gains than courier or mining missions."
@@ -186,7 +199,7 @@
     "level": 1,
     "type": "scenario",
     "agent": "Intelligence Officer Mirra",
-    "faction": "Caldari Navy",
+    "faction": "Veyren Fleet",
     "description": "A drifting cargo container in a combat zone holds valuable intel. Retrieve it while dealing with hostile NPCs.",
     "briefing": "We have located a drifting cargo container at coordinates in a known pirate patrol route. The container holds encrypted data files we need. Retrieve the container and bring it back, but be warned — pirates are in the area.",
     "objectives": [
@@ -204,14 +217,18 @@
       "isk": 60000,
       "loyalty_points": 180,
       "standing_gain": 0.012,
-      "items": ["survey_scanner"]
+      "items": [
+        "survey_scanner"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "spawn_distance": 20000,
     "time_limit": 5400,
     "difficulty": "medium",
     "npc_presence": {
-      "types": ["serpentis_scout"],
+      "types": [
+        "venom_syndicate_scout"
+      ],
       "count": 3
     },
     "notes": "Scenario missions involve retrieving items from combat zones. Caution is advised."
@@ -222,13 +239,13 @@
     "level": 1,
     "type": "storyline",
     "agent": "Storyline Agent Katrel",
-    "faction": "Caldari Navy",
+    "faction": "Veyren Fleet",
     "description": "A special mission offered by a storyline agent after completing multiple regular missions. Affects faction standing.",
-    "briefing": "Your consistent service has been noted by high command. We have a special operation that requires a capable pilot. This mission will significantly affect your standing with the Caldari State and its allies.",
+    "briefing": "Your consistent service has been noted by high command. We have a special operation that requires a capable pilot. This mission will significantly affect your standing with the Veyren Combine and its allies.",
     "objectives": [
       {
         "type": "destroy",
-        "target": "serpentis_lieutenant",
+        "target": "venom_syndicate_lieutenant",
         "count": 1
       },
       {
@@ -242,9 +259,11 @@
       "loyalty_points": 500,
       "standing_gain": 0.05,
       "faction_standing_gain": 0.02,
-      "items": ["implant_limited_ocular_filter"]
+      "items": [
+        "implant_limited_ocular_filter"
+      ]
     },
-    "location": "perimeter",
+    "location": "rimward",
     "spawn_distance": 15000,
     "time_limit": 7200,
     "difficulty": "medium",

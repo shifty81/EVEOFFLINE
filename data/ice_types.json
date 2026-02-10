@@ -1,8 +1,8 @@
 {
   "ice_types": {
-    "clear_icicle": {
-      "id": "clear_icicle",
-      "name": "Clear Icicle",
+    "glacial_shard": {
+      "id": "glacial_shard",
+      "name": "Glacial Shard",
       "description": "Common ice containing heavy water",
       "volume": 1000.0,
       "rarity": "common",
@@ -15,9 +15,9 @@
       },
       "base_price": 1500
     },
-    "glacial_mass": {
-      "id": "glacial_mass",
-      "name": "Glacial Mass",
+    "frost_mass": {
+      "id": "frost_mass",
+      "name": "Frost Mass",
       "description": "Common ice rich in liquid ozone",
       "volume": 1000.0,
       "rarity": "common",
@@ -30,9 +30,9 @@
       },
       "base_price": 1800
     },
-    "blue_ice": {
-      "id": "blue_ice",
-      "name": "Blue Ice",
+    "azure_ice": {
+      "id": "azure_ice",
+      "name": "Azure Ice",
       "description": "Uncommon ice with oxygen and heavy water",
       "volume": 1000.0,
       "rarity": "uncommon",
@@ -46,9 +46,9 @@
       },
       "base_price": 3500
     },
-    "white_glaze": {
-      "id": "white_glaze",
-      "name": "White Glaze",
+    "pale_glaze": {
+      "id": "pale_glaze",
+      "name": "Pale Glaze",
       "description": "Uncommon ice containing hydrogen and liquid ozone",
       "volume": 1000.0,
       "rarity": "uncommon",
@@ -62,9 +62,9 @@
       },
       "base_price": 3200
     },
-    "glare_crust": {
-      "id": "glare_crust",
-      "name": "Glare Crust",
+    "bright_crust": {
+      "id": "bright_crust",
+      "name": "Bright Crust",
       "description": "Rare ice with strontium clathrates",
       "volume": 1000.0,
       "rarity": "rare",
@@ -78,9 +78,9 @@
       },
       "base_price": 8500
     },
-    "dark_glitter": {
-      "id": "dark_glitter",
-      "name": "Dark Glitter",
+    "shadow_glitter": {
+      "id": "shadow_glitter",
+      "name": "Shadow Glitter",
       "description": "Rare ice rich in strontium, oxygen, and heavy water",
       "volume": 1000.0,
       "rarity": "rare",
@@ -95,9 +95,9 @@
       },
       "base_price": 9200
     },
-    "gelidus": {
-      "id": "gelidus",
-      "name": "Gelidus",
+    "cryolis": {
+      "id": "cryolis",
+      "name": "Cryolis",
       "description": "Very rare ice containing helium isotopes",
       "volume": 1000.0,
       "rarity": "very_rare",
@@ -112,9 +112,9 @@
       },
       "base_price": 15000
     },
-    "krystallos": {
-      "id": "krystallos",
-      "name": "Krystallos",
+    "stellacite": {
+      "id": "stellacite",
+      "name": "Stellacite",
       "description": "Very rare ice with nitrogen isotopes",
       "volume": 1000.0,
       "rarity": "very_rare",
@@ -129,9 +129,9 @@
       },
       "base_price": 14500
     },
-    "thick_blue_ice": {
-      "id": "thick_blue_ice",
-      "name": "Thick Blue Ice",
+    "thick_azure_ice": {
+      "id": "thick_azure_ice",
+      "name": "Thick Azure Ice",
       "description": "Ultra rare dense ice with oxygen and helium isotopes",
       "volume": 1000.0,
       "rarity": "ultra_rare",
@@ -145,9 +145,9 @@
       },
       "base_price": 22000
     },
-    "pristine_white_glaze": {
-      "id": "pristine_white_glaze",
-      "name": "Pristine White Glaze",
+    "pristine_pale_glaze": {
+      "id": "pristine_pale_glaze",
+      "name": "Pristine Pale Glaze",
       "description": "Ultra rare pure ice with hydrogen and nitrogen isotopes",
       "volume": 1000.0,
       "rarity": "ultra_rare",
@@ -161,9 +161,9 @@
       },
       "base_price": 21000
     },
-    "smooth_glacial_mass": {
-      "id": "smooth_glacial_mass",
-      "name": "Smooth Glacial Mass",
+    "smooth_frost_mass": {
+      "id": "smooth_frost_mass",
+      "name": "Smooth Frost Mass",
       "description": "Ultra rare refined ice with liquid ozone and oxygen isotopes",
       "volume": 1000.0,
       "rarity": "ultra_rare",
@@ -177,9 +177,9 @@
       },
       "base_price": 20500
     },
-    "enriched_clear_icicle": {
-      "id": "enriched_clear_icicle",
-      "name": "Enriched Clear Icicle",
+    "enriched_glacial_shard": {
+      "id": "enriched_glacial_shard",
+      "name": "Enriched Glacial Shard",
       "description": "Legendary ice concentrated with heavy water and strontium",
       "volume": 1000.0,
       "rarity": "legendary",

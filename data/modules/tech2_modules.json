@@ -412,9 +412,9 @@
     "capacitor_use": 30,
     "duration": 5,
     "warp_scramble_strength": 2,
-    "disable_microwarp": true,
+    "disable_mijaktfalkarp": true,
     "optimal_range": 10800,
-    "description": "Tech II warp scrambler that prevents warping and disables microwarpdrives. Short range, double point.",
+    "description": "Tech II warp scrambler that prevents warping and disables mijaktfalkarpdrives. Short range, double point.",
     "volume": 5,
     "meta_level": 5,
     "tech_level": 2

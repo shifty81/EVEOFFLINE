@@ -1,6 +1,8 @@
 # EVE OFFLINE
 
-A PVE-focused space MMO inspired by EVE ONLINE, designed for small groups of players (2-20). Built with C++ and OpenGL. Game systems are structured around the EVE Online game manual.
+A PVE-focused space MMO heavily inspired by EVE Online, designed for small groups of players (2-20) or solo play with AI companions. Built with C++ and OpenGL. Features fleet/party systems supporting both AI and human players in cooperative PVE content.
+
+> **Note**: This project is heavily based on EVE Online's game mechanics and systems but uses entirely original naming conventions for all in-game content (ships, factions, resources, systems, etc.). All gameplay focuses on PVE and cooperative fleet content — no PVP.
 
 > **Status**: In active R&D and development — actively testing until further notice.
 
@@ -100,7 +102,7 @@ cmake --build . --config Release
 
 ### C++ Client (OpenGL)
 - **3D Rendering**: OpenGL 3.3+ with deferred rendering, shadow mapping, post-processing
-- **EVE-Styled UI**: ImGui-based interface matching EVE Online's Photon UI
+- **Sci-Fi Styled UI**: ImGui-based interface inspired by EVE Online's Photon UI
 - **Audio**: OpenAL spatial audio for weapons, explosions, and engines
 - **Networking**: TCP client connecting to the dedicated server
 - **Entity System**: Synchronized entity management with interpolation
@@ -108,29 +110,31 @@ cmake --build . --config Release
 ### C++ Server
 - **ECS Architecture**: Entity Component System for game logic
 - **Multiplayer**: TCP server supporting multiple concurrent clients
-- **AI Systems**: NPC behavior, combat, movement, and targeting
+- **AI Systems**: NPC behavior, combat, movement, and targeting — AI pilots can fill fleet roles
 - **Steam Integration**: Optional Steam authentication and server browser
 - **Cross-Platform**: Windows, Linux, macOS
 
 ### Game Content (data/)
-All game content is moddable via JSON files, structured around the EVE Online manual:
-- 98+ ships (frigates to titans, Tech I and Tech II, plus capitals)
+All game content is moddable via JSON files:
+- 102+ ships (frigates to titans, Tech I and Tech II, plus capitals)
   - Frigates, Destroyers, Cruisers, Battlecruisers, Battleships
   - Interceptors, Covert Ops, Assault Frigates, Stealth Bombers, Marauders
   - Interdictors, Command Ships, Logistics Cruisers, Recon Ships
   - Carriers, Dreadnoughts, Titans
   - Industrial haulers, Mining Barges, Exhumers
   - Procedural 3D models with faction-specific designs
-- 70+ modules (weapons, defenses, utilities)
-- 100+ skills across 20 categories with attribute-based training
+- 159+ modules (weapons, defenses, utilities, Tech II, Faction, Officer)
+- 137 skills across 20 categories with attribute-based training
 - Missions across 5 levels with 7 types (combat, mining, courier, trade, scenario, exploration, storyline)
-- Character creation with 4 races, bloodlines, and attributes
+- 4 playable factions: Solari, Veyren, Aurelian, Keldari
+- Character creation with races, bloodlines, and attributes
 - Clone system, implants, and Learning skills
-- CONCORD security enforcement and insurance
+- AEGIS security enforcement and insurance
 - Corporation system with NPC and player corps
 - Contract/escrow system
 - Deadspace complexes with 5 difficulty tiers
 - Mining, manufacturing, market, and exploration systems
+- Fleet/party system with AI or player wingmates
 - Stations and asteroids with visual variety
 
 ## 🔧 Modding
@@ -145,7 +149,7 @@ data/
 ├── npcs/               # NPC definitions
 ├── missions/           # Mission templates
 ├── universe/           # Solar system data
-├── security/           # CONCORD, insurance
+├── security/           # AEGIS security, insurance
 ├── corporations/       # NPC and player corps
 ├── contracts/          # Contract/escrow system
 ├── exploration/        # Signatures, deadspace complexes
@@ -167,13 +171,11 @@ All documentation is in [docs/](docs/):
 **Development**
 - [Roadmap](docs/ROADMAP.md) — Development progress and plans
 - [Next Tasks](docs/NEXT_TASKS.md) — Recommendations for upcoming work
-- [Design Document](docs/design/DESIGN.md) — Game systems structured around EVE manual
-- [EVE Manual Reference](docs/EVE_MANUAL_REFERENCE.md) — How manual chapters map to implementation
+- [Design Document](docs/design/DESIGN.md) — Game systems design
 
 **Technical**
 - [C++ Client Docs](docs/cpp_client/) — Rendering, UI, audio, networking
 - [Ship Modeling](docs/SHIP_MODELING.md) — Procedural ship generation system
-- [EVE Ship Reference](docs/EVE_SHIP_REFERENCE.md) — Design inspiration from EVE Online
 - [Standings System](docs/STANDINGS_SYSTEM.md) — NPC relationships and faction standings
 
 ## 🤝 Contributing
@@ -186,4 +188,4 @@ Contributions are welcome! See [CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
 ---
 
-**Note**: This is an indie project inspired by EVE ONLINE. It is not affiliated with or endorsed by CCP Games.
+**Note**: This is an indie PVE space MMO project heavily inspired by EVE Online's game mechanics. It is not affiliated with or endorsed by CCP Games. All in-game content (ships, factions, resources, systems, etc.) uses original naming conventions. The game focuses exclusively on PVE and cooperative fleet content with AI or player wingmates.

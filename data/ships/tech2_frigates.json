@@ -1,11 +1,11 @@
 {
-  "jaguar": {
-    "id": "jaguar",
-    "name": "Jaguar",
+  "lynx": {
+    "id": "lynx",
+    "name": "Lynx",
     "class": "Assault Frigate",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Jaguar is a shield-focused assault frigate with exceptional speed and firepower. It excels in hit-and-run tactics and skirmish warfare.",
+    "race": "Keldari",
+    "description": "The Lynx is a shield-focused assault frigate with exceptional speed and firepower. It excels in hit-and-run tactics and skirmish warfare.",
     "hull_hp": 450,
     "armor_hp": 500,
     "shield_hp": 750,
@@ -53,13 +53,13 @@
       }
     }
   },
-  "hawk": {
-    "id": "hawk",
-    "name": "Hawk",
+  "gyrhawk": {
+    "id": "gyrhawk",
+    "name": "Gyrhawk",
     "class": "Assault Frigate",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Hawk is the ultimate shield-tanking assault frigate, featuring tremendous defensive capabilities and devastating close-range firepower with rockets.",
+    "race": "Veyren",
+    "description": "The Gyrhawk is the ultimate shield-tanking assault frigate, featuring tremendous defensive capabilities and devastating close-range firepower with rockets.",
     "hull_hp": 520,
     "armor_hp": 350,
     "shield_hp": 1050,
@@ -107,13 +107,13 @@
       }
     }
   },
-  "enyo": {
-    "id": "enyo",
-    "name": "Enyo",
+  "duelliste": {
+    "id": "duelliste",
+    "name": "Duelliste",
     "class": "Assault Frigate",
     "tech_level": 2,
-    "race": "Gallente",
-    "description": "The Enyo is an armor-focused assault frigate designed for close-range blaster combat. Its exceptional armor tank and brutal damage output make it a devastating brawler.",
+    "race": "Aurelian",
+    "description": "The Duelliste is an armor-focused assault frigate designed for close-range blaster combat. Its exceptional armor tank and brutal damage output make it a devastating brawler.",
     "hull_hp": 480,
     "armor_hp": 850,
     "shield_hp": 550,
@@ -161,13 +161,13 @@
       }
     }
   },
-  "retribution": {
-    "id": "retribution",
-    "name": "Retribution",
+  "justicar": {
+    "id": "justicar",
+    "name": "Justicar",
     "class": "Assault Frigate",
     "tech_level": 2,
-    "race": "Amarr",
-    "description": "The Retribution combines the Amarr's signature armor tank with focused laser weaponry. It excels at sustained damage output and can withstand tremendous punishment.",
+    "race": "Solari",
+    "description": "The Justicar combines the Solari's signature armor tank with focused laser weaponry. It excels at sustained damage output and can withstand tremendous punishment.",
     "hull_hp": 500,
     "armor_hp": 950,
     "shield_hp": 480,
@@ -216,13 +216,13 @@
       }
     }
   },
-  "wolf": {
-    "id": "wolf",
-    "name": "Wolf",
+  "direwolf": {
+    "id": "direwolf",
+    "name": "Direwolf",
     "class": "Assault Frigate",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Wolf is an armor-focused assault frigate that trades the Jaguar's speed for better tank. It's designed for sustained combat and alpha strike damage.",
+    "race": "Keldari",
+    "description": "The Direwolf is an armor-focused assault frigate that trades the Lynx's speed for better tank. It's designed for sustained combat and alpha strike damage.",
     "hull_hp": 470,
     "armor_hp": 800,
     "shield_hp": 600,
@@ -270,13 +270,13 @@
       }
     }
   },
-  "harpy": {
-    "id": "harpy",
-    "name": "Harpy",
+  "frostvane": {
+    "id": "frostvane",
+    "name": "Frostvane",
     "class": "Assault Frigate",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Harpy is built for long-range railgun combat with a powerful shield tank. It can project damage at extreme ranges while maintaining defensive superiority.",
+    "race": "Veyren",
+    "description": "The Frostvane is built for long-range railgun combat with a powerful shield tank. It can project damage at extreme ranges while maintaining defensive superiority.",
     "hull_hp": 530,
     "armor_hp": 360,
     "shield_hp": 1000,
@@ -324,13 +324,13 @@
       }
     }
   },
-  "claw": {
-    "id": "claw",
-    "name": "Claw",
+  "talon": {
+    "id": "talon",
+    "name": "Talon",
     "class": "Interceptor",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Claw is a combat interceptor built for speed and devastating hit-and-run attacks. Its autocannons deliver punishing close-range damage while its agility keeps it out of danger.",
+    "race": "Keldari",
+    "description": "The Talon is a combat interceptor built for speed and devastating hit-and-run attacks. Its autocannons deliver punishing close-range damage while its agility keeps it out of danger.",
     "hull_hp": 350,
     "armor_hp": 300,
     "shield_hp": 500,
@@ -377,13 +377,13 @@
       }
     }
   },
-  "crow": {
-    "id": "crow",
-    "name": "Crow",
+  "jaktfalk": {
+    "id": "jaktfalk",
+    "name": "Jaktfalk",
     "class": "Interceptor",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Crow is a combat interceptor that combines missile systems with extreme speed. Its light missiles allow it to engage targets at range while maintaining high velocity.",
+    "race": "Veyren",
+    "description": "The Jaktfalk is a combat interceptor that combines missile systems with extreme speed. Its light missiles allow it to engage targets at range while maintaining high velocity.",
     "hull_hp": 380,
     "armor_hp": 280,
     "shield_hp": 600,
@@ -430,13 +430,13 @@
       }
     }
   },
-  "taranis": {
-    "id": "taranis",
-    "name": "Taranis",
+  "eclair": {
+    "id": "eclair",
+    "name": "Eclair",
     "class": "Interceptor",
     "tech_level": 2,
-    "race": "Gallente",
-    "description": "The Taranis is a combat interceptor armed with blasters for devastating close-range engagements. It combines Gallente firepower with interceptor-class speed and agility.",
+    "race": "Aurelian",
+    "description": "The Eclair is a combat interceptor armed with blasters for devastating close-range engagements. It combines Aurelian firepower with interceptor-class speed and agility.",
     "hull_hp": 360,
     "armor_hp": 400,
     "shield_hp": 400,
@@ -483,13 +483,13 @@
       }
     }
   },
-  "crusader": {
-    "id": "crusader",
-    "name": "Crusader",
+  "templar": {
+    "id": "templar",
+    "name": "Templar",
     "class": "Interceptor",
     "tech_level": 2,
-    "race": "Amarr",
-    "description": "The Crusader is a combat interceptor wielding pulse lasers with deadly precision. Its speed and tracking bonuses allow it to maintain optimal range while orbiting targets at high velocity.",
+    "race": "Solari",
+    "description": "The Templar is a combat interceptor wielding pulse lasers with deadly precision. Its speed and tracking bonuses allow it to maintain optimal range while orbiting targets at high velocity.",
     "hull_hp": 370,
     "armor_hp": 390,
     "shield_hp": 350,
@@ -536,13 +536,13 @@
       }
     }
   },
-  "stiletto": {
-    "id": "stiletto",
-    "name": "Stiletto",
+  "needlepoint": {
+    "id": "needlepoint",
+    "name": "Needlepoint",
     "class": "Interceptor",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Stiletto is a fleet interceptor designed for long-range tackling. Its warp disruptor range bonus and bubble immunity make it the premier fast tackle ship for fleet operations.",
+    "race": "Keldari",
+    "description": "The Needlepoint is a fleet interceptor designed for long-range tackling. Its warp disruptor range bonus and bubble immunity make it the premier fast tackle ship for fleet operations.",
     "hull_hp": 320,
     "armor_hp": 260,
     "shield_hp": 480,
@@ -590,13 +590,13 @@
       }
     }
   },
-  "raptor": {
-    "id": "raptor",
-    "name": "Raptor",
+  "svellgyrhawk": {
+    "id": "svellgyrhawk",
+    "name": "Svellgyrhawk",
     "class": "Interceptor",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Raptor is a fleet interceptor optimized for long-range tackle and fleet scouting. Its shield tank and bubble immunity make it an essential tool for fleet commanders.",
+    "race": "Veyren",
+    "description": "The Svellgyrhawk is a fleet interceptor optimized for long-range tackle and fleet scouting. Its shield tank and bubble immunity make it an essential tool for fleet commanders.",
     "hull_hp": 340,
     "armor_hp": 250,
     "shield_hp": 550,
@@ -644,13 +644,13 @@
       }
     }
   },
-  "ares": {
-    "id": "ares",
-    "name": "Ares",
+  "fleuret": {
+    "id": "fleuret",
+    "name": "Fleuret",
     "class": "Interceptor",
     "tech_level": 2,
-    "race": "Gallente",
-    "description": "The Ares is a fleet interceptor built for speed and tackle supremacy. Its warp disruptor bonuses and bubble immunity make it ideal for catching and holding targets for the fleet.",
+    "race": "Aurelian",
+    "description": "The Fleuret is a fleet interceptor built for speed and tackle supremacy. Its warp disruptor bonuses and bubble immunity make it ideal for catching and holding targets for the fleet.",
     "hull_hp": 330,
     "armor_hp": 350,
     "shield_hp": 380,
@@ -698,13 +698,13 @@
       }
     }
   },
-  "malediction": {
-    "id": "malediction",
-    "name": "Malediction",
+  "anathemist": {
+    "id": "anathemist",
+    "name": "Anathemist",
     "class": "Interceptor",
     "tech_level": 2,
-    "race": "Amarr",
-    "description": "The Malediction is a fleet interceptor that combines Amarr engineering with unmatched tackle capability. Its bubble immunity and warp disruptor bonuses make it a feared tackler across New Eden.",
+    "race": "Solari",
+    "description": "The Anathemist is a fleet interceptor that combines Solari engineering with unmatched tackle capability. Its bubble immunity and warp disruptor bonuses make it a feared tackler across Astralis.",
     "hull_hp": 340,
     "armor_hp": 370,
     "shield_hp": 340,
@@ -752,13 +752,13 @@
       }
     }
   },
-  "cheetah": {
-    "id": "cheetah",
-    "name": "Cheetah",
+  "duskrunner": {
+    "id": "duskrunner",
+    "name": "Duskrunner",
     "class": "Covert Ops",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Cheetah is a Minmatar covert ops frigate designed for exploration and scanning. Its speed and agility combined with a Covert Ops Cloaking Device make it an exceptional scout and probe scanner.",
+    "race": "Keldari",
+    "description": "The Duskrunner is a Keldari covert ops frigate designed for exploration and scanning. Its speed and agility combined with a Covert Ops Cloaking Device make it an exceptional scout and probe scanner.",
     "hull_hp": 300,
     "armor_hp": 250,
     "shield_hp": 450,
@@ -807,13 +807,13 @@
       }
     }
   },
-  "buzzard": {
-    "id": "buzzard",
-    "name": "Buzzard",
+  "spektor": {
+    "id": "spektor",
+    "name": "Spektor",
     "class": "Covert Ops",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Buzzard is a Caldari covert ops frigate optimized for probe scanning and exploration. Its strong shield and mid-slot layout allow effective use of scanning and hacking modules while remaining cloaked.",
+    "race": "Veyren",
+    "description": "The Spektor is a Veyren covert ops frigate optimized for probe scanning and exploration. Its strong shield and mid-slot layout allow effective use of scanning and hacking modules while remaining cloaked.",
     "hull_hp": 330,
     "armor_hp": 220,
     "shield_hp": 580,
@@ -862,13 +862,13 @@
       }
     }
   },
-  "helios": {
-    "id": "helios",
-    "name": "Helios",
+  "luminos": {
+    "id": "luminos",
+    "name": "Luminos",
     "class": "Covert Ops",
     "tech_level": 2,
-    "race": "Gallente",
-    "description": "The Helios is a Gallente covert ops frigate built for deep-space exploration and scanning. Its balanced slot layout and drone bay make it a versatile exploration platform capable of hacking and data analysis while cloaked.",
+    "race": "Aurelian",
+    "description": "The Luminos is a Aurelian covert ops frigate built for deep-space exploration and scanning. Its balanced slot layout and drone bay make it a versatile exploration platform capable of hacking and data analysis while cloaked.",
     "hull_hp": 280,
     "armor_hp": 320,
     "shield_hp": 340,
@@ -917,13 +917,13 @@
       }
     }
   },
-  "anathema": {
-    "id": "anathema",
-    "name": "Anathema",
+  "veiled_eye": {
+    "id": "veiled_eye",
+    "name": "Veiled Eye",
     "class": "Covert Ops",
     "tech_level": 2,
-    "race": "Amarr",
-    "description": "The Anathema is an Amarr covert ops frigate engineered for covert exploration and intelligence gathering. Its armor-focused design and generous capacitor allow sustained scanning operations deep behind enemy lines.",
+    "race": "Solari",
+    "description": "The Veiled Eye is an Solari covert ops frigate engineered for covert exploration and intelligence gathering. Its armor-focused design and generous capacitor allow sustained scanning operations deep behind enemy lines.",
     "hull_hp": 350,
     "armor_hp": 350,
     "shield_hp": 300,
@@ -972,13 +972,13 @@
       }
     }
   },
-  "hound": {
-    "id": "hound",
-    "name": "Hound",
+  "shadowfang": {
+    "id": "shadowfang",
+    "name": "Shadowfang",
     "class": "Stealth Bomber",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Hound is a Minmatar stealth bomber designed to deliver devastating torpedo strikes from the safety of a Covert Ops cloak. Its explosive damage specialization makes it lethal against battleships and structures.",
+    "race": "Keldari",
+    "description": "The Shadowfang is a Keldari stealth bomber designed to deliver devastating torpedo strikes from the safety of a Covert Ops cloak. Its explosive damage specialization makes it lethal against battleships and structures.",
     "hull_hp": 250,
     "armor_hp": 200,
     "shield_hp": 350,
@@ -1026,13 +1026,13 @@
       }
     }
   },
-  "manticore": {
-    "id": "manticore",
-    "name": "Manticore",
+  "frostbane": {
+    "id": "frostbane",
+    "name": "Frostbane",
     "class": "Stealth Bomber",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Manticore is a Caldari stealth bomber specializing in kinetic torpedo strikes. Its advanced targeting systems and covert capabilities make it an ideal ambush vessel for fleet operations.",
+    "race": "Veyren",
+    "description": "The Frostbane is a Veyren stealth bomber specializing in kinetic torpedo strikes. Its advanced targeting systems and covert capabilities make it an ideal ambush vessel for fleet operations.",
     "hull_hp": 230,
     "armor_hp": 180,
     "shield_hp": 380,
@@ -1080,13 +1080,13 @@
       }
     }
   },
-  "nemesis": {
-    "id": "nemesis",
-    "name": "Nemesis",
+  "vengeresse": {
+    "id": "vengeresse",
+    "name": "Vengeresse",
     "class": "Stealth Bomber",
     "tech_level": 2,
-    "race": "Gallente",
-    "description": "The Nemesis is a Gallente stealth bomber that delivers thermal torpedo damage with surgical precision. Combined with its drone bay and Covert Ops cloak, it excels at hit-and-run attacks.",
+    "race": "Aurelian",
+    "description": "The Vengeresse is a Aurelian stealth bomber that delivers thermal torpedo damage with surgical precision. Combined with its drone bay and Covert Ops cloak, it excels at hit-and-run attacks.",
     "hull_hp": 280,
     "armor_hp": 220,
     "shield_hp": 300,
@@ -1134,13 +1134,13 @@
       }
     }
   },
-  "purifier": {
-    "id": "purifier",
-    "name": "Purifier",
+  "sanctifier": {
+    "id": "sanctifier",
+    "name": "Sanctifier",
     "class": "Stealth Bomber",
     "tech_level": 2,
-    "race": "Amarr",
-    "description": "The Purifier is an Amarr stealth bomber that harnesses EM torpedo damage to punish shield-tanked targets. Its armor tank and Covert Ops capabilities make it a versatile ambush platform.",
+    "race": "Solari",
+    "description": "The Sanctifier is an Solari stealth bomber that harnesses EM torpedo damage to punish shield-tanked targets. Its armor tank and Covert Ops capabilities make it a versatile ambush platform.",
     "hull_hp": 240,
     "armor_hp": 250,
     "shield_hp": 280,

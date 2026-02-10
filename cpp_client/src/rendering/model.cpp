@@ -566,15 +566,15 @@ struct HullParams {
  */
 static int getFactionSides(const std::string& faction) {
     // Original EVE factions
-    if (faction.find("Caldari") != std::string::npos) return 4;   // Blocky/angular
-    if (faction.find("Minmatar") != std::string::npos) return 6;  // Industrial/angular
-    if (faction.find("Amarr") != std::string::npos) return 8;     // Refined/ornate
-    if (faction.find("Gallente") != std::string::npos) return 12; // Smooth/organic
+    if (faction.find("Veyren") != std::string::npos) return 4;   // Blocky/angular
+    if (faction.find("Keldari") != std::string::npos) return 6;  // Industrial/angular
+    if (faction.find("Solari") != std::string::npos) return 8;     // Refined/ornate
+    if (faction.find("Aurelian") != std::string::npos) return 12; // Smooth/organic
     // New PVE factions (matching their analog's design language)
-    if (faction.find("Core Nexus") != std::string::npos) return 4;           // Caldari analog — blocky
-    if (faction.find("Rust-Scrap") != std::string::npos) return 6;           // Minmatar analog — industrial
-    if (faction.find("Sanctum Hegemony") != std::string::npos) return 8;     // Amarr analog — ornate
-    if (faction.find("Vanguard Republic") != std::string::npos) return 12;   // Gallente analog — smooth
+    if (faction.find("Core Nexus") != std::string::npos) return 4;           // Veyren analog — blocky
+    if (faction.find("Rust-Scrap") != std::string::npos) return 6;           // Keldari analog — industrial
+    if (faction.find("Sanctum Hegemony") != std::string::npos) return 8;     // Solari analog — ornate
+    if (faction.find("Vanguard Republic") != std::string::npos) return 12;   // Aurelian analog — smooth
     return 6; // Default
 }
 
@@ -681,7 +681,7 @@ void Model::draw() const {
 // Ship type checking functions
 bool Model::isFrigate(const std::string& shipType) {
     static const std::vector<std::string> frigateNames = {
-        "Frigate", "Rifter", "Merlin", "Tristan", "Punisher",
+        "Frigate", "Fang", "Falk", "Revel", "Sentinel",
         "Assault Frigate", "Jaguar", "Hawk", "Enyo", "Retribution", "Wolf", "Harpy",
         "Interceptor", "Claw", "Crow", "Taranis", "Crusader",
         "Stiletto", "Raptor", "Ares", "Malediction",
@@ -694,7 +694,7 @@ bool Model::isFrigate(const std::string& shipType) {
 
 bool Model::isDestroyer(const std::string& shipType) {
     static const std::vector<std::string> destroyerNames = {
-        "Destroyer", "Thrasher", "Cormorant", "Catalyst", "Coercer",
+        "Destroyer", "Thrasher", "Cormorant", "Vipere", "Coercer",
         "Interdictor", "Sabre", "Flycatcher", "Eris", "Heretic"
     };
     return std::any_of(destroyerNames.begin(), destroyerNames.end(),
@@ -712,11 +712,12 @@ bool Model::isCruiser(const std::string& shipType) {
 
 bool Model::isTech2Cruiser(const std::string& shipType) {
     static const std::vector<std::string> tech2Names = {
-        "Heavy Assault Cruiser", "Vagabond", "Cerberus", "Ishtar", "Zealot",
-        "Heavy Interdiction Cruiser", "Broadsword", "Onyx", "Phobos", "Devoter",
-        "Force Recon Ship", "Huginn", "Rapier", "Falcon", "Arazu", "Pilgrim",
-        "Combat Recon Ship", "Rook", "Lachesis", "Curse",
-        "Logistics Cruiser", "Scimitar", "Basilisk", "Oneiros", "Guardian"
+        "Heavy Assault Cruiser", "Wanderer", "Hydralisk", "Imperatrice", "Ardent",
+        "Gunnolf", "Valdris", "Cavalier", "Inquisitor",
+        "Heavy Interdiction Cruiser", "Ironclamp", "Frostlok", "Grappleur", "Warden",
+        "Force Recon Ship", "Farseer", "Ghostblade", "Skygaze", "Surveillant", "Wayfarer",
+        "Combat Recon Ship", "Watchkeep", "Arbitre", "Maledictus",
+        "Logistics Cruiser", "Lifeblood", "Restorer", "Soigneur", "Protector"
     };
     return std::any_of(tech2Names.begin(), tech2Names.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -724,7 +725,7 @@ bool Model::isTech2Cruiser(const std::string& shipType) {
 
 bool Model::isBattlecruiser(const std::string& shipType) {
     static const std::vector<std::string> bcNames = {
-        "Battlecruiser", "Cyclone", "Ferox", "Brutix", "Harbinger"
+        "Battlecruiser", "Galeforce", "Fenvar", "Marquis", "Herald"
     };
     return std::any_of(bcNames.begin(), bcNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -732,7 +733,7 @@ bool Model::isBattlecruiser(const std::string& shipType) {
 
 bool Model::isCommandShip(const std::string& shipType) {
     static const std::vector<std::string> csNames = {
-        "Command Ship", "Claymore", "Vulture", "Astarte", "Absolution"
+        "Command Ship", "Warleader", "Jarl", "Commandant", "Paragon"
     };
     return std::any_of(csNames.begin(), csNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -740,8 +741,8 @@ bool Model::isCommandShip(const std::string& shipType) {
 
 bool Model::isBattleship(const std::string& shipType) {
     static const std::vector<std::string> bsNames = {
-        "Battleship", "Tempest", "Raven", "Dominix", "Apocalypse",
-        "Marauder", "Vargur", "Golem", "Kronos", "Paladin"
+        "Battleship", "Gale", "Strix", "Sovereign", "Exarch",
+        "Marauder", "Ironheart", "Monolith", "Majeste", "Solarius Prime"
     };
     return std::any_of(bsNames.begin(), bsNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -749,8 +750,8 @@ bool Model::isBattleship(const std::string& shipType) {
 
 bool Model::isMiningBarge(const std::string& shipType) {
     static const std::vector<std::string> miningNames = {
-        "Mining Barge", "Procurer", "Retriever", "Covetor", "Exhumer", "Hulk", "Mackinaw", "Skiff",
-        "Industrial", "Hoarder", "Badger", "Iteron", "Bestower"
+        "Mining Barge", "Ironbore", "Deepscoop", "Yieldmaster", "Exhumer", "Excavon", "Vasthold", "Coreshield",
+        "Industrial", "Packrunner", "Drifthauler", "Marchand", "Wayfarer Hauler"
     };
     return std::any_of(miningNames.begin(), miningNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -758,8 +759,8 @@ bool Model::isMiningBarge(const std::string& shipType) {
 
 bool Model::isCarrier(const std::string& shipType) {
     static const std::vector<std::string> carrierNames = {
-        "Carrier", "Archon", "Thanatos", "Chimera", "Nidhoggur",
-        "Supercarrier", "Hel", "Nyx", "Wyvern", "Aeon"
+        "Carrier", "Solarius", "Lumiere", "Draknar", "Ironprow",
+        "Supercarrier"
     };
     return std::any_of(carrierNames.begin(), carrierNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -767,7 +768,7 @@ bool Model::isCarrier(const std::string& shipType) {
 
 bool Model::isDreadnought(const std::string& shipType) {
     static const std::vector<std::string> dreadNames = {
-        "Dreadnought", "Revelation", "Moros", "Phoenix", "Naglfar"
+        "Dreadnought", "Sanctum", "Bastion Royal", "Valkyr", "Thornwall"
     };
     return std::any_of(dreadNames.begin(), dreadNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -775,7 +776,7 @@ bool Model::isDreadnought(const std::string& shipType) {
 
 bool Model::isTitan(const std::string& shipType) {
     static const std::vector<std::string> titanNames = {
-        "Titan", "Avatar", "Erebus", "Leviathan", "Ragnarok"
+        "Titan", "Empyrean", "Grandeur", "Jormundur", "Worldbreaker"
     };
     return std::any_of(titanNames.begin(), titanNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -783,7 +784,7 @@ bool Model::isTitan(const std::string& shipType) {
 
 bool Model::isStation(const std::string& shipType) {
     static const std::vector<std::string> stationNames = {
-        "Station", "Citadel", "Keepstar", "Fortizar", "Astrahus",
+        "Station", "Citadel", "Bastion", "Fortress", "Beacon",
         "Outpost", "Refinery", "Engineering Complex"
     };
     return std::any_of(stationNames.begin(), stationNames.end(),
@@ -792,9 +793,9 @@ bool Model::isStation(const std::string& shipType) {
 
 bool Model::isAsteroid(const std::string& shipType) {
     static const std::vector<std::string> asteroidNames = {
-        "Asteroid", "Veldspar", "Scordite", "Pyroxeres", "Plagioclase",
-        "Omber", "Kernite", "Jaspet", "Hemorphite", "Hedbergite",
-        "Gneiss", "Dark Ochre", "Crokite", "Bistot", "Arkonor", "Mercoxit"
+        "Asteroid", "Dustite", "Ferrite", "Ignaite", "Crystite",
+        "Shadite", "Corite", "Lumine", "Sangite", "Glacite",
+        "Densite", "Voidite", "Pyranite", "Stellite", "Cosmite", "Nexorite"
     };
     return std::any_of(asteroidNames.begin(), asteroidNames.end(),
         [&shipType](const std::string& name) { return shipType.find(name) != std::string::npos; });
@@ -803,59 +804,59 @@ bool Model::isAsteroid(const std::string& shipType) {
 FactionColors Model::getFactionColors(const std::string& faction) {
     static const std::map<std::string, FactionColors> colorMap = {
         // === Original EVE Online factions ===
-        {"Minmatar", {
+        {"Keldari", {
             glm::vec4(0.5f, 0.35f, 0.25f, 1.0f),  // Rust brown
             glm::vec4(0.3f, 0.2f, 0.15f, 1.0f),   // Dark brown
             glm::vec4(0.8f, 0.6f, 0.3f, 1.0f)     // Light rust
         }},
-        {"Caldari", {
+        {"Veyren", {
             glm::vec4(0.35f, 0.45f, 0.55f, 1.0f), // Steel blue
             glm::vec4(0.2f, 0.25f, 0.35f, 1.0f),  // Dark blue
             glm::vec4(0.5f, 0.7f, 0.9f, 1.0f)     // Light blue
         }},
-        {"Gallente", {
+        {"Aurelian", {
             glm::vec4(0.3f, 0.4f, 0.35f, 1.0f),   // Dark green-gray
             glm::vec4(0.2f, 0.3f, 0.25f, 1.0f),   // Darker green
             glm::vec4(0.4f, 0.7f, 0.5f, 1.0f)     // Light green
         }},
-        {"Amarr", {
+        {"Solari", {
             glm::vec4(0.6f, 0.55f, 0.45f, 1.0f),  // Gold-brass
             glm::vec4(0.4f, 0.35f, 0.25f, 1.0f),  // Dark gold
             glm::vec4(0.9f, 0.8f, 0.5f, 1.0f)     // Bright gold
         }},
         // === New PVE factions (from game design doc) ===
-        {"Sanctum Hegemony", {                      // Amarr analog
+        {"Sanctum Hegemony", {                      // Solari analog
             glm::vec4(0.7f, 0.6f, 0.35f, 1.0f),   // Polished gold
             glm::vec4(0.45f, 0.38f, 0.2f, 1.0f),   // Dark gold
             glm::vec4(0.95f, 0.85f, 0.45f, 1.0f)  // Bright gold shine
         }},
-        {"Core Nexus", {                            // Caldari analog
+        {"Core Nexus", {                            // Veyren analog
             glm::vec4(0.3f, 0.35f, 0.42f, 1.0f),  // Dark steel grey
             glm::vec4(0.15f, 0.18f, 0.25f, 1.0f),  // Near-black blue
             glm::vec4(0.45f, 0.55f, 0.7f, 1.0f)   // Muted blue accent
         }},
-        {"Vanguard Republic", {                     // Gallente analog
+        {"Vanguard Republic", {                     // Aurelian analog
             glm::vec4(0.25f, 0.4f, 0.38f, 1.0f),  // Teal-green
             glm::vec4(0.15f, 0.28f, 0.25f, 1.0f),  // Dark teal
             glm::vec4(0.35f, 0.65f, 0.55f, 1.0f)  // Light sea-green
         }},
-        {"Rust-Scrap Coalition", {                  // Minmatar analog
+        {"Rust-Scrap Coalition", {                  // Keldari analog
             glm::vec4(0.55f, 0.25f, 0.2f, 1.0f),  // Rusty red
             glm::vec4(0.2f, 0.12f, 0.1f, 1.0f),   // Dark rust/black
             glm::vec4(0.75f, 0.4f, 0.25f, 1.0f)   // Orange-rust accent
         }},
         // === Pirate/NPC factions ===
-        {"Serpentis", {
+        {"Venom Syndicate", {
             glm::vec4(0.4f, 0.25f, 0.45f, 1.0f),  // Purple
             glm::vec4(0.2f, 0.15f, 0.25f, 1.0f),  // Dark purple
             glm::vec4(0.7f, 0.3f, 0.7f, 1.0f)     // Bright purple
         }},
-        {"Guristas", {
+        {"Iron Corsairs", {
             glm::vec4(0.5f, 0.2f, 0.2f, 1.0f),    // Dark red
             glm::vec4(0.3f, 0.1f, 0.1f, 1.0f),    // Very dark red
             glm::vec4(0.9f, 0.3f, 0.3f, 1.0f)     // Bright red
         }},
-        {"Blood Raiders", {
+        {"Crimson Order", {
             glm::vec4(0.4f, 0.15f, 0.15f, 1.0f),  // Blood red
             glm::vec4(0.2f, 0.05f, 0.05f, 1.0f),  // Almost black
             glm::vec4(0.8f, 0.2f, 0.2f, 1.0f)     // Crimson
@@ -916,7 +917,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
     ShipDesignTraits traits;
     
     // Determine faction design style
-    if (faction.find("Caldari") != std::string::npos ||
+    if (faction.find("Veyren") != std::string::npos ||
         faction.find("Core Nexus") != std::string::npos) {
         traits.style = ShipDesignTraits::DesignStyle::CALDARI_BLOCKY;
         traits.isBlocky = true;
@@ -925,7 +926,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.hasSpires = false;
         traits.hasExposedFramework = false;
         traits.asymmetryFactor = 0.0f;
-    } else if (faction.find("Amarr") != std::string::npos ||
+    } else if (faction.find("Solari") != std::string::npos ||
                faction.find("Sanctum Hegemony") != std::string::npos) {
         traits.style = ShipDesignTraits::DesignStyle::AMARR_ORNATE;
         traits.hasSpires = true;
@@ -934,7 +935,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.isAsymmetric = false;
         traits.hasExposedFramework = false;
         traits.asymmetryFactor = 0.0f;
-    } else if (faction.find("Gallente") != std::string::npos ||
+    } else if (faction.find("Aurelian") != std::string::npos ||
                faction.find("Vanguard Republic") != std::string::npos) {
         traits.style = ShipDesignTraits::DesignStyle::GALLENTE_ORGANIC;
         traits.isOrganic = true;
@@ -943,7 +944,7 @@ ShipDesignTraits Model::getDesignTraits(const std::string& faction, const std::s
         traits.hasSpires = false;
         traits.hasExposedFramework = false;
         traits.asymmetryFactor = 0.0f;
-    } else if (faction.find("Minmatar") != std::string::npos ||
+    } else if (faction.find("Keldari") != std::string::npos ||
                faction.find("Rust-Scrap") != std::string::npos) {
         traits.style = ShipDesignTraits::DesignStyle::MINMATAR_ASYMMETRIC;
         traits.isAsymmetric = true;
@@ -1091,7 +1092,7 @@ void Model::addHullPanelLines(std::vector<Vertex>& vertices, std::vector<unsigne
 }
 
 /**
- * Add Amarr-style spire detail
+ * Add Solari-style spire detail
  */
 void Model::addSpireDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
                            float posZ, float height, const glm::vec3& color) {
@@ -1116,7 +1117,7 @@ void Model::addSpireDetail(std::vector<Vertex>& vertices, std::vector<unsigned i
 }
 
 /**
- * Add Minmatar-style asymmetric detail
+ * Add Keldari-style asymmetric detail
  */
 void Model::addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
                                 float posZ, float offset, const glm::vec3& color) {
@@ -1282,21 +1283,21 @@ std::unique_ptr<Model> Model::createAsteroidModel(const std::string& oreType) {
     // Determine color based on ore type
     glm::vec3 asteroidColor = glm::vec3(0.5f, 0.5f, 0.5f); // Default gray
 
-    if (oreType.find("Veldspar") != std::string::npos) {
+    if (oreType.find("Dustite") != std::string::npos) {
         asteroidColor = glm::vec3(0.6f, 0.4f, 0.2f);
-    } else if (oreType.find("Scordite") != std::string::npos) {
+    } else if (oreType.find("Ferrite") != std::string::npos) {
         asteroidColor = glm::vec3(0.5f, 0.5f, 0.55f);
-    } else if (oreType.find("Pyroxeres") != std::string::npos) {
+    } else if (oreType.find("Ignaite") != std::string::npos) {
         asteroidColor = glm::vec3(0.7f, 0.3f, 0.2f);
-    } else if (oreType.find("Plagioclase") != std::string::npos) {
+    } else if (oreType.find("Crystite") != std::string::npos) {
         asteroidColor = glm::vec3(0.3f, 0.5f, 0.4f);
-    } else if (oreType.find("Omber") != std::string::npos) {
+    } else if (oreType.find("Shadite") != std::string::npos) {
         asteroidColor = glm::vec3(0.8f, 0.6f, 0.3f);
-    } else if (oreType.find("Kernite") != std::string::npos) {
+    } else if (oreType.find("Corite") != std::string::npos) {
         asteroidColor = glm::vec3(0.3f, 0.6f, 0.7f);
-    } else if (oreType.find("Jaspet") != std::string::npos) {
+    } else if (oreType.find("Lumine") != std::string::npos) {
         asteroidColor = glm::vec3(0.6f, 0.2f, 0.3f);
-    } else if (oreType.find("Hemorphite") != std::string::npos) {
+    } else if (oreType.find("Sangite") != std::string::npos) {
         asteroidColor = glm::vec3(0.9f, 0.3f, 0.2f);
     }
 

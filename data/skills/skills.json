@@ -71,10 +71,10 @@
     "max_level": 5,
     "prerequisites": {}
   },
-  "minmatar_frigate": {
-    "id": "minmatar_frigate",
-    "name": "Minmatar Frigate",
-    "description": "Skill at flying Minmatar frigates. Per level bonus varies by ship.",
+  "keldari_frigate": {
+    "id": "keldari_frigate",
+    "name": "Keldari Frigate",
+    "description": "Skill at flying Keldari Frigates. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -84,10 +84,10 @@
       "spaceship_command": 1
     }
   },
-  "caldari_frigate": {
-    "id": "caldari_frigate",
-    "name": "Caldari Frigate",
-    "description": "Skill at flying Caldari frigates. Per level bonus varies by ship.",
+  "veyren_frigate": {
+    "id": "veyren_frigate",
+    "name": "Veyren Frigate",
+    "description": "Skill at flying Veyren Frigates. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -248,38 +248,38 @@
       "missiles": 2
     }
   },
-  "minmatar_destroyer": {
-    "id": "minmatar_destroyer",
-    "name": "Minmatar Destroyer",
-    "description": "Skill at flying Minmatar destroyers. Per level bonus varies by ship.",
+  "keldari_destroyer": {
+    "id": "keldari_destroyer",
+    "name": "Keldari Destroyer",
+    "description": "Skill at flying Keldari destroyers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 3,
     "max_level": 5,
     "prerequisites": {
-      "minmatar_frigate": 3,
+      "keldari_frigate": 3,
       "spaceship_command": 2
     }
   },
-  "caldari_destroyer": {
-    "id": "caldari_destroyer",
-    "name": "Caldari Destroyer",
-    "description": "Skill at flying Caldari destroyers. Per level bonus varies by ship.",
+  "veyren_destroyer": {
+    "id": "veyren_destroyer",
+    "name": "Veyren Destroyer",
+    "description": "Skill at flying Veyren destroyers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 3,
     "max_level": 5,
     "prerequisites": {
-      "caldari_frigate": 3,
+      "veyren_frigate": 3,
       "spaceship_command": 2
     }
   },
-  "gallente_frigate": {
-    "id": "gallente_frigate",
-    "name": "Gallente Frigate",
-    "description": "Skill at flying Gallente frigates. Per level bonus varies by ship.",
+  "aurelian_frigate": {
+    "id": "aurelian_frigate",
+    "name": "Aurelian Frigate",
+    "description": "Skill at flying Aurelian Frigates. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -289,10 +289,10 @@
       "spaceship_command": 1
     }
   },
-  "amarr_frigate": {
-    "id": "amarr_frigate",
-    "name": "Amarr Frigate",
-    "description": "Skill at flying Amarr frigates. Per level bonus varies by ship.",
+  "solari_frigate": {
+    "id": "solari_frigate",
+    "name": "Solari Frigate",
+    "description": "Skill at flying Solari Frigates. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -302,87 +302,87 @@
       "spaceship_command": 1
     }
   },
-  "gallente_destroyer": {
-    "id": "gallente_destroyer",
-    "name": "Gallente Destroyer",
-    "description": "Skill at flying Gallente destroyers. Per level bonus varies by ship.",
+  "aurelian_destroyer": {
+    "id": "aurelian_destroyer",
+    "name": "Aurelian Destroyer",
+    "description": "Skill at flying Aurelian destroyers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 3,
     "max_level": 5,
     "prerequisites": {
-      "gallente_frigate": 3,
+      "aurelian_frigate": 3,
       "spaceship_command": 2
     }
   },
-  "amarr_destroyer": {
-    "id": "amarr_destroyer",
-    "name": "Amarr Destroyer",
-    "description": "Skill at flying Amarr destroyers. Per level bonus varies by ship.",
+  "solari_destroyer": {
+    "id": "solari_destroyer",
+    "name": "Solari Destroyer",
+    "description": "Skill at flying Solari destroyers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 3,
     "max_level": 5,
     "prerequisites": {
-      "amarr_frigate": 3,
+      "solari_frigate": 3,
       "spaceship_command": 2
     }
   },
-  "minmatar_cruiser": {
-    "id": "minmatar_cruiser",
-    "name": "Minmatar Cruiser",
-    "description": "Skill at flying Minmatar cruisers. Per level bonus varies by ship.",
+  "keldari_cruiser": {
+    "id": "keldari_cruiser",
+    "name": "Keldari Cruiser",
+    "description": "Skill at flying Keldari cruisers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 5,
     "max_level": 5,
     "prerequisites": {
-      "minmatar_destroyer": 3,
+      "keldari_destroyer": 3,
       "spaceship_command": 3
     }
   },
-  "caldari_cruiser": {
-    "id": "caldari_cruiser",
-    "name": "Caldari Cruiser",
-    "description": "Skill at flying Caldari cruisers. Per level bonus varies by ship.",
+  "veyren_cruiser": {
+    "id": "veyren_cruiser",
+    "name": "Veyren Cruiser",
+    "description": "Skill at flying Veyren cruisers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 5,
     "max_level": 5,
     "prerequisites": {
-      "caldari_destroyer": 3,
+      "veyren_destroyer": 3,
       "spaceship_command": 3
     }
   },
-  "gallente_cruiser": {
-    "id": "gallente_cruiser",
-    "name": "Gallente Cruiser",
-    "description": "Skill at flying Gallente cruisers. Per level bonus varies by ship.",
+  "aurelian_cruiser": {
+    "id": "aurelian_cruiser",
+    "name": "Aurelian Cruiser",
+    "description": "Skill at flying Aurelian cruisers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 5,
     "max_level": 5,
     "prerequisites": {
-      "gallente_destroyer": 3,
+      "aurelian_destroyer": 3,
       "spaceship_command": 3
     }
   },
-  "amarr_cruiser": {
-    "id": "amarr_cruiser",
-    "name": "Amarr Cruiser",
-    "description": "Skill at flying Amarr cruisers. Per level bonus varies by ship.",
+  "solari_cruiser": {
+    "id": "solari_cruiser",
+    "name": "Solari Cruiser",
+    "description": "Skill at flying Solari cruisers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 5,
     "max_level": 5,
     "prerequisites": {
-      "amarr_destroyer": 3,
+      "solari_destroyer": 3,
       "spaceship_command": 3
     }
   },
@@ -663,115 +663,115 @@
       "missiles": 4
     }
   },
-  "minmatar_battlecruiser": {
-    "id": "minmatar_battlecruiser",
-    "name": "Minmatar Battlecruiser",
-    "description": "Skill at flying Minmatar battlecruisers. Per level bonus varies by ship.",
+  "keldari_battlecruiser": {
+    "id": "keldari_battlecruiser",
+    "name": "Keldari Battlecruiser",
+    "description": "Skill at flying Keldari battlecruisers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 6,
     "max_level": 5,
     "prerequisites": {
-      "minmatar_cruiser": 4,
+      "keldari_cruiser": 4,
       "spaceship_command": 4
     }
   },
-  "caldari_battlecruiser": {
-    "id": "caldari_battlecruiser",
-    "name": "Caldari Battlecruiser",
-    "description": "Skill at flying Caldari battlecruisers. Per level bonus varies by ship.",
+  "veyren_battlecruiser": {
+    "id": "veyren_battlecruiser",
+    "name": "Veyren Battlecruiser",
+    "description": "Skill at flying Veyren battlecruisers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 6,
     "max_level": 5,
     "prerequisites": {
-      "caldari_cruiser": 4,
+      "veyren_cruiser": 4,
       "spaceship_command": 4
     }
   },
-  "gallente_battlecruiser": {
-    "id": "gallente_battlecruiser",
-    "name": "Gallente Battlecruiser",
-    "description": "Skill at flying Gallente battlecruisers. Per level bonus varies by ship.",
+  "aurelian_battlecruiser": {
+    "id": "aurelian_battlecruiser",
+    "name": "Aurelian Battlecruiser",
+    "description": "Skill at flying Aurelian battlecruisers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 6,
     "max_level": 5,
     "prerequisites": {
-      "gallente_cruiser": 4,
+      "aurelian_cruiser": 4,
       "spaceship_command": 4
     }
   },
-  "amarr_battlecruiser": {
-    "id": "amarr_battlecruiser",
-    "name": "Amarr Battlecruiser",
-    "description": "Skill at flying Amarr battlecruisers. Per level bonus varies by ship.",
+  "solari_battlecruiser": {
+    "id": "solari_battlecruiser",
+    "name": "Solari Battlecruiser",
+    "description": "Skill at flying Solari battlecruisers. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 6,
     "max_level": 5,
     "prerequisites": {
-      "amarr_cruiser": 4,
+      "solari_cruiser": 4,
       "spaceship_command": 4
     }
   },
-  "minmatar_battleship": {
-    "id": "minmatar_battleship",
-    "name": "Minmatar Battleship",
-    "description": "Skill at flying Minmatar battleships. Per level bonus varies by ship.",
+  "keldari_battleship": {
+    "id": "keldari_battleship",
+    "name": "Keldari Battleship",
+    "description": "Skill at flying Keldari battleships. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 8,
     "max_level": 5,
     "prerequisites": {
-      "minmatar_battlecruiser": 4,
+      "keldari_battlecruiser": 4,
       "spaceship_command": 5
     }
   },
-  "caldari_battleship": {
-    "id": "caldari_battleship",
-    "name": "Caldari Battleship",
-    "description": "Skill at flying Caldari battleships. Per level bonus varies by ship.",
+  "veyren_battleship": {
+    "id": "veyren_battleship",
+    "name": "Veyren Battleship",
+    "description": "Skill at flying Veyren battleships. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 8,
     "max_level": 5,
     "prerequisites": {
-      "caldari_battlecruiser": 4,
+      "veyren_battlecruiser": 4,
       "spaceship_command": 5
     }
   },
-  "gallente_battleship": {
-    "id": "gallente_battleship",
-    "name": "Gallente Battleship",
-    "description": "Skill at flying Gallente battleships. Per level bonus varies by ship.",
+  "aurelian_battleship": {
+    "id": "aurelian_battleship",
+    "name": "Aurelian Battleship",
+    "description": "Skill at flying Aurelian battleships. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 8,
     "max_level": 5,
     "prerequisites": {
-      "gallente_battlecruiser": 4,
+      "aurelian_battlecruiser": 4,
       "spaceship_command": 5
     }
   },
-  "amarr_battleship": {
-    "id": "amarr_battleship",
-    "name": "Amarr Battleship",
-    "description": "Skill at flying Amarr battleships. Per level bonus varies by ship.",
+  "solari_battleship": {
+    "id": "solari_battleship",
+    "name": "Solari Battleship",
+    "description": "Skill at flying Solari battleships. Per level bonus varies by ship.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
     "training_multiplier": 8,
     "max_level": 5,
     "prerequisites": {
-      "amarr_battlecruiser": 4,
+      "solari_battlecruiser": 4,
       "spaceship_command": 5
     }
   },
@@ -1336,10 +1336,10 @@
       "spaceship_command": 5
     }
   },
-  "amarr_carrier": {
-    "id": "amarr_carrier",
-    "name": "Amarr Carrier",
-    "description": "Skill at operating Amarr carrier class ships.",
+  "solari_carrier": {
+    "id": "solari_carrier",
+    "name": "Solari Carrier",
+    "description": "Skill at operating Solari carrier class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1347,13 +1347,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 1,
-      "amarr_battleship": 5
+      "solari_battleship": 5
     }
   },
-  "caldari_carrier": {
-    "id": "caldari_carrier",
-    "name": "Caldari Carrier",
-    "description": "Skill at operating Caldari carrier class ships.",
+  "veyren_carrier": {
+    "id": "veyren_carrier",
+    "name": "Veyren Carrier",
+    "description": "Skill at operating Veyren carrier class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1361,13 +1361,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 1,
-      "caldari_battleship": 5
+      "veyren_battleship": 5
     }
   },
-  "gallente_carrier": {
-    "id": "gallente_carrier",
-    "name": "Gallente Carrier",
-    "description": "Skill at operating Gallente carrier class ships.",
+  "aurelian_carrier": {
+    "id": "aurelian_carrier",
+    "name": "Aurelian Carrier",
+    "description": "Skill at operating Aurelian carrier class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1375,13 +1375,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 1,
-      "gallente_battleship": 5
+      "aurelian_battleship": 5
     }
   },
-  "minmatar_carrier": {
-    "id": "minmatar_carrier",
-    "name": "Minmatar Carrier",
-    "description": "Skill at operating Minmatar carrier class ships.",
+  "keldari_carrier": {
+    "id": "keldari_carrier",
+    "name": "Keldari Carrier",
+    "description": "Skill at operating Keldari carrier class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1389,13 +1389,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 1,
-      "minmatar_battleship": 5
+      "keldari_battleship": 5
     }
   },
-  "amarr_dreadnought": {
-    "id": "amarr_dreadnought",
-    "name": "Amarr Dreadnought",
-    "description": "Skill at operating Amarr dreadnought class ships.",
+  "solari_dreadnought": {
+    "id": "solari_dreadnought",
+    "name": "Solari Dreadnought",
+    "description": "Skill at operating Solari dreadnought class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1403,13 +1403,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 3,
-      "amarr_battleship": 5
+      "solari_battleship": 5
     }
   },
-  "caldari_dreadnought": {
-    "id": "caldari_dreadnought",
-    "name": "Caldari Dreadnought",
-    "description": "Skill at operating Caldari dreadnought class ships.",
+  "veyren_dreadnought": {
+    "id": "veyren_dreadnought",
+    "name": "Veyren Dreadnought",
+    "description": "Skill at operating Veyren dreadnought class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1417,13 +1417,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 3,
-      "caldari_battleship": 5
+      "veyren_battleship": 5
     }
   },
-  "gallente_dreadnought": {
-    "id": "gallente_dreadnought",
-    "name": "Gallente Dreadnought",
-    "description": "Skill at operating Gallente dreadnought class ships.",
+  "aurelian_dreadnought": {
+    "id": "aurelian_dreadnought",
+    "name": "Aurelian Dreadnought",
+    "description": "Skill at operating Aurelian dreadnought class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1431,13 +1431,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 3,
-      "gallente_battleship": 5
+      "aurelian_battleship": 5
     }
   },
-  "minmatar_dreadnought": {
-    "id": "minmatar_dreadnought",
-    "name": "Minmatar Dreadnought",
-    "description": "Skill at operating Minmatar dreadnought class ships.",
+  "keldari_dreadnought": {
+    "id": "keldari_dreadnought",
+    "name": "Keldari Dreadnought",
+    "description": "Skill at operating Keldari dreadnought class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1445,13 +1445,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 3,
-      "minmatar_battleship": 5
+      "keldari_battleship": 5
     }
   },
-  "amarr_titan": {
-    "id": "amarr_titan",
-    "name": "Amarr Titan",
-    "description": "Skill at operating Amarr titan class ships.",
+  "solari_titan": {
+    "id": "solari_titan",
+    "name": "Solari Titan",
+    "description": "Skill at operating Solari titan class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1459,13 +1459,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 5,
-      "amarr_battleship": 5
+      "solari_battleship": 5
     }
   },
-  "caldari_titan": {
-    "id": "caldari_titan",
-    "name": "Caldari Titan",
-    "description": "Skill at operating Caldari titan class ships.",
+  "veyren_titan": {
+    "id": "veyren_titan",
+    "name": "Veyren Titan",
+    "description": "Skill at operating Veyren titan class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1473,13 +1473,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 5,
-      "caldari_battleship": 5
+      "veyren_battleship": 5
     }
   },
-  "gallente_titan": {
-    "id": "gallente_titan",
-    "name": "Gallente Titan",
-    "description": "Skill at operating Gallente titan class ships.",
+  "aurelian_titan": {
+    "id": "aurelian_titan",
+    "name": "Aurelian Titan",
+    "description": "Skill at operating Aurelian titan class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1487,13 +1487,13 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 5,
-      "gallente_battleship": 5
+      "aurelian_battleship": 5
     }
   },
-  "minmatar_titan": {
-    "id": "minmatar_titan",
-    "name": "Minmatar Titan",
-    "description": "Skill at operating Minmatar titan class ships.",
+  "keldari_titan": {
+    "id": "keldari_titan",
+    "name": "Keldari Titan",
+    "description": "Skill at operating Keldari titan class ships.",
     "category": "Spaceship Command",
     "primary_attribute": "perception",
     "secondary_attribute": "willpower",
@@ -1501,7 +1501,7 @@
     "max_level": 5,
     "prerequisites": {
       "capital_ships": 5,
-      "minmatar_battleship": 5
+      "keldari_battleship": 5
     }
   },
   "jump_drive_operation": {

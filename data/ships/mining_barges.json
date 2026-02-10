@@ -1,10 +1,10 @@
 {
-  "procurer": {
-    "id": "procurer",
-    "name": "Procurer",
+  "ironbore": {
+    "id": "ironbore",
+    "name": "Ironbore",
     "class": "Mining Barge",
     "race": "ORE",
-    "description": "The Procurer is a heavily armored mining barge built for durability and survival in hostile environments. Its strong defenses make it ideal for solo mining in dangerous space.",
+    "description": "The Ironbore is a heavily armored mining barge built for durability and survival in hostile environments. Its strong defenses make it ideal for solo mining in dangerous space.",
     "hull_hp": 4000,
     "armor_hp": 3000,
     "shield_hp": 6000,
@@ -39,17 +39,32 @@
       "drone_hitpoints": 50
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "retriever": {
-    "id": "retriever",
-    "name": "Retriever",
+  "deepscoop": {
+    "id": "deepscoop",
+    "name": "Deepscoop",
     "class": "Mining Barge",
     "race": "ORE",
-    "description": "The Retriever boasts the largest ore hold of all mining barges, making it perfect for solo miners who want to maximize time in the asteroid belt without frequent trips to station.",
+    "description": "The Deepscoop boasts the largest ore hold of all mining barges, making it perfect for solo miners who want to maximize time in the asteroid belt without frequent trips to station.",
     "hull_hp": 4000,
     "armor_hp": 3000,
     "shield_hp": 2300,
@@ -81,17 +96,32 @@
       "ice_harvester_capacitor": -33.33
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "covetor": {
-    "id": "covetor",
-    "name": "Covetor",
+  "yieldmaster": {
+    "id": "yieldmaster",
+    "name": "Yieldmaster",
     "class": "Mining Barge",
     "race": "ORE",
-    "description": "The Covetor delivers the highest mining yield of all mining barges, making it ideal for fleet operations with hauler support. Its small ore hold requires frequent offloading.",
+    "description": "The Yieldmaster delivers the highest mining yield of all mining barges, making it ideal for fleet operations with hauler support. Its small ore hold requires frequent offloading.",
     "hull_hp": 2000,
     "armor_hp": 2000,
     "shield_hp": 3000,
@@ -129,9 +159,24 @@
       "gas_harvester_duration": -30
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   }
 }

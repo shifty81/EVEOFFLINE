@@ -1,19 +1,19 @@
 {
-  "concord_system": {
-    "description": "CONCORD is the interstellar police force of New Eden. They enforce security in high-sec space and respond to criminal acts. In EVE OFFLINE, CONCORD provides security enforcement for PVE gameplay.",
+  "aegis_system": {
+    "description": "AEGIS is the interstellar police force of Astralis. They enforce security in high-sec space and respond to criminal acts. In EVEOFFLINE, AEGIS provides security enforcement for PVE gameplay.",
     "security_ratings": {
       "high_sec": {
         "range": "0.5 to 1.0",
-        "description": "Empire-controlled space with CONCORD protection. Criminal acts result in swift CONCORD response.",
-        "concord_response": true,
+        "description": "Empire-controlled space with AEGIS protection. Criminal acts result in swift AEGIS response.",
+        "aegis_response": true,
         "gate_guns": true,
         "npc_police_patrols": true,
         "player_aggression_allowed": false
       },
       "low_sec": {
         "range": "0.1 to 0.4",
-        "description": "Frontier space with limited security. Gate guns fire on criminals but CONCORD does not respond.",
-        "concord_response": false,
+        "description": "Frontier space with limited security. Gate guns fire on criminals but AEGIS does not respond.",
+        "aegis_response": false,
         "gate_guns": true,
         "npc_police_patrols": false,
         "player_aggression_allowed": true,
@@ -22,14 +22,14 @@
       "null_sec": {
         "range": "0.0",
         "description": "Lawless space with no security enforcement. Only player-created structures provide safety.",
-        "concord_response": false,
+        "aegis_response": false,
         "gate_guns": false,
         "npc_police_patrols": false,
         "player_aggression_allowed": true,
         "security_penalty": false
       }
     },
-    "concord_response_times": {
+    "aegis_response_times": {
       "1.0": 6,
       "0.9": 7,
       "0.8": 10,
@@ -41,17 +41,27 @@
       "suspect": {
         "description": "Flagged for minor infractions. Anyone may engage you without penalty.",
         "duration_seconds": 900,
-        "causes": ["stealing_from_wrecks", "assisting_criminals", "illegal_cargo"]
+        "causes": [
+          "stealing_from_wrecks",
+          "assisting_criminals",
+          "illegal_cargo"
+        ]
       },
       "criminal": {
-        "description": "Flagged for criminal acts. CONCORD will respond and destroy your ship in high-sec.",
+        "description": "Flagged for criminal acts. AEGIS will respond and destroy your ship in high-sec.",
         "duration_seconds": 900,
-        "causes": ["attacking_neutral_player", "pod_killing"]
+        "causes": [
+          "attacking_neutral_player",
+          "pod_killing"
+        ]
       },
       "weapons_timer": {
         "description": "Active when you have recently used aggressive modules. Cannot dock or jump while active.",
         "duration_seconds": 60,
-        "causes": ["activating_weapons", "activating_ewar"]
+        "causes": [
+          "activating_weapons",
+          "activating_ewar"
+        ]
       }
     },
     "security_status": {
@@ -63,7 +73,7 @@
         "above_0": "Full access to all empire space.",
         "-0.1_to_-1.9": "Faction police may engage you in the corresponding faction's high-sec space.",
         "-2.0_to_-4.9": "Cannot enter 1.0 security systems without being attacked by faction police.",
-        "-5.0_and_below": "Kill on sight in all high-sec space. CONCORD and faction police will engage."
+        "-5.0_and_below": "Kill on sight in all high-sec space. AEGIS and faction police will engage."
       },
       "gaining_security_status": {
         "killing_npc_pirates": "Small security status gain per kill, scaled by NPC bounty value.",

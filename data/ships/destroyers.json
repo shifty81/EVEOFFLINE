@@ -1,10 +1,10 @@
 {
-  "thrasher": {
-    "id": "thrasher",
-    "name": "Thrasher",
+  "cleaver": {
+    "id": "cleaver",
+    "name": "Cleaver",
     "class": "Destroyer",
-    "race": "Minmatar",
-    "description": "The Thrasher is a fast, high-DPS destroyer favored for hit-and-run tactics.",
+    "race": "Keldari",
+    "description": "The Cleaver is a fast, high-DPS destroyer favored for hit-and-run tactics.",
     "hull_hp": 550,
     "armor_hp": 450,
     "shield_hp": 550,
@@ -30,17 +30,32 @@
       "small_projectile_falloff": 10
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "cormorant": {
-    "id": "cormorant",
-    "name": "Cormorant",
+  "skarn": {
+    "id": "skarn",
+    "name": "Skarn",
     "class": "Destroyer",
-    "race": "Caldari",
-    "description": "The Cormorant is a shield-tanked destroyer with excellent range and precision.",
+    "race": "Veyren",
+    "description": "The Skarn is a shield-tanked destroyer with excellent range and precision.",
     "hull_hp": 600,
     "armor_hp": 400,
     "shield_hp": 850,
@@ -66,17 +81,32 @@
       "shield_resistances": 3
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "catalyst": {
-    "id": "catalyst",
-    "name": "Catalyst",
+  "vaillant": {
+    "id": "vaillant",
+    "name": "Vaillant",
     "class": "Destroyer",
-    "race": "Gallente",
-    "description": "The Catalyst excels at close-range blaster combat with devastating DPS.",
+    "race": "Aurelian",
+    "description": "The Vaillant excels at close-range blaster combat with devastating DPS.",
     "hull_hp": 580,
     "armor_hp": 600,
     "shield_hp": 500,
@@ -101,17 +131,32 @@
       "small_hybrid_tracking": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 60},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 60
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "coercer": {
-    "id": "coercer",
-    "name": "Coercer",
+  "adjudicator": {
+    "id": "adjudicator",
+    "name": "Adjudicator",
     "class": "Destroyer",
-    "race": "Amarr",
-    "description": "The Coercer combines heavy armor and long-range lasers for sustained firepower.",
+    "race": "Solari",
+    "description": "The Adjudicator combines heavy armor and long-range lasers for sustained firepower.",
     "hull_hp": 620,
     "armor_hp": 750,
     "shield_hp": 450,
@@ -137,9 +182,24 @@
       "capacitor_use_reduction": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   }
 }

@@ -1,146 +1,204 @@
 {
   "ore_types": {
-    "veldspar": {
-      "name": "Veldspar",
+    "dustite": {
+      "name": "Dustite",
       "tier": "common",
       "security_min": 0.5,
       "base_value": 10,
       "volume_per_unit": 0.1,
       "reprocessing_base": 400,
-      "minerals": {"tritanium": 415}
+      "minerals": {
+        "ferrium": 415
+      }
     },
-    "scordite": {
-      "name": "Scordite",
-      "tier": "common", 
+    "ferrite": {
+      "name": "Ferrite",
+      "tier": "common",
       "security_min": 0.7,
       "base_value": 25,
       "volume_per_unit": 0.15,
       "reprocessing_base": 333,
-      "minerals": {"tritanium": 346, "pyerite": 173}
+      "minerals": {
+        "ferrium": 346,
+        "ignium": 173
+      }
     },
-    "pyroxeres": {
-      "name": "Pyroxeres",
+    "ignaite": {
+      "name": "Ignaite",
       "tier": "uncommon",
       "security_min": 0.9,
       "base_value": 45,
       "volume_per_unit": 0.3,
       "reprocessing_base": 333,
-      "minerals": {"tritanium": 351, "pyerite": 25, "mexallon": 50, "nocxium": 5}
+      "minerals": {
+        "ferrium": 351,
+        "ignium": 25,
+        "allonium": 50,
+        "noctium": 5
+      }
     },
-    "plagioclase": {
-      "name": "Plagioclase",
+    "crystite": {
+      "name": "Crystite",
       "tier": "uncommon",
       "security_min": 0.9,
       "base_value": 50,
       "volume_per_unit": 0.35,
       "reprocessing_base": 333,
-      "minerals": {"tritanium": 256, "pyerite": 107, "mexallon": 213}
+      "minerals": {
+        "ferrium": 256,
+        "ignium": 107,
+        "allonium": 213
+      }
     },
-    "omber": {
-      "name": "Omber",
+    "shadite": {
+      "name": "Shadite",
       "tier": "uncommon",
       "security_min": 0.7,
       "security_max": 0.9,
       "base_value": 85,
       "volume_per_unit": 0.6,
       "reprocessing_base": 500,
-      "minerals": {"tritanium": 307, "pyerite": 123, "isogen": 307}
+      "minerals": {
+        "ferrium": 307,
+        "ignium": 123,
+        "isodium": 307
+      }
     },
-    "kernite": {
-      "name": "Kernite",
+    "corite": {
+      "name": "Corite",
       "tier": "rare",
       "security_min": 0.4,
       "security_max": 0.7,
       "base_value": 125,
       "volume_per_unit": 1.2,
       "reprocessing_base": 400,
-      "minerals": {"tritanium": 386, "mexallon": 773, "isogen": 386}
+      "minerals": {
+        "ferrium": 386,
+        "allonium": 773,
+        "isodium": 386
+      }
     },
-    "jaspet": {
-      "name": "Jaspet",
+    "lumine": {
+      "name": "Lumine",
       "tier": "rare",
       "security_min": 0.2,
       "security_max": 0.4,
       "base_value": 180,
       "volume_per_unit": 2.0,
       "reprocessing_base": 500,
-      "minerals": {"mexallon": 350, "nocxium": 75, "zydrine": 8}
+      "minerals": {
+        "allonium": 350,
+        "noctium": 75,
+        "zyrium": 8
+      }
     },
-    "hemorphite": {
-      "name": "Hemorphite",
+    "sangite": {
+      "name": "Sangite",
       "tier": "rare",
       "security_min": 0.0,
       "security_max": 0.2,
       "base_value": 240,
       "volume_per_unit": 3.0,
       "reprocessing_base": 500,
-      "minerals": {"tritanium": 212, "isogen": 212, "nocxium": 106, "zydrine": 27}
+      "minerals": {
+        "ferrium": 212,
+        "isodium": 212,
+        "noctium": 106,
+        "zyrium": 27
+      }
     },
-    "hedbergite": {
-      "name": "Hedbergite",
+    "glacite": {
+      "name": "Glacite",
       "tier": "rare",
       "security_min": 0.0,
       "security_max": 0.2,
       "base_value": 220,
       "volume_per_unit": 3.0,
       "reprocessing_base": 500,
-      "minerals": {"pyerite": 708, "isogen": 354, "nocxium": 32, "zydrine": 15}
+      "minerals": {
+        "ignium": 708,
+        "isodium": 354,
+        "noctium": 32,
+        "zyrium": 15
+      }
     },
-    "gneiss": {
-      "name": "Gneiss",
+    "densite": {
+      "name": "Densite",
       "tier": "very_rare",
       "security_max": 0.0,
       "base_value": 300,
       "volume_per_unit": 5.0,
       "reprocessing_base": 400,
-      "minerals": {"pyerite": 1278, "mexallon": 1278, "isogen": 383}
+      "minerals": {
+        "ignium": 1278,
+        "allonium": 1278,
+        "isodium": 383
+      }
     },
-    "dark_ochre": {
-      "name": "Dark Ochre",
+    "voidite": {
+      "name": "Voidite",
       "tier": "very_rare",
       "security_max": 0.0,
       "base_value": 350,
       "volume_per_unit": 8.0,
       "reprocessing_base": 400,
-      "minerals": {"tritanium": 10000, "nocxium": 173, "zydrine": 87}
+      "minerals": {
+        "ferrium": 10000,
+        "noctium": 173,
+        "zyrium": 87
+      }
     },
-    "crokite": {
-      "name": "Crokite",
+    "pyranite": {
+      "name": "Pyranite",
       "tier": "ultra_rare",
       "security_max": 0.0,
       "base_value": 450,
       "volume_per_unit": 16.0,
       "reprocessing_base": 250,
-      "minerals": {"tritanium": 21000, "nocxium": 760, "zydrine": 135}
+      "minerals": {
+        "ferrium": 21000,
+        "noctium": 760,
+        "zyrium": 135
+      }
     },
-    "bistot": {
-      "name": "Bistot",
+    "stellite": {
+      "name": "Stellite",
       "tier": "ultra_rare",
       "security_max": 0.0,
       "base_value": 480,
       "volume_per_unit": 16.0,
       "reprocessing_base": 333,
-      "minerals": {"pyerite": 12000, "zydrine": 450, "megacyte": 100}
+      "minerals": {
+        "ignium": 12000,
+        "zyrium": 450,
+        "megrium": 100
+      }
     },
-    "arkonor": {
-      "name": "Arkonor",
+    "cosmite": {
+      "name": "Cosmite",
       "tier": "ultra_rare",
       "security_max": 0.0,
       "base_value": 500,
       "volume_per_unit": 16.0,
       "reprocessing_base": 250,
-      "minerals": {"tritanium": 22000, "mexallon": 2500, "megacyte": 320}
+      "minerals": {
+        "ferrium": 22000,
+        "allonium": 2500,
+        "megrium": 320
+      }
     },
-    "mercoxit": {
-      "name": "Mercoxit",
+    "nexorite": {
+      "name": "Nexorite",
       "tier": "legendary",
       "security_max": -0.5,
       "base_value": 1500,
       "volume_per_unit": 40.0,
       "reprocessing_base": 250,
-      "minerals": {"morphite": 300},
+      "minerals": {
+        "morphium": 300
+      },
       "requires_deep_core": true,
-      "description": "Extremely rare ore that yields Morphite, used in Tech II capital components. Requires special deep core mining lasers."
+      "description": "Extremely rare ore that yields Morphium, used in Tech II capital components. Requires special deep core mining lasers."
     }
   }
 }

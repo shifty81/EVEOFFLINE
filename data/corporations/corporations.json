@@ -1,110 +1,186 @@
 {
   "corporation_system": {
-    "description": "Corporations are the primary social organizations in New Eden. Every player belongs to a corporation, either NPC or player-run. Corporations provide shared resources, tax revenue, and organizational structure.",
+    "description": "Corporations are the primary social organizations in Astralis. Every player belongs to a corporation, either NPC or player-run. Corporations provide shared resources, tax revenue, and organizational structure.",
     "npc_corporations": {
-      "caldari_navy": {
-        "id": "caldari_navy",
-        "name": "Caldari Navy",
-        "faction": "Caldari",
+      "veyren_fleet": {
+        "id": "veyren_fleet",
+        "name": "Veyren Fleet",
+        "faction": "Veyren",
         "type": "military",
-        "description": "The naval arm of the Caldari State, responsible for defending Caldari sovereignty.",
+        "description": "The naval arm of the Veyren Combine, responsible for defending Veyren sovereignty.",
         "tax_rate": 11,
-        "divisions": ["military", "security", "logistics"],
-        "agent_types": ["combat", "courier"]
+        "divisions": [
+          "military",
+          "security",
+          "logistics"
+        ],
+        "agent_types": [
+          "combat",
+          "courier"
+        ]
       },
-      "caldari_provisions": {
-        "id": "caldari_provisions",
-        "name": "Caldari Provisions",
-        "faction": "Caldari",
+      "veyren_provisions": {
+        "id": "veyren_provisions",
+        "name": "Veyren Provisions",
+        "faction": "Veyren",
         "type": "industrial",
-        "description": "A major Caldari corporation providing goods and services throughout the State.",
+        "description": "A major Veyren corporation providing goods and services throughout the State.",
         "tax_rate": 11,
-        "divisions": ["mining", "distribution", "manufacturing"],
-        "agent_types": ["mining", "courier", "trade"]
+        "divisions": [
+          "mining",
+          "distribution",
+          "manufacturing"
+        ],
+        "agent_types": [
+          "mining",
+          "courier",
+          "trade"
+        ]
       },
-      "amarr_navy": {
-        "id": "amarr_navy",
-        "name": "Amarr Navy",
-        "faction": "Amarr",
+      "solari_imperial": {
+        "id": "solari_imperial",
+        "name": "Solari Imperial",
+        "faction": "Solari",
         "type": "military",
-        "description": "The imperial fleet of the Amarr Empire, the largest navy in New Eden.",
+        "description": "The imperial fleet of the Solari Dominion, the largest navy in Astralis.",
         "tax_rate": 11,
-        "divisions": ["military", "security", "intelligence"],
-        "agent_types": ["combat", "courier"]
+        "divisions": [
+          "military",
+          "security",
+          "intelligence"
+        ],
+        "agent_types": [
+          "combat",
+          "courier"
+        ]
       },
-      "ministry_of_war": {
-        "id": "ministry_of_war",
-        "name": "Ministry of War",
-        "faction": "Amarr",
+      "ministry_of_order": {
+        "id": "ministry_of_order",
+        "name": "Ministry of Order",
+        "faction": "Solari",
         "type": "military",
-        "description": "Oversees the Amarr Empire's military operations and defense strategy.",
+        "description": "Oversees the Solari Dominion's military operations and defense strategy.",
         "tax_rate": 11,
-        "divisions": ["military", "security", "r_and_d"],
-        "agent_types": ["combat", "courier"]
+        "divisions": [
+          "military",
+          "security",
+          "r_and_d"
+        ],
+        "agent_types": [
+          "combat",
+          "courier"
+        ]
       },
-      "federation_navy": {
-        "id": "federation_navy",
-        "name": "Federation Navy",
-        "faction": "Gallente",
+      "aurelian_grand": {
+        "id": "aurelian_grand",
+        "name": "Aurelian Grand",
+        "faction": "Aurelian",
         "type": "military",
-        "description": "The military arm of the Gallente Federation, champions of freedom in New Eden.",
+        "description": "The military arm of the Aurelian Federation, champions of freedom in Astralis.",
         "tax_rate": 11,
-        "divisions": ["military", "security", "logistics"],
-        "agent_types": ["combat", "courier"]
+        "divisions": [
+          "military",
+          "security",
+          "logistics"
+        ],
+        "agent_types": [
+          "combat",
+          "courier"
+        ]
       },
-      "republic_fleet": {
-        "id": "republic_fleet",
-        "name": "Republic Fleet",
-        "faction": "Minmatar",
+      "keldari_tribal": {
+        "id": "keldari_tribal",
+        "name": "Keldari Tribal",
+        "faction": "Keldari",
         "type": "military",
-        "description": "The Minmatar Republic's defense force, built from reclaimed and improvised ships.",
+        "description": "The Keldari Republic's defense force, built from reclaimed and improvised ships.",
         "tax_rate": 11,
-        "divisions": ["military", "security", "logistics"],
-        "agent_types": ["combat", "courier"]
+        "divisions": [
+          "military",
+          "security",
+          "logistics"
+        ],
+        "agent_types": [
+          "combat",
+          "courier"
+        ]
       },
-      "core_complexion": {
-        "id": "core_complexion",
-        "name": "Core Complexion Inc.",
-        "faction": "Minmatar",
+      "core_synthesis": {
+        "id": "core_synthesis",
+        "name": "Core Synthesis Inc.",
+        "faction": "Keldari",
         "type": "research",
-        "description": "A Minmatar research corporation with R&D agents available for scientific research.",
+        "description": "A Keldari research corporation with R&D agents available for scientific research.",
         "tax_rate": 11,
-        "divisions": ["r_and_d", "manufacturing"],
-        "agent_types": ["research"],
-        "research_fields": ["minmatar_starship_engineering", "mechanical_engineering"]
+        "divisions": [
+          "r_and_d",
+          "manufacturing"
+        ],
+        "agent_types": [
+          "research"
+        ],
+        "research_fields": [
+          "keldari_starship_engineering",
+          "mechanical_engineering"
+        ]
       },
-      "creodron": {
-        "id": "creodron",
-        "name": "Creodron",
-        "faction": "Gallente",
+      "novadron": {
+        "id": "novadron",
+        "name": "Novadron",
+        "faction": "Aurelian",
         "type": "research",
-        "description": "A Gallente research corporation specializing in drone technology and starship engineering.",
+        "description": "A Aurelian research corporation specializing in drone technology and starship engineering.",
         "tax_rate": 11,
-        "divisions": ["r_and_d", "manufacturing"],
-        "agent_types": ["research"],
-        "research_fields": ["gallentian_starship_engineering", "electronic_engineering"]
+        "divisions": [
+          "r_and_d",
+          "manufacturing"
+        ],
+        "agent_types": [
+          "research"
+        ],
+        "research_fields": [
+          "gallentian_starship_engineering",
+          "electronic_engineering"
+        ]
       },
-      "carthum_conglomerate": {
-        "id": "carthum_conglomerate",
-        "name": "Carthum Conglomerate",
-        "faction": "Amarr",
+      "solvane_industries": {
+        "id": "solvane_industries",
+        "name": "Solvane Industries",
+        "faction": "Solari",
         "type": "research",
-        "description": "An Amarr research corporation with advanced R&D programs.",
+        "description": "An Solari research corporation with advanced R&D programs.",
         "tax_rate": 11,
-        "divisions": ["r_and_d", "manufacturing"],
-        "agent_types": ["research"],
-        "research_fields": ["amarrian_starship_engineering", "laser_physics"]
+        "divisions": [
+          "r_and_d",
+          "manufacturing"
+        ],
+        "agent_types": [
+          "research"
+        ],
+        "research_fields": [
+          "solarian_starship_engineering",
+          "laser_physics"
+        ]
       },
-      "ishukone_corporation": {
-        "id": "ishukone_corporation",
-        "name": "Ishukone Corporation",
-        "faction": "Caldari",
+      "thyrkane_corporation": {
+        "id": "thyrkane_corporation",
+        "name": "Thyrkane Corporation",
+        "faction": "Veyren",
         "type": "research",
-        "description": "One of the Caldari mega-corporations with advanced research capabilities.",
+        "description": "One of the Veyren mega-corporations with advanced research capabilities.",
         "tax_rate": 11,
-        "divisions": ["r_and_d", "manufacturing", "distribution"],
-        "agent_types": ["research"],
-        "research_fields": ["caldari_starship_engineering", "graviton_physics"]
+        "divisions": [
+          "r_and_d",
+          "manufacturing",
+          "distribution"
+        ],
+        "agent_types": [
+          "research"
+        ],
+        "research_fields": [
+          "veyren_starship_engineering",
+          "graviton_physics"
+        ]
       }
     },
     "player_corporation_mechanics": {
@@ -118,22 +194,35 @@
         "ceo": {
           "name": "CEO",
           "description": "Full control over all corporation functions.",
-          "permissions": ["all"]
+          "permissions": [
+            "all"
+          ]
         },
         "director": {
           "name": "Director",
           "description": "Has most CEO powers except dissolving the corporation.",
-          "permissions": ["manage_members", "manage_hangars", "manage_wallet", "manage_structures"]
+          "permissions": [
+            "manage_members",
+            "manage_hangars",
+            "manage_wallet",
+            "manage_structures"
+          ]
         },
         "hangar_access": {
           "name": "Hangar Access",
           "description": "Can access corporation hangars.",
-          "permissions": ["view_hangars", "take_items"]
+          "permissions": [
+            "view_hangars",
+            "take_items"
+          ]
         },
         "accountant": {
           "name": "Accountant",
           "description": "Can view and manage corporation wallet.",
-          "permissions": ["view_wallet", "make_payments"]
+          "permissions": [
+            "view_wallet",
+            "make_payments"
+          ]
         }
       },
       "wallet_divisions": 7,

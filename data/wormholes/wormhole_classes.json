@@ -7,20 +7,22 @@
     "max_ship_class": "Battlecruiser",
     "max_ship_mass": 20000000,
     "system_effects": {},
-    "static_connections": ["highsec"],
+    "static_connections": [
+      "highsec"
+    ],
     "max_wormhole_stability": 500000000,
     "max_wormhole_lifetime_hours": 24,
-    "sleeper_spawns": [
+    "dormant_spawns": [
       {
-        "id": "sleeper_drone_c1",
-        "name": "Emergent Patroller",
+        "id": "dormant_drone_c1",
+        "name": "Nascent Patroller",
         "type": "frigate",
         "count_min": 2,
         "count_max": 4
       },
       {
-        "id": "sleeper_sentinel_c1",
-        "name": "Awakened Patroller",
+        "id": "dormant_sentinel_c1",
+        "name": "Stirring Patroller",
         "type": "cruiser",
         "count_min": 1,
         "count_max": 2
@@ -37,20 +39,23 @@
     "max_ship_class": "Battleship",
     "max_ship_mass": 300000000,
     "system_effects": {},
-    "static_connections": ["highsec", "c1"],
+    "static_connections": [
+      "highsec",
+      "c1"
+    ],
     "max_wormhole_stability": 1000000000,
     "max_wormhole_lifetime_hours": 24,
-    "sleeper_spawns": [
+    "dormant_spawns": [
       {
-        "id": "sleeper_drone_c2",
-        "name": "Emergent Defender",
+        "id": "dormant_drone_c2",
+        "name": "Nascent Defender",
         "type": "frigate",
         "count_min": 3,
         "count_max": 5
       },
       {
-        "id": "sleeper_sentinel_c2",
-        "name": "Awakened Defender",
+        "id": "dormant_sentinel_c2",
+        "name": "Stirring Defender",
         "type": "cruiser",
         "count_min": 2,
         "count_max": 3
@@ -67,27 +72,29 @@
     "max_ship_class": "Battleship",
     "max_ship_mass": 300000000,
     "system_effects": {},
-    "static_connections": ["lowsec"],
+    "static_connections": [
+      "lowsec"
+    ],
     "max_wormhole_stability": 1000000000,
     "max_wormhole_lifetime_hours": 24,
-    "sleeper_spawns": [
+    "dormant_spawns": [
       {
-        "id": "sleeper_drone_c3",
-        "name": "Emergent Warden",
+        "id": "dormant_drone_c3",
+        "name": "Nascent Warden",
         "type": "frigate",
         "count_min": 3,
         "count_max": 6
       },
       {
-        "id": "sleeper_sentinel_c3",
-        "name": "Awakened Warden",
+        "id": "dormant_sentinel_c3",
+        "name": "Stirring Warden",
         "type": "cruiser",
         "count_min": 2,
         "count_max": 4
       },
       {
-        "id": "sleeper_upholder_c3",
-        "name": "Sleepless Warden",
+        "id": "dormant_upholder_c3",
+        "name": "Timeless Warden",
         "type": "battleship",
         "count_min": 0,
         "count_max": 1
@@ -104,27 +111,30 @@
     "max_ship_class": "Battleship",
     "max_ship_mass": 300000000,
     "system_effects": {},
-    "static_connections": ["c1", "c3"],
+    "static_connections": [
+      "c1",
+      "c3"
+    ],
     "max_wormhole_stability": 2000000000,
     "max_wormhole_lifetime_hours": 24,
-    "sleeper_spawns": [
+    "dormant_spawns": [
       {
-        "id": "sleeper_drone_c4",
-        "name": "Emergent Keeper",
+        "id": "dormant_drone_c4",
+        "name": "Nascent Keeper",
         "type": "frigate",
         "count_min": 4,
         "count_max": 6
       },
       {
-        "id": "sleeper_sentinel_c4",
-        "name": "Awakened Keeper",
+        "id": "dormant_sentinel_c4",
+        "name": "Stirring Keeper",
         "type": "cruiser",
         "count_min": 3,
         "count_max": 5
       },
       {
-        "id": "sleeper_upholder_c4",
-        "name": "Sleepless Keeper",
+        "id": "dormant_upholder_c4",
+        "name": "Timeless Keeper",
         "type": "battleship",
         "count_min": 1,
         "count_max": 2
@@ -141,27 +151,29 @@
     "max_ship_class": "Capital",
     "max_ship_mass": 1800000000,
     "system_effects": {},
-    "static_connections": ["c5"],
+    "static_connections": [
+      "c5"
+    ],
     "max_wormhole_stability": 3000000000,
     "max_wormhole_lifetime_hours": 24,
-    "sleeper_spawns": [
+    "dormant_spawns": [
       {
-        "id": "sleeper_drone_c5",
-        "name": "Emergent Preserver",
+        "id": "dormant_drone_c5",
+        "name": "Nascent Preserver",
         "type": "frigate",
         "count_min": 5,
         "count_max": 8
       },
       {
-        "id": "sleeper_sentinel_c5",
-        "name": "Awakened Preserver",
+        "id": "dormant_sentinel_c5",
+        "name": "Stirring Preserver",
         "type": "cruiser",
         "count_min": 4,
         "count_max": 6
       },
       {
-        "id": "sleeper_upholder_c5",
-        "name": "Sleepless Preserver",
+        "id": "dormant_upholder_c5",
+        "name": "Timeless Preserver",
         "type": "battleship",
         "count_min": 2,
         "count_max": 4
@@ -178,27 +190,29 @@
     "max_ship_class": "Capital",
     "max_ship_mass": 1800000000,
     "system_effects": {},
-    "static_connections": ["c6"],
+    "static_connections": [
+      "c6"
+    ],
     "max_wormhole_stability": 3000000000,
     "max_wormhole_lifetime_hours": 24,
-    "sleeper_spawns": [
+    "dormant_spawns": [
       {
-        "id": "sleeper_drone_c6",
-        "name": "Emergent Sentinel",
+        "id": "dormant_drone_c6",
+        "name": "Nascent Sentinel",
         "type": "frigate",
         "count_min": 6,
         "count_max": 10
       },
       {
-        "id": "sleeper_sentinel_c6",
-        "name": "Awakened Sentinel",
+        "id": "dormant_sentinel_c6",
+        "name": "Stirring Sentinel",
         "type": "cruiser",
         "count_min": 5,
         "count_max": 8
       },
       {
-        "id": "sleeper_upholder_c6",
-        "name": "Sleepless Sentinel",
+        "id": "dormant_upholder_c6",
+        "name": "Timeless Sentinel",
         "type": "battleship",
         "count_min": 3,
         "count_max": 5

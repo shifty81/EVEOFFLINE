@@ -36,11 +36,11 @@ struct ShipDesignTraits {
     DesignStyle style;
     
     // Visual characteristics
-    bool hasSpires;          // Vertical spires (Amarr)
-    bool isAsymmetric;       // Asymmetric design (Minmatar)
-    bool hasExposedFramework;// Visible structure (Minmatar)
-    bool isBlocky;           // Angular design (Caldari)
-    bool isOrganic;          // Smooth curves (Gallente)
+    bool hasSpires;          // Vertical spires (Solari)
+    bool isAsymmetric;       // Asymmetric design (Keldari)
+    bool hasExposedFramework;// Visible structure (Keldari)
+    bool isBlocky;           // Angular design (Veyren)
+    bool isOrganic;          // Smooth curves (Aurelian)
     
     // Weapon hardpoint configuration
     int turretHardpoints;    // Number of visible turret mounts
@@ -87,8 +87,8 @@ public:
      * and applies faction-specific colors. Ships are generated with appropriate scale
      * and complexity for their class.
      * 
-     * @param shipType The type/class of ship (e.g., "Rifter", "Moa", "Raven")
-     * @param faction The faction (e.g., "Caldari", "Gallente", "Minmatar", "Amarr")
+     * @param shipType The type/class of ship (e.g., "Fang", "Ironscale", "Strix")
+     * @param faction The faction (e.g., "Veyren", "Aurelian", "Keldari", "Solari")
      * @return Unique pointer to generated Model, or generic model if type unknown
      */
     static std::unique_ptr<Model> createShipModel(const std::string& shipType, const std::string& faction);
@@ -97,10 +97,10 @@ public:
      * Create procedural ship model with faction-specific design patterns
      * 
      * Enhanced version of createShipModel that adds faction-specific design elements:
-     * - Caldari: Angular, blocky designs with blue/grey colors
-     * - Gallente: Smooth, curved hulls with green/gold accents
-     * - Minmatar: Asymmetric, industrial look with rust/brown tones
-     * - Amarr: Golden, ornate designs with religious aesthetics
+     * - Veyren: Angular, blocky designs with blue/grey colors
+     * - Aurelian: Smooth, curved hulls with green/gold accents
+     * - Keldari: Asymmetric, industrial look with rust/brown tones
+     * - Solari: Golden, ornate designs with religious aesthetics
      * - Jove: Organic, alien curves (rare faction)
      * - ORE: Utility-focused mining ship designs
      * - Pirate: Aggressive red/black color schemes
@@ -135,8 +135,8 @@ private:
      * Find OBJ model file for a given ship type and faction
      * Searches the models/ships directory for matching OBJ files.
      * File naming convention: {faction}_{class}_{ShipName}.obj
-     * @param shipType The ship type/name (e.g., "Rifter", "Raven")
-     * @param faction The faction (e.g., "Minmatar", "Caldari")
+     * @param shipType The ship type/name (e.g., "Fang", "Strix")
+     * @param faction The faction (e.g., "Keldari", "Veyren")
      * @return Path to OBJ file if found, empty string otherwise
      */
     static std::string findOBJModelPath(const std::string& shipType, const std::string& faction);

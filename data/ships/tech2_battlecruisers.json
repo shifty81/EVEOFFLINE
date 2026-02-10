@@ -1,11 +1,11 @@
 {
-  "claymore": {
-    "id": "claymore",
-    "name": "Claymore",
+  "warleader": {
+    "id": "warleader",
+    "name": "Warleader",
     "class": "Command Ship",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Claymore is a Minmatar Command Ship built on the Cyclone hull. It combines projectile and missile firepower with fleet command capabilities, providing powerful shield-based fleet boosts.",
+    "race": "Keldari",
+    "description": "The Warleader is a Keldari Command Ship built on the Galeforce hull. It combines projectile and missile firepower with fleet command capabilities, providing powerful shield-based fleet boosts.",
     "hull_hp": 3680,
     "armor_hp": 4025,
     "shield_hp": 4370,
@@ -33,18 +33,33 @@
       "fleet_bonus": "shield_boost_amount"
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 30, "kinetic": 50, "explosive": 60},
-      "armor": {"em": 65, "thermal": 40, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 65,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
-  "vulture": {
-    "id": "vulture",
-    "name": "Vulture",
+  "jarl": {
+    "id": "jarl",
+    "name": "Jarl",
     "class": "Command Ship",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Vulture is a Caldari Command Ship evolved from the Ferox. It provides excellent shield tanking with hybrid weapon bonuses and powerful siege warfare fleet boosts.",
+    "race": "Veyren",
+    "description": "The Jarl is a Veyren Command Ship evolved from the Fenvar. It provides excellent shield tanking with hybrid weapon bonuses and powerful siege warfare fleet boosts.",
     "hull_hp": 3910,
     "armor_hp": 3450,
     "shield_hp": 5175,
@@ -72,18 +87,33 @@
       "fleet_bonus": "shield_resistances"
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 30, "kinetic": 50, "explosive": 60},
-      "armor": {"em": 55, "thermal": 50, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 50,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
-  "astarte": {
-    "id": "astarte",
-    "name": "Astarte",
+  "commandant": {
+    "id": "commandant",
+    "name": "Commandant",
     "class": "Command Ship",
     "tech_level": 2,
-    "race": "Gallente",
-    "description": "The Astarte is a Gallente Command Ship based on the Brutix. It excels at close-range combat with hybrid weapons and drones while providing armor-based fleet command boosts.",
+    "race": "Aurelian",
+    "description": "The Commandant is a Aurelian Command Ship based on the Marquis. It excels at close-range combat with hybrid weapons and drones while providing armor-based fleet command boosts.",
     "hull_hp": 3795,
     "armor_hp": 4830,
     "shield_hp": 3680,
@@ -113,18 +143,33 @@
       "fleet_bonus": "armor_resistances"
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 30, "kinetic": 50, "explosive": 60},
-      "armor": {"em": 55, "thermal": 40, "kinetic": 30, "explosive": 65},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 65
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   },
-  "absolution": {
-    "id": "absolution",
-    "name": "Absolution",
+  "paragon": {
+    "id": "paragon",
+    "name": "Paragon",
     "class": "Command Ship",
     "tech_level": 2,
-    "race": "Amarr",
-    "description": "The Absolution is an Amarr Command Ship derived from the Harbinger. It features devastating energy weapon bonuses with exceptional armor tanking and armor-based fleet command boosts.",
+    "race": "Solari",
+    "description": "The Paragon is an Solari Command Ship derived from the Herald. It features devastating energy weapon bonuses with exceptional armor tanking and armor-based fleet command boosts.",
     "hull_hp": 4025,
     "armor_hp": 5520,
     "shield_hp": 3335,
@@ -152,9 +197,24 @@
       "fleet_bonus": "armor_resistances"
     },
     "resistances": {
-      "shield": {"em": 10, "thermal": 30, "kinetic": 50, "explosive": 60},
-      "armor": {"em": 55, "thermal": 40, "kinetic": 30, "explosive": 15},
-      "hull": {"em": 40, "thermal": 40, "kinetic": 40, "explosive": 40}
+      "shield": {
+        "em": 10,
+        "thermal": 30,
+        "kinetic": 50,
+        "explosive": 60
+      },
+      "armor": {
+        "em": 55,
+        "thermal": 40,
+        "kinetic": 30,
+        "explosive": 15
+      },
+      "hull": {
+        "em": 40,
+        "thermal": 40,
+        "kinetic": 40,
+        "explosive": 40
+      }
     }
   }
 }

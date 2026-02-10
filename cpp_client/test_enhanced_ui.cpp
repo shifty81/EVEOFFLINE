@@ -50,24 +50,24 @@ int main() {
     invData.hangar_used = 2350.0f;
     
     // Add cargo items
-    invData.cargo_items.push_back(UI::InventoryItem("ore_veldspar", "Veldspar", 1000, 0.01f, "ore", "mining"));
+    invData.cargo_items.push_back(UI::InventoryItem("ore_dustite", "Dustite", 1000, 0.01f, "ore", "mining"));
     invData.cargo_items.push_back(UI::InventoryItem("ore_plagioclase", "Plagioclase", 500, 0.035f, "ore", "mining"));
     invData.cargo_items.push_back(UI::InventoryItem("ammo_emp_s", "EMP S", 2000, 0.0003f, "ammo", "weapon"));
     invData.cargo_items.push_back(UI::InventoryItem("module_shield_extender", "Medium Shield Extender II", 1, 5.0f, "module", "shield"));
     
     // Add hangar items
-    invData.hangar_items.push_back(UI::InventoryItem("ship_rifter", "Rifter", 1, 2500.0f, "ship", "frigate"));
+    invData.hangar_items.push_back(UI::InventoryItem("ship_fang", "Fang", 1, 2500.0f, "ship", "frigate"));
     invData.hangar_items.push_back(UI::InventoryItem("ship_thrasher", "Thrasher", 1, 3500.0f, "ship", "destroyer"));
     invData.hangar_items.push_back(UI::InventoryItem("module_shield_booster", "Large Shield Booster II", 5, 50.0f, "module", "shield"));
     invData.hangar_items.push_back(UI::InventoryItem("ore_kernite", "Kernite", 10000, 1.2f, "ore", "mining"));
-    invData.hangar_items.push_back(UI::InventoryItem("mineral_tritanium", "Tritanium", 50000, 0.01f, "mineral", "materials"));
+    invData.hangar_items.push_back(UI::InventoryItem("mineral_ferrium", "Ferrium", 50000, 0.01f, "mineral", "materials"));
     
     inventoryPanel->SetInventoryData(invData);
     
     // Setup demo fitting data
     UI::FittingData fittingData;
-    fittingData.ship_name = "My Rifter";
-    fittingData.ship_type = "Frigate (Minmatar)";
+    fittingData.ship_name = "My Fang";
+    fittingData.ship_type = "Frigate (Keldari)";
     fittingData.cpu_used = 85.3f;
     fittingData.cpu_max = 120.0f;
     fittingData.powergrid_used = 42.5f;
@@ -92,10 +92,10 @@ int main() {
     UI::MissionData missionData;
     missionData.is_active = true;
     missionData.mission_id = "mission_001";
-    missionData.mission_name = "Clear the Serpentis Base";
+    missionData.mission_name = "Clear the Venom Syndicate Base";
     missionData.mission_type = "combat";
     missionData.agent_name = "Agent Smith";
-    missionData.location = "Rens VII - Moon 17";
+    missionData.location = "Kelheim Station - Moon 17";
     missionData.level = 2;
     missionData.isk_reward = 450000.0f;
     missionData.lp_reward = 225.0f;
@@ -105,9 +105,9 @@ int main() {
     
     // Add objectives
     missionData.objectives.push_back(UI::MissionObjective("Warp to mission location", true));
-    missionData.objectives.push_back(UI::MissionObjective("Destroy 10 Serpentis Frigates", true));
-    missionData.objectives.push_back(UI::MissionObjective("Destroy 5 Serpentis Cruisers", false));
-    missionData.objectives.push_back(UI::MissionObjective("Destroy mission boss 'Serpentis Commander'", false));
+    missionData.objectives.push_back(UI::MissionObjective("Destroy 10 Venom Syndicate Frigates", true));
+    missionData.objectives.push_back(UI::MissionObjective("Destroy 5 Venom Syndicate Cruisers", false));
+    missionData.objectives.push_back(UI::MissionObjective("Destroy mission boss 'Venom Syndicate Commander'", false));
     missionData.objectives.push_back(UI::MissionObjective("Return to agent", false));
     
     missionPanel->SetMissionData(missionData);

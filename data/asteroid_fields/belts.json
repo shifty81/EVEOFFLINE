@@ -1,19 +1,27 @@
 {
-  "jita_belts": [
+  "thyrkstad_belts": [
     {
-      "id": "jita_belt_1",
-      "name": "Jita - Asteroid Belt I",
-      "system": "Jita",
+      "id": "thyrkstad_belt_1",
+      "name": "Thyrkstad - Asteroid Belt I",
+      "system": "Thyrkstad",
       "security": 1.0,
       "layout": "semicircle",
       "radius_km": 50,
-      "warp_point": [0, 0, 0],
+      "warp_point": [
+        0,
+        0,
+        0
+      ],
       "ore_composition": {
-        "veldspar": 0.70,
-        "scordite": 0.20,
-        "plagioclase": 0.10
+        "dustite": 0.7,
+        "ferrite": 0.2,
+        "crystite": 0.1
       },
-      "asteroid_count": {"small": 30, "medium": 15, "large": 5},
+      "asteroid_count": {
+        "small": 30,
+        "medium": 15,
+        "large": 5
+      },
       "npc_spawns": true,
       "respawn_schedule": "daily_downtime"
     }

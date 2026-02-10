@@ -9,9 +9,9 @@ namespace eve {
 namespace data {
 
 /**
- * @brief Sleeper NPC spawn definition within a wormhole class
+ * @brief Dormant NPC spawn definition within a wormhole class
  */
-struct SleeperSpawn {
+struct DormantSpawn {
     std::string id;
     std::string name;
     std::string type;     // "frigate", "cruiser", "battleship"
@@ -35,7 +35,7 @@ struct WormholeClassTemplate {
     std::vector<std::string> static_connections;
     double max_wormhole_stability = 500000000.0;
     float max_wormhole_lifetime_hours = 24.0f;
-    std::vector<SleeperSpawn> sleeper_spawns;
+    std::vector<DormantSpawn> dormant_spawns;
     float salvage_value_multiplier = 1.0f;
     double blue_loot_isk = 150000.0;
 };

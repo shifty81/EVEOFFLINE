@@ -15,38 +15,63 @@
     "frigate": {
       "base_au_per_second": 5.0,
       "description": "Fast warp speed for small, agile ships",
-      "examples": ["Rifter", "Merlin", "Tristan", "Punisher"]
+      "examples": [
+        "Fang",
+        "Falk",
+        "Revel",
+        "Sentinel"
+      ]
     },
     "destroyer": {
       "base_au_per_second": 4.0,
       "description": "Moderate warp speed for medium ships",
-      "examples": ["Thrasher", "Cormorant", "Catalyst", "Coercer"]
+      "examples": [
+        "Cleaver",
+        "Skarn",
+        "Vaillant",
+        "Adjudicator"
+      ]
     },
     "cruiser": {
       "base_au_per_second": 3.0,
       "description": "Standard warp speed for cruiser-class",
-      "examples": ["Stabber", "Caracal", "Vexor", "Maller"]
+      "examples": [
+        "Strider",
+        "Brynjar",
+        "Chevalier",
+        "Bastion"
+      ]
     },
     "battlecruiser": {
       "base_au_per_second": 2.5,
       "description": "Slower warp for heavy ships",
-      "examples": ["Cyclone", "Ferox", "Brutix", "Harbinger"]
+      "examples": [
+        "Galeforce",
+        "Fenvar",
+        "Marquis",
+        "Herald"
+      ]
     },
     "battleship": {
       "base_au_per_second": 2.0,
       "description": "Slowest warp speed for massive ships",
-      "examples": ["Tempest", "Raven", "Dominix", "Apocalypse"]
+      "examples": [
+        "Gale",
+        "Strix",
+        "Sovereign",
+        "Exarch"
+      ]
     },
     "mining_barge": {
       "venture": {
         "au_per_second": 8.0,
         "description": "Exceptionally fast warp for a mining frigate"
       },
-      "procurer": {
+      "ironbore": {
         "au_per_second": 3.0,
         "description": "Standard mining barge speed"
       },
-      "hulk": {
+      "excavon": {
         "au_per_second": 1.35,
         "description": "Very slow, heavily specialized mining ship"
       }
@@ -74,7 +99,7 @@
         "seconds": 10.0,
         "description": "Time to align for warp"
       },
-      "hulk": {
+      "excavon": {
         "seconds": 12.0,
         "description": "Very slow alignment for mining barges"
       }
@@ -84,19 +109,19 @@
         "frigate": "0.2 seconds in warp",
         "cruiser": "0.33 seconds in warp",
         "battleship": "0.5 seconds in warp",
-        "hulk": "0.74 seconds in warp"
+        "excavon": "0.74 seconds in warp"
       },
       "10_au_warp": {
         "frigate": "2 seconds in warp",
         "cruiser": "3.3 seconds in warp",
         "battleship": "5 seconds in warp",
-        "hulk": "7.4 seconds in warp"
+        "excavon": "7.4 seconds in warp"
       },
       "100_au_warp": {
         "frigate": "20 seconds in warp",
         "cruiser": "33 seconds in warp",
         "battleship": "50 seconds in warp",
-        "hulk": "74 seconds in warp"
+        "excavon": "74 seconds in warp"
       },
       "gate_to_gate": {
         "average_distance_au": 15,
@@ -113,7 +138,7 @@
           "total": "~5 seconds",
           "with_docking": "~15 seconds total"
         },
-        "hulk": {
+        "excavon": {
           "distance_au": 10,
           "align": 12,
           "warp": 7.4,
@@ -122,7 +147,7 @@
         },
         "full_mining_trip": {
           "venture": "1 minute round trip",
-          "hulk": "1.5-2 minutes round trip"
+          "excavon": "1.5-2 minutes round trip"
         }
       }
     }

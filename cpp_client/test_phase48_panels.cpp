@@ -30,13 +30,13 @@ using namespace eve;
 // ---------------------------------------------------------------------------
 static std::vector<UI::DScanResult> GenerateDemoResults() {
     return {
-        {"Serpentis Frigate",  "Frigate",    0.32f, "npc_001"},
+        {"Venom Syndicate Frigate",  "Frigate",    0.32f, "npc_001"},
         {"Asteroid Belt VII", "Asteroid",    1.25f, "belt_007"},
-        {"Guristas Cruiser",  "Cruiser",     3.80f, "npc_002"},
+        {"Iron Corsairs Cruiser",  "Cruiser",     3.80f, "npc_002"},
         {"Customs Office",    "Structure",   0.05f, "struct_001"},
         {"Player Capsule",    "Capsule",     7.12f, "player_003"},
         {"Stargate",          "Stargate",   12.50f, "gate_001"},
-        {"Blood Raider BS",   "Battleship",  0.78f, "npc_003"},
+        {"Crimson Order BS",   "Battleship",  0.78f, "npc_003"},
         {"Mobile Depot",      "Structure",   0.15f, "struct_002"},
     };
 }

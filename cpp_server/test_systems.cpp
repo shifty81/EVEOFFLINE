@@ -541,21 +541,21 @@ void testShipDatabaseGetShip() {
         }
     }
     
-    const data::ShipTemplate* rifter = db.getShip("rifter");
-    if (rifter) {
-        assertTrue(rifter->name == "Rifter", "Rifter name correct");
-        assertTrue(rifter->ship_class == "Frigate", "Rifter class is Frigate");
-        assertTrue(rifter->race == "Minmatar", "Rifter race is Minmatar");
-        assertTrue(rifter->shield_hp > 0.0f, "Rifter has shield HP");
-        assertTrue(rifter->armor_hp > 0.0f, "Rifter has armor HP");
-        assertTrue(rifter->hull_hp > 0.0f, "Rifter has hull HP");
-        assertTrue(rifter->cpu > 0.0f, "Rifter has CPU");
-        assertTrue(rifter->powergrid > 0.0f, "Rifter has powergrid");
-        assertTrue(rifter->max_velocity > 0.0f, "Rifter has velocity");
-        assertTrue(rifter->scan_resolution > 0.0f, "Rifter has scan resolution");
-        assertTrue(rifter->max_locked_targets > 0, "Rifter has max locked targets");
+    const data::ShipTemplate* fang = db.getShip("fang");
+    if (fang) {
+        assertTrue(fang->name == "Fang", "Fang name correct");
+        assertTrue(fang->ship_class == "Frigate", "Fang class is Frigate");
+        assertTrue(fang->race == "Keldari", "Fang race is Keldari");
+        assertTrue(fang->shield_hp > 0.0f, "Fang has shield HP");
+        assertTrue(fang->armor_hp > 0.0f, "Fang has armor HP");
+        assertTrue(fang->hull_hp > 0.0f, "Fang has hull HP");
+        assertTrue(fang->cpu > 0.0f, "Fang has CPU");
+        assertTrue(fang->powergrid > 0.0f, "Fang has powergrid");
+        assertTrue(fang->max_velocity > 0.0f, "Fang has velocity");
+        assertTrue(fang->scan_resolution > 0.0f, "Fang has scan resolution");
+        assertTrue(fang->max_locked_targets > 0, "Fang has max locked targets");
     } else {
-        assertTrue(false, "Rifter template found in database");
+        assertTrue(false, "Fang template found in database");
     }
     
     const data::ShipTemplate* missing = db.getShip("nonexistent_ship");
@@ -572,20 +572,20 @@ void testShipDatabaseResistances() {
         }
     }
     
-    const data::ShipTemplate* rifter = db.getShip("rifter");
-    if (rifter) {
-        // Rifter shield: em=0, thermal=20, kinetic=40, explosive=50 (in JSON)
+    const data::ShipTemplate* fang = db.getShip("fang");
+    if (fang) {
+        // Fang shield: em=0, thermal=20, kinetic=40, explosive=50 (in JSON)
         // Converted to fractions: 0.0, 0.20, 0.40, 0.50
-        assertTrue(approxEqual(rifter->shield_resists.em, 0.0f), "Shield EM resist = 0%");
-        assertTrue(approxEqual(rifter->shield_resists.thermal, 0.20f), "Shield thermal resist = 20%");
-        assertTrue(approxEqual(rifter->shield_resists.kinetic, 0.40f), "Shield kinetic resist = 40%");
-        assertTrue(approxEqual(rifter->shield_resists.explosive, 0.50f), "Shield explosive resist = 50%");
+        assertTrue(approxEqual(fang->shield_resists.em, 0.0f), "Shield EM resist = 0%");
+        assertTrue(approxEqual(fang->shield_resists.thermal, 0.20f), "Shield thermal resist = 20%");
+        assertTrue(approxEqual(fang->shield_resists.kinetic, 0.40f), "Shield kinetic resist = 40%");
+        assertTrue(approxEqual(fang->shield_resists.explosive, 0.50f), "Shield explosive resist = 50%");
         
         // Armor: em=60, thermal=35, kinetic=25, explosive=10
-        assertTrue(approxEqual(rifter->armor_resists.em, 0.60f), "Armor EM resist = 60%");
-        assertTrue(approxEqual(rifter->armor_resists.thermal, 0.35f), "Armor thermal resist = 35%");
+        assertTrue(approxEqual(fang->armor_resists.em, 0.60f), "Armor EM resist = 60%");
+        assertTrue(approxEqual(fang->armor_resists.thermal, 0.35f), "Armor thermal resist = 35%");
     } else {
-        assertTrue(false, "Rifter template found for resistance check");
+        assertTrue(false, "Fang template found for resistance check");
     }
 }
 
@@ -602,12 +602,12 @@ void testShipDatabaseGetShipIds() {
     auto ids = db.getShipIds();
     assertTrue(ids.size() > 0, "getShipIds returns non-empty list");
     
-    // Check that 'rifter' is in the list
+    // Check that 'fang' is in the list
     bool found = false;
     for (const auto& id : ids) {
-        if (id == "rifter") found = true;
+        if (id == "fang") found = true;
     }
-    assertTrue(found, "rifter is in ship ID list");
+    assertTrue(found, "fang is in ship ID list");
 }
 
 void testShipDatabaseCapitalShips() {
@@ -621,25 +621,25 @@ void testShipDatabaseCapitalShips() {
     }
     
     // Verify capital ships are loaded
-    const data::ShipTemplate* archon = db.getShip("archon");
-    if (archon) {
-        assertTrue(archon->name == "Archon", "Archon name correct");
-        assertTrue(archon->ship_class == "Carrier", "Archon class is Carrier");
-        assertTrue(archon->race == "Amarr", "Archon race is Amarr");
-        assertTrue(archon->hull_hp > 10000.0f, "Archon has high hull HP");
-        assertTrue(archon->armor_hp > 50000.0f, "Archon has high armor HP");
+    const data::ShipTemplate* solarius = db.getShip("solarius");
+    if (solarius) {
+        assertTrue(solarius->name == "Solarius", "Solarius name correct");
+        assertTrue(solarius->ship_class == "Carrier", "Solarius class is Carrier");
+        assertTrue(solarius->race == "Solari", "Solarius race is Solari");
+        assertTrue(solarius->hull_hp > 10000.0f, "Solarius has high hull HP");
+        assertTrue(solarius->armor_hp > 50000.0f, "Solarius has high armor HP");
     } else {
-        assertTrue(false, "Archon carrier found in database");
+        assertTrue(false, "Solarius carrier found in database");
     }
     
     // Verify titan is loaded
-    const data::ShipTemplate* avatar = db.getShip("avatar");
-    if (avatar) {
-        assertTrue(avatar->name == "Avatar", "Avatar name correct");
-        assertTrue(avatar->ship_class == "Titan", "Avatar class is Titan");
-        assertTrue(avatar->hull_hp > 100000.0f, "Avatar has very high hull HP");
+    const data::ShipTemplate* empyrean = db.getShip("empyrean");
+    if (empyrean) {
+        assertTrue(empyrean->name == "Empyrean", "Empyrean name correct");
+        assertTrue(empyrean->ship_class == "Titan", "Empyrean class is Titan");
+        assertTrue(empyrean->hull_hp > 100000.0f, "Empyrean has very high hull HP");
     } else {
-        assertTrue(false, "Avatar titan found in database");
+        assertTrue(false, "Empyrean titan found in database");
     }
     
     // Verify multiple ship categories loaded
@@ -649,15 +649,15 @@ void testShipDatabaseCapitalShips() {
     bool hasMarauder = false, hasIndustrial = false;
     bool hasInterdictor = false, hasStealthBomber = false;
     for (const auto& id : ids) {
-        if (id == "archon") hasCapital = true;
-        if (id == "tempest") hasBattleship = true;
-        if (id == "rifter") hasFrigate = true;
-        if (id == "vagabond") hasTech2Cruiser = true;
-        if (id == "procurer") hasMiningBarge = true;
-        if (id == "vargur") hasMarauder = true;
-        if (id == "badger") hasIndustrial = true;
-        if (id == "sabre") hasInterdictor = true;
-        if (id == "hound") hasStealthBomber = true;
+        if (id == "solarius") hasCapital = true;
+        if (id == "gale") hasBattleship = true;
+        if (id == "fang") hasFrigate = true;
+        if (id == "wanderer") hasTech2Cruiser = true;
+        if (id == "ironbore") hasMiningBarge = true;
+        if (id == "ironheart") hasMarauder = true;
+        if (id == "drifthauler") hasIndustrial = true;
+        if (id == "gripshard") hasInterdictor = true;
+        if (id == "shadowfang") hasStealthBomber = true;
     }
     assertTrue(hasCapital, "Capital ships loaded");
     assertTrue(hasBattleship, "Battleships loaded");
@@ -682,34 +682,34 @@ void testShipDatabaseMarauders() {
     }
     
     // Verify all 4 Marauders are loaded
-    const data::ShipTemplate* vargur = db.getShip("vargur");
-    if (vargur) {
-        assertTrue(vargur->name == "Vargur", "Vargur name correct");
-        assertTrue(vargur->ship_class == "Marauder", "Vargur class is Marauder");
-        assertTrue(vargur->race == "Minmatar", "Vargur race is Minmatar");
-        assertTrue(vargur->hull_hp > 8000.0f, "Vargur has high hull HP");
-        assertTrue(vargur->shield_hp > 10000.0f, "Vargur has high shield HP");
-        assertTrue(vargur->max_locked_targets >= 10, "Vargur has 10 locked targets");
+    const data::ShipTemplate* ironheart = db.getShip("ironheart");
+    if (ironheart) {
+        assertTrue(ironheart->name == "Ironheart", "Ironheart name correct");
+        assertTrue(ironheart->ship_class == "Marauder", "Ironheart class is Marauder");
+        assertTrue(ironheart->race == "Keldari", "Ironheart race is Keldari");
+        assertTrue(ironheart->hull_hp > 8000.0f, "Ironheart has high hull HP");
+        assertTrue(ironheart->shield_hp > 10000.0f, "Ironheart has high shield HP");
+        assertTrue(ironheart->max_locked_targets >= 10, "Ironheart has 10 locked targets");
     } else {
-        assertTrue(false, "Vargur marauder found in database");
+        assertTrue(false, "Ironheart marauder found in database");
     }
     
-    const data::ShipTemplate* golem = db.getShip("golem");
-    assertTrue(golem != nullptr, "Golem marauder found in database");
-    if (golem) {
-        assertTrue(golem->race == "Caldari", "Golem race is Caldari");
+    const data::ShipTemplate* monolith = db.getShip("monolith");
+    assertTrue(monolith != nullptr, "Monolith marauder found in database");
+    if (monolith) {
+        assertTrue(monolith->race == "Veyren", "Monolith race is Veyren");
     }
     
-    const data::ShipTemplate* kronos = db.getShip("kronos");
-    assertTrue(kronos != nullptr, "Kronos marauder found in database");
-    if (kronos) {
-        assertTrue(kronos->race == "Gallente", "Kronos race is Gallente");
+    const data::ShipTemplate* majeste = db.getShip("majeste");
+    assertTrue(majeste != nullptr, "Majeste marauder found in database");
+    if (majeste) {
+        assertTrue(majeste->race == "Aurelian", "Majeste race is Aurelian");
     }
     
-    const data::ShipTemplate* paladin = db.getShip("paladin");
-    assertTrue(paladin != nullptr, "Paladin marauder found in database");
-    if (paladin) {
-        assertTrue(paladin->race == "Amarr", "Paladin race is Amarr");
+    const data::ShipTemplate* solarius_prime = db.getShip("solarius_prime");
+    assertTrue(solarius_prime != nullptr, "Solarius Prime marauder found in database");
+    if (solarius_prime) {
+        assertTrue(solarius_prime->race == "Solari", "Solarius Prime race is Solari");
     }
 }
 
@@ -724,33 +724,33 @@ void testShipDatabaseInterdictors() {
     }
     
     // Verify all 4 Interdictors are loaded
-    const data::ShipTemplate* sabre = db.getShip("sabre");
-    if (sabre) {
-        assertTrue(sabre->name == "Sabre", "Sabre name correct");
-        assertTrue(sabre->ship_class == "Interdictor", "Sabre class is Interdictor");
-        assertTrue(sabre->race == "Minmatar", "Sabre race is Minmatar");
-        assertTrue(sabre->hull_hp > 700.0f, "Sabre has destroyer-class hull HP");
-        assertTrue(sabre->max_locked_targets >= 7, "Sabre has 7 locked targets");
+    const data::ShipTemplate* gripshard = db.getShip("gripshard");
+    if (gripshard) {
+        assertTrue(gripshard->name == "Gripshard", "Gripshard name correct");
+        assertTrue(gripshard->ship_class == "Interdictor", "Gripshard class is Interdictor");
+        assertTrue(gripshard->race == "Keldari", "Gripshard race is Keldari");
+        assertTrue(gripshard->hull_hp > 700.0f, "Gripshard has destroyer-class hull HP");
+        assertTrue(gripshard->max_locked_targets >= 7, "Gripshard has 7 locked targets");
     } else {
-        assertTrue(false, "Sabre interdictor found in database");
+        assertTrue(false, "Gripshard interdictor found in database");
     }
     
-    const data::ShipTemplate* flycatcher = db.getShip("flycatcher");
-    assertTrue(flycatcher != nullptr, "Flycatcher interdictor found in database");
-    if (flycatcher) {
-        assertTrue(flycatcher->race == "Caldari", "Flycatcher race is Caldari");
+    const data::ShipTemplate* nettvar = db.getShip("nettvar");
+    assertTrue(nettvar != nullptr, "Nettvar interdictor found in database");
+    if (nettvar) {
+        assertTrue(nettvar->race == "Veyren", "Nettvar race is Veyren");
     }
     
-    const data::ShipTemplate* eris = db.getShip("eris");
-    assertTrue(eris != nullptr, "Eris interdictor found in database");
-    if (eris) {
-        assertTrue(eris->race == "Gallente", "Eris race is Gallente");
+    const data::ShipTemplate* barricade = db.getShip("barricade");
+    assertTrue(barricade != nullptr, "Barricade interdictor found in database");
+    if (barricade) {
+        assertTrue(barricade->race == "Aurelian", "Barricade race is Aurelian");
     }
     
-    const data::ShipTemplate* heretic = db.getShip("heretic");
-    assertTrue(heretic != nullptr, "Heretic interdictor found in database");
-    if (heretic) {
-        assertTrue(heretic->race == "Amarr", "Heretic race is Amarr");
+    const data::ShipTemplate* denouncer = db.getShip("denouncer");
+    assertTrue(denouncer != nullptr, "Denouncer interdictor found in database");
+    if (denouncer) {
+        assertTrue(denouncer->race == "Solari", "Denouncer race is Solari");
     }
 }
 
@@ -765,32 +765,85 @@ void testShipDatabaseStealthBombers() {
     }
     
     // Verify all 4 Stealth Bombers are loaded
-    const data::ShipTemplate* hound = db.getShip("hound");
-    if (hound) {
-        assertTrue(hound->name == "Hound", "Hound name correct");
-        assertTrue(hound->ship_class == "Stealth Bomber", "Hound class is Stealth Bomber");
-        assertTrue(hound->race == "Minmatar", "Hound race is Minmatar");
-        assertTrue(hound->max_targeting_range >= 45000.0f, "Hound has long targeting range");
+    const data::ShipTemplate* shadowfang = db.getShip("shadowfang");
+    if (shadowfang) {
+        assertTrue(shadowfang->name == "Shadowfang", "Shadowfang name correct");
+        assertTrue(shadowfang->ship_class == "Stealth Bomber", "Shadowfang class is Stealth Bomber");
+        assertTrue(shadowfang->race == "Keldari", "Shadowfang race is Keldari");
+        assertTrue(shadowfang->max_targeting_range >= 45000.0f, "Shadowfang has long targeting range");
     } else {
-        assertTrue(false, "Hound stealth bomber found in database");
+        assertTrue(false, "Shadowfang stealth bomber found in database");
     }
     
-    const data::ShipTemplate* manticore = db.getShip("manticore");
-    assertTrue(manticore != nullptr, "Manticore stealth bomber found in database");
-    if (manticore) {
-        assertTrue(manticore->race == "Caldari", "Manticore race is Caldari");
+    const data::ShipTemplate* frostbane = db.getShip("frostbane");
+    assertTrue(frostbane != nullptr, "Frostbane stealth bomber found in database");
+    if (frostbane) {
+        assertTrue(frostbane->race == "Veyren", "Frostbane race is Veyren");
     }
     
-    const data::ShipTemplate* nemesis = db.getShip("nemesis");
-    assertTrue(nemesis != nullptr, "Nemesis stealth bomber found in database");
-    if (nemesis) {
-        assertTrue(nemesis->race == "Gallente", "Nemesis race is Gallente");
+    const data::ShipTemplate* vengeresse = db.getShip("vengeresse");
+    assertTrue(vengeresse != nullptr, "Vengeresse stealth bomber found in database");
+    if (vengeresse) {
+        assertTrue(vengeresse->race == "Aurelian", "Vengeresse race is Aurelian");
     }
     
-    const data::ShipTemplate* purifier = db.getShip("purifier");
-    assertTrue(purifier != nullptr, "Purifier stealth bomber found in database");
-    if (purifier) {
-        assertTrue(purifier->race == "Amarr", "Purifier race is Amarr");
+    const data::ShipTemplate* sanctifier = db.getShip("sanctifier");
+    assertTrue(sanctifier != nullptr, "Sanctifier stealth bomber found in database");
+    if (sanctifier) {
+        assertTrue(sanctifier->race == "Solari", "Sanctifier race is Solari");
+    }
+}
+
+void testShipDatabaseSecondHACs() {
+    std::cout << "\n=== ShipDatabase Second HAC Variants ===" << std::endl;
+    
+    data::ShipDatabase db;
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    // Verify all 4 second HAC variants are loaded
+    const data::ShipTemplate* gunnolf = db.getShip("gunnolf");
+    if (gunnolf) {
+        assertTrue(gunnolf->name == "Gunnolf", "Gunnolf name correct");
+        assertTrue(gunnolf->ship_class == "Heavy Assault Cruiser", "Gunnolf class is HAC");
+        assertTrue(gunnolf->race == "Keldari", "Gunnolf race is Keldari");
+        assertTrue(gunnolf->max_targeting_range >= 70000.0f, "Gunnolf has long targeting range");
+    } else {
+        assertTrue(false, "Gunnolf HAC found in database");
+    }
+    
+    const data::ShipTemplate* valdris = db.getShip("valdris");
+    if (valdris) {
+        assertTrue(valdris->name == "Valdris", "Valdris name correct");
+        assertTrue(valdris->ship_class == "Heavy Assault Cruiser", "Valdris class is HAC");
+        assertTrue(valdris->race == "Veyren", "Valdris race is Veyren");
+        assertTrue(valdris->shield_hp >= 3000.0f, "Valdris has strong shields");
+    } else {
+        assertTrue(false, "Valdris HAC found in database");
+    }
+    
+    const data::ShipTemplate* cavalier = db.getShip("cavalier");
+    if (cavalier) {
+        assertTrue(cavalier->name == "Cavalier", "Cavalier name correct");
+        assertTrue(cavalier->ship_class == "Heavy Assault Cruiser", "Cavalier class is HAC");
+        assertTrue(cavalier->race == "Aurelian", "Cavalier race is Aurelian");
+        assertTrue(cavalier->armor_hp >= 2000.0f, "Cavalier has strong armor");
+    } else {
+        assertTrue(false, "Cavalier HAC found in database");
+    }
+    
+    const data::ShipTemplate* inquisitor = db.getShip("inquisitor");
+    if (inquisitor) {
+        assertTrue(inquisitor->name == "Inquisitor", "Inquisitor name correct");
+        assertTrue(inquisitor->ship_class == "Heavy Assault Cruiser", "Inquisitor class is HAC");
+        assertTrue(inquisitor->race == "Solari", "Inquisitor race is Solari");
+        assertTrue(inquisitor->armor_hp >= 2500.0f, "Inquisitor has heavy armor");
+        assertTrue(inquisitor->capacitor >= 1400.0f, "Inquisitor has strong capacitor");
+    } else {
+        assertTrue(false, "Inquisitor HAC found in database");
     }
 }
 
@@ -821,7 +874,7 @@ void testWormholeDatabaseGetClass() {
         assertTrue(c1->wormhole_class == 1, "C1 wormhole class is 1");
         assertTrue(c1->difficulty == "easy", "C1 difficulty is easy");
         assertTrue(c1->max_ship_class == "Battlecruiser", "C1 max ship is Battlecruiser");
-        assertTrue(!c1->sleeper_spawns.empty(), "C1 has sleeper spawns");
+        assertTrue(!c1->dormant_spawns.empty(), "C1 has dormant spawns");
         assertTrue(c1->salvage_value_multiplier > 0.0f, "C1 has salvage multiplier");
     } else {
         assertTrue(false, "C1 wormhole class found");
@@ -985,14 +1038,14 @@ void testSolarSystemComponent() {
     solar->system_name = "J123456";
     solar->wormhole_class = 3;
     solar->effect_name = "magnetar";
-    solar->sleepers_spawned = false;
+    solar->dormants_spawned = false;
     
     assertTrue(solar->wormhole_class == 3, "SolarSystem wormhole class set correctly");
     assertTrue(solar->effect_name == "magnetar", "SolarSystem effect set correctly");
-    assertTrue(!solar->sleepers_spawned, "Sleepers not yet spawned");
+    assertTrue(!solar->dormants_spawned, "Dormants not yet spawned");
     
-    solar->sleepers_spawned = true;
-    assertTrue(solar->sleepers_spawned, "Sleepers marked as spawned");
+    solar->dormants_spawned = true;
+    assertTrue(solar->dormants_spawned, "Dormants marked as spawned");
 }
 
 // ==================== FleetSystem Tests ====================
@@ -1472,7 +1525,7 @@ void testSerializeDeserializeShipAndFaction() {
     ship->ship_type = "Cruiser";
     ship->ship_class = "Cruiser";
     ship->ship_name = "Caracal";
-    ship->race = "Caldari";
+    ship->race = "Veyren";
     ship->cpu_max = 350.0f;
     ship->powergrid_max = 200.0f;
     ship->signature_radius = 140.0f;
@@ -1482,7 +1535,7 @@ void testSerializeDeserializeShipAndFaction() {
     entity->addComponent(std::move(ship));
 
     auto fac = std::make_unique<components::Faction>();
-    fac->faction_name = "Caldari";
+    fac->faction_name = "Veyren";
     entity->addComponent(std::move(fac));
 
     data::WorldPersistence persistence;
@@ -1497,7 +1550,7 @@ void testSerializeDeserializeShipAndFaction() {
     auto* lship = loaded->getComponent<components::Ship>();
     assertTrue(lship != nullptr, "Ship component loaded");
     assertTrue(lship->ship_name == "Caracal", "Ship name preserved");
-    assertTrue(lship->race == "Caldari", "Ship race preserved");
+    assertTrue(lship->race == "Veyren", "Ship race preserved");
     assertTrue(lship->ship_class == "Cruiser", "Ship class preserved");
     assertTrue(approxEqual(lship->cpu_max, 350.0f), "CPU max preserved");
     assertTrue(lship->max_locked_targets == 6, "Max locked targets preserved");
@@ -1505,7 +1558,7 @@ void testSerializeDeserializeShipAndFaction() {
 
     auto* lfac = loaded->getComponent<components::Faction>();
     assertTrue(lfac != nullptr, "Faction component loaded");
-    assertTrue(lfac->faction_name == "Caldari", "Faction name preserved");
+    assertTrue(lfac->faction_name == "Veyren", "Faction name preserved");
 }
 
 void testSerializeDeserializeStandings() {
@@ -1519,9 +1572,9 @@ void testSerializeDeserializeStandings() {
     standings->personal_standings["npc_pirate_001"] = -5.0f;
     standings->personal_standings["player_friend"] = 8.5f;
     standings->corporation_standings["Republic Fleet"] = 3.0f;
-    standings->corporation_standings["Serpentis"] = -7.5f;
-    standings->faction_standings["Minmatar"] = 2.5f;
-    standings->faction_standings["Amarr"] = -1.5f;
+    standings->corporation_standings["Venom Syndicate"] = -7.5f;
+    standings->faction_standings["Keldari"] = 2.5f;
+    standings->faction_standings["Solari"] = -1.5f;
     entity->addComponent(std::move(standings));
 
     data::WorldPersistence persistence;
@@ -1544,12 +1597,12 @@ void testSerializeDeserializeStandings() {
     // Check corporation standings
     assertTrue(lstandings->corporation_standings.size() == 2, "Corporation standings count preserved");
     assertTrue(approxEqual(lstandings->corporation_standings["Republic Fleet"], 3.0f), "Corporation standing (Republic Fleet) preserved");
-    assertTrue(approxEqual(lstandings->corporation_standings["Serpentis"], -7.5f), "Corporation standing (Serpentis) preserved");
+    assertTrue(approxEqual(lstandings->corporation_standings["Venom Syndicate"], -7.5f), "Corporation standing (Venom Syndicate) preserved");
     
     // Check faction standings
     assertTrue(lstandings->faction_standings.size() == 2, "Faction standings count preserved");
-    assertTrue(approxEqual(lstandings->faction_standings["Minmatar"], 2.5f), "Faction standing (Minmatar) preserved");
-    assertTrue(approxEqual(lstandings->faction_standings["Amarr"], -1.5f), "Faction standing (Amarr) preserved");
+    assertTrue(approxEqual(lstandings->faction_standings["Keldari"], 2.5f), "Faction standing (Keldari) preserved");
+    assertTrue(approxEqual(lstandings->faction_standings["Solari"], -1.5f), "Faction standing (Solari) preserved");
 }
 
 void testStandingsGetStanding() {
@@ -1561,7 +1614,7 @@ void testStandingsGetStanding() {
     auto standings = std::make_unique<components::Standings>();
     standings->personal_standings["npc_001"] = -5.0f;
     standings->corporation_standings["TestCorp"] = 3.0f;
-    standings->faction_standings["Caldari"] = 7.0f;
+    standings->faction_standings["Veyren"] = 7.0f;
     entity->addComponent(std::move(standings));
 
     auto* comp = entity->getComponent<components::Standings>();
@@ -1575,7 +1628,7 @@ void testStandingsGetStanding() {
     assertTrue(approxEqual(standing2, 3.0f), "Corporation standing returned");
     
     // Faction standing used when no personal or corp standing
-    float standing3 = comp->getStandingWith("npc_003", "OtherCorp", "Caldari");
+    float standing3 = comp->getStandingWith("npc_003", "OtherCorp", "Veyren");
     assertTrue(approxEqual(standing3, 7.0f), "Faction standing returned");
     
     // Neutral (0) when no standing exists
@@ -1797,7 +1850,7 @@ void testSerializeDeserializeWormholeAndSolarSystem() {
     ss->system_name = "J123456";
     ss->wormhole_class = 3;
     ss->effect_name = "magnetar";
-    ss->sleepers_spawned = true;
+    ss->dormants_spawned = true;
     entity->addComponent(std::move(ss));
 
     auto* wh_entity = world.createEntity("wh_conn_1");
@@ -1826,7 +1879,7 @@ void testSerializeDeserializeWormholeAndSolarSystem() {
     assertTrue(lss->system_id == "j123456", "System ID preserved");
     assertTrue(lss->wormhole_class == 3, "Wormhole class preserved");
     assertTrue(lss->effect_name == "magnetar", "Effect name preserved");
-    assertTrue(lss->sleepers_spawned == true, "Sleepers spawned preserved");
+    assertTrue(lss->dormants_spawned == true, "Dormants spawned preserved");
 
     auto* lwh_entity = world2.getEntity("wh_conn_1");
     assertTrue(lwh_entity != nullptr, "WormholeConnection entity loaded");
@@ -2045,6 +2098,7 @@ int main() {
     testShipDatabaseMarauders();
     testShipDatabaseInterdictors();
     testShipDatabaseStealthBombers();
+    testShipDatabaseSecondHACs();
     
     // WormholeDatabase tests
     testWormholeDatabaseLoad();

@@ -1,10 +1,10 @@
 {
-  "stabber": {
-    "id": "stabber",
-    "name": "Stabber",
+  "strider": {
+    "id": "strider",
+    "name": "Strider",
     "class": "Cruiser",
-    "race": "Minmatar",
-    "description": "The Stabber is a fast, agile cruiser known for speed tanking and kiting.",
+    "race": "Keldari",
+    "description": "The Strider is a fast, agile cruiser known for speed tanking and kiting.",
     "hull_hp": 1400,
     "armor_hp": 1250,
     "shield_hp": 1400,
@@ -31,17 +31,32 @@
       "ship_velocity": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "caracal": {
-    "id": "caracal",
-    "name": "Caracal",
+  "brynjar": {
+    "id": "brynjar",
+    "name": "Brynjar",
     "class": "Cruiser",
-    "race": "Caldari",
-    "description": "The Caracal is a missile-focused cruiser with strong shields and range.",
+    "race": "Veyren",
+    "description": "The Brynjar is a missile-focused cruiser with strong shields and range.",
     "hull_hp": 1600,
     "armor_hp": 900,
     "shield_hp": 2100,
@@ -68,17 +83,32 @@
       "kinetic_missile_damage": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "vexor": {
-    "id": "vexor",
-    "name": "Vexor",
+  "chevalier": {
+    "id": "chevalier",
+    "name": "Chevalier",
     "class": "Cruiser",
-    "race": "Gallente",
-    "description": "The Vexor is a powerful drone boat with excellent armor and versatility.",
+    "race": "Aurelian",
+    "description": "The Chevalier is a powerful drone boat with excellent armor and versatility.",
     "hull_hp": 1500,
     "armor_hp": 1650,
     "shield_hp": 1300,
@@ -107,17 +137,32 @@
       "armor_hp": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 60},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 60
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "maller": {
-    "id": "maller",
-    "name": "Maller",
+  "bastion": {
+    "id": "bastion",
+    "name": "Bastion",
     "class": "Cruiser",
-    "race": "Amarr",
-    "description": "The Maller is a heavily armored laser platform designed for sustained combat.",
+    "race": "Solari",
+    "description": "The Bastion is a heavily armored laser platform designed for sustained combat.",
     "hull_hp": 1550,
     "armor_hp": 2000,
     "shield_hp": 1100,
@@ -144,17 +189,32 @@
       "capacitor_recharge_rate": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "rupture": {
-    "id": "rupture",
-    "name": "Rupture",
+  "ravine": {
+    "id": "ravine",
+    "name": "Ravine",
     "class": "Cruiser",
-    "race": "Minmatar",
-    "description": "The Rupture combines projectile weapons with drone support for flexible combat.",
+    "race": "Keldari",
+    "description": "The Ravine combines projectile weapons with drone support for flexible combat.",
     "hull_hp": 1450,
     "armor_hp": 1400,
     "shield_hp": 1350,
@@ -182,17 +242,32 @@
       "drone_hitpoints": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 60, "thermal": 35, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 60,
+        "thermal": 35,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   },
-  "moa": {
-    "id": "moa",
-    "name": "Moa",
+  "eidar": {
+    "id": "eidar",
+    "name": "Eidar",
     "class": "Cruiser",
-    "race": "Caldari",
-    "description": "The Moa is a hybrid-weapon cruiser with excellent shields and steady damage output.",
+    "race": "Veyren",
+    "description": "The Eidar is a hybrid-weapon cruiser with excellent shields and steady damage output.",
     "hull_hp": 1650,
     "armor_hp": 950,
     "shield_hp": 2000,
@@ -218,9 +293,24 @@
       "shield_boost_amount": 5
     },
     "resistances": {
-      "shield": {"em": 0, "thermal": 20, "kinetic": 40, "explosive": 50},
-      "armor": {"em": 50, "thermal": 45, "kinetic": 25, "explosive": 10},
-      "hull": {"em": 33, "thermal": 33, "kinetic": 33, "explosive": 33}
+      "shield": {
+        "em": 0,
+        "thermal": 20,
+        "kinetic": 40,
+        "explosive": 50
+      },
+      "armor": {
+        "em": 50,
+        "thermal": 45,
+        "kinetic": 25,
+        "explosive": 10
+      },
+      "hull": {
+        "em": 33,
+        "thermal": 33,
+        "kinetic": 33,
+        "explosive": 33
+      }
     }
   }
 }

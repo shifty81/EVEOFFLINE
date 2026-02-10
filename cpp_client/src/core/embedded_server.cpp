@@ -35,7 +35,7 @@ bool EmbeddedServer::start(const Config& config) {
     // Note: Full cpp_server integration would be done here in production
     // For now, we create a minimal server simulation that tracks state
     m_connectedPlayers = 0;
-    m_currentSystem = "New Eden"; // Default starting system
+    m_currentSystem = "Astralis"; // Default starting system
     
     m_running = true;
 

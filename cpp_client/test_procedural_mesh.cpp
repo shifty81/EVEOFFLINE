@@ -353,8 +353,8 @@ void testFactionSidesVariation() {
     std::cout << "\n=== Faction Sides Variation ===" << std::endl;
 
     // Different factions should produce hulls with different silhouettes
-    int factionSides[] = {4, 6, 8, 12};  // Caldari, Minmatar, Amarr, Gallente
-    const char* names[] = {"Caldari(4)", "Minmatar(6)", "Amarr(8)", "Gallente(12)"};
+    int factionSides[] = {4, 6, 8, 12};  // Veyren, Keldari, Solari, Aurelian
+    const char* names[] = {"Veyren(4)", "Keldari(6)", "Solari(8)", "Aurelian(12)"};
 
     for (int f = 0; f < 4; ++f) {
         auto mults = generateRadiusMultipliers(4, 0.5f, 42u);

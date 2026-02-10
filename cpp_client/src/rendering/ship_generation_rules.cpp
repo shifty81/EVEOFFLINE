@@ -13,10 +13,10 @@ void ShipGenerationRules::initialize() {
     std::cout << "Initializing Ship Generation Rules..." << std::endl;
     
     // Initialize faction-specific rules
-    initializeMinmatarRules();
-    initializeCaldariRules();
-    initializeGallenteRules();
-    initializeAmarrRules();
+    initializeKeldariRules();
+    initializeVeyrenRules();
+    initializeAurelianRules();
+    initializeSolariRules();
     
     // Initialize class-specific rules
     initializeFrigateRules();
@@ -171,7 +171,7 @@ bool ShipGenerationRules::isEnginePlacementValid(const glm::vec3& position, cons
 
 // ==================== Faction-Specific Rules ====================
 
-void ShipGenerationRules::initializeMinmatarRules() {
+void ShipGenerationRules::initializeKeldariRules() {
     FactionRules rules;
     rules.style = FactionStyle::MINMATAR;
     rules.requiresSymmetry = false;
@@ -184,7 +184,7 @@ void ShipGenerationRules::initializeMinmatarRules() {
     rules.allowsExposedFramework = true;
     rules.requiresOrnateDetails = false;
     
-    // Reference traits from 56 analyzed Minmatar OBJ models
+    // Reference traits from 56 analyzed Keldari OBJ models
     rules.referenceTraits.avgAspectLW = 2.284f;
     rules.referenceTraits.minAspectLW = 1.010f;
     rules.referenceTraits.maxAspectLW = 5.755f;
@@ -197,10 +197,10 @@ void ShipGenerationRules::initializeMinmatarRules() {
     rules.minPartCounts["engine"] = 2;
     rules.maxPartCounts["panel_detail"] = 20;
     
-    m_factionRules["Minmatar"] = rules;
+    m_factionRules["Keldari"] = rules;
 }
 
-void ShipGenerationRules::initializeCaldariRules() {
+void ShipGenerationRules::initializeVeyrenRules() {
     FactionRules rules;
     rules.style = FactionStyle::CALDARI;
     rules.requiresSymmetry = true;
@@ -213,7 +213,7 @@ void ShipGenerationRules::initializeCaldariRules() {
     rules.allowsExposedFramework = false;
     rules.requiresOrnateDetails = false;
     
-    // Reference traits from 61 analyzed Caldari OBJ models
+    // Reference traits from 61 analyzed Veyren OBJ models
     rules.referenceTraits.avgAspectLW = 1.834f;  // Most compact/boxy of major factions
     rules.referenceTraits.minAspectLW = 1.003f;
     rules.referenceTraits.maxAspectLW = 5.094f;
@@ -226,10 +226,10 @@ void ShipGenerationRules::initializeCaldariRules() {
     rules.minPartCounts["engine"] = 2;
     rules.maxPartCounts["panel_detail"] = 15;
     
-    m_factionRules["Caldari"] = rules;
+    m_factionRules["Veyren"] = rules;
 }
 
-void ShipGenerationRules::initializeGallenteRules() {
+void ShipGenerationRules::initializeAurelianRules() {
     FactionRules rules;
     rules.style = FactionStyle::GALLENTE;
     rules.requiresSymmetry = true;
@@ -242,7 +242,7 @@ void ShipGenerationRules::initializeGallenteRules() {
     rules.allowsExposedFramework = false;
     rules.requiresOrnateDetails = false;
     
-    // Reference traits from 56 analyzed Gallente OBJ models
+    // Reference traits from 56 analyzed Aurelian OBJ models
     rules.referenceTraits.avgAspectLW = 2.278f;
     rules.referenceTraits.minAspectLW = 1.035f;
     rules.referenceTraits.maxAspectLW = 10.442f;  // Widest range of any faction
@@ -256,10 +256,10 @@ void ShipGenerationRules::initializeGallenteRules() {
     rules.minPartCounts["drone_bay"] = 1;
     rules.maxPartCounts["panel_detail"] = 12;
     
-    m_factionRules["Gallente"] = rules;
+    m_factionRules["Aurelian"] = rules;
 }
 
-void ShipGenerationRules::initializeAmarrRules() {
+void ShipGenerationRules::initializeSolariRules() {
     FactionRules rules;
     rules.style = FactionStyle::AMARR;
     rules.requiresSymmetry = true;
@@ -272,7 +272,7 @@ void ShipGenerationRules::initializeAmarrRules() {
     rules.allowsExposedFramework = false;
     rules.requiresOrnateDetails = true;  // Cathedral-like details
     
-    // Reference traits from 58 analyzed Amarr OBJ models
+    // Reference traits from 58 analyzed Solari OBJ models
     rules.referenceTraits.avgAspectLW = 2.199f;
     rules.referenceTraits.minAspectLW = 1.020f;
     rules.referenceTraits.maxAspectLW = 4.573f;
@@ -286,7 +286,7 @@ void ShipGenerationRules::initializeAmarrRules() {
     rules.minPartCounts["spire"] = 1;
     rules.maxPartCounts["panel_detail"] = 25;
     
-    m_factionRules["Amarr"] = rules;
+    m_factionRules["Solari"] = rules;
 }
 
 // ==================== Class-Specific Rules ====================

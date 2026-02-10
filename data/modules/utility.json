@@ -14,9 +14,9 @@
     "volume": 10,
     "meta_level": 0
   },
-  "1mn_microwarpdrive": {
-    "id": "1mn_microwarpdrive",
-    "name": "1MN Microwarpdrive I",
+  "1mn_mijaktfalkarpdrive": {
+    "id": "1mn_mijaktfalkarpdrive",
+    "name": "1MN Mijaktfalkarpdrive I",
     "type": "propulsion",
     "slot": "mid",
     "size": "small",
@@ -29,9 +29,9 @@
     "volume": 5,
     "meta_level": 0
   },
-  "10mn_microwarpdrive": {
-    "id": "10mn_microwarpdrive",
-    "name": "10MN Microwarpdrive I",
+  "10mn_mijaktfalkarpdrive": {
+    "id": "10mn_mijaktfalkarpdrive",
+    "name": "10MN Mijaktfalkarpdrive I",
     "type": "propulsion",
     "slot": "mid",
     "size": "medium",

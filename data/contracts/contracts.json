@@ -1,13 +1,13 @@
 {
   "contract_system": {
-    "description": "The contract system allows players to create agreements for trading items, courier deliveries, and other services with escrow to guarantee fulfillment.",
+    "description": "The contract system allows players to create agreements for trading items, courier deliveries, and other services with esjaktfalk to guarantee fulfillment.",
     "contract_types": {
       "item_exchange": {
         "id": "item_exchange",
         "name": "Item Exchange",
         "description": "Offer items for sale or request items at a specified price. The buyer pays ISK and receives the items.",
-        "requires_escrow": true,
-        "escrow_type": "isk",
+        "requires_esjaktfalk": true,
+        "esjaktfalk_type": "isk",
         "max_duration_days": 14,
         "listing_fee_percentage": 1.0
       },
@@ -15,8 +15,8 @@
         "id": "courier",
         "name": "Courier Contract",
         "description": "Request that items be transported from one station to another. The hauler provides collateral and receives payment on delivery.",
-        "requires_escrow": true,
-        "escrow_type": "collateral",
+        "requires_esjaktfalk": true,
+        "esjaktfalk_type": "collateral",
         "max_duration_days": 14,
         "max_volume_m3": 1000000,
         "completion_time_days": 3
@@ -25,18 +25,18 @@
         "id": "auction",
         "name": "Auction",
         "description": "List items for auction where the highest bidder wins. Requires a starting bid and optional buyout price.",
-        "requires_escrow": true,
-        "escrow_type": "bid",
+        "requires_esjaktfalk": true,
+        "esjaktfalk_type": "bid",
         "max_duration_days": 14,
         "listing_fee_percentage": 1.0,
         "minimum_bid_increment_percentage": 5.0
       }
     },
-    "escrow_mechanics": {
-      "description": "Escrow holds ISK or collateral to ensure contract fulfillment. Funds are released when the contract is completed or returned if the contract expires.",
-      "buyer_escrow": "ISK is held in escrow when a buyer accepts a contract. Released to seller on completion.",
+    "esjaktfalk_mechanics": {
+      "description": "Esjaktfalk holds ISK or collateral to ensure contract fulfillment. Funds are released when the contract is completed or returned if the contract expires.",
+      "buyer_esjaktfalk": "ISK is held in esjaktfalk when a buyer accepts a contract. Released to seller on completion.",
       "courier_collateral": "The hauler deposits collateral equal to the contract value. Returned on successful delivery, forfeited if the contract fails.",
-      "auction_deposit": "Bidders' ISK is held in escrow. Outbid amounts are returned. Winner's escrow is released to seller."
+      "auction_deposit": "Bidders' ISK is held in esjaktfalk. Outbid amounts are returned. Winner's esjaktfalk is released to seller."
     },
     "fees": {
       "broker_fee_percentage": 1.0,

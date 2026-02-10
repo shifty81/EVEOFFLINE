@@ -336,7 +336,7 @@ std::string WorldPersistence::serializeEntity(
              << ",\"system_name\":\"" << escapeJson(ss->system_name) << "\""
              << ",\"wormhole_class\":" << ss->wormhole_class
              << ",\"effect_name\":\"" << escapeJson(ss->effect_name) << "\""
-             << ",\"sleepers_spawned\":" << (ss->sleepers_spawned ? "true" : "false")
+             << ",\"dormants_spawned\":" << (ss->dormants_spawned ? "true" : "false")
              << "}";
     }
 
@@ -637,7 +637,7 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
         ss->system_name     = extractString(ss_json, "system_name");
         ss->wormhole_class  = extractInt(ss_json, "\"wormhole_class\":");
         ss->effect_name     = extractString(ss_json, "effect_name");
-        ss->sleepers_spawned = extractBool(ss_json, "\"sleepers_spawned\":");
+        ss->dormants_spawned = extractBool(ss_json, "\"dormants_spawned\":");
         entity->addComponent(std::move(ss));
     }
 

@@ -1,11 +1,11 @@
 {
-  "sabre": {
-    "id": "sabre",
-    "name": "Sabre",
+  "gripshard": {
+    "id": "gripshard",
+    "name": "Gripshard",
     "class": "Interdictor",
     "tech_level": 2,
-    "race": "Minmatar",
-    "description": "The Sabre is a Minmatar interdictor capable of deploying warp disruption probes to create interdiction bubbles. Its high speed and autocannon firepower make it a deadly tackler in fleet engagements.",
+    "race": "Keldari",
+    "description": "The Gripshard is a Keldari interdictor capable of deploying warp disruption probes to create interdiction bubbles. Its high speed and autocannon firepower make it a deadly tackler in fleet engagements.",
     "hull_hp": 750,
     "armor_hp": 600,
     "shield_hp": 800,
@@ -52,13 +52,13 @@
       }
     }
   },
-  "flycatcher": {
-    "id": "flycatcher",
-    "name": "Flycatcher",
+  "nettvar": {
+    "id": "nettvar",
+    "name": "Nettvar",
     "class": "Interdictor",
     "tech_level": 2,
-    "race": "Caldari",
-    "description": "The Flycatcher is a Caldari interdictor designed around missile systems and shield tanking. It deploys warp disruption probes while maintaining excellent range control with light missiles.",
+    "race": "Veyren",
+    "description": "The Nettvar is a Veyren interdictor designed around missile systems and shield tanking. It deploys warp disruption probes while maintaining excellent range control with light missiles.",
     "hull_hp": 700,
     "armor_hp": 550,
     "shield_hp": 900,
@@ -105,13 +105,13 @@
       }
     }
   },
-  "eris": {
-    "id": "eris",
-    "name": "Eris",
+  "barricade": {
+    "id": "barricade",
+    "name": "Barricade",
     "class": "Interdictor",
     "tech_level": 2,
-    "race": "Gallente",
-    "description": "The Eris is a Gallente interdictor built for close-range brawling. Its hybrid turrets deliver devastating blaster damage while its interdiction sphere traps targets within engagement range.",
+    "race": "Aurelian",
+    "description": "The Barricade is a Aurelian interdictor built for close-range brawling. Its hybrid turrets deliver devastating blaster damage while its interdiction sphere traps targets within engagement range.",
     "hull_hp": 800,
     "armor_hp": 700,
     "shield_hp": 650,
@@ -158,13 +158,13 @@
       }
     }
   },
-  "heretic": {
-    "id": "heretic",
-    "name": "Heretic",
+  "denouncer": {
+    "id": "denouncer",
+    "name": "Denouncer",
     "class": "Interdictor",
     "tech_level": 2,
-    "race": "Amarr",
-    "description": "The Heretic is an Amarr interdictor that combines energy turret firepower with interdiction capabilities. Its strong armor tank allows it to survive in hostile space while maintaining tackle on targets.",
+    "race": "Solari",
+    "description": "The Denouncer is an Solari interdictor that combines energy turret firepower with interdiction capabilities. Its strong armor tank allows it to survive in hostile space while maintaining tackle on targets.",
     "hull_hp": 720,
     "armor_hp": 750,
     "shield_hp": 600,

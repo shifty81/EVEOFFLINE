@@ -191,7 +191,7 @@ void testFleetFormation() {
         
         ship.transform = glm::translate(glm::mat4(1.0f), glm::vec3(x, 0, z));
         ship.transform = glm::rotate(ship.transform, angle, glm::vec3(0, 1, 0));
-        ship.color = glm::vec4(0.3f, 0.5f, 0.8f, 1.0f); // Caldari blue
+        ship.color = glm::vec4(0.3f, 0.5f, 0.8f, 1.0f); // Veyren blue
         
         fleet.push_back(ship);
     }
