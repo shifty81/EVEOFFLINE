@@ -12,6 +12,10 @@ bool NeocomPanel::RenderButton(const char* icon, const char* label, const char* 
     float buttonSize = 40.0f;
     float expandedWidth = 170.0f;
 
+    // Push hover highlight colors for EVE-style mouseover feedback
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.10f, 0.23f, 0.29f, 0.9f));  // Teal highlight
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.17f, 0.35f, 0.42f, 1.0f));   // Brighter on click
+
     if (m_collapsed) {
         // Icon-only button
         clicked = ImGui::Button(icon, ImVec2(buttonSize, buttonSize));
@@ -21,6 +25,16 @@ bool NeocomPanel::RenderButton(const char* icon, const char* label, const char* 
         std::snprintf(fullLabel, sizeof(fullLabel), "%s  %s", icon, label);
         clicked = ImGui::Button(fullLabel, ImVec2(expandedWidth, buttonSize));
     }
+
+    // Hover highlight border effect
+    if (ImGui::IsItemHovered()) {
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+        ImVec2 min = ImGui::GetItemRectMin();
+        ImVec2 max = ImGui::GetItemRectMax();
+        drawList->AddRect(min, max, IM_COL32(69, 208, 232, 120), 2.0f, 0, 1.5f);
+    }
+
+    ImGui::PopStyleColor(2);
 
     if (ImGui::IsItemHovered() && tooltip) {
         ImGui::SetTooltip("%s", tooltip);

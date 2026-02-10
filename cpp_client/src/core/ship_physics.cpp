@@ -8,9 +8,19 @@ ShipPhysics::ShipPhysics()
     : m_position(0.0f)
     , m_velocity(0.0f)
     , m_desiredDirection(0.0f, 0.0f, 1.0f)
+    , m_heading(0.0f, 0.0f, 1.0f)
     , m_navMode(NavigationMode::MANUAL)
     , m_navTarget(0.0f)
     , m_navRange(0.0f)
+    , m_warpPhase(WarpPhase::NONE)
+    , m_warpProgress(0.0f)
+    , m_warpDistanceTotal(0.0f)
+    , m_warpDistanceTraveled(0.0f)
+    , m_currentWarpSpeedAU(0.0f)
+    , m_baseWarpSpeedAU(5.0f)
+    , m_warpPhaseTimer(0.0f)
+    , m_warpStartPos(0.0f)
+    , m_warpDirection(0.0f)
     , m_propulsionActive(false)
     , m_propulsionMultiplier(1.0f)
 {
@@ -51,9 +61,29 @@ void ShipPhysics::keepAtRange(const glm::vec3& target, float range) {
 }
 
 void ShipPhysics::warpTo(const glm::vec3& destination) {
+    glm::vec3 toTarget = destination - m_position;
+    float distance = glm::length(toTarget);
+    
+    // Must be at least 150km to warp
+    if (distance < MIN_WARP_DISTANCE) {
+        // Too close to warp, just approach instead
+        approach(destination, 0.0f);
+        return;
+    }
+    
     m_navMode = NavigationMode::WARPING;
     m_navTarget = destination;
-    m_desiredDirection = glm::normalize(destination - m_position);
+    m_desiredDirection = glm::normalize(toTarget);
+    
+    // Initialize warp state — start with alignment phase
+    m_warpPhase = WarpPhase::ALIGNING;
+    m_warpProgress = 0.0f;
+    m_warpDistanceTotal = distance;
+    m_warpDistanceTraveled = 0.0f;
+    m_currentWarpSpeedAU = 0.0f;
+    m_warpPhaseTimer = 0.0f;
+    m_warpStartPos = m_position;
+    m_warpDirection = glm::normalize(toTarget);
 }
 
 void ShipPhysics::stop() {
@@ -102,13 +132,13 @@ void ShipPhysics::update(float deltaTime) {
         }
         
         case NavigationMode::WARPING: {
-            // Simplified warp: check if aligned, then instant jump
-            if (isAlignedForWarp()) {
-                m_position = m_navTarget;
-                m_velocity = glm::vec3(0.0f);
-                m_navMode = NavigationMode::STOPPED;
+            // Warp is handled by updateWarp() — don't use normal physics
+            updateWarp(deltaTime);
+            // Update heading to match warp direction
+            if (m_warpPhase != WarpPhase::NONE && glm::length(m_warpDirection) > 0.001f) {
+                m_heading = m_warpDirection;
             }
-            break;
+            return;  // Skip normal acceleration/friction during warp
         }
         
         case NavigationMode::STOPPED: {
@@ -130,6 +160,14 @@ void ShipPhysics::update(float deltaTime) {
     
     // Update position
     m_position += m_velocity * deltaTime;
+    
+    // Update heading direction (ship gradually turns toward velocity)
+    float speed = glm::length(m_velocity);
+    if (speed > 1.0f) {
+        glm::vec3 velDir = m_velocity / speed;
+        float turnRate = 2.0f * deltaTime;  // Smooth turn
+        m_heading = glm::normalize(glm::mix(m_heading, velDir, std::min(turnRate, 1.0f)));
+    }
 }
 
 void ShipPhysics::updateAcceleration(float deltaTime) {
@@ -276,6 +314,138 @@ void ShipPhysics::removePropulsionBonus() {
     if (currentSpeed > m_stats.maxVelocity) {
         m_velocity = glm::normalize(m_velocity) * m_stats.maxVelocity;
     }
+}
+
+void ShipPhysics::updateWarp(float deltaTime) {
+    m_warpPhaseTimer += deltaTime;
+    
+    switch (m_warpPhase) {
+        case WarpPhase::ALIGNING: {
+            // Phase 1: Align and accelerate to 75% max subwarp speed
+            // Normal acceleration happens in this phase
+            updateAcceleration(deltaTime);
+            m_position += m_velocity * deltaTime;
+            
+            if (isAlignedForWarp()) {
+                // Aligned! Enter warp acceleration phase
+                m_warpPhase = WarpPhase::ACCELERATING;
+                m_warpPhaseTimer = 0.0f;
+                m_warpStartPos = m_position;
+                m_warpDistanceTotal = glm::length(m_navTarget - m_position);
+                m_warpDistanceTraveled = 0.0f;
+            }
+            break;
+        }
+        
+        case WarpPhase::ACCELERATING: {
+            // Phase 2: Accelerate from subwarp to max warp speed
+            // Covers first ~33% of warp distance, or ~1 AU equivalent
+            float accelDuration = 3.0f;  // ~3 seconds to reach max warp
+            float t = std::min(m_warpPhaseTimer / accelDuration, 1.0f);
+            
+            // Logarithmic acceleration curve
+            float speedFraction = t * t;  // Smooth ramp up
+            m_currentWarpSpeedAU = m_baseWarpSpeedAU * speedFraction;
+            
+            // Convert AU/s to m/s for position update
+            float warpSpeedMeters = m_currentWarpSpeedAU * AU_IN_METERS;
+            float distanceThisFrame = warpSpeedMeters * deltaTime;
+            m_warpDistanceTraveled += distanceThisFrame;
+            
+            // Move along warp direction
+            m_position = m_warpStartPos + m_warpDirection * m_warpDistanceTraveled;
+            m_velocity = m_warpDirection * warpSpeedMeters;
+            
+            // Update progress
+            m_warpProgress = m_warpDistanceTraveled / m_warpDistanceTotal;
+            
+            // Transition to cruise when at max speed or past 33% distance
+            if (t >= 1.0f || m_warpProgress >= 0.33f) {
+                m_warpPhase = WarpPhase::CRUISING;
+                m_warpPhaseTimer = 0.0f;
+                m_currentWarpSpeedAU = m_baseWarpSpeedAU;
+            }
+            break;
+        }
+        
+        case WarpPhase::CRUISING: {
+            // Phase 3: Travel at max warp speed (warp tunnel effect)
+            m_currentWarpSpeedAU = m_baseWarpSpeedAU;
+            float warpSpeedMeters = m_currentWarpSpeedAU * AU_IN_METERS;
+            float distanceThisFrame = warpSpeedMeters * deltaTime;
+            m_warpDistanceTraveled += distanceThisFrame;
+            
+            m_position = m_warpStartPos + m_warpDirection * m_warpDistanceTraveled;
+            m_velocity = m_warpDirection * warpSpeedMeters;
+            
+            m_warpProgress = m_warpDistanceTraveled / m_warpDistanceTotal;
+            
+            // Begin deceleration at ~67% of total distance
+            if (m_warpProgress >= 0.67f) {
+                m_warpPhase = WarpPhase::DECELERATING;
+                m_warpPhaseTimer = 0.0f;
+            }
+            break;
+        }
+        
+        case WarpPhase::DECELERATING: {
+            // Phase 4: Decelerate from warp speed to subwarp
+            float decelDuration = 3.0f;  // ~3 seconds to decelerate
+            float t = std::min(m_warpPhaseTimer / decelDuration, 1.0f);
+            
+            // Smooth deceleration curve
+            float speedFraction = 1.0f - (t * t);
+            m_currentWarpSpeedAU = m_baseWarpSpeedAU * std::max(speedFraction, 0.01f);
+            
+            float warpSpeedMeters = m_currentWarpSpeedAU * AU_IN_METERS;
+            float distanceThisFrame = warpSpeedMeters * deltaTime;
+            m_warpDistanceTraveled += distanceThisFrame;
+            
+            m_position = m_warpStartPos + m_warpDirection * m_warpDistanceTraveled;
+            m_velocity = m_warpDirection * warpSpeedMeters;
+            
+            m_warpProgress = m_warpDistanceTraveled / m_warpDistanceTotal;
+            
+            // Check if arrived (within 2500m or exceeded total distance)
+            float remainingDistance = m_warpDistanceTotal - m_warpDistanceTraveled;
+            if (remainingDistance <= WARP_EXIT_DISTANCE || t >= 1.0f) {
+                // Exit warp — land offset behind destination (half of exit distance)
+                m_position = m_navTarget - m_warpDirection * (WARP_EXIT_DISTANCE * 0.5f);
+                m_velocity = m_warpDirection * m_stats.maxVelocity * WARP_EXIT_SPEED_FRACTION;
+                m_warpPhase = WarpPhase::NONE;
+                m_currentWarpSpeedAU = 0.0f;
+                m_warpProgress = 1.0f;
+                m_navMode = NavigationMode::STOPPED;
+                m_desiredDirection = glm::vec3(0.0f);
+            }
+            break;
+        }
+        
+        case WarpPhase::NONE:
+        default:
+            break;
+    }
+}
+
+float ShipPhysics::getEngineThrottle() const {
+    if (m_navMode == NavigationMode::STOPPED) {
+        return 0.0f;
+    }
+    
+    if (m_warpPhase == WarpPhase::CRUISING || m_warpPhase == WarpPhase::ACCELERATING) {
+        return 1.0f;  // Full thrust during warp
+    }
+    
+    if (m_warpPhase == WarpPhase::DECELERATING) {
+        return 0.3f;  // Reduced during decel
+    }
+    
+    // Normal flight: throttle based on speed vs max
+    float speed = glm::length(m_velocity);
+    if (m_stats.maxVelocity > 0.0f) {
+        return std::min(speed / m_stats.maxVelocity, 1.0f);
+    }
+    return 0.0f;
 }
 
 } // namespace eve

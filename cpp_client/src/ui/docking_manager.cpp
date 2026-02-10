@@ -191,7 +191,7 @@ void DockingManager::RenderFloatingPanel(DockablePanel& panel) {
         panel.position_set = true;
     }
 
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+    ImGuiWindowFlags flags = ImGuiWindowFlags_None;  // Allow collapsing
     if (m_interfaceLocked) {
         flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     }
@@ -234,7 +234,7 @@ void DockingManager::RenderDockContainer(DockContainer& container) {
     // Build window title from docked panels
     std::string windowTitle = "##DockContainer_" + container.id;
 
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+    ImGuiWindowFlags flags = ImGuiWindowFlags_None;  // Allow collapsing
     if (m_interfaceLocked) {
         flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
     }
@@ -363,6 +363,30 @@ void DockingManager::TrySnapPanel(DockablePanel& panel) {
         // Top edge of panel to bottom edge of other
         if (std::abs(pos.y - otherEnd.y) < SNAP_DISTANCE) {
             pos.y = otherEnd.y;
+            snapped = true;
+        }
+    }
+
+    // Also snap to dock containers
+    for (const auto& [containerId, container] : m_containers) {
+        ImVec2 containerEnd(container.position.x + container.size.x,
+                            container.position.y + container.size.y);
+        ImVec2 panelEnd(pos.x + size.x, pos.y + size.y);
+
+        if (std::abs(panelEnd.x - container.position.x) < SNAP_DISTANCE) {
+            pos.x = container.position.x - size.x;
+            snapped = true;
+        }
+        if (std::abs(pos.x - containerEnd.x) < SNAP_DISTANCE) {
+            pos.x = containerEnd.x;
+            snapped = true;
+        }
+        if (std::abs(panelEnd.y - container.position.y) < SNAP_DISTANCE) {
+            pos.y = container.position.y - size.y;
+            snapped = true;
+        }
+        if (std::abs(pos.y - containerEnd.y) < SNAP_DISTANCE) {
+            pos.y = containerEnd.y;
             snapped = true;
         }
     }

@@ -93,7 +93,7 @@ bool UIManager::Initialize(GLFWwindow* window) {
         m_neocomPanel->SetMarketCallback([this]() { ToggleMarket(); });
         m_neocomPanel->SetMissionsCallback([this]() { ToggleMission(); });
         m_neocomPanel->SetDScanCallback([this]() { ToggleDScan(); });
-        m_neocomPanel->SetMapCallback([this]() { ToggleOverview(); });
+        m_neocomPanel->SetMapCallback([this]() { ToggleMap(); });
     }
     
     std::cout << "[UIManager] ImGui initialized successfully" << std::endl;
@@ -153,6 +153,11 @@ void UIManager::Render() {
     // through the docking manager
     if (m_dockingManager) {
         m_dockingManager->RenderAll();
+    }
+    
+    // Render star map overlay (toggled by Map button in Neocom)
+    if (m_showStarMap) {
+        RenderStarMapPanel();
     }
 }
 
@@ -579,6 +584,10 @@ void UIManager::ToggleDScan() {
     }
 }
 
+void UIManager::ToggleMap() {
+    m_showStarMap = !m_showStarMap;
+}
+
 // Interface lock delegated to docking manager
 void UIManager::SetInterfaceLocked(bool locked) {
     if (m_dockingManager) {
@@ -597,6 +606,170 @@ void UIManager::ToggleInterfaceLock() {
     if (m_dockingManager) {
         m_dockingManager->ToggleInterfaceLock();
     }
+}
+
+void UIManager::RenderStarMapPanel() {
+    if (!m_showStarMap) return;
+    
+    ImGuiIO& io = ImGui::GetIO();
+    float mapWidth = io.DisplaySize.x * 0.7f;
+    float mapHeight = io.DisplaySize.y * 0.7f;
+    float posX = (io.DisplaySize.x - mapWidth) * 0.5f;
+    float posY = (io.DisplaySize.y - mapHeight) * 0.5f;
+    
+    ImGui::SetNextWindowPos(ImVec2(posX, posY), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(mapWidth, mapHeight), ImGuiCond_FirstUseEver);
+    
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.02f, 0.03f, 0.06f, 0.95f));
+    
+    if (ImGui::Begin("Star Map (F10)", &m_showStarMap, ImGuiWindowFlags_None)) {
+        // Map header with system info
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.271f, 0.816f, 0.910f, 1.0f));
+        ImGui::Text("STAR MAP - New Eden");
+        ImGui::PopStyleColor();
+        
+        ImGui::Separator();
+        ImGui::Spacing();
+        
+        // View mode tabs
+        if (ImGui::BeginTabBar("MapViewTabs")) {
+            if (ImGui::BeginTabItem("Galaxy")) {
+                ImGui::Text("Galaxy View - Solar System Map");
+                ImGui::Spacing();
+                
+                // Render galaxy system nodes
+                ImDrawList* drawList = ImGui::GetWindowDrawList();
+                ImVec2 canvasPos = ImGui::GetCursorScreenPos();
+                ImVec2 canvasSize = ImGui::GetContentRegionAvail();
+                
+                // Draw dark background for map
+                drawList->AddRectFilled(canvasPos,
+                    ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + canvasSize.y),
+                    IM_COL32(5, 8, 15, 255));
+                
+                // Draw grid
+                float gridStep = 60.0f;
+                for (float x = 0; x < canvasSize.x; x += gridStep) {
+                    drawList->AddLine(
+                        ImVec2(canvasPos.x + x, canvasPos.y),
+                        ImVec2(canvasPos.x + x, canvasPos.y + canvasSize.y),
+                        IM_COL32(20, 30, 50, 60));
+                }
+                for (float y = 0; y < canvasSize.y; y += gridStep) {
+                    drawList->AddLine(
+                        ImVec2(canvasPos.x, canvasPos.y + y),
+                        ImVec2(canvasPos.x + canvasSize.x, canvasPos.y + y),
+                        IM_COL32(20, 30, 50, 60));
+                }
+                
+                // Draw system nodes with connections (placeholder positions for known systems)
+                struct MapNode {
+                    const char* name;
+                    float x, y;
+                    float security;
+                    ImU32 color;
+                };
+                
+                MapNode nodes[] = {
+                    {"Jita",      0.5f, 0.4f,  1.0f, IM_COL32(69, 208, 232, 255)},
+                    {"Perimeter", 0.6f, 0.35f, 0.9f, IM_COL32(69, 208, 232, 200)},
+                    {"Amarr",     0.7f, 0.6f,  1.0f, IM_COL32(69, 208, 232, 255)},
+                    {"Dodixie",   0.3f, 0.55f, 0.9f, IM_COL32(69, 208, 232, 200)},
+                    {"Rancer",    0.45f, 0.25f, 0.4f, IM_COL32(255, 165, 0, 255)},
+                    {"Hek",       0.35f, 0.3f,  0.5f, IM_COL32(200, 200, 100, 255)},
+                };
+                int nodeCount = 6;
+                
+                // Draw connections
+                int connections[][2] = {{0,1}, {1,4}, {4,5}, {3,5}};
+                for (auto& conn : connections) {
+                    ImVec2 p1(canvasPos.x + nodes[conn[0]].x * canvasSize.x,
+                              canvasPos.y + nodes[conn[0]].y * canvasSize.y);
+                    ImVec2 p2(canvasPos.x + nodes[conn[1]].x * canvasSize.x,
+                              canvasPos.y + nodes[conn[1]].y * canvasSize.y);
+                    drawList->AddLine(p1, p2, IM_COL32(40, 80, 120, 150), 1.5f);
+                }
+                
+                // Draw nodes
+                for (int i = 0; i < nodeCount; i++) {
+                    ImVec2 pos(canvasPos.x + nodes[i].x * canvasSize.x,
+                              canvasPos.y + nodes[i].y * canvasSize.y);
+                    
+                    float radius = 6.0f;
+                    drawList->AddCircleFilled(pos, radius, nodes[i].color);
+                    drawList->AddCircle(pos, radius + 2.0f, IM_COL32(69, 208, 232, 80), 0, 1.0f);
+                    
+                    // Label
+                    drawList->AddText(ImVec2(pos.x + 10, pos.y - 6), IM_COL32(200, 220, 240, 220),
+                                      nodes[i].name);
+                    
+                    // Security status
+                    char secBuf[16];
+                    snprintf(secBuf, sizeof(secBuf), "%.1f", nodes[i].security);
+                    drawList->AddText(ImVec2(pos.x + 10, pos.y + 6),
+                                      nodes[i].security >= 0.5f ? IM_COL32(100, 200, 100, 180) : IM_COL32(255, 100, 100, 180),
+                                      secBuf);
+                }
+                
+                // Legend
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + canvasSize.y + 5.0f);
+                ImGui::TextColored(ImVec4(0.4f, 0.6f, 0.8f, 1.0f), "Click system to set destination | Scroll to zoom");
+                
+                ImGui::EndTabItem();
+            }
+            
+            if (ImGui::BeginTabItem("Solar System")) {
+                ImGui::Text("Current System View");
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.271f, 0.816f, 0.910f, 1.0f), "Celestial Objects:");
+                ImGui::Separator();
+                
+                // Show warpable celestials in current system
+                const char* celestials[] = {
+                    "Sun", "Planet I", "Planet II", "Planet III",
+                    "Asteroid Belt I", "Asteroid Belt II",
+                    "Station", "Stargate (Perimeter)"
+                };
+                const char* distances[] = {
+                    "0 AU", "5.2 AU", "12.8 AU", "28.4 AU",
+                    "8.5 AU", "18.3 AU", "15.0 AU", "32.1 AU"
+                };
+                
+                for (int i = 0; i < 8; i++) {
+                    ImGui::PushID(i);
+                    
+                    // Highlight on hover
+                    bool hovered = false;
+                    ImGui::Selectable(celestials[i], false, ImGuiSelectableFlags_SpanAllColumns);
+                    hovered = ImGui::IsItemHovered();
+                    
+                    if (hovered) {
+                        ImGui::SetTooltip("Right-click to warp to %s\nDistance: %s", celestials[i], distances[i]);
+                    }
+                    
+                    ImGui::SameLine(250);
+                    ImGui::TextColored(ImVec4(0.5f, 0.7f, 0.9f, 1.0f), "%s", distances[i]);
+                    
+                    ImGui::PopID();
+                }
+                
+                ImGui::EndTabItem();
+            }
+            
+            if (ImGui::BeginTabItem("Route")) {
+                ImGui::Text("Route Planning");
+                ImGui::Spacing();
+                ImGui::TextColored(ImVec4(0.8f, 0.8f, 0.4f, 1.0f), "No destination set");
+                ImGui::Text("Set a destination from the Galaxy view to plan a route.");
+                ImGui::EndTabItem();
+            }
+            
+            ImGui::EndTabBar();
+        }
+    }
+    ImGui::End();
+    
+    ImGui::PopStyleColor();
 }
 
 } // namespace UI
