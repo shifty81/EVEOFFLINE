@@ -390,7 +390,7 @@ void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::sh
         entry.distance = std::sqrt(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
         
         // Get health percentages
-        const eve::Health& health = entity->getHealth();
+        const auto& health = entity->getHealth();
         entry.shield_percent = (health.maxShield > 0) ? 
             (static_cast<float>(health.shield) / health.maxShield) : 0.0f;
         entry.armor_percent = (health.maxArmor > 0) ? 
