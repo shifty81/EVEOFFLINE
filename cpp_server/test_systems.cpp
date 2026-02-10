@@ -794,6 +794,59 @@ void testShipDatabaseStealthBombers() {
     }
 }
 
+void testShipDatabaseSecondHACs() {
+    std::cout << "\n=== ShipDatabase Second HAC Variants ===" << std::endl;
+    
+    data::ShipDatabase db;
+    if (db.loadFromDirectory("../data") == 0) {
+        if (db.loadFromDirectory("data") == 0) {
+            db.loadFromDirectory("../../data");
+        }
+    }
+    
+    // Verify all 4 second HAC variants are loaded
+    const data::ShipTemplate* muninn = db.getShip("muninn");
+    if (muninn) {
+        assertTrue(muninn->name == "Muninn", "Muninn name correct");
+        assertTrue(muninn->ship_class == "Heavy Assault Cruiser", "Muninn class is HAC");
+        assertTrue(muninn->race == "Minmatar", "Muninn race is Minmatar");
+        assertTrue(muninn->max_targeting_range >= 70000.0f, "Muninn has long targeting range");
+    } else {
+        assertTrue(false, "Muninn HAC found in database");
+    }
+    
+    const data::ShipTemplate* eagle = db.getShip("eagle");
+    if (eagle) {
+        assertTrue(eagle->name == "Eagle", "Eagle name correct");
+        assertTrue(eagle->ship_class == "Heavy Assault Cruiser", "Eagle class is HAC");
+        assertTrue(eagle->race == "Caldari", "Eagle race is Caldari");
+        assertTrue(eagle->shield_hp >= 3000.0f, "Eagle has strong shields");
+    } else {
+        assertTrue(false, "Eagle HAC found in database");
+    }
+    
+    const data::ShipTemplate* deimos = db.getShip("deimos");
+    if (deimos) {
+        assertTrue(deimos->name == "Deimos", "Deimos name correct");
+        assertTrue(deimos->ship_class == "Heavy Assault Cruiser", "Deimos class is HAC");
+        assertTrue(deimos->race == "Gallente", "Deimos race is Gallente");
+        assertTrue(deimos->armor_hp >= 2000.0f, "Deimos has strong armor");
+    } else {
+        assertTrue(false, "Deimos HAC found in database");
+    }
+    
+    const data::ShipTemplate* sacrilege = db.getShip("sacrilege");
+    if (sacrilege) {
+        assertTrue(sacrilege->name == "Sacrilege", "Sacrilege name correct");
+        assertTrue(sacrilege->ship_class == "Heavy Assault Cruiser", "Sacrilege class is HAC");
+        assertTrue(sacrilege->race == "Amarr", "Sacrilege race is Amarr");
+        assertTrue(sacrilege->armor_hp >= 2500.0f, "Sacrilege has heavy armor");
+        assertTrue(sacrilege->capacitor >= 1400.0f, "Sacrilege has strong capacitor");
+    } else {
+        assertTrue(false, "Sacrilege HAC found in database");
+    }
+}
+
 // ==================== WormholeDatabase Tests ====================
 
 void testWormholeDatabaseLoad() {
@@ -2045,6 +2098,7 @@ int main() {
     testShipDatabaseMarauders();
     testShipDatabaseInterdictors();
     testShipDatabaseStealthBombers();
+    testShipDatabaseSecondHACs();
     
     // WormholeDatabase tests
     testWormholeDatabaseLoad();

@@ -409,12 +409,12 @@ Phase 5 core development completed with procedural ship models, performance opti
   - 4-6 engine arrays with glowing exhausts
 
 - [x] **Tech II Cruiser Content** - **NEW**
-  - 4 Heavy Assault Cruisers (Vagabond, Cerberus, Ishtar, Zealot)
+  - 8 Heavy Assault Cruisers (Vagabond, Cerberus, Ishtar, Zealot, Muninn, Eagle, Deimos, Sacrilege)
   - 4 Heavy Interdiction Cruisers (Broadsword, Onyx, Phobos, Devoter)
   - 8 Recon Ships - Force & Combat (Huginn, Rapier, Falcon, Rook, Arazu, Lachesis, Pilgrim, Curse)
   - 4 Logistics Cruisers (Scimitar, Basilisk, Oneiros, Guardian)
   - Complete stats, bonuses, and resistances for all ships
-  - 140 new 3D models (20 ships × 7 factions)
+  - 168 new 3D models (24 ships × 7 factions)
 
 - [x] **Mission System Expansion**
   - 12 new NPCs (Battlecruisers and Battleships)
@@ -448,8 +448,8 @@ Optional enhancements:
 - ✅ Epic arc missions: 4 arcs (12 storyline missions) across all empire factions
 - ✅ Faction modules: 8 faction modules (4 weapon upgrades, 4 defensive)
 - ✅ Officer modules: 4 rare officer-grade modules
-- More Tech II variants (second HAC per race)
-- Additional mission content (Level 5 missions)
+- ✅ More Tech II variants (second HAC per race: Muninn, Eagle, Deimos, Sacrilege)
+- ✅ Additional mission content (Level 5 missions — 8 high-end PVE missions)
 
 ---
 

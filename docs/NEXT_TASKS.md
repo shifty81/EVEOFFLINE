@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 8, 2026)**: Interdictor destroyers (4 ships: Sabre, Flycatcher, Eris, Heretic), Stealth Bombers (4 ships: Hound, Manticore, Nemesis, Purifier), and 8 large Tech II weapons added. The game now has 98 ships, 159+ modules, 137 skills, and comprehensive content across all tiers.
+> **Update (February 10, 2026)**: Second HAC variants added (Muninn, Eagle, Deimos, Sacrilege). Tech II EWAR and Logistics modules verified complete. The game now has 102 ships, 159+ modules, 137 skills, and comprehensive content across all tiers.
 
 ## Current Status (February 2026)
 
@@ -15,8 +15,8 @@
 - ✅ **Medium-Term**: External Model Loading, Standings System, Tech II Content, Epic Arcs, Faction/Officer Modules (February 2026)
 
 ### Project Highlights
-- **98 ships** across all classes (Frigates to Titans, including Command Ships, Interceptors, Covert Ops, Industrials, Marauders, Interdictors, Stealth Bombers)
-- **686 procedural ship models** (98 ships × 7 factions)
+- **102 ships** across all classes (Frigates to Titans, including Command Ships, Interceptors, Covert Ops, Industrials, Marauders, Interdictors, Stealth Bombers)
+- **714 procedural ship models** (102 ships × 7 factions)
 - **Custom model support**: .obj, .gltf, .glb formats
 - **159+ modules** for ship fitting (Tech I, Tech II, Faction, Officer, Capital, Mining Crystals)
 - **137 skills** with complete skill tree (including 14 Leadership skills)
@@ -84,7 +84,7 @@ Most TODOs in the codebase are for optional/future features:
 From ROADMAP.md "In Progress" section:
 
 #### 2.1 Additional Tech II Variants
-- Second HAC per race (currently 4, could have 8)
+- ✅ Second HAC per race (8 total: Vagabond, Cerberus, Ishtar, Zealot, Muninn, Eagle, Deimos, Sacrilege)
 - ✅ Tech II Battlecruisers (Command Ships) — 4 ships
 - ✅ Tech II Interceptors — 8 ships (4 combat, 4 fleet)
 - ✅ Covert Ops Frigates — 4 ships
@@ -92,14 +92,14 @@ From ROADMAP.md "In Progress" section:
 - Estimated effort: 2-3 weeks
 
 #### 2.2 Additional Mission Content
-- Level 5 missions (high-end PVE)
+- ✅ Level 5 missions (high-end PVE) — 8 missions
 - ✅ Epic mission arcs (story-driven content) — 4 arcs, 12 missions
 - ✅ Incursions (group PVE events) — 8 encounters across 4 tiers
 - Estimated effort: 2-3 weeks
 
 #### 2.3 More Modules
-- Tech II EWAR modules
-- Tech II logistics modules
+- ✅ Tech II EWAR modules (Multispectral ECM II, Tracking Disruptor II, Remote Sensor Dampener II, Target Painter II, Stasis Webifier II, Warp Disruptor II, Warp Scrambler II, Sensor Booster II)
+- ✅ Tech II logistics modules (Large/Medium Remote Armor Repairer II, Large/Medium Remote Shield Booster II)
 - ✅ Officer modules (rare drops) — 4 officer modules
 - ✅ Faction modules — 8 faction modules
 - ✅ Capital-sized modules: 15 modules (shield, armor, logistics, weapons, siege, triage, doomsday)
@@ -389,5 +389,5 @@ The project has a solid foundation and can grow in multiple directions based on 
 
 ---
 
-*Last Updated: February 8, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Interdictors, Stealth Bombers, large Tech II weapons added. 98 ships, 159+ modules. Ready for Phase 8 planning.*
+*Last Updated: February 10, 2026*
+*Status: Quick Wins, Medium-Term Tasks complete. Second HAC variants added (Muninn, Eagle, Deimos, Sacrilege). Tech II EWAR and Logistics modules verified complete. 102 ships, 159+ modules. Ready for Phase 8 planning.*
