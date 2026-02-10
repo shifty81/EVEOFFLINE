@@ -195,6 +195,12 @@ void SolarSystemScene::update(float deltaTime, ShipPhysics* shipPhysics) {
         return;
     }
 
+    // Resolve celestial collisions during sub-warp flight
+    if (!shipPhysics->isWarping()) {
+        auto zones = getCollisionZones();
+        shipPhysics->resolveCollision(zones);
+    }
+
     // Update engine trail state based on ship throttle
     float throttle = shipPhysics->getEngineThrottle();
     m_engineTrail.emitting = (throttle > 0.01f);
@@ -248,6 +254,33 @@ bool SolarSystemScene::isInDockingRange(const glm::vec3& position,
     return dist <= dockingRadius;
 }
 
+std::vector<ShipPhysics::CelestialCollisionZone> SolarSystemScene::getCollisionZones() const {
+    std::vector<ShipPhysics::CelestialCollisionZone> zones;
+    for (const auto& c : m_celestials) {
+        // All celestials with significant radius get collision zones
+        if (c.radius > 0.0f) {
+            ShipPhysics::CelestialCollisionZone zone;
+            zone.position = c.position;
+            zone.radius = c.radius;
+            zone.collisionRadius = c.radius * COLLISION_MULTIPLIER;
+            zones.push_back(zone);
+        }
+    }
+    return zones;
+}
+
+bool SolarSystemScene::isInsideCelestialCollisionZone(const glm::vec3& position) const {
+    for (const auto& c : m_celestials) {
+        if (c.radius > 0.0f) {
+            float dist = glm::length(position - c.position);
+            if (dist < c.radius * COLLISION_MULTIPLIER) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void SolarSystemScene::warpTo(const std::string& celestialId, ShipPhysics* shipPhysics,
                                float warpDistance) {
     if (!shipPhysics) return;
@@ -258,11 +291,31 @@ void SolarSystemScene::warpTo(const std::string& celestialId, ShipPhysics* shipP
         return;
     }
 
+    // Check if ship is inside a collision zone (bouncing — cannot warp)
+    auto zones = getCollisionZones();
+    if (shipPhysics->isInsideCollisionZone(zones)) {
+        std::cerr << "[SolarSystem] Cannot warp: ship is inside a celestial collision zone (bumped)" << std::endl;
+        return;
+    }
+
     // Calculate warp destination (offset by warpDistance from the celestial)
     glm::vec3 destination = target->position;
     if (warpDistance > 0.0f) {
         glm::vec3 dir = glm::normalize(shipPhysics->getPosition() - target->position);
         destination = target->position + dir * warpDistance;
+    } else {
+        // Default: land at the edge of the collision zone rather than inside
+        float collisionRadius = target->radius * COLLISION_MULTIPLIER;
+        if (collisionRadius > 0.0f) {
+            glm::vec3 dir = glm::normalize(shipPhysics->getPosition() - target->position);
+            destination = target->position + dir * (collisionRadius + 2500.0f);
+        }
+    }
+
+    // Check if warp path passes through any celestial collision zone
+    if (shipPhysics->isWarpPathBlocked(shipPhysics->getPosition(), destination, zones)) {
+        std::cerr << "[SolarSystem] Cannot warp: path blocked by celestial body" << std::endl;
+        return;
     }
 
     std::cout << "[SolarSystem] Warping to " << target->name

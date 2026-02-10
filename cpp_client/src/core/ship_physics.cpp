@@ -60,6 +60,16 @@ void ShipPhysics::keepAtRange(const glm::vec3& target, float range) {
     m_navRange = range;
 }
 
+void ShipPhysics::alignTo(const glm::vec3& destination) {
+    glm::vec3 toTarget = destination - m_position;
+    float distance = glm::length(toTarget);
+    if (distance < 0.001f) return;
+
+    m_navMode = NavigationMode::ALIGN_TO;
+    m_navTarget = destination;
+    m_desiredDirection = glm::normalize(toTarget);
+}
+
 void ShipPhysics::warpTo(const glm::vec3& destination) {
     glm::vec3 toTarget = destination - m_position;
     float distance = glm::length(toTarget);
@@ -127,6 +137,17 @@ void ShipPhysics::update(float deltaTime) {
                 }
             } else {
                 m_desiredDirection = glm::vec3(0.0f);
+            }
+            break;
+        }
+        
+        case NavigationMode::ALIGN_TO: {
+            // Align to destination: accelerate toward it to 75% max velocity
+            // This prepares the ship for warp without actually warping
+            glm::vec3 toTarget = m_navTarget - m_position;
+            float distance = glm::length(toTarget);
+            if (distance > 0.001f) {
+                m_desiredDirection = glm::normalize(toTarget);
             }
             break;
         }
@@ -446,6 +467,72 @@ float ShipPhysics::getEngineThrottle() const {
         return std::min(speed / m_stats.maxVelocity, 1.0f);
     }
     return 0.0f;
+}
+
+bool ShipPhysics::isWarpPathBlocked(const glm::vec3& from, const glm::vec3& to,
+                                     const std::vector<CelestialCollisionZone>& zones) const {
+    glm::vec3 warpDir = to - from;
+    float warpLength = glm::length(warpDir);
+    if (warpLength < 0.001f) return false;
+
+    glm::vec3 warpDirNorm = warpDir / warpLength;
+
+    for (const auto& zone : zones) {
+        // Ray-sphere intersection test
+        // Check if the warp line segment passes within collisionRadius of the zone center
+        glm::vec3 oc = from - zone.position;
+        float b = glm::dot(oc, warpDirNorm);
+        float c = glm::dot(oc, oc) - zone.collisionRadius * zone.collisionRadius;
+
+        float discriminant = b * b - c;
+        if (discriminant < 0.0f) continue;  // No intersection
+
+        float sqrtDisc = std::sqrt(discriminant);
+        float t1 = -b - sqrtDisc;
+        float t2 = -b + sqrtDisc;
+
+        // Check if intersection is within the warp segment [0, warpLength]
+        if (t1 <= warpLength && t2 >= 0.0f) {
+            return true;  // Warp path is blocked
+        }
+    }
+    return false;
+}
+
+bool ShipPhysics::isInsideCollisionZone(const std::vector<CelestialCollisionZone>& zones) const {
+    for (const auto& zone : zones) {
+        float dist = glm::length(m_position - zone.position);
+        if (dist < zone.collisionRadius) {
+            return true;
+        }
+    }
+    return false;
+}
+
+glm::vec3 ShipPhysics::resolveCollision(const std::vector<CelestialCollisionZone>& zones) {
+    for (const auto& zone : zones) {
+        glm::vec3 toShip = m_position - zone.position;
+        float dist = glm::length(toShip);
+        if (dist < zone.collisionRadius) {
+            // Push ship to the edge of the collision zone
+            glm::vec3 pushDir;
+            if (dist > 0.001f) {
+                pushDir = toShip / dist;
+            } else {
+                // Ship is exactly at center — push in arbitrary direction
+                pushDir = glm::vec3(0.0f, 1.0f, 0.0f);
+            }
+            m_position = zone.position + pushDir * (zone.collisionRadius + 100.0f);
+
+            // Kill velocity toward the celestial (bounce effect)
+            float velToward = glm::dot(m_velocity, -pushDir);
+            if (velToward > 0.0f) {
+                m_velocity += pushDir * velToward;
+            }
+            return m_position;
+        }
+    }
+    return m_position;
 }
 
 } // namespace eve

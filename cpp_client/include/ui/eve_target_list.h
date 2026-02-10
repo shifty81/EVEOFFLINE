@@ -7,10 +7,6 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 
-namespace eve {
-    class Entity;
-}
-
 namespace UI {
 
 /**
@@ -66,7 +62,7 @@ public:
      * Update targets from entity list
      * @param entities Map of entity ID to entity
      */
-    void updateTargets(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities);
+    void updateTargets(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities);
     
     /**
      * Add a target

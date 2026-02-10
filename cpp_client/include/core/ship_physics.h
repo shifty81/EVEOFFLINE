@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <vector>
 
 namespace eve {
 
@@ -60,6 +61,7 @@ public:
     void approach(const glm::vec3& target, float approachRange = 0.0f);
     void orbit(const glm::vec3& target, float orbitRange);
     void keepAtRange(const glm::vec3& target, float range);
+    void alignTo(const glm::vec3& destination);
     void warpTo(const glm::vec3& destination);
     void stop();
     
@@ -131,6 +133,40 @@ public:
      */
     glm::vec3 getHeading() const { return m_heading; }
 
+    /**
+     * Celestial collision zone info for warp path checking.
+     * Represents a sphere that the ship cannot warp through or into.
+     */
+    struct CelestialCollisionZone {
+        glm::vec3 position;
+        float radius;           // Physical radius of celestial
+        float collisionRadius;  // Collision zone radius (larger than physical)
+    };
+
+    /**
+     * Check if a warp path intersects any celestial collision zone.
+     * Returns true if the warp is blocked (ship would pass through a celestial).
+     */
+    bool isWarpPathBlocked(const glm::vec3& from, const glm::vec3& to,
+                           const std::vector<CelestialCollisionZone>& zones) const;
+
+    /**
+     * Check if the ship is currently inside a celestial collision zone.
+     * Ships inside a collision zone cannot initiate warp ("bouncing").
+     */
+    bool isInsideCollisionZone(const std::vector<CelestialCollisionZone>& zones) const;
+
+    /**
+     * Push ship out of a collision zone if it has drifted inside one.
+     * Returns the corrected position, or current position if not inside any zone.
+     */
+    glm::vec3 resolveCollision(const std::vector<CelestialCollisionZone>& zones);
+
+    /**
+     * Set position directly (used for collision resolution)
+     */
+    void setPosition(const glm::vec3& pos) { m_position = pos; }
+
 private:
     void updateAcceleration(float deltaTime);
     void updateOrbit(float deltaTime);
@@ -152,6 +188,7 @@ private:
         APPROACH,
         ORBIT,
         KEEP_AT_RANGE,
+        ALIGN_TO,
         WARPING,
         STOPPED
     };

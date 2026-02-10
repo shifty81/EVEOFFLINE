@@ -5,11 +5,6 @@
 #include <string>
 #include <vector>
 
-namespace eve {
-    class Entity;
-    class Camera;
-}
-
 namespace UI {
 
 /**
@@ -40,8 +35,8 @@ public:
         double mouseY,
         int screenWidth,
         int screenHeight,
-        const eve::Camera& camera,
-        const std::vector<std::shared_ptr<eve::Entity>>& entities
+        const ::eve::Camera& camera,
+        const std::vector<std::shared_ptr<::eve::Entity>>& entities
     );
     
     /**
