@@ -693,7 +693,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 #### DevOps & Deployment
 - [x] CI/CD pipeline (GitHub Actions) — Server and Client workflows
-- [x] Automated testing on PR — Server tests (362 assertions) run on push/PR
+- [x] Automated testing on PR — Server tests (521 assertions) run on push/PR
 - [x] Docker containerization — Multi-stage Dockerfile for dedicated server
 - [x] Crash reporting and logging — Structured Logger with levels, file output, and crash-safe exception handling
 - [x] Server monitoring and analytics — ServerMetrics tracking tick timing, entity/player counts, and uptime
@@ -774,7 +774,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 ## Success Metrics
 
 ### Current Achievement
-- ✅ **95+ test functions** - All passing across 8 test suites
+- ✅ **95+ test functions** - All passing (521 assertions across test suites)
 - ✅ **49 ships** - Tech I, Tech II, and Mining Barges across all classes
 - ✅ **70 modules** - Full fitting options
 - ✅ **47 skills** - Complete skill tree
@@ -798,6 +798,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - ✅ **C++ Server Module Activation** - Server-side MODULE_ACTIVATE/MODULE_DEACTIVATE protocol
 - ✅ **C++ Server ShipDatabase** - Data-driven ship stats from 66 JSON ship templates
 - ✅ **C++ Server FleetSystem** - Fleet creation, membership, roles, bonuses, target broadcast, fleet warp
+- ✅ **C++ Server InventorySystem** - Item add/remove/transfer with capacity limits (m3)
+- ✅ **C++ Server LootSystem** - Wreck creation from NPC LootTable, loot collection with ISK payout
+- ✅ **C++ Server NpcDatabase** - Data-driven NPC stats from 32 JSON templates
 
 ### Phase 7 Goals (COMPLETE)
 - [x] **Mining & Resource Gathering** - Core system complete ✅

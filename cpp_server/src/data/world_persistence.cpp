@@ -351,6 +351,46 @@ std::string WorldPersistence::serializeEntity(
              << "}";
     }
 
+    // Inventory
+    auto* inv = entity->getComponent<components::Inventory>();
+    if (inv) {
+        json << ",\"inventory\":{"
+             << "\"max_capacity\":" << inv->max_capacity
+             << ",\"items\":[";
+        bool first_item = true;
+        for (const auto& item : inv->items) {
+            if (!first_item) json << ",";
+            first_item = false;
+            json << "{\"item_id\":\"" << escapeJson(item.item_id) << "\""
+                 << ",\"name\":\"" << escapeJson(item.name) << "\""
+                 << ",\"type\":\"" << escapeJson(item.type) << "\""
+                 << ",\"quantity\":" << item.quantity
+                 << ",\"volume\":" << item.volume << "}";
+        }
+        json << "]}";
+    }
+
+    // LootTable
+    auto* lt = entity->getComponent<components::LootTable>();
+    if (lt) {
+        json << ",\"loot_table\":{"
+             << "\"isk_drop\":" << lt->isk_drop
+             << ",\"entries\":[";
+        bool first_entry = true;
+        for (const auto& entry : lt->entries) {
+            if (!first_entry) json << ",";
+            first_entry = false;
+            json << "{\"item_id\":\"" << escapeJson(entry.item_id) << "\""
+                 << ",\"name\":\"" << escapeJson(entry.name) << "\""
+                 << ",\"type\":\"" << escapeJson(entry.type) << "\""
+                 << ",\"drop_chance\":" << entry.drop_chance
+                 << ",\"min_quantity\":" << entry.min_quantity
+                 << ",\"max_quantity\":" << entry.max_quantity
+                 << ",\"volume\":" << entry.volume << "}";
+        }
+        json << "]}";
+    }
+
     json << "}";
     return json.str();
 }
@@ -650,6 +690,80 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
         fm->squad_id = extractString(fm_json, "squad_id");
         fm->wing_id  = extractString(fm_json, "wing_id");
         entity->addComponent(std::move(fm));
+    }
+
+    // Inventory
+    std::string inv_json = extractObject(json, "inventory");
+    if (!inv_json.empty()) {
+        auto inv = std::make_unique<components::Inventory>();
+        inv->max_capacity = extractFloat(inv_json, "\"max_capacity\":", 400.0f);
+
+        // Parse items array
+        size_t arr_start = inv_json.find("[");
+        size_t arr_end = inv_json.rfind("]");
+        if (arr_start != std::string::npos && arr_end != std::string::npos && arr_end > arr_start) {
+            std::string items_content = inv_json.substr(arr_start + 1, arr_end - arr_start - 1);
+            int depth = 0;
+            size_t obj_start = std::string::npos;
+            for (size_t i = 0; i < items_content.size(); ++i) {
+                if (items_content[i] == '{') {
+                    if (depth == 0) obj_start = i;
+                    ++depth;
+                } else if (items_content[i] == '}') {
+                    --depth;
+                    if (depth == 0 && obj_start != std::string::npos) {
+                        std::string item_json = items_content.substr(obj_start, i - obj_start + 1);
+                        components::Inventory::Item item;
+                        item.item_id  = extractString(item_json, "item_id");
+                        item.name     = extractString(item_json, "name");
+                        item.type     = extractString(item_json, "type");
+                        item.quantity = extractInt(item_json, "\"quantity\":");
+                        item.volume   = extractFloat(item_json, "\"volume\":", 1.0f);
+                        inv->items.push_back(item);
+                        obj_start = std::string::npos;
+                    }
+                }
+            }
+        }
+        entity->addComponent(std::move(inv));
+    }
+
+    // LootTable
+    std::string lt_json = extractObject(json, "loot_table");
+    if (!lt_json.empty()) {
+        auto lt = std::make_unique<components::LootTable>();
+        lt->isk_drop = extractDouble(lt_json, "\"isk_drop\":");
+
+        // Parse entries array
+        size_t arr_start = lt_json.find("[");
+        size_t arr_end = lt_json.rfind("]");
+        if (arr_start != std::string::npos && arr_end != std::string::npos && arr_end > arr_start) {
+            std::string entries_content = lt_json.substr(arr_start + 1, arr_end - arr_start - 1);
+            int depth = 0;
+            size_t obj_start = std::string::npos;
+            for (size_t i = 0; i < entries_content.size(); ++i) {
+                if (entries_content[i] == '{') {
+                    if (depth == 0) obj_start = i;
+                    ++depth;
+                } else if (entries_content[i] == '}') {
+                    --depth;
+                    if (depth == 0 && obj_start != std::string::npos) {
+                        std::string entry_json = entries_content.substr(obj_start, i - obj_start + 1);
+                        components::LootTable::LootEntry entry;
+                        entry.item_id      = extractString(entry_json, "item_id");
+                        entry.name         = extractString(entry_json, "name");
+                        entry.type         = extractString(entry_json, "type");
+                        entry.drop_chance  = extractFloat(entry_json, "\"drop_chance\":", 1.0f);
+                        entry.min_quantity = extractInt(entry_json, "\"min_quantity\":", 1);
+                        entry.max_quantity = extractInt(entry_json, "\"max_quantity\":", 1);
+                        entry.volume       = extractFloat(entry_json, "\"volume\":", 1.0f);
+                        lt->entries.push_back(entry);
+                        obj_start = std::string::npos;
+                    }
+                }
+            }
+        }
+        entity->addComponent(std::move(lt));
     }
 
     return true;
