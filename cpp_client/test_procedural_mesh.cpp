@@ -273,6 +273,101 @@ void testDeterministic() {
                "Same params produce same index count");
 }
 
+// ─── Ship class hull generation (validates no squiggly triangles) ──────
+
+void testShipClassHulls() {
+    std::cout << "\n=== Ship Class Hull Generation ===" << std::endl;
+
+    // Each entry: {sides, segments, segLength, baseRadius, scaleX, scaleZ, seed, label}
+    struct ShipClassParams {
+        int sides; int segments; float segLen; float baseR;
+        float scaleX; float scaleZ; unsigned int seed;
+        const char* label;
+    };
+    ShipClassParams classes[] = {
+        {6,  4,  0.85f, 0.45f, 1.0f, 0.8f,  100u, "Frigate"},
+        {6,  5,  1.0f,  0.35f, 0.8f, 0.7f,  200u, "Destroyer"},
+        {6,  6,  1.0f,  0.65f, 1.2f, 0.8f,  300u, "Cruiser"},
+        {6,  7,  1.2f,  0.8f,  1.1f, 0.9f,  500u, "Battlecruiser"},
+        {8,  8,  1.5f,  1.0f,  1.2f, 0.85f, 600u, "Battleship"},
+        {4,  5,  1.2f,  0.9f,  1.5f, 0.7f,  700u, "MiningBarge"},
+        {8,  10, 1.5f,  1.2f,  1.6f, 0.6f,  800u, "Carrier"},
+        {6,  8,  1.5f,  1.3f,  1.0f, 1.1f,  900u, "Dreadnought"},
+        {8,  12, 2.0f,  1.8f,  1.1f, 0.9f,  1000u,"Titan"},
+    };
+
+    for (const auto& c : classes) {
+        auto mults = generateRadiusMultipliers(c.segments, c.baseR, c.seed);
+        TriangulatedMesh hull = buildSegmentedHull(
+            c.sides, c.segments, c.segLen, c.baseR,
+            mults, c.scaleX, c.scaleZ, glm::vec3(0.5f));
+
+        assertTrue(!hull.vertices.empty(),
+                   std::string(c.label) + " has vertices");
+        assertTrue(!hull.indices.empty(),
+                   std::string(c.label) + " has indices");
+        assertTrue(hull.indices.size() % 3 == 0,
+                   std::string(c.label) + " index count is multiple of 3 (valid GL_TRIANGLES)");
+
+        // Verify no out-of-range indices (prevents random line artifacts)
+        bool validIndices = true;
+        unsigned int maxIdx = static_cast<unsigned int>(hull.vertices.size());
+        for (auto idx : hull.indices) {
+            if (idx >= maxIdx) { validIndices = false; break; }
+        }
+        assertTrue(validIndices,
+                   std::string(c.label) + " all indices within vertex range");
+
+        // Verify no degenerate triangles (area > 0) for first 10 triangles
+        bool noDegenerate = true;
+        int triCount = std::min(10, static_cast<int>(hull.indices.size() / 3));
+        for (int t = 0; t < triCount; ++t) {
+            glm::vec3 v0 = hull.vertices[hull.indices[t*3+0]].position;
+            glm::vec3 v1 = hull.vertices[hull.indices[t*3+1]].position;
+            glm::vec3 v2 = hull.vertices[hull.indices[t*3+2]].position;
+            float area = glm::length(glm::cross(v1 - v0, v2 - v0)) * 0.5f;
+            if (area < 1e-8f) { noDegenerate = false; break; }
+        }
+        assertTrue(noDegenerate,
+                   std::string(c.label) + " no degenerate zero-area triangles");
+
+        // Verify no NaN/Inf
+        bool noNaN = true;
+        for (const auto& v : hull.vertices) {
+            if (std::isnan(v.position.x) || std::isnan(v.position.y) || std::isnan(v.position.z) ||
+                std::isinf(v.position.x) || std::isinf(v.position.y) || std::isinf(v.position.z)) {
+                noNaN = false; break;
+            }
+        }
+        assertTrue(noNaN,
+                   std::string(c.label) + " no NaN/Inf in positions");
+
+        std::cout << "    " << c.label << ": " << hull.vertices.size()
+                  << " verts, " << hull.indices.size() / 3 << " tris" << std::endl;
+    }
+}
+
+// ─── Faction-specific sides variation ─────────────────────────────────
+
+void testFactionSidesVariation() {
+    std::cout << "\n=== Faction Sides Variation ===" << std::endl;
+
+    // Different factions should produce hulls with different silhouettes
+    int factionSides[] = {4, 6, 8, 12};  // Caldari, Minmatar, Amarr, Gallente
+    const char* names[] = {"Caldari(4)", "Minmatar(6)", "Amarr(8)", "Gallente(12)"};
+
+    for (int f = 0; f < 4; ++f) {
+        auto mults = generateRadiusMultipliers(4, 0.5f, 42u);
+        TriangulatedMesh hull = buildSegmentedHull(
+            factionSides[f], 4, 1.0f, 0.5f,
+            mults, 1.0f, 1.0f, glm::vec3(0.5f));
+        assertTrue(!hull.vertices.empty(),
+                   std::string(names[f]) + " hull generated");
+        assertTrue(hull.indices.size() % 3 == 0,
+                   std::string(names[f]) + " valid triangles");
+    }
+}
+
 // ─── main ──────────────────────────────────────────────────────────────
 
 int main() {
@@ -288,6 +383,8 @@ int main() {
     testBezier();
     testSegmentedHull();
     testDeterministic();
+    testShipClassHulls();
+    testFactionSidesVariation();
 
     std::cout << "\n=== Results ===" << std::endl;
     std::cout << testsPassed << " / " << testsRun << " tests passed" << std::endl;

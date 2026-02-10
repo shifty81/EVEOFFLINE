@@ -1,10 +1,14 @@
 #include "rendering/model.h"
 #include "rendering/mesh.h"
+#include "rendering/procedural_mesh_ops.h"
+#include "rendering/ship_part_library.h"
+#include "rendering/ship_generation_rules.h"
 #include <iostream>
 #include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <filesystem>
+#include <functional>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -471,6 +475,95 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
     return model;
 }
 
+std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string& shipType, const std::string& faction) {
+    // Try OBJ model first
+    std::string objPath = findOBJModelPath(shipType, faction);
+    if (!objPath.empty()) {
+        auto model = std::make_unique<Model>();
+        if (model->loadFromFile(objPath)) {
+            return model;
+        }
+    }
+
+    FactionColors colors = getFactionColors(faction);
+
+    // Determine ship class for hull parameters
+    std::string shipClass;
+    if (isFrigate(shipType))           shipClass = "Frigate";
+    else if (isDestroyer(shipType))    shipClass = "Destroyer";
+    else if (isTech2Cruiser(shipType)) shipClass = "Cruiser";
+    else if (isCruiser(shipType))      shipClass = "Cruiser";
+    else if (isCommandShip(shipType))  shipClass = "Battlecruiser";
+    else if (isBattlecruiser(shipType))shipClass = "Battlecruiser";
+    else if (isBattleship(shipType))   shipClass = "Battleship";
+    else if (isCarrier(shipType))      shipClass = "Carrier";
+    else if (isDreadnought(shipType))  shipClass = "Dreadnought";
+    else if (isTitan(shipType))        shipClass = "Titan";
+    else if (isMiningBarge(shipType))  shipClass = "Frigate";
+    else if (isStation(shipType))      return createStationModel(colors, shipType);
+    else if (isAsteroid(shipType))     return createAsteroidModel(shipType);
+    else                               shipClass = "Frigate";
+
+    // Use ShipPartLibrary to get faction/class-appropriate assembly config
+    // with per-ship-type seed for unique but deterministic variation
+    ShipVariationParams variation;
+    variation.seed = static_cast<unsigned int>(std::hash<std::string>{}(shipType + "|" + faction));
+    variation.proportionJitter = 0.3f;
+    variation.scaleJitter = 0.1f;
+
+    ShipPartLibrary library;
+    library.initialize();
+    ShipAssemblyConfig config = library.createVariedAssemblyConfig(shipClass, faction, variation);
+
+    // Map assembly config to hull parameters using faction-appropriate sides
+    HullParams p;
+    p.sides = getFactionSides(faction);
+    p.seed = variation.seed;
+    p.scaleX = config.proportions.y / config.proportions.x;
+    p.scaleZ = config.proportions.z / config.proportions.x;
+
+    // Map ship class to segment count and dimensions
+    if (shipClass == "Frigate") {
+        p.segments = 4;
+        p.segmentLength = config.overallScale / 4.0f;
+        p.baseRadius = config.overallScale * 0.13f;
+    } else if (shipClass == "Destroyer") {
+        p.segments = 5;
+        p.segmentLength = config.overallScale / 5.0f;
+        p.baseRadius = config.overallScale * 0.08f;
+    } else if (shipClass == "Cruiser") {
+        p.segments = 6;
+        p.segmentLength = config.overallScale / 6.0f;
+        p.baseRadius = config.overallScale * 0.12f;
+    } else if (shipClass == "Battlecruiser") {
+        p.segments = 7;
+        p.segmentLength = config.overallScale / 7.0f;
+        p.baseRadius = config.overallScale * 0.10f;
+    } else if (shipClass == "Battleship") {
+        p.segments = 8;
+        p.segmentLength = config.overallScale / 8.0f;
+        p.baseRadius = config.overallScale * 0.09f;
+    } else if (shipClass == "Carrier") {
+        p.segments = 10;
+        p.segmentLength = config.overallScale / 10.0f;
+        p.baseRadius = config.overallScale * 0.08f;
+    } else if (shipClass == "Dreadnought") {
+        p.segments = 8;
+        p.segmentLength = config.overallScale / 8.0f;
+        p.baseRadius = config.overallScale * 0.11f;
+    } else if (shipClass == "Titan") {
+        p.segments = 12;
+        p.segmentLength = config.overallScale / 12.0f;
+        p.baseRadius = config.overallScale * 0.07f;
+    } else {
+        p.segments = 4;
+        p.segmentLength = config.overallScale / 4.0f;
+        p.baseRadius = config.overallScale * 0.13f;
+    }
+
+    return buildShipFromParams(p, colors);
+}
+
 void Model::draw() const {
     for (const auto& mesh : m_meshes) {
         mesh->draw();
@@ -649,6 +742,67 @@ FactionColors Model::getFactionColors(const std::string& faction) {
         glm::vec4(0.3f, 0.3f, 0.3f, 1.0f),  // Dark gray
         glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)   // Light gray
     };
+}
+
+// ==================== Procedural Hull Generation via buildSegmentedHull ====================
+
+/**
+ * Parameters controlling the procedural hull builder for each ship class.
+ * These replace the old ad-hoc vertex/index generation that produced broken
+ * triangles (the "squiggly lines" problem).
+ */
+struct HullParams {
+    int sides;            // Cross-section polygon sides (4=blocky, 6=angular, 8=refined, 12=smooth)
+    int segments;         // Number of extrusion steps along hull length
+    float segmentLength;  // Length of each segment
+    float baseRadius;     // Starting cross-section radius
+    float scaleX;         // Width scale on cross-section
+    float scaleZ;         // Height scale on cross-section
+    unsigned int seed;    // Deterministic seed for radius variation
+};
+
+/**
+ * Get faction-appropriate cross-section sides.
+ * More sides = smoother silhouette.
+ */
+static int getFactionSides(const std::string& faction) {
+    if (faction.find("Caldari") != std::string::npos) return 4;   // Blocky/angular
+    if (faction.find("Minmatar") != std::string::npos) return 6;  // Industrial/angular
+    if (faction.find("Amarr") != std::string::npos) return 8;     // Refined/ornate
+    if (faction.find("Gallente") != std::string::npos) return 12; // Smooth/organic
+    return 6; // Default
+}
+
+/**
+ * Build a complete ship model from hull parameters using the procedural
+ * mesh system.  Generates a TriangulatedMesh with correct triangles,
+ * proper winding order, and valid indices (always multiples of 3).
+ *
+ * Replaces the old manual vertex/index code that produced degenerate
+ * triangles and squiggly rendering artifacts.
+ */
+static std::unique_ptr<Model> buildShipFromParams(
+    const HullParams& params,
+    const FactionColors& colors) {
+
+    auto model = std::make_unique<Model>();
+
+    glm::vec3 primaryColor(colors.primary.r, colors.primary.g, colors.primary.b);
+
+    auto mults = generateRadiusMultipliers(params.segments, params.baseRadius, params.seed);
+
+    TriangulatedMesh hull = buildSegmentedHull(
+        params.sides, params.segments,
+        params.segmentLength, params.baseRadius,
+        mults, params.scaleX, params.scaleZ,
+        primaryColor);
+
+    if (!hull.vertices.empty() && !hull.indices.empty()) {
+        auto mesh = std::make_unique<Mesh>(hull.vertices, hull.indices);
+        model->addMesh(std::move(mesh));
+    }
+
+    return model;
 }
 
 // ==================== Enhanced Procedural Detail Generation ====================
@@ -877,241 +1031,39 @@ void Model::addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsig
 
 // Ship model creation functions
 std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Create a more detailed frigate hull with better geometry
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 3.5f;
-    float width = 0.9f;
-    float height = 0.7f;
-
-    // Forward section - sleek nose
-    vertices.push_back({{length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
-    
-    // Front-mid section - expanding
-    for (int i = 0; i < 2; ++i) {
-        float t = (i + 1) / 7.0f;
-        float z = length * (1.0f - t * 0.3f);
-        float scale = 0.3f + t * 1.2f;
-        
-        // Top, bottom, sides
-        vertices.push_back({{z, width * scale, height * scale * 0.3f}, {0.0f, 1.0f, 0.3f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, height * scale * 0.3f}, {0.0f, -1.0f, 0.3f}, {}, colors.secondary});
-        vertices.push_back({{z, width * scale * 0.5f, height * scale}, {0.3f, 0.5f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale * 0.5f, height * scale}, {-0.3f, 0.5f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, width * scale * 0.5f, -height * scale * 0.7f}, {0.3f, 0.5f, -1.0f}, {}, colors.secondary});
-        vertices.push_back({{z, -width * scale * 0.5f, -height * scale * 0.7f}, {-0.3f, 0.5f, -1.0f}, {}, colors.secondary});
-    }
-    
-    // Mid section - main hull
-    for (int i = 2; i < 4; ++i) {
-        float t = (i + 1) / 7.0f;
-        float z = length * (1.0f - t);
-        float scale = 1.0f - (t - 0.3f) * 0.6f;
-        
-        vertices.push_back({{z, width * scale, height * scale * 0.3f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, height * scale * 0.3f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, width * scale * 0.5f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale * 0.5f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, width * scale * 0.5f, -height * scale * 0.7f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-        vertices.push_back({{z, -width * scale * 0.5f, -height * scale * 0.7f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    // Rear section - engine pods
-    for (int i = 4; i < 6; ++i) {
-        float t = (i + 1) / 7.0f;
-        float z = length * (1.0f - t);
-        float scale = 0.7f - (t - 0.6f) * 0.8f;
-        
-        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.7f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
-    }
-
-    // Engine exhaust points
-    vertices.push_back({{-length * 0.3f, width * 0.4f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-    vertices.push_back({{-length * 0.3f, -width * 0.4f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    // Add enhanced details - weapon hardpoints on forward hull
-    addWeaponHardpoints(vertices, indices, length * 0.6f, width * 0.5f, height * 0.2f, 2, 
-                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
-    
-    // Add engine glow detail at rear
-    addEngineDetail(vertices, indices, -length * 0.3f, width * 0.5f, height * 0.3f, 2,
-                    glm::vec3(colors.accent.r * 1.2f, colors.accent.g * 1.2f, colors.accent.b * 1.5f));
-    
-    // Add hull panel lines for detail
-    addHullPanelLines(vertices, indices, length * 0.5f, 0.0f, width * 0.8f,
-                     glm::vec3(colors.primary.r, colors.primary.g, colors.primary.b));
-
-    // Create triangles connecting vertices
-    for (unsigned int i = 1; i < vertices.size() - 2; i += 2) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-        
-        if (i + 2 < vertices.size()) {
-            indices.push_back(i);
-            indices.push_back(i + 1);
-            indices.push_back(i + 2);
-        }
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 6;
+    p.segments = 4;
+    p.segmentLength = 0.85f;
+    p.baseRadius = 0.45f;
+    p.scaleX = 1.0f;
+    p.scaleZ = 0.8f;
+    p.seed = 100u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createDestroyerModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Destroyers are longer, thinner, and more aggressive than frigates
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 5.0f;
-    float width = 0.7f;
-    float height = 0.6f;
-
-    // Sharp aggressive nose
-    vertices.push_back({{length, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
-    
-    // Forward weapon section - narrow and sleek
-    for (int i = 0; i < 3; ++i) {
-        float t = (i + 1) / 10.0f;
-        float z = length * (1.0f - t * 0.4f);
-        float scale = 0.4f + t * 0.8f;
-        
-        vertices.push_back({{z, width * scale, height * scale * 0.4f}, {0.0f, 1.0f, 0.2f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, height * scale * 0.4f}, {0.0f, -1.0f, 0.2f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.6f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-    
-    // Mid section - main destroyer spine
-    for (int i = 3; i < 7; ++i) {
-        float t = (i + 1) / 10.0f;
-        float z = length * (1.0f - t);
-        float scale = 1.0f - (t - 0.4f) * 0.5f;
-        
-        // Destroyer characteristic: dual-hull design with spine
-        vertices.push_back({{z, width * scale * 1.2f, height * scale * 0.3f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale * 1.2f, height * scale * 0.3f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * scale * 1.1f}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.5f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    // Rear engine section - split engines
-    for (int i = 7; i < 9; ++i) {
-        float t = (i + 1) / 10.0f;
-        float z = length * (1.0f - t);
-        float scale = 0.6f - (t - 0.7f) * 1.2f;
-        
-        vertices.push_back({{z, width * scale * 1.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, -width * scale * 1.5f, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, 0.0f, height * scale * 0.8f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.5f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
-    }
-
-    // Dual engine exhausts
-    vertices.push_back({{-length * 0.25f, width * 0.8f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-    vertices.push_back({{-length * 0.25f, -width * 0.8f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    // Create triangulated mesh
-    for (unsigned int i = 1; i < vertices.size() - 2; i += 2) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-        
-        if (i + 2 < vertices.size()) {
-            indices.push_back(i);
-            indices.push_back(i + 2);
-            indices.push_back(i + 1);
-        }
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 6;
+    p.segments = 5;
+    p.segmentLength = 1.0f;
+    p.baseRadius = 0.35f;
+    p.scaleX = 0.8f;
+    p.scaleZ = 0.7f;
+    p.seed = 200u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createCruiserModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Cruisers are larger, bulkier, with more presence
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 6.0f;
-    float width = 1.8f;
-    float height = 1.2f;
-
-    // Command bridge section
-    vertices.push_back({{length * 0.9f, 0.0f, height * 0.3f}, {1.0f, 0.0f, 0.3f}, {}, colors.primary});
-    
-    // Forward section - aggressive but substantial
-    for (int i = 0; i < 2; ++i) {
-        float t = (i + 1) / 12.0f;
-        float z = length * (0.9f - t * 0.3f);
-        float scale = 0.5f + t * 1.0f;
-        
-        vertices.push_back({{z, width * scale, height * scale * 0.4f}, {0.0f, 1.0f, 0.2f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, height * scale * 0.4f}, {0.0f, -1.0f, 0.2f}, {}, colors.secondary});
-        vertices.push_back({{z, width * scale * 0.6f, height * scale}, {0.2f, 0.3f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale * 0.6f, height * scale}, {-0.2f, 0.3f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.5f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-    
-    // Main hull - wide and powerful
-    for (int i = 2; i < 8; ++i) {
-        float t = (i + 1) / 12.0f;
-        float z = length * (0.9f - t);
-        float scale = 1.0f + (i < 5 ? t * 0.3f : (1.0f - t) * 0.2f);
-        
-        vertices.push_back({{z, width * scale, height * scale * 0.3f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, height * scale * 0.3f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, width * scale * 0.7f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale * 0.7f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.4f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    // Engine section - powerful propulsion
-    for (int i = 8; i < 11; ++i) {
-        float t = (i + 1) / 12.0f;
-        float z = length * (0.9f - t);
-        float scale = 1.2f - (t - 0.7f) * 1.5f;
-        
-        vertices.push_back({{z, width * scale, height * scale * 0.2f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, -width * scale, height * scale * 0.2f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, 0.0f, height * scale * 0.6f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.3f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
-    }
-
-    // Main engine exhaust
-    vertices.push_back({{-length * 0.15f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    // Create mesh triangulation
-    for (unsigned int i = 1; i < vertices.size() - 2; i += 2) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-        
-        if (i + 2 < vertices.size()) {
-            indices.push_back(i);
-            indices.push_back(i + 2);
-            indices.push_back(i + 3);
-        }
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 6;
+    p.segments = 6;
+    p.segmentLength = 1.0f;
+    p.baseRadius = 0.65f;
+    p.scaleX = 1.2f;
+    p.scaleZ = 0.8f;
+    p.seed = 300u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createTech2CruiserModel(const FactionColors& colors) {
@@ -1129,220 +1081,39 @@ std::unique_ptr<Model> Model::createTech2CruiserModel(const FactionColors& color
 }
 
 std::unique_ptr<Model> Model::createBattlecruiserModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Battlecruisers are massive, intimidating warships
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 8.5f;
-    float width = 2.5f;
-    float height = 1.8f;
-
-    // Forward command tower
-    vertices.push_back({{length * 0.85f, 0.0f, height * 0.5f}, {1.0f, 0.0f, 0.5f}, {}, colors.primary});
-    
-    // Front weapon platforms - massive and menacing
-    for (int i = 0; i < 3; ++i) {
-        float t = (i + 1) / 15.0f;
-        float z = length * (0.85f - t * 0.4f);
-        float scale = 0.6f + t * 0.8f;
-        
-        vertices.push_back({{z, width * scale, height * scale * 0.3f}, {0.0f, 1.0f, 0.1f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, height * scale * 0.3f}, {0.0f, -1.0f, 0.1f}, {}, colors.secondary});
-        vertices.push_back({{z, width * scale * 0.7f, height * scale}, {0.1f, 0.2f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale * 0.7f, height * scale}, {-0.1f, 0.2f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.4f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-    
-    // Main hull - broad and imposing
-    for (int i = 3; i < 10; ++i) {
-        float t = (i + 1) / 15.0f;
-        float z = length * (0.85f - t);
-        float widthScale = 1.0f + (i < 7 ? (t - 0.2f) * 0.4f : (1.0f - t) * 0.3f);
-        float heightScale = 1.0f - t * 0.15f;
-        
-        vertices.push_back({{z, width * widthScale, height * heightScale * 0.25f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * widthScale, height * heightScale * 0.25f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, width * widthScale * 0.6f, height * heightScale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * widthScale * 0.6f, height * heightScale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * heightScale * 0.35f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    // Engine array - multiple powerful engines
-    for (int i = 10; i < 14; ++i) {
-        float t = (i + 1) / 15.0f;
-        float z = length * (0.85f - t);
-        float scale = 1.3f - (t - 0.7f) * 1.8f;
-        
-        vertices.push_back({{z, width * scale * 0.9f, height * scale * 0.15f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, -width * scale * 0.9f, height * scale * 0.15f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, width * scale * 0.4f, height * scale * 0.5f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
-        vertices.push_back({{z, -width * scale * 0.4f, height * scale * 0.5f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
-        vertices.push_back({{z, 0.0f, -height * scale * 0.25f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
-    }
-
-    // Massive engine cluster exhausts
-    vertices.push_back({{-length * 0.18f, width * 0.6f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-    vertices.push_back({{-length * 0.18f, -width * 0.6f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-    vertices.push_back({{-length * 0.18f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    // Triangulation
-    for (unsigned int i = 1; i < vertices.size() - 3; i += 2) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-        
-        if (i + 3 < vertices.size()) {
-            indices.push_back(i);
-            indices.push_back(i + 2);
-            indices.push_back(i + 3);
-        }
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 6;
+    p.segments = 7;
+    p.segmentLength = 1.2f;
+    p.baseRadius = 0.8f;
+    p.scaleX = 1.1f;
+    p.scaleZ = 0.9f;
+    p.seed = 500u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createBattleshipModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Battleships are the largest subcapital ships - absolutely massive and powerful
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 12.0f;
-    float width = 3.5f;
-    float height = 2.5f;
-
-    // Command citadel
-    vertices.push_back({{length * 0.8f, 0.0f, height * 0.6f}, {1.0f, 0.0f, 0.6f}, {}, colors.primary});
-    
-    // Forward battle section with weapon batteries
-    for (int i = 0; i < 4; ++i) {
-        float t = (i + 1) / 20.0f;
-        float z = length * (0.8f - t * 0.5f);
-        float scale = 0.5f + t * 1.2f;
-        
-        vertices.push_back({{z, width * scale, height * scale * 0.25f}, {0.0f, 1.0f, 0.1f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, height * scale * 0.25f}, {0.0f, -1.0f, 0.1f}, {}, colors.secondary});
-        vertices.push_back({{z, width * scale * 0.65f, height * scale * 0.9f}, {0.1f, 0.15f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale * 0.65f, height * scale * 0.9f}, {-0.1f, 0.15f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, width * scale * 0.5f, -height * scale * 0.3f}, {0.1f, 0.0f, -1.0f}, {}, colors.secondary});
-        vertices.push_back({{z, -width * scale * 0.5f, -height * scale * 0.3f}, {-0.1f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-    
-    // Main battleship superstructure - extremely wide and imposing
-    for (int i = 4; i < 14; ++i) {
-        float t = (i + 1) / 20.0f;
-        float z = length * (0.8f - t);
-        float widthScale = 1.0f + (i < 10 ? (t - 0.25f) * 0.5f : (1.0f - t) * 0.4f);
-        float heightScale = 1.0f - t * 0.12f;
-        
-        vertices.push_back({{z, width * widthScale, height * heightScale * 0.2f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * widthScale, height * heightScale * 0.2f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, width * widthScale * 0.55f, height * heightScale * 0.85f}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * widthScale * 0.55f, height * heightScale * 0.85f}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, width * widthScale * 0.45f, -height * heightScale * 0.25f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-        vertices.push_back({{z, -width * widthScale * 0.45f, -height * heightScale * 0.25f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    // Massive engine banks
-    for (int i = 14; i < 19; ++i) {
-        float t = (i + 1) / 20.0f;
-        float z = length * (0.8f - t);
-        float scale = 1.5f - (t - 0.7f) * 2.2f;
-        
-        vertices.push_back({{z, width * scale * 0.8f, height * scale * 0.12f}, {0.0f, 1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, -width * scale * 0.8f, height * scale * 0.12f}, {0.0f, -1.0f, 0.0f}, {}, colors.accent});
-        vertices.push_back({{z, width * scale * 0.35f, height * scale * 0.4f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
-        vertices.push_back({{z, -width * scale * 0.35f, height * scale * 0.4f}, {0.0f, 0.0f, 1.0f}, {}, colors.accent});
-        vertices.push_back({{z, width * scale * 0.3f, -height * scale * 0.2f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
-        vertices.push_back({{z, -width * scale * 0.3f, -height * scale * 0.2f}, {0.0f, 0.0f, -1.0f}, {}, colors.accent});
-    }
-
-    // Multiple massive engine exhaust ports
-    vertices.push_back({{-length * 0.22f, width * 0.9f, height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-    vertices.push_back({{-length * 0.22f, -width * 0.9f, height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-    vertices.push_back({{-length * 0.22f, width * 0.4f, -height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-    vertices.push_back({{-length * 0.22f, -width * 0.4f, -height * 0.1f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    // Add enhanced details for battleship - massive weapon platforms
-    // Forward turret batteries (top and bottom)
-    addWeaponHardpoints(vertices, indices, length * 0.5f, width * 0.8f, height * 0.4f, 4,
-                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
-    addWeaponHardpoints(vertices, indices, length * 0.3f, width * 0.9f, height * 0.3f, 4,
-                        glm::vec3(colors.accent.r, colors.accent.g, colors.accent.b));
-    
-    // Missile launcher bays on sides
-    addWeaponHardpoints(vertices, indices, length * 0.2f, width * 1.0f, 0.0f, 4,
-                        glm::vec3(colors.secondary.r, colors.secondary.g, colors.secondary.b));
-    
-    // Massive engine array at rear - 6 large exhausts
-    addEngineDetail(vertices, indices, -length * 0.22f, width * 1.2f, height * 0.5f, 6,
-                    glm::vec3(colors.accent.r * 1.3f, colors.accent.g * 1.3f, colors.accent.b * 1.8f));
-    
-    // Command superstructure detail
-    addHullPanelLines(vertices, indices, length * 0.6f, 0.0f, width * 1.1f,
-                     glm::vec3(colors.primary.r, colors.primary.g, colors.primary.b));
-
-    // Triangulation with proper connectivity
-    for (unsigned int i = 1; i < vertices.size() - 4; i += 3) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-        
-        if (i + 3 < vertices.size()) {
-            indices.push_back(i);
-            indices.push_back(i + 2);
-            indices.push_back(i + 3);
-        }
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 8;
+    p.segments = 8;
+    p.segmentLength = 1.5f;
+    p.baseRadius = 1.0f;
+    p.scaleX = 1.2f;
+    p.scaleZ = 0.85f;
+    p.seed = 600u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createMiningBargeModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Mining barges are bulky and wide
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 6.0f;
-    float width = 3.0f;
-    float height = 2.0f;
-
-    vertices.push_back({{length * 0.5f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
-    
-    for (int i = 0; i < 4; ++i) {
-        float t = (i + 1) / 5.0f;
-        float z = -length * t;
-        float scale = 1.0f;
-        
-        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    vertices.push_back({{-length, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 4;
+    p.segments = 5;
+    p.segmentLength = 1.2f;
+    p.baseRadius = 0.9f;
+    p.scaleX = 1.5f;
+    p.scaleZ = 0.7f;
+    p.seed = 700u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createGenericModel(const FactionColors& colors) {
@@ -1351,235 +1122,88 @@ std::unique_ptr<Model> Model::createGenericModel(const FactionColors& colors) {
 }
 
 std::unique_ptr<Model> Model::createCarrierModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Carriers are massive capital ships with a distinctive carrier deck
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 15.0f;
-    float width = 6.0f;
-    float height = 4.0f;
-
-    // Front command section (smaller)
-    vertices.push_back({{length * 0.8f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
-    
-    // Main carrier deck sections - flat and wide
-    for (int i = 0; i < 10; ++i) {
-        float t = (i + 1) / 11.0f;
-        float z = length * 0.8f - length * t;
-        // Carriers are wider in the middle
-        float widthScale = (i < 5) ? (1.0f + t * 0.5f) : (1.5f - (t - 0.5f) * 0.8f);
-        float heightScale = 1.0f - t * 0.2f;
-        
-        vertices.push_back({{z, width * widthScale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * widthScale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * heightScale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * heightScale * 0.3f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    // Rear engine section
-    vertices.push_back({{-length * 0.3f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 8;
+    p.segments = 10;
+    p.segmentLength = 1.5f;
+    p.baseRadius = 1.2f;
+    p.scaleX = 1.6f;
+    p.scaleZ = 0.6f;
+    p.seed = 800u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createDreadnoughtModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Dreadnoughts are compact but heavily armored with massive gun platforms
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 12.0f;
-    float width = 4.5f;
-    float height = 5.0f;
-
-    // Front weapon platform
-    vertices.push_back({{length * 0.7f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
-    
-    // Main hull - bulky and thick
-    for (int i = 0; i < 8; ++i) {
-        float t = (i + 1) / 9.0f;
-        float z = length * 0.7f - length * t;
-        // Dreadnoughts are thick and compact
-        float scale = 1.0f + (t < 0.5f ? t * 0.4f : (1.0f - t) * 0.4f);
-        
-        vertices.push_back({{z, width * scale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * scale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * scale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * scale}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    // Rear engine array
-    vertices.push_back({{-length * 0.35f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 6;
+    p.segments = 8;
+    p.segmentLength = 1.5f;
+    p.baseRadius = 1.3f;
+    p.scaleX = 1.0f;
+    p.scaleZ = 1.1f;
+    p.seed = 900u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createTitanModel(const FactionColors& colors) {
-    auto model = std::make_unique<Model>();
-    
-    // Titans are absolutely massive, the largest ships in the game
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float length = 25.0f;
-    float width = 8.0f;
-    float height = 7.0f;
-
-    // Massive front section
-    vertices.push_back({{length * 0.6f, 0.0f, 0.0f}, {1.0f, 0.0f, 0.0f}, {}, colors.primary});
-    
-    // Command tower and main hull
-    for (int i = 0; i < 15; ++i) {
-        float t = (i + 1) / 16.0f;
-        float z = length * 0.6f - length * t;
-        
-        // Titans have a distinctive shape - wider in forward sections
-        float widthScale = 1.0f + (t < 0.4f ? t * 0.8f : (1.0f - t) * 0.5f);
-        float heightScale = 1.0f + (t < 0.3f ? t * 0.5f : (1.0f - t) * 0.3f);
-        
-        vertices.push_back({{z, width * widthScale, 0.0f}, {0.0f, 1.0f, 0.0f}, {}, colors.primary});
-        vertices.push_back({{z, -width * widthScale, 0.0f}, {0.0f, -1.0f, 0.0f}, {}, colors.secondary});
-        vertices.push_back({{z, 0.0f, height * heightScale}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{z, 0.0f, -height * heightScale * 0.6f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-
-    // Massive engine clusters
-    vertices.push_back({{-length * 0.45f, 0.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {}, colors.accent});
-
-    for (unsigned int i = 0; i < vertices.size() - 1; ++i) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back(i + 1);
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    HullParams p;
+    p.sides = 8;
+    p.segments = 12;
+    p.segmentLength = 2.0f;
+    p.baseRadius = 1.8f;
+    p.scaleX = 1.1f;
+    p.scaleZ = 0.9f;
+    p.seed = 1000u;
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createStationModel(const FactionColors& colors, const std::string& stationType) {
-    auto model = std::make_unique<Model>();
-    
-    // Stations are large stationary structures
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
-
-    float size = 20.0f;
-    float radius = size * 0.5f;
-    
-    // Create a basic station structure with a central hub and spokes
-    // Central core
-    int segments = 8;
-    for (int i = 0; i < segments; ++i) {
-        float angle = (i * 2.0f * PI) / segments;
-        float x = radius * 0.3f * std::cos(angle);
-        float y = radius * 0.3f * std::sin(angle);
-        
-        vertices.push_back({{x, y, radius * 0.5f}, {0.0f, 0.0f, 1.0f}, {}, colors.primary});
-        vertices.push_back({{x, y, -radius * 0.5f}, {0.0f, 0.0f, -1.0f}, {}, colors.secondary});
-    }
-    
-    // Add docking spokes
-    for (int i = 0; i < 4; ++i) {
-        float angle = (i * PI * 0.5f);
-        float x = radius * std::cos(angle);
-        float y = radius * std::sin(angle);
-        
-        vertices.push_back({{x, y, 0.0f}, {std::cos(angle), std::sin(angle), 0.0f}, {}, colors.accent});
-    }
-
-    // Create triangles for the station structure
-    for (unsigned int i = 0; i < vertices.size() / 2 - 1; ++i) {
-        indices.push_back(i);
-        indices.push_back(i + 1);
-        indices.push_back(i + 2);
-    }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
-
-    return model;
+    // Stations use a high-sided cylindrical hull for a ring/hub shape
+    HullParams p;
+    p.sides = 12;
+    p.segments = 6;
+    p.segmentLength = 3.0f;
+    p.baseRadius = 3.0f;
+    p.scaleX = 1.0f;
+    p.scaleZ = 1.0f;
+    p.seed = static_cast<unsigned int>(std::hash<std::string>{}(stationType));
+    return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createAsteroidModel(const std::string& oreType) {
     auto model = std::make_unique<Model>();
-    
-    // Asteroids are irregular rock formations
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
 
     // Determine color based on ore type
     glm::vec3 asteroidColor = glm::vec3(0.5f, 0.5f, 0.5f); // Default gray
-    
+
     if (oreType.find("Veldspar") != std::string::npos) {
-        asteroidColor = glm::vec3(0.6f, 0.4f, 0.2f); // Brown-orange
+        asteroidColor = glm::vec3(0.6f, 0.4f, 0.2f);
     } else if (oreType.find("Scordite") != std::string::npos) {
-        asteroidColor = glm::vec3(0.5f, 0.5f, 0.55f); // Gray metallic
+        asteroidColor = glm::vec3(0.5f, 0.5f, 0.55f);
     } else if (oreType.find("Pyroxeres") != std::string::npos) {
-        asteroidColor = glm::vec3(0.7f, 0.3f, 0.2f); // Red-brown
+        asteroidColor = glm::vec3(0.7f, 0.3f, 0.2f);
     } else if (oreType.find("Plagioclase") != std::string::npos) {
-        asteroidColor = glm::vec3(0.3f, 0.5f, 0.4f); // Green-gray
+        asteroidColor = glm::vec3(0.3f, 0.5f, 0.4f);
     } else if (oreType.find("Omber") != std::string::npos) {
-        asteroidColor = glm::vec3(0.8f, 0.6f, 0.3f); // Golden-brown
+        asteroidColor = glm::vec3(0.8f, 0.6f, 0.3f);
     } else if (oreType.find("Kernite") != std::string::npos) {
-        asteroidColor = glm::vec3(0.3f, 0.6f, 0.7f); // Blue-cyan
+        asteroidColor = glm::vec3(0.3f, 0.6f, 0.7f);
     } else if (oreType.find("Jaspet") != std::string::npos) {
-        asteroidColor = glm::vec3(0.6f, 0.2f, 0.3f); // Dark red
+        asteroidColor = glm::vec3(0.6f, 0.2f, 0.3f);
     } else if (oreType.find("Hemorphite") != std::string::npos) {
-        asteroidColor = glm::vec3(0.9f, 0.3f, 0.2f); // Bright red-orange
+        asteroidColor = glm::vec3(0.9f, 0.3f, 0.2f);
     }
 
-    float size = 2.5f;
-    
-    // Create an irregular shape using multiple vertices
-    int points = 12;
-    for (int i = 0; i < points; ++i) {
-        float theta = (i * 2.0f * PI) / points;
-        float phi = (i * PI) / points;
-        
-        // Add randomness to make it look irregular
-        float r = size * (0.7f + (i % 3) * 0.15f);
-        
-        float x = r * std::sin(phi) * std::cos(theta);
-        float y = r * std::sin(phi) * std::sin(theta);
-        float z = r * std::cos(phi);
-        
-        glm::vec3 normal = glm::normalize(glm::vec3(x, y, z));
-        
-        vertices.push_back({{x, y, z}, normal, {}, asteroidColor});
-    }
+    // Use irregular polygon extrusion for a rocky, lumpy shape
+    unsigned int seed = static_cast<unsigned int>(std::hash<std::string>{}(oreType));
+    auto mults = generateRadiusMultipliers(3, 2.0f, seed);
+    TriangulatedMesh hull = buildSegmentedHull(
+        5, 3, 1.5f, 2.0f, mults, 1.0f, 1.0f, asteroidColor);
 
-    // Create triangles
-    for (unsigned int i = 0; i < vertices.size(); ++i) {
-        indices.push_back(0);
-        indices.push_back(i);
-        indices.push_back((i + 1) % vertices.size());
+    if (!hull.vertices.empty() && !hull.indices.empty()) {
+        auto mesh = std::make_unique<Mesh>(hull.vertices, hull.indices);
+        model->addMesh(std::move(mesh));
     }
-
-    auto mesh = std::make_unique<Mesh>(vertices, indices);
-    model->addMesh(std::move(mesh));
 
     return model;
 }
