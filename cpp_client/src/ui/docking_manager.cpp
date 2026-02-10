@@ -236,7 +236,10 @@ void DockingManager::RenderFloatingPanel(DockablePanel& panel) {
             ImGui::SameLine();
             // Opacity slider (compact)
             ImGui::SetNextItemWidth(std::min(80.0f, availW - 120.0f));
-            ImGui::SliderFloat("##opacity", &panel.opacity, 0.15f, 1.0f, "%.0f%%");
+            float opacityPct = panel.opacity * 100.0f;
+            if (ImGui::SliderFloat("##opacity", &opacityPct, 15.0f, 100.0f, "%.0f%%")) {
+                panel.opacity = opacityPct / 100.0f;
+            }
             if (ImGui::IsItemHovered()) {
                 ImGui::SetTooltip("Background opacity");
             }
@@ -245,8 +248,9 @@ void DockingManager::RenderFloatingPanel(DockablePanel& panel) {
 
         // Render panel contents only if not collapsed
         if (!panel.collapsed) {
-            // Push slightly transparent text so it's readable even at low bg opacity
-            float textAlpha = std::max(0.75f, panel.opacity + 0.08f);
+            // Ensure text stays readable even at low background opacity
+            static constexpr float TEXT_ALPHA_BOOST = 0.08f;
+            float textAlpha = std::max(0.75f, panel.opacity + TEXT_ALPHA_BOOST);
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(
                 EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
                 EVEColors::TEXT_PRIMARY[2], textAlpha));

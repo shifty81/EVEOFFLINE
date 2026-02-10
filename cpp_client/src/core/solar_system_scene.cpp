@@ -402,7 +402,7 @@ void SolarSystemScene::generateSystem(uint32_t seed, const std::string& systemNa
         std::ostringstream pid;
         pid << "planet_" << (i + 1);
         planet.id = pid.str();
-        planet.name = systemName + " " + romanNumerals[i];
+        planet.name = systemName + " " + (i < 8 ? romanNumerals[i] : std::to_string(i + 1));
         planet.type = Celestial::Type::PLANET;
         planet.position = glm::vec3(px, py, pz);
         planet.radius = pRadius;
@@ -422,7 +422,7 @@ void SolarSystemScene::generateSystem(uint32_t seed, const std::string& systemNa
             std::ostringstream mid;
             mid << "moon_" << (i + 1) << "_" << (m + 1);
             moon.id = mid.str();
-            moon.name = systemName + " " + romanNumerals[i] + " - Moon " + std::to_string(m + 1);
+            moon.name = systemName + " " + (i < 8 ? romanNumerals[i] : std::to_string(i + 1)) + " - Moon " + std::to_string(m + 1);
             moon.type = Celestial::Type::MOON;
             moon.position = glm::vec3(
                 px + std::cos(moonAngle) * moonDist,
@@ -447,7 +447,8 @@ void SolarSystemScene::generateSystem(uint32_t seed, const std::string& systemNa
         std::ostringstream bid;
         bid << "belt_" << (b + 1);
         belt.id = bid.str();
-        belt.name = systemName + " - Asteroid Belt " + romanNumerals[b];
+        belt.name = systemName + " - Asteroid Belt " +
+            (b < 8 ? romanNumerals[b] : std::to_string(b + 1));
         belt.type = Celestial::Type::ASTEROID_BELT;
         belt.position = glm::vec3(
             std::cos(beltAngle) * beltAU * AU_IN_METERS,
@@ -491,7 +492,7 @@ void SolarSystemScene::generateSystem(uint32_t seed, const std::string& systemNa
 
         int prefixIdx = static_cast<int>(rng() % 8);
         if (parentPlanet) {
-            station.name = systemName + " " + romanNumerals[nearPlanet] + " - " + stationPrefixes[prefixIdx];
+            station.name = systemName + " " + (nearPlanet < 8 ? romanNumerals[nearPlanet] : std::to_string(nearPlanet + 1)) + " - " + stationPrefixes[prefixIdx];
             station.position = parentPlanet->position + glm::vec3(
                 (rng() % 2000) - 1000.0f,
                 500.0f + (rng() % 1000),
