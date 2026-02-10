@@ -452,6 +452,57 @@ public:
     COMPONENT_TYPE(ModuleRack)
 };
 
+/**
+ * @brief Cargo inventory for ships, wrecks, containers
+ */
+class Inventory : public ecs::Component {
+public:
+    struct Item {
+        std::string item_id;
+        std::string name;
+        std::string type;        // "weapon", "module", "ammo", "ore", "salvage", "commodity"
+        int quantity = 1;
+        float volume = 1.0f;     // m3 per unit
+    };
+
+    std::vector<Item> items;
+    float max_capacity = 400.0f;  // m3 cargo hold
+
+    float usedCapacity() const {
+        float total = 0.0f;
+        for (const auto& item : items)
+            total += item.volume * item.quantity;
+        return total;
+    }
+
+    float freeCapacity() const {
+        return max_capacity - usedCapacity();
+    }
+
+    COMPONENT_TYPE(Inventory)
+};
+
+/**
+ * @brief Loot drop table attached to NPCs
+ */
+class LootTable : public ecs::Component {
+public:
+    struct LootEntry {
+        std::string item_id;
+        std::string name;
+        std::string type;
+        float drop_chance = 1.0f;  // 0.0-1.0
+        int min_quantity = 1;
+        int max_quantity = 1;
+        float volume = 1.0f;
+    };
+
+    std::vector<LootEntry> entries;
+    double isk_drop = 0.0;     // ISK bounty
+
+    COMPONENT_TYPE(LootTable)
+};
+
 } // namespace components
 } // namespace eve
 

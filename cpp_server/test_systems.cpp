@@ -21,7 +21,10 @@
 #include "systems/mission_system.h"
 #include "systems/skill_system.h"
 #include "systems/module_system.h"
+#include "systems/inventory_system.h"
+#include "systems/loot_system.h"
 #include "data/world_persistence.h"
+#include "data/npc_database.h"
 #include "systems/movement_system.h"
 #include "utils/logger.h"
 #include "utils/server_metrics.h"
@@ -2731,6 +2734,329 @@ void testMovementWarpDistance() {
     assertTrue(warped, "Warp accepted (>150km)");
 }
 
+// ==================== Inventory System Tests ====================
+
+void testInventoryAddItem() {
+    std::cout << "\n=== Inventory Add Item ===" << std::endl;
+
+    ecs::World world;
+    systems::InventorySystem invSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 100.0f;
+
+    bool added = invSys.addItem("ship1", "tritanium", "Tritanium", "ore", 10, 1.0f);
+    assertTrue(added, "Item added successfully");
+    assertTrue(inv->items.size() == 1, "One item stack in inventory");
+    assertTrue(inv->items[0].quantity == 10, "Quantity is 10");
+    assertTrue(approxEqual(inv->usedCapacity(), 10.0f), "Used capacity is 10 m3");
+
+    // Stack with existing
+    added = invSys.addItem("ship1", "tritanium", "Tritanium", "ore", 5, 1.0f);
+    assertTrue(added, "Stacked item added");
+    assertTrue(inv->items.size() == 1, "Still one stack after stacking");
+    assertTrue(inv->items[0].quantity == 15, "Quantity is 15 after stacking");
+}
+
+void testInventoryCapacityLimit() {
+    std::cout << "\n=== Inventory Capacity Limit ===" << std::endl;
+
+    ecs::World world;
+    systems::InventorySystem invSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 50.0f;
+
+    bool added = invSys.addItem("ship1", "ore", "Veldspar", "ore", 40, 1.0f);
+    assertTrue(added, "40 m3 fits in 50 m3 hold");
+
+    added = invSys.addItem("ship1", "big_item", "Big Module", "module", 1, 20.0f);
+    assertTrue(!added, "20 m3 item rejected (only 10 m3 free)");
+    assertTrue(approxEqual(inv->freeCapacity(), 10.0f), "Free capacity is 10 m3");
+}
+
+void testInventoryRemoveItem() {
+    std::cout << "\n=== Inventory Remove Item ===" << std::endl;
+
+    ecs::World world;
+    systems::InventorySystem invSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 400.0f;
+
+    invSys.addItem("ship1", "ammo", "Hybrid Charges", "ammo", 100, 0.01f);
+
+    int removed = invSys.removeItem("ship1", "ammo", 30);
+    assertTrue(removed == 30, "Removed 30 units");
+    assertTrue(invSys.getItemCount("ship1", "ammo") == 70, "70 remaining");
+
+    removed = invSys.removeItem("ship1", "ammo", 200);
+    assertTrue(removed == 70, "Removed only 70 (all available)");
+    assertTrue(inv->items.empty(), "Item stack removed when depleted");
+}
+
+void testInventoryTransfer() {
+    std::cout << "\n=== Inventory Transfer ===" << std::endl;
+
+    ecs::World world;
+    systems::InventorySystem invSys(&world);
+
+    auto* ship1 = world.createEntity("ship1");
+    auto* inv1 = addComp<components::Inventory>(ship1);
+    inv1->max_capacity = 400.0f;
+
+    auto* ship2 = world.createEntity("ship2");
+    auto* inv2 = addComp<components::Inventory>(ship2);
+    inv2->max_capacity = 400.0f;
+
+    invSys.addItem("ship1", "salvage", "Armor Plates", "salvage", 20, 2.0f);
+
+    bool transferred = invSys.transferItem("ship1", "ship2", "salvage", 10);
+    assertTrue(transferred, "Transfer succeeded");
+    assertTrue(invSys.getItemCount("ship1", "salvage") == 10, "Source has 10 left");
+    assertTrue(invSys.getItemCount("ship2", "salvage") == 10, "Destination has 10");
+
+    // Transfer fails if source lacks quantity
+    transferred = invSys.transferItem("ship1", "ship2", "nonexistent", 5);
+    assertTrue(!transferred, "Transfer fails for missing item");
+}
+
+void testInventoryHasItem() {
+    std::cout << "\n=== Inventory HasItem ===" << std::endl;
+
+    ecs::World world;
+    systems::InventorySystem invSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    addComp<components::Inventory>(ship);
+
+    invSys.addItem("ship1", "dogtag", "Pirate Dogtag", "commodity", 5, 0.1f);
+
+    assertTrue(invSys.hasItem("ship1", "dogtag", 3), "Has 3 dogtags (has 5)");
+    assertTrue(invSys.hasItem("ship1", "dogtag", 5), "Has exactly 5 dogtags");
+    assertTrue(!invSys.hasItem("ship1", "dogtag", 6), "Does not have 6 dogtags");
+    assertTrue(!invSys.hasItem("ship1", "nope"), "Does not have nonexistent item");
+}
+
+// ==================== Loot System Tests ====================
+
+void testLootGenerate() {
+    std::cout << "\n=== Loot Generate ===" << std::endl;
+
+    ecs::World world;
+    systems::LootSystem lootSys(&world);
+    lootSys.setRandomSeed(42);
+
+    auto* npc = world.createEntity("pirate1");
+    auto* lt = addComp<components::LootTable>(npc);
+    lt->isk_drop = 15000.0;
+
+    components::LootTable::LootEntry entry1;
+    entry1.item_id     = "scrap_metal";
+    entry1.name        = "Scrap Metal";
+    entry1.type        = "salvage";
+    entry1.drop_chance = 1.0f;  // always drops
+    entry1.min_quantity = 1;
+    entry1.max_quantity = 5;
+    entry1.volume      = 1.0f;
+    lt->entries.push_back(entry1);
+
+    components::LootTable::LootEntry entry2;
+    entry2.item_id     = "rare_module";
+    entry2.name        = "Rare Module";
+    entry2.type        = "module";
+    entry2.drop_chance = 1.0f;  // always drops for testing
+    entry2.min_quantity = 1;
+    entry2.max_quantity = 1;
+    entry2.volume      = 5.0f;
+    lt->entries.push_back(entry2);
+
+    std::string wreck_id = lootSys.generateLoot("pirate1");
+    assertTrue(!wreck_id.empty(), "Wreck entity created");
+
+    auto* wreck = world.getEntity(wreck_id);
+    assertTrue(wreck != nullptr, "Wreck entity exists in world");
+
+    auto* wreck_inv = wreck->getComponent<components::Inventory>();
+    assertTrue(wreck_inv != nullptr, "Wreck has Inventory component");
+    assertTrue(wreck_inv->items.size() >= 1, "Wreck has at least one item");
+
+    auto* wreck_lt = wreck->getComponent<components::LootTable>();
+    assertTrue(wreck_lt != nullptr, "Wreck has LootTable for ISK");
+    assertTrue(wreck_lt->isk_drop > 14999.0 && wreck_lt->isk_drop < 15001.0,
+               "ISK bounty preserved on wreck");
+}
+
+void testLootCollect() {
+    std::cout << "\n=== Loot Collect ===" << std::endl;
+
+    ecs::World world;
+    systems::LootSystem lootSys(&world);
+    lootSys.setRandomSeed(42);
+
+    // Create NPC with loot
+    auto* npc = world.createEntity("pirate2");
+    auto* lt = addComp<components::LootTable>(npc);
+    lt->isk_drop = 25000.0;
+
+    components::LootTable::LootEntry entry;
+    entry.item_id     = "hybrid_charges";
+    entry.name        = "Hybrid Charges";
+    entry.type        = "ammo";
+    entry.drop_chance = 1.0f;
+    entry.min_quantity = 10;
+    entry.max_quantity = 10;
+    entry.volume      = 0.01f;
+    lt->entries.push_back(entry);
+
+    std::string wreck_id = lootSys.generateLoot("pirate2");
+
+    // Create player
+    auto* player = world.createEntity("player1");
+    auto* player_inv = addComp<components::Inventory>(player);
+    player_inv->max_capacity = 400.0f;
+    auto* player_comp = addComp<components::Player>(player);
+    player_comp->isk = 100000.0;
+
+    bool collected = lootSys.collectLoot(wreck_id, "player1");
+    assertTrue(collected, "Loot collected successfully");
+    assertTrue(player_inv->items.size() >= 1, "Player received items");
+    assertTrue(player_comp->isk > 124999.0 && player_comp->isk < 125001.0,
+               "Player ISK increased by bounty");
+}
+
+void testLootEmptyTable() {
+    std::cout << "\n=== Loot Empty Table ===" << std::endl;
+
+    ecs::World world;
+    systems::LootSystem lootSys(&world);
+    lootSys.setRandomSeed(99);
+
+    auto* npc = world.createEntity("pirate3");
+    auto* lt = addComp<components::LootTable>(npc);
+    lt->isk_drop = 0.0;
+    // No entries
+
+    std::string wreck_id = lootSys.generateLoot("pirate3");
+    assertTrue(!wreck_id.empty(), "Wreck created even with empty loot table");
+
+    auto* wreck = world.getEntity(wreck_id);
+    auto* wreck_inv = wreck->getComponent<components::Inventory>();
+    assertTrue(wreck_inv->items.empty(), "Wreck has no items from empty table");
+}
+
+// ==================== NpcDatabase Tests ====================
+
+void testNpcDatabaseLoad() {
+    std::cout << "\n=== NpcDatabase Load ===" << std::endl;
+
+    data::NpcDatabase npcDb;
+
+    // Try multiple paths (same strategy as ShipDatabase tests)
+    int loaded = npcDb.loadFromDirectory("../data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("../../data");
+
+    assertTrue(loaded > 0, "NpcDatabase loaded NPCs from directory");
+    assertTrue(npcDb.getNpcCount() >= 32, "At least 32 NPC templates loaded");
+}
+
+void testNpcDatabaseGetNpc() {
+    std::cout << "\n=== NpcDatabase GetNpc ===" << std::endl;
+
+    data::NpcDatabase npcDb;
+    int loaded = npcDb.loadFromDirectory("../data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("../../data");
+
+    const data::NpcTemplate* scout = npcDb.getNpc("venom_syndicate_scout");
+    assertTrue(scout != nullptr, "venom_syndicate_scout found");
+    assertTrue(scout->name == "Venom Syndicate Scout", "NPC name correct");
+    assertTrue(scout->type == "frigate", "NPC type correct");
+    assertTrue(scout->faction == "Venom Syndicate", "NPC faction correct");
+}
+
+void testNpcDatabaseHpValues() {
+    std::cout << "\n=== NpcDatabase HP Values ===" << std::endl;
+
+    data::NpcDatabase npcDb;
+    int loaded = npcDb.loadFromDirectory("../data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("../../data");
+
+    const data::NpcTemplate* scout = npcDb.getNpc("venom_syndicate_scout");
+    assertTrue(scout != nullptr, "Scout found for HP test");
+    assertTrue(approxEqual(scout->hull_hp, 300.0f), "Hull HP is 300");
+    assertTrue(approxEqual(scout->armor_hp, 250.0f), "Armor HP is 250");
+    assertTrue(approxEqual(scout->shield_hp, 350.0f), "Shield HP is 350");
+    assertTrue(scout->bounty > 12499.0 && scout->bounty < 12501.0, "Bounty is 12500");
+}
+
+void testNpcDatabaseWeapons() {
+    std::cout << "\n=== NpcDatabase Weapons ===" << std::endl;
+
+    data::NpcDatabase npcDb;
+    int loaded = npcDb.loadFromDirectory("../data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("../../data");
+
+    const data::NpcTemplate* scout = npcDb.getNpc("venom_syndicate_scout");
+    assertTrue(scout != nullptr, "Scout found for weapons test");
+    assertTrue(!scout->weapons.empty(), "Scout has weapons");
+    assertTrue(scout->weapons[0].type == "small_hybrid", "Weapon type is small_hybrid");
+    assertTrue(approxEqual(scout->weapons[0].damage, 28.0f), "Weapon damage is 28");
+    assertTrue(scout->weapons[0].damage_type == "kinetic", "Weapon damage type is kinetic");
+    assertTrue(approxEqual(scout->weapons[0].rate_of_fire, 4.5f), "Rate of fire is 4.5");
+}
+
+void testNpcDatabaseResistances() {
+    std::cout << "\n=== NpcDatabase Resistances ===" << std::endl;
+
+    data::NpcDatabase npcDb;
+    int loaded = npcDb.loadFromDirectory("../data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("../../data");
+
+    const data::NpcTemplate* scout = npcDb.getNpc("venom_syndicate_scout");
+    assertTrue(scout != nullptr, "Scout found for resistances test");
+
+    // Shield: em=0, thermal=60, kinetic=85, explosive=50 -> /100
+    assertTrue(approxEqual(scout->shield_resists.em, 0.0f), "Shield EM resist is 0.0");
+    assertTrue(approxEqual(scout->shield_resists.thermal, 0.60f), "Shield thermal resist is 0.60");
+    assertTrue(approxEqual(scout->shield_resists.kinetic, 0.85f), "Shield kinetic resist is 0.85");
+    assertTrue(approxEqual(scout->shield_resists.explosive, 0.50f), "Shield explosive resist is 0.50");
+
+    // Armor: em=10, thermal=35, kinetic=25, explosive=45 -> /100
+    assertTrue(approxEqual(scout->armor_resists.em, 0.10f), "Armor EM resist is 0.10");
+    assertTrue(approxEqual(scout->armor_resists.kinetic, 0.25f), "Armor kinetic resist is 0.25");
+}
+
+void testNpcDatabaseIds() {
+    std::cout << "\n=== NpcDatabase IDs ===" << std::endl;
+
+    data::NpcDatabase npcDb;
+    int loaded = npcDb.loadFromDirectory("../data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("data");
+    if (loaded == 0) loaded = npcDb.loadFromDirectory("../../data");
+
+    auto ids = npcDb.getNpcIds();
+    assertTrue(!ids.empty(), "getNpcIds returns non-empty list");
+    assertTrue(ids.size() == npcDb.getNpcCount(), "IDs count matches getNpcCount");
+}
+
+void testNpcDatabaseNonexistent() {
+    std::cout << "\n=== NpcDatabase Nonexistent ===" << std::endl;
+
+    data::NpcDatabase npcDb;
+    npcDb.loadFromDirectory("../data");
+
+    const data::NpcTemplate* result = npcDb.getNpc("totally_fake_npc");
+    assertTrue(result == nullptr, "Nonexistent NPC returns nullptr");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -2738,7 +3064,8 @@ int main() {
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
     std::cout << "Capacitor, Shield, Weapon, Targeting," << std::endl;
     std::cout << "ShipDB, WormholeDB, Wormhole, Fleet," << std::endl;
-    std::cout << "Mission, Skill, Module," << std::endl;
+    std::cout << "Mission, Skill, Module, Inventory," << std::endl;
+    std::cout << "Loot, NpcDB," << std::endl;
     std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
     std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
@@ -2863,6 +3190,27 @@ int main() {
     testMovementApproachCommand();
     testMovementStopCommand();
     testMovementWarpDistance();
+
+    // Inventory system tests
+    testInventoryAddItem();
+    testInventoryCapacityLimit();
+    testInventoryRemoveItem();
+    testInventoryTransfer();
+    testInventoryHasItem();
+
+    // Loot system tests
+    testLootGenerate();
+    testLootCollect();
+    testLootEmptyTable();
+
+    // NpcDatabase tests
+    testNpcDatabaseLoad();
+    testNpcDatabaseGetNpc();
+    testNpcDatabaseHpValues();
+    testNpcDatabaseWeapons();
+    testNpcDatabaseResistances();
+    testNpcDatabaseIds();
+    testNpcDatabaseNonexistent();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
