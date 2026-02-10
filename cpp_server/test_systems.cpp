@@ -2992,7 +2992,7 @@ void testNpcDatabaseHpValues() {
     assertTrue(approxEqual(scout->hull_hp, 300.0f), "Hull HP is 300");
     assertTrue(approxEqual(scout->armor_hp, 250.0f), "Armor HP is 250");
     assertTrue(approxEqual(scout->shield_hp, 350.0f), "Shield HP is 350");
-    assertTrue(scout->bounty > 12499.0 && scout->bounty < 12501.0, "Bounty is 12500");
+    assertTrue(approxEqual(static_cast<float>(scout->bounty), 12500.0f), "Bounty is 12500");
 }
 
 void testNpcDatabaseWeapons() {

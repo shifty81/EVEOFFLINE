@@ -2,6 +2,7 @@
 #include "ecs/world.h"
 #include "components/game_components.h"
 #include <algorithm>
+#include <iostream>
 
 namespace eve {
 namespace systems {
@@ -87,7 +88,13 @@ bool LootSystem::collectLoot(const std::string& wreck_id,
     for (const auto& item : wreck_inv->items) {
         // Check capacity
         float needed = item.volume * item.quantity;
-        if (player_inv->freeCapacity() < needed) continue;
+        if (player_inv->freeCapacity() < needed) {
+            std::cout << "[LootSystem] Item " << item.name
+                      << " skipped: insufficient cargo space ("
+                      << needed << " m3 needed, "
+                      << player_inv->freeCapacity() << " m3 free)" << std::endl;
+            continue;
+        }
 
         // Stack with existing or add new
         bool stacked = false;
