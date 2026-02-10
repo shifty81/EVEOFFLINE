@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 #include "rendering/mesh.h"
 #include "rendering/procedural_mesh_ops.h"
+#include "rendering/reference_model_analyzer.h"
 
 namespace eve {
 
@@ -158,6 +159,20 @@ public:
                                                    const std::string& faction,
                                                    const ShipVariationParams& variation) const;
     
+    /**
+     * Create hull parts from learned reference model parameters.
+     * Uses the cross-section profiles and radius multipliers extracted by
+     * the ReferenceModelAnalyzer to generate ship parts that mimic the
+     * proportions and silhouettes of the analyzed models.
+     *
+     * @param analyzer  Analyzer that has already processed reference models
+     * @param faction   Faction name (determines color scheme and polygon sides)
+     * @param partIdPrefix  Prefix for part IDs (e.g. "learned_")
+     */
+    void createPartsFromLearnedModels(const ReferenceModelAnalyzer& analyzer,
+                                       const std::string& faction,
+                                       const std::string& partIdPrefix = "learned_");
+
 private:
     // Storage for all parts, keyed by unique ID
     std::map<std::string, ShipPart> m_parts;

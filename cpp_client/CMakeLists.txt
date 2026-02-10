@@ -304,6 +304,7 @@ set(CLIENT_SOURCES
     src/rendering/ship_part_library.cpp
     src/rendering/ship_generation_rules.cpp
     src/rendering/procedural_mesh_ops.cpp
+    src/rendering/reference_model_analyzer.cpp
     src/rendering/texture.cpp
     src/rendering/particle_system.cpp
     src/rendering/healthbar_renderer.cpp
@@ -525,6 +526,46 @@ if(EXISTS "${OBJ_MODELS_DIR}")
             "$<TARGET_FILE_DIR:eve_client>/models/ships"
         COMMENT "Copying extracted OBJ ship models next to executable"
     )
+endif()
+
+# Automatically extract reference models from testing/ archives for the
+# ReferenceModelAnalyzer.  These uploaded models are used to learn
+# geometric traits (cross-section profiles, aspect ratios, radius
+# multipliers) that guide procedural ship generation.
+set(TESTING_MODELS_DIR "${CMAKE_BINARY_DIR}/bin/testing_models")
+set(TESTING_ARCHIVE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../testing")
+if(EXISTS "${TESTING_ARCHIVE_DIR}" AND P7ZIP_EXECUTABLE)
+    if(NOT EXISTS "${TESTING_MODELS_DIR}")
+        file(MAKE_DIRECTORY "${TESTING_MODELS_DIR}")
+        # Extract spaceship RAR
+        set(SPACESHIP_RAR "${TESTING_ARCHIVE_DIR}/99-intergalactic_spaceship-obj.rar")
+        if(EXISTS "${SPACESHIP_RAR}")
+            message(STATUS "Extracting Intergalactic Spaceship model...")
+            execute_process(
+                COMMAND ${P7ZIP_EXECUTABLE} x "${SPACESHIP_RAR}" -o${TESTING_MODELS_DIR}/spaceship -y
+                RESULT_VARIABLE EXTRACT_RESULT OUTPUT_QUIET
+            )
+            if(EXTRACT_RESULT EQUAL 0)
+                message(STATUS "  Extracted to ${TESTING_MODELS_DIR}/spaceship")
+            endif()
+        endif()
+        # Extract Vulcan Dkyr Class ZIP
+        set(VULCAN_ZIP "${TESTING_ARCHIVE_DIR}/qy0sx26192io-VulcanDkyrClass.zip")
+        if(EXISTS "${VULCAN_ZIP}")
+            message(STATUS "Extracting Vulcan Dkyr Class model...")
+            execute_process(
+                COMMAND ${P7ZIP_EXECUTABLE} x "${VULCAN_ZIP}" -o${TESTING_MODELS_DIR}/vulcan -y
+                RESULT_VARIABLE EXTRACT_RESULT OUTPUT_QUIET
+            )
+            if(EXTRACT_RESULT EQUAL 0)
+                message(STATUS "  Extracted to ${TESTING_MODELS_DIR}/vulcan")
+            endif()
+        endif()
+    else()
+        message(STATUS "Testing models already extracted at ${TESTING_MODELS_DIR}")
+    endif()
+elseif(EXISTS "${TESTING_ARCHIVE_DIR}")
+    message(STATUS "7z not found - testing model archives will be extracted at runtime by ReferenceModelAnalyzer")
 endif()
 
 # Also copy any OBJ files placed directly in the source models/ships/ directory
@@ -972,6 +1013,23 @@ if(BUILD_TESTS)
         target_link_libraries(test_server_responses)
     elseif(APPLE)
         target_link_libraries(test_server_responses)
+    endif()
+
+    # Test: Reference Model Analyzer
+    # Analyzes uploaded 3D models from testing/ directory and validates
+    # that learned parameters produce valid procedural geometry.
+    add_executable(test_model_analyzer
+        test_model_analyzer.cpp
+        src/rendering/reference_model_analyzer.cpp
+        src/rendering/procedural_mesh_ops.cpp
+        src/rendering/ship_generation_rules.cpp
+    )
+    target_link_libraries(test_model_analyzer
+        Threads::Threads
+        glm::glm
+    )
+    if(WIN32)
+        target_link_libraries(test_model_analyzer ws2_32)
     endif()
 endif()
 
