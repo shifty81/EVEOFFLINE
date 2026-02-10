@@ -16,6 +16,10 @@ import re
 import sys
 from pathlib import Path
 
+# Default data directory (relative to script location, fallback to env-specific path)
+_SCRIPT_DIR = Path(__file__).resolve().parent
+_DEFAULT_DATA_DIR = _SCRIPT_DIR / "data"
+
 # ---------------------------------------------------------------------------
 # RACE MAPPINGS
 # ---------------------------------------------------------------------------
@@ -663,7 +667,7 @@ def rename_all(data_dir=None):
     """
     if data_dir is None:
         # Default to the project data directory
-        data_dir = Path("/home/runner/work/EVEOFFLINE/EVEOFFLINE/data")
+        data_dir = _DEFAULT_DATA_DIR
 
     data_dir = Path(data_dir)
     if not data_dir.is_dir():
@@ -766,7 +770,7 @@ if __name__ == "__main__":
             apply_renaming(args.file)
     elif args.apply:
         if args.dry_run:
-            data_dir = Path(args.data_dir or "/home/runner/work/EVEOFFLINE/EVEOFFLINE/data")
+            data_dir = Path(args.data_dir) if args.data_dir else _DEFAULT_DATA_DIR
             for jf in sorted(data_dir.rglob("*.json")):
                 with open(jf, "r") as f:
                     data = json.load(f)
