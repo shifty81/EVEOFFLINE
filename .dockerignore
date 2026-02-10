@@ -9,7 +9,8 @@ archive
 *.pdf
 *.zip
 *.rar
-*.txt
-*.md
-*.bat
 *.py
+error_log*.txt
+errorlog*.txt
+errors latest*.txt
+upload.txt
