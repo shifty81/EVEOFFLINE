@@ -9,6 +9,7 @@
 #include <glm/gtc/matrix_inverse.hpp>
 #include <iostream>
 #include <random>
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 #ifndef M_PI

@@ -995,7 +995,7 @@ void Application::updateLocalMovement(float deltaTime) {
     
     // Movement physics constants — tuned for EVE-style feel with proper align time
     static constexpr float ACCELERATION = 25.0f;           // m/s² (reduced for gradual ramp-up)
-    static constexpr float DECELERATION = 20.0f;            // m/s² when stopping
+    static constexpr float DECELERATION = 30.0f;            // m/s² when stopping (faster than accel for responsive stop)
     static constexpr float APPROACH_DECEL_DIST = 50.0f;     // Start slowing at this range
     static constexpr float WARP_SPEED = 5000.0f;            // Simulated warp speed m/s
     static constexpr float WARP_EXIT_DIST = 100.0f;         // Exit warp at this range
@@ -1007,6 +1007,7 @@ void Application::updateLocalMovement(float deltaTime) {
     if (m_currentMoveCommand == MoveCommand::None) {
         // Decelerate to stop — exponential slowdown for smooth feel
         if (m_playerSpeed > 0.1f) {
+            // Guard against negative factor when deltaTime is very large (e.g. lag spike)
             m_playerSpeed *= std::max(0.0f, 1.0f - DECELERATION * deltaTime / m_playerMaxSpeed);
             playerPos += m_playerVelocity * deltaTime;
             // Update velocity direction with reduced speed
