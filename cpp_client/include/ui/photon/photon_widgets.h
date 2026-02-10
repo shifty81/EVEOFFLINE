@@ -228,4 +228,60 @@ void scrollbar(PhotonContext& ctx, const Rect& track,
 void neocomBar(PhotonContext& ctx, float x, float width, float height,
                int icons, const std::function<void(int)>& callback);
 
+// ── Tooltip ─────────────────────────────────────────────────────────
+
+/**
+ * Draw a floating tooltip near the mouse cursor.
+ * Call after the widget you want to annotate, only when hovered.
+ *
+ * @param ctx   Context.
+ * @param text  Tooltip text string.
+ */
+void tooltip(PhotonContext& ctx, const std::string& text);
+
+// ── Checkbox ────────────────────────────────────────────────────────
+
+/**
+ * Checkbox widget with label text.  Toggles *checked on click.
+ * Returns true when the value changes.
+ *
+ * @param ctx      Context.
+ * @param label    Text label shown to the right of the box.
+ * @param r        Bounding rectangle (box is left-aligned).
+ * @param checked  Pointer to bool toggled on click.
+ */
+bool checkbox(PhotonContext& ctx, const char* label,
+              const Rect& r, bool* checked);
+
+// ── ComboBox (dropdown selector) ────────────────────────────────────
+
+/**
+ * Dropdown combo box.  Shows the currently selected item and returns
+ * true when a new selection is made.
+ *
+ * @param ctx         Context.
+ * @param label       Widget label (for ID hashing).
+ * @param r           Bounding rectangle for the collapsed combo.
+ * @param items       List of option strings.
+ * @param selected    Index of the currently selected item (updated on click).
+ * @param dropdownOpen  Pointer to bool tracking open/closed state.
+ */
+bool comboBox(PhotonContext& ctx, const char* label,
+              const Rect& r, const std::vector<std::string>& items,
+              int* selected, bool* dropdownOpen);
+
+// ── Stateful Panel (with drag + minimize) ───────────────────────────
+
+/**
+ * Begin a panel using persistent state (supports drag-to-move and
+ * minimize/collapse).  Returns true if content area is visible.
+ *
+ * @param ctx    Context.
+ * @param title  Header title.
+ * @param state  Persistent panel state (position, open, minimized).
+ * @param flags  Visual flags.
+ */
+bool panelBeginStateful(PhotonContext& ctx, const char* title,
+                        PanelState& state, const PanelFlags& flags = {});
+
 } // namespace photon

@@ -105,6 +105,17 @@ public:
     void popID();
     WidgetID currentID(const char* label) const;
 
+    // ── Drag helpers ────────────────────────────────────────────────
+
+    /** Begin dragging from the given position. Returns drag delta. */
+    Vec2 getDragDelta() const;
+
+    /** Check if the left mouse is currently held down. */
+    bool isMouseDown() const { return m_input.mouseDown[0]; }
+
+    /** Check if left mouse was just clicked this frame. */
+    bool isMouseClicked() const { return m_input.mouseClicked[0]; }
+
 private:
     PhotonRenderer m_renderer;
     Theme          m_theme;

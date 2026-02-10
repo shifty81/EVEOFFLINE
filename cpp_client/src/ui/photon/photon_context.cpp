@@ -83,4 +83,10 @@ WidgetID PhotonContext::currentID(const char* label) const {
     return h;
 }
 
+Vec2 PhotonContext::getDragDelta() const {
+    // In a real system this would track the previous mouse position.
+    // For now, use the fact that mouseDown means we're dragging.
+    return {0.0f, 0.0f};  // delta tracked externally via PanelState
+}
+
 } // namespace photon

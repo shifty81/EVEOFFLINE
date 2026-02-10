@@ -130,6 +130,16 @@ struct InputState {
     int  windowH = 720;
 };
 
+// ── Panel persistent state ──────────────────────────────────────────
+
+struct PanelState {
+    Rect bounds;
+    bool open = true;        // false = closed via × button
+    bool minimized = false;  // true = collapsed to header-only
+    bool dragging = false;   // true while header is being dragged
+    Vec2 dragOffset;         // offset from mouse to panel origin during drag
+};
+
 // ── Widget IDs ──────────────────────────────────────────────────────
 
 using WidgetID = uint32_t;
