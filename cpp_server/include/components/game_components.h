@@ -569,6 +569,27 @@ public:
     COMPONENT_TYPE(InsurancePolicy)
 };
 
+/**
+ * @brief Tracks bounty rewards earned by a player
+ */
+class BountyLedger : public ecs::Component {
+public:
+    double total_bounty_earned = 0.0;
+    int total_kills = 0;
+    
+    struct BountyRecord {
+        std::string target_id;
+        std::string target_name;
+        double bounty_amount = 0.0;
+        std::string faction;
+    };
+    
+    std::vector<BountyRecord> recent_kills;  // last N kills
+    static constexpr int MAX_RECENT = 50;
+    
+    COMPONENT_TYPE(BountyLedger)
+};
+
 } // namespace components
 } // namespace eve
 

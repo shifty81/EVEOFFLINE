@@ -61,6 +61,7 @@ set(SERVER_SOURCES
     src/systems/inventory_system.cpp
     src/systems/loot_system.cpp
     src/systems/insurance_system.cpp
+    src/systems/bounty_system.cpp
     src/systems/drone_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
@@ -99,6 +100,7 @@ set(SERVER_HEADERS
     include/systems/inventory_system.h
     include/systems/loot_system.h
     include/systems/insurance_system.h
+    include/systems/bounty_system.h
     include/systems/drone_system.h
     include/data/ship_database.h
     include/data/npc_database.h
@@ -199,6 +201,7 @@ if(BUILD_TESTS)
         src/systems/inventory_system.cpp
         src/systems/loot_system.cpp
         src/systems/insurance_system.cpp
+        src/systems/bounty_system.cpp
         src/systems/drone_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
