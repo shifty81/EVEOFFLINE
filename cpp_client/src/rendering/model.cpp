@@ -1,6 +1,7 @@
 #include "rendering/model.h"
 #include "rendering/mesh.h"
 #include "rendering/procedural_mesh_ops.h"
+#include "rendering/procedural_ship_generator.h"
 #include "rendering/ship_part_library.h"
 #include "rendering/ship_generation_rules.h"
 #include <iostream>
@@ -434,6 +435,52 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
             return model;
         }
         std::cerr << "Failed to load OBJ model, falling back to procedural generation" << std::endl;
+    }
+
+    // Try procedural generation from a seed OBJ (reference assets)
+    {
+        ProceduralShipGenerator generator;
+        // Configure reference assets (99-intergalactic_spaceship-obj & 24-textures)
+        ReferenceAssetConfig assetCfg;
+        assetCfg.objArchivePath      = "testing/99-intergalactic_spaceship-obj.rar";
+        assetCfg.textureArchivePath  = "testing/24-textures.zip";
+        assetCfg.extractedObjDir     = "models/ships";
+        assetCfg.extractedTextureDir = "textures";
+        generator.setReferenceAssets(assetCfg);
+
+        // Determine ship class for seed lookup
+        std::string shipClass = "generic";
+        if (isFrigate(shipType))         shipClass = "frigate";
+        else if (isDestroyer(shipType))  shipClass = "destroyer";
+        else if (isCruiser(shipType))    shipClass = "cruiser";
+        else if (isBattlecruiser(shipType)) shipClass = "battlecruiser";
+        else if (isBattleship(shipType)) shipClass = "battleship";
+        else if (isCarrier(shipType))    shipClass = "carrier";
+        else if (isDreadnought(shipType)) shipClass = "dreadnought";
+        else if (isTitan(shipType))      shipClass = "titan";
+
+        std::string seedPath = generator.findSeedOBJ(faction, shipClass);
+        if (!seedPath.empty()) {
+            ProceduralShipParams params;
+            // Generate a deterministic seed from ship type + faction
+            params.seed = static_cast<unsigned int>(
+                std::hash<std::string>{}(shipType + "_" + faction));
+            params.enforceSymmetry = true;
+            params.extrusionCount = 5;
+            params.engineCount = 2;
+            params.weaponCount = 2;
+
+            // Faction-specific colour
+            FactionColors fc = getFactionColors(faction);
+            params.primaryColor = glm::vec3(fc.primary);
+
+            auto model = generator.generateFromFile(seedPath, params);
+            if (model) {
+                std::cout << "Using procedural seed OBJ for " << shipType
+                          << " (" << faction << ")" << std::endl;
+                return model;
+            }
+        }
     }
 
     // Fall back to procedural generation

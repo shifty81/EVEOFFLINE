@@ -304,6 +304,7 @@ set(CLIENT_SOURCES
     src/rendering/ship_part_library.cpp
     src/rendering/ship_generation_rules.cpp
     src/rendering/procedural_mesh_ops.cpp
+    src/rendering/procedural_ship_generator.cpp
     src/rendering/reference_model_analyzer.cpp
     src/rendering/texture.cpp
     src/rendering/particle_system.cpp

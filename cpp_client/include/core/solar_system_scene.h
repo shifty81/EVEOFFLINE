@@ -4,10 +4,9 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include "core/ship_physics.h"
 
 namespace eve {
-
-class ShipPhysics;
 
 /**
  * Represents a celestial object in a solar system that can be warped to.

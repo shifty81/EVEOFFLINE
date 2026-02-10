@@ -11,6 +11,10 @@
 struct GLFWwindow;
 struct ImGuiContext;
 
+namespace eve {
+    class Entity;
+}
+
 namespace UI {
 
 class EVETargetList;
