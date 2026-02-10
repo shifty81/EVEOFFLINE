@@ -164,7 +164,7 @@ void EVETargetList::renderHealthArc(float centerX, float centerY, float radius,
     }
 }
 
-void EVETargetList::updateTargets(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities) {
+void EVETargetList::updateTargets(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities) {
     // Update existing targets
     for (auto& target : m_targets) {
         auto it = entities.find(target.entityId);

@@ -355,7 +355,7 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     }
 }
 
-void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities,
+void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities,
                                    const glm::vec3& playerPosition) {
     m_entries.clear();
     

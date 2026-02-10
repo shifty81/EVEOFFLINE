@@ -106,7 +106,7 @@ public:
 
     // ---- Overview ----
     void UpdateOverviewData(
-        const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities,
+        const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities,
         const glm::vec3& playerPos);
     void SetOverviewFilter(const std::string& filter);
 

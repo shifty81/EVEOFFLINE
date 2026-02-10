@@ -316,7 +316,7 @@ void RmlUiManager::ClearTargets() {
 // ---- Overview ----
 
 void RmlUiManager::UpdateOverviewData(
-    const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities,
+    const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities,
     const glm::vec3& playerPos)
 {
     if (!initialized_ || !context_) return;
@@ -787,7 +787,7 @@ void RmlUiManager::RemoveTarget(const std::string&) {}
 void RmlUiManager::ClearTargets() {}
 
 void RmlUiManager::UpdateOverviewData(
-    const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>&,
+    const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>&,
     const glm::vec3&) {}
 void RmlUiManager::SetOverviewFilter(const std::string&) {}
 

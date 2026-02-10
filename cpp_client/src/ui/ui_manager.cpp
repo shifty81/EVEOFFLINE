@@ -519,7 +519,7 @@ void UIManager::SetPlayerPosition(const glm::vec3& position) {
     m_playerPosition = position;
 }
 
-void UIManager::UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities) {
+void UIManager::UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities) {
     if (m_targetList) {
         m_targetList->updateTargets(entities);
     }

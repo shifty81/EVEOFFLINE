@@ -8,10 +8,6 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-namespace eve {
-    class Entity;
-}
-
 namespace UI {
 
 // Overview entity entry
@@ -85,7 +81,7 @@ public:
     void RenderContents();
     
     // Update overview from entity list
-    void UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<eve::Entity>>& entities,
+    void UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities,
                         const glm::vec3& playerPosition = glm::vec3(0.0f));
     
     // Visibility

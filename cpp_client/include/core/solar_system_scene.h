@@ -143,6 +143,30 @@ public:
     bool isInDockingRange(const glm::vec3& position, const std::string& stationId,
                           float dockingRadius = 2500.0f) const;
 
+    /**
+     * Get collision zones for all celestials in the system.
+     * Collision radius = physical radius * COLLISION_MULTIPLIER.
+     * Ships cannot warp through or enter these zones.
+     */
+    std::vector<ShipPhysics::CelestialCollisionZone> getCollisionZones() const;
+
+    /**
+     * Check if a ship position is inside any celestial collision zone.
+     */
+    bool isInsideCelestialCollisionZone(const glm::vec3& position) const;
+
+    /**
+     * Collision zone multiplier: collision radius is this factor times the
+     * celestial's physical radius. Provides a safety margin.
+     */
+    static constexpr float COLLISION_MULTIPLIER = 1.5f;
+
+    /**
+     * Extra distance (meters) beyond the collision zone edge where ships
+     * land when warping to a celestial without a specific warp distance.
+     */
+    static constexpr float WARP_LANDING_MARGIN = 2500.0f;
+
     // Engine trail state for rendering
     struct EngineTrailState {
         bool emitting;

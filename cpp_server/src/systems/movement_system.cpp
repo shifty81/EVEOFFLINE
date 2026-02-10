@@ -10,6 +10,10 @@ MovementSystem::MovementSystem(ecs::World* world)
     : System(world) {
 }
 
+void MovementSystem::setCollisionZones(const std::vector<CollisionZone>& zones) {
+    m_collisionZones = zones;
+}
+
 void MovementSystem::update(float delta_time) {
     // Get all entities with Position and Velocity components
     auto entities = world_->getEntities<components::Position, components::Velocity>();
@@ -35,6 +39,34 @@ void MovementSystem::update(float delta_time) {
             vel->vx *= factor;
             vel->vy *= factor;
             vel->vz *= factor;
+        }
+        
+        // Enforce celestial collision zones
+        for (const auto& zone : m_collisionZones) {
+            float dx = pos->x - zone.x;
+            float dy = pos->y - zone.y;
+            float dz = pos->z - zone.z;
+            float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
+            
+            if (dist < zone.radius && dist > 0.001f) {
+                // Push entity to edge of collision zone
+                float pushFactor = (zone.radius + COLLISION_PUSH_MARGIN) / dist;
+                pos->x = zone.x + dx * pushFactor;
+                pos->y = zone.y + dy * pushFactor;
+                pos->z = zone.z + dz * pushFactor;
+                
+                // Kill velocity toward the celestial
+                float invDist = 1.0f / dist;
+                float nx = dx * invDist;
+                float ny = dy * invDist;
+                float nz = dz * invDist;
+                float velToward = -(vel->vx * nx + vel->vy * ny + vel->vz * nz);
+                if (velToward > 0.0f) {
+                    vel->vx += nx * velToward;
+                    vel->vy += ny * velToward;
+                    vel->vz += nz * velToward;
+                }
+            }
         }
     }
 }
