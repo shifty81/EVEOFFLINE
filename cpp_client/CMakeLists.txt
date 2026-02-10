@@ -653,6 +653,11 @@ if(BUILD_TESTS)
         src/rendering/model.cpp
         src/rendering/texture.cpp
         src/rendering/lighting.cpp
+        src/rendering/procedural_mesh_ops.cpp
+        src/rendering/procedural_ship_generator.cpp
+        src/rendering/ship_part_library.cpp
+        src/rendering/ship_generation_rules.cpp
+        src/rendering/reference_model_analyzer.cpp
         src/ui/input_handler.cpp
         src/ui/ui_manager.cpp
         src/ui/eve_panels.cpp
