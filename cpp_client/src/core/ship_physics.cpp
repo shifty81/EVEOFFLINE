@@ -519,10 +519,10 @@ glm::vec3 ShipPhysics::resolveCollision(const std::vector<CelestialCollisionZone
             if (dist > 0.001f) {
                 pushDir = toShip / dist;
             } else {
-                // Ship is exactly at center — push in arbitrary direction
+                // Ship is exactly at center — push upward (arbitrary but deterministic)
                 pushDir = glm::vec3(0.0f, 1.0f, 0.0f);
             }
-            m_position = zone.position + pushDir * (zone.collisionRadius + 100.0f);
+            m_position = zone.position + pushDir * (zone.collisionRadius + COLLISION_PUSH_MARGIN);
 
             // Kill velocity toward the celestial (bounce effect)
             float velToward = glm::dot(m_velocity, -pushDir);

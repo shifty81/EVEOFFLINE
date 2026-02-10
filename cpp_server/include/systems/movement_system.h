@@ -39,6 +39,8 @@ public:
 
 private:
     std::vector<CollisionZone> m_collisionZones;
+
+    static constexpr float COLLISION_PUSH_MARGIN = 100.0f;  // Extra meters beyond collision radius
 };
 
 } // namespace systems

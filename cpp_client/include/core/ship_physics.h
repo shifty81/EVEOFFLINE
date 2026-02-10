@@ -162,11 +162,6 @@ public:
      */
     glm::vec3 resolveCollision(const std::vector<CelestialCollisionZone>& zones);
 
-    /**
-     * Set position directly (used for collision resolution)
-     */
-    void setPosition(const glm::vec3& pos) { m_position = pos; }
-
 private:
     void updateAcceleration(float deltaTime);
     void updateOrbit(float deltaTime);
@@ -220,6 +215,7 @@ private:
     static constexpr float MIN_WARP_DISTANCE = 150000.0f;  // Minimum 150km to warp
     static constexpr float WARP_EXIT_DISTANCE = 2500.0f;   // Land within 2500m of target
     static constexpr float WARP_EXIT_SPEED_FRACTION = 0.25f;  // Exit warp at 25% max subwarp speed
+    static constexpr float COLLISION_PUSH_MARGIN = 100.0f;     // Extra meters to push ship outside collision zone
 };
 
 } // namespace eve

@@ -50,7 +50,7 @@ void MovementSystem::update(float delta_time) {
             
             if (dist < zone.radius && dist > 0.001f) {
                 // Push entity to edge of collision zone
-                float pushFactor = (zone.radius + 100.0f) / dist;
+                float pushFactor = (zone.radius + COLLISION_PUSH_MARGIN) / dist;
                 pos->x = zone.x + dx * pushFactor;
                 pos->y = zone.y + dy * pushFactor;
                 pos->z = zone.z + dz * pushFactor;

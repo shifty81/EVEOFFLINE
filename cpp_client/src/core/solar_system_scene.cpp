@@ -308,7 +308,7 @@ void SolarSystemScene::warpTo(const std::string& celestialId, ShipPhysics* shipP
         float collisionRadius = target->radius * COLLISION_MULTIPLIER;
         if (collisionRadius > 0.0f) {
             glm::vec3 dir = glm::normalize(shipPhysics->getPosition() - target->position);
-            destination = target->position + dir * (collisionRadius + 2500.0f);
+            destination = target->position + dir * (collisionRadius + WARP_LANDING_MARGIN);
         }
     }
 

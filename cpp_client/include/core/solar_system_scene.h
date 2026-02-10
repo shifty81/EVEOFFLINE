@@ -161,6 +161,12 @@ public:
      */
     static constexpr float COLLISION_MULTIPLIER = 1.5f;
 
+    /**
+     * Extra distance (meters) beyond the collision zone edge where ships
+     * land when warping to a celestial without a specific warp distance.
+     */
+    static constexpr float WARP_LANDING_MARGIN = 2500.0f;
+
     // Engine trail state for rendering
     struct EngineTrailState {
         bool emitting;
