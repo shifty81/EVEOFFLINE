@@ -6,6 +6,9 @@
 namespace eve {
 namespace systems {
 
+// Base skill points awarded per level of training
+static constexpr double BASE_SP_PER_LEVEL = 1000.0;
+
 SkillSystem::SkillSystem(ecs::World* world)
     : System(world) {
 }
@@ -36,7 +39,7 @@ void SkillSystem::update(float delta_time) {
             }
 
             // Award SP (base: 1000 SP per level, scaled by multiplier)
-            double sp_gain = 1000.0 * front.target_level;
+            double sp_gain = BASE_SP_PER_LEVEL * front.target_level;
             auto skill_it = skillset->skills.find(front.skill_id);
             if (skill_it != skillset->skills.end()) {
                 sp_gain *= skill_it->second.training_multiplier;
@@ -104,7 +107,7 @@ bool SkillSystem::trainSkillInstant(const std::string& entity_id,
     skill.level = level;
     skillset->skills[skill_id] = skill;
 
-    skillset->total_sp += 1000.0 * level;
+    skillset->total_sp += BASE_SP_PER_LEVEL * level;
     return true;
 }
 

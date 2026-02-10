@@ -6,6 +6,11 @@
 namespace eve {
 namespace systems {
 
+// Minimum distance required to initiate warp (150 km)
+static constexpr float MIN_WARP_DISTANCE = 150000.0f;
+// Warp completes in approximately 10 seconds (progress rate per second)
+static constexpr float WARP_PROGRESS_RATE = 0.1f;
+
 MovementSystem::MovementSystem(ecs::World* world)
     : System(world) {
 }
@@ -87,7 +92,7 @@ void MovementSystem::update(float delta_time) {
                 }
             }
         } else if (cmd.type == MovementCommand::Type::Warp) {
-            cmd.warp_progress += delta_time * 0.1f;  // 10 seconds for full warp
+            cmd.warp_progress += delta_time * WARP_PROGRESS_RATE;
             if (cmd.warp_progress >= 1.0f) {
                 pos->x = cmd.warp_dest_x;
                 pos->y = cmd.warp_dest_y;
@@ -202,7 +207,7 @@ bool MovementSystem::commandWarp(const std::string& entity_id,
     float dy = dest_y - pos->y;
     float dz = dest_z - pos->z;
     float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
-    if (dist < 150000.0f) return false;  // too close to warp
+    if (dist < MIN_WARP_DISTANCE) return false;  // too close to warp
 
     MovementCommand cmd;
     cmd.type = MovementCommand::Type::Warp;
