@@ -124,7 +124,7 @@ void InventoryPanel::RenderCapacityDisplay() {
     ImGui::TextColored(ImVec4(
         EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
         EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
-        "%.1f / %.1f m\xc2\xb3 (%.1f%%)", 
+        "%.1f / %.1f m³ (%.1f%%)", 
                        used, capacity, percent);
     
     // Capacity bar

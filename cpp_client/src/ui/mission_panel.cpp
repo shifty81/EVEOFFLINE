@@ -98,7 +98,7 @@ void MissionPanel::RenderObjectivesList() {
         if (objective.completed) {
             ImGui::TextColored(ImVec4(
                 EVEColors::SUCCESS[0], EVEColors::SUCCESS[1],
-                EVEColors::SUCCESS[2], EVEColors::SUCCESS[3]), "[\xe2\x9c\x93]");
+                EVEColors::SUCCESS[2], EVEColors::SUCCESS[3]), "[✓]");
         } else {
             ImGui::TextColored(ImVec4(
                 EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
