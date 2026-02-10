@@ -55,6 +55,9 @@ set(SERVER_SOURCES
     src/systems/weapon_system.cpp
     src/systems/wormhole_system.cpp
     src/systems/fleet_system.cpp
+    src/systems/mission_system.cpp
+    src/systems/skill_system.cpp
+    src/systems/module_system.cpp
     src/data/ship_database.cpp
     src/data/wormhole_database.cpp
     src/data/world_persistence.cpp
@@ -85,6 +88,9 @@ set(SERVER_HEADERS
     include/systems/weapon_system.h
     include/systems/wormhole_system.h
     include/systems/fleet_system.h
+    include/systems/mission_system.h
+    include/systems/skill_system.h
+    include/systems/module_system.h
     include/data/ship_database.h
     include/data/wormhole_database.h
     include/data/world_persistence.h
@@ -176,6 +182,9 @@ if(BUILD_TESTS)
         src/data/wormhole_database.cpp
         src/systems/wormhole_system.cpp
         src/systems/fleet_system.cpp
+        src/systems/mission_system.cpp
+        src/systems/skill_system.cpp
+        src/systems/module_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

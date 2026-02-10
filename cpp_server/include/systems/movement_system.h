@@ -4,6 +4,7 @@
 #include "ecs/system.h"
 #include <string>
 #include <vector>
+#include <map>
 
 namespace eve {
 namespace systems {
@@ -37,7 +38,54 @@ public:
      */
     void setCollisionZones(const std::vector<CollisionZone>& zones);
 
+    /**
+     * @brief Command an entity to orbit another entity
+     * @param entity_id The orbiting entity
+     * @param target_id The entity to orbit around
+     * @param distance Desired orbit distance in meters
+     */
+    void commandOrbit(const std::string& entity_id,
+                      const std::string& target_id,
+                      float distance);
+
+    /**
+     * @brief Command an entity to approach another entity
+     * @param entity_id The approaching entity
+     * @param target_id The entity to approach
+     */
+    void commandApproach(const std::string& entity_id,
+                         const std::string& target_id);
+
+    /**
+     * @brief Command an entity to stop
+     */
+    void commandStop(const std::string& entity_id);
+
+    /**
+     * @brief Command an entity to warp to a position
+     * @param entity_id The entity to warp
+     * @param dest_x Destination X
+     * @param dest_y Destination Y
+     * @param dest_z Destination Z
+     * @return true if warp initiated (not disrupted)
+     */
+    bool commandWarp(const std::string& entity_id,
+                     float dest_x, float dest_y, float dest_z);
+
 private:
+    struct MovementCommand {
+        enum class Type { None, Orbit, Approach, Warp, Stop };
+        Type type = Type::None;
+        std::string target_id;
+        float orbit_distance = 1000.0f;
+        float warp_dest_x = 0.0f;
+        float warp_dest_y = 0.0f;
+        float warp_dest_z = 0.0f;
+        float warp_progress = 0.0f;  // 0-1
+        bool warping = false;
+    };
+    std::map<std::string, MovementCommand> movement_commands_;
+
     std::vector<CollisionZone> m_collisionZones;
 
     static constexpr float COLLISION_PUSH_MARGIN = 100.0f;  // Extra meters beyond collision radius
