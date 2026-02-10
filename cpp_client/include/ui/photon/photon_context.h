@@ -107,7 +107,8 @@ public:
 
     // ── Drag helpers ────────────────────────────────────────────────
 
-    /** Begin dragging from the given position. Returns drag delta. */
+    /** Reserved for future per-frame mouse delta tracking.
+     *  Currently returns zero; drag state is tracked via PanelState. */
     Vec2 getDragDelta() const;
 
     /** Check if the left mouse is currently held down. */
