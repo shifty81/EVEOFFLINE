@@ -24,10 +24,10 @@ ShipPhysics::ShipPhysics()
     , m_propulsionActive(false)
     , m_propulsionMultiplier(1.0f)
 {
-    // Default frigate stats
+    // Default frigate stats — tuned for noticeable align time
     m_stats.mass = 1200000.0f;           // 1.2 million kg
-    m_stats.inertiaModifier = 3.2f;
-    m_stats.maxVelocity = 400.0f;        // 400 m/s
+    m_stats.inertiaModifier = 4.5f;      // Higher inertia for slower, more visible alignment
+    m_stats.maxVelocity = 350.0f;        // 350 m/s (slightly slower for better feel)
     m_stats.signatureRadius = 35.0f;     // 35m signature
 }
 
@@ -186,7 +186,7 @@ void ShipPhysics::update(float deltaTime) {
     float speed = glm::length(m_velocity);
     if (speed > 1.0f) {
         glm::vec3 velDir = m_velocity / speed;
-        float turnRate = 2.0f * deltaTime;  // Smooth turn
+        float turnRate = 1.0f * deltaTime;  // Slower turn for visible alignment phase
         m_heading = glm::normalize(glm::mix(m_heading, velDir, std::min(turnRate, 1.0f)));
     }
 }

@@ -629,13 +629,18 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             m_lastMouseDragY = y;
         } else if (action == GLFW_RELEASE) {
             // If right-click was a quick click (not a drag), show context menu
+            // Skip if ImGui already captured the mouse (e.g. overview panel handled it)
+            // to prevent two context menus appearing simultaneously
             if (m_rightMouseDown) {
-                double dx = x - m_lastMouseDragX;
-                double dy = y - m_lastMouseDragY;
-                double dist = std::sqrt(dx * dx + dy * dy);
-                if (dist < 5.0) {
-                    // Quick right-click — show EVE context menu
-                    showSpaceContextMenu(x, y);
+                ImGuiIO& io = ImGui::GetIO();
+                if (!io.WantCaptureMouse) {
+                    double dx = x - m_lastMouseDragX;
+                    double dy = y - m_lastMouseDragY;
+                    double dist = std::sqrt(dx * dx + dy * dy);
+                    if (dist < 5.0) {
+                        // Quick right-click — show EVE context menu
+                        showSpaceContextMenu(x, y);
+                    }
                 }
             }
             m_rightMouseDown = false;
@@ -935,20 +940,29 @@ void Application::updateLocalMovement(float deltaTime) {
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
     if (!playerEntity) return;
     
-    // Movement physics constants
-    static constexpr float ACCELERATION = 80.0f;          // m/s²
-    static constexpr float DECELERATION = 40.0f;          // m/s² when stopping
-    static constexpr float APPROACH_DECEL_DIST = 50.0f;   // Start slowing at this range
-    static constexpr float WARP_SPEED = 5000.0f;          // Simulated warp speed m/s
-    static constexpr float WARP_EXIT_DIST = 100.0f;       // Exit warp at this range
+    // Movement physics constants — tuned for EVE-style feel with proper align time
+    static constexpr float ACCELERATION = 25.0f;           // m/s² (reduced for gradual ramp-up)
+    static constexpr float DECELERATION = 20.0f;            // m/s² when stopping
+    static constexpr float APPROACH_DECEL_DIST = 50.0f;     // Start slowing at this range
+    static constexpr float WARP_SPEED = 5000.0f;            // Simulated warp speed m/s
+    static constexpr float WARP_EXIT_DIST = 100.0f;         // Exit warp at this range
+    static constexpr float ALIGN_TURN_RATE = 1.5f;          // rad/s — how fast ship rotates toward target
+    static constexpr float ALIGN_SPEED_FRACTION = 0.75f;    // Must reach 75% max speed to warp
     
     glm::vec3 playerPos = playerEntity->getPosition();
     
     if (m_currentMoveCommand == MoveCommand::None) {
-        // Decelerate to stop
-        if (m_playerSpeed > 0.0f) {
-            m_playerSpeed = std::max(0.0f, m_playerSpeed - DECELERATION * deltaTime);
+        // Decelerate to stop — exponential slowdown for smooth feel
+        if (m_playerSpeed > 0.1f) {
+            m_playerSpeed *= std::max(0.0f, 1.0f - DECELERATION * deltaTime / m_playerMaxSpeed);
             playerPos += m_playerVelocity * deltaTime;
+            // Update velocity direction with reduced speed
+            if (glm::length(m_playerVelocity) > 0.01f) {
+                m_playerVelocity = glm::normalize(m_playerVelocity) * m_playerSpeed;
+            }
+        } else {
+            m_playerSpeed = 0.0f;
+            m_playerVelocity = glm::vec3(0.0f);
         }
     } else {
         // Get target position
@@ -968,21 +982,24 @@ void Application::updateLocalMovement(float deltaTime) {
         
         switch (m_currentMoveCommand) {
             case MoveCommand::Approach: {
-                // Accelerate towards target, slow down when close
+                // EVE-style exponential acceleration towards target
+                // Ship gradually ramps up speed, giving time to align
                 float targetSpeed = m_playerMaxSpeed;
                 if (dist < APPROACH_DECEL_DIST) {
                     targetSpeed = m_playerMaxSpeed * (dist / APPROACH_DECEL_DIST);
                 }
-                m_playerSpeed = std::min(m_playerMaxSpeed,
-                                         m_playerSpeed + ACCELERATION * deltaTime);
-                m_playerSpeed = std::min(m_playerSpeed, targetSpeed);
+                // Exponential ramp: speed approaches target over time
+                float speedDiff = targetSpeed - m_playerSpeed;
+                m_playerSpeed += speedDiff * ACCELERATION * deltaTime / m_playerMaxSpeed;
+                m_playerSpeed = std::clamp(m_playerSpeed, 0.0f, targetSpeed);
                 m_playerVelocity = dir * m_playerSpeed;
                 break;
             }
             case MoveCommand::Orbit: {
-                // Orbit around target at set distance
-                m_playerSpeed = std::min(m_playerMaxSpeed,
-                                         m_playerSpeed + ACCELERATION * deltaTime);
+                // Orbit around target at set distance with gradual acceleration
+                float speedDiff = m_playerMaxSpeed - m_playerSpeed;
+                m_playerSpeed += speedDiff * ACCELERATION * deltaTime / m_playerMaxSpeed;
+                m_playerSpeed = std::min(m_playerSpeed, m_playerMaxSpeed);
                 if (dist > m_orbitDistance + 10.0f) {
                     m_playerVelocity = dir * m_playerSpeed;
                 } else if (dist < m_orbitDistance - 10.0f) {
@@ -995,8 +1012,9 @@ void Application::updateLocalMovement(float deltaTime) {
                 break;
             }
             case MoveCommand::KeepAtRange: {
-                m_playerSpeed = std::min(m_playerMaxSpeed,
-                                         m_playerSpeed + ACCELERATION * deltaTime);
+                float speedDiff = m_playerMaxSpeed - m_playerSpeed;
+                m_playerSpeed += speedDiff * ACCELERATION * deltaTime / m_playerMaxSpeed;
+                m_playerSpeed = std::min(m_playerSpeed, m_playerMaxSpeed);
                 if (dist > m_keepAtRangeDistance + 20.0f) {
                     m_playerVelocity = dir * m_playerSpeed;
                 } else if (dist < m_keepAtRangeDistance - 20.0f) {
@@ -1008,8 +1026,12 @@ void Application::updateLocalMovement(float deltaTime) {
                 break;
             }
             case MoveCommand::AlignTo: {
-                m_playerSpeed = std::min(m_playerMaxSpeed * 0.75f,
-                                         m_playerSpeed + ACCELERATION * deltaTime);
+                // Align to target: gradually accelerate to 75% max speed
+                // giving the ship time to turn and align before reaching speed
+                float alignTarget = m_playerMaxSpeed * ALIGN_SPEED_FRACTION;
+                float speedDiff = alignTarget - m_playerSpeed;
+                m_playerSpeed += speedDiff * ACCELERATION * deltaTime / m_playerMaxSpeed;
+                m_playerSpeed = std::clamp(m_playerSpeed, 0.0f, alignTarget);
                 m_playerVelocity = dir * m_playerSpeed;
                 break;
             }
