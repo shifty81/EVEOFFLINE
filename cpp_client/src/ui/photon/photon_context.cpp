@@ -83,4 +83,10 @@ WidgetID PhotonContext::currentID(const char* label) const {
     return h;
 }
 
+Vec2 PhotonContext::getDragDelta() const {
+    // Drag position tracking is handled externally via PanelState.
+    // This method is reserved for future per-frame delta computation.
+    return {0.0f, 0.0f};
+}
+
 } // namespace photon

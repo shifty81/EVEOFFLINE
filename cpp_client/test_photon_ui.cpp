@@ -10,6 +10,7 @@
 #include "ui/photon/photon_types.h"
 #include "ui/photon/photon_context.h"
 #include "ui/photon/photon_widgets.h"
+#include "ui/photon/photon_hud.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -268,6 +269,229 @@ void testInputState() {
     assertTrue(input.windowH == 720, "windowH defaults to 720");
 }
 
+// ─── Tooltip rendering test ───────────────────────────────────────────
+
+void testTooltip() {
+    std::cout << "\n=== Tooltip ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    photon::InputState input;
+    input.windowW = 1920;
+    input.windowH = 1080;
+    input.mousePos = {500.0f, 400.0f};
+    ctx.beginFrame(input);
+
+    // Should not crash and should draw tooltip elements
+    photon::tooltip(ctx, "This is a test tooltip");
+    assertTrue(true, "Tooltip renders without crash");
+
+    ctx.endFrame();
+    ctx.shutdown();
+}
+
+// ─── Checkbox test ───────────────────────────────────────────────────
+
+void testCheckbox() {
+    std::cout << "\n=== Checkbox ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    bool checked = false;
+    photon::Rect cbRect(100, 100, 200, 20);
+
+    // Frame 1: Click on checkbox
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {110.0f, 110.0f};  // Inside the checkbox box
+        input.mouseClicked[0] = true;
+        input.mouseDown[0] = true;
+        ctx.beginFrame(input);
+        photon::checkbox(ctx, "Test Check", cbRect, &checked);
+        ctx.endFrame();
+    }
+
+    // Frame 2: Release on checkbox
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {110.0f, 110.0f};
+        input.mouseReleased[0] = true;
+        ctx.beginFrame(input);
+        bool changed = photon::checkbox(ctx, "Test Check", cbRect, &checked);
+        assertTrue(changed, "Checkbox value changes on click-release");
+        assertTrue(checked, "Checkbox becomes checked after click");
+        ctx.endFrame();
+    }
+
+    // Frame 3: Click again to uncheck
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {110.0f, 110.0f};
+        input.mouseClicked[0] = true;
+        input.mouseDown[0] = true;
+        ctx.beginFrame(input);
+        photon::checkbox(ctx, "Test Check", cbRect, &checked);
+        ctx.endFrame();
+    }
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {110.0f, 110.0f};
+        input.mouseReleased[0] = true;
+        ctx.beginFrame(input);
+        bool changed = photon::checkbox(ctx, "Test Check", cbRect, &checked);
+        assertTrue(changed, "Checkbox value changes on second click");
+        assertTrue(!checked, "Checkbox becomes unchecked after second click");
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── ComboBox test ─────────────────────────────────────────────────
+
+void testComboBox() {
+    std::cout << "\n=== ComboBox ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    std::vector<std::string> items = {"All", "Combat", "Mining", "Custom"};
+    int selected = 0;
+    bool dropdownOpen = false;
+    photon::Rect cbRect(100, 100, 200, 24);
+
+    // Frame 1: Render combo in closed state
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {300.0f, 300.0f};  // Outside
+        ctx.beginFrame(input);
+        bool changed = photon::comboBox(ctx, "TestCombo", cbRect, items, &selected, &dropdownOpen);
+        assertTrue(!changed, "ComboBox no change when not interacted with");
+        assertTrue(!dropdownOpen, "ComboBox starts closed");
+        ctx.endFrame();
+    }
+
+    assertTrue(selected == 0, "ComboBox initial selection is 0");
+
+    ctx.shutdown();
+}
+
+// ─── PanelState test ──────────────────────────────────────────────────
+
+void testPanelState() {
+    std::cout << "\n=== PanelState ===" << std::endl;
+    photon::PanelState state;
+    state.bounds = {100, 100, 300, 400};
+    assertTrue(state.open, "PanelState defaults to open");
+    assertTrue(!state.minimized, "PanelState defaults to not minimized");
+    assertTrue(!state.dragging, "PanelState defaults to not dragging");
+    
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    // Render a stateful panel
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {500.0f, 500.0f};  // Outside panel
+        ctx.beginFrame(input);
+        photon::PanelFlags flags;
+        bool contentVisible = photon::panelBeginStateful(ctx, "Test Panel", state, flags);
+        assertTrue(contentVisible, "Stateful panel content is visible when open");
+        photon::panelEnd(ctx);
+        ctx.endFrame();
+    }
+    
+    ctx.shutdown();
+}
+
+// ─── PhotonHUD test ────────────────────────────────────────────────────
+
+void testPhotonHUD() {
+    std::cout << "\n=== PhotonHUD ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    photon::PhotonHUD hud;
+    hud.init(1920, 1080);
+
+    assertTrue(hud.isOverviewOpen(), "HUD overview defaults to open");
+    assertTrue(hud.isSelectedItemOpen(), "HUD selected item defaults to open");
+
+    // Toggle overview
+    hud.toggleOverview();
+    assertTrue(!hud.isOverviewOpen(), "HUD overview toggled to closed");
+    hud.toggleOverview();
+    assertTrue(hud.isOverviewOpen(), "HUD overview toggled back to open");
+
+    // Render a full HUD frame
+    photon::ShipHUDData ship;
+    ship.shieldPct = 0.85f;
+    ship.armorPct = 1.0f;
+    ship.hullPct = 1.0f;
+    ship.capacitorPct = 0.72f;
+    ship.currentSpeed = 150.0f;
+    ship.maxSpeed = 250.0f;
+    ship.highSlots = {{true, true, 0.3f, {0.8f, 0.2f, 0.2f}},
+                      {true, false, 0.0f, {0.8f, 0.2f, 0.2f}}};
+    ship.midSlots = {{true, false, 0.0f, {0.2f, 0.6f, 1.0f}}};
+    ship.lowSlots = {{true, false, 0.0f, {0.5f, 0.5f, 0.5f}}};
+
+    std::vector<photon::TargetCardInfo> targets = {
+        {"Pirate Frigate", 0.6f, 0.3f, 0.9f, 12000.0f, true, true},
+        {"Asteroid", 1.0f, 1.0f, 1.0f, 5000.0f, false, false},
+    };
+
+    std::vector<photon::OverviewEntry> overview = {
+        {"Pirate Frigate", "Frigate", 12000.0f, 350.0f, {0.8f, 0.2f, 0.2f}, true},
+        {"Mining Barge", "Mining Barge", 5000.0f, 0.0f, {0.2f, 0.6f, 1.0f}, false},
+        {"Station", "Station", 45000.0f, 0.0f, {0.667f, 0.667f, 0.667f}, false},
+    };
+
+    photon::SelectedItemInfo selected;
+    selected.name = "Pirate Frigate";
+    selected.distance = 12000.0f;
+    selected.distanceUnit = "m";
+
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {960.0f, 540.0f};
+        ctx.beginFrame(input);
+        hud.update(ctx, ship, targets, overview, selected);
+        ctx.endFrame();
+    }
+
+    assertTrue(true, "Full HUD renders without crash");
+
+    // Test with module callback
+    int clickedModule = -1;
+    hud.setModuleCallback([&clickedModule](int idx) {
+        clickedModule = idx;
+    });
+    assertTrue(true, "Module callback set without crash");
+
+    // Test with neocom callback
+    int clickedNeocom = -1;
+    hud.setNeocomCallback([&clickedNeocom](int idx) {
+        clickedNeocom = idx;
+    });
+    assertTrue(true, "Neocom callback set without crash");
+
+    ctx.shutdown();
+}
+
 // ─── Main ──────────────────────────────────────────────────────────────
 
 int main() {
@@ -284,6 +508,12 @@ int main() {
     testButtonBehavior();
     testTextMeasurement();
     testInputState();
+
+    testTooltip();
+    testCheckbox();
+    testComboBox();
+    testPanelState();
+    testPhotonHUD();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

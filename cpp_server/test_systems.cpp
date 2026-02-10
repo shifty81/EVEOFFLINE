@@ -18,6 +18,9 @@
 #include "data/wormhole_database.h"
 #include "systems/wormhole_system.h"
 #include "systems/fleet_system.h"
+#include "systems/mission_system.h"
+#include "systems/skill_system.h"
+#include "systems/module_system.h"
 #include "data/world_persistence.h"
 #include "systems/movement_system.h"
 #include "utils/logger.h"
@@ -2275,6 +2278,459 @@ void testMetricsResetWindow() {
     assertTrue(metrics.getMinTickMs() == 0.0, "Min reset to 0 after window reset");
 }
 
+// ==================== Mission System Tests ====================
+
+void testMissionAcceptAndComplete() {
+    std::cout << "\n=== Mission Accept & Complete ===" << std::endl;
+
+    ecs::World world;
+    systems::MissionSystem missionSys(&world);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::MissionTracker>(player);
+    auto* playerComp = addComp<components::Player>(player);
+    playerComp->isk = 0.0;
+    auto* standings = addComp<components::Standings>(player);
+
+    // Accept a mission
+    bool accepted = missionSys.acceptMission("player1", "mission_001",
+        "Destroy Pirates", 1, "combat", "Veyren", 100000.0, 0.5f);
+    assertTrue(accepted, "Mission accepted successfully");
+
+    auto* tracker = player->getComponent<components::MissionTracker>();
+    assertTrue(tracker->active_missions.size() == 1, "One active mission");
+
+    // Add objective
+    components::MissionTracker::Objective obj;
+    obj.type = "destroy";
+    obj.target = "pirate_frigate";
+    obj.required = 3;
+    obj.completed = 0;
+    tracker->active_missions[0].objectives.push_back(obj);
+
+    // Record partial progress
+    missionSys.recordProgress("player1", "mission_001", "destroy", "pirate_frigate", 2);
+    assertTrue(tracker->active_missions[0].objectives[0].completed == 2,
+               "Partial progress recorded (2/3)");
+
+    // Complete the objective
+    missionSys.recordProgress("player1", "mission_001", "destroy", "pirate_frigate", 1);
+    assertTrue(tracker->active_missions[0].objectives[0].done(),
+               "Objective completed (3/3)");
+
+    // Update should process completion
+    missionSys.update(0.0f);
+    assertTrue(approxEqual(static_cast<float>(playerComp->isk), 100000.0f, 1.0f),
+               "ISK reward applied");
+    assertTrue(tracker->completed_mission_ids.size() == 1,
+               "Mission recorded as completed");
+    assertTrue(tracker->active_missions.empty(),
+               "Active missions cleared after completion");
+
+    // Check standing was applied
+    float standing = standings->faction_standings["Veyren"];
+    assertTrue(approxEqual(standing, 0.5f), "Standing reward applied");
+}
+
+void testMissionTimeout() {
+    std::cout << "\n=== Mission Timeout ===" << std::endl;
+
+    ecs::World world;
+    systems::MissionSystem missionSys(&world);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::MissionTracker>(player);
+    addComp<components::Player>(player);
+
+    // Accept a timed mission (30 second limit)
+    missionSys.acceptMission("player1", "timed_001",
+        "Timed Mission", 1, "combat", "Veyren", 50000.0, 0.1f, 30.0f);
+
+    auto* tracker = player->getComponent<components::MissionTracker>();
+
+    // Add an incomplete objective
+    components::MissionTracker::Objective obj;
+    obj.type = "destroy";
+    obj.target = "enemy";
+    obj.required = 5;
+    tracker->active_missions[0].objectives.push_back(obj);
+
+    // Update for 25 seconds (should still be active)
+    missionSys.update(25.0f);
+    assertTrue(tracker->active_missions.size() == 1, "Mission still active at 25s");
+
+    // Update past the time limit
+    missionSys.update(10.0f);
+    assertTrue(tracker->active_missions.empty(), "Timed-out mission removed");
+}
+
+void testMissionAbandon() {
+    std::cout << "\n=== Mission Abandon ===" << std::endl;
+
+    ecs::World world;
+    systems::MissionSystem missionSys(&world);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::MissionTracker>(player);
+
+    missionSys.acceptMission("player1", "abandon_001",
+        "Will Abandon", 1, "combat", "Faction", 10000.0, 0.1f);
+
+    auto* tracker = player->getComponent<components::MissionTracker>();
+    assertTrue(tracker->active_missions.size() == 1, "Mission active before abandon");
+
+    missionSys.abandonMission("player1", "abandon_001");
+    assertTrue(tracker->active_missions.empty(), "Mission removed after abandon");
+}
+
+void testMissionDuplicatePrevention() {
+    std::cout << "\n=== Mission Duplicate Prevention ===" << std::endl;
+
+    ecs::World world;
+    systems::MissionSystem missionSys(&world);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::MissionTracker>(player);
+
+    bool first = missionSys.acceptMission("player1", "dup_001",
+        "First", 1, "combat", "Faction", 10000.0, 0.1f);
+    bool second = missionSys.acceptMission("player1", "dup_001",
+        "Duplicate", 1, "combat", "Faction", 10000.0, 0.1f);
+
+    assertTrue(first, "First accept succeeds");
+    assertTrue(!second, "Duplicate accept rejected");
+}
+
+// ==================== Skill System Tests ====================
+
+void testSkillTraining() {
+    std::cout << "\n=== Skill Training ===" << std::endl;
+
+    ecs::World world;
+    systems::SkillSystem skillSys(&world);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::SkillSet>(player);
+
+    // Queue skill training
+    bool queued = skillSys.queueSkillTraining("player1", "gunnery_001",
+        "Small Projectile Turret", 1, 60.0f);
+    assertTrue(queued, "Skill training queued");
+
+    auto* skillset = player->getComponent<components::SkillSet>();
+    assertTrue(skillset->training_queue.size() == 1, "One skill in queue");
+
+    // Partially train
+    skillSys.update(30.0f);
+    assertTrue(skillSys.getSkillLevel("player1", "gunnery_001") == 0,
+               "Skill not yet complete after 30s");
+
+    // Complete training
+    skillSys.update(35.0f);
+    assertTrue(skillSys.getSkillLevel("player1", "gunnery_001") == 1,
+               "Skill trained to level 1 after 65s");
+    assertTrue(skillset->training_queue.empty(), "Queue empty after completion");
+    assertTrue(skillset->total_sp > 0.0, "SP awarded");
+}
+
+void testSkillInstantTrain() {
+    std::cout << "\n=== Skill Instant Train ===" << std::endl;
+
+    ecs::World world;
+    systems::SkillSystem skillSys(&world);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::SkillSet>(player);
+
+    bool trained = skillSys.trainSkillInstant("player1", "nav_001",
+        "Navigation", 3);
+    assertTrue(trained, "Instant train succeeds");
+    assertTrue(skillSys.getSkillLevel("player1", "nav_001") == 3,
+               "Skill is level 3");
+}
+
+void testSkillQueueMultiple() {
+    std::cout << "\n=== Skill Queue Multiple ===" << std::endl;
+
+    ecs::World world;
+    systems::SkillSystem skillSys(&world);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::SkillSet>(player);
+
+    skillSys.queueSkillTraining("player1", "skill_a", "Skill A", 1, 10.0f);
+    skillSys.queueSkillTraining("player1", "skill_b", "Skill B", 1, 20.0f);
+
+    auto* skillset = player->getComponent<components::SkillSet>();
+    assertTrue(skillset->training_queue.size() == 2, "Two skills in queue");
+
+    // Complete first
+    skillSys.update(12.0f);
+    assertTrue(skillSys.getSkillLevel("player1", "skill_a") == 1, "First skill complete");
+    assertTrue(skillset->training_queue.size() == 1, "One skill remaining");
+
+    // Complete second
+    skillSys.update(20.0f);
+    assertTrue(skillSys.getSkillLevel("player1", "skill_b") == 1, "Second skill complete");
+    assertTrue(skillset->training_queue.empty(), "Queue empty");
+}
+
+void testSkillInvalidLevel() {
+    std::cout << "\n=== Skill Invalid Level ===" << std::endl;
+
+    ecs::World world;
+    systems::SkillSystem skillSys(&world);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::SkillSet>(player);
+
+    bool result = skillSys.queueSkillTraining("player1", "test", "Test", 6, 10.0f);
+    assertTrue(!result, "Level 6 rejected (max is 5)");
+
+    result = skillSys.queueSkillTraining("player1", "test", "Test", 0, 10.0f);
+    assertTrue(!result, "Level 0 rejected (min is 1)");
+}
+
+// ==================== Module System Tests ====================
+
+void testModuleActivation() {
+    std::cout << "\n=== Module Activation ===" << std::endl;
+
+    ecs::World world;
+    systems::ModuleSystem modSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* rack = addComp<components::ModuleRack>(ship);
+    auto* cap = addComp<components::Capacitor>(ship);
+    cap->capacitor = 100.0f;
+    cap->capacitor_max = 100.0f;
+
+    // Add a module to high slot
+    components::ModuleRack::FittedModule gun;
+    gun.module_id = "gun_001";
+    gun.name = "125mm Autocannon";
+    gun.slot_type = "high";
+    gun.slot_index = 0;
+    gun.cycle_time = 5.0f;
+    gun.capacitor_cost = 10.0f;
+    rack->high_slots.push_back(gun);
+
+    // Activate
+    bool activated = modSys.activateModule("ship1", "high", 0);
+    assertTrue(activated, "Module activated");
+    assertTrue(rack->high_slots[0].active, "Module is active");
+
+    // Can't activate again
+    bool double_activate = modSys.activateModule("ship1", "high", 0);
+    assertTrue(!double_activate, "Can't activate already active module");
+}
+
+void testModuleCycling() {
+    std::cout << "\n=== Module Cycling ===" << std::endl;
+
+    ecs::World world;
+    systems::ModuleSystem modSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* rack = addComp<components::ModuleRack>(ship);
+    auto* cap = addComp<components::Capacitor>(ship);
+    cap->capacitor = 100.0f;
+    cap->capacitor_max = 100.0f;
+
+    components::ModuleRack::FittedModule repper;
+    repper.module_id = "rep_001";
+    repper.name = "Small Armor Repairer";
+    repper.slot_type = "low";
+    repper.slot_index = 0;
+    repper.cycle_time = 4.0f;
+    repper.capacitor_cost = 20.0f;
+    rack->low_slots.push_back(repper);
+
+    modSys.activateModule("ship1", "low", 0);
+
+    // Partially cycle
+    modSys.update(2.0f);
+    assertTrue(approxEqual(rack->low_slots[0].cycle_progress, 0.5f),
+               "Half cycle after 2s (4s cycle time)");
+
+    // Complete cycle — should consume cap
+    modSys.update(3.0f);
+    assertTrue(approxEqual(cap->capacitor, 80.0f, 1.0f),
+               "Capacitor consumed after cycle completion");
+}
+
+void testModuleCapDrain() {
+    std::cout << "\n=== Module Capacitor Drain ===" << std::endl;
+
+    ecs::World world;
+    systems::ModuleSystem modSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* rack = addComp<components::ModuleRack>(ship);
+    auto* cap = addComp<components::Capacitor>(ship);
+    cap->capacitor = 15.0f;  // Just enough for one cycle
+    cap->capacitor_max = 100.0f;
+
+    components::ModuleRack::FittedModule mod;
+    mod.cycle_time = 1.0f;
+    mod.capacitor_cost = 10.0f;
+    rack->high_slots.push_back(mod);
+
+    modSys.activateModule("ship1", "high", 0);
+
+    // First cycle completes
+    modSys.update(1.5f);
+    assertTrue(rack->high_slots[0].active, "Module still active after first cycle");
+
+    // Second cycle — not enough cap
+    modSys.update(1.5f);
+    assertTrue(!rack->high_slots[0].active,
+               "Module deactivated when capacitor exhausted");
+}
+
+void testModuleFittingValidation() {
+    std::cout << "\n=== Module Fitting Validation ===" << std::endl;
+
+    ecs::World world;
+    systems::ModuleSystem modSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* shipComp = addComp<components::Ship>(ship);
+    shipComp->cpu_max = 100.0f;
+    shipComp->powergrid_max = 50.0f;
+    auto* rack = addComp<components::ModuleRack>(ship);
+
+    // Fit a module within limits
+    components::ModuleRack::FittedModule mod1;
+    mod1.cpu_usage = 30.0f;
+    mod1.powergrid_usage = 20.0f;
+    rack->high_slots.push_back(mod1);
+
+    assertTrue(modSys.validateFitting("ship1"), "Fitting within limits");
+
+    // Exceed CPU
+    components::ModuleRack::FittedModule mod2;
+    mod2.cpu_usage = 80.0f;
+    mod2.powergrid_usage = 10.0f;
+    rack->mid_slots.push_back(mod2);
+
+    assertTrue(!modSys.validateFitting("ship1"), "Fitting exceeds CPU");
+}
+
+void testModuleToggle() {
+    std::cout << "\n=== Module Toggle ===" << std::endl;
+
+    ecs::World world;
+    systems::ModuleSystem modSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* rack = addComp<components::ModuleRack>(ship);
+    auto* cap = addComp<components::Capacitor>(ship);
+    cap->capacitor = 100.0f;
+
+    components::ModuleRack::FittedModule mod;
+    mod.capacitor_cost = 5.0f;
+    rack->mid_slots.push_back(mod);
+
+    // Toggle on
+    modSys.toggleModule("ship1", "mid", 0);
+    assertTrue(rack->mid_slots[0].active, "Module toggled on");
+
+    // Toggle off
+    modSys.toggleModule("ship1", "mid", 0);
+    assertTrue(!rack->mid_slots[0].active, "Module toggled off");
+}
+
+// ==================== Movement Command Tests ====================
+
+void testMovementOrbitCommand() {
+    std::cout << "\n=== Movement Orbit Command ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(ship);
+    vel->max_speed = 200.0f;
+
+    auto* target = world.createEntity("target1");
+    auto* tpos = addComp<components::Position>(target);
+    tpos->x = 1000.0f; tpos->y = 0.0f; tpos->z = 0.0f;
+    addComp<components::Velocity>(target);
+
+    moveSys.commandOrbit("ship1", "target1", 500.0f);
+    moveSys.update(1.0f);
+
+    // Ship should be moving (velocity non-zero)
+    float speed = std::sqrt(vel->vx * vel->vx + vel->vy * vel->vy + vel->vz * vel->vz);
+    assertTrue(speed > 0.0f, "Ship has velocity after orbit command");
+}
+
+void testMovementApproachCommand() {
+    std::cout << "\n=== Movement Approach Command ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(ship);
+    vel->max_speed = 200.0f;
+
+    auto* target = world.createEntity("target1");
+    auto* tpos = addComp<components::Position>(target);
+    tpos->x = 1000.0f; tpos->y = 0.0f; tpos->z = 0.0f;
+    addComp<components::Velocity>(target);
+
+    moveSys.commandApproach("ship1", "target1");
+    moveSys.update(1.0f);
+
+    // Ship should be moving toward target (positive vx)
+    assertTrue(vel->vx > 0.0f, "Ship moving toward target (positive X)");
+    assertTrue(pos->x > 0.0f, "Ship position moved toward target");
+}
+
+void testMovementStopCommand() {
+    std::cout << "\n=== Movement Stop Command ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    addComp<components::Position>(ship);
+    auto* vel = addComp<components::Velocity>(ship);
+    vel->vx = 100.0f;
+    vel->vy = 50.0f;
+    vel->max_speed = 200.0f;
+
+    moveSys.commandStop("ship1");
+    assertTrue(vel->vx == 0.0f && vel->vy == 0.0f && vel->vz == 0.0f,
+               "Velocity zeroed after stop command");
+}
+
+void testMovementWarpDistance() {
+    std::cout << "\n=== Movement Warp Distance Check ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+
+    // Try to warp too close (< 150km)
+    bool warped = moveSys.commandWarp("ship1", 100.0f, 0.0f, 0.0f);
+    assertTrue(!warped, "Warp rejected (destination too close)");
+
+    // Warp to valid distance
+    warped = moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+    assertTrue(warped, "Warp accepted (>150km)");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -2282,6 +2738,7 @@ int main() {
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
     std::cout << "Capacitor, Shield, Weapon, Targeting," << std::endl;
     std::cout << "ShipDB, WormholeDB, Wormhole, Fleet," << std::endl;
+    std::cout << "Mission, Skill, Module," << std::endl;
     std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
     std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
@@ -2381,7 +2838,32 @@ int main() {
     testMetricsUptime();
     testMetricsSummary();
     testMetricsResetWindow();
-    
+
+    // Mission system tests
+    testMissionAcceptAndComplete();
+    testMissionTimeout();
+    testMissionAbandon();
+    testMissionDuplicatePrevention();
+
+    // Skill system tests
+    testSkillTraining();
+    testSkillInstantTrain();
+    testSkillQueueMultiple();
+    testSkillInvalidLevel();
+
+    // Module system tests
+    testModuleActivation();
+    testModuleCycling();
+    testModuleCapDrain();
+    testModuleFittingValidation();
+    testModuleToggle();
+
+    // Movement command tests
+    testMovementOrbitCommand();
+    testMovementApproachCommand();
+    testMovementStopCommand();
+    testMovementWarpDistance();
+
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
     std::cout << "========================================" << std::endl;

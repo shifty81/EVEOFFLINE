@@ -598,4 +598,246 @@ void neocomBar(PhotonContext& ctx, float x, float width, float height,
     }
 }
 
+// ── Tooltip ─────────────────────────────────────────────────────────
+
+void tooltip(PhotonContext& ctx, const std::string& text) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    float tw = rr.measureText(text) + 16.0f;
+    float th = 24.0f;
+    Vec2 mouse = ctx.input().mousePos;
+    // Position tooltip slightly below and to the right of cursor
+    Rect tipRect = {mouse.x + 12.0f, mouse.y + 16.0f, tw, th};
+
+    // Clamp to window bounds
+    float winW = static_cast<float>(ctx.input().windowW);
+    float winH = static_cast<float>(ctx.input().windowH);
+    if (tipRect.right() > winW) tipRect.x = winW - tw;
+    if (tipRect.bottom() > winH) tipRect.y = mouse.y - th - 4.0f;
+
+    rr.drawRect(tipRect, t.bgTooltip);
+    rr.drawRectOutline(tipRect, t.borderNormal);
+    rr.drawText(text, {tipRect.x + 8.0f, tipRect.y + 5.0f}, t.textPrimary);
+}
+
+// ── Checkbox ────────────────────────────────────────────────────────
+
+bool checkbox(PhotonContext& ctx, const char* label,
+              const Rect& r, bool* checked) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    WidgetID id = ctx.currentID(label);
+
+    float boxSz = std::min(r.h - 4.0f, 16.0f);
+    Rect box = {r.x + 2.0f, r.y + (r.h - boxSz) * 0.5f, boxSz, boxSz};
+    bool clicked = ctx.buttonBehavior(box, id);
+
+    // Box background
+    Color bg = t.bgSecondary;
+    if (ctx.isHot(id)) bg = t.hover;
+    rr.drawRect(box, bg);
+    rr.drawRectOutline(box, t.borderNormal);
+
+    // Check mark (simple filled inner square when checked)
+    if (checked && *checked) {
+        float inset = 3.0f;
+        Rect inner = {box.x + inset, box.y + inset,
+                      box.w - 2 * inset, box.h - 2 * inset};
+        rr.drawRect(inner, t.accentPrimary);
+    }
+
+    // Label text
+    float textX = box.right() + 6.0f;
+    float textY = r.y + (r.h - 13.0f) * 0.5f;
+    rr.drawText(label, {textX, textY}, t.textPrimary);
+
+    if (clicked && checked) {
+        *checked = !(*checked);
+        return true;
+    }
+    return false;
+}
+
+// ── ComboBox ────────────────────────────────────────────────────────
+
+bool comboBox(PhotonContext& ctx, const char* label,
+              const Rect& r, const std::vector<std::string>& items,
+              int* selected, bool* dropdownOpen) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    WidgetID id = ctx.currentID(label);
+    bool changed = false;
+
+    // Main combo button
+    bool mainClicked = ctx.buttonBehavior(r, id);
+
+    Color bg = t.bgSecondary;
+    if (ctx.isHot(id)) bg = t.hover;
+    rr.drawRect(r, bg);
+    rr.drawRectOutline(r, t.borderNormal);
+
+    // Current selection text
+    if (selected && *selected >= 0 && *selected < static_cast<int>(items.size())) {
+        float textY = r.y + (r.h - 13.0f) * 0.5f;
+        rr.drawText(items[*selected], {r.x + 6.0f, textY}, t.textPrimary);
+    }
+
+    // Dropdown arrow indicator
+    float arrowX = r.right() - 14.0f;
+    float arrowY = r.y + r.h * 0.5f;
+    rr.drawLine({arrowX, arrowY - 3.0f}, {arrowX + 4.0f, arrowY + 3.0f},
+                t.textSecondary, 1.0f);
+    rr.drawLine({arrowX + 4.0f, arrowY + 3.0f}, {arrowX + 8.0f, arrowY - 3.0f},
+                t.textSecondary, 1.0f);
+
+    // Toggle dropdown on click
+    if (mainClicked && dropdownOpen) {
+        *dropdownOpen = !(*dropdownOpen);
+    }
+
+    // Dropdown list
+    if (dropdownOpen && *dropdownOpen && !items.empty()) {
+        float itemH = 22.0f;
+        float dropH = itemH * items.size();
+        Rect dropRect = {r.x, r.bottom(), r.w, dropH};
+
+        rr.drawRect(dropRect, t.bgPanel);
+        rr.drawRectOutline(dropRect, t.borderNormal);
+
+        for (int i = 0; i < static_cast<int>(items.size()); ++i) {
+            Rect itemRect = {r.x, r.bottom() + i * itemH, r.w, itemH};
+            WidgetID itemID = ctx.currentID(items[i].c_str());
+
+            bool itemClicked = ctx.buttonBehavior(itemRect, itemID);
+
+            Color itemBg = (i % 2 == 0) ? t.bgSecondary.withAlpha(0.3f)
+                                         : t.bgPanel.withAlpha(0.3f);
+            if (selected && i == *selected) itemBg = t.selection;
+            else if (ctx.isHot(itemID)) itemBg = t.hover;
+
+            rr.drawRect(itemRect, itemBg);
+            float textY = itemRect.y + (itemH - 13.0f) * 0.5f;
+            rr.drawText(items[i], {itemRect.x + 6.0f, textY}, t.textPrimary);
+
+            if (itemClicked && selected) {
+                *selected = i;
+                *dropdownOpen = false;
+                changed = true;
+            }
+        }
+    }
+
+    return changed;
+}
+
+// ── Stateful Panel ──────────────────────────────────────────────────
+
+bool panelBeginStateful(PhotonContext& ctx, const char* title,
+                        PanelState& state, const PanelFlags& flags) {
+    if (!state.open) return false;
+
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    ctx.pushID(title);
+
+    // Handle dragging (header-bar drag to move)
+    if (!flags.locked && flags.showHeader) {
+        float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
+        Rect headerHit = {state.bounds.x, state.bounds.y, state.bounds.w, hh};
+        WidgetID dragID = ctx.currentID("_drag");
+
+        if (ctx.isHovered(headerHit) && ctx.isMouseClicked()) {
+            state.dragging = true;
+            state.dragOffset = {ctx.input().mousePos.x - state.bounds.x,
+                                ctx.input().mousePos.y - state.bounds.y};
+            ctx.setActive(dragID);
+        }
+
+        if (state.dragging) {
+            if (ctx.isMouseDown()) {
+                state.bounds.x = ctx.input().mousePos.x - state.dragOffset.x;
+                state.bounds.y = ctx.input().mousePos.y - state.dragOffset.y;
+
+                // Clamp to window bounds
+                float winW = static_cast<float>(ctx.input().windowW);
+                float winH = static_cast<float>(ctx.input().windowH);
+                state.bounds.x = std::max(0.0f, std::min(state.bounds.x, winW - state.bounds.w));
+                state.bounds.y = std::max(0.0f, std::min(state.bounds.y, winH - t.headerHeight));
+            } else {
+                state.dragging = false;
+                ctx.clearActive();
+            }
+        }
+    }
+
+    // Draw panel background
+    Rect drawBounds = state.bounds;
+    if (state.minimized) {
+        float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
+        drawBounds.h = hh;
+    }
+
+    rr.drawRect(drawBounds, t.bgPanel);
+
+    // Border
+    if (flags.drawBorder) {
+        rr.drawRectOutline(drawBounds, t.borderSubtle, t.borderWidth);
+    }
+
+    // Header bar
+    if (flags.showHeader) {
+        float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
+        Rect headerRect = {drawBounds.x, drawBounds.y, drawBounds.w, hh};
+        rr.drawRect(headerRect, t.bgHeader);
+
+        float textY = drawBounds.y + (hh - 13.0f) * 0.5f;
+        rr.drawText(title, {drawBounds.x + t.padding, textY}, t.textPrimary);
+
+        // Close button (×)
+        if (flags.showClose) {
+            float btnSz = 14.0f;
+            Rect closeRect = {drawBounds.right() - btnSz - 4.0f,
+                              drawBounds.y + (hh - btnSz) * 0.5f,
+                              btnSz, btnSz};
+            WidgetID closeID = ctx.currentID("_close");
+            bool hovered = ctx.isHovered(closeRect);
+            if (hovered) ctx.setHot(closeID);
+            Color closeBg = hovered ? t.danger.withAlpha(0.6f) : t.bgSecondary;
+            rr.drawRect(closeRect, closeBg);
+            rr.drawText("x", {closeRect.x + 3.0f, closeRect.y + 1.0f}, t.textPrimary);
+            if (ctx.buttonBehavior(closeRect, closeID)) {
+                state.open = false;
+            }
+        }
+
+        // Minimize button (—)
+        if (flags.showMinimize) {
+            float btnSz = 14.0f;
+            float offset = flags.showClose ? 22.0f : 4.0f;
+            Rect minRect = {drawBounds.right() - btnSz - offset,
+                            drawBounds.y + (hh - btnSz) * 0.5f,
+                            btnSz, btnSz};
+            WidgetID minID = ctx.currentID("_min");
+            bool hovered = ctx.isHovered(minRect);
+            if (hovered) ctx.setHot(minID);
+            Color minBg = hovered ? t.hover : t.bgSecondary;
+            rr.drawRect(minRect, minBg);
+            rr.drawText("-", {minRect.x + 3.0f, minRect.y + 1.0f}, t.textPrimary);
+            if (ctx.buttonBehavior(minRect, minID)) {
+                state.minimized = !state.minimized;
+            }
+        }
+
+        // Thin accent line under header
+        rr.drawRect({drawBounds.x, drawBounds.y + hh - 1.0f, drawBounds.w, 1.0f},
+                    t.accentDim);
+    }
+
+    return !state.minimized;
+}
+
 } // namespace photon

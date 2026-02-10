@@ -344,6 +344,7 @@ set(CLIENT_SOURCES
     src/ui/photon/photon_renderer.cpp
     src/ui/photon/photon_context.cpp
     src/ui/photon/photon_widgets.cpp
+    src/ui/photon/photon_hud.cpp
     src/core/solar_system_scene.cpp
     src/core/ship_physics.cpp
     ${GLAD_SOURCES}
@@ -405,6 +406,7 @@ set(CLIENT_HEADERS
     include/ui/photon/photon_renderer.h
     include/ui/photon/photon_context.h
     include/ui/photon/photon_widgets.h
+    include/ui/photon/photon_hud.h
     include/core/solar_system_scene.h
     include/core/ship_physics.h
     ${AUDIO_HEADERS}
@@ -1049,6 +1051,22 @@ if(BUILD_TESTS)
     )
     if(WIN32)
         target_link_libraries(test_model_analyzer ws2_32)
+    endif()
+
+    # Test: Photon UI System (headless — no GPU required)
+    add_executable(test_photon_ui
+        test_photon_ui.cpp
+        src/ui/photon/photon_renderer.cpp
+        src/ui/photon/photon_context.cpp
+        src/ui/photon/photon_widgets.cpp
+        src/ui/photon/photon_hud.cpp
+    )
+    target_include_directories(test_photon_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(test_photon_ui
+        Threads::Threads
+    )
+    if(WIN32)
+        target_link_libraries(test_photon_ui ws2_32)
     endif()
 endif()
 

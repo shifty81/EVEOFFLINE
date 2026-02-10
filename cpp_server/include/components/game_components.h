@@ -338,6 +338,120 @@ public:
     COMPONENT_TYPE(FleetMembership)
 };
 
+/**
+ * @brief Active mission tracking for a player entity
+ * 
+ * Tracks missions the player has accepted, their objectives,
+ * and progress. Supports multiple concurrent missions.
+ */
+class MissionTracker : public ecs::Component {
+public:
+    struct Objective {
+        std::string type;          // "destroy", "mine", "deliver", "reach"
+        std::string target;        // entity type or item name
+        int required = 1;
+        int completed = 0;
+        bool done() const { return completed >= required; }
+    };
+
+    struct ActiveMission {
+        std::string mission_id;
+        std::string name;
+        int level = 1;
+        std::string type;          // "combat", "mining", "courier"
+        std::string agent_faction;
+        std::vector<Objective> objectives;
+        double isk_reward = 0.0;
+        double lp_reward = 0.0;
+        float standing_reward = 0.0f;
+        float time_remaining = -1.0f;  // seconds, -1 = no limit
+        bool completed = false;
+        bool failed = false;
+
+        bool allObjectivesDone() const {
+            for (const auto& obj : objectives)
+                if (!obj.done()) return false;
+            return !objectives.empty();
+        }
+    };
+
+    std::vector<ActiveMission> active_missions;
+    std::vector<std::string> completed_mission_ids;
+
+    COMPONENT_TYPE(MissionTracker)
+};
+
+/**
+ * @brief Skill training and bonuses for a player entity
+ *
+ * Tracks trained skills, current training queue, and provides
+ * methods to compute skill bonuses on ship stats.
+ */
+class SkillSet : public ecs::Component {
+public:
+    struct TrainedSkill {
+        std::string skill_id;
+        std::string name;
+        int level = 0;           // 0-5
+        int max_level = 5;
+        float training_multiplier = 1.0f;
+    };
+
+    struct QueueEntry {
+        std::string skill_id;
+        int target_level = 1;
+        float time_remaining = 0.0f;  // seconds remaining
+    };
+
+    // All trained skills indexed by skill_id
+    std::map<std::string, TrainedSkill> skills;
+
+    // Training queue (FIFO)
+    std::vector<QueueEntry> training_queue;
+
+    // Total skill points
+    double total_sp = 0.0;
+
+    int getSkillLevel(const std::string& skill_id) const {
+        auto it = skills.find(skill_id);
+        return (it != skills.end()) ? it->second.level : 0;
+    }
+
+    COMPONENT_TYPE(SkillSet)
+};
+
+/**
+ * @brief Module activation state for fitted modules on a ship
+ *
+ * Tracks which modules are fitted, their activation state,
+ * and cycling timers. Separate from Weapon component which
+ * handles NPC auto-fire; this handles player-initiated module use.
+ */
+class ModuleRack : public ecs::Component {
+public:
+    struct FittedModule {
+        std::string module_id;
+        std::string name;
+        std::string slot_type;     // "high", "mid", "low"
+        int slot_index = 0;
+        bool active = false;       // currently cycling
+        float cycle_time = 5.0f;   // seconds per cycle
+        float cycle_progress = 0.0f; // 0-1 progress through current cycle
+        float capacitor_cost = 5.0f;
+        float cpu_usage = 10.0f;
+        float powergrid_usage = 5.0f;
+
+        // Effects applied while active (key: stat_name, value: modifier)
+        std::map<std::string, float> effects;
+    };
+
+    std::vector<FittedModule> high_slots;
+    std::vector<FittedModule> mid_slots;
+    std::vector<FittedModule> low_slots;
+
+    COMPONENT_TYPE(ModuleRack)
+};
+
 } // namespace components
 } // namespace eve
 

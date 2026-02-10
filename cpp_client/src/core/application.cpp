@@ -16,6 +16,8 @@
 #include "ui/overview_panel.h"
 #include <GLFW/glfw3.h>
 #include <imgui.h>
+#include "ui/photon/photon_context.h"
+#include "ui/photon/photon_hud.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -51,6 +53,8 @@ Application::Application(const std::string& title, int width, int height)
     m_uiManager = std::make_unique<UI::UIManager>();
     m_entityPicker = std::make_unique<UI::EntityPicker>();
     m_solarSystem = std::make_unique<SolarSystemScene>();
+    m_photonCtx = std::make_unique<photon::PhotonContext>();
+    m_photonHUD = std::make_unique<photon::PhotonHUD>();
     
     // Initialize
     initialize();
@@ -104,6 +108,10 @@ void Application::initialize() {
     if (!m_uiManager->Initialize(m_window->getHandle())) {
         throw std::runtime_error("Failed to initialize UI manager");
     }
+    
+    // Initialize Photon UI context
+    m_photonCtx->init();
+    m_photonHUD->init(m_window->getWidth(), m_window->getHeight());
     
     // Set up input callbacks — EVE Online style controls
     // Left-click: select/target, Double-click: approach
@@ -506,12 +514,41 @@ void Application::render() {
     m_uiManager->Render();
     m_uiManager->EndFrame();
     
+    // Render Photon HUD overlay
+    {
+        photon::InputState photonInput;
+        photonInput.windowW = m_window->getWidth();
+        photonInput.windowH = m_window->getHeight();
+        // Mouse state would be fed from GLFW in a full integration
+        // For now, Photon renders visual-only (no interaction forwarded yet)
+        
+        m_photonCtx->beginFrame(photonInput);
+        
+        photon::ShipHUDData shipData;
+        // TODO: Connect to actual ship state from game client
+        shipData.shieldPct = 1.0f;
+        shipData.armorPct = 1.0f;
+        shipData.hullPct = 1.0f;
+        shipData.capacitorPct = 1.0f;
+        shipData.currentSpeed = m_playerSpeed;
+        shipData.maxSpeed = m_playerMaxSpeed;
+        
+        m_photonHUD->update(*m_photonCtx, shipData, {}, {}, {});
+        
+        m_photonCtx->endFrame();
+    }
+    
     // End rendering
     m_renderer->endFrame();
 }
 
 void Application::cleanup() {
     std::cout << "Cleaning up application..." << std::endl;
+    
+    // Shutdown Photon UI
+    if (m_photonCtx) {
+        m_photonCtx->shutdown();
+    }
     
     // Leave session and stop server if hosting
     if (m_sessionManager) {

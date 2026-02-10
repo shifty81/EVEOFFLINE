@@ -24,6 +24,11 @@ namespace UI {
     class EntityPicker;
 }
 
+namespace photon {
+    class PhotonHUD;
+    class PhotonContext;
+}
+
 namespace eve {
 
 /**
@@ -223,6 +228,8 @@ private:
     std::unique_ptr<UI::UIManager> m_uiManager;
     std::unique_ptr<UI::EntityPicker> m_entityPicker;
     std::unique_ptr<SolarSystemScene> m_solarSystem;
+    std::unique_ptr<photon::PhotonContext> m_photonCtx;
+    std::unique_ptr<photon::PhotonHUD> m_photonHUD;
 
     bool m_running;
     float m_lastFrameTime;
