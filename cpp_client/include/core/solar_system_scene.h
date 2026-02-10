@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <functional>
+#include <cstdint>
 #include "core/ship_physics.h"
 
 namespace eve {
@@ -78,6 +79,14 @@ public:
      * Creates: Sun, 3 planets, 2 asteroid belts, 1 station, 1 stargate.
      */
     void loadTestSystem();
+
+    /**
+     * Generate a procedural solar system from a seed.
+     * Each seed produces a unique but deterministic layout with varied
+     * numbers of planets, moons, asteroid belts, stations, and stargates.
+     * Almost all systems have at least one station or asteroid belt.
+     */
+    void generateSystem(uint32_t seed, const std::string& systemName);
 
     /**
      * Add a celestial object to the system.

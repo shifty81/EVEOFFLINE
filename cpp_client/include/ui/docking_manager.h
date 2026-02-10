@@ -27,6 +27,11 @@ struct DockablePanel {
     ImVec2 position = {0, 0};
     ImVec2 size = {300, 400};
     bool position_set = false;  // Whether initial position has been applied
+
+    // Panel controls
+    bool collapsed = false;     // Whether the panel body is collapsed (header only)
+    bool pinned = false;        // Whether the panel size is locked (pinned)
+    float opacity = 0.92f;      // Background opacity (0.0 - 1.0); text stays readable
 };
 
 /**

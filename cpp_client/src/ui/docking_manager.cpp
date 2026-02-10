@@ -197,18 +197,64 @@ void DockingManager::RenderFloatingPanel(DockablePanel& panel) {
         panel.position_set = true;
     }
 
-    ImGuiWindowFlags flags = ImGuiWindowFlags_None;  // Allow collapsing
-    if (m_interfaceLocked) {
-        flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    ImGuiWindowFlags flags = ImGuiWindowFlags_None;
+    if (m_interfaceLocked || panel.pinned) {
+        flags |= ImGuiWindowFlags_NoResize;
     }
+    if (m_interfaceLocked) {
+        flags |= ImGuiWindowFlags_NoMove;
+    }
+
+    // Apply per-panel background opacity; text stays nearly full opacity
+    ImVec4 panelBg(EVEColors::BG_PRIMARY[0], EVEColors::BG_PRIMARY[1],
+                   EVEColors::BG_PRIMARY[2], panel.opacity);
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, panelBg);
 
     if (ImGui::Begin(panel.title.c_str(), &panel.visible, flags)) {
         // Track position/size for snapping/docking
         panel.position = ImGui::GetWindowPos();
         panel.size = ImGui::GetWindowSize();
 
-        // Render panel contents
-        panel.renderContents();
+        // Render panel header controls: [Collapse] [Pin] [Opacity slider]
+        {
+            float availW = ImGui::GetContentRegionAvail().x;
+            // Collapse toggle
+            if (ImGui::SmallButton(panel.collapsed ? ">>" : "<<")) {
+                panel.collapsed = !panel.collapsed;
+            }
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetTooltip(panel.collapsed ? "Expand panel" : "Collapse panel");
+            }
+            ImGui::SameLine();
+            // Pin toggle
+            if (ImGui::SmallButton(panel.pinned ? "[=]" : "[o]")) {
+                panel.pinned = !panel.pinned;
+            }
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetTooltip(panel.pinned ? "Unpin (unlock size)" : "Pin (lock size)");
+            }
+            ImGui::SameLine();
+            // Opacity slider (compact)
+            ImGui::SetNextItemWidth(std::min(80.0f, availW - 120.0f));
+            ImGui::SliderFloat("##opacity", &panel.opacity, 0.15f, 1.0f, "%.0f%%");
+            if (ImGui::IsItemHovered()) {
+                ImGui::SetTooltip("Background opacity");
+            }
+            ImGui::Separator();
+        }
+
+        // Render panel contents only if not collapsed
+        if (!panel.collapsed) {
+            // Push slightly transparent text so it's readable even at low bg opacity
+            float textAlpha = std::max(0.75f, panel.opacity + 0.08f);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(
+                EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
+                EVEColors::TEXT_PRIMARY[2], textAlpha));
+
+            panel.renderContents();
+
+            ImGui::PopStyleColor();
+        }
 
         // Snap logic (only when not locked)
         if (!m_interfaceLocked) {
@@ -216,6 +262,7 @@ void DockingManager::RenderFloatingPanel(DockablePanel& panel) {
         }
     }
     ImGui::End();
+    ImGui::PopStyleColor();  // WindowBg
 }
 
 void DockingManager::RenderDockContainer(DockContainer& container) {
