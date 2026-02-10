@@ -60,6 +60,7 @@ set(SERVER_SOURCES
     src/systems/module_system.cpp
     src/systems/inventory_system.cpp
     src/systems/loot_system.cpp
+    src/systems/drone_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -96,6 +97,7 @@ set(SERVER_HEADERS
     include/systems/module_system.h
     include/systems/inventory_system.h
     include/systems/loot_system.h
+    include/systems/drone_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -194,6 +196,7 @@ if(BUILD_TESTS)
         src/systems/module_system.cpp
         src/systems/inventory_system.cpp
         src/systems/loot_system.cpp
+        src/systems/drone_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

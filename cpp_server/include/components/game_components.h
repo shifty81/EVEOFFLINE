@@ -503,6 +503,54 @@ public:
     COMPONENT_TYPE(LootTable)
 };
 
+/**
+ * @brief Drone bay and deployed drone management
+ *
+ * Tracks which drones are stored in the drone bay and which are
+ * currently deployed in space.  Enforces bandwidth and bay capacity.
+ */
+class DroneBay : public ecs::Component {
+public:
+    struct DroneInfo {
+        std::string drone_id;
+        std::string name;
+        std::string type;          // "light_combat_drone", "medium_combat_drone", etc.
+        std::string damage_type;   // "em", "thermal", "kinetic", "explosive"
+        float damage = 0.0f;
+        float rate_of_fire = 3.0f; // seconds between shots
+        float cooldown = 0.0f;     // current cooldown timer
+        float optimal_range = 5000.0f;
+        float hitpoints = 45.0f;
+        float current_hp = 45.0f;
+        int bandwidth_use = 5;
+        float volume = 5.0f;       // m3 per drone
+    };
+
+    std::vector<DroneInfo> stored_drones;    // drones in bay (not deployed)
+    std::vector<DroneInfo> deployed_drones;  // drones in space
+
+    float bay_capacity = 25.0f;     // m3 total bay capacity
+    int max_bandwidth = 25;         // Mbit/s bandwidth limit
+
+    int usedBandwidth() const {
+        int total = 0;
+        for (const auto& d : deployed_drones)
+            total += d.bandwidth_use;
+        return total;
+    }
+
+    float usedBayVolume() const {
+        float total = 0.0f;
+        for (const auto& d : stored_drones)
+            total += d.volume;
+        for (const auto& d : deployed_drones)
+            total += d.volume;
+        return total;
+    }
+
+    COMPONENT_TYPE(DroneBay)
+};
+
 } // namespace components
 } // namespace eve
 
