@@ -514,7 +514,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 **Priority**: Medium
 
 #### More Ships
-- [ ] Tech II ships (all classes)
+- [x] Tech II ships (all classes)
 - [x] Battleships (4 races)
 - [x] Tech II Battleships (Marauders: Vargur, Golem, Kronos, Paladin)
 - [x] Battlecruisers (4 races)
@@ -526,7 +526,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Capital ships (Carriers, Dreadnoughts)
 
 #### More Modules
-- [ ] Tech II modules (all types)
+- [x] Tech II modules (all types)
 - [x] Officer modules (rare drops)
 - [x] Faction modules
 - [x] Capital-sized modules (shield booster, armor repairer, logistics, weapons, siege, triage, doomsday)
@@ -692,9 +692,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Multi-threaded server processing
 
 #### DevOps & Deployment
-- [ ] CI/CD pipeline (GitHub Actions)
-- [ ] Automated testing on PR
-- [ ] Docker containerization
+- [x] CI/CD pipeline (GitHub Actions) — Server and Client workflows
+- [x] Automated testing on PR — Server tests (362 assertions) run on push/PR
+- [x] Docker containerization — Multi-stage Dockerfile for dedicated server
 - [ ] Cloud deployment guides (AWS, GCP, Azure)
 - [ ] Server monitoring and analytics
 - [ ] Crash reporting and logging

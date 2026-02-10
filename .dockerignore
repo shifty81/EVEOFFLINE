@@ -1,0 +1,16 @@
+.git
+.github
+build
+build_vs
+cpp_client
+docs
+testing
+archive
+*.pdf
+*.zip
+*.rar
+*.py
+error_log*.txt
+errorlog*.txt
+errors latest*.txt
+upload.txt
