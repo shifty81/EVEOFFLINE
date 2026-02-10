@@ -10,6 +10,7 @@
 
 namespace eve {
     class Entity;
+    struct Celestial;
 }
 
 namespace UI {
@@ -87,6 +88,10 @@ public:
     // Update overview from entity list
     void UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities,
                         const glm::vec3& playerPosition = glm::vec3(0.0f));
+    
+    // Update overview with celestials from solar system (planets, moons, belts, stations, gates)
+    void UpdateCelestials(const std::vector<::eve::Celestial>& celestials,
+                          const glm::vec3& playerPosition = glm::vec3(0.0f));
     
     // Visibility
     void SetVisible(bool visible) { m_visible = visible; }

@@ -1,6 +1,7 @@
 #include "ui/overview_panel.h"
 #include "ui/ui_manager.h"
 #include "core/entity.h"
+#include "core/solar_system_scene.h"
 #include <imgui.h>
 #include <algorithm>
 #include <cmath>
@@ -193,9 +194,12 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
         }
     }
     
-    // Right-click context menu
+    // Right-click context menu — use per-row popup ID to avoid conflicts
+    // with the standalone ContextMenu component
+    std::string popupId = "OverviewCtx_" + std::to_string(row_index);
     if (ImGui::IsItemHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Right)) {
-        ImGui::OpenPopup("EntityContextMenu");
+        m_selectedEntity = entry.entity_id;
+        ImGui::OpenPopup(popupId.c_str());
     }
     
     ImGui::PopStyleColor(3);
@@ -229,7 +233,7 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     }
     
     // Context menu (enhanced)
-    if (ImGui::BeginPopup("EntityContextMenu")) {
+    if (ImGui::BeginPopup(popupId.c_str())) {
         // Approach
         if (ImGui::MenuItem("Approach")) {
             if (m_onApproach) {
@@ -414,6 +418,48 @@ void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::sh
     }
     
     // Apply filter and sort
+    ApplyFilter();
+    SortEntries();
+}
+
+void OverviewPanel::UpdateCelestials(const std::vector<::eve::Celestial>& celestials,
+                                      const glm::vec3& playerPosition) {
+    // Append celestial entries to existing entity entries
+    // (call after UpdateEntities, or standalone for celestial-only view)
+    for (const auto& c : celestials) {
+        // Skip sun — typically not shown in EVE overview
+        if (c.type == ::eve::Celestial::Type::SUN) continue;
+
+        OverviewEntry entry;
+        entry.entity_id = c.id;
+        entry.name = c.name;
+        entry.is_player = false;
+        entry.standing = 0;  // Celestials are neutral
+        entry.shield_percent = 1.0f;
+        entry.armor_percent = 1.0f;
+        entry.hull_percent = 1.0f;
+
+        // Map celestial type to display string
+        switch (c.type) {
+            case ::eve::Celestial::Type::PLANET:        entry.ship_type = "Planet";        break;
+            case ::eve::Celestial::Type::MOON:          entry.ship_type = "Moon";          break;
+            case ::eve::Celestial::Type::STATION:       entry.ship_type = "Station";       break;
+            case ::eve::Celestial::Type::STARGATE:      entry.ship_type = "Stargate";      break;
+            case ::eve::Celestial::Type::ASTEROID_BELT: entry.ship_type = "Asteroid Belt"; break;
+            case ::eve::Celestial::Type::WORMHOLE:      entry.ship_type = "Wormhole";      break;
+            default:                                    entry.ship_type = "Celestial";     break;
+        }
+
+        entry.corporation = "";  // Celestials have no corp
+
+        // Calculate distance from player
+        glm::vec3 delta = c.position - playerPosition;
+        entry.distance = std::sqrt(delta.x * delta.x + delta.y * delta.y + delta.z * delta.z);
+
+        m_entries.push_back(entry);
+    }
+
+    // Re-apply filter and sort with celestials included
     ApplyFilter();
     SortEntries();
 }
