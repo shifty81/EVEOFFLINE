@@ -6,8 +6,9 @@
 
 ## Table of Contents
 1. [Project Vision](#project-vision)
-2. [Current Status](#current-status)
-3. [Completed Work](#completed-work)
+2. [Master Implementation Plan](#master-implementation-plan)
+3. [Current Status](#current-status)
+4. [Completed Work](#completed-work)
 4. [In Progress](#in-progress)
 5. [Planned Features](#planned-features)
 6. [Future Considerations](#future-considerations)
@@ -23,6 +24,130 @@ EVE OFFLINE is a PVE-focused space MMO inspired by EVE Online, designed for smal
 - EVE-like mechanics: ships, skills, fitting, combat, missions, exploration
 - Fully moddable via editable JSON files
 - Focus on PVE content without PVP stress
+- AI-driven economy where NPCs are real economic actors
+- Custom retained-mode UI system (replacing ImGui for game UI)
+- Deterministic simulation for networking and replays
+
+**What we are NOT building:**
+- PvP combat
+- Twitch shooter mechanics
+- Asset-copied EVE clone
+- Client-authoritative logic
+
+---
+
+## Master Implementation Plan
+
+> Based on comprehensive baseline design document (February 2026)
+
+### Architecture Pillars
+
+| Layer | Responsibility |
+|-------|---------------|
+| **Server (Authoritative)** | Tick-based simulation, ECS, AI, economy, combat, persistence |
+| **Client (Display)** | Rendering, interpolation, UI, input, audio — no game logic authority |
+| **Networking** | Server sends snapshots → Client caches → Interpolation → Render |
+
+### Simulation Model
+- **Tick-based** (10-20 Hz), not frame-based
+- **Deterministic** logic for networking and replays
+- All systems process on server ticks: Movement, Combat, Industry, AI, Market
+
+### AI as Economic Actors (Critical for PvE)
+AI NPCs are real participants in the economy, not fake spawn-and-die mobs:
+- **Miners** — Choose asteroids, mine ore, haul to stations
+- **Haulers** — Buy/sell on market, transport between stations
+- **Industrialists** — Manufacture goods, respond to orders
+- **Traders** — Market speculation, arbitrage
+- **Pirates** — Disrupt trade routes, attack miners
+- **Authorities** — Respond to security threats
+- **Mercenaries** — Accept player contracts
+
+Each AI owns ships, has a wallet, responds to market prices, and can die permanently. Player actions distort the economy: blow up haulers → prices spike; mine too much → prices crash.
+
+### Economy Engine
+- No fake NPC market orders — everything is produced, transported, consumed, destroyed
+- Regional markets with delayed information
+- Dynamic taxation and broker fees
+- Shipping risk and supply/demand curves
+
+### Custom UI Strategy (Replacing ImGui for Game UI)
+- **Retained-mode** windowed UI system
+- **Window docking** (DockNode tree with split/leaf nodes)
+- **EVE-style dark theme** (defined in `data/ui/eve_dark_theme.json`)
+- **Ship HUD**: Control ring (shield/armor/hull), capacitor bar, module rack, target brackets
+- **Keyboard-first** interaction with mouse support
+- **Data binding** via observer pattern (no polling)
+- ImGui retained only for debug/dev tools
+
+### Modular Procedural Ship Generation
+- Ships generated from modular parts assembled along a hull spine
+- **ShipSeed** struct: seed, faction, hull class, tech tier, role
+- Same seed = same ship forever (networking + saves)
+- Part families: Hull Spine, Bow/Nose, Stern/Engines, Mid Modules, Hardpoints
+- Faction shape language drives silhouettes and materials
+- Procedural materials (base color, edge wear, panel lines, grime, emissive)
+
+### Implementation Priority Order
+1. ✅ Server tick loop solid
+2. ✅ Core ECS systems (combat, movement, targeting, AI)
+3. ✅ Ship/module/skill data pipeline
+4. ✅ Drone, Insurance, Bounty, Market systems
+5. 🔄 Snapshot replication & client interpolation
+6. 🔄 Custom UI windows (floating, then docking)
+7. 🔄 Ship HUD (control ring, module rack, brackets)
+8. ⬜ AI economic actors (miners, haulers, traders)
+9. ⬜ Full economy simulation
+10. ⬜ Advanced mission generation
+11. ⬜ Universe map & travel
+12. ⬜ Polish & modding tools
+
+### C++ Server Systems Status
+
+| System | Status | Tests |
+|--------|--------|-------|
+| CapacitorSystem | ✅ Complete | 10 assertions |
+| ShieldRechargeSystem | ✅ Complete | 5 assertions |
+| WeaponSystem | ✅ Complete | 16 assertions |
+| CombatSystem | ✅ Complete | Damage application |
+| TargetingSystem | ✅ Complete | 8 assertions |
+| MovementSystem | ✅ Complete | 14 assertions |
+| AISystem | ✅ Complete | Via weapon tests |
+| FleetSystem | ✅ Complete | 40+ assertions |
+| MissionSystem | ✅ Complete | 10 assertions |
+| SkillSystem | ✅ Complete | 10 assertions |
+| ModuleSystem | ✅ Complete | 12 assertions |
+| InventorySystem | ✅ Complete | 19 assertions |
+| LootSystem | ✅ Complete | 11 assertions |
+| WormholeSystem | ✅ Complete | 16 assertions |
+| DroneSystem | ✅ Complete | 33 assertions |
+| InsuranceSystem | ✅ Complete | 21 assertions |
+| BountySystem | ✅ Complete | 14 assertions |
+| MarketSystem | ✅ Complete | 11 assertions |
+| **Total** | **18 systems** | **599 assertions** |
+
+### Data Loaders Status
+
+| Loader | Status | Records |
+|--------|--------|---------|
+| ShipDatabase | ✅ Complete | 102 ship templates |
+| NpcDatabase | ✅ Complete | 32 NPC templates |
+| WormholeDatabase | ✅ Complete | 6 classes, 6 effects |
+| WorldPersistence | ✅ Complete | Full save/load |
+
+### Systems Still Needed (from Baseline)
+
+| System | Priority | Description |
+|--------|----------|-------------|
+| CorporationSystem | High | Corp management, hangars, taxes in C++ |
+| PISystem | Medium | Planetary interaction, resource extraction |
+| ManufacturingSystem | Medium | Blueprint-based production |
+| ResearchSystem | Medium | Invention, T2 blueprint creation |
+| ContractSystem | Medium | Player-to-player contracts in C++ |
+| ChatSystem | Medium | Persistent channels, moderation |
+| CharacterCreationSystem | Low | Races, bloodlines, clones, implants |
+| TournamentSystem | Low | Competitive PvE events |
+| LeaderboardSystem | Low | Achievements, rankings |
 
 ---
 

@@ -1,0 +1,207 @@
+{
+  "theme_name": "eve_dark",
+  "description": "EVE-style dark UI theme — Cold Spreadsheet in Space",
+
+  "colors": {
+    "background": {
+      "bg_0": "#0B0F14",
+      "bg_1": "#101722",
+      "bg_2": "#141D2B",
+      "bg_3": "#1B2536"
+    },
+    "text": {
+      "primary": "#D6D9E0",
+      "secondary": "#9AA4B2",
+      "muted": "#6B7380",
+      "disabled": "#3E4550"
+    },
+    "accent": {
+      "default": "#3A7BD5",
+      "soft": "#2E5FA8",
+      "highlight": "#4A8BE5"
+    },
+    "status": {
+      "positive": "#3FA46A",
+      "warning": "#D5A23A",
+      "negative": "#C94A4A",
+      "neutral": "#6A7C94"
+    },
+    "ship_hud": {
+      "shield": "#3A7BD5",
+      "armor": "#D5A23A",
+      "hull": "#C94A4A",
+      "capacitor_full": "#3FA46A",
+      "capacitor_low": "#D5A23A",
+      "capacitor_critical": "#C94A4A",
+      "speed_normal": "#6A7C94",
+      "speed_boosted": "#3A7BD5",
+      "speed_aligning": "#D5A23A",
+      "speed_webbed": "#C94A4A"
+    },
+    "targeting": {
+      "hostile": "#C94A4A",
+      "neutral": "#6A7C94",
+      "friendly": "#3FA46A",
+      "selected": "#3A7BD5"
+    },
+    "window": {
+      "border": "#2B364A",
+      "border_focused": "#3A7BD5",
+      "background": "#101722",
+      "titlebar_bg": "#141D2B",
+      "titlebar_text": "#C7CCD6"
+    },
+    "panel": {
+      "background": "#141D2B",
+      "border": "#2A3445"
+    },
+    "button": {
+      "background": "#1A2434",
+      "hover": "#23304A",
+      "active": "#2E5FA8",
+      "text": "#C7CCD6"
+    },
+    "list": {
+      "row_even": "#101722",
+      "row_odd": "#0E141E",
+      "row_hover": "#1B2536",
+      "row_selected": "#2E5FA8"
+    },
+    "scrollbar": {
+      "track": "#0B0F14",
+      "thumb": "#2A3445",
+      "thumb_hover": "#3A7BD5"
+    },
+    "notification": {
+      "toast_bg": "#141D2B",
+      "toast_border": "#3A7BD5",
+      "toast_text": "#D6D9E0"
+    },
+    "module_slots": {
+      "high": "#3A7BD5",
+      "mid": "#D5A23A",
+      "low": "#3FA46A"
+    },
+    "module_states": {
+      "idle": "#3E4550",
+      "active": "#3A7BD5",
+      "cycling": "#4A8BE5",
+      "overloaded": "#D5A23A",
+      "disabled": "#2A2A2A"
+    },
+    "debug": {
+      "bounds": "#FF00FF",
+      "layout": "#00FFFF"
+    }
+  },
+
+  "typography": {
+    "font_ui": "Inter",
+    "font_mono": "JetBrains Mono",
+    "font_heading": "Inter SemiBold",
+    "sizes": {
+      "xs": 10,
+      "sm": 11,
+      "md": 12,
+      "lg": 14,
+      "xl": 16
+    }
+  },
+
+  "spacing": {
+    "grid_unit": 4,
+    "padding_xs": 4,
+    "padding_sm": 8,
+    "padding_md": 12,
+    "padding_lg": 16,
+    "border_radius": 0,
+    "border_width": 1,
+    "row_height": 18,
+    "titlebar_height": 22,
+    "module_button_size": 36,
+    "icon_size": 16
+  },
+
+  "hud": {
+    "control_ring": {
+      "shield_thickness": 8,
+      "armor_thickness": 6,
+      "hull_thickness": 4,
+      "velocity_arc_thickness": 3,
+      "ring_radius": 48,
+      "ring_gap": 2,
+      "flash_duration_ms": 200,
+      "critical_threshold": 0.25,
+      "pulse_speed": 1.5
+    },
+    "capacitor_bar": {
+      "width": 12,
+      "height": 80,
+      "position": "left_of_ring"
+    },
+    "status_readouts": {
+      "font_size": 10,
+      "format": "uppercase",
+      "alignment": "right"
+    },
+    "module_rack": {
+      "slot_size": 36,
+      "slot_gap": 2,
+      "group_gap": 8,
+      "cooldown_sweep": "clockwise"
+    },
+    "alerts": {
+      "max_visible": 3,
+      "fade_duration_ms": 500,
+      "display_duration_ms": 3000
+    }
+  },
+
+  "damage_feedback": {
+    "shield_hit": {
+      "effect": "blue_ripple",
+      "duration_ms": 150
+    },
+    "armor_hit": {
+      "effect": "yellow_flash",
+      "duration_ms": 200
+    },
+    "hull_hit": {
+      "effect": "red_pulse_shake",
+      "duration_ms": 300,
+      "shake_px": 2
+    },
+    "critical_hull": {
+      "effect": "red_vignette",
+      "threshold": 0.25,
+      "pulse_speed": 0.8
+    }
+  },
+
+  "faction_colors": {
+    "Solari": {
+      "primary": "#C9A84C",
+      "secondary": "#8B7333",
+      "accent": "#FFD700",
+      "hull": "#A08C4A"
+    },
+    "Veyren": {
+      "primary": "#4A6A8A",
+      "secondary": "#2E4460",
+      "accent": "#6A8AB0",
+      "hull": "#3A5570"
+    },
+    "Aurelian": {
+      "primary": "#3A7A5A",
+      "secondary": "#2A5A42",
+      "accent": "#4A9A6A",
+      "hull": "#2E6B4E"
+    },
+    "Keldari": {
+      "primary": "#8A6A4A",
+      "secondary": "#6A4A2E",
+      "accent": "#AA8A5A",
+      "hull": "#7A5A3A"
+    }
+  }
+}

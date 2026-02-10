@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 10, 2026)**: Second HAC variants added (Muninn, Eagle, Deimos, Sacrilege). Tech II EWAR and Logistics modules verified complete. The game now has 102 ships, 159+ modules, 137 skills, and comprehensive content across all tiers. InventorySystem, LootSystem, NpcDatabase, and DroneSystem added to C++ server with tests (554 total).
+> **Update (February 10, 2026)**: Major systems push — DroneSystem, InsuranceSystem, BountySystem, and MarketSystem added to C++ server. EVE-style UI theme defined. Master implementation plan created from baseline design document. 18 server systems, 599 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
 
 ## Current Status (February 2026)
 
@@ -25,12 +25,14 @@
 - **10 mining missions** across levels 1-4
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
-- **9 major gameplay systems** fully implemented (including Incursions)
-- **95+ test functions** all passing (554 assertions)
+- **18 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market)
+- **110+ test functions** all passing (599 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture
 - **Multiplayer functional** with server-client integration
+- **EVE-style UI theme** defined in JSON (dark palette, HUD specs, module states)
+- **Master implementation plan** with AI economic actor roadmap
 
 ---
 
@@ -359,6 +361,51 @@ From ROADMAP.md "In Progress" section:
     - ✅ WorldPersistence serialization/deserialization for stored and deployed drones
     - ✅ 33 test assertions, 100% pass rate
 
+29. ✅ **Add C++ Server InsuranceSystem** (COMPLETED - February 2026)
+    - ✅ InsurancePolicy component with tier, coverage, premium, payout, duration
+    - ✅ Three tiers: Basic (50% coverage, 10% premium), Standard (70%/20%), Platinum (100%/30%)
+    - ✅ Purchase deducts premium from Player ISK
+    - ✅ Claim pays out and marks policy as claimed (no double claims)
+    - ✅ Duration-based expiry with per-tick countdown
+    - ✅ Insufficient funds check on purchase
+    - ✅ 21 test assertions, 100% pass rate
+
+30. ✅ **Add C++ Server BountySystem** (COMPLETED - February 2026)
+    - ✅ BountyLedger component with kill tracking and recent kills history
+    - ✅ processKill awards ISK bounty and records kill details
+    - ✅ Recent kills capped at 50 entries (total kills tracked separately)
+    - ✅ Auto-creates BountyLedger component on first kill
+    - ✅ 14 test assertions, 100% pass rate
+
+31. ✅ **Add C++ Server MarketSystem** (COMPLETED - February 2026)
+    - ✅ MarketHub component with buy/sell orders, broker fees, sales tax
+    - ✅ Place sell orders with broker fee deduction
+    - ✅ Place buy orders with ISK escrow
+    - ✅ Buy from market matching lowest sell price
+    - ✅ Price queries (lowest sell, highest buy)
+    - ✅ Order duration expiry with cleanup
+    - ✅ 11 test assertions, 100% pass rate
+
+32. ✅ **Add EVE-Style UI Theme** (COMPLETED - February 2026)
+    - ✅ Comprehensive dark theme in data/ui/eve_dark_theme.json
+    - ✅ Color palette: backgrounds, text, accent, status, faction colors
+    - ✅ Ship HUD colors: shield (blue), armor (yellow), hull (red), capacitor
+    - ✅ Targeting colors: hostile, neutral, friendly, selected
+    - ✅ Module slot colors and state indicators
+    - ✅ Typography, spacing, and grid system defined
+    - ✅ HUD control ring, module rack, and alert specifications
+    - ✅ Damage feedback visual mappings
+
+33. ✅ **Add Master Implementation Plan** (COMPLETED - February 2026)
+    - ✅ Comprehensive roadmap in docs/ROADMAP.md based on baseline design document
+    - ✅ Architecture pillars: server-authoritative, tick-based, deterministic
+    - ✅ AI economic actor roles defined (miners, haulers, traders, pirates)
+    - ✅ Custom UI strategy (retained-mode, docking, EVE theme)
+    - ✅ Modular procedural ship generation plan
+    - ✅ Implementation priority order
+    - ✅ Complete systems status table (18 systems, 599 tests)
+    - ✅ Gap analysis with remaining systems to implement
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -425,4 +472,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 10, 2026*
-*Status: Quick Wins, Medium-Term Tasks complete. Logging, monitoring, and crash reporting added. InventorySystem, LootSystem, NpcDatabase, and DroneSystem added. 102 ships, 159+ modules, 554 test assertions. Ready for Phase 8 planning.*
+*Status: All major server systems implemented. DroneSystem, InsuranceSystem, BountySystem, MarketSystem added. EVE-style UI theme defined. Master implementation plan created from baseline. 18 server systems, 102 ships, 159+ modules, 599 test assertions. Ready for AI economic actors and custom UI implementation.*
