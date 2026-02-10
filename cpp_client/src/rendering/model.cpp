@@ -475,6 +475,40 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
     return model;
 }
 
+// ==================== Procedural Hull Generation via buildSegmentedHull ====================
+
+/**
+ * Parameters controlling the procedural hull builder for each ship class.
+ * These replace the old ad-hoc vertex/index generation that produced broken
+ * triangles (the "squiggly lines" problem).
+ */
+struct HullParams {
+    int sides;            // Cross-section polygon sides (4=blocky, 6=angular, 8=refined, 12=smooth)
+    int segments;         // Number of extrusion steps along hull length
+    float segmentLength;  // Length of each segment
+    float baseRadius;     // Starting cross-section radius
+    float scaleX;         // Width scale on cross-section
+    float scaleZ;         // Height scale on cross-section
+    unsigned int seed;    // Deterministic seed for radius variation
+};
+
+/**
+ * Get faction-appropriate cross-section sides.
+ * More sides = smoother silhouette.
+ */
+static int getFactionSides(const std::string& faction) {
+    if (faction.find("Caldari") != std::string::npos) return 4;   // Blocky/angular
+    if (faction.find("Minmatar") != std::string::npos) return 6;  // Industrial/angular
+    if (faction.find("Amarr") != std::string::npos) return 8;     // Refined/ornate
+    if (faction.find("Gallente") != std::string::npos) return 12; // Smooth/organic
+    return 6; // Default
+}
+
+// Forward declaration for buildShipFromParams (defined later in this file)
+static std::unique_ptr<Model> buildShipFromParams(
+    const HullParams& params,
+    const FactionColors& colors);
+
 std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string& shipType, const std::string& faction) {
     // Try OBJ model first
     std::string objPath = findOBJModelPath(shipType, faction);
@@ -742,35 +776,6 @@ FactionColors Model::getFactionColors(const std::string& faction) {
         glm::vec4(0.3f, 0.3f, 0.3f, 1.0f),  // Dark gray
         glm::vec4(0.7f, 0.7f, 0.7f, 1.0f)   // Light gray
     };
-}
-
-// ==================== Procedural Hull Generation via buildSegmentedHull ====================
-
-/**
- * Parameters controlling the procedural hull builder for each ship class.
- * These replace the old ad-hoc vertex/index generation that produced broken
- * triangles (the "squiggly lines" problem).
- */
-struct HullParams {
-    int sides;            // Cross-section polygon sides (4=blocky, 6=angular, 8=refined, 12=smooth)
-    int segments;         // Number of extrusion steps along hull length
-    float segmentLength;  // Length of each segment
-    float baseRadius;     // Starting cross-section radius
-    float scaleX;         // Width scale on cross-section
-    float scaleZ;         // Height scale on cross-section
-    unsigned int seed;    // Deterministic seed for radius variation
-};
-
-/**
- * Get faction-appropriate cross-section sides.
- * More sides = smoother silhouette.
- */
-static int getFactionSides(const std::string& faction) {
-    if (faction.find("Caldari") != std::string::npos) return 4;   // Blocky/angular
-    if (faction.find("Minmatar") != std::string::npos) return 6;  // Industrial/angular
-    if (faction.find("Amarr") != std::string::npos) return 8;     // Refined/ornate
-    if (faction.find("Gallente") != std::string::npos) return 12; // Smooth/organic
-    return 6; // Default
 }
 
 /**
