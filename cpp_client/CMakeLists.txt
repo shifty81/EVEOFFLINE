@@ -338,6 +338,9 @@ set(CLIENT_SOURCES
     src/ui/dscan_panel.cpp
     src/ui/neocom_panel.cpp
     src/ui/rml_ui_manager.cpp
+    src/ui/radial_menu.cpp
+    src/core/solar_system_scene.cpp
+    src/core/ship_physics.cpp
     ${GLAD_SOURCES}
     ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}
@@ -392,6 +395,9 @@ set(CLIENT_HEADERS
     include/ui/dscan_panel.h
     include/ui/neocom_panel.h
     include/ui/rml_ui_manager.h
+    include/ui/radial_menu.h
+    include/core/solar_system_scene.h
+    include/core/ship_physics.h
     ${AUDIO_HEADERS}
 )
 

@@ -27,6 +27,10 @@ class DockingManager;
 class DScanPanel;
 class NeocomPanel;
 
+namespace eve {
+    class StarMap;
+}
+
 struct EVEColors {
     // Background colors — deep dark blue-black (Photon UI style)
     // See docs/design/EVE_UI_STYLE_REFERENCE.md for full palette
@@ -154,6 +158,7 @@ public:
     void ToggleOverview();
     void ToggleMarket();
     void ToggleDScan();
+    void ToggleMap();
     
     // Interface lock
     void SetInterfaceLocked(bool locked);
@@ -193,6 +198,9 @@ private:
     std::unique_ptr<DScanPanel> m_dscanPanel;
     std::unique_ptr<NeocomPanel> m_neocomPanel;
     
+    // Star map (toggled by Map button in Neocom)
+    bool m_showStarMap = false;
+    
     // Panel visibility
     bool show_ship_status_;
     bool show_target_info_;
@@ -205,6 +213,7 @@ private:
     void RenderTargetInfoPanel();
     void RenderSpeedPanel();
     void RenderCombatLogPanel();
+    void RenderStarMapPanel();
     
     // Helper for health bars
     void RenderHealthBar(const char* label, float current, float max, const float color[4]);

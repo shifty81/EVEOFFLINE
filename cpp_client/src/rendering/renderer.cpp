@@ -17,7 +17,7 @@ Renderer::Renderer()
     , m_nebulaVBO(0)
     , m_starfieldVAO(0)
     , m_starfieldVBO(0)
-    , m_starCount(2000)
+    , m_starCount(4000)
     , m_initialized(false)
 {
 }
@@ -234,6 +234,11 @@ void Renderer::renderStarfield(Camera& camera) {
     m_starfieldShader->use();
     m_starfieldShader->setMat4("view", camera.getViewMatrix());
     m_starfieldShader->setMat4("projection", camera.getProjectionMatrix());
+    
+    // Pass time for twinkling animation
+    static float starfieldTime = 0.0f;
+    starfieldTime += 0.016f;  // Approximate 60fps delta
+    m_starfieldShader->setFloat("time", starfieldTime);
     
     glBindVertexArray(m_starfieldVAO);
     glDrawArrays(GL_POINTS, 0, m_starCount);

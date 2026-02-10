@@ -84,11 +84,58 @@ public:
      */
     void applyPropulsionBonus(float velocityMultiplier);
     void removePropulsionBonus();
-    
+
+    /**
+     * Warp phase enum for proper EVE-style warp (4 phases)
+     */
+    enum class WarpPhase {
+        NONE,           // Not warping
+        ALIGNING,       // Turning and accelerating to 75% max subwarp speed
+        ACCELERATING,   // Accelerating from subwarp to max warp speed
+        CRUISING,       // Traveling at max warp speed (warp tunnel)
+        DECELERATING    // Slowing from warp speed back to subwarp
+    };
+
+    /**
+     * Get current warp phase
+     */
+    WarpPhase getWarpPhase() const { return m_warpPhase; }
+
+    /**
+     * Get warp progress (0.0 = start, 1.0 = arrived)
+     */
+    float getWarpProgress() const { return m_warpProgress; }
+
+    /**
+     * Get current warp speed in AU/s (only meaningful during warp)
+     */
+    float getWarpSpeedAU() const { return m_currentWarpSpeedAU; }
+
+    /**
+     * Set base warp speed for ship class (AU/s)
+     */
+    void setWarpSpeed(float auPerSecond) { m_baseWarpSpeedAU = auPerSecond; }
+
+    /**
+     * Check if ship is in any warp phase (including aligning)
+     */
+    bool isWarping() const { return m_warpPhase != WarpPhase::NONE; }
+
+    /**
+     * Get the engine throttle level (0.0-1.0) for visual trail intensity
+     */
+    float getEngineThrottle() const;
+
+    /**
+     * Get heading direction (normalized direction the ship is facing)
+     */
+    glm::vec3 getHeading() const { return m_heading; }
+
 private:
     void updateAcceleration(float deltaTime);
     void updateOrbit(float deltaTime);
     void applySpaceFriction(float deltaTime);
+    void updateWarp(float deltaTime);
     
     // Ship stats
     ShipStats m_stats;
@@ -97,6 +144,7 @@ private:
     glm::vec3 m_position;
     glm::vec3 m_velocity;
     glm::vec3 m_desiredDirection;
+    glm::vec3 m_heading;  // Ship facing direction (visual)
     
     // Navigation state
     enum class NavigationMode {
@@ -112,6 +160,17 @@ private:
     glm::vec3 m_navTarget;
     float m_navRange;
     
+    // Warp state (EVE-style 4-phase warp)
+    WarpPhase m_warpPhase;
+    float m_warpProgress;           // 0.0 to 1.0
+    float m_warpDistanceTotal;      // Total warp distance in meters
+    float m_warpDistanceTraveled;   // Distance covered so far
+    float m_currentWarpSpeedAU;     // Current warp speed in AU/s
+    float m_baseWarpSpeedAU;        // Ship class warp speed (e.g. 5.0 for frigate)
+    float m_warpPhaseTimer;         // Timer within current phase
+    glm::vec3 m_warpStartPos;       // Position where warp began
+    glm::vec3 m_warpDirection;      // Normalized warp direction
+    
     // Propulsion bonus
     bool m_propulsionActive;
     float m_propulsionMultiplier;
@@ -120,6 +179,9 @@ private:
     static constexpr float SPACE_FRICTION = 0.5f;  // Simulated space friction
     static constexpr float WARP_ALIGN_THRESHOLD = 0.75f;  // 75% of max velocity
     static constexpr float ACCELERATION_CONSTANT = 500000.0f;  // EVE's constant
+    static constexpr float AU_IN_METERS = 149597870700.0f;  // 1 AU in meters
+    static constexpr float MIN_WARP_DISTANCE = 150000.0f;  // Minimum 150km to warp
+    static constexpr float WARP_EXIT_DISTANCE = 2500.0f;   // Land within 2500m of target
 };
 
 } // namespace eve
