@@ -1,10 +1,10 @@
 #pragma once
 
 /**
- * @file photon_hud.h
- * @brief Full EVE-style HUD layout compositor using Photon widgets
+ * @file atlas_hud.h
+ * @brief Full EVE-style HUD layout compositor using Atlas widgets
  *
- * PhotonHUD assembles all individual Photon widgets into the complete
+ * AtlasHUD assembles all individual Atlas widgets into the complete
  * EVE Online-style game HUD layout:
  *
  *   ┌─────────┬───────────────────────────────────────┬──────────────┐
@@ -23,18 +23,18 @@
  *   └─────────┴───────────────────────────────────────┴──────────────┘
  *
  * Usage:
- *   photon::PhotonHUD hud;
+ *   atlas::AtlasHUD hud;
  *   hud.init(ctx);
  *   // Each frame:
  *   hud.update(ctx, shipData, targetData, overviewData);
  */
 
-#include "photon_context.h"
-#include "photon_widgets.h"
+#include "atlas_context.h"
+#include "atlas_widgets.h"
 #include <vector>
 #include <string>
 
-namespace photon {
+namespace atlas {
 
 /**
  * Ship status data fed into the HUD each frame.
@@ -62,15 +62,15 @@ struct ShipHUDData {
 };
 
 /**
- * PhotonHUD — assembles Photon widgets into a complete EVE-style HUD.
+ * AtlasHUD — assembles Atlas widgets into a complete EVE-style HUD.
  *
  * All layout is computed automatically based on window size.
  * Panels are movable via PanelState when unlocked.
  */
-class PhotonHUD {
+class AtlasHUD {
 public:
-    PhotonHUD();
-    ~PhotonHUD();
+    AtlasHUD();
+    ~AtlasHUD();
 
     /** Initialise panel states with default positions. Call once. */
     void init(int windowW, int windowH);
@@ -78,13 +78,13 @@ public:
     /**
      * Draw the complete HUD for one frame.
      *
-     * @param ctx          Photon context (must be between beginFrame/endFrame).
+     * @param ctx          Atlas context (must be between beginFrame/endFrame).
      * @param ship         Ship status data.
      * @param targets      Locked target list.
      * @param overview     Overview entries.
      * @param selectedItem Currently selected item info (may be empty name).
      */
-    void update(PhotonContext& ctx,
+    void update(AtlasContext& ctx,
                 const ShipHUDData& ship,
                 const std::vector<TargetCardInfo>& targets,
                 const std::vector<OverviewEntry>& overview,
@@ -159,15 +159,15 @@ private:
     std::function<void()>    m_selInfoCb;
 
     // Internal layout helpers
-    void drawShipHUD(PhotonContext& ctx, const ShipHUDData& ship);
-    void drawTargetCards(PhotonContext& ctx,
+    void drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship);
+    void drawTargetCards(AtlasContext& ctx,
                         const std::vector<TargetCardInfo>& targets);
-    void drawOverviewPanel(PhotonContext& ctx,
+    void drawOverviewPanel(AtlasContext& ctx,
                           const std::vector<OverviewEntry>& entries);
-    void drawSelectedItemPanel(PhotonContext& ctx,
+    void drawSelectedItemPanel(AtlasContext& ctx,
                               const SelectedItemInfo& info);
-    void drawModeIndicator(PhotonContext& ctx);
-    void drawInfoPanel(PhotonContext& ctx);
+    void drawModeIndicator(AtlasContext& ctx);
+    void drawInfoPanel(AtlasContext& ctx);
 
     // Animation state
     float m_displayCapFrac = 1.0f;   // smoothed capacitor display value
@@ -183,4 +183,4 @@ private:
     InfoPanelData m_infoPanelData;
 };
 
-} // namespace photon
+} // namespace atlas

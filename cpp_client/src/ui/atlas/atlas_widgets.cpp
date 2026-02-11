@@ -1,4 +1,4 @@
-#include "ui/photon/photon_widgets.h"
+#include "ui/atlas/atlas_widgets.h"
 
 #include <algorithm>
 #include <cmath>
@@ -10,11 +10,11 @@
 
 static constexpr float METERS_PER_AU = 149597870700.0f;
 
-namespace photon {
+namespace atlas {
 
 // ── Panel ───────────────────────────────────────────────────────────
 
-bool panelBegin(PhotonContext& ctx, const char* title,
+bool panelBegin(AtlasContext& ctx, const char* title,
                 Rect& bounds, const PanelFlags& flags,
                 bool* open) {
     const Theme& t = ctx.theme();
@@ -83,13 +83,13 @@ bool panelBegin(PhotonContext& ctx, const char* title,
     return true;  // panel is open (minimize state not yet tracked)
 }
 
-void panelEnd(PhotonContext& ctx) {
+void panelEnd(AtlasContext& ctx) {
     ctx.popID();
 }
 
 // ── Button ──────────────────────────────────────────────────────────
 
-bool button(PhotonContext& ctx, const char* label, const Rect& r) {
+bool button(AtlasContext& ctx, const char* label, const Rect& r) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
 
@@ -111,7 +111,7 @@ bool button(PhotonContext& ctx, const char* label, const Rect& r) {
     return clicked;
 }
 
-bool iconButton(PhotonContext& ctx, WidgetID id, const Rect& r,
+bool iconButton(AtlasContext& ctx, WidgetID id, const Rect& r,
                 const Color& iconColor) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -134,7 +134,7 @@ bool iconButton(PhotonContext& ctx, WidgetID id, const Rect& r,
 
 // ── Progress Bar ────────────────────────────────────────────────────
 
-void progressBar(PhotonContext& ctx, const Rect& r,
+void progressBar(AtlasContext& ctx, const Rect& r,
                  float fraction, const Color& fillColor,
                  const char* label) {
     const Theme& t = ctx.theme();
@@ -159,7 +159,7 @@ void progressBar(PhotonContext& ctx, const Rect& r,
 
 // ── Ship Status Arcs ────────────────────────────────────────────────
 
-void shipStatusArcs(PhotonContext& ctx, Vec2 centre, float outerR,
+void shipStatusArcs(AtlasContext& ctx, Vec2 centre, float outerR,
                     float shieldPct, float armorPct, float hullPct) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -220,7 +220,7 @@ void shipStatusArcs(PhotonContext& ctx, Vec2 centre, float outerR,
 
 // ── Capacitor Ring ──────────────────────────────────────────────────
 
-void capacitorRing(PhotonContext& ctx, Vec2 centre,
+void capacitorRing(AtlasContext& ctx, Vec2 centre,
                    float innerR, float outerR,
                    float fraction, int segments) {
     const Theme& t = ctx.theme();
@@ -242,7 +242,7 @@ void capacitorRing(PhotonContext& ctx, Vec2 centre,
 
 // ── Module Slot ─────────────────────────────────────────────────────
 
-bool moduleSlot(PhotonContext& ctx, Vec2 centre, float radius,
+bool moduleSlot(AtlasContext& ctx, Vec2 centre, float radius,
                 bool active, float cooldownPct, const Color& color) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -280,7 +280,7 @@ bool moduleSlot(PhotonContext& ctx, Vec2 centre, float radius,
 
 // ── Module Slot with Overheat ───────────────────────────────────────
 
-bool moduleSlotEx(PhotonContext& ctx, Vec2 centre, float radius,
+bool moduleSlotEx(AtlasContext& ctx, Vec2 centre, float radius,
                   bool active, float cooldownPct, const Color& color,
                   float overheatPct, float time) {
     const Theme& t = ctx.theme();
@@ -337,7 +337,7 @@ bool moduleSlotEx(PhotonContext& ctx, Vec2 centre, float radius,
 
 // ── Capacitor Ring Animated ─────────────────────────────────────────
 
-void capacitorRingAnimated(PhotonContext& ctx, Vec2 centre,
+void capacitorRingAnimated(AtlasContext& ctx, Vec2 centre,
                            float innerR, float outerR,
                            float targetFrac, float& displayFrac,
                            float dt, int segments, float lerpSpeed) {
@@ -356,7 +356,7 @@ void capacitorRingAnimated(PhotonContext& ctx, Vec2 centre,
 
 // ── Speed Indicator ─────────────────────────────────────────────────
 
-void speedIndicator(PhotonContext& ctx, Vec2 pos,
+void speedIndicator(AtlasContext& ctx, Vec2 pos,
                     float currentSpeed, float maxSpeed) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -391,7 +391,7 @@ void speedIndicator(PhotonContext& ctx, Vec2 pos,
 
 // ── Overview ────────────────────────────────────────────────────────
 
-void overviewHeader(PhotonContext& ctx, const Rect& r,
+void overviewHeader(AtlasContext& ctx, const Rect& r,
                     const std::vector<std::string>& tabs,
                     int activeTab) {
     const Theme& t = ctx.theme();
@@ -420,7 +420,7 @@ void overviewHeader(PhotonContext& ctx, const Rect& r,
     rr.drawRect({r.x, r.bottom() - 1.0f, r.w, 1.0f}, t.borderSubtle);
 }
 
-bool overviewRow(PhotonContext& ctx, const Rect& r,
+bool overviewRow(AtlasContext& ctx, const Rect& r,
                  const OverviewEntry& entry, bool isAlternate) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -465,7 +465,7 @@ bool overviewRow(PhotonContext& ctx, const Rect& r,
 
 // ── Target Card ─────────────────────────────────────────────────────
 
-bool targetCard(PhotonContext& ctx, const Rect& r,
+bool targetCard(AtlasContext& ctx, const Rect& r,
                 const TargetCardInfo& info) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -525,7 +525,7 @@ bool targetCard(PhotonContext& ctx, const Rect& r,
 
 // ── Selected Item Panel ─────────────────────────────────────────────
 
-void selectedItemPanel(PhotonContext& ctx, const Rect& r,
+void selectedItemPanel(AtlasContext& ctx, const Rect& r,
                        const SelectedItemInfo& info) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -566,19 +566,19 @@ void selectedItemPanel(PhotonContext& ctx, const Rect& r,
 
 // ── Utility Widgets ─────────────────────────────────────────────────
 
-void label(PhotonContext& ctx, Vec2 pos, const std::string& text,
+void label(AtlasContext& ctx, Vec2 pos, const std::string& text,
            const Color& color) {
     const Theme& t = ctx.theme();
     Color c = (color.a > 0.01f) ? color : t.textPrimary;
     ctx.renderer().drawText(text, pos, c);
 }
 
-void separator(PhotonContext& ctx, Vec2 start, float width) {
+void separator(AtlasContext& ctx, Vec2 start, float width) {
     const Theme& t = ctx.theme();
     ctx.renderer().drawRect({start.x, start.y, width, 1.0f}, t.borderSubtle);
 }
 
-bool treeNode(PhotonContext& ctx, const Rect& r,
+bool treeNode(AtlasContext& ctx, const Rect& r,
               const char* nodeLabel, bool* expanded) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -621,7 +621,7 @@ bool treeNode(PhotonContext& ctx, const Rect& r,
     return expanded ? *expanded : false;
 }
 
-void scrollbar(PhotonContext& ctx, const Rect& track,
+void scrollbar(AtlasContext& ctx, const Rect& track,
                float scrollOffset, float contentHeight, float viewHeight) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -644,7 +644,7 @@ void scrollbar(PhotonContext& ctx, const Rect& track,
 
 // ── Neocom Bar ──────────────────────────────────────────────────────
 
-void neocomBar(PhotonContext& ctx, float x, float width, float height,
+void neocomBar(AtlasContext& ctx, float x, float width, float height,
                int icons, const std::function<void(int)>& callback) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -678,7 +678,7 @@ void neocomBar(PhotonContext& ctx, float x, float width, float height,
 
 // ── Tooltip ─────────────────────────────────────────────────────────
 
-void tooltip(PhotonContext& ctx, const std::string& text) {
+void tooltip(AtlasContext& ctx, const std::string& text) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
 
@@ -701,7 +701,7 @@ void tooltip(PhotonContext& ctx, const std::string& text) {
 
 // ── Checkbox ────────────────────────────────────────────────────────
 
-bool checkbox(PhotonContext& ctx, const char* label,
+bool checkbox(AtlasContext& ctx, const char* label,
               const Rect& r, bool* checked) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -740,7 +740,7 @@ bool checkbox(PhotonContext& ctx, const char* label,
 
 // ── ComboBox ────────────────────────────────────────────────────────
 
-bool comboBox(PhotonContext& ctx, const char* label,
+bool comboBox(AtlasContext& ctx, const char* label,
               const Rect& r, const std::vector<std::string>& items,
               int* selected, bool* dropdownOpen) {
     const Theme& t = ctx.theme();
@@ -813,7 +813,7 @@ bool comboBox(PhotonContext& ctx, const char* label,
 
 // ── Stateful Panel ──────────────────────────────────────────────────
 
-bool panelBeginStateful(PhotonContext& ctx, const char* title,
+bool panelBeginStateful(AtlasContext& ctx, const char* title,
                         PanelState& state, const PanelFlags& flags) {
     if (!state.open) return false;
 
@@ -920,7 +920,7 @@ bool panelBeginStateful(PhotonContext& ctx, const char* title,
 
 // ── Slider ──────────────────────────────────────────────────────────
 
-bool slider(PhotonContext& ctx, const char* label,
+bool slider(AtlasContext& ctx, const char* label,
             const Rect& r, float* value,
             float minVal, float maxVal,
             const char* format) {
@@ -996,7 +996,7 @@ bool slider(PhotonContext& ctx, const char* label,
 
 // ── Text Input ──────────────────────────────────────────────────────
 
-bool textInput(PhotonContext& ctx, const char* label,
+bool textInput(AtlasContext& ctx, const char* label,
                const Rect& r, TextInputState& state,
                const char* placeholder) {
     const Theme& t = ctx.theme();
@@ -1047,7 +1047,7 @@ bool textInput(PhotonContext& ctx, const char* label,
 
 // ── Notification Toast ──────────────────────────────────────────────
 
-void notification(PhotonContext& ctx, const std::string& text,
+void notification(AtlasContext& ctx, const std::string& text,
                   const Color& color) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
@@ -1073,7 +1073,7 @@ void notification(PhotonContext& ctx, const std::string& text,
 
 // ── Mode Indicator ──────────────────────────────────────────────────
 
-void modeIndicator(PhotonContext& ctx, Vec2 pos,
+void modeIndicator(AtlasContext& ctx, Vec2 pos,
                    const char* modeText, const Color& color) {
     if (!modeText || modeText[0] == '\0') return;
 
@@ -1103,7 +1103,7 @@ void modeIndicator(PhotonContext& ctx, Vec2 pos,
 
 // ── Info Panel ──────────────────────────────────────────────────────
 
-void infoPanelDraw(PhotonContext& ctx, PanelState& state,
+void infoPanelDraw(AtlasContext& ctx, PanelState& state,
                    const InfoPanelData& data) {
     if (!state.open || data.isEmpty()) return;
 
@@ -1205,7 +1205,7 @@ void infoPanelDraw(PhotonContext& ctx, PanelState& state,
 
 // ── Overview Header Interactive ─────────────────────────────────────
 
-int overviewHeaderInteractive(PhotonContext& ctx, const Rect& r,
+int overviewHeaderInteractive(AtlasContext& ctx, const Rect& r,
                               const std::vector<std::string>& tabs,
                               int activeTab) {
     const Theme& t = ctx.theme();
@@ -1247,4 +1247,4 @@ int overviewHeaderInteractive(PhotonContext& ctx, const Rect& r,
     return clickedTab;
 }
 
-} // namespace photon
+} // namespace atlas

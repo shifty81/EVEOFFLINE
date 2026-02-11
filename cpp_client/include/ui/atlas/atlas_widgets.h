@@ -1,10 +1,10 @@
 #pragma once
 
 /**
- * @file photon_widgets.h
- * @brief High-level Photon UI widgets modelled after EVE Online's Photon UI
+ * @file atlas_widgets.h
+ * @brief High-level Atlas UI widgets modelled after EVE Online's Atlas UI
  *
- * All widgets are free functions that take a PhotonContext& and draw
+ * All widgets are free functions that take a AtlasContext& and draw
  * directly through its renderer.  This mirrors an immediate-mode API
  * but the renderer batches everything for a single GPU draw call.
  *
@@ -25,12 +25,12 @@
  *   Scrollbar   — thin vertical scroll indicator.
  */
 
-#include "photon_context.h"
+#include "atlas_context.h"
 #include <string>
 #include <vector>
 #include <functional>
 
-namespace photon {
+namespace atlas {
 
 // ── Panel ───────────────────────────────────────────────────────────
 
@@ -44,29 +44,29 @@ struct PanelFlags {
 };
 
 /**
- * Begin a Photon panel.  Returns true if the panel is open (not
+ * Begin a Atlas panel.  Returns true if the panel is open (not
  * minimized).  Call panelEnd() when done adding content.
  *
- * @param ctx      Photon context.
+ * @param ctx      Atlas context.
  * @param title    Header title text.
  * @param bounds   Position and size in screen pixels.
  * @param flags    Visual/behavioral flags.
  * @param open     If non-null, the × button writes false here.
  */
-bool panelBegin(PhotonContext& ctx, const char* title,
+bool panelBegin(AtlasContext& ctx, const char* title,
                 Rect& bounds, const PanelFlags& flags = {},
                 bool* open = nullptr);
 
 /** End the current panel. */
-void panelEnd(PhotonContext& ctx);
+void panelEnd(AtlasContext& ctx);
 
 // ── Buttons ─────────────────────────────────────────────────────────
 
 /** Rectangular text button.  Returns true on click. */
-bool button(PhotonContext& ctx, const char* label, const Rect& r);
+bool button(AtlasContext& ctx, const char* label, const Rect& r);
 
 /** Small icon-style square button (Neocom style). */
-bool iconButton(PhotonContext& ctx, WidgetID id, const Rect& r,
+bool iconButton(AtlasContext& ctx, WidgetID id, const Rect& r,
                 const Color& iconColor);
 
 // ── Progress / Status Bars ──────────────────────────────────────────
@@ -75,7 +75,7 @@ bool iconButton(PhotonContext& ctx, WidgetID id, const Rect& r,
  * Horizontal progress bar with label (e.g. "Shield: 89%").
  * Draws background + filled portion + optional percentage text.
  */
-void progressBar(PhotonContext& ctx, const Rect& r,
+void progressBar(AtlasContext& ctx, const Rect& r,
                  float fraction, const Color& fillColor,
                  const char* label = nullptr);
 
@@ -94,7 +94,7 @@ void progressBar(PhotonContext& ctx, const Rect& r,
  * @param armorPct  0.0–1.0 armor remaining.
  * @param hullPct   0.0–1.0 hull remaining.
  */
-void shipStatusArcs(PhotonContext& ctx, Vec2 centre, float outerR,
+void shipStatusArcs(AtlasContext& ctx, Vec2 centre, float outerR,
                     float shieldPct, float armorPct, float hullPct);
 
 /**
@@ -109,7 +109,7 @@ void shipStatusArcs(PhotonContext& ctx, Vec2 centre, float outerR,
  * @param fraction  0.0–1.0 capacitor remaining.
  * @param segments  Number of segments (default 16).
  */
-void capacitorRing(PhotonContext& ctx, Vec2 centre,
+void capacitorRing(AtlasContext& ctx, Vec2 centre,
                    float innerR, float outerR,
                    float fraction, int segments = 16);
 
@@ -123,7 +123,7 @@ void capacitorRing(PhotonContext& ctx, Vec2 centre,
  * @param color      Module highlight color.
  * @return true if clicked.
  */
-bool moduleSlot(PhotonContext& ctx, Vec2 centre, float radius,
+bool moduleSlot(AtlasContext& ctx, Vec2 centre, float radius,
                 bool active, float cooldownPct, const Color& color);
 
 /**
@@ -138,7 +138,7 @@ bool moduleSlot(PhotonContext& ctx, Vec2 centre, float radius,
  * @param time        Current game time in seconds (for pulse animation).
  * @return true if clicked.
  */
-bool moduleSlotEx(PhotonContext& ctx, Vec2 centre, float radius,
+bool moduleSlotEx(AtlasContext& ctx, Vec2 centre, float radius,
                   bool active, float cooldownPct, const Color& color,
                   float overheatPct, float time);
 
@@ -158,7 +158,7 @@ bool moduleSlotEx(PhotonContext& ctx, Vec2 centre, float radius,
  * @param segments     Number of ring segments.
  * @param lerpSpeed    Easing speed (higher = faster, default 5.0).
  */
-void capacitorRingAnimated(PhotonContext& ctx, Vec2 centre,
+void capacitorRingAnimated(AtlasContext& ctx, Vec2 centre,
                            float innerR, float outerR,
                            float targetFrac, float& displayFrac,
                            float dt, int segments = 16,
@@ -167,7 +167,7 @@ void capacitorRingAnimated(PhotonContext& ctx, Vec2 centre,
 /**
  * Speed indicator (bottom of HUD): shows current speed with +/- buttons.
  */
-void speedIndicator(PhotonContext& ctx, Vec2 pos,
+void speedIndicator(AtlasContext& ctx, Vec2 pos,
                     float currentSpeed, float maxSpeed);
 
 // ── Overview Widgets ────────────────────────────────────────────────
@@ -184,14 +184,14 @@ struct OverviewEntry {
 /**
  * Draw the overview table header (columns: Distance, Name, Type, Velocity).
  */
-void overviewHeader(PhotonContext& ctx, const Rect& r,
+void overviewHeader(AtlasContext& ctx, const Rect& r,
                     const std::vector<std::string>& tabs,
                     int activeTab);
 
 /**
  * Draw a single overview row.  Returns true if clicked.
  */
-bool overviewRow(PhotonContext& ctx, const Rect& r,
+bool overviewRow(AtlasContext& ctx, const Rect& r,
                  const OverviewEntry& entry, bool isAlternate);
 
 // ── Locked Target Cards ─────────────────────────────────────────────
@@ -213,7 +213,7 @@ struct TargetCardInfo {
  * @param r      Rectangle for this card (~80×80 px).
  * @param info   Target data.
  */
-bool targetCard(PhotonContext& ctx, const Rect& r,
+bool targetCard(AtlasContext& ctx, const Rect& r,
                 const TargetCardInfo& info);
 
 // ── Selected Item Panel ─────────────────────────────────────────────
@@ -228,27 +228,27 @@ struct SelectedItemInfo {
  * Draw the "Selected Item" panel (top-right corner) showing
  * the currently selected entity's name, distance, and action buttons.
  */
-void selectedItemPanel(PhotonContext& ctx, const Rect& r,
+void selectedItemPanel(AtlasContext& ctx, const Rect& r,
                        const SelectedItemInfo& info);
 
 // ── Utility Widgets ─────────────────────────────────────────────────
 
 /** Simple left-aligned text label. */
-void label(PhotonContext& ctx, Vec2 pos, const std::string& text,
+void label(AtlasContext& ctx, Vec2 pos, const std::string& text,
            const Color& color = {});
 
 /** Thin horizontal separator line. */
-void separator(PhotonContext& ctx, Vec2 start, float width);
+void separator(AtlasContext& ctx, Vec2 start, float width);
 
 /**
  * Collapsible tree node (People & Places style).
  * Returns true if expanded.
  */
-bool treeNode(PhotonContext& ctx, const Rect& r,
+bool treeNode(AtlasContext& ctx, const Rect& r,
               const char* label, bool* expanded);
 
 /** Thin vertical scrollbar indicator. */
-void scrollbar(PhotonContext& ctx, const Rect& track,
+void scrollbar(AtlasContext& ctx, const Rect& track,
                float scrollOffset, float contentHeight, float viewHeight);
 
 // ── Neocom Bar ──────────────────────────────────────────────────────
@@ -263,7 +263,7 @@ void scrollbar(PhotonContext& ctx, const Rect& track,
  * @param icons     Number of icon slots.
  * @param callback  Called with icon index when an icon is clicked.
  */
-void neocomBar(PhotonContext& ctx, float x, float width, float height,
+void neocomBar(AtlasContext& ctx, float x, float width, float height,
                int icons, const std::function<void(int)>& callback);
 
 // ── Tooltip ─────────────────────────────────────────────────────────
@@ -275,7 +275,7 @@ void neocomBar(PhotonContext& ctx, float x, float width, float height,
  * @param ctx   Context.
  * @param text  Tooltip text string.
  */
-void tooltip(PhotonContext& ctx, const std::string& text);
+void tooltip(AtlasContext& ctx, const std::string& text);
 
 // ── Checkbox ────────────────────────────────────────────────────────
 
@@ -288,7 +288,7 @@ void tooltip(PhotonContext& ctx, const std::string& text);
  * @param r        Bounding rectangle (box is left-aligned).
  * @param checked  Pointer to bool toggled on click.
  */
-bool checkbox(PhotonContext& ctx, const char* label,
+bool checkbox(AtlasContext& ctx, const char* label,
               const Rect& r, bool* checked);
 
 // ── ComboBox (dropdown selector) ────────────────────────────────────
@@ -304,7 +304,7 @@ bool checkbox(PhotonContext& ctx, const char* label,
  * @param selected    Index of the currently selected item (updated on click).
  * @param dropdownOpen  Pointer to bool tracking open/closed state.
  */
-bool comboBox(PhotonContext& ctx, const char* label,
+bool comboBox(AtlasContext& ctx, const char* label,
               const Rect& r, const std::vector<std::string>& items,
               int* selected, bool* dropdownOpen);
 
@@ -319,7 +319,7 @@ bool comboBox(PhotonContext& ctx, const char* label,
  * @param state  Persistent panel state (position, open, minimized).
  * @param flags  Visual flags.
  */
-bool panelBeginStateful(PhotonContext& ctx, const char* title,
+bool panelBeginStateful(AtlasContext& ctx, const char* title,
                         PanelState& state, const PanelFlags& flags = {});
 
 // ── Slider ──────────────────────────────────────────────────────────
@@ -336,7 +336,7 @@ bool panelBeginStateful(PhotonContext& ctx, const char* title,
  * @param format   Printf-style format string for the value label (e.g. "%.0f°").
  *                 Pass nullptr to suppress the label.
  */
-bool slider(PhotonContext& ctx, const char* label,
+bool slider(AtlasContext& ctx, const char* label,
             const Rect& r, float* value,
             float minVal, float maxVal,
             const char* format = nullptr);
@@ -361,7 +361,7 @@ struct TextInputState {
  * @param state    Persistent input state (text buffer, cursor, focus).
  * @param placeholder  Placeholder text shown when empty and unfocused.
  */
-bool textInput(PhotonContext& ctx, const char* label,
+bool textInput(AtlasContext& ctx, const char* label,
                const Rect& r, TextInputState& state,
                const char* placeholder = nullptr);
 
@@ -378,7 +378,7 @@ bool textInput(PhotonContext& ctx, const char* label,
  *                  Pass empty string or nullptr to hide.
  * @param color     Accent color for the indicator.
  */
-void modeIndicator(PhotonContext& ctx, Vec2 pos,
+void modeIndicator(AtlasContext& ctx, Vec2 pos,
                    const char* modeText, const Color& color = {});
 
 // ── Notification Toast ──────────────────────────────────────────────
@@ -391,7 +391,7 @@ void modeIndicator(PhotonContext& ctx, Vec2 pos,
  * @param text     Notification message.
  * @param color    Accent color for the left border (default: accentPrimary).
  */
-void notification(PhotonContext& ctx, const std::string& text,
+void notification(AtlasContext& ctx, const std::string& text,
                   const Color& color = {});
 
 // ── Info Panel ──────────────────────────────────────────────────────
@@ -421,7 +421,7 @@ struct InfoPanelData {
  * @param state  Persistent panel state (position, open, minimized).
  * @param data   Entity information to display.
  */
-void infoPanelDraw(PhotonContext& ctx, PanelState& state,
+void infoPanelDraw(AtlasContext& ctx, PanelState& state,
                    const InfoPanelData& data);
 
 // ── Overview Header with click support ──────────────────────────────
@@ -430,8 +430,8 @@ void infoPanelDraw(PhotonContext& ctx, PanelState& state,
  * Draw overview tab header with interactive tab switching.
  * Returns the index of the clicked tab, or -1 if none clicked.
  */
-int overviewHeaderInteractive(PhotonContext& ctx, const Rect& r,
+int overviewHeaderInteractive(AtlasContext& ctx, const Rect& r,
                               const std::vector<std::string>& tabs,
                               int activeTab);
 
-} // namespace photon
+} // namespace atlas
