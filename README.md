@@ -160,6 +160,11 @@ data/
 └── planetary_interaction/ # PI resources
 ```
 
+**Modding Tools** (in `tools/`):
+- `validate_json.py` - Validate JSON syntax and structure
+
+See the [Modding Guide](docs/MODDING_GUIDE.md) for detailed instructions.
+
 ## 📚 Documentation
 
 All documentation is in [docs/](docs/):

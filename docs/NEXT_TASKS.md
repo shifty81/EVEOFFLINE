@@ -134,11 +134,11 @@ From ROADMAP.md "In Progress" section:
 - In-game web browser (dotlan-style maps)
 
 #### 3.4 Community & Modding
-- Mod manager utility
+- 🔄 **In Progress**: Mod manager utility — JSON validation tool created (tools/validate_json.py)
 - Content creation tools
 - Mission editor
 - Ship designer
-- Modding documentation
+- ✅ Modding documentation — Comprehensive guide exists (docs/MODDING_GUIDE.md)
 
 ---
 
