@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 11, 2026)**: PISystem, ManufacturingSystem, ResearchSystem added to C++ server. 23 server systems, 734 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
+> **Update (February 11, 2026)**: ChatSystem and CharacterCreationSystem added to C++ server. 25 server systems, 785 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
 
 ## Current Status (February 2026)
 
@@ -27,7 +27,7 @@
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **18 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **128+ test functions** all passing (734 assertions)
+- **150+ test functions** all passing (785 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture
@@ -404,7 +404,7 @@ From ROADMAP.md "In Progress" section:
     - ✅ Custom UI strategy (retained-mode, docking, EVE theme)
     - ✅ Modular procedural ship generation plan
     - ✅ Implementation priority order
-    - ✅ Complete systems status table (23 systems, 734 tests)
+    - ✅ Complete systems status table (25 systems, 785 tests)
     - ✅ Gap analysis with remaining systems to implement
 
 34. ✅ **Add C++ Server CorporationSystem** (COMPLETED - February 2026)
@@ -448,6 +448,25 @@ From ROADMAP.md "In Progress" section:
     - ✅ ISK install cost deduction from player wallet
     - ✅ Datacore tracking for invention jobs
     - ✅ 18 test assertions, 100% pass rate
+
+39. ✅ **Add C++ Server ChatSystem** (COMPLETED - February 2026)
+    - ✅ ChatChannel component with persistent channels, members, message history
+    - ✅ ChatSystem with join/leave, messaging, moderation (mute/unmute), MOTD
+    - ✅ Channel types: local, corp, fleet, alliance, private
+    - ✅ Role-based moderation (member, moderator, operator, owner)
+    - ✅ Max member limits and message history trimming
+    - ✅ Muted player enforcement
+    - ✅ 28 test assertions, 100% pass rate
+
+40. ✅ **Add C++ Server CharacterCreationSystem** (COMPLETED - February 2026)
+    - ✅ CharacterSheet component with race, bloodline, ancestry, attributes, implants, clones
+    - ✅ CharacterCreationSystem with race-specific starting attributes
+    - ✅ Implant management (install/remove, slot 1-10, attribute bonuses)
+    - ✅ Clone management (alpha/omega grades, clone jumping with 24h cooldown)
+    - ✅ Security status tracking with clamping (-10.0 to 10.0)
+    - ✅ Employment history tracking
+    - ✅ 4 races supported: Caldari, Amarr, Gallente, Minmatar
+    - ✅ 23 test assertions, 100% pass rate
 
 ### Long-Term Goals (1-3 months each)
 
@@ -515,4 +534,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 11, 2026*
-*Status: All major server systems implemented. PISystem, ManufacturingSystem, ResearchSystem added. 23 server systems, 102 ships, 159+ modules, 734 test assertions. Ready for AI economic actors and custom UI implementation.*
+*Status: All major server systems implemented. ChatSystem and CharacterCreationSystem added. 25 server systems, 102 ships, 159+ modules, 785 test assertions. Ready for AI economic actors and custom UI implementation.*

@@ -8,6 +8,8 @@
 namespace eve {
 namespace systems {
 
+static constexpr int CLONE_JUMP_COOLDOWN_SECONDS = 86400;  // 24 hours
+
 CharacterCreationSystem::CharacterCreationSystem(ecs::World* world) : System(world) {}
 
 void CharacterCreationSystem::update(float delta_time) {
@@ -160,7 +162,7 @@ bool CharacterCreationSystem::jumpClone(const std::string& entity_id) {
 
     if (sheet->clone_jump_cooldown > 0) return false;
 
-    sheet->clone_jump_cooldown = 86400;
+    sheet->clone_jump_cooldown = CLONE_JUMP_COOLDOWN_SECONDS;
     return true;
 }
 
