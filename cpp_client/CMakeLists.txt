@@ -309,6 +309,9 @@ set(IMGUI_UI_SOURCES
     src/ui/docking_manager.cpp
     src/ui/dscan_panel.cpp
     src/ui/neocom_panel.cpp
+    src/ui/chat_panel.cpp
+    src/ui/drone_control_panel.cpp
+    src/ui/notification_manager.cpp
     src/ui/radial_menu.cpp
 )
 
@@ -415,6 +418,9 @@ set(CLIENT_HEADERS
     include/ui/docking_manager.h
     include/ui/dscan_panel.h
     include/ui/neocom_panel.h
+    include/ui/chat_panel.h
+    include/ui/drone_control_panel.h
+    include/ui/notification_manager.h
     include/ui/rml_ui_manager.h
     include/ui/radial_menu.h
     include/ui/photon/photon_types.h
@@ -695,6 +701,9 @@ if(BUILD_TESTS)
             src/ui/market_panel.cpp
             src/ui/dscan_panel.cpp
             src/ui/neocom_panel.cpp
+            src/ui/chat_panel.cpp
+            src/ui/drone_control_panel.cpp
+            src/ui/notification_manager.cpp
             src/ui/photon/photon_renderer.cpp
             src/ui/photon/photon_context.cpp
             src/ui/photon/photon_widgets.cpp
@@ -810,6 +819,9 @@ if(BUILD_TESTS)
             src/ui/market_panel.cpp
             src/ui/dscan_panel.cpp
             src/ui/neocom_panel.cpp
+            src/ui/chat_panel.cpp
+            src/ui/drone_control_panel.cpp
+            src/ui/notification_manager.cpp
             src/ui/photon/photon_renderer.cpp
             src/ui/photon/photon_context.cpp
             src/ui/photon/photon_widgets.cpp

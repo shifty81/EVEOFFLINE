@@ -26,6 +26,9 @@ class MarketPanel;
 class DockingManager;
 class DScanPanel;
 class NeocomPanel;
+class ChatPanel;
+class DroneControlPanel;
+class NotificationManager;
 
 namespace eve {
     class StarMap;
@@ -148,6 +151,11 @@ public:
     DScanPanel* GetDScanPanel() { return m_dscanPanel.get(); }
     NeocomPanel* GetNeocomPanel() { return m_neocomPanel.get(); }
     
+    // Phase 4.9/4.11 panels
+    ChatPanel* GetChatPanel() { return m_chatPanel.get(); }
+    DroneControlPanel* GetDroneControlPanel() { return m_droneControlPanel.get(); }
+    NotificationManager* GetNotificationManager() { return m_notificationManager.get(); }
+    
     // Docking manager access
     DockingManager* GetDockingManager() { return m_dockingManager.get(); }
     
@@ -159,6 +167,8 @@ public:
     void ToggleMarket();
     void ToggleDScan();
     void ToggleMap();
+    void ToggleChat();
+    void ToggleDrones();
     
     // Interface lock
     void SetInterfaceLocked(bool locked);
@@ -197,6 +207,11 @@ private:
     // Phase 4.8 panels
     std::unique_ptr<DScanPanel> m_dscanPanel;
     std::unique_ptr<NeocomPanel> m_neocomPanel;
+    
+    // Phase 4.9/4.11 panels
+    std::unique_ptr<ChatPanel> m_chatPanel;
+    std::unique_ptr<DroneControlPanel> m_droneControlPanel;
+    std::unique_ptr<NotificationManager> m_notificationManager;
     
     // Star map (toggled by Map button in Neocom)
     bool m_showStarMap = false;

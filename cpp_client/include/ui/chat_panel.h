@@ -6,6 +6,8 @@
 #include <map>
 #include <functional>
 
+struct ImVec4;
+
 namespace UI {
 
 // Chat message entry
