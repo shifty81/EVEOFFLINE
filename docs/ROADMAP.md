@@ -192,7 +192,10 @@ Data-driven modding without code injection:
 | MarketSystem | ✅ Complete | 11 assertions |
 | CorporationSystem | ✅ Complete | 37 assertions |
 | ContractSystem | ✅ Complete | 36 assertions |
-| **Total** | **20 systems** | **672 assertions** |
+| PISystem | ✅ Complete | 14 assertions |
+| ManufacturingSystem | ✅ Complete | 21 assertions |
+| ResearchSystem | ✅ Complete | 18 assertions |
+| **Total** | **23 systems** | **734 assertions** |
 
 ### Data Loaders Status
 
@@ -207,9 +210,6 @@ Data-driven modding without code injection:
 
 | System | Priority | Description |
 |--------|----------|-------------|
-| PISystem | Medium | Planetary interaction, resource extraction |
-| ManufacturingSystem | Medium | Blueprint-based production |
-| ResearchSystem | Medium | Invention, T2 blueprint creation |
 | ChatSystem | Medium | Persistent channels, moderation |
 | CharacterCreationSystem | Low | Races, bloodlines, clones, implants |
 | TournamentSystem | Low | Competitive PvE events |
