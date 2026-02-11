@@ -146,9 +146,19 @@ The EVE OFFLINE C++ client had fully implemented Context Menu and Radial Menu UI
 - [ ] Hold left-click (300ms) on entity opens radial menu
 - [ ] Radial menu selection executes correct action
 - [ ] Q/W/E/D keys activate respective modes
+- [ ] Q/W/E/D mode indicator appears on screen above HUD
+- [ ] Mode indicator disappears after clicking a target
 - [ ] D+Click on entity triggers docking message
 - [ ] Camera controls still work (right-drag)
 - [ ] Entity selection still works (left-click)
+- [ ] Show Info opens info panel with entity details
+- [ ] Info panel shows name, type, faction, distance, health bars
+- [ ] Info panel close button works
+- [ ] Overview tabs are clickable and switch active tab
+- [ ] Selected Item panel O (Orbit) button works
+- [ ] Selected Item panel >> (Approach) button works
+- [ ] Selected Item panel W (Warp) button works
+- [ ] Selected Item panel i (Info) button opens info panel
 
 ### Integration Testing
 - [ ] Context menu doesn't interfere with UI panels
@@ -165,13 +175,15 @@ The EVE OFFLINE C++ client had fully implemented Context Menu and Radial Menu UI
 
 2. **Docking Implementation**: D+Click prints message but doesn't send actual dock/jump command to server. Requires server-side implementation.
 
-3. **Info Panel**: "Show Info" callback prints to console. Actual info panel UI is not yet implemented.
+3. ~~**Info Panel**: "Show Info" callback prints to console. Actual info panel UI is not yet implemented.~~ ✅ **RESOLVED** (Feb 11, 2026) — Info panel now displays entity details, health bars, faction, distance, and velocity.
 
-4. **Visual Feedback**: No on-screen indicators for active movement modes (Q/W/E/D). User must rely on console messages.
+4. ~~**Visual Feedback**: No on-screen indicators for active movement modes (Q/W/E/D). User must rely on console messages.~~ ✅ **RESOLVED** (Feb 11, 2026) — On-screen mode indicator pill appears above HUD showing active mode (e.g. "APPROACH - click a target"). Auto-clears when mode is consumed.
 
 5. **Radial Menu Hold Time**: Fixed at 300ms. Future: make configurable in settings.
 
 6. **Distance Presets**: Radial menu uses hardcoded default distances (orbit: 500m, range: 2500m). Context menu has full submenu options.
+
+7. **Overview Tab Filtering**: Tabs are now interactive (clickable) but filtering logic (Combat/Mining/Custom filters) is not yet implemented — all tabs show the same entity list.
 
 ---
 
@@ -187,9 +199,10 @@ The EVE OFFLINE C++ client had fully implemented Context Menu and Radial Menu UI
 - Star map integration (F10)
 - Bookmark system (Ctrl+B)
 - Fleet actions in context menu
-- Info panel implementation
-- Visual indicators for movement modes
+- ~~Info panel implementation~~ ✅ Done
+- ~~Visual indicators for movement modes~~ ✅ Done
 - Range circle preview overlay
+- Overview tab filtering logic (Combat/Mining/Custom)
 
 ---
 

@@ -10,7 +10,7 @@
 
 This document outlines the comprehensive plan to implement EVE Online's complete Photon UI system in the C++ OpenGL client. The UI is the most complex aspect of EVE Online, featuring dense information displays, extensive customization, and sophisticated interaction patterns.
 
-## Current Status (Phase 4.7 & 4.9 Complete)
+## Current Status (Phase 4.10 In Progress)
 
 ✅ **Completed**:
 - Phase 4.3: Entity rendering system
@@ -24,6 +24,10 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 - **Phase 4.7: Context & Radial Menus** ✅ (Feb 11, 2026)
 - Phase 4.8: Neocom and Additional Panels (Partial)
 - **Phase 4.9: Movement Command Shortcuts (Q/W/E/D + Click)** ✅ (Feb 11, 2026)
+- **Phase 4.9.1: Visual Mode Indicators** ✅ (Feb 11, 2026) — On-screen HUD indicator for active movement modes
+- **Phase 4.9.2: Info Panel** ✅ (Feb 11, 2026) — Show Info window with entity details, health, distance, faction
+- **Phase 4.9.3: Overview Tab Switching** ✅ (Feb 11, 2026) — Interactive clickable tab headers (All/Combat/Mining/Custom)
+- **Phase 4.9.4: Selected Item Panel Callbacks** ✅ (Feb 11, 2026) — Orbit/Approach/Warp/Info buttons wired to game logic
 
 ⏳ **In Progress**: 
 - Phase 4.10: Window Management & Customization
@@ -212,7 +216,7 @@ This document outlines the comprehensive plan to implement EVE Online's complete
   - Set as Active Target — Future
   
 - [x] **Information Actions**
-  - Show Info ✅ (callback wired, UI panel TBD)
+  - Show Info ✅ (info panel with entity details, health, faction) (Feb 11, 2026)
   - Show Location — Future
   - Create Bookmark — Future
   
@@ -378,7 +382,9 @@ This document outlines the comprehensive plan to implement EVE Online's complete
   - Orbit: 500m, 1km, 5km, 10km, 20km, 50km
   - Keep at Range: 1km, 5km, 10km, 20km, 50km
   
-- [ ] **Visual Feedback**
+- [x] **Visual Feedback**
+  - On-screen mode indicator (HUD text pill) ✅ (Feb 11, 2026)
+  - Mode text auto-clears after command execution ✅
   - Flight path indicator — Future
   - Range circle preview — Future
   - ETA display — Future
