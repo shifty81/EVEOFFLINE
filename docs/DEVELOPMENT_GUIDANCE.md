@@ -68,7 +68,7 @@ This is the most important next step for the project. All foundational systems a
 - New functions needed in Model class:
   - `addPartToMesh()` - Add a ShipPart to vertices/indices with transform
   - `assembleShipFromParts()` - Main assembly function
-  - `getFactionSides()` - Get polygon count for faction (already exists)
+  - Note: `getFactionSides()` already exists in `model.cpp` at line 570
 
 **Step 3**: Test ship generation
 - Generate ships for each faction (Keldari, Veyren, Aurelian, Solari)
