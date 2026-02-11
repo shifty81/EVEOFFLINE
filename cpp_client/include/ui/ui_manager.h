@@ -9,6 +9,7 @@
 #include "ui/photon/photon_context.h"
 #include "ui/photon/photon_hud.h"
 #include "ui/photon/photon_widgets.h"
+#include "ui/layout_manager.h"
 
 namespace eve {
     class Entity;
