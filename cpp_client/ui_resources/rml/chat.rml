@@ -1,0 +1,203 @@
+<!-- EVE OFFLINE — Chat Panel (RML)
+     Channel-based chat with Local/Corp/Fleet tabs and message input. -->
+<rml>
+<head>
+    <title>Chat</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #chat {
+            position: fixed;
+            bottom: 200dp;
+            left: 60dp;
+            width: 340dp;
+            height: 260dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* Channel tabs */
+        .channel-tabs {
+            background-color: #0A0E1480;
+            padding: 2dp 8dp 0dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .channel-tab {
+            display: inline-block;
+            padding: 3dp 10dp;
+            font-size: 10dp;
+            color: #8B949E;
+            background-color: transparent;
+            border: 1dp transparent;
+            border-bottom: 0dp;
+            border-radius: 2dp 2dp 0dp 0dp;
+            margin-right: 2dp;
+        }
+
+        .channel-tab:hover {
+            color: #E6EDF3;
+            background-color: #1A3A4A40;
+        }
+
+        .channel-tab.active {
+            color: #E6EDF3;
+            background-color: #0D1117;
+            border-color: #28384899;
+        }
+
+        /* Member count */
+        .member-bar {
+            padding: 2dp 8dp;
+            font-size: 9dp;
+            color: #8B949E;
+            background-color: #0A0E1440;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .member-count {
+            color: #E6EDF3;
+        }
+
+        /* Message area */
+        .message-area {
+            height: 155dp;
+            overflow: auto;
+            padding: 4dp 8dp;
+        }
+
+        .chat-msg {
+            padding: 1dp 0dp;
+            font-size: 11dp;
+        }
+
+        .msg-time {
+            color: #484F58;
+            font-size: 9dp;
+            display: inline-block;
+            width: 40dp;
+        }
+
+        .msg-sender {
+            font-weight: bold;
+            display: inline-block;
+        }
+
+        .msg-sender.self {
+            color: #78E1F0;
+        }
+
+        .msg-sender.other {
+            color: #E6EDF3;
+        }
+
+        .msg-sender.system {
+            color: #FFD040;
+        }
+
+        .msg-sender.hostile {
+            color: #E04A4A;
+        }
+
+        .msg-sender.friendly {
+            color: #4A8AE0;
+        }
+
+        .msg-text {
+            color: #C8CDD3;
+        }
+
+        /* Input bar */
+        .input-bar {
+            padding: 4dp 8dp;
+            background-color: #0A0E14;
+            border-top: 1dp #1E2A36;
+        }
+
+        .chat-input {
+            width: 100%;
+            height: 22dp;
+            background-color: #161B22;
+            border: 1dp #283848;
+            border-radius: 2dp;
+            padding: 2dp 8dp;
+            font-size: 11dp;
+            color: #E6EDF3;
+        }
+
+        .chat-input:focus {
+            border-color: #45D0E8;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat">
+        <div class="panel-header">
+            <span class="title">CHAT</span>
+            <span class="window-btn" id="btn-close">x</span>
+            <span class="window-btn" id="btn-minimize">—</span>
+        </div>
+
+        <!-- Channel tabs -->
+        <div class="channel-tabs">
+            <button class="channel-tab active" id="tab-local">Local</button>
+            <button class="channel-tab" id="tab-corp">Corp</button>
+            <button class="channel-tab" id="tab-fleet">Fleet</button>
+        </div>
+
+        <!-- Member count -->
+        <div class="member-bar">
+            Channel members: <span class="member-count" id="member-count">1</span>
+        </div>
+
+        <!-- Messages -->
+        <div class="message-area" id="chat-messages">
+            <div class="chat-msg">
+                <span class="msg-time">00:00</span>
+                <span class="msg-sender system">System:</span>
+                <span class="msg-text">Channel joined.</span>
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="input-bar">
+            <input class="chat-input" id="chat-input" type="text" value=""/>
+        </div>
+    </div>
+</body>
+</rml>

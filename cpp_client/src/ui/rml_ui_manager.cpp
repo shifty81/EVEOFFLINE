@@ -472,6 +472,8 @@ bool RmlUiManager::LoadDocuments() {
         {"mission",      resourcePath_ + "/rml/mission.rml",       false},
         {"dscan",        resourcePath_ + "/rml/dscan.rml",         false},
         {"neocom",       resourcePath_ + "/rml/neocom.rml",        true},
+        {"chat",         resourcePath_ + "/rml/chat.rml",          false},
+        {"context_menu", resourcePath_ + "/rml/context_menu.rml",  false},
     };
 
     bool allOk = true;

@@ -1,0 +1,118 @@
+<!-- EVE OFFLINE — Context Menu (RML)
+     Right-click context menu for entity interaction.
+     Displays action options: Approach, Orbit, Warp, Lock, Show Info, etc. -->
+<rml>
+<head>
+    <title>Context Menu</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #context-menu {
+            position: fixed;
+            top: 0dp;
+            left: 0dp;
+            width: 180dp;
+            background-color: #0D1117F0;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        /* Menu header (entity name) */
+        .menu-header {
+            padding: 6dp 8dp;
+            font-size: 11dp;
+            font-weight: bold;
+            color: #45D0E8;
+            border-bottom: 1dp #1E2A36;
+            background-color: #0A0E14;
+        }
+
+        .menu-type {
+            font-size: 9dp;
+            color: #8B949E;
+            font-weight: normal;
+        }
+
+        /* Menu items */
+        .menu-item {
+            display: block;
+            width: 100%;
+            padding: 5dp 8dp;
+            font-size: 11dp;
+            color: #E6EDF3;
+            background-color: transparent;
+            border-width: 0dp;
+            text-align: left;
+        }
+
+        .menu-item:hover {
+            background-color: #1A3A4ACC;
+            color: #45D0E8;
+        }
+
+        .menu-item:active {
+            background-color: #45D0E840;
+        }
+
+        .menu-item .shortcut {
+            font-size: 9dp;
+            color: #484F58;
+            float: right;
+        }
+
+        .menu-separator {
+            height: 1dp;
+            background-color: #1E2A36;
+            margin: 2dp 0dp;
+        }
+
+        .menu-item.disabled {
+            color: #484F58;
+        }
+
+        /* Submenu arrow */
+        .submenu-arrow {
+            float: right;
+            color: #8B949E;
+            font-size: 10dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="context-menu">
+        <div class="menu-header">
+            <span id="ctx-entity-name">Entity Name</span>
+            <div class="menu-type" id="ctx-entity-type">Type</div>
+        </div>
+
+        <!-- Combat actions -->
+        <button class="menu-item" id="ctx-lock">Lock Target<span class="shortcut">Ctrl+Click</span></button>
+        <button class="menu-item" id="ctx-approach">Approach<span class="shortcut">Q</span></button>
+        <button class="menu-item" id="ctx-orbit">Orbit<span class="submenu-arrow">▸</span></button>
+        <button class="menu-item" id="ctx-keep-range">Keep at Range<span class="submenu-arrow">▸</span></button>
+
+        <div class="menu-separator"></div>
+
+        <!-- Navigation -->
+        <button class="menu-item" id="ctx-align">Align To<span class="shortcut">A</span></button>
+        <button class="menu-item" id="ctx-warp">Warp To<span class="shortcut">D+Click</span></button>
+
+        <div class="menu-separator"></div>
+
+        <!-- Information -->
+        <button class="menu-item" id="ctx-show-info">Show Info</button>
+        <button class="menu-item" id="ctx-look-at">Look At</button>
+        <button class="menu-item" id="ctx-set-dest">Set Destination</button>
+
+        <div class="menu-separator"></div>
+
+        <!-- Fleet actions (when in fleet) -->
+        <button class="menu-item" id="ctx-fleet-warp">Fleet Warp To<span class="submenu-arrow">▸</span></button>
+        <button class="menu-item" id="ctx-fleet-broadcast">Broadcast Target</button>
+    </div>
+</body>
+</rml>

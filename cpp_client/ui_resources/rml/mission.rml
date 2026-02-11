@@ -1,4 +1,6 @@
-<!-- EVE OFFLINE — Mission Panel (RML placeholder) -->
+<!-- EVE OFFLINE — Mission Journal Panel (RML)
+     Mission tracker with objectives, rewards, and agent info.
+     Shows active missions with completion status and details. -->
 <rml>
 <head>
     <title>Missions</title>
@@ -13,8 +15,8 @@
             position: fixed;
             top: 90dp;
             left: 80dp;
-            width: 360dp;
-            height: 280dp;
+            width: 400dp;
+            height: 420dp;
             background-color: #0D1117EB;
             border: 1dp #28384899;
             border-radius: 2dp;
@@ -33,20 +35,289 @@
             color: #45D0E8;
         }
 
-        .panel-body {
-            padding: 12dp;
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* Mission tabs */
+        .mission-tabs {
+            background-color: #0A0E1480;
+            padding: 4dp 8dp 0dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .tab-btn {
+            display: inline-block;
+            padding: 4dp 12dp;
+            font-size: 10dp;
+            color: #8B949E;
+            background-color: transparent;
+            border: 1dp transparent;
+            border-bottom: 0dp;
+            border-radius: 2dp 2dp 0dp 0dp;
+            margin-right: 2dp;
+        }
+
+        .tab-btn:hover {
+            color: #E6EDF3;
+            background-color: #1A3A4A40;
+        }
+
+        .tab-btn.active {
+            color: #E6EDF3;
+            background-color: #0D1117;
+            border-color: #28384899;
+        }
+
+        /* Mission list */
+        .mission-list {
+            height: 120dp;
+            overflow: auto;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .mission-entry {
+            padding: 6dp 8dp;
+            border-bottom: 1dp #1E2A3640;
+        }
+
+        .mission-entry:hover {
+            background-color: #1A3A4A40;
+        }
+
+        .mission-entry.selected {
+            background-color: #1A3A4A80;
+            border-left: 2dp #45D0E8;
+        }
+
+        .mission-title {
+            font-size: 11dp;
+            font-weight: bold;
+            color: #E6EDF3;
+        }
+
+        .mission-agent {
+            font-size: 9dp;
+            color: #8B949E;
+            margin-top: 1dp;
+        }
+
+        .mission-level {
+            font-size: 9dp;
+            color: #45D0E8;
+            float: right;
+        }
+
+        /* Mission detail */
+        .mission-detail {
+            padding: 8dp;
+            height: 200dp;
+            overflow: auto;
+        }
+
+        .detail-title {
+            font-size: 13dp;
+            font-weight: bold;
+            color: #E6EDF3;
+            margin-bottom: 4dp;
+        }
+
+        .detail-desc {
             font-size: 11dp;
             color: #8B949E;
+            margin-bottom: 8dp;
+            line-height: 1.4;
+        }
+
+        .section-label {
+            font-size: 10dp;
+            font-weight: bold;
+            color: #45D0E8;
+            padding: 4dp 0dp;
+            border-bottom: 1dp #1E2A36;
+            margin-bottom: 4dp;
+        }
+
+        /* Objectives */
+        .objective {
+            padding: 3dp 0dp 3dp 16dp;
+            font-size: 10dp;
+        }
+
+        .objective.complete {
+            color: #4AE088;
+        }
+
+        .objective.incomplete {
+            color: #E6EDF3;
+        }
+
+        .obj-marker {
+            display: inline-block;
+            width: 10dp;
+            font-size: 10dp;
+            margin-left: -14dp;
+        }
+
+        .obj-marker.done {
+            color: #4AE088;
+        }
+
+        .obj-marker.pending {
+            color: #484F58;
+        }
+
+        /* Rewards */
+        .reward-row {
+            padding: 3dp 0dp;
+            font-size: 10dp;
+        }
+
+        .reward-label {
+            color: #8B949E;
+            display: inline-block;
+            width: 80dp;
+        }
+
+        .reward-value {
+            color: #78E1F0;
+        }
+
+        .reward-isk {
+            color: #FFD040;
+        }
+
+        /* Action buttons */
+        .mission-actions {
+            padding: 6dp 8dp;
+            background-color: #0A0E14;
+            border-top: 1dp #1E2A36;
+        }
+
+        .mission-actions button {
+            height: 26dp;
+            font-size: 11dp;
+            padding: 0dp 16dp;
+            margin-right: 4dp;
+            border-radius: 2dp;
+            background-color: #2A5A6A90;
+            border: 1dp #45D0E866;
+            color: #E6EDF3;
+        }
+
+        .mission-actions button:hover {
+            background-color: #2A5A6AE6;
+            border-color: #45D0E8CC;
+        }
+
+        .complete-btn {
+            background-color: #2A6A4A90;
+            border: 1dp #4AE08866;
+            color: #4AE088;
+        }
+
+        .complete-btn:hover {
+            background-color: #2A6A4AE6;
+        }
+
+        .decline-btn {
+            background-color: #6A2A2A60;
+            border: 1dp #E04A4A40;
+            color: #E04A4A;
+        }
+
+        .decline-btn:hover {
+            background-color: #6A2A2AE6;
         }
     </style>
 </head>
 <body>
     <div id="mission">
         <div class="panel-header">
-            <span class="title">Missions</span>
+            <span class="title">MISSION JOURNAL</span>
+            <span class="window-btn" id="btn-close">x</span>
+            <span class="window-btn" id="btn-minimize">—</span>
         </div>
-        <div class="panel-body">
-            Mission tracker UI is migrating to RmlUi. Objectives and rewards will appear here soon.
+
+        <!-- Tabs -->
+        <div class="mission-tabs">
+            <button class="tab-btn active" id="tab-active">Active</button>
+            <button class="tab-btn" id="tab-offered">Offered</button>
+            <button class="tab-btn" id="tab-completed">Completed</button>
+        </div>
+
+        <!-- Mission list -->
+        <div class="mission-list" id="mission-list">
+            <div class="mission-entry selected" id="mission-entry-1">
+                <span class="mission-level">L3 Security</span>
+                <div class="mission-title">Crimson Order Assault</div>
+                <div class="mission-agent">Agent: Commander Voss — Keldari Navy</div>
+            </div>
+            <div class="mission-entry" id="mission-entry-2">
+                <span class="mission-level">L2 Mining</span>
+                <div class="mission-title">Resource Extraction</div>
+                <div class="mission-agent">Agent: Mining Foreman Kael</div>
+            </div>
+        </div>
+
+        <!-- Mission detail -->
+        <div class="mission-detail" id="mission-detail">
+            <div class="detail-title" id="mission-detail-title">Crimson Order Assault</div>
+            <div class="detail-desc" id="mission-detail-desc">
+                A Crimson Order raiding party has been spotted near the Keldari station.
+                Eliminate all hostile vessels and secure the area.
+            </div>
+
+            <!-- Objectives -->
+            <div class="section-label">Objectives</div>
+            <div class="objective complete" id="obj-1">
+                <span class="obj-marker done">✓</span> Warp to the mission site
+            </div>
+            <div class="objective incomplete" id="obj-2">
+                <span class="obj-marker pending">○</span> Destroy Crimson Order vessels (1/3)
+            </div>
+            <div class="objective incomplete" id="obj-3">
+                <span class="obj-marker pending">○</span> Retrieve stolen cargo
+            </div>
+
+            <!-- Rewards -->
+            <div class="section-label">Rewards</div>
+            <div class="reward-row">
+                <span class="reward-label">ISK Reward:</span>
+                <span class="reward-value reward-isk" id="reward-isk">450,000 ISK</span>
+            </div>
+            <div class="reward-row">
+                <span class="reward-label">Bonus ISK:</span>
+                <span class="reward-value reward-isk" id="reward-bonus">150,000 ISK</span>
+            </div>
+            <div class="reward-row">
+                <span class="reward-label">Standing:</span>
+                <span class="reward-value" id="reward-standing">+0.15 Keldari Navy</span>
+            </div>
+            <div class="reward-row">
+                <span class="reward-label">LP Reward:</span>
+                <span class="reward-value" id="reward-lp">800 LP</span>
+            </div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="mission-actions">
+            <button class="complete-btn" id="btn-complete">Complete</button>
+            <button id="btn-set-dest">Set Destination</button>
+            <button class="decline-btn" id="btn-decline">Decline</button>
         </div>
     </div>
 </body>

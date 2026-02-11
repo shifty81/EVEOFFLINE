@@ -361,21 +361,80 @@ void Application::render() {
         photon::InputState photonInput;
         photonInput.windowW = m_window->getWidth();
         photonInput.windowH = m_window->getHeight();
-        // Mouse state would be fed from GLFW in a full integration
-        // For now, Photon renders visual-only (no interaction forwarded yet)
+        // Forward mouse state from GLFW to Photon for interactive widgets
+        photonInput.mousePos = {static_cast<float>(m_inputHandler->getMouseX()),
+                                static_cast<float>(m_inputHandler->getMouseY())};
+        photonInput.mouseDown[0] = m_leftMouseDown;
+        photonInput.mouseDown[1] = m_rightMouseDown;
         
         m_photonCtx->beginFrame(photonInput);
         
         photon::ShipHUDData shipData;
-        // TODO: Connect to actual ship state from game client
-        shipData.shieldPct = 1.0f;
-        shipData.armorPct = 1.0f;
-        shipData.hullPct = 1.0f;
-        shipData.capacitorPct = 1.0f;
+        // Connect to actual ship state from game client
+        auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+        if (playerEntity) {
+            const auto& health = playerEntity->getHealth();
+            shipData.shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
+            shipData.armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
+            shipData.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
+            const auto& capacitor = playerEntity->getCapacitor();
+            shipData.capacitorPct = capacitor.max > 0.0f ? capacitor.current / capacitor.max : 0.0f;
+        }
         shipData.currentSpeed = m_playerSpeed;
         shipData.maxSpeed = m_playerMaxSpeed;
         
-        m_photonHUD->update(*m_photonCtx, shipData, {}, {}, {});
+        // Build Photon target cards from target list
+        std::vector<photon::TargetCardInfo> photonTargets;
+        if (playerEntity) {
+            const auto playerPos = playerEntity->getPosition();
+            for (const auto& targetId : m_targetList) {
+                auto targetEntity = m_gameClient->getEntityManager().getEntity(targetId);
+                if (!targetEntity) continue;
+                photon::TargetCardInfo card;
+                card.name = targetEntity->getShipName().empty() ? targetEntity->getId() : targetEntity->getShipName();
+                const auto& th = targetEntity->getHealth();
+                card.shieldPct = th.maxShield > 0 ? th.currentShield / static_cast<float>(th.maxShield) : 0.0f;
+                card.armorPct = th.maxArmor > 0 ? th.currentArmor / static_cast<float>(th.maxArmor) : 0.0f;
+                card.hullPct = th.maxHull > 0 ? th.currentHull / static_cast<float>(th.maxHull) : 0.0f;
+                card.distance = glm::distance(playerPos, targetEntity->getPosition());
+                card.isActive = (targetId == m_currentTargetId);
+                photonTargets.push_back(card);
+            }
+        }
+        
+        // Build Photon overview entries from entity manager
+        std::vector<photon::OverviewEntry> photonOverview;
+        if (playerEntity) {
+            const auto playerPos = playerEntity->getPosition();
+            for (const auto& pair : m_gameClient->getEntityManager().getAllEntities()) {
+                if (pair.first == m_localPlayerId) continue;
+                photon::OverviewEntry entry;
+                entry.name = pair.second->getShipName().empty() ? pair.first : pair.second->getShipName();
+                entry.type = pair.second->getShipType();
+                entry.distance = glm::distance(playerPos, pair.second->getPosition());
+                entry.selected = (pair.first == m_currentTargetId);
+                photonOverview.push_back(entry);
+            }
+        }
+        
+        // Build selected item info
+        photon::SelectedItemInfo photonSelected;
+        if (!m_currentTargetId.empty() && playerEntity) {
+            auto targetEntity = m_gameClient->getEntityManager().getEntity(m_currentTargetId);
+            if (targetEntity) {
+                photonSelected.name = targetEntity->getShipName().empty() ? m_currentTargetId : targetEntity->getShipName();
+                float dist = glm::distance(playerEntity->getPosition(), targetEntity->getPosition());
+                if (dist >= 1000.0f) {
+                    photonSelected.distance = dist / 1000.0f;
+                    photonSelected.distanceUnit = "km";
+                } else {
+                    photonSelected.distance = dist;
+                    photonSelected.distanceUnit = "m";
+                }
+            }
+        }
+        
+        m_photonHUD->update(*m_photonCtx, shipData, photonTargets, photonOverview, photonSelected);
         
         m_photonCtx->endFrame();
     }
