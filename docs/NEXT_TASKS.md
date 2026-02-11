@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 11, 2026)**: TournamentSystem and LeaderboardSystem added to C++ server. All baseline systems complete. 27 server systems, 832 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
+> **Update (February 11, 2026)**: StationSystem, WreckSalvageSystem, and ServerConsole Phase 1 added to C++ server. 29 server systems, 897 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
 
 ## Current Status (February 2026)
 
@@ -25,9 +25,9 @@
 - **10 mining missions** across levels 1-4
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
-- **27 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard)
+- **29 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **170+ test functions** all passing (832 assertions)
+- **170+ test functions** all passing (897 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture
@@ -489,6 +489,33 @@ From ROADMAP.md "In Progress" section:
     - ✅ Multi-player stat tracking and comparison
     - ✅ 23 test assertions, 100% pass rate
 
+43. ✅ **Add C++ Server StationSystem** (COMPLETED - February 2026)
+    - ✅ Station component for dockable stations with configurable docking range
+    - ✅ Docked component to track entity docking state
+    - ✅ createStation with position, docking range, repair cost
+    - ✅ dockAtStation with proximity range check and velocity zeroing
+    - ✅ undockFromStation with docked count tracking
+    - ✅ repairShip restores shield/armor/hull for ISK cost
+    - ✅ Double-dock prevention and not-docked repair rejection
+    - ✅ 29 test assertions, 100% pass rate
+
+44. ✅ **Add C++ Server WreckSalvageSystem** (COMPLETED - February 2026)
+    - ✅ Wreck component with source entity tracking and lifetime decay
+    - ✅ createWreck spawns wreck entity with position and inventory
+    - ✅ salvageWreck with range check, item transfer to player, double-salvage prevention
+    - ✅ Automatic wreck despawn on lifetime expiry via update()
+    - ✅ Active wreck count query
+    - ✅ 22 test assertions, 100% pass rate
+
+45. ✅ **Add ServerConsole Phase 1** (COMPLETED - February 2026)
+    - ✅ Command registration with handler callbacks
+    - ✅ Built-in help and status commands
+    - ✅ Log message buffering (200 entries max)
+    - ✅ Tokenized command parsing and dispatch
+    - ✅ Custom command registration support
+    - ✅ Init/shutdown lifecycle with state tracking
+    - ✅ 14 test assertions, 100% pass rate
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -555,4 +582,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 11, 2026*
-*Status: All baseline server systems implemented. TournamentSystem and LeaderboardSystem added. 27 server systems, 102 ships, 159+ modules, 832 test assertions. Ready for AI economic actors and custom UI implementation.*
+*Status: All baseline server systems implemented. StationSystem, WreckSalvageSystem, and ServerConsole added. 29 server systems, 102 ships, 159+ modules, 897 test assertions. Vertical Slice Phase 1 (station docking) and Phase 2 (wreck/salvage) server-side infrastructure complete.*
