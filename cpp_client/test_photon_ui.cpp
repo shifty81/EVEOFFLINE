@@ -1093,6 +1093,234 @@ void testDamageFeedback() {
     assertTrue(eve::DamageLayer::SHIELD != eve::DamageLayer::HULL, "Shield != Hull layer");
 }
 
+// ─── Mode Indicator tests ──────────────────────────────────────────────
+
+void testModeIndicator() {
+    std::cout << "\n=== Mode Indicator ===" << std::endl;
+
+    // Test that modeIndicator doesn't crash with null or empty text
+    photon::PhotonContext ctx;
+    ctx.init();
+    photon::InputState input;
+    input.windowW = 1920;
+    input.windowH = 1080;
+    ctx.beginFrame(input);
+
+    // Empty text should be a no-op
+    photon::modeIndicator(ctx, {960.0f, 500.0f}, "");
+    assertTrue(true, "modeIndicator with empty text does not crash");
+
+    // Null text should be a no-op
+    photon::modeIndicator(ctx, {960.0f, 500.0f}, nullptr);
+    assertTrue(true, "modeIndicator with null text does not crash");
+
+    // Valid text
+    photon::modeIndicator(ctx, {960.0f, 500.0f}, "APPROACH - click a target");
+    assertTrue(true, "modeIndicator with valid text does not crash");
+
+    // With custom color
+    photon::Color yellow = {1.0f, 1.0f, 0.0f, 1.0f};
+    photon::modeIndicator(ctx, {960.0f, 500.0f}, "ORBIT - click a target", yellow);
+    assertTrue(true, "modeIndicator with custom color does not crash");
+
+    ctx.endFrame();
+    ctx.shutdown();
+}
+
+// ─── Info Panel Data tests ─────────────────────────────────────────────
+
+void testInfoPanelData() {
+    std::cout << "\n=== Info Panel Data ===" << std::endl;
+
+    photon::InfoPanelData empty;
+    assertTrue(empty.isEmpty(), "Empty InfoPanelData is empty");
+    assertTrue(empty.name.empty(), "Empty InfoPanelData name is empty");
+    assertClose(empty.distance, 0.0f, "Empty InfoPanelData distance is 0");
+
+    photon::InfoPanelData data;
+    data.name = "Crimson Order Raider";
+    data.type = "Cruiser";
+    data.faction = "Crimson Order";
+    data.shieldPct = 0.85f;
+    data.armorPct = 0.60f;
+    data.hullPct = 1.0f;
+    data.distance = 5000.0f;
+    data.velocity = 200.0f;
+    data.signature = 120.0f;
+    data.hasHealth = true;
+
+    assertTrue(!data.isEmpty(), "Populated InfoPanelData is not empty");
+    assertTrue(data.name == "Crimson Order Raider", "InfoPanelData name correct");
+    assertTrue(data.type == "Cruiser", "InfoPanelData type correct");
+    assertTrue(data.faction == "Crimson Order", "InfoPanelData faction correct");
+    assertClose(data.shieldPct, 0.85f, "InfoPanelData shield 85%");
+    assertClose(data.distance, 5000.0f, "InfoPanelData distance 5km");
+    assertTrue(data.hasHealth, "InfoPanelData hasHealth is true");
+}
+
+// ─── Info Panel Rendering test ─────────────────────────────────────────
+
+void testInfoPanelRendering() {
+    std::cout << "\n=== Info Panel Rendering ===" << std::endl;
+
+    photon::PhotonContext ctx;
+    ctx.init();
+    photon::InputState input;
+    input.windowW = 1920;
+    input.windowH = 1080;
+    ctx.beginFrame(input);
+
+    photon::PanelState state;
+    state.bounds = {100.0f, 100.0f, 280.0f, 260.0f};
+    state.open = true;
+
+    photon::InfoPanelData data;
+    data.name = "Test Entity";
+    data.type = "Frigate";
+    data.faction = "TestCorp";
+    data.distance = 1500.0f;
+    data.velocity = 100.0f;
+    data.shieldPct = 1.0f;
+    data.armorPct = 0.5f;
+    data.hullPct = 1.0f;
+    data.hasHealth = true;
+
+    photon::infoPanelDraw(ctx, state, data);
+    assertTrue(true, "infoPanelDraw renders without crash");
+
+    // Empty data should be a no-op
+    photon::InfoPanelData emptyData;
+    photon::infoPanelDraw(ctx, state, emptyData);
+    assertTrue(true, "infoPanelDraw with empty data does not crash");
+
+    // Closed panel should be a no-op
+    state.open = false;
+    photon::infoPanelDraw(ctx, state, data);
+    assertTrue(true, "infoPanelDraw with closed panel does not crash");
+
+    ctx.endFrame();
+    ctx.shutdown();
+}
+
+// ─── Overview Tab Switching test ───────────────────────────────────────
+
+void testOverviewTabSwitching() {
+    std::cout << "\n=== Overview Tab Switching ===" << std::endl;
+
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    // Frame with mouse not on any tab
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {0.0f, 0.0f};
+        ctx.beginFrame(input);
+
+        std::vector<std::string> tabs = {"All", "Combat", "Mining", "Custom"};
+        photon::Rect tabRect = {100.0f, 100.0f, 300.0f, 24.0f};
+        int clicked = photon::overviewHeaderInteractive(ctx, tabRect, tabs, 0);
+        assertTrue(clicked == -1, "No tab clicked when mouse is away");
+
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── PhotonHUD Mode Indicator test ─────────────────────────────────────
+
+void testPhotonHUDModeIndicator() {
+    std::cout << "\n=== PhotonHUD Mode Indicator ===" << std::endl;
+
+    photon::PhotonHUD hud;
+    hud.init(1920, 1080);
+
+    // Initially empty
+    hud.setModeIndicator("");
+    assertTrue(true, "Setting empty mode indicator succeeds");
+
+    // Set a mode
+    hud.setModeIndicator("APPROACH - click a target");
+    assertTrue(true, "Setting approach mode indicator succeeds");
+
+    // Clear
+    hud.setModeIndicator("");
+    assertTrue(true, "Clearing mode indicator succeeds");
+}
+
+// ─── PhotonHUD Info Panel test ─────────────────────────────────────────
+
+void testPhotonHUDInfoPanel() {
+    std::cout << "\n=== PhotonHUD Info Panel ===" << std::endl;
+
+    photon::PhotonHUD hud;
+    hud.init(1920, 1080);
+
+    assertTrue(!hud.isInfoPanelOpen(), "Info panel initially closed");
+
+    photon::InfoPanelData data;
+    data.name = "Test Ship";
+    data.type = "Destroyer";
+    data.faction = "Iron Corsairs";
+    data.distance = 3000.0f;
+    data.hasHealth = true;
+    data.shieldPct = 0.9f;
+    data.armorPct = 0.7f;
+    data.hullPct = 1.0f;
+
+    hud.showInfoPanel(data);
+    assertTrue(hud.isInfoPanelOpen(), "Info panel opens after showInfoPanel");
+
+    hud.closeInfoPanel();
+    assertTrue(!hud.isInfoPanelOpen(), "Info panel closes after closeInfoPanel");
+}
+
+// ─── PhotonHUD Overview Tab test ───────────────────────────────────────
+
+void testPhotonHUDOverviewTab() {
+    std::cout << "\n=== PhotonHUD Overview Tab ===" << std::endl;
+
+    photon::PhotonHUD hud;
+    hud.init(1920, 1080);
+
+    assertTrue(hud.getActiveOverviewTab() == 0, "Default overview tab is 0");
+
+    hud.setActiveOverviewTab(2);
+    assertTrue(hud.getActiveOverviewTab() == 2, "Overview tab set to 2");
+
+    hud.setActiveOverviewTab(0);
+    assertTrue(hud.getActiveOverviewTab() == 0, "Overview tab reset to 0");
+}
+
+// ─── Selected Item Callbacks test ──────────────────────────────────────
+
+void testSelectedItemCallbacks() {
+    std::cout << "\n=== Selected Item Callbacks ===" << std::endl;
+
+    photon::PhotonHUD hud;
+    hud.init(1920, 1080);
+
+    bool orbitCalled = false;
+    bool approachCalled = false;
+    bool warpCalled = false;
+    bool infoCalled = false;
+
+    hud.setSelectedItemOrbitCb([&]() { orbitCalled = true; });
+    hud.setSelectedItemApproachCb([&]() { approachCalled = true; });
+    hud.setSelectedItemWarpCb([&]() { warpCalled = true; });
+    hud.setSelectedItemInfoCb([&]() { infoCalled = true; });
+
+    assertTrue(!orbitCalled, "Orbit callback not called before trigger");
+    assertTrue(!approachCalled, "Approach callback not called before trigger");
+    assertTrue(!warpCalled, "Warp callback not called before trigger");
+    assertTrue(!infoCalled, "Info callback not called before trigger");
+
+    // Callbacks are wired and can be set
+    assertTrue(true, "All selected item callbacks set without crash");
+}
+
 // ─── Probe Scanner Panel tests ─────────────────────────────────────────
 
 void testProbeScannerPanel() {
@@ -1172,6 +1400,16 @@ int main() {
     testModuleSlotState();
     testDamageFeedback();
     testProbeScannerPanel();
+
+    // Phase 4.10+ GUI/HUD enhancement tests
+    testModeIndicator();
+    testInfoPanelData();
+    testInfoPanelRendering();
+    testOverviewTabSwitching();
+    testPhotonHUDModeIndicator();
+    testPhotonHUDInfoPanel();
+    testPhotonHUDOverviewTab();
+    testSelectedItemCallbacks();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

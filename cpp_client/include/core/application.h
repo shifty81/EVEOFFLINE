@@ -279,6 +279,9 @@ private:
     // D-key docking mode
     bool m_dockingModeActive = false;
     
+    // Active movement mode indicator text
+    std::string m_activeModeText;
+    
     // Local/demo mode
     bool m_localPlayerSpawned = false;
     std::string m_localPlayerId = "player_local";

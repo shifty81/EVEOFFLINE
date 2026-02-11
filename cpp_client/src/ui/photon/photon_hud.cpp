@@ -21,6 +21,11 @@ void PhotonHUD::init(int windowW, int windowH) {
     m_selectedItemState.bounds = {w - 310.0f, 10.0f, 300.0f, 120.0f};
     m_selectedItemState.open = true;
     m_selectedItemState.minimized = false;
+
+    // Info panel: centre-left, ~280×260
+    m_infoPanelState.bounds = {60.0f, 100.0f, 280.0f, 260.0f};
+    m_infoPanelState.open = false;
+    m_infoPanelState.minimized = false;
 }
 
 void PhotonHUD::update(PhotonContext& ctx,
@@ -50,6 +55,12 @@ void PhotonHUD::update(PhotonContext& ctx,
 
     // 5. Ship HUD (bottom-center)
     drawShipHUD(ctx, ship);
+
+    // 6. Mode indicator (above HUD)
+    drawModeIndicator(ctx);
+
+    // 7. Info panel (if open)
+    drawInfoPanel(ctx);
 }
 
 // ── Ship HUD ────────────────────────────────────────────────────────
@@ -157,10 +168,13 @@ void PhotonHUD::drawOverviewPanel(PhotonContext& ctx,
                         m_overviewState.bounds.w,
                         m_overviewState.bounds.h - hh};
 
-    // Tab header
+    // Tab header (interactive — clickable tabs)
     std::vector<std::string> tabs = {"All", "Combat", "Mining", "Custom"};
     Rect tabRect = {contentArea.x, contentArea.y, contentArea.w, 24.0f};
-    overviewHeader(ctx, tabRect, tabs, 0);
+    int clickedTab = overviewHeaderInteractive(ctx, tabRect, tabs, m_overviewActiveTab);
+    if (clickedTab >= 0) {
+        m_overviewActiveTab = clickedTab;
+    }
 
     // Rows
     float rowH = 22.0f;
@@ -222,14 +236,52 @@ void PhotonHUD::drawSelectedItemPanel(PhotonContext& ctx,
     float btnSz = 24.0f;
     float btnGap = 6.0f;
     float btnX = m_selectedItemState.bounds.x + t.padding;
-    const char* actions[] = {"O", ">>", "W", "i"};
+
+    // O = Orbit, >> = Approach, W = Warp, i = Info
+    struct ActionBtn { const char* label; const std::function<void()>* cb; };
+    ActionBtn actions[] = {
+        {"O",  &m_selOrbitCb},
+        {">>", &m_selApproachCb},
+        {"W",  &m_selWarpCb},
+        {"i",  &m_selInfoCb},
+    };
     for (int i = 0; i < 4; ++i) {
         Rect btn = {btnX, btnY, btnSz, btnSz};
-        button(ctx, actions[i], btn);
+        if (button(ctx, actions[i].label, btn)) {
+            if (actions[i].cb && *(actions[i].cb)) {
+                (*(actions[i].cb))();
+            }
+        }
         btnX += btnSz + btnGap;
     }
 
     panelEnd(ctx);
+}
+
+// ── Mode Indicator ──────────────────────────────────────────────────
+
+void PhotonHUD::drawModeIndicator(PhotonContext& ctx) {
+    if (m_modeText.empty()) return;
+
+    float winW = static_cast<float>(ctx.input().windowW);
+    float winH = static_cast<float>(ctx.input().windowH);
+
+    // Position above the ship HUD circle
+    Vec2 pos = {winW * 0.5f, winH - 180.0f};
+    modeIndicator(ctx, pos, m_modeText.c_str());
+}
+
+// ── Info Panel ──────────────────────────────────────────────────────
+
+void PhotonHUD::showInfoPanel(const InfoPanelData& data) {
+    m_infoPanelData = data;
+    m_infoPanelState.open = true;
+}
+
+void PhotonHUD::drawInfoPanel(PhotonContext& ctx) {
+    if (!m_infoPanelState.open || m_infoPanelData.isEmpty()) return;
+
+    infoPanelDraw(ctx, m_infoPanelState, m_infoPanelData);
 }
 
 } // namespace photon

@@ -307,7 +307,23 @@ void Application::setupUICallbacks() {
     
     m_contextMenu->SetShowInfoCallback([this](const std::string& entityId) {
         std::cout << "[Info] Show info for: " << entityId << std::endl;
-        // TODO: Open info panel
+        auto entity = m_gameClient->getEntityManager().getEntity(entityId);
+        if (entity && m_photonHUD) {
+            auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+            photon::InfoPanelData info;
+            info.name = entity->getShipName().empty() ? entityId : entity->getShipName();
+            info.type = entity->getShipType();
+            info.faction = entity->getFaction();
+            const auto& health = entity->getHealth();
+            info.shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
+            info.armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
+            info.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
+            info.hasHealth = true;
+            if (playerEntity) {
+                info.distance = glm::distance(playerEntity->getPosition(), entity->getPosition());
+            }
+            m_photonHUD->showInfoPanel(info);
+        }
     });
     
     std::cout << "  - Context menu callbacks wired" << std::endl;
@@ -346,7 +362,26 @@ void Application::setupUICallbacks() {
                 }
                 break;
             case UI::RadialMenu::Action::SHOW_INFO:
-                std::cout << "[Info] Show info for: " << entityId << std::endl;
+                {
+                    std::cout << "[Info] Show info for: " << entityId << std::endl;
+                    auto entity = m_gameClient->getEntityManager().getEntity(entityId);
+                    if (entity && m_photonHUD) {
+                        auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+                        photon::InfoPanelData info;
+                        info.name = entity->getShipName().empty() ? entityId : entity->getShipName();
+                        info.type = entity->getShipType();
+                        info.faction = entity->getFaction();
+                        const auto& health = entity->getHealth();
+                        info.shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
+                        info.armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
+                        info.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
+                        info.hasHealth = true;
+                        if (playerEntity) {
+                            info.distance = glm::distance(playerEntity->getPosition(), entity->getPosition());
+                        }
+                        m_photonHUD->showInfoPanel(info);
+                    }
+                }
                 break;
             default:
                 break;
@@ -354,6 +389,45 @@ void Application::setupUICallbacks() {
     });
     
     std::cout << "  - Radial menu callbacks wired" << std::endl;
+    
+    // === Setup Selected Item Panel Callbacks ===
+    m_photonHUD->setSelectedItemOrbitCb([this]() {
+        if (!m_currentTargetId.empty()) {
+            commandOrbit(m_currentTargetId);
+        }
+    });
+    m_photonHUD->setSelectedItemApproachCb([this]() {
+        if (!m_currentTargetId.empty()) {
+            commandApproach(m_currentTargetId);
+        }
+    });
+    m_photonHUD->setSelectedItemWarpCb([this]() {
+        if (!m_currentTargetId.empty()) {
+            commandWarpTo(m_currentTargetId);
+        }
+    });
+    m_photonHUD->setSelectedItemInfoCb([this]() {
+        if (!m_currentTargetId.empty()) {
+            auto entity = m_gameClient->getEntityManager().getEntity(m_currentTargetId);
+            if (entity && m_photonHUD) {
+                auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+                photon::InfoPanelData info;
+                info.name = entity->getShipName().empty() ? m_currentTargetId : entity->getShipName();
+                info.type = entity->getShipType();
+                info.faction = entity->getFaction();
+                const auto& health = entity->getHealth();
+                info.shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
+                info.armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
+                info.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
+                info.hasHealth = true;
+                if (playerEntity) {
+                    info.distance = glm::distance(playerEntity->getPosition(), entity->getPosition());
+                }
+                m_photonHUD->showInfoPanel(info);
+            }
+        }
+    });
+    std::cout << "  - Selected item panel callbacks wired" << std::endl;
     
     std::cout << "UI callbacks setup complete" << std::endl;
 }
@@ -530,6 +604,9 @@ void Application::render() {
             }
         }
         
+        // Update mode indicator text on the HUD
+        m_photonHUD->setModeIndicator(m_activeModeText);
+        
         m_photonHUD->update(*m_photonCtx, shipData, photonTargets, photonOverview, photonSelected);
         
         m_photonCtx->endFrame();
@@ -688,24 +765,28 @@ void Application::handleKeyInput(int key, int action, int mods) {
         m_orbitActive = false;
         m_keepRangeActive = false;
         m_dockingModeActive = false;
+        m_activeModeText = "APPROACH - click a target";
         std::cout << "[Controls] Approach mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_W) {
         m_approachActive = false;
         m_orbitActive = true;
         m_keepRangeActive = false;
         m_dockingModeActive = false;
+        m_activeModeText = "ORBIT - click a target";
         std::cout << "[Controls] Orbit mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_E) {
         m_approachActive = false;
         m_orbitActive = false;
         m_keepRangeActive = true;
         m_dockingModeActive = false;
+        m_activeModeText = "KEEP AT RANGE - click a target";
         std::cout << "[Controls] Keep at Range mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_D) {
         m_approachActive = false;
         m_orbitActive = false;
         m_keepRangeActive = false;
         m_dockingModeActive = true;
+        m_activeModeText = "DOCK / JUMP - click a station or gate";
         std::cout << "[Controls] Docking mode active — click a station or gate" << std::endl;
     } else if (key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL)) {
         commandStopShip();
@@ -816,17 +897,21 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             if (m_approachActive) {
                 commandApproach(pickedEntityId);
                 m_approachActive = false;
+                m_activeModeText.clear();
             } else if (m_orbitActive) {
                 commandOrbit(pickedEntityId);
                 m_orbitActive = false;
+                m_activeModeText.clear();
             } else if (m_keepRangeActive) {
                 commandKeepAtRange(pickedEntityId);
                 m_keepRangeActive = false;
+                m_activeModeText.clear();
             } else if (m_dockingModeActive) {
                 // D+Click for docking/jump through
                 std::cout << "[Movement] Dock/Jump through " << pickedEntityId << std::endl;
                 // TODO: Send dock/jump command to server
                 m_dockingModeActive = false;
+                m_activeModeText.clear();
             } else {
                 // Default: select / CTRL+click to lock target
                 bool addToTargets = (mods & GLFW_MOD_CONTROL) != 0;
@@ -1036,6 +1121,8 @@ void Application::commandStopShip() {
     m_approachActive = false;
     m_orbitActive = false;
     m_keepRangeActive = false;
+    m_dockingModeActive = false;
+    m_activeModeText.clear();
     std::cout << "[Movement] Ship stopped" << std::endl;
 }
 
