@@ -96,7 +96,7 @@
                 <span class="icon">L</span>Lock
             </button>
             <button class="radial-segment pos-bottom" id="rad-range">
-                <span class="icon">R</span>Range
+                <span class="icon">R</span>Keep Range
             </button>
             <button class="radial-segment pos-bot-left" id="rad-align">
                 <span class="icon">&gt;</span>Align

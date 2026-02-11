@@ -1273,7 +1273,7 @@ void RmlUiManager::UpdateRadialHighlight(const std::string& segmentId) {
     for (const char* id : segments) {
         auto* el = doc->GetElementById(id);
         if (el) {
-            el->SetClass("highlighted", (id == segmentId));
+            el->SetClass("highlighted", (segmentId == id));
         }
     }
 }
