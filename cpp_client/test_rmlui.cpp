@@ -161,7 +161,7 @@ int main() {
     rmlUi->AddCombatLogMessage("[12:35:02] Arrived at asteroid belt");
 
     // Initial ship status
-    UI::RmlShipData shipData;
+    UI::ShipStatusData shipData;
     shipData.shield_pct = 0.85f;
     shipData.armor_pct = 1.0f;
     shipData.hull_pct = 1.0f;

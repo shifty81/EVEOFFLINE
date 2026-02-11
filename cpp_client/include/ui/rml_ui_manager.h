@@ -45,7 +45,7 @@ namespace UI {
 /**
  * @brief Ship status data for the HUD display.
  */
-struct RmlShipData {
+struct ShipStatusData {
     float shield_pct = 1.0f;
     float armor_pct = 1.0f;
     float hull_pct = 1.0f;
@@ -95,7 +95,7 @@ public:
     void HandleFramebufferSize(int width, int height);
 
     // ---- Ship Status ----
-    void SetShipStatus(const RmlShipData& data);
+    void SetShipStatus(const ShipStatusData& data);
     void SetShieldPercent(float pct);
     void SetArmorPercent(float pct);
     void SetHullPercent(float pct);
@@ -158,7 +158,7 @@ private:
     std::unordered_map<std::string, Rml::ElementDocument*> documents_;
 
     // Ship data for updating elements
-    RmlShipData shipData_;
+    ShipStatusData shipData_;
 
     // Target data for the target list
     struct TargetInfo {
@@ -180,7 +180,6 @@ private:
     bool LoadDocuments();
     void UpdateHudElements();
     void UpdateTargetListElements();
-    void SetupInputCallbacks();
 #endif
 };
 

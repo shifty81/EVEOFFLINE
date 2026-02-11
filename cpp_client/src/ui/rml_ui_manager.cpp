@@ -31,13 +31,6 @@ namespace UI {
 // UTF-8 encoding of the superscript 3 character (³) for m³ display
 static constexpr const char* CUBIC_METER_SUFFIX = " m\xc2\xb3";
 
-// Data stored in GLFW window user pointer for input callback dispatch.
-struct RmlCallbackData {
-    Rml::Context* context = nullptr;
-    RenderInterface_GL3* renderer = nullptr;
-    int active_mods = 0;
-};
-
 // ============================================================================
 // RmlUiManager — uses official RmlUi GL3 + GLFW backends
 // ============================================================================
@@ -255,7 +248,7 @@ void RmlUiManager::HandleFramebufferSize(int width, int height) {
 
 // ---- Ship Status ----
 
-void RmlUiManager::SetShipStatus(const RmlShipData& data) {
+void RmlUiManager::SetShipStatus(const ShipStatusData& data) {
     shipData_ = data;
 }
 
@@ -721,67 +714,6 @@ bool RmlUiManager::WantsKeyboardInput() const {
     return context_->GetFocusElement() != nullptr;
 }
 
-void RmlUiManager::SetupInputCallbacks() {
-    if (!window_ || !context_) return;
-
-    // Store callback data via GLFW window user pointer to avoid statics.
-    auto* cbData = new RmlCallbackData();
-    cbData->context = context_;
-    cbData->renderer = renderInterface_.get();
-    glfwSetWindowUserPointer(window_, cbData);
-
-    glfwSetKeyCallback(window_, [](GLFWwindow* w, int key, int, int action, int mods) {
-        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
-        if (!d) return;
-        d->active_mods = mods;
-        RmlGLFW::ProcessKeyCallback(d->context, key, action, mods);
-    });
-
-    glfwSetCharCallback(window_, [](GLFWwindow* w, unsigned int codepoint) {
-        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
-        if (!d) return;
-        RmlGLFW::ProcessCharCallback(d->context, codepoint);
-    });
-
-    glfwSetCursorPosCallback(window_, [](GLFWwindow* w, double xpos, double ypos) {
-        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
-        if (!d) return;
-        RmlGLFW::ProcessCursorPosCallback(d->context, w, xpos, ypos, d->active_mods);
-    });
-
-    glfwSetMouseButtonCallback(window_, [](GLFWwindow* w, int button, int action, int mods) {
-        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
-        if (!d) return;
-        d->active_mods = mods;
-        RmlGLFW::ProcessMouseButtonCallback(d->context, button, action, mods);
-    });
-
-    glfwSetScrollCallback(window_, [](GLFWwindow* w, double, double yoffset) {
-        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
-        if (!d) return;
-        RmlGLFW::ProcessScrollCallback(d->context, yoffset, d->active_mods);
-    });
-
-    glfwSetFramebufferSizeCallback(window_, [](GLFWwindow* w, int width, int height) {
-        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
-        if (!d) return;
-        d->renderer->SetViewport(width, height);
-        RmlGLFW::ProcessFramebufferSizeCallback(d->context, width, height);
-    });
-
-    glfwSetWindowContentScaleCallback(window_, [](GLFWwindow* w, float xscale, float) {
-        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
-        if (!d) return;
-        RmlGLFW::ProcessContentScaleCallback(d->context, xscale);
-    });
-
-    glfwSetCursorEnterCallback(window_, [](GLFWwindow* w, int entered) {
-        auto* d = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(w));
-        if (!d) return;
-        RmlGLFW::ProcessCursorEnterCallback(d->context, entered);
-    });
-}
-
 } // namespace UI
 
 #else // !USE_RMLUI
@@ -817,7 +749,7 @@ void RmlUiManager::HandleMouseButton(int, int, int) {}
 void RmlUiManager::HandleScroll(double, int) {}
 void RmlUiManager::HandleFramebufferSize(int, int) {}
 
-void RmlUiManager::SetShipStatus(const RmlShipData&) {}
+void RmlUiManager::SetShipStatus(const ShipStatusData&) {}
 void RmlUiManager::SetShieldPercent(float) {}
 void RmlUiManager::SetArmorPercent(float) {}
 void RmlUiManager::SetHullPercent(float) {}

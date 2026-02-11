@@ -151,8 +151,18 @@ void Application::initialize() {
     
     // Scroll callback — EVE uses mousewheel for camera zoom
     m_window->setScrollCallback([this](double xoffset, double yoffset) {
+        int mods = 0;
+        if (m_inputHandler->isCtrlPressed()) {
+            mods |= GLFW_MOD_CONTROL;
+        }
+        if (m_inputHandler->isShiftPressed()) {
+            mods |= GLFW_MOD_SHIFT;
+        }
+        if (m_inputHandler->isAltPressed()) {
+            mods |= GLFW_MOD_ALT;
+        }
         if (m_uiManager) {
-            m_uiManager->HandleScroll(yoffset, 0);
+            m_uiManager->HandleScroll(yoffset, mods);
         }
         handleScroll(xoffset, yoffset);
     });
@@ -281,7 +291,7 @@ void Application::update(float deltaTime) {
     // Update ship status in the HUD
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
     if (playerEntity) {
-        UI::RmlShipData status;
+        UI::ShipStatusData status;
         const auto& health = playerEntity->getHealth();
         status.shield_pct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
         status.armor_pct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
