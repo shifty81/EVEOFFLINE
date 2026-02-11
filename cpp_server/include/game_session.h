@@ -220,6 +220,7 @@ private:
     mutable std::mutex players_mutex_;
 
     std::atomic<uint32_t> next_entity_id_{1};
+    mutable std::atomic<uint64_t> snapshot_sequence_{0};  // Sequence number for snapshots
 };
 
 } // namespace eve
