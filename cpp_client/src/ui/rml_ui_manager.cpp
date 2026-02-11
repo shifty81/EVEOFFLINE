@@ -106,17 +106,25 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
     // Load fonts for UI rendering.
     // RmlUi requires at least one font to render text. The first font loaded
     // as a fallback will be used when no other font matches.
+    //
+    // Search order:
+    //   1. Bundled fonts in ui_resources/fonts/ (portable, always available)
+    //   2. System font paths (Linux, macOS, Windows)
     struct FontCandidate {
-        const char* path;
+        std::string path;
         bool fallback;
     };
 
+    std::string fontsDir = resourcePath_ + "/fonts/";
+
     // Try to load Lato (EVE Online's UI font), then common system fallbacks
     FontCandidate regularFonts[] = {
+        {fontsDir + "Lato-Regular.ttf", true},
         {"/usr/share/fonts/truetype/lato/Lato-Regular.ttf", true},
         {"/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", true},
         {"/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", true},
         {"/usr/share/fonts/TTF/DejaVuSans.ttf", true},
+        {"/Library/Fonts/Arial.ttf", true},
         {"C:\\Windows\\Fonts\\segoeui.ttf", true},
         {"C:\\Windows\\Fonts\\arial.ttf", true},
     };
@@ -131,22 +139,52 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
     }
 
     // Try to load bold variant
-    const char* boldFonts[] = {
+    std::string boldFonts[] = {
+        fontsDir + "Lato-Bold.ttf",
         "/usr/share/fonts/truetype/lato/Lato-Bold.ttf",
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
         "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
+        "/Library/Fonts/Arial Bold.ttf",
         "C:\\Windows\\Fonts\\segoeuib.ttf",
         "C:\\Windows\\Fonts\\arialbd.ttf",
     };
-    for (const auto* boldPath : boldFonts) {
+    for (const auto& boldPath : boldFonts) {
         if (Rml::LoadFontFace(boldPath, false)) {
             std::cout << "[RmlUiManager] Loaded bold font: " << boldPath << "\n";
             break;
         }
     }
 
+    // Try to load italic variant
+    std::string italicFonts[] = {
+        fontsDir + "Lato-Italic.ttf",
+        "/usr/share/fonts/truetype/lato/Lato-Italic.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf",
+    };
+    for (const auto& italicPath : italicFonts) {
+        if (Rml::LoadFontFace(italicPath, false)) {
+            std::cout << "[RmlUiManager] Loaded italic font: " << italicPath << "\n";
+            break;
+        }
+    }
+
+    // Try to load bold-italic variant
+    std::string boldItalicFonts[] = {
+        fontsDir + "Lato-BoldItalic.ttf",
+        "/usr/share/fonts/truetype/lato/Lato-BoldItalic.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf",
+    };
+    for (const auto& biPath : boldItalicFonts) {
+        if (Rml::LoadFontFace(biPath, false)) {
+            std::cout << "[RmlUiManager] Loaded bold-italic font: " << biPath << "\n";
+            break;
+        }
+    }
+
     if (!fontLoaded) {
-        std::cerr << "[RmlUiManager] Warning: no system fonts found, text may not render\n";
+        std::cerr << "[RmlUiManager] Warning: no fonts found, text may not render.\n"
+                  << "  Searched bundled path: " << fontsDir << "\n"
+                  << "  Place Lato-Regular.ttf in " << fontsDir << " to fix.\n";
     }
 
     // Load core documents
