@@ -98,7 +98,7 @@ void FittingPanel::RenderResourceBar(const char* label, float used, float max, f
     
     float percent = max > 0.0f ? used / max : 0.0f;
     
-    // Color bar based on usage — Photon UI style
+    // Color bar based on usage — Atlas UI style
     ImVec4 barColor;
     if (percent > 1.0f) {
         barColor = ImVec4(SpaceColors::DANGER[0], SpaceColors::DANGER[1],

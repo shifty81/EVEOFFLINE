@@ -155,7 +155,7 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     // Apply standing color
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rowColor[0], rowColor[1], rowColor[2], rowColor[3]));
     
-    // Enhance hover highlighting with Photon UI teal accent
+    // Enhance hover highlighting with Atlas UI teal accent
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(
         SpaceColors::SELECTION[0], SpaceColors::SELECTION[1],
         SpaceColors::SELECTION[2], 0.8f));

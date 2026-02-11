@@ -77,7 +77,7 @@ void InventoryPanel::SetInventoryData(const InventoryData& data) {
 }
 
 void InventoryPanel::RenderViewButtons() {
-    // Cargo button — Photon UI active tab uses teal accent
+    // Cargo button — Atlas UI active tab uses teal accent
     if (m_viewMode == 0) {
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
             SpaceColors::ACCENT_DIM[0], SpaceColors::ACCENT_DIM[1],

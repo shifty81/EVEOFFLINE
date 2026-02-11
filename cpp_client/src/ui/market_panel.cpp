@@ -82,7 +82,7 @@ void MarketPanel::SetAvailableItems(const std::vector<MarketItem>& items) {
 }
 
 void MarketPanel::RenderViewTabs() {
-    // Browse tab — Photon UI active tab uses teal accent
+    // Browse tab — Atlas UI active tab uses teal accent
     if (m_viewMode == 0) {
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
             SpaceColors::ACCENT_DIM[0], SpaceColors::ACCENT_DIM[1],

@@ -64,7 +64,7 @@ int main() {
     }
     std::cout << "[Test] UIManager initialized" << std::endl;
 
-    // ---- Setup Photon context for module rack rendering ----
+    // ---- Setup Atlas context for module rack rendering ----
     atlas::AtlasContext atlasCtx;
 
     // ---- Setup demo ship status ----

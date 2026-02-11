@@ -108,7 +108,7 @@ void Application::initialize() {
         throw std::runtime_error("Failed to initialize UI manager");
     }
     
-    // Initialize Photon UI context
+    // Initialize Atlas UI context
     m_atlasCtx->init();
     m_atlasHUD->init(m_window->getWidth(), m_window->getHeight());
     
@@ -516,12 +516,12 @@ void Application::render() {
     m_uiManager->Render();
     m_uiManager->EndFrame();
     
-    // Render Photon HUD overlay
+    // Render Atlas HUD overlay
     {
         atlas::InputState atlasInput;
         atlasInput.windowW = m_window->getWidth();
         atlasInput.windowH = m_window->getHeight();
-        // Forward mouse state from GLFW to Photon for interactive widgets
+        // Forward mouse state from GLFW to Atlas for interactive widgets
         atlasInput.mousePos = {static_cast<float>(m_inputHandler->getMouseX()),
                                 static_cast<float>(m_inputHandler->getMouseY())};
         atlasInput.mouseDown[0] = m_leftMouseDown;
@@ -543,7 +543,7 @@ void Application::render() {
         shipData.currentSpeed = m_playerSpeed;
         shipData.maxSpeed = m_playerMaxSpeed;
         
-        // Build Photon target cards from target list
+        // Build Atlas target cards from target list
         std::vector<atlas::TargetCardInfo> atlasTargets;
         if (playerEntity) {
             const auto playerPos = playerEntity->getPosition();
@@ -562,7 +562,7 @@ void Application::render() {
             }
         }
         
-        // Build Photon overview entries from entity manager
+        // Build Atlas overview entries from entity manager
         std::vector<atlas::OverviewEntry> atlasOverview;
         if (playerEntity) {
             const auto playerPos = playerEntity->getPosition();
@@ -619,7 +619,7 @@ void Application::render() {
 void Application::cleanup() {
     std::cout << "Cleaning up application..." << std::endl;
     
-    // Shutdown Photon UI
+    // Shutdown Atlas UI
     if (m_atlasCtx) {
         m_atlasCtx->shutdown();
     }

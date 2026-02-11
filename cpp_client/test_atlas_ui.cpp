@@ -1385,7 +1385,7 @@ void testProbeScannerPanel() {
 
 int main() {
     std::cout << "========================================" << std::endl;
-    std::cout << "Photon UI System Tests" << std::endl;
+    std::cout << "Atlas UI System Tests" << std::endl;
     std::cout << "========================================" << std::endl;
 
     testVec2();

@@ -52,7 +52,7 @@ public:
     bool initialize();
 
     /**
-     * Render HUD elements using Photon UI.
+     * Render HUD elements using Atlas UI.
      * Renders the circular ship status display (via HUDPanels::RenderShipStatusCircular)
      * and the combat log.
      */

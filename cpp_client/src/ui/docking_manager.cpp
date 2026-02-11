@@ -161,7 +161,7 @@ void DockingManager::RenderLockButton() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     if (ImGui::Begin("##LockButton", nullptr, flags)) {
         const char* icon = m_interfaceLocked ? "L" : "U";
-        // Photon UI: teal accent for unlocked, warning for locked
+        // Atlas UI: teal accent for unlocked, warning for locked
         ImVec4 color = m_interfaceLocked
             ? ImVec4(SpaceColors::WARNING[0], SpaceColors::WARNING[1],
                      SpaceColors::WARNING[2], SpaceColors::WARNING[3])

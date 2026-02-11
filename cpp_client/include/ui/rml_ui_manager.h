@@ -1,6 +1,6 @@
 /**
  * @file rml_ui_manager.h
- * @brief RmlUi-based UI manager for EVE OFFLINE Photon UI replication.
+ * @brief RmlUi-based UI manager for EVE OFFLINE Atlas UI replication.
  *
  * This class provides the primary game UI framework using RmlUi to render
  * panels defined in RML (HTML-like) documents styled with RCSS (CSS-like)

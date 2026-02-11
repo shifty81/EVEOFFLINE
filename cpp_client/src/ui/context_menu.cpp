@@ -30,7 +30,7 @@ void ContextMenu::Close() {
 }
 
 void ContextMenu::Render() {
-    // Rendering is handled by the Photon/RmlUi system
+    // Rendering is handled by the Atlas/RmlUi system
 }
 
 void ContextMenu::RenderOrbitSubmenu() {

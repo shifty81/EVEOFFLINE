@@ -1,7 +1,7 @@
 /*
- * EVE OFFLINE — Photon UI Theme (RCSS)
+ * EVE OFFLINE — Atlas UI Theme (RCSS)
  *
- * This stylesheet replicates EVE Online's Photon UI visual design for use
+ * This stylesheet defines the Atlas UI visual design for use
  * with the RmlUi framework. All color values match the constants defined in
  * docs/design/EVE_UI_STYLE_REFERENCE.md.
  *
@@ -850,10 +850,10 @@ tbody td {
 }
 
 /* ===================================================================
-   21. NEOCOM SIDEBAR
+   21. SIDEBAR
    =================================================================== */
 
-.neo-btn {
+.sb-btn {
     display: block;
     width: 36dp;
     height: 36dp;
@@ -867,29 +867,29 @@ tbody td {
     color: #8B949E;
 }
 
-.neo-btn:hover {
+.sb-btn:hover {
     background-color: #1A3A4A80;
     border-color: #45D0E880;
     color: #45D0E8;
 }
 
-.neo-btn .icon {
+.sb-btn .icon {
     font-size: 16dp;
 }
 
-.neo-btn .label {
+.sb-btn .label {
     font-size: 7dp;
     color: #8B949E;
     display: none;
 }
 
-.neocom-separator {
+.sidebar-separator {
     height: 1dp;
     background-color: #1E2A36;
     margin: 4dp 2dp;
 }
 
-.neocom-toggle {
+.sidebar-toggle {
     display: block;
     width: 36dp;
     height: 20dp;
@@ -900,7 +900,7 @@ tbody td {
     border-width: 0dp;
 }
 
-.neocom-toggle:hover {
+.sidebar-toggle:hover {
     color: #45D0E8;
 }
 

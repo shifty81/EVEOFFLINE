@@ -233,7 +233,7 @@ void UIManager::Render() {
 }
 
 // ============================================================================
-// Photon-based Panel Rendering
+// Atlas-based Panel Rendering
 // ============================================================================
 
 void UIManager::RenderDockablePanel(const std::string& id) {
@@ -258,7 +258,7 @@ void UIManager::RenderDockablePanel(const std::string& id) {
         atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
         y += theme.itemSpacing + 4.0f;
         atlas::label(m_ctx, atlas::Vec2(x, y),
-                      "Panel content (Photon stub)", theme.textSecondary);
+                      "Panel content (Atlas stub)", theme.textSecondary);
     }
     atlas::panelEnd(m_ctx);
 }
