@@ -840,4 +840,157 @@ bool panelBeginStateful(PhotonContext& ctx, const char* title,
     return !state.minimized;
 }
 
+// ── Slider ──────────────────────────────────────────────────────────
+
+bool slider(PhotonContext& ctx, const char* label,
+            const Rect& r, float* value,
+            float minVal, float maxVal,
+            const char* format) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    WidgetID id = ctx.currentID(label);
+    bool changed = false;
+
+    // Track background
+    rr.drawRect(r, t.bgSecondary.withAlpha(0.5f));
+    rr.drawRectOutline(r, t.borderSubtle);
+
+    if (!value) return false;
+
+    float range = maxVal - minVal;
+    if (range <= 0.0f) return false;
+
+    float frac = (*value - minVal) / range;
+    frac = std::max(0.0f, std::min(1.0f, frac));
+
+    // Filled portion
+    if (frac > 0.0f) {
+        rr.drawRect({r.x, r.y, r.w * frac, r.h}, t.accentDim.withAlpha(0.6f));
+    }
+
+    // Thumb (small vertical bar)
+    float thumbX = r.x + r.w * frac;
+    float thumbW = 6.0f;
+    Rect thumbRect = {thumbX - thumbW * 0.5f, r.y, thumbW, r.h};
+
+    bool hovered = ctx.isHovered(r);
+    if (hovered) ctx.setHot(id);
+
+    Color thumbColor = t.accentPrimary;
+    if (ctx.isActive(id)) thumbColor = t.accentSecondary;
+    else if (ctx.isHot(id)) thumbColor = t.accentPrimary.withAlpha(0.8f);
+
+    rr.drawRect(thumbRect, thumbColor);
+
+    // Interaction: click or drag to set value
+    if (hovered && ctx.isMouseClicked()) {
+        ctx.setActive(id);
+    }
+
+    if (ctx.isActive(id)) {
+        if (ctx.isMouseDown()) {
+            float mouseX = ctx.input().mousePos.x;
+            float newFrac = (mouseX - r.x) / r.w;
+            newFrac = std::max(0.0f, std::min(1.0f, newFrac));
+            float newValue = minVal + newFrac * range;
+            if (newValue != *value) {
+                *value = newValue;
+                changed = true;
+            }
+        } else {
+            ctx.clearActive();
+        }
+    }
+
+    // Value label
+    if (format) {
+        char buf[64];
+        std::snprintf(buf, sizeof(buf), format, *value);
+        float tw = rr.measureText(buf);
+        float tx = r.x + (r.w - tw) * 0.5f;
+        float ty = r.y + (r.h - 13.0f) * 0.5f;
+        rr.drawText(buf, {tx, ty}, t.textPrimary);
+    }
+
+    return changed;
+}
+
+// ── Text Input ──────────────────────────────────────────────────────
+
+bool textInput(PhotonContext& ctx, const char* label,
+               const Rect& r, TextInputState& state,
+               const char* placeholder) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    WidgetID id = ctx.currentID(label);
+    bool changed = false;
+
+    // Background
+    Color bg = state.focused ? t.bgSecondary : t.bgSecondary.withAlpha(0.5f);
+    rr.drawRect(r, bg);
+
+    // Border
+    Color borderCol = state.focused ? t.accentPrimary : t.borderNormal;
+    rr.drawRectOutline(r, borderCol);
+
+    // Click to focus
+    bool hovered = ctx.isHovered(r);
+    if (hovered) ctx.setHot(id);
+
+    if (hovered && ctx.isMouseClicked()) {
+        state.focused = true;
+        ctx.setActive(id);
+    } else if (ctx.isMouseClicked() && !hovered) {
+        state.focused = false;
+    }
+
+    // Text display
+    float textY = r.y + (r.h - 13.0f) * 0.5f;
+    float textX = r.x + 6.0f;
+
+    if (state.text.empty() && !state.focused && placeholder) {
+        rr.drawText(placeholder, {textX, textY}, t.textDisabled);
+    } else {
+        rr.drawText(state.text, {textX, textY}, t.textPrimary);
+    }
+
+    // Blinking cursor (approximated — draw when focused)
+    if (state.focused) {
+        int pos = std::min(state.cursorPos, static_cast<int>(state.text.size()));
+        std::string beforeCursor = state.text.substr(0, pos);
+        float cursorX = textX + rr.measureText(beforeCursor);
+        rr.drawRect({cursorX, r.y + 3.0f, 1.0f, r.h - 6.0f}, t.textPrimary);
+    }
+
+    return changed;
+}
+
+// ── Notification Toast ──────────────────────────────────────────────
+
+void notification(PhotonContext& ctx, const std::string& text,
+                  const Color& color) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    float winW = static_cast<float>(ctx.input().windowW);
+    float notifW = rr.measureText(text) + 32.0f;
+    float notifH = 28.0f;
+    float notifX = (winW - notifW) * 0.5f;
+    float notifY = 40.0f;
+
+    // Background
+    rr.drawRect({notifX, notifY, notifW, notifH}, t.bgPanel);
+    rr.drawRectOutline({notifX, notifY, notifW, notifH}, t.borderSubtle);
+
+    // Left accent bar
+    Color accentCol = (color.a > 0.01f) ? color : t.accentPrimary;
+    rr.drawRect({notifX, notifY, 3.0f, notifH}, accentCol);
+
+    // Text
+    float textY = notifY + (notifH - 13.0f) * 0.5f;
+    rr.drawText(text, {notifX + 12.0f, textY}, t.textPrimary);
+}
+
 } // namespace photon

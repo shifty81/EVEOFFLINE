@@ -284,4 +284,60 @@ bool comboBox(PhotonContext& ctx, const char* label,
 bool panelBeginStateful(PhotonContext& ctx, const char* title,
                         PanelState& state, const PanelFlags& flags = {});
 
+// ── Slider ──────────────────────────────────────────────────────────
+
+/**
+ * Horizontal slider widget.  Returns true when the value changes.
+ *
+ * @param ctx      Context.
+ * @param label    Widget label (for ID hashing).
+ * @param r        Bounding rectangle for the slider track.
+ * @param value    Pointer to the current value (updated on drag).
+ * @param minVal   Minimum value.
+ * @param maxVal   Maximum value.
+ * @param format   Printf-style format string for the value label (e.g. "%.0f°").
+ *                 Pass nullptr to suppress the label.
+ */
+bool slider(PhotonContext& ctx, const char* label,
+            const Rect& r, float* value,
+            float minVal, float maxVal,
+            const char* format = nullptr);
+
+// ── Text Input ──────────────────────────────────────────────────────
+
+/**
+ * Persistent state for a text input field.
+ */
+struct TextInputState {
+    std::string text;
+    int cursorPos = 0;
+    bool focused = false;
+};
+
+/**
+ * Single-line text input field.  Returns true when text changes.
+ *
+ * @param ctx      Context.
+ * @param label    Widget label (for ID hashing).
+ * @param r        Bounding rectangle.
+ * @param state    Persistent input state (text buffer, cursor, focus).
+ * @param placeholder  Placeholder text shown when empty and unfocused.
+ */
+bool textInput(PhotonContext& ctx, const char* label,
+               const Rect& r, TextInputState& state,
+               const char* placeholder = nullptr);
+
+// ── Notification Toast ──────────────────────────────────────────────
+
+/**
+ * Show a transient notification banner.  Call each frame while
+ * the notification should be visible.
+ *
+ * @param ctx      Context.
+ * @param text     Notification message.
+ * @param color    Accent color for the left border (default: accentPrimary).
+ */
+void notification(PhotonContext& ctx, const std::string& text,
+                  const Color& color = {});
+
 } // namespace photon

@@ -1,4 +1,6 @@
-<!-- EVE OFFLINE — Market Panel (RML placeholder) -->
+<!-- EVE OFFLINE — Market Panel (RML)
+     Regional market browser for buying and selling items.
+     Tabs for Browse/My Orders, search, category tree, and order tables. -->
 <rml>
 <head>
     <title>Market</title>
@@ -13,8 +15,8 @@
             position: fixed;
             top: 90dp;
             left: 420dp;
-            width: 420dp;
-            height: 320dp;
+            width: 460dp;
+            height: 480dp;
             background-color: #0D1117EB;
             border: 1dp #28384899;
             border-radius: 2dp;
@@ -33,20 +35,304 @@
             color: #45D0E8;
         }
 
-        .panel-body {
-            padding: 12dp;
-            font-size: 11dp;
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
             color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* Tabs */
+        .market-tabs {
+            background-color: #0A0E1480;
+            padding: 4dp 8dp 0dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .tab-btn {
+            display: inline-block;
+            padding: 4dp 12dp;
+            font-size: 10dp;
+            color: #8B949E;
+            background-color: transparent;
+            border: 1dp transparent;
+            border-bottom: 0dp;
+            border-radius: 2dp 2dp 0dp 0dp;
+            margin-right: 2dp;
+        }
+
+        .tab-btn:hover {
+            color: #E6EDF3;
+            background-color: #1A3A4A40;
+        }
+
+        .tab-btn.active {
+            color: #E6EDF3;
+            background-color: #0D1117;
+            border-color: #28384899;
+        }
+
+        /* Search bar */
+        .search-bar {
+            padding: 6dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 24dp;
+            background-color: #161B22;
+            border: 1dp #283848;
+            border-radius: 2dp;
+            padding: 2dp 8dp;
+            font-size: 11dp;
+            color: #E6EDF3;
+        }
+
+        .search-input:focus {
+            border-color: #45D0E8;
+        }
+
+        /* Category tree */
+        .category-section {
+            width: 140dp;
+            height: 320dp;
+            overflow: auto;
+            border-right: 1dp #1E2A36;
+            float: left;
+            padding: 4dp;
+        }
+
+        .cat-item {
+            display: block;
+            padding: 3dp 6dp;
+            font-size: 10dp;
+            color: #8B949E;
+            border-width: 0dp;
+            background-color: transparent;
+            text-align: left;
+            width: 100%;
+        }
+
+        .cat-item:hover {
+            color: #E6EDF3;
+            background-color: #1A3A4A40;
+        }
+
+        .cat-item.selected {
+            color: #45D0E8;
+            background-color: #1A3A4A80;
+        }
+
+        .cat-group {
+            font-size: 10dp;
+            font-weight: bold;
+            color: #E6EDF3;
+            padding: 4dp 6dp 2dp 6dp;
+        }
+
+        /* Item detail section */
+        .detail-section {
+            margin-left: 140dp;
+            padding: 8dp;
+            height: 320dp;
+            overflow: auto;
+        }
+
+        .item-name {
+            font-size: 14dp;
+            font-weight: bold;
+            color: #E6EDF3;
+            margin-bottom: 4dp;
+        }
+
+        .item-meta {
+            font-size: 10dp;
+            color: #8B949E;
+            margin-bottom: 8dp;
+        }
+
+        /* Order tables */
+        .order-section-title {
+            font-size: 10dp;
+            font-weight: bold;
+            color: #45D0E8;
+            padding: 4dp 0dp;
+            border-bottom: 1dp #1E2A36;
+            margin-bottom: 4dp;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        thead td {
+            padding: 2dp 4dp;
+            font-size: 9dp;
+            font-weight: bold;
+            color: #8B949E;
+            border-bottom: 1dp #283848;
+        }
+
+        tbody tr {
+            height: 20dp;
+        }
+
+        tbody tr:hover {
+            background-color: #1A3A4A40;
+        }
+
+        tbody td {
+            padding: 2dp 4dp;
+            font-size: 10dp;
+        }
+
+        .price-col {
+            color: #78E1F0;
+            text-align: right;
+        }
+
+        .qty-col {
+            color: #E6EDF3;
+            text-align: right;
+        }
+
+        .loc-col {
+            color: #8B949E;
+        }
+
+        /* Buy/Sell action bar */
+        .action-bar {
+            padding: 6dp 8dp;
+            background-color: #0A0E14;
+            border-top: 1dp #1E2A36;
+        }
+
+        .action-bar button {
+            height: 26dp;
+            font-size: 11dp;
+            padding: 0dp 16dp;
+            margin-right: 4dp;
+            border-radius: 2dp;
+        }
+
+        .buy-btn {
+            background-color: #2A6A4A90;
+            border: 1dp #4AE08866;
+            color: #4AE088;
+        }
+
+        .buy-btn:hover {
+            background-color: #2A6A4AE6;
+            border-color: #4AE088CC;
+        }
+
+        .sell-btn {
+            background-color: #6A2A2A90;
+            border: 1dp #E04A4A66;
+            color: #E04A4A;
+        }
+
+        .sell-btn:hover {
+            background-color: #6A2A2AE6;
+            border-color: #E04A4ACC;
         }
     </style>
 </head>
 <body>
     <div id="market">
         <div class="panel-header">
-            <span class="title">Market</span>
+            <span class="title">REGIONAL MARKET</span>
+            <span class="window-btn" id="btn-close">x</span>
+            <span class="window-btn" id="btn-minimize">—</span>
         </div>
-        <div class="panel-body">
-            Market UI migration in progress. Core listing and order widgets will move here next.
+
+        <!-- Tabs -->
+        <div class="market-tabs">
+            <button class="tab-btn active" id="tab-browse">Browse</button>
+            <button class="tab-btn" id="tab-myorders">My Orders</button>
+            <button class="tab-btn" id="tab-history">History</button>
+        </div>
+
+        <!-- Search -->
+        <div class="search-bar">
+            <input class="search-input" id="market-search" type="text" value="Search items..."/>
+        </div>
+
+        <!-- Category tree (left) + Details (right) -->
+        <div class="category-section">
+            <div class="cat-group">Ships</div>
+            <button class="cat-item" id="cat-frigates">Frigates</button>
+            <button class="cat-item" id="cat-destroyers">Destroyers</button>
+            <button class="cat-item" id="cat-cruisers">Cruisers</button>
+            <button class="cat-item" id="cat-battlecruisers">Battlecruisers</button>
+            <button class="cat-item" id="cat-battleships">Battleships</button>
+
+            <div class="cat-group">Modules</div>
+            <button class="cat-item" id="cat-weapons">Weapons</button>
+            <button class="cat-item" id="cat-defense">Defense</button>
+            <button class="cat-item" id="cat-propulsion">Propulsion</button>
+            <button class="cat-item" id="cat-electronics">Electronics</button>
+
+            <div class="cat-group">Ammunition</div>
+            <button class="cat-item" id="cat-projectile">Projectile</button>
+            <button class="cat-item" id="cat-hybrid">Hybrid</button>
+            <button class="cat-item" id="cat-missiles">Missiles</button>
+
+            <div class="cat-group">Materials</div>
+            <button class="cat-item" id="cat-minerals">Minerals</button>
+            <button class="cat-item" id="cat-salvage">Salvage</button>
+        </div>
+
+        <div class="detail-section" id="market-detail">
+            <div class="item-name" id="market-item-name">Select an item</div>
+            <div class="item-meta" id="market-item-meta">Choose a category to browse available items.</div>
+
+            <!-- Sell Orders (ascending by price — best first) -->
+            <div class="order-section-title">Sell Orders</div>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Price</td>
+                        <td>Quantity</td>
+                        <td>Location</td>
+                    </tr>
+                </thead>
+                <tbody id="sell-orders-body">
+                    <!-- Populated from C++ -->
+                </tbody>
+            </table>
+
+            <!-- Buy Orders (descending by price — best first) -->
+            <div class="order-section-title">Buy Orders</div>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Price</td>
+                        <td>Quantity</td>
+                        <td>Location</td>
+                    </tr>
+                </thead>
+                <tbody id="buy-orders-body">
+                    <!-- Populated from C++ -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Action bar -->
+        <div class="action-bar">
+            <button class="buy-btn" id="btn-buy">Buy</button>
+            <button class="sell-btn" id="btn-sell">Sell</button>
         </div>
     </div>
 </body>
