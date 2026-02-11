@@ -169,6 +169,7 @@ All documentation is in [docs/](docs/):
 - [Build Guides](docs/guides/) — VS2022, vcpkg, build automation
 
 **Development**
+- [Development Guidance](docs/DEVELOPMENT_GUIDANCE.md) — ⭐ **START HERE** for next steps
 - [Roadmap](docs/ROADMAP.md) — Development progress and plans
 - [Next Tasks](docs/NEXT_TASKS.md) — Recommendations for upcoming work
 - [Design Document](docs/design/DESIGN.md) — Game systems design
