@@ -1,0 +1,324 @@
+# EVE OFFLINE - Development Guidance (February 2026)
+
+## Current Status
+
+**Project Health**: ✅ Excellent
+- **102 ships** across all classes (Frigates to Titans)
+- **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
+- **137 skills** with complete skill tree
+- **27 C++ server systems** fully implemented
+- **832 test assertions** all passing
+- **Zero security vulnerabilities** (CodeQL verified)
+- **CI/CD pipelines** for both client and server
+
+**Latest Milestone**: Phases 1-7 Complete (Q4 2025 - Q4 2026)
+
+## Next Major Milestone: Vertical Slice - One Full Star System
+
+**Timeline**: 3-6 months  
+**Priority**: 🔥 **CRITICAL**  
+**Goal**: Prove all gameplay loops work together in one complete star system
+
+This is the most important next step for the project. All foundational systems are in place, but they need to be integrated into a cohesive, playable experience.
+
+### Vertical Slice Scope
+
+**System Contents**:
+- 1 Trade Hub Station
+- 2 Mining Belts
+- 1 Pirate Zone
+- 3-5 Procedural Anomalies
+- AI Traffic (miners, patrols, haulers)
+- Player Spawn Point
+
+### Vertical Slice Phase 1 (Weeks 1-3): Foundational Gameplay Loop
+
+**Status**: 🚧 IN PROGRESS
+
+#### Task 1.1: Procedural Ship Hull + Weapons Generation ⚡ START HERE
+
+**Priority**: HIGHEST  
+**Complexity**: Medium  
+**Estimated Time**: 1-2 weeks  
+
+**Objective**: Complete the integration of the modular ship generation system so that ships are rendered with visible hulls, weapons, and engines.
+
+**Current State**:
+- ✅ ShipPartLibrary fully implemented (`cpp_client/include/rendering/ship_part_library.h`)
+- ✅ ShipGenerationRules fully implemented (`cpp_client/include/rendering/ship_generation_rules.h`)
+- ✅ Model::createShipModelWithRacialDesign uses library for assembly configs
+- ⚠️ Ships are generated using procedural extrusion, NOT actual modular parts
+- ⚠️ Weapons and hardpoints are not visually distinct
+
+**Implementation Plan**:
+
+**Step 1**: Modify `Model::createShipModelWithRacialDesign` to use actual ship parts
+- Location: `cpp_client/src/rendering/model.cpp` (lines 589-676)
+- Reference: `docs/SHIP_GENERATION_NEXT_STEPS.md` (Step 1)
+- Tasks:
+  1. Initialize ShipPartLibrary and ShipGenerationRules as singletons
+  2. Retrieve forward, main, and rear hull parts from the library
+  3. Assemble parts into a unified mesh with proper transforms
+  4. Add engines based on class rules (placement at rear)
+  5. Add weapon hardpoints based on ship class (turrets, launchers)
+  6. Add faction-specific details (spires for Solari, asymmetry for Keldari)
+  7. Create helper function `addPartToMesh()` for part assembly
+
+**Step 2**: Add helper functions for part assembly
+- New functions needed in Model class:
+  - `addPartToMesh()` - Add a ShipPart to vertices/indices with transform
+  - `assembleShipFromParts()` - Main assembly function
+  - `getFactionSides()` - Get polygon count for faction (already exists)
+
+**Step 3**: Test ship generation
+- Generate ships for each faction (Keldari, Veyren, Aurelian, Solari)
+- Generate ships for each class (Frigate, Destroyer, Cruiser, Battlecruiser, Battleship, Carrier, Dreadnought, Titan)
+- Verify visible differences between factions
+- Verify weapons and engines are visible
+- Check performance (part assembly should be fast)
+
+**Step 4**: Visual validation
+- Ships should look distinct per faction
+- Weapons should be visible as turret mounts
+- Engines should be visible at the rear
+- Tech II ships should have visual differences from Tech I
+
+**Success Criteria**:
+- ✅ All 102 ships generate with visible hulls
+- ✅ Weapon hardpoints are visible on ship hulls
+- ✅ Engines are visible and positioned at rear
+- ✅ Faction design differences are clear (blocky Veyren, ornate Solari, asymmetric Keldari, smooth Aurelian)
+- ✅ Performance is acceptable (<100ms per ship generation)
+
+**Files to Modify**:
+- `cpp_client/src/rendering/model.cpp` (main implementation)
+- `cpp_client/include/rendering/model.h` (add helper function declarations)
+
+**Files to Reference**:
+- `docs/SHIP_GENERATION_NEXT_STEPS.md` (detailed integration steps)
+- `cpp_client/include/rendering/ship_part_library.h` (library API)
+- `cpp_client/include/rendering/ship_generation_rules.h` (rules API)
+
+---
+
+#### Task 1.2: Shield/Armor/Hull Damage with Visual Feedback
+
+**Priority**: High  
+**Complexity**: Medium  
+**Estimated Time**: 1 week
+
+**Objective**: Implement visible damage feedback when ships take damage
+
+**Implementation Plan**:
+1. Add shield ripple effect (blue glow on hit)
+2. Add armor flash effect (yellow/orange flash)
+3. Add hull damage effect (red pulse, screen shake)
+4. Integrate with existing HealthBar system
+5. Add particle effects for explosions
+
+**Dependencies**: Task 1.1 (ships must be rendered first)
+
+---
+
+#### Task 1.3: Basic AI Combat (Engage, Orbit, Retreat)
+
+**Priority**: High  
+**Complexity**: Medium-High  
+**Estimated Time**: 1-2 weeks
+
+**Objective**: NPCs can engage players, orbit targets, and retreat when damaged
+
+**Current State**:
+- ✅ C++ server has WeaponSystem implemented
+- ✅ C++ server has target locking protocol
+- ✅ NPC database with 32 NPC templates
+- ⚠️ AI behavior is basic (needs orbit and retreat logic)
+
+**Implementation Plan**:
+1. Add orbit behavior to AI movement system
+2. Add retreat logic (flee when shields drop below 25%)
+3. Add engagement range logic (optimal + falloff)
+4. Add target selection (closest, lowest HP, etc.)
+5. Test AI vs AI combat
+6. Test AI vs player combat
+
+---
+
+#### Task 1.4: Station Docking and Repair Service
+
+**Priority**: High  
+**Complexity**: Medium  
+**Estimated Time**: 1 week
+
+**Objective**: Players can dock at stations and repair their ships
+
+**Implementation Plan**:
+1. Add station docking protocol (CLIENT_REQUEST_DOCK, SERVER_DOCK_SUCCESS)
+2. Add repair service in station UI
+3. Add repair cost calculation (ISK deduction)
+4. Add undock mechanism
+5. Test full dock → repair → undock flow
+
+---
+
+### Vertical Slice Phase 2 (Weeks 4-6): Wrecks, Salvage & Economy
+
+**Status**: NOT STARTED
+
+**Tasks**:
+- Ship destruction → wreck spawning (uses existing LootSystem)
+- Salvage gameplay mechanics
+- Basic mineral economy
+- Mining AI ships active
+- Resource tracking per system
+
+**Dependencies**: Phase 1 complete
+
+---
+
+### Vertical Slice Phase 3 (Weeks 7-9): Exploration & Anomalies
+
+**Status**: NOT STARTED
+
+**Tasks**:
+- Scanner UI implementation
+- Anomaly generation from system seed
+- Combat & mining anomalies
+- Difficulty scaling by location
+
+**Dependencies**: Phase 2 complete
+
+---
+
+### Vertical Slice Phase 4 (Weeks 10-12): Procedural Missions & Reputation
+
+**Status**: NOT STARTED
+
+**Tasks**:
+- Mission templates implementation (use existing mission data)
+- Mission generation from world state
+- Faction reputation system (partially implemented in StandingsSystem)
+- Hostile/friendly AI behavior based on reputation
+
+**Dependencies**: Phase 3 complete
+
+---
+
+### Vertical Slice Phase 5 (Weeks 13-16): Persistence & Stress Testing
+
+**Status**: NOT STARTED
+
+**Tasks**:
+- Save/load system state (use existing WorldPersistence)
+- Fleet state persistence
+- Economy persistence
+- LOD & impostors for large battles
+- 100+ ship fleet stress test
+
+**Dependencies**: Phase 4 complete
+
+---
+
+## Alternative Priorities (If Vertical Slice is Not the Goal)
+
+If the vertical slice is not the immediate priority, here are other valuable tasks:
+
+### Option A: Content Expansion (Low Effort, High Impact)
+
+**Add more game content using existing systems**:
+- Add more Level 5 missions (8 planned, 0 exist)
+- Add more exploration sites (18 exist, could add 10 more)
+- Add more NPC factions (32 NPCs exist, could add pirate variants)
+- Add more skills (137 exist, could add specialized skills)
+
+**Effort**: 1-2 weeks  
+**Value**: Medium (enriches gameplay)
+
+---
+
+### Option B: Performance Optimization (Medium Effort, High Impact)
+
+**Optimize server and client performance**:
+1. Profile C++ server tick performance
+2. Add spatial partitioning for entity queries
+3. Implement interest management (only send nearby entities to clients)
+4. Add client-side prediction for movement
+5. Optimize rendering (instanced rendering for ships)
+
+**Effort**: 2-4 weeks  
+**Value**: High (enables larger battles, more players)
+
+---
+
+### Option C: Database Persistence (High Effort, High Impact)
+
+**Add PostgreSQL support for persistent universe**:
+1. Design database schema for entities, players, corporations
+2. Implement PostgreSQL adapter
+3. Add save/load for all game state
+4. Add backup and recovery tools
+5. Add migration tools
+
+**Effort**: 3-6 weeks  
+**Value**: Very High (enables persistent universe)
+
+---
+
+## Recommended Next Action
+
+🎯 **Start with Task 1.1: Procedural Ship Hull + Weapons Generation**
+
+**Rationale**:
+1. It's the first task in the critical Vertical Slice milestone
+2. It's well-documented with clear implementation steps
+3. It unlocks the rest of Phase 1 (damage feedback, AI combat, docking)
+4. It's achievable in 1-2 weeks
+5. It will make ships look much better visually
+
+**Expected Outcome**:
+- Ships will have visible weapon turrets
+- Ships will have visible engines
+- Each faction will have distinct visual characteristics
+- Foundation for Phase 1 complete
+
+---
+
+## Development Process
+
+**When working on any task**:
+
+1. ✅ **Create a branch**: Use descriptive names like `feature/procedural-ship-generation`
+2. ✅ **Write tests first**: Add tests to validate your changes
+3. ✅ **Make minimal changes**: Change only what's needed
+4. ✅ **Run existing tests**: Ensure no regressions (`make test-server`)
+5. ✅ **Run linters**: Ensure code quality
+6. ✅ **Run CodeQL**: Ensure no security vulnerabilities
+7. ✅ **Get code review**: Use the code_review tool
+8. ✅ **Document changes**: Update relevant docs in `docs/`
+9. ✅ **Commit frequently**: Use `report_progress` to track work
+10. ✅ **Create PR**: With clear description and checklist
+
+---
+
+## Getting Help
+
+**Documentation**:
+- `docs/ROADMAP.md` - Full project roadmap and milestones
+- `docs/NEXT_TASKS.md` - Detailed task recommendations
+- `docs/SHIP_GENERATION_NEXT_STEPS.md` - Ship generation integration guide
+- `docs/cpp_client/` - Client architecture and systems
+- `docs/guides/` - Build and setup guides
+
+**Testing**:
+- Server tests: `cd cpp_server/build && ctest` (832 assertions)
+- Client tests: Manual testing required (OpenGL dependency)
+
+**CI/CD**:
+- GitHub Actions run automatically on PR
+- Server tests run on every push
+- CodeQL security scanning on every PR
+
+---
+
+*Last Updated: February 11, 2026*  
+*Next Review: After Task 1.1 completion*
