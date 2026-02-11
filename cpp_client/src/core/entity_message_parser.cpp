@@ -102,9 +102,12 @@ bool EntityMessageParser::parseStateUpdate(const std::string& dataJson, EntityMa
     try {
         auto data = nlohmann::json::parse(dataJson);
         
-        // Extract snapshot metadata
+        // Extract snapshot metadata (for future packet loss detection and timing)
+        // TODO: Use these values for interpolation delay calculation and dropped packet detection
         uint64_t sequence = data.value("sequence", 0ULL);
         uint64_t timestamp = data.value("timestamp", 0ULL);
+        (void)sequence;   // Suppress unused variable warning
+        (void)timestamp;  // Suppress unused variable warning
         
         // Extract entities array
         if (!data.contains("entities") || !data["entities"].is_array()) {

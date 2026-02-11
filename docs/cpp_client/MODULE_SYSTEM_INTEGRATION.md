@@ -52,7 +52,7 @@ void PhotonHUD::drawModuleRack(PhotonContext& ctx,
                                   module.cooldownPct,
                                   slotColor);
         
-        if (clicked && !module.cooldownPct > 0.0f) {
+        if (clicked && module.cooldownPct <= 0.0f) {
             // Send activation command to server
             if (module.active) {
                 network.sendModuleDeactivate(i);
@@ -353,7 +353,7 @@ void GameClient::updateModuleHeat(float deltaTime) {
         }
         
         // Show burnout notification
-        if (heatPct >= 1.0f && m_modules[i].wasBurntOut != true) {
+        if (heatPct >= 1.0f && !m_modules[i].wasBurntOut) {
             std::string msg = "Module " + std::to_string(i + 1) + 
                              " burnt out!";
             m_notificationManager->ShowDanger(msg);
