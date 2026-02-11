@@ -341,6 +341,8 @@ make
 
 The server includes a comprehensive test suite with 832 test assertions across 170+ test functions covering all game systems.
 
+> **Note:** Test assertions are individual verification checks (✓ marks in output), while test functions are the test cases that group related assertions. For example, a test function for "Fleet Create and Disband" contains multiple assertions that verify different aspects of that functionality.
+
 **Quick build and test:**
 ```bash
 cd cpp_server
