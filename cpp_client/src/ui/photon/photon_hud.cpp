@@ -58,6 +58,10 @@ void PhotonHUD::drawShipHUD(PhotonContext& ctx, const ShipHUDData& ship) {
     float winW = static_cast<float>(ctx.input().windowW);
     float winH = static_cast<float>(ctx.input().windowH);
 
+    // Advance animation time (approximate dt from input if available, else 1/60)
+    float dt = 1.0f / 60.0f;  // default frame time
+    m_time += dt;
+
     // Centre of HUD circle (bottom-center of screen)
     Vec2 hudCentre = {winW * 0.5f, winH - 110.0f};
     float hudRadius = 70.0f;
@@ -66,11 +70,12 @@ void PhotonHUD::drawShipHUD(PhotonContext& ctx, const ShipHUDData& ship) {
     shipStatusArcs(ctx, hudCentre, hudRadius,
                    ship.shieldPct, ship.armorPct, ship.hullPct);
 
-    // Capacitor ring (inside the status arcs)
+    // Capacitor ring with smooth easing
     float capInner = hudRadius - 30.0f;
     float capOuter = hudRadius - 22.0f;
-    capacitorRing(ctx, hudCentre, capInner, capOuter,
-                  ship.capacitorPct, ship.capSegments);
+    capacitorRingAnimated(ctx, hudCentre, capInner, capOuter,
+                          ship.capacitorPct, m_displayCapFrac,
+                          dt, ship.capSegments);
 
     // Module rack (row of circles below the HUD circle)
     float moduleY = winH - 30.0f;
@@ -83,8 +88,9 @@ void PhotonHUD::drawShipHUD(PhotonContext& ctx, const ShipHUDData& ship) {
             const auto& mod = slots[i];
             if (!mod.fitted) continue;
             float cx = startX + i * (moduleR * 2 + moduleGap);
-            bool clicked = moduleSlot(ctx, {cx, moduleY}, moduleR,
-                                       mod.active, mod.cooldown, mod.color);
+            bool clicked = moduleSlotEx(ctx, {cx, moduleY}, moduleR,
+                                        mod.active, mod.cooldown, mod.color,
+                                        mod.overheat, m_time);
             if (clicked && m_moduleCallback) {
                 m_moduleCallback(slotOffset + i);
             }

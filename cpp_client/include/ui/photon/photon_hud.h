@@ -53,6 +53,7 @@ struct ShipHUDData {
         bool   fitted    = false;
         bool   active    = false;
         float  cooldown  = 0.0f;    // 0-1 fraction remaining
+        float  overheat  = 0.0f;    // 0-1 heat damage level (1.0 = burnt out)
         Color  color     = {0.5f, 0.5f, 0.5f, 1.0f};
     };
     std::vector<ModuleInfo> highSlots;
@@ -128,6 +129,10 @@ private:
                           const std::vector<OverviewEntry>& entries);
     void drawSelectedItemPanel(PhotonContext& ctx,
                               const SelectedItemInfo& info);
+
+    // Animation state
+    float m_displayCapFrac = 1.0f;   // smoothed capacitor display value
+    float m_time           = 0.0f;   // accumulated time for pulse animations
 };
 
 } // namespace photon

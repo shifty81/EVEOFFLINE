@@ -127,6 +127,44 @@ bool moduleSlot(PhotonContext& ctx, Vec2 centre, float radius,
                 bool active, float cooldownPct, const Color& color);
 
 /**
+ * Draw a module slot with overheat indication.
+ *
+ * @param centre      Centre of the circle.
+ * @param radius      Circle radius (~20-24px).
+ * @param active      Whether the module is currently cycling.
+ * @param cooldownPct 0.0–1.0 cooldown remaining.
+ * @param color       Module highlight color.
+ * @param overheatPct 0.0–1.0 heat damage level. At 1.0 the module is burnt out.
+ * @param time        Current game time in seconds (for pulse animation).
+ * @return true if clicked.
+ */
+bool moduleSlotEx(PhotonContext& ctx, Vec2 centre, float radius,
+                  bool active, float cooldownPct, const Color& color,
+                  float overheatPct, float time);
+
+/**
+ * Capacitor ring with smooth easing between values.
+ *
+ * Animates the displayed capacitor level toward the target fraction
+ * using exponential easing, giving a smooth drain/recharge effect.
+ *
+ * @param ctx          Context.
+ * @param centre       Centre point.
+ * @param innerR       Inner radius.
+ * @param outerR       Outer radius.
+ * @param targetFrac   Target capacitor fraction 0.0–1.0.
+ * @param displayFrac  In/out displayed fraction (lerped toward target each frame).
+ * @param dt           Frame delta time in seconds.
+ * @param segments     Number of ring segments.
+ * @param lerpSpeed    Easing speed (higher = faster, default 5.0).
+ */
+void capacitorRingAnimated(PhotonContext& ctx, Vec2 centre,
+                           float innerR, float outerR,
+                           float targetFrac, float& displayFrac,
+                           float dt, int segments = 16,
+                           float lerpSpeed = 5.0f);
+
+/**
  * Speed indicator (bottom of HUD): shows current speed with +/- buttons.
  */
 void speedIndicator(PhotonContext& ctx, Vec2 pos,

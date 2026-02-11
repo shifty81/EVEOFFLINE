@@ -474,6 +474,7 @@ bool RmlUiManager::LoadDocuments() {
         {"neocom",       resourcePath_ + "/rml/neocom.rml",        true},
         {"chat",         resourcePath_ + "/rml/chat.rml",          false},
         {"context_menu", resourcePath_ + "/rml/context_menu.rml",  false},
+        {"drone_bay",    resourcePath_ + "/rml/drone_bay.rml",     false},
     };
 
     bool allOk = true;
@@ -706,6 +707,117 @@ void RmlUiManager::UpdateDScanResults(
     body->SetInnerRML(rowsRml);
 }
 
+void RmlUiManager::UpdateDroneBayData(
+    const std::vector<DroneRmlInfo>& spaceDrones,
+    const std::vector<DroneRmlInfo>& bayDrones,
+    int usedBandwidth, int maxBandwidth,
+    float bayUsed, float bayCapacity)
+{
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("drone_bay");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+
+    // Update bandwidth bar
+    auto* bwText = doc->GetElementById("bandwidth-text");
+    if (bwText) {
+        char buf[64];
+        std::snprintf(buf, sizeof(buf), "%d / %d Mbit/s", usedBandwidth, maxBandwidth);
+        bwText->SetInnerRML(buf);
+    }
+
+    auto* bwFill = doc->GetElementById("bandwidth-fill");
+    if (bwFill && maxBandwidth > 0) {
+        float pct = (static_cast<float>(usedBandwidth) / maxBandwidth) * 100.0f;
+        char style[64];
+        std::snprintf(style, sizeof(style), "width: %.1f%%", pct);
+        bwFill->SetAttribute("style", Rml::String(style));
+    }
+
+    // Update bay capacity bar
+    auto* bayText = doc->GetElementById("bay-capacity-text");
+    if (bayText) {
+        char buf[64];
+        std::snprintf(buf, sizeof(buf), "%.1f / %.1f%s", bayUsed, bayCapacity, CUBIC_METER_SUFFIX);
+        bayText->SetInnerRML(buf);
+    }
+
+    auto* bayFill = doc->GetElementById("bay-capacity-fill");
+    if (bayFill && bayCapacity > 0.0f) {
+        float pct = (bayUsed / bayCapacity) * 100.0f;
+        char style[64];
+        std::snprintf(style, sizeof(style), "width: %.1f%%", pct);
+        bayFill->SetAttribute("style", Rml::String(style));
+    }
+
+    // Update space drone count
+    auto* spaceCount = doc->GetElementById("space-drone-count");
+    if (spaceCount) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%zu", spaceDrones.size());
+        spaceCount->SetInnerRML(buf);
+    }
+
+    // Update bay drone count
+    auto* bayCount = doc->GetElementById("bay-drone-count");
+    if (bayCount) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%zu", bayDrones.size());
+        bayCount->SetInnerRML(buf);
+    }
+
+    // Build space drones list
+    auto* spaceBody = doc->GetElementById("space-drones-body");
+    if (spaceBody) {
+        std::string rowsRml;
+        for (const auto& d : spaceDrones) {
+            std::string hpClass = "drone-hp-fill";
+            if (d.healthPct < 0.25f) hpClass += " critical";
+            else if (d.healthPct < 0.50f) hpClass += " damaged";
+
+            std::string statusClass = d.engaging ? "drone-status engaging" : "drone-status idle";
+            std::string statusText = d.engaging ? "Engaging" : "Idle";
+
+            char hpW[16];
+            std::snprintf(hpW, sizeof(hpW), "%.1f%%", d.healthPct * 100.0f);
+
+            rowsRml +=
+                "<div class=\"drone-row\">"
+                "<span class=\"drone-name\">" + d.name + "</span>"
+                "<span class=\"drone-type\">" + d.type + "</span>"
+                "<div class=\"drone-hp-track\"><div class=\"" + hpClass + "\" style=\"width: " + hpW + ";\"></div></div>"
+                "<span class=\"" + statusClass + "\">" + statusText + "</span>"
+                "</div>";
+        }
+        spaceBody->SetInnerRML(rowsRml);
+    }
+
+    // Build bay drones list
+    auto* bayBody = doc->GetElementById("bay-drones-body");
+    if (bayBody) {
+        std::string rowsRml;
+        for (const auto& d : bayDrones) {
+            std::string hpClass = "drone-hp-fill";
+            if (d.healthPct < 0.25f) hpClass += " critical";
+            else if (d.healthPct < 0.50f) hpClass += " damaged";
+
+            char hpW[16];
+            std::snprintf(hpW, sizeof(hpW), "%.1f%%", d.healthPct * 100.0f);
+
+            rowsRml +=
+                "<div class=\"drone-row\">"
+                "<span class=\"drone-name\">" + d.name + "</span>"
+                "<span class=\"drone-type\">" + d.type + "</span>"
+                "<div class=\"drone-hp-track\"><div class=\"" + hpClass + "\" style=\"width: " + hpW + ";\"></div></div>"
+                "<span class=\"drone-status idle\">Bay</span>"
+                "</div>";
+        }
+        bayBody->SetInnerRML(rowsRml);
+    }
+}
+
 bool RmlUiManager::WantsMouseInput() const {
     if (!initialized_ || !context_) return false;
     return context_->GetHoverElement() != nullptr;
@@ -780,6 +892,9 @@ void RmlUiManager::UpdateInventoryData(
 void RmlUiManager::UpdateDScanResults(
     const std::vector<std::string>&, const std::vector<std::string>&,
     const std::vector<float>&) {}
+void RmlUiManager::UpdateDroneBayData(
+    const std::vector<DroneRmlInfo>&, const std::vector<DroneRmlInfo>&,
+    int, int, float, float) {}
 
 bool RmlUiManager::WantsMouseInput() const { return false; }
 bool RmlUiManager::WantsKeyboardInput() const { return false; }

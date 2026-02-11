@@ -276,6 +276,82 @@ bool moduleSlot(PhotonContext& ctx, Vec2 centre, float radius,
     return clicked;
 }
 
+// ── Module Slot with Overheat ───────────────────────────────────────
+
+bool moduleSlotEx(PhotonContext& ctx, Vec2 centre, float radius,
+                  bool active, float cooldownPct, const Color& color,
+                  float overheatPct, float time) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    Rect hitbox = {centre.x - radius, centre.y - radius,
+                   radius * 2, radius * 2};
+    WidgetID id = hashID("modex") ^ static_cast<uint32_t>(centre.x * 1000)
+                                  ^ static_cast<uint32_t>(centre.y * 1000);
+    bool clicked = ctx.buttonBehavior(hitbox, id);
+
+    // Background circle
+    Color bg = active ? color.withAlpha(0.4f) : t.bgSecondary.withAlpha(0.6f);
+    if (ctx.isHot(id)) bg = t.hover;
+    rr.drawCircle(centre, radius, bg);
+
+    // Overheat glow ring: pulsing red/orange border when overheated
+    if (overheatPct > 0.01f) {
+        // Pulse frequency increases with heat level
+        float pulseRate = 2.0f + overheatPct * 4.0f;
+        float pulse = 0.5f + 0.5f * std::sin(time * pulseRate * 2.0f * static_cast<float>(M_PI));
+        float alpha = 0.3f + overheatPct * 0.7f * pulse;
+
+        // Lerp from orange to red as heat increases
+        Color heatColor = {1.0f, 0.5f * (1.0f - overheatPct), 0.0f, alpha};
+        rr.drawCircleOutline(centre, radius + 1.0f, heatColor, 2.0f);
+
+        // Inner heat tint
+        rr.drawCircle(centre, radius - 1.0f, heatColor.withAlpha(alpha * 0.15f));
+    }
+
+    // Normal border ring
+    Color border = active ? color : t.borderNormal;
+    if (overheatPct >= 1.0f) {
+        border = Color(0.5f, 0.1f, 0.1f, 0.8f);  // burnt out: dim red
+    }
+    rr.drawCircleOutline(centre, radius, border, 1.5f);
+
+    // Cooldown sweep overlay (clockwise from top)
+    if (cooldownPct > 0.001f && cooldownPct < 1.0f) {
+        float startA = -static_cast<float>(M_PI) * 0.5f;
+        float sweepA = 2.0f * static_cast<float>(M_PI) * cooldownPct;
+        rr.drawArc(centre, 0.0f, radius - 1.0f, startA, startA + sweepA,
+                   Color(0, 0, 0, 0.5f), 16);
+    }
+
+    // Active glow dot in centre
+    if (active) {
+        rr.drawCircle(centre, radius * 0.3f, color);
+    }
+
+    return clicked;
+}
+
+// ── Capacitor Ring Animated ─────────────────────────────────────────
+
+void capacitorRingAnimated(PhotonContext& ctx, Vec2 centre,
+                           float innerR, float outerR,
+                           float targetFrac, float& displayFrac,
+                           float dt, int segments, float lerpSpeed) {
+    // Exponential ease toward target
+    float diff = targetFrac - displayFrac;
+    displayFrac += diff * std::min(1.0f, lerpSpeed * dt);
+    // Snap when close enough to avoid floating imprecision
+    if (std::fabs(diff) < 0.001f) displayFrac = targetFrac;
+
+    // Clamp
+    displayFrac = std::max(0.0f, std::min(1.0f, displayFrac));
+
+    // Draw using the existing capacitorRing with smoothed value
+    capacitorRing(ctx, centre, innerR, outerR, displayFrac, segments);
+}
+
 // ── Speed Indicator ─────────────────────────────────────────────────
 
 void speedIndicator(PhotonContext& ctx, Vec2 pos,
