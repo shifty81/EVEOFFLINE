@@ -1,24 +1,26 @@
-#ifndef EVE_COLORS_H
-#define EVE_COLORS_H
+#ifndef SPACE_COLORS_H
+#define SPACE_COLORS_H
 
 namespace UI {
 
 /**
- * EVE Online Photon UI color palette.
+ * @file space_colors.h
  *
- * Legacy compatibility header — prefer photon::Theme (photon_types.h) for
- * new Photon-based code.  Kept so existing ImGui-based panels continue to
- * compile while they are incrementally migrated to Photon widgets.
+ * Space-themed UI color palette.
+ *
+ * Legacy compatibility header — prefer atlas::Theme (atlas_types.h) for
+ * new Atlas-based code.  Kept so existing ImGui-based panels continue to
+ * compile while they are incrementally migrated to Atlas widgets.
  */
-struct EVEColors {
-    // Background colors — deep dark blue-black (Photon UI style)
+struct SpaceColors {
+    // Background colors — deep dark blue-black
     static constexpr float BG_PRIMARY[4] = {0.051f, 0.067f, 0.090f, 0.92f};
     static constexpr float BG_SECONDARY[4] = {0.086f, 0.106f, 0.133f, 0.90f};
     static constexpr float BG_PANEL[4] = {0.031f, 0.047f, 0.071f, 0.95f};
     static constexpr float BG_HEADER[4] = {0.039f, 0.055f, 0.078f, 1.0f};
     static constexpr float BG_TOOLTIP[4] = {0.110f, 0.129f, 0.157f, 0.95f};
 
-    // Accent colors — teal/cyan (EVE Photon default accent)
+    // Accent colors — teal/cyan (default accent)
     static constexpr float ACCENT_PRIMARY[4] = {0.271f, 0.816f, 0.910f, 1.0f};
     static constexpr float ACCENT_SECONDARY[4] = {0.471f, 0.882f, 0.941f, 1.0f};
     static constexpr float ACCENT_DIM[4] = {0.165f, 0.353f, 0.416f, 1.0f};
@@ -36,7 +38,7 @@ struct EVEColors {
     static constexpr float TEXT_SECONDARY[4] = {0.545f, 0.580f, 0.620f, 1.0f};
     static constexpr float TEXT_DISABLED[4] = {0.282f, 0.310f, 0.345f, 0.6f};
 
-    // Health colors (matches EVE Online exactly)
+    // Health colors
     static constexpr float SHIELD_COLOR[4] = {0.2f, 0.6f, 1.0f, 1.0f};
     static constexpr float ARMOR_COLOR[4] = {1.0f, 0.816f, 0.251f, 1.0f};
     static constexpr float HULL_COLOR[4] = {0.902f, 0.271f, 0.271f, 1.0f};
@@ -54,4 +56,4 @@ struct EVEColors {
 
 } // namespace UI
 
-#endif // EVE_COLORS_H
+#endif // SPACE_COLORS_H

@@ -1,5 +1,5 @@
-#include "ui/eve_panels.h"
-#include "ui/photon/photon_context.h"
+#include "ui/hud_panels.h"
+#include "ui/atlas/atlas_context.h"
 #include <algorithm>
 #include <cmath>
 #include <cstdio>
@@ -7,16 +7,16 @@
 static constexpr float PI = 3.14159265358979323846f;
 static constexpr float METERS_PER_AU = 149597870700.0f;
 
-static photon::Color toColor(const float c[4]) {
-    return photon::Color(c[0], c[1], c[2], c[3]);
+static atlas::Color toColor(const float c[4]) {
+    return atlas::Color(c[0], c[1], c[2], c[3]);
 }
 
-static photon::Color rgba(int r, int g, int b, int a = 255) {
-    return photon::Color::fromRGBA(r, g, b, a);
+static atlas::Color rgba(int r, int g, int b, int a = 255) {
+    return atlas::Color::fromRGBA(r, g, b, a);
 }
 
 namespace UI {
-namespace EVEPanels {
+namespace HUDPanels {
 
 void GetHealthColorForPercent(float percent, float out_color[4], const float base_color[4]) {
     out_color[0] = base_color[0];
@@ -35,7 +35,7 @@ void GetHealthColorForPercent(float percent, float out_color[4], const float bas
     }
 }
 
-void RenderHealthBar(photon::PhotonContext& ctx, const char* label, float current, float max,
+void RenderHealthBar(atlas::AtlasContext& ctx, const char* label, float current, float max,
                      const float color[4], float width) {
     if (max <= 0.0f) max = 1.0f;
 
@@ -48,35 +48,35 @@ void RenderHealthBar(photon::PhotonContext& ctx, const char* label, float curren
              label, current, max, percent * 100.0f);
 
     auto& r = ctx.renderer();
-    r.drawText(value_text, {0, 0}, toColor(EVEColors::TEXT_PRIMARY));
-    r.drawProgressBar(photon::Rect(0, 16, width, 14), percent,
+    r.drawText(value_text, {0, 0}, toColor(SpaceColors::TEXT_PRIMARY));
+    r.drawProgressBar(atlas::Rect(0, 16, width, 14), percent,
                       toColor(adjusted_color), rgba(30, 40, 55, 180));
 }
 
-void RenderPanelHeader(photon::PhotonContext& ctx, const char* title,
+void RenderPanelHeader(atlas::AtlasContext& ctx, const char* title,
                        const float accent_color[4]) {
     auto& r = ctx.renderer();
     r.drawText(title, {0, 0}, toColor(accent_color));
-    r.drawLine({0, 18}, {200, 18}, toColor(EVEColors::BORDER_SUBTLE));
+    r.drawLine({0, 18}, {200, 18}, toColor(SpaceColors::BORDER_SUBTLE));
 }
 
-void RenderShipStatus(photon::PhotonContext& ctx, const ShipStatus& status) {
+void RenderShipStatus(atlas::AtlasContext& ctx, const ShipStatus& status) {
     auto& r = ctx.renderer();
     float y = 0.0f;
 
-    RenderPanelHeader(ctx, "SHIP STATUS", EVEColors::ACCENT_PRIMARY);
+    RenderPanelHeader(ctx, "SHIP STATUS", SpaceColors::ACCENT_PRIMARY);
     y += 24.0f;
 
     // Shields
     {
         float pct = (status.shields_max > 0) ?
             std::clamp(status.shields / status.shields_max, 0.0f, 1.0f) : 0.0f;
-        float adj[4]; GetHealthColorForPercent(pct, adj, EVEColors::SHIELD_COLOR);
+        float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::SHIELD_COLOR);
         char buf[64]; snprintf(buf, sizeof(buf), "Shields  %.0f / %.0f (%.0f%%)",
                                status.shields, status.shields_max, pct * 100.0f);
-        r.drawText(buf, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+        r.drawText(buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(photon::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
+        r.drawProgressBar(atlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
         y += 18.0f;
     }
 
@@ -84,12 +84,12 @@ void RenderShipStatus(photon::PhotonContext& ctx, const ShipStatus& status) {
     {
         float pct = (status.armor_max > 0) ?
             std::clamp(status.armor / status.armor_max, 0.0f, 1.0f) : 0.0f;
-        float adj[4]; GetHealthColorForPercent(pct, adj, EVEColors::ARMOR_COLOR);
+        float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::ARMOR_COLOR);
         char buf[64]; snprintf(buf, sizeof(buf), "Armor  %.0f / %.0f (%.0f%%)",
                                status.armor, status.armor_max, pct * 100.0f);
-        r.drawText(buf, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+        r.drawText(buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(photon::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
+        r.drawProgressBar(atlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
         y += 18.0f;
     }
 
@@ -97,50 +97,50 @@ void RenderShipStatus(photon::PhotonContext& ctx, const ShipStatus& status) {
     {
         float pct = (status.hull_max > 0) ?
             std::clamp(status.hull / status.hull_max, 0.0f, 1.0f) : 0.0f;
-        float adj[4]; GetHealthColorForPercent(pct, adj, EVEColors::HULL_COLOR);
+        float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::HULL_COLOR);
         char buf[64]; snprintf(buf, sizeof(buf), "Hull  %.0f / %.0f (%.0f%%)",
                                status.hull, status.hull_max, pct * 100.0f);
-        r.drawText(buf, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+        r.drawText(buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(photon::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
+        r.drawProgressBar(atlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
         y += 18.0f;
     }
 
-    r.drawLine({0, y}, {200, y}, toColor(EVEColors::BORDER_SUBTLE));
+    r.drawLine({0, y}, {200, y}, toColor(SpaceColors::BORDER_SUBTLE));
     y += 8.0f;
 
     // Capacitor
     float cap_percent = (status.capacitor_max > 0.0f) ?
         (status.capacitor / status.capacitor_max) : 0.0f;
-    photon::Color cap_color(1.0f, 0.9f, 0.3f, 1.0f);
+    atlas::Color cap_color(1.0f, 0.9f, 0.3f, 1.0f);
     if (cap_percent < 0.25f) {
-        cap_color = photon::Color(1.0f, 0.3f, 0.0f, 1.0f);
+        cap_color = atlas::Color(1.0f, 0.3f, 0.0f, 1.0f);
     } else if (cap_percent < 0.5f) {
-        cap_color = photon::Color(1.0f, 0.6f, 0.0f, 1.0f);
+        cap_color = atlas::Color(1.0f, 0.6f, 0.0f, 1.0f);
     }
 
     char cap_text[64];
     snprintf(cap_text, sizeof(cap_text), "Capacitor  %.0f / %.0f (%.0f%%)",
              status.capacitor, status.capacitor_max, cap_percent * 100.0f);
-    r.drawText(cap_text, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+    r.drawText(cap_text, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
     y += 16.0f;
-    r.drawProgressBar(photon::Rect(0, y, 200, 12), cap_percent,
+    r.drawProgressBar(atlas::Rect(0, y, 200, 12), cap_percent,
                       cap_color, rgba(30, 40, 55, 180));
 }
 
-void RenderTargetInfo(photon::PhotonContext& ctx, const TargetInfo& target) {
+void RenderTargetInfo(atlas::AtlasContext& ctx, const TargetInfo& target) {
     auto& r = ctx.renderer();
     float y = 0.0f;
 
     if (!target.is_locked) {
-        RenderPanelHeader(ctx, "TARGET INFO", EVEColors::ACCENT_PRIMARY);
+        RenderPanelHeader(ctx, "TARGET INFO", SpaceColors::ACCENT_PRIMARY);
         y += 24.0f;
-        r.drawText("No target locked", {0, y}, toColor(EVEColors::TEXT_SECONDARY));
+        r.drawText("No target locked", {0, y}, toColor(SpaceColors::TEXT_SECONDARY));
         return;
     }
 
     const float* header_color = target.is_hostile ?
-        EVEColors::TARGET_HOSTILE : EVEColors::TARGET_FRIENDLY;
+        SpaceColors::TARGET_HOSTILE : SpaceColors::TARGET_FRIENDLY;
     RenderPanelHeader(ctx, "TARGET INFO", header_color);
     y += 24.0f;
 
@@ -149,69 +149,69 @@ void RenderTargetInfo(photon::PhotonContext& ctx, const TargetInfo& target) {
 
     char dist_buf[64];
     snprintf(dist_buf, sizeof(dist_buf), "Distance: %.0f m", target.distance);
-    r.drawText(dist_buf, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+    r.drawText(dist_buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
     y += 18.0f;
 
-    r.drawLine({0, y}, {250, y}, toColor(EVEColors::BORDER_SUBTLE));
+    r.drawLine({0, y}, {250, y}, toColor(SpaceColors::BORDER_SUBTLE));
     y += 8.0f;
 
-    photon::Color bgBar = rgba(30, 40, 55, 180);
+    atlas::Color bgBar = rgba(30, 40, 55, 180);
     if (target.shields_max > 0.0f) {
         float pct = std::clamp(target.shields / target.shields_max, 0.0f, 1.0f);
-        float adj[4]; GetHealthColorForPercent(pct, adj, EVEColors::SHIELD_COLOR);
-        r.drawText("Shields", {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+        float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::SHIELD_COLOR);
+        r.drawText("Shields", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(photon::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
+        r.drawProgressBar(atlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
         y += 18.0f;
     }
     if (target.armor_max > 0.0f) {
         float pct = std::clamp(target.armor / target.armor_max, 0.0f, 1.0f);
-        float adj[4]; GetHealthColorForPercent(pct, adj, EVEColors::ARMOR_COLOR);
-        r.drawText("Armor", {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+        float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::ARMOR_COLOR);
+        r.drawText("Armor", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(photon::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
+        r.drawProgressBar(atlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
         y += 18.0f;
     }
     if (target.hull_max > 0.0f) {
         float pct = std::clamp(target.hull / target.hull_max, 0.0f, 1.0f);
-        float adj[4]; GetHealthColorForPercent(pct, adj, EVEColors::HULL_COLOR);
-        r.drawText("Hull", {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+        float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::HULL_COLOR);
+        r.drawText("Hull", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(photon::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
+        r.drawProgressBar(atlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
     }
 }
 
-void RenderSpeedDisplay(photon::PhotonContext& ctx, float current_speed, float max_speed) {
+void RenderSpeedDisplay(atlas::AtlasContext& ctx, float current_speed, float max_speed) {
     auto& r = ctx.renderer();
     float y = 0.0f;
 
-    RenderPanelHeader(ctx, "SPEED", EVEColors::ACCENT_PRIMARY);
+    RenderPanelHeader(ctx, "SPEED", SpaceColors::ACCENT_PRIMARY);
     y += 24.0f;
 
     char speed_text[64];
     snprintf(speed_text, sizeof(speed_text), "%.1f m/s", current_speed);
-    r.drawText(speed_text, {0, y}, toColor(EVEColors::ACCENT_SECONDARY), 1.5f);
+    r.drawText(speed_text, {0, y}, toColor(SpaceColors::ACCENT_SECONDARY), 1.5f);
     y += 24.0f;
 
     char max_text[64];
     snprintf(max_text, sizeof(max_text), "Max: %.1f m/s", max_speed);
-    r.drawText(max_text, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+    r.drawText(max_text, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
     y += 18.0f;
 
     float speed_percent = (max_speed > 0.0f) ?
         std::min(1.0f, current_speed / max_speed) : 0.0f;
-    r.drawProgressBar(photon::Rect(0, y, 200, 12), speed_percent,
-                      toColor(EVEColors::ACCENT_PRIMARY), rgba(30, 40, 55, 180));
+    r.drawProgressBar(atlas::Rect(0, y, 200, 12), speed_percent,
+                      toColor(SpaceColors::ACCENT_PRIMARY), rgba(30, 40, 55, 180));
 }
 
 // ============================================================================
-// EVE Online-style HUD using Photon renderer arcs
+// HUD-style circular gauges using Atlas renderer arcs
 // ============================================================================
 
-static void DrawBlockRingGauge(photon::PhotonRenderer& renderer,
-                               photon::Vec2 center, float radius,
-                               float pct, photon::Color filledColor,
-                               photon::Color emptyColor, float thickness,
+static void DrawBlockRingGauge(atlas::AtlasRenderer& renderer,
+                               atlas::Vec2 center, float radius,
+                               float pct, atlas::Color filledColor,
+                               atlas::Color emptyColor, float thickness,
                                int segments = 32, float gapFraction = 0.08f) {
     float fullCircle = 2.0f * PI;
     float angle_step = fullCircle / static_cast<float>(segments);
@@ -223,15 +223,15 @@ static void DrawBlockRingGauge(photon::PhotonRenderer& renderer,
     for (int i = 0; i < segments; i++) {
         float a1 = -PI / 2.0f + angle_step * i + gap;
         float a2 = -PI / 2.0f + angle_step * (i + 1) - gap;
-        const photon::Color& color = (i < filledCount) ? filledColor : emptyColor;
+        const atlas::Color& color = (i < filledCount) ? filledColor : emptyColor;
         renderer.drawArc(center, innerR, outerR, a1, a2, color);
     }
 }
 
-static void DrawHalfCircleBlockGauge(photon::PhotonRenderer& renderer,
-                                     photon::Vec2 center, float radius,
-                                     float pct, photon::Color filledColor,
-                                     photon::Color emptyColor, float thickness,
+static void DrawHalfCircleBlockGauge(atlas::AtlasRenderer& renderer,
+                                     atlas::Vec2 center, float radius,
+                                     float pct, atlas::Color filledColor,
+                                     atlas::Color emptyColor, float thickness,
                                      int segments = 20, float gapFraction = 0.06f) {
     float angle_min = PI;
     float angle_max = 2.0f * PI;
@@ -244,13 +244,13 @@ static void DrawHalfCircleBlockGauge(photon::PhotonRenderer& renderer,
     for (int i = 0; i < segments; i++) {
         float a1 = angle_min + angle_step * i + gap;
         float a2 = angle_min + angle_step * (i + 1) - gap;
-        const photon::Color& color =
+        const atlas::Color& color =
             (static_cast<float>(i) < fillCount) ? filledColor : emptyColor;
         renderer.drawArc(center, innerR, outerR, a1, a2, color);
     }
 }
 
-void RenderShipStatusCircular(photon::PhotonContext& ctx, const ShipStatus& status) {
+void RenderShipStatusCircular(atlas::AtlasContext& ctx, const ShipStatus& status) {
     auto& r = ctx.renderer();
 
     float outerRadius = 100.0f;
@@ -258,7 +258,7 @@ void RenderShipStatusCircular(photon::PhotonContext& ctx, const ShipStatus& stat
     float ringGap = 4.0f;
     float capThickness = 7.0f;
 
-    photon::Vec2 center(outerRadius + 15, outerRadius + 10);
+    atlas::Vec2 center(outerRadius + 15, outerRadius + 10);
 
     // Dark background circle
     r.drawCircle(center, outerRadius + 8, rgba(8, 12, 18, 230));
@@ -323,7 +323,7 @@ void RenderShipStatusCircular(photon::PhotonContext& ctx, const ShipStatus& stat
     float rackWidth = totalSlots * slotSpacing;
     float rackStartX = center.x - rackWidth / 2.0f + slotSpacing / 2.0f;
 
-    photon::Rect rackBg(rackStartX - slotRadius - 4, rackY - slotRadius - 6,
+    atlas::Rect rackBg(rackStartX - slotRadius - 4, rackY - slotRadius - 6,
                         (totalSlots - 1) * slotSpacing + slotRadius * 2 + 8,
                         slotRadius * 2 + 12);
     r.drawRoundedRect(rackBg, rgba(12, 16, 22, 200), 3.0f);
@@ -334,9 +334,9 @@ void RenderShipStatusCircular(photon::PhotonContext& ctx, const ShipStatus& stat
                rgba(120, 150, 180, 140));
 
     for (int i = 0; i < totalSlots; i++) {
-        photon::Vec2 slotPos(rackStartX + i * slotSpacing, rackY);
+        atlas::Vec2 slotPos(rackStartX + i * slotSpacing, rackY);
 
-        photon::Color inactiveCol;
+        atlas::Color inactiveCol;
         if (i < 3) {
             inactiveCol = rgba(22, 38, 28, 190);
         } else if (i < 6) {
@@ -356,13 +356,13 @@ void RenderShipStatusCircular(photon::PhotonContext& ctx, const ShipStatus& stat
     }
 }
 
-void RenderSpeedGauge(photon::PhotonContext& ctx, float current_speed, float max_speed,
+void RenderSpeedGauge(atlas::AtlasContext& ctx, float current_speed, float max_speed,
                       bool* approach_active, bool* orbit_active,
                       bool* keep_range_active) {
     auto& r = ctx.renderer();
 
     float gaugeRadius = 50.0f;
-    photon::Vec2 center(gaugeRadius + 10, gaugeRadius + 10);
+    atlas::Vec2 center(gaugeRadius + 10, gaugeRadius + 10);
 
     r.drawCircle(center, gaugeRadius, rgba(13, 17, 23, 200));
     r.drawCircleOutline(center, gaugeRadius, rgba(40, 56, 72, 150));
@@ -381,7 +381,7 @@ void RenderSpeedGauge(photon::PhotonContext& ctx, float current_speed, float max
     for (int i = 0; i < segments; i++) {
         float a1 = arcStart + stepAngle * i + gap;
         float a2 = arcStart + stepAngle * (i + 1) - gap;
-        photon::Color color = (static_cast<float>(i) < pctFill) ?
+        atlas::Color color = (static_cast<float>(i) < pctFill) ?
             rgba(69, 208, 232, 220) : rgba(30, 50, 70, 100);
         r.drawArc(center, innerR, outerR, a1, a2, color);
     }
@@ -405,9 +405,9 @@ void RenderSpeedGauge(photon::PhotonContext& ctx, float current_speed, float max
 
     auto drawButton = [&](const char* label, float bx, float by,
                           float bw, float bh, bool highlight) -> bool {
-        photon::Rect br(bx, by, bw, bh);
-        photon::Color bg = highlight ?
-            photon::Color(0.15f, 0.4f, 0.5f, 0.9f) :
+        atlas::Rect br(bx, by, bw, bh);
+        atlas::Color bg = highlight ?
+            atlas::Color(0.15f, 0.4f, 0.5f, 0.9f) :
             rgba(30, 42, 58, 200);
         r.drawRoundedRect(br, bg, 3.0f);
         r.drawRoundedRectOutline(br, rgba(55, 75, 95, 160), 3.0f);
@@ -447,19 +447,19 @@ void RenderSpeedGauge(photon::PhotonContext& ctx, float current_speed, float max
     r.drawText(maxBuf, {0, btnY}, rgba(140, 148, 158, 255));
 }
 
-void RenderCombatLog(photon::PhotonContext& ctx,
+void RenderCombatLog(atlas::AtlasContext& ctx,
                      const std::vector<std::string>& messages) {
     auto& r = ctx.renderer();
     float y = 0.0f;
 
-    RenderPanelHeader(ctx, "COMBAT LOG", EVEColors::ACCENT_PRIMARY);
+    RenderPanelHeader(ctx, "COMBAT LOG", SpaceColors::ACCENT_PRIMARY);
     y += 24.0f;
 
     if (messages.empty()) {
-        r.drawText("No combat activity", {0, y}, toColor(EVEColors::TEXT_SECONDARY));
+        r.drawText("No combat activity", {0, y}, toColor(SpaceColors::TEXT_SECONDARY));
     } else {
         for (const auto& message : messages) {
-            r.drawText(message, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+            r.drawText(message, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
             y += 14.0f;
         }
     }
@@ -468,7 +468,7 @@ void RenderCombatLog(photon::PhotonContext& ctx,
 // ============================================================================
 // RenderModuleRack
 // ============================================================================
-void RenderModuleRack(photon::PhotonContext& ctx,
+void RenderModuleRack(atlas::AtlasContext& ctx,
                       const ModuleSlotState slots[], int count) {
     if (count <= 0) return;
 
@@ -479,7 +479,7 @@ void RenderModuleRack(photon::PhotonContext& ctx,
     float startX = 10.0f;
     float centerY = slotRadius + 8.0f;
 
-    photon::Rect rackBg(startX - slotRadius - 4, centerY - slotRadius - 8,
+    atlas::Rect rackBg(startX - slotRadius - 4, centerY - slotRadius - 8,
                         (count - 1) * slotSpacing + slotRadius * 2 + 8,
                         slotRadius * 2 + 16);
     r.drawRoundedRect(rackBg, rgba(12, 16, 22, 210), 3.0f);
@@ -487,9 +487,9 @@ void RenderModuleRack(photon::PhotonContext& ctx,
 
     for (int i = 0; i < count; i++) {
         const auto& s = slots[i];
-        photon::Vec2 slotPos(startX + i * slotSpacing, centerY);
+        atlas::Vec2 slotPos(startX + i * slotSpacing, centerY);
 
-        photon::Color activeCol, inactiveCol, emptyCol;
+        atlas::Color activeCol, inactiveCol, emptyCol;
         switch (s.slotType) {
             case ModuleSlotState::HIGH:
                 activeCol   = rgba(50, 180, 50, 230);
@@ -508,7 +508,7 @@ void RenderModuleRack(photon::PhotonContext& ctx,
                 break;
         }
 
-        photon::Color bgColor;
+        atlas::Color bgColor;
         if (!s.fitted) {
             bgColor = emptyCol;
         } else if (s.active) {
@@ -519,7 +519,7 @@ void RenderModuleRack(photon::PhotonContext& ctx,
 
         r.drawCircle(slotPos, slotRadius, bgColor);
 
-        photon::Color borderColor = rgba(55, 75, 95, 160);
+        atlas::Color borderColor = rgba(55, 75, 95, 160);
         if (s.overheated) {
             borderColor = rgba(255, 100, 30, 220);
         } else if (s.active) {
@@ -545,7 +545,7 @@ void RenderModuleRack(photon::PhotonContext& ctx,
 // ============================================================================
 // RenderAlertStack
 // ============================================================================
-void RenderAlertStack(photon::PhotonContext& ctx,
+void RenderAlertStack(atlas::AtlasContext& ctx,
                       const std::vector<HUDAlert>& alerts,
                       float centerX, float baseY) {
     if (alerts.empty()) return;
@@ -567,7 +567,7 @@ void RenderAlertStack(photon::PhotonContext& ctx,
         float y = startY - (i + 1) * (alertHeight + alertGap);
         float x = centerX - alertWidth / 2.0f;
 
-        photon::Color bgColor, borderColor, textColor;
+        atlas::Color bgColor, borderColor, textColor;
         switch (alert.priority) {
             case HUDAlertPriority::CRITICAL:
                 bgColor     = rgba(120, 20, 20, static_cast<int>(200 * alpha));
@@ -586,7 +586,7 @@ void RenderAlertStack(photon::PhotonContext& ctx,
                 break;
         }
 
-        photon::Rect box(x, y, alertWidth, alertHeight);
+        atlas::Rect box(x, y, alertWidth, alertHeight);
         r.drawRoundedRect(box, bgColor, 2.0f);
         r.drawRoundedRectOutline(box, borderColor, 2.0f);
 
@@ -600,23 +600,23 @@ void RenderAlertStack(photon::PhotonContext& ctx,
 // ============================================================================
 // RenderSelectedItem
 // ============================================================================
-void RenderSelectedItem(photon::PhotonContext& ctx, const SelectedItemData& item,
+void RenderSelectedItem(atlas::AtlasContext& ctx, const SelectedItemData& item,
                         bool* approach_clicked, bool* orbit_clicked,
                         bool* lock_clicked, bool* warp_clicked) {
     auto& r = ctx.renderer();
     float y = 0.0f;
 
     if (item.isEmpty()) {
-        r.drawText("No item selected", {0, y}, toColor(EVEColors::TEXT_SECONDARY));
+        r.drawText("No item selected", {0, y}, toColor(SpaceColors::TEXT_SECONDARY));
         return;
     }
 
-    photon::Color nameColor = item.is_hostile ?
-        toColor(EVEColors::TARGET_HOSTILE) : toColor(EVEColors::ACCENT_PRIMARY);
+    atlas::Color nameColor = item.is_hostile ?
+        toColor(SpaceColors::TARGET_HOSTILE) : toColor(SpaceColors::ACCENT_PRIMARY);
     r.drawText(item.name, {0, y}, nameColor);
     y += 16.0f;
 
-    r.drawText(item.type, {0, y}, toColor(EVEColors::TEXT_SECONDARY));
+    r.drawText(item.type, {0, y}, toColor(SpaceColors::TEXT_SECONDARY));
     y += 16.0f;
 
     char dist_buf[64];
@@ -627,44 +627,44 @@ void RenderSelectedItem(photon::PhotonContext& ctx, const SelectedItemData& item
     } else {
         snprintf(dist_buf, sizeof(dist_buf), "Distance: %.2f AU", item.distance / METERS_PER_AU);
     }
-    r.drawText(dist_buf, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+    r.drawText(dist_buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
     y += 16.0f;
 
     if (item.velocity > 0.0f) {
         char vel_buf[64];
         snprintf(vel_buf, sizeof(vel_buf), "Velocity: %.0f m/s", item.velocity);
-        r.drawText(vel_buf, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+        r.drawText(vel_buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 16.0f;
     }
     if (item.angular_velocity > 0.001f) {
         char ang_buf[64];
         snprintf(ang_buf, sizeof(ang_buf), "Angular: %.3f rad/s", item.angular_velocity);
-        r.drawText(ang_buf, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
+        r.drawText(ang_buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 16.0f;
     }
 
     if (item.has_health) {
-        r.drawLine({0, y}, {180, y}, toColor(EVEColors::BORDER_SUBTLE));
+        r.drawLine({0, y}, {180, y}, toColor(SpaceColors::BORDER_SUBTLE));
         y += 6.0f;
-        photon::Color bgBar = rgba(30, 40, 55, 180);
+        atlas::Color bgBar = rgba(30, 40, 55, 180);
 
-        float sAdj[4]; GetHealthColorForPercent(item.shields_pct, sAdj, EVEColors::SHIELD_COLOR);
-        r.drawText("S", {0, y}, toColor(EVEColors::TEXT_PRIMARY));
-        r.drawProgressBar(photon::Rect(14, y, 180, 12), item.shields_pct, toColor(sAdj), bgBar);
+        float sAdj[4]; GetHealthColorForPercent(item.shields_pct, sAdj, SpaceColors::SHIELD_COLOR);
+        r.drawText("S", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
+        r.drawProgressBar(atlas::Rect(14, y, 180, 12), item.shields_pct, toColor(sAdj), bgBar);
         y += 16.0f;
 
-        float aAdj[4]; GetHealthColorForPercent(item.armor_pct, aAdj, EVEColors::ARMOR_COLOR);
-        r.drawText("A", {0, y}, toColor(EVEColors::TEXT_PRIMARY));
-        r.drawProgressBar(photon::Rect(14, y, 180, 12), item.armor_pct, toColor(aAdj), bgBar);
+        float aAdj[4]; GetHealthColorForPercent(item.armor_pct, aAdj, SpaceColors::ARMOR_COLOR);
+        r.drawText("A", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
+        r.drawProgressBar(atlas::Rect(14, y, 180, 12), item.armor_pct, toColor(aAdj), bgBar);
         y += 16.0f;
 
-        float hAdj[4]; GetHealthColorForPercent(item.hull_pct, hAdj, EVEColors::HULL_COLOR);
-        r.drawText("H", {0, y}, toColor(EVEColors::TEXT_PRIMARY));
-        r.drawProgressBar(photon::Rect(14, y, 180, 12), item.hull_pct, toColor(hAdj), bgBar);
+        float hAdj[4]; GetHealthColorForPercent(item.hull_pct, hAdj, SpaceColors::HULL_COLOR);
+        r.drawText("H", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
+        r.drawProgressBar(atlas::Rect(14, y, 180, 12), item.hull_pct, toColor(hAdj), bgBar);
         y += 16.0f;
     }
 
-    r.drawLine({0, y}, {280, y}, toColor(EVEColors::BORDER_SUBTLE));
+    r.drawLine({0, y}, {280, y}, toColor(SpaceColors::BORDER_SUBTLE));
     y += 6.0f;
 
     float buttonWidth = 65.0f;
@@ -672,7 +672,7 @@ void RenderSelectedItem(photon::PhotonContext& ctx, const SelectedItemData& item
     float btnX = 0.0f;
 
     auto drawBtn = [&](const char* label, bool* clicked) {
-        photon::Rect br(btnX, y, buttonWidth, buttonHeight);
+        atlas::Rect br(btnX, y, buttonWidth, buttonHeight);
         r.drawRoundedRect(br, rgba(30, 42, 58, 200), 3.0f);
         r.drawRoundedRectOutline(br, rgba(55, 75, 95, 160), 3.0f);
         float lw = r.measureText(label);
@@ -689,5 +689,5 @@ void RenderSelectedItem(photon::PhotonContext& ctx, const SelectedItemData& item
     drawBtn("Warp To", warp_clicked);
 }
 
-} // namespace EVEPanels
+} // namespace HUDPanels
 } // namespace UI

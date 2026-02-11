@@ -1,5 +1,5 @@
-#ifndef NEOCOM_PANEL_H
-#define NEOCOM_PANEL_H
+#ifndef SIDEBAR_PANEL_H
+#define SIDEBAR_PANEL_H
 
 #include <string>
 #include <functional>
@@ -8,7 +8,9 @@
 namespace UI {
 
 /**
- * Neocom – the EVE Online-style vertical icon sidebar.
+ * @file sidebar_panel.h
+ *
+ * SidebarPanel – vertical icon sidebar.
  *
  * Rendered as a narrow bar on the left side of the screen with icon buttons
  * for core services: Character Sheet, Inventory, Fitting, Market, Map,
@@ -16,10 +18,10 @@ namespace UI {
  *
  * Each button fires a user-supplied callback (typically a panel toggle in UIManager).
  */
-class NeocomPanel {
+class SidebarPanel {
 public:
-    NeocomPanel();
-    ~NeocomPanel() = default;
+    SidebarPanel();
+    ~SidebarPanel() = default;
 
     /** Render the sidebar (call each frame between BeginFrame/EndFrame). */
     void Render();
@@ -71,4 +73,4 @@ private:
 
 } // namespace UI
 
-#endif // NEOCOM_PANEL_H
+#endif // SIDEBAR_PANEL_H

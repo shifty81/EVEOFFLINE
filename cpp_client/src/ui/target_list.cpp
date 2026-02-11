@@ -1,4 +1,4 @@
-#include "ui/eve_target_list.h"
+#include "ui/target_list.h"
 #include "core/entity.h"
 #include <imgui.h>
 #include <algorithm>
@@ -6,15 +6,15 @@
 
 namespace UI {
 
-// Use centralized EVEColors from ui_manager.h for consistency
-static const float COLOR_SHIELD[] = {0.2f, 0.6f, 1.0f, 1.0f};     // Blue — matches EVEColors::SHIELD_COLOR
-static const float COLOR_ARMOR[] = {1.0f, 0.816f, 0.251f, 1.0f};   // Gold — matches EVEColors::ARMOR_COLOR
-static const float COLOR_HULL[] = {0.902f, 0.271f, 0.271f, 1.0f};  // Red — matches EVEColors::HULL_COLOR
-static const float COLOR_BACKGROUND[] = {0.051f, 0.067f, 0.090f, 0.92f};  // Dark blue-black — matches EVEColors::BG_PRIMARY
-static const float COLOR_BORDER[] = {0.271f, 0.816f, 0.910f, 0.8f};       // Teal — matches EVEColors::ACCENT_PRIMARY
+// Use centralized SpaceColors from ui_manager.h for consistency
+static const float COLOR_SHIELD[] = {0.2f, 0.6f, 1.0f, 1.0f};     // Blue — matches SpaceColors::SHIELD_COLOR
+static const float COLOR_ARMOR[] = {1.0f, 0.816f, 0.251f, 1.0f};   // Gold — matches SpaceColors::ARMOR_COLOR
+static const float COLOR_HULL[] = {0.902f, 0.271f, 0.271f, 1.0f};  // Red — matches SpaceColors::HULL_COLOR
+static const float COLOR_BACKGROUND[] = {0.051f, 0.067f, 0.090f, 0.92f};  // Dark blue-black — matches SpaceColors::BG_PRIMARY
+static const float COLOR_BORDER[] = {0.271f, 0.816f, 0.910f, 0.8f};       // Teal — matches SpaceColors::ACCENT_PRIMARY
 static const float COLOR_ACTIVE[] = {1.0f, 0.878f, 0.4f, 1.0f};          // Yellow-gold for active target
 
-EVETargetList::EVETargetList()
+TargetList::TargetList()
     : m_posX(50.0f)
     , m_posY(50.0f)
     , m_iconSize(80.0f)
@@ -22,10 +22,10 @@ EVETargetList::EVETargetList()
 {
 }
 
-EVETargetList::~EVETargetList() {
+TargetList::~TargetList() {
 }
 
-void EVETargetList::render() {
+void TargetList::render() {
     if (m_targets.empty()) {
         return;
     }
@@ -56,7 +56,7 @@ void EVETargetList::render() {
     ImGui::End();
 }
 
-void EVETargetList::renderTargetIcon(const TargetData& target, float x, float y) {
+void TargetList::renderTargetIcon(const TargetData& target, float x, float y) {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     ImVec2 pos = ImGui::GetCursorScreenPos();
     
@@ -132,7 +132,7 @@ void EVETargetList::renderTargetIcon(const TargetData& target, float x, float y)
     }
 }
 
-void EVETargetList::renderHealthArc(float centerX, float centerY, float radius,
+void TargetList::renderHealthArc(float centerX, float centerY, float radius,
                                    float startAngle, float endAngle,
                                    float percent, const float color[4]) {
     if (percent <= 0.0f) return;
@@ -164,7 +164,7 @@ void EVETargetList::renderHealthArc(float centerX, float centerY, float radius,
     }
 }
 
-void EVETargetList::updateTargets(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities) {
+void TargetList::updateTargets(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities) {
     // Update existing targets
     for (auto& target : m_targets) {
         auto it = entities.find(target.entityId);
@@ -191,7 +191,7 @@ void EVETargetList::updateTargets(const std::unordered_map<std::string, std::sha
     }
 }
 
-void EVETargetList::addTarget(const std::string& entityId) {
+void TargetList::addTarget(const std::string& entityId) {
     // Check if already targeted
     if (isTargeted(entityId)) {
         return;
@@ -209,7 +209,7 @@ void EVETargetList::addTarget(const std::string& entityId) {
     }
 }
 
-void EVETargetList::removeTarget(const std::string& entityId) {
+void TargetList::removeTarget(const std::string& entityId) {
     auto it = std::remove_if(m_targets.begin(), m_targets.end(),
         [&entityId](const TargetData& target) {
             return target.entityId == entityId;
@@ -228,7 +228,7 @@ void EVETargetList::removeTarget(const std::string& entityId) {
     }
 }
 
-void EVETargetList::setActiveTarget(const std::string& entityId) {
+void TargetList::setActiveTarget(const std::string& entityId) {
     // Deactivate all targets
     for (auto& target : m_targets) {
         target.isActive = false;
@@ -244,7 +244,7 @@ void EVETargetList::setActiveTarget(const std::string& entityId) {
     }
 }
 
-bool EVETargetList::isTargeted(const std::string& entityId) const {
+bool TargetList::isTargeted(const std::string& entityId) const {
     return std::any_of(m_targets.begin(), m_targets.end(),
         [&entityId](const TargetData& target) {
             return target.entityId == entityId;
