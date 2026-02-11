@@ -12,7 +12,8 @@
 5. [In Progress](#in-progress)
 6. [Planned Features](#planned-features)
 7. [Future Considerations](#future-considerations)
-8. [Development Milestones](#development-milestones)
+8. [Vertical Slice: One Full Star System](#-vertical-slice-one-full-star-system-next-major-milestone)
+9. [Development Milestones](#development-milestones)
 
 ---
 
@@ -38,7 +39,7 @@ EVE OFFLINE is a PVE-focused space MMO inspired by EVE Online, designed for smal
 
 ## Master Implementation Plan
 
-> Based on comprehensive baseline design document (February 2026)
+> Based on comprehensive baseline design document (February 2026) and `scopeforprojectsofar.rtf` project planning document
 
 ### Architecture Pillars
 
@@ -87,6 +88,71 @@ Each AI owns ships, has a wallet, responds to market prices, and can die permane
 - Part families: Hull Spine, Bow/Nose, Stern/Engines, Mid Modules, Hardpoints
 - Faction shape language drives silhouettes and materials
 - Procedural materials (base color, edge wear, panel lines, grime, emissive)
+
+### Ship HUD Architecture ("Cold Control Ring")
+The Ship HUD is anchored bottom-center, designed for peripheral readability:
+- **Control Ring**: Outer ring (shield), middle ring (armor), inner core (hull) — arc-based with clockwise depletion
+- **Velocity Arc**: Speed indicator around control ring, color changes for boost/align/webbed states
+- **Capacitor Bar**: Vertical bar with gradient from green (full) to red (critical)
+- **Module Rack**: Horizontal row grouped by slot type (High/Mid/Low), 32×32 icons with cooldown sweeps
+- **Target Brackets**: Four-corner brackets in space, color-coded by relation, lock progress arcs
+- **Alert Stack**: Priority-based warnings above ring ("CAP LOW", "STRUCTURE CRITICAL", "SCRAMBLED")
+- **Damage Feedback**: Shield (blue ripple), armor (yellow flash), hull (red pulse + shake)
+
+### Combat Damage Layers
+Shield → Armor → Hull damage progression:
+- **Shield**: Regenerates over time, takes full damage, visual blue ripple effects
+- **Armor**: No regen, reduced damage via resists, visual sparks and plating cracks
+- **Hull**: No regen, critical effects below 25%, visual fires, smoke, flicker
+
+### AI Combat Behavior Tiers
+AI behavior scales by difficulty tier:
+| Tier | Behavior |
+|------|----------|
+| Civilian | Flee when engaged |
+| Militia | Attack blindly |
+| Navy | Maintain optimal range |
+| Elite | Focus fire, coordinated |
+| Boss | Spawns reinforcements |
+
+AI state machine: Idle → Patrol → Engage → Orbit → Retreat
+
+### Economy-Driven Ship Generation
+NPC ships reflect economic state:
+- Resource-rich systems → More mining ships with bulky hulls
+- War-torn systems → Damaged ships, more combat patrols
+- High-tech systems → Sleeker, advanced hulls
+- Player actions (mining, piracy, trade protection) visibly change traffic patterns
+
+### LOD & Impostor System
+Performance scaling for large fleet battles:
+| Distance | LOD Level | Update Rate |
+|----------|-----------|-------------|
+| <5km | LOD0 (full detail) | 30 Hz |
+| 5-20km | LOD1 (reduced segments) | 15 Hz |
+| 20-80km | LOD2 (merged mesh) | 5 Hz |
+| >80km | Impostor (billboard) | 1 Hz |
+
+### Salvage & Wrecks System
+Post-combat gameplay loop:
+- Ship destruction → Wreck spawn with original ShipSeed
+- Salvage value affected by: ship class, tech tier, damage type, overkill amount
+- Wreck visuals: damaged ship impostor, broken modules floating, fire slowly extinguishing
+- Salvage gameplay: target wreck, activate salvager, progress bar, RNG roll influenced by skills
+
+### Overview & Targeting Integration
+EVE-style targeting system:
+- Overview is a filtered ECS query of Targetable entities, sorted by distance/threat
+- Click overview row or in-space bracket → synced EntityID selection
+- Lock time = function of target signature and player sensor strength
+- Weapon fire auto-aims to locked target
+
+### Mod Support Architecture
+Data-driven modding without code injection:
+- `ai_profiles.json`: Define AI behavior (orbitRange, retreatThreshold, focusFire)
+- `economy_rules.json`: Define system economy curves (pirateSpawnRate, miningYield)
+- `ship_templates.json`: Define ship stats and visual parameters
+- All mods maintain deterministic simulation
 
 ### Implementation Priority Order
 1. ✅ Server tick loop solid
@@ -815,6 +881,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Client-side prediction for responsive movement
 - [ ] Spatial partitioning for efficient entity queries
 - [ ] Multi-threaded server processing
+- [ ] Large-scale fleet battle stress testing (150-300 ships)
+- [ ] LOD system with impostor billboards for distant ships
+- [ ] Group AI abstraction (FleetController with squad leaders)
 
 #### DevOps & Deployment
 - [x] CI/CD pipeline (GitHub Actions) — Server and Client workflows
@@ -831,6 +900,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Ship designer
 - [ ] Modding documentation and tutorials
 - [ ] Community content repository
+- [ ] AI profile mods (`ai_profiles.json` for behavior customization)
+- [ ] Economy rule mods (`economy_rules.json` for system economy curves)
+- [ ] Ship template mods (`ship_templates.json` for custom ships)
 
 #### Additional Features
 - [ ] PvP toggle option (optional for those who want it)
@@ -839,6 +911,61 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] In-game web browser (dotlan-style maps)
 - [ ] Voice chat integration
 - [ ] Mobile companion app
+
+### 📋 Vertical Slice: One Full Star System (Next Major Milestone)
+**Timeline**: 3-6 months  
+**Priority**: Critical  
+**Goal**: Prove all gameplay loops work together in one complete star system
+
+#### System Contents (Scope Lock)
+- 1 Trade Hub Station
+- 2 Mining Belts
+- 1 Pirate Zone
+- 3-5 Procedural Anomalies
+- AI Traffic (miners, patrols, haulers)
+- Player Spawn Point
+
+#### Phase 1 (Weeks 1-3): Foundational Gameplay Loop
+- [ ] Procedural ship hull + weapons generation
+- [ ] Shield/armor/hull damage with visual feedback
+- [ ] Basic AI combat (engage, orbit, retreat)
+- [ ] Station docking and repair service
+- **Success Criteria**: Player can undock, fight NPCs, take damage, dock and repair
+
+#### Phase 2 (Weeks 4-6): Wrecks, Salvage & Economy
+- [ ] Ship destruction → wreck spawning
+- [ ] Salvage gameplay mechanics
+- [ ] Basic mineral economy
+- [ ] Mining AI ships active
+- [ ] Resource tracking per system
+- **Success Criteria**: NPCs mine, pirates attack, wrecks remain, salvage yields resources, economy changes
+
+#### Phase 3 (Weeks 7-9): Exploration & Anomalies
+- [ ] Scanner UI implementation
+- [ ] Anomaly generation from system seed
+- [ ] Combat & mining anomalies
+- [ ] Difficulty scaling by location
+- [ ] Visual distortion cues for anomalies
+- **Success Criteria**: Player scans, finds new content, it feels special
+
+#### Phase 4 (Weeks 10-12): Procedural Missions & Reputation
+- [ ] Mission templates implementation
+- [ ] Mission generation from world state
+- [ ] Faction reputation system
+- [ ] Hostile/friendly AI behavior based on rep
+- [ ] Mission-driven economy shifts
+- **Success Criteria**: Missions change AI behavior, reputation alters encounters
+
+#### Phase 5 (Weeks 13-16): Persistence & Stress Testing
+- [ ] Save/load system state
+- [ ] Fleet state persistence
+- [ ] Economy persistence
+- [ ] LOD & impostors for large battles
+- [ ] 100+ ship fleet stress test
+- **Success Criteria**: Quit, reload, world remembers everything, stable performance
+
+#### Complete Loop Validation
+Player undocks → Scans anomaly → Fights pirates → Ship explodes → Wreck created → Salvage collected → Economy shifts → AI fleets adapt → Missions change → Reputation updates → Save game → Reload → World remembers
 
 ---
 
