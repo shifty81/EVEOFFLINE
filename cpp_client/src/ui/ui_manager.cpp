@@ -63,9 +63,12 @@ UIManager::~UIManager() {
 // ============================================================================
 
 bool UIManager::Initialize(int windowW, int windowH) {
-    // Initialize Photon rendering context (compiles shaders, allocates GPU buffers)
+    m_windowW = windowW;
+    m_windowH = windowH;
+
+    // Initialize Atlas rendering context (compiles shaders, allocates GPU buffers)
     if (!m_ctx.init()) {
-        std::cerr << "[UIManager] Error: Failed to initialize Photon context" << std::endl;
+        std::cerr << "[UIManager] Error: Failed to initialize Atlas context" << std::endl;
         return false;
     }
 
@@ -105,7 +108,10 @@ bool UIManager::Initialize(int windowW, int windowH) {
     // Set up panel configs with default positions
     InitPanelConfigs(windowW, windowH);
 
-    std::cout << "[UIManager] Photon UI initialized successfully" << std::endl;
+    // Create default layout presets (writes only if files don't exist)
+    m_layoutManager.CreateDefaultPresets(windowW, windowH);
+
+    std::cout << "[UIManager] Atlas UI initialized successfully" << std::endl;
     return true;
 }
 
@@ -638,11 +644,91 @@ void UIManager::SetModuleSlots(const ModuleSlotState slots[], int count) {
 
 void UIManager::SetCompactMode(bool enabled) {
     m_compactMode = enabled;
-    // Photon Theme metrics are used at render time via PanelFlags::compactMode
+    // Atlas Theme metrics are used at render time via PanelFlags::compactMode
 }
 
 void UIManager::ToggleCompactMode() {
     SetCompactMode(!m_compactMode);
+}
+
+// ============================================================================
+// Per-Panel Opacity (Phase 4.10)
+// ============================================================================
+
+void UIManager::SetPanelOpacity(const std::string& panel_name, float opacity) {
+    auto it = m_panelConfigs.find(panel_name);
+    if (it != m_panelConfigs.end()) {
+        it->second.opacity = std::max(0.15f, std::min(1.0f, opacity));
+    }
+}
+
+float UIManager::GetPanelOpacity(const std::string& panel_name) const {
+    auto it = m_panelConfigs.find(panel_name);
+    if (it != m_panelConfigs.end()) {
+        return it->second.opacity;
+    }
+    return 0.92f;
+}
+
+// ============================================================================
+// Layout Management (Phase 4.10)
+// ============================================================================
+
+std::unordered_map<std::string, PanelLayout> UIManager::ExportPanelLayouts() const {
+    std::unordered_map<std::string, PanelLayout> layouts;
+    for (const auto& [id, cfg] : m_panelConfigs) {
+        PanelLayout pl;
+        pl.id = id;
+        pl.x = cfg.state.bounds.x;
+        pl.y = cfg.state.bounds.y;
+        pl.w = cfg.state.bounds.w;
+        pl.h = cfg.state.bounds.h;
+        pl.visible = cfg.state.open;
+        pl.minimized = cfg.state.minimized;
+        pl.opacity = cfg.opacity;
+        layouts[id] = pl;
+    }
+    return layouts;
+}
+
+void UIManager::ImportPanelLayouts(const std::unordered_map<std::string, PanelLayout>& layouts) {
+    for (const auto& [id, pl] : layouts) {
+        auto it = m_panelConfigs.find(id);
+        if (it != m_panelConfigs.end()) {
+            it->second.state.bounds = atlas::Rect(pl.x, pl.y, pl.w, pl.h);
+            it->second.state.open = pl.visible;
+            it->second.state.minimized = pl.minimized;
+            it->second.opacity = pl.opacity;
+        }
+    }
+}
+
+bool UIManager::SaveLayout(const std::string& presetName) {
+    auto layouts = ExportPanelLayouts();
+    bool ok = m_layoutManager.SaveLayout(presetName, layouts);
+    if (ok) {
+        m_activeLayoutName = presetName;
+    }
+    return ok;
+}
+
+bool UIManager::LoadLayout(const std::string& presetName) {
+    std::unordered_map<std::string, PanelLayout> layouts;
+    if (!m_layoutManager.LoadLayout(presetName, layouts)) {
+        return false;
+    }
+    ImportPanelLayouts(layouts);
+    m_activeLayoutName = presetName;
+    return true;
+}
+
+std::vector<std::string> UIManager::GetAvailableLayouts() const {
+    return m_layoutManager.GetAvailablePresets();
+}
+
+void UIManager::ResetToDefaultLayout() {
+    InitPanelConfigs(m_windowW, m_windowH);
+    m_activeLayoutName = "default";
 }
 
 } // namespace UI

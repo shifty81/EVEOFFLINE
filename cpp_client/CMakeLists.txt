@@ -1110,6 +1110,19 @@ if(BUILD_TESTS)
     if(WIN32)
         target_link_libraries(test_atlas_ui ws2_32)
     endif()
+
+    # Test: Layout Manager (headless — no GPU required)
+    add_executable(test_layout_manager
+        test_layout_manager.cpp
+        src/ui/layout_manager.cpp
+    )
+    target_include_directories(test_layout_manager PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(test_layout_manager
+        Threads::Threads
+    )
+    if(WIN32)
+        target_link_libraries(test_layout_manager ws2_32)
+    endif()
 endif()
 
 # RmlUi Test (only when RmlUi is enabled)

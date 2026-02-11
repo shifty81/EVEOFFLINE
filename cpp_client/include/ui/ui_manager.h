@@ -141,17 +141,17 @@ public:
     UIManager();
     ~UIManager();
 
-    // Initialize Photon UI context and HUD layout
+    // Initialize Atlas UI context and HUD layout
     bool Initialize(int windowW, int windowH);
 
-    // Cleanup Photon GPU resources
+    // Cleanup Atlas GPU resources
     void Shutdown();
 
     // Frame management — caller must fill InputState from GLFW each frame
     void BeginFrame(const atlas::InputState& input);
     void EndFrame();
 
-    // Render all UI panels via Photon
+    // Render all UI panels via Atlas
     void Render();
 
     // Data setters
@@ -225,11 +225,35 @@ public:
     bool IsCompactMode() const { return m_compactMode; }
     void ToggleCompactMode();
 
-    // Access Photon context for advanced / external usage
+    // Access Atlas context for advanced / external usage
     atlas::AtlasContext& GetAtlasContext() { return m_ctx; }
 
+    // ── Layout management (Phase 4.10) ──────────────────────────────
+
+    /** Save current panel layout to a named preset. */
+    bool SaveLayout(const std::string& presetName);
+
+    /** Load a named preset and apply it to all panels. */
+    bool LoadLayout(const std::string& presetName);
+
+    /** Get list of available layout presets. */
+    std::vector<std::string> GetAvailableLayouts() const;
+
+    /** Reset all panels to the default layout. */
+    void ResetToDefaultLayout();
+
+    /** Get the active layout preset name. */
+    const std::string& GetActiveLayoutName() const { return m_activeLayoutName; }
+
+    // Per-panel opacity
+    void SetPanelOpacity(const std::string& panel_name, float opacity);
+    float GetPanelOpacity(const std::string& panel_name) const;
+
+    // Access layout manager
+    LayoutManager& GetLayoutManager() { return m_layoutManager; }
+
 private:
-    // Photon UI core
+    // Atlas UI core
     atlas::AtlasContext m_ctx;
     atlas::AtlasHUD     m_hud;
 
@@ -254,10 +278,11 @@ private:
     std::unique_ptr<NotificationManager> m_notificationManager;
     std::unique_ptr<ProbeScannerPanel> m_probeScannerPanel;
 
-    // Photon panel states (replaces DockingManager)
+    // Atlas panel states (replaces DockingManager)
     struct PanelConfig {
         atlas::PanelState state;
         std::string title;
+        float opacity = 0.92f;  // Per-panel opacity (0.0–1.0)
     };
     std::unordered_map<std::string, PanelConfig> m_panelConfigs;
 
@@ -291,14 +316,24 @@ private:
     // Compact mode
     bool m_compactMode = false;
 
+    // Layout management (Phase 4.10)
+    LayoutManager m_layoutManager;
+    std::string m_activeLayoutName = "default";
+    int m_windowW = 1280;
+    int m_windowH = 720;
+
     // Panel initialization helper
     void InitPanelConfigs(int windowW, int windowH);
 
-    // Photon-based render helpers
+    // Atlas-based render helpers
     void RenderCombatLogPanel();
     void RenderStarMapPanel();
     void RenderAlertStack();
     void RenderDockablePanel(const std::string& id);
+
+    // Layout helper: convert between PanelConfig map and PanelLayout map
+    std::unordered_map<std::string, PanelLayout> ExportPanelLayouts() const;
+    void ImportPanelLayouts(const std::unordered_map<std::string, PanelLayout>& layouts);
 };
 
 } // namespace UI
