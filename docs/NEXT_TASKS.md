@@ -125,7 +125,7 @@ From ROADMAP.md "In Progress" section:
 - ✅ Docker containerization — Multi-stage Dockerfile for dedicated server
 - ✅ Crash reporting and logging — Structured Logger with levels (DEBUG–FATAL), file output, and exception handling in main()
 - ✅ Server monitoring and analytics — ServerMetrics tracking tick timing, entity/player counts, uptime, periodic stats logging
-- Cloud deployment guides
+- ✅ Cloud deployment guides — Comprehensive guide for AWS, GCP, Azure, Digital Ocean deployment
 
 #### 3.3 Additional Game Systems
 - PvP toggle option (optional for those who want it)
