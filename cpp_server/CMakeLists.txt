@@ -44,6 +44,7 @@ set(SERVER_SOURCES
     src/utils/name_generator.cpp
     src/utils/logger.cpp
     src/utils/server_metrics.cpp
+    src/ui/server_console.cpp
     src/ecs/entity.cpp
     src/ecs/world.cpp
     src/systems/movement_system.cpp
@@ -92,6 +93,7 @@ set(SERVER_HEADERS
     include/utils/name_generator.h
     include/utils/logger.h
     include/utils/server_metrics.h
+    include/ui/server_console.h
     include/ecs/component.h
     include/ecs/entity.h
     include/ecs/system.h

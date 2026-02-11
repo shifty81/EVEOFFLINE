@@ -52,86 +52,32 @@ public:
      * @note server and config parameters are reserved for Phase 2/3
      *       when the console needs server stats and config access.
      */
-    bool init(Server& server, const ServerConfig& config) {
-        (void)server;
-        (void)config;
-        return initInternal();
-    }
-
-    /**
-     * Initialize without server/config references (for headless or test use).
-     */
-    bool init() {
-        return initInternal();
-    }
+    bool init(Server& server, const ServerConfig& config);
 
     /**
      * Process one frame of console I/O.
      * Call from the server's main loop each tick.
      */
-    void update() {
-        // In non-interactive mode there is nothing to poll.
-    }
+    void update();
 
     /**
      * Shutdown the console and restore terminal state.
      */
-    void shutdown() {
-        m_initialized = false;
-        m_commands.clear();
-    }
+    void shutdown();
 
     /**
      * Add a log message to the console output buffer.
      * @param level    Log severity level.
      * @param message  Log message text.
      */
-    void addLogMessage(utils::LogLevel level, const std::string& message) {
-        (void)level;
-        if (m_log_buffer.size() >= MAX_LOG_LINES) {
-            m_log_buffer.erase(m_log_buffer.begin());
-        }
-        m_log_buffer.push_back(message);
-    }
+    void addLogMessage(utils::LogLevel level, const std::string& message);
 
     /**
      * Execute a command string and return the result.
      * @param command  Command text (e.g. "status", "help").
      * @return Command output string.
      */
-    std::string executeCommand(const std::string& command) {
-        if (!m_initialized) return "Console not initialized";
-        if (command.empty()) return "";
-
-        // Tokenize
-        std::vector<std::string> tokens = tokenize(command);
-        if (tokens.empty()) return "";
-
-        std::string cmd_name = tokens[0];
-        std::vector<std::string> args(tokens.begin() + 1, tokens.end());
-
-        auto it = m_commands.find(cmd_name);
-        if (it == m_commands.end()) {
-            return "Unknown command: " + cmd_name + ". Type 'help' for a list.";
-        }
-
-        return it->second.handler(args);
-    }
-
-    /**
-     * Register a custom command.
-     * @param name        Command name (single word).
-     * @param description Short help text.
-     * @param handler     Callback that processes the command.
-     */
-    void registerCommand(const std::string& name,
-                         const std::string& description,
-                         CommandHandler handler) {
-        CommandEntry entry;
-        entry.description = description;
-        entry.handler = std::move(handler);
-        m_commands[name] = std::move(entry);
-    }
+    std::string executeCommand(const std::string& command);
 
     /**
      * Set whether the console operates in interactive mode.

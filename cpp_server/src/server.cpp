@@ -128,6 +128,10 @@ bool Server::initialize() {
     game_session_->setTargetingSystem(targeting_system_);
     game_session_->initialize();
     
+    // Initialize server console
+    console_.setInteractive(true);  // Enable interactive mode by default
+    console_.init(*this, *config_);
+    
     return true;
 }
 
@@ -153,6 +157,8 @@ void Server::stop() {
     log.info("Stopping server...");
     log.info(metrics_.summary());
     running_ = false;
+    
+    console_.shutdown();
     
     if (tcp_server_) {
         tcp_server_->stop();
@@ -194,6 +200,9 @@ void Server::mainLoop() {
         if (config_->use_steam && steam_auth_) {
             updateSteam();
         }
+        
+        // Update console (process user input)
+        console_.update();
         
         // Auto-save check
         if (config_->auto_save && config_->persistent_world) {
