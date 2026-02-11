@@ -134,7 +134,7 @@ std::shared_ptr<Mesh> StationRenderer::createSolariStation() {
         vBottom.position = glm::vec3(x, 0.0f, z);
         vBottom.normal = glm::normalize(glm::vec3(x, 0.0f, z));
         vBottom.texCoords = glm::vec2((float)i / segments, 0.0f);
-        vBottom.color = glm::vec4(0.8f, 0.6f, 0.2f, 1.0f); // Golden color
+        vBottom.color = glm::vec3(0.8f, 0.6f, 0.2f); // Golden color
         vertices.push_back(vBottom);
         
         // Top vertex
@@ -142,7 +142,7 @@ std::shared_ptr<Mesh> StationRenderer::createSolariStation() {
         vTop.position = glm::vec3(x, bodyHeight, z);
         vTop.normal = glm::normalize(glm::vec3(x, 0.0f, z));
         vTop.texCoords = glm::vec2((float)i / segments, 1.0f);
-        vTop.color = glm::vec4(0.9f, 0.8f, 0.5f, 1.0f);
+        vTop.color = glm::vec3(0.9f, 0.8f, 0.5f);
         vertices.push_back(vTop);
     }
     
@@ -182,7 +182,7 @@ std::shared_ptr<Mesh> StationRenderer::createSolariStation() {
             Vertex vBase;
             vBase.position = spireBase + glm::vec3(x, 0.0f, z);
             vBase.normal = glm::normalize(glm::vec3(x, spireHeight, z));
-            vBase.color = glm::vec4(1.0f, 0.85f, 0.3f, 1.0f); // Bright gold for spires
+            vBase.color = glm::vec3(1.0f, 0.85f, 0.3f); // Bright gold for spires
             vertices.push_back(vBase);
         }
         
@@ -190,7 +190,7 @@ std::shared_ptr<Mesh> StationRenderer::createSolariStation() {
         Vertex vTip;
         vTip.position = spireTop;
         vTip.normal = glm::vec3(0.0f, 1.0f, 0.0f);
-        vTip.color = glm::vec4(1.0f, 0.9f, 0.4f, 1.0f);
+        vTip.color = glm::vec3(1.0f, 0.9f, 0.4f);
         unsigned int tipIdx = vertices.size();
         vertices.push_back(vTip);
         
@@ -217,7 +217,7 @@ std::shared_ptr<Mesh> StationRenderer::createVeyrenStation() {
     const float mainDepth = 800.0f;
     
     // Helper to add a box at position
-    auto addBox = [&](glm::vec3 center, float w, float h, float d, glm::vec4 color) {
+    auto addBox = [&](glm::vec3 center, float w, float h, float d, glm::vec3 color) {
         unsigned int baseIdx = vertices.size();
         
         // 8 vertices of the box
@@ -283,19 +283,19 @@ std::shared_ptr<Mesh> StationRenderer::createVeyrenStation() {
     
     // Main central box
     addBox(glm::vec3(0, 0, 0), mainWidth, mainHeight, mainDepth, 
-           glm::vec4(0.4f, 0.45f, 0.5f, 1.0f));
+           glm::vec3(0.4f, 0.45f, 0.5f));
     
     // Add smaller connected modules
     addBox(glm::vec3(500, 200, 0), 400, 300, 400, 
-           glm::vec4(0.5f, 0.55f, 0.6f, 1.0f));
+           glm::vec3(0.5f, 0.55f, 0.6f));
     addBox(glm::vec3(-500, 200, 0), 400, 300, 400, 
-           glm::vec4(0.5f, 0.55f, 0.6f, 1.0f));
+           glm::vec3(0.5f, 0.55f, 0.6f));
     addBox(glm::vec3(0, 200, 500), 400, 300, 400, 
-           glm::vec4(0.5f, 0.55f, 0.6f, 1.0f));
+           glm::vec3(0.5f, 0.55f, 0.6f));
     
     // Add antenna/tower on top
     addBox(glm::vec3(0, 500, 0), 100, 400, 100, 
-           glm::vec4(0.2f, 0.4f, 0.6f, 1.0f));
+           glm::vec3(0.2f, 0.4f, 0.6f));
     
     return std::make_shared<Mesh>(vertices, indices);
 }
@@ -324,7 +324,7 @@ std::shared_ptr<Mesh> StationRenderer::createAurelianStation() {
             v.position = glm::vec3(x, y, z);
             v.normal = glm::normalize(v.position);
             v.texCoords = glm::vec2((float)seg / segments, (float)ring / rings);
-            v.color = glm::vec4(0.2f, 0.4f, 0.3f, 0.8f); // Semi-transparent green-blue
+            v.color = glm::vec3(0.2f, 0.4f, 0.3f); // Semi-transparent green-blue
             vertices.push_back(v);
         }
     }
@@ -367,7 +367,7 @@ std::shared_ptr<Mesh> StationRenderer::createAurelianStation() {
                 Vertex v;
                 v.position = offset + glm::vec3(x, y, z);
                 v.normal = glm::normalize(glm::vec3(x, y, z));
-                v.color = glm::vec4(0.3f, 0.6f, 0.5f, 0.8f);
+                v.color = glm::vec3(0.3f, 0.6f, 0.5f);
                 vertices.push_back(v);
             }
         }
@@ -397,7 +397,7 @@ std::shared_ptr<Mesh> StationRenderer::createKeldariStation() {
     std::vector<unsigned int> indices;
     
     // Create irregular scaffolding structure using cylinders
-    auto addCylinder = [&](glm::vec3 start, glm::vec3 end, float radius, glm::vec4 color) {
+    auto addCylinder = [&](glm::vec3 start, glm::vec3 end, float radius, glm::vec3 color) {
         unsigned int baseIdx = vertices.size();
         glm::vec3 dir = end - start;
         float length = glm::length(dir);
@@ -444,8 +444,8 @@ std::shared_ptr<Mesh> StationRenderer::createKeldariStation() {
     };
     
     // Main vertical support beams (irregular)
-    glm::vec4 rustyColor(0.4f, 0.3f, 0.25f, 1.0f);
-    glm::vec4 metalColor(0.5f, 0.4f, 0.3f, 1.0f);
+    glm::vec3 rustyColor(0.4f, 0.3f, 0.25f);
+    glm::vec3 metalColor(0.5f, 0.4f, 0.3f);
     
     addCylinder(glm::vec3(-300, 0, -300), glm::vec3(-250, 800, -280), 50, rustyColor);
     addCylinder(glm::vec3(300, 0, -300), glm::vec3(280, 750, -320), 50, rustyColor);
@@ -462,7 +462,7 @@ std::shared_ptr<Mesh> StationRenderer::createKeldariStation() {
     unsigned int baseIdx = vertices.size();
     glm::vec3 center(0, 400, 0);
     float w = 400, h = 300, d = 400;
-    glm::vec4 moduleColor(0.6f, 0.3f, 0.2f, 1.0f);
+    glm::vec3 moduleColor(0.6f, 0.3f, 0.2f);
     
     glm::vec3 corners[8] = {
         center + glm::vec3(-w/2, -h/2, -d/2),
@@ -497,8 +497,8 @@ std::shared_ptr<Mesh> StationRenderer::createAstrahus() {
     const float coreRadius = 300.0f;
     const float coreHeight = 800.0f;
     const int segments = 8;
-    glm::vec4 hullColor(0.5f, 0.5f, 0.55f, 1.0f);
-    glm::vec4 glowColor(0.3f, 0.6f, 1.0f, 1.0f);
+    glm::vec3 hullColor(0.5f, 0.5f, 0.55f);
+    glm::vec3 glowColor(0.3f, 0.6f, 1.0f);
     
     for (int i = 0; i <= segments; i++) {
         float theta = (float)i / segments * 2.0f * glm::pi<float>();
@@ -582,7 +582,7 @@ std::shared_ptr<Mesh> StationRenderer::createFortizar() {
     const float coreRadius = 500.0f;
     const float coreHeight = 1200.0f;
     const int segments = 12;
-    glm::vec4 hullColor(0.5f, 0.5f, 0.55f, 1.0f);
+    glm::vec3 hullColor(0.5f, 0.5f, 0.55f);
     
     // Central core (similar to Astrahus but larger)
     for (int i = 0; i <= segments; i++) {
@@ -626,7 +626,7 @@ std::shared_ptr<Mesh> StationRenderer::createKeepstar() {
     const float sphereRadius = 1000.0f;
     const int segments = 24;
     const int rings = 20;
-    glm::vec4 hullColor(0.5f, 0.5f, 0.55f, 1.0f);
+    glm::vec3 hullColor(0.5f, 0.5f, 0.55f);
     
     // Central massive sphere
     for (int ring = 0; ring <= rings; ring++) {
@@ -674,7 +674,7 @@ std::shared_ptr<Mesh> StationRenderer::createRaitaru() {
     const float mainRadius = 250.0f;
     const float mainHeight = 600.0f;
     const int segments = 12;
-    glm::vec4 industrialColor(0.6f, 0.6f, 0.65f, 1.0f);
+    glm::vec3 industrialColor(0.6f, 0.6f, 0.65f);
     
     // Main central cylinder
     for (int i = 0; i <= segments; i++) {
