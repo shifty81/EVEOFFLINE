@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 10, 2026)**: Major systems push — DroneSystem, InsuranceSystem, BountySystem, MarketSystem, CorporationSystem, ContractSystem added to C++ server. EVE-style UI theme defined. Master implementation plan created from baseline design document. 20 server systems, 672 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
+> **Update (February 11, 2026)**: PISystem, ManufacturingSystem, ResearchSystem added to C++ server. 23 server systems, 734 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
 
 ## Current Status (February 2026)
 
@@ -26,7 +26,8 @@
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **18 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts)
-- **110+ test functions** all passing (672 assertions)
+- **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
+- **128+ test functions** all passing (734 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture
@@ -403,7 +404,7 @@ From ROADMAP.md "In Progress" section:
     - ✅ Custom UI strategy (retained-mode, docking, EVE theme)
     - ✅ Modular procedural ship generation plan
     - ✅ Implementation priority order
-    - ✅ Complete systems status table (20 systems, 672 tests)
+    - ✅ Complete systems status table (23 systems, 734 tests)
     - ✅ Gap analysis with remaining systems to implement
 
 34. ✅ **Add C++ Server CorporationSystem** (COMPLETED - February 2026)
@@ -422,6 +423,31 @@ From ROADMAP.md "In Progress" section:
     - ✅ Contract status tracking (outstanding, in_progress, completed, expired)
     - ✅ WorldPersistence serialization/deserialization support
     - ✅ 36 test assertions, 100% pass rate
+
+36. ✅ **Add C++ Server PISystem** (COMPLETED - February 2026)
+    - ✅ PlanetaryColony component with extractors, processors, and storage
+    - ✅ PISystem with install extractor/processor, extraction cycles, processing cycles
+    - ✅ CPU and powergrid budget enforcement
+    - ✅ Storage capacity limits
+    - ✅ Resource type tracking and accumulation
+    - ✅ 14 test assertions, 100% pass rate
+
+37. ✅ **Add C++ Server ManufacturingSystem** (COMPLETED - February 2026)
+    - ✅ ManufacturingFacility component with job tracking, material requirements
+    - ✅ ManufacturingSystem with start/cancel jobs, multi-run support
+    - ✅ Job slot limit enforcement
+    - ✅ ISK install cost deduction from player wallet
+    - ✅ Per-tick time countdown with run completion tracking
+    - ✅ 21 test assertions, 100% pass rate
+
+38. ✅ **Add C++ Server ResearchSystem** (COMPLETED - February 2026)
+    - ✅ ResearchLab component with ME/TE research and invention jobs
+    - ✅ ResearchSystem with ME research, TE research, and T2 invention
+    - ✅ Deterministic RNG for invention success/failure
+    - ✅ Job slot limit enforcement
+    - ✅ ISK install cost deduction from player wallet
+    - ✅ Datacore tracking for invention jobs
+    - ✅ 18 test assertions, 100% pass rate
 
 ### Long-Term Goals (1-3 months each)
 
@@ -488,5 +514,5 @@ The project has a solid foundation and can grow in multiple directions based on 
 
 ---
 
-*Last Updated: February 10, 2026*
-*Status: All major server systems implemented. CorporationSystem, ContractSystem, DroneSystem, InsuranceSystem, BountySystem, MarketSystem added. EVE-style UI theme defined. Master implementation plan created from baseline. 20 server systems, 102 ships, 159+ modules, 672 test assertions. Ready for AI economic actors and custom UI implementation.*
+*Last Updated: February 11, 2026*
+*Status: All major server systems implemented. PISystem, ManufacturingSystem, ResearchSystem added. 23 server systems, 102 ships, 159+ modules, 734 test assertions. Ready for AI economic actors and custom UI implementation.*

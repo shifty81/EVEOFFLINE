@@ -667,6 +667,167 @@ public:
     COMPONENT_TYPE(ContractBoard)
 };
 
+/**
+ * @brief Planetary Interaction colony on a planet
+ *
+ * Tracks extractors, processors, and storage for PI resources.
+ * Each colony has a CPU and powergrid budget from the planet type.
+ */
+class PlanetaryColony : public ecs::Component {
+public:
+    std::string colony_id;
+    std::string owner_id;       // player entity id
+    std::string planet_type;    // "barren", "temperate", "oceanic", "lava", "gas", "ice", "storm", "plasma"
+    std::string system_id;
+
+    struct Extractor {
+        std::string extractor_id;
+        std::string resource_type;  // e.g. "base_metals", "aqueous_liquids"
+        float cycle_time = 3600.0f; // seconds per extraction cycle
+        float cycle_progress = 0.0f;
+        int quantity_per_cycle = 100;
+        bool active = true;
+        float cpu_usage = 45.0f;
+        float powergrid_usage = 550.0f;
+    };
+
+    struct Processor {
+        std::string processor_id;
+        std::string input_type;
+        std::string output_type;
+        int input_quantity = 40;     // units consumed per cycle
+        int output_quantity = 5;     // units produced per cycle
+        float cycle_time = 1800.0f;  // seconds per processing cycle
+        float cycle_progress = 0.0f;
+        bool active = true;
+        float cpu_usage = 200.0f;
+        float powergrid_usage = 800.0f;
+    };
+
+    struct StoredResource {
+        std::string resource_type;
+        int quantity = 0;
+    };
+
+    std::vector<Extractor> extractors;
+    std::vector<Processor> processors;
+    std::vector<StoredResource> storage;
+    float storage_capacity = 10000.0f;  // units
+
+    float cpu_max = 1675.0f;
+    float powergrid_max = 6000.0f;
+
+    float usedCpu() const {
+        float total = 0.0f;
+        for (const auto& e : extractors) total += e.cpu_usage;
+        for (const auto& p : processors) total += p.cpu_usage;
+        return total;
+    }
+
+    float usedPowergrid() const {
+        float total = 0.0f;
+        for (const auto& e : extractors) total += e.powergrid_usage;
+        for (const auto& p : processors) total += p.powergrid_usage;
+        return total;
+    }
+
+    int totalStored() const {
+        int total = 0;
+        for (const auto& s : storage) total += s.quantity;
+        return total;
+    }
+
+    COMPONENT_TYPE(PlanetaryColony)
+};
+
+/**
+ * @brief Manufacturing facility for blueprint-based production
+ *
+ * Tracks manufacturing jobs: blueprint, materials, output,
+ * time remaining, and job status.
+ */
+class ManufacturingFacility : public ecs::Component {
+public:
+    std::string facility_id;
+    std::string station_id;
+    int max_jobs = 1;  // concurrent job slots
+
+    struct MaterialRequirement {
+        std::string material_id;
+        int quantity = 0;
+    };
+
+    struct ManufacturingJob {
+        std::string job_id;
+        std::string blueprint_id;
+        std::string owner_id;
+        std::string output_item_id;
+        std::string output_item_name;
+        int output_quantity = 1;
+        int runs = 1;
+        int runs_completed = 0;
+        float time_per_run = 3600.0f;   // seconds per run
+        float time_remaining = 3600.0f; // current run time remaining
+        std::string status;             // "pending", "active", "completed", "cancelled"
+        double install_cost = 0.0;
+        std::vector<MaterialRequirement> materials;
+        float material_efficiency = 0.0f;  // 0-10, reduces material cost
+        float time_efficiency = 0.0f;      // 0-20, reduces time
+    };
+
+    std::vector<ManufacturingJob> jobs;
+
+    int activeJobCount() const {
+        int count = 0;
+        for (const auto& j : jobs)
+            if (j.status == "active") ++count;
+        return count;
+    }
+
+    COMPONENT_TYPE(ManufacturingFacility)
+};
+
+/**
+ * @brief Research laboratory for invention and blueprint research
+ *
+ * Supports ME/TE research on blueprints and Tech II invention.
+ */
+class ResearchLab : public ecs::Component {
+public:
+    std::string lab_id;
+    std::string station_id;
+    int max_jobs = 1;
+
+    struct ResearchJob {
+        std::string job_id;
+        std::string blueprint_id;
+        std::string owner_id;
+        std::string research_type;       // "material_efficiency", "time_efficiency", "invention"
+        float time_remaining = 3600.0f;
+        float total_time = 3600.0f;
+        std::string status;              // "active", "completed", "failed"
+        // ME/TE research
+        int target_level = 1;            // target ME or TE level
+        // Invention
+        std::string output_blueprint_id; // T2 blueprint on success
+        float success_chance = 0.5f;     // 0.0-1.0
+        std::string datacore_1;
+        std::string datacore_2;
+        double install_cost = 0.0;
+    };
+
+    std::vector<ResearchJob> jobs;
+
+    int activeJobCount() const {
+        int count = 0;
+        for (const auto& j : jobs)
+            if (j.status == "active") ++count;
+        return count;
+    }
+
+    COMPONENT_TYPE(ResearchLab)
+};
+
 } // namespace components
 } // namespace eve
 
