@@ -948,6 +948,30 @@ void testRmlUiManagerStub() {
     mgr.HideContextMenu();
     assertTrue(true, "HideContextMenu stub callable");
 
+    mgr.SetContextMenuEntityId("entity_123");
+    assertTrue(true, "SetContextMenuEntityId stub callable");
+
+    mgr.ShowRadialMenu(400.0f, 300.0f, "entity_123");
+    assertTrue(true, "ShowRadialMenu stub callable");
+
+    mgr.HideRadialMenu();
+    assertTrue(true, "HideRadialMenu stub callable");
+
+    mgr.UpdateRadialHighlight("rad-approach");
+    assertTrue(true, "UpdateRadialHighlight stub callable");
+
+    // Test context menu callback setters
+    bool callbackFired = false;
+    mgr.SetOnApproach([&](const std::string&) { callbackFired = true; });
+    mgr.SetOnOrbit([](const std::string&, int) {});
+    mgr.SetOnKeepAtRange([](const std::string&, int) {});
+    mgr.SetOnWarpTo([](const std::string&, int) {});
+    mgr.SetOnLockTarget([](const std::string&) {});
+    mgr.SetOnAlignTo([](const std::string&) {});
+    mgr.SetOnShowInfo([](const std::string&) {});
+    mgr.SetOnLookAt([](const std::string&) {});
+    assertTrue(true, "Context menu callback setters callable");
+
     assertTrue(!mgr.WantsMouseInput(), "WantsMouseInput returns false when uninitialized");
     assertTrue(!mgr.WantsKeyboardInput(), "WantsKeyboardInput returns false when uninitialized");
 }

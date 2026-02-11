@@ -12,6 +12,7 @@
 #ifdef USE_RMLUI
 
 #include "ui/rml_ui_manager.h"
+#include "ui/rml_event_listener.h"
 #include "core/entity.h"
 
 #include <RmlUi/Core.h>
@@ -516,6 +517,7 @@ bool RmlUiManager::LoadDocuments() {
         {"neocom",       resourcePath_ + "/rml/neocom.rml",        true},
         {"chat",         resourcePath_ + "/rml/chat.rml",          false},
         {"context_menu", resourcePath_ + "/rml/context_menu.rml",  false},
+        {"radial_menu",  resourcePath_ + "/rml/radial_menu.rml",   false},
         {"drone_bay",    resourcePath_ + "/rml/drone_bay.rml",     false},
     };
 
@@ -535,7 +537,61 @@ bool RmlUiManager::LoadDocuments() {
         }
     }
 
+    InstallContextMenuEvents();
+
     return allOk;
+}
+
+void RmlUiManager::InstallContextMenuEvents() {
+    auto it = documents_.find("context_menu");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+    contextMenuEvents_.Clear();
+
+    contextMenuEvents_.Install(doc, "ctx-lock", "click",
+        [this](Rml::Event&) {
+            if (onLockTarget_) onLockTarget_(contextMenuEntityId_);
+            HideContextMenu();
+        });
+    contextMenuEvents_.Install(doc, "ctx-approach", "click",
+        [this](Rml::Event&) {
+            if (onApproach_) onApproach_(contextMenuEntityId_);
+            HideContextMenu();
+        });
+    contextMenuEvents_.Install(doc, "ctx-orbit", "click",
+        [this](Rml::Event&) {
+            if (onOrbit_) onOrbit_(contextMenuEntityId_, 500);
+            HideContextMenu();
+        });
+    contextMenuEvents_.Install(doc, "ctx-keep-range", "click",
+        [this](Rml::Event&) {
+            if (onKeepAtRange_) onKeepAtRange_(contextMenuEntityId_, 2500);
+            HideContextMenu();
+        });
+    contextMenuEvents_.Install(doc, "ctx-align", "click",
+        [this](Rml::Event&) {
+            if (onAlignTo_) onAlignTo_(contextMenuEntityId_);
+            HideContextMenu();
+        });
+    contextMenuEvents_.Install(doc, "ctx-warp", "click",
+        [this](Rml::Event&) {
+            if (onWarpTo_) onWarpTo_(contextMenuEntityId_, 0);
+            HideContextMenu();
+        });
+    contextMenuEvents_.Install(doc, "ctx-show-info", "click",
+        [this](Rml::Event&) {
+            if (onShowInfo_) onShowInfo_(contextMenuEntityId_);
+            HideContextMenu();
+        });
+    contextMenuEvents_.Install(doc, "ctx-look-at", "click",
+        [this](Rml::Event&) {
+            if (onLookAt_) onLookAt_(contextMenuEntityId_);
+            HideContextMenu();
+        });
+
+    std::cout << "[RmlUiManager] Context menu events installed ("
+              << contextMenuEvents_.Count() << " listeners)\n";
 }
 
 void RmlUiManager::UpdateHudElements() {
@@ -1167,6 +1223,61 @@ void RmlUiManager::HideContextMenu() {
     }
 }
 
+void RmlUiManager::SetContextMenuEntityId(const std::string& entityId) {
+    contextMenuEntityId_ = entityId;
+}
+
+void RmlUiManager::ShowRadialMenu(float centerX, float centerY,
+                                   const std::string& entityId) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("radial_menu");
+    if (it == documents_.end() || !it->second) return;
+
+    contextMenuEntityId_ = entityId;
+
+    auto* doc = it->second;
+    auto* menuEl = doc->GetElementById("radial-menu");
+    if (menuEl) {
+        char style[128];
+        std::snprintf(style, sizeof(style),
+                      "top: %.0fdp; left: %.0fdp;", centerY - 100.0f, centerX - 100.0f);
+        menuEl->SetAttribute("style", Rml::String(style));
+    }
+
+    doc->Show();
+}
+
+void RmlUiManager::HideRadialMenu() {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("radial_menu");
+    if (it != documents_.end() && it->second) {
+        it->second->Hide();
+    }
+}
+
+void RmlUiManager::UpdateRadialHighlight(const std::string& segmentId) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("radial_menu");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+
+    // Clear all highlights
+    const char* segments[] = {
+        "rad-approach", "rad-orbit", "rad-warp", "rad-lock",
+        "rad-range", "rad-align", "rad-info", "rad-look"
+    };
+    for (const char* id : segments) {
+        auto* el = doc->GetElementById(id);
+        if (el) {
+            el->SetClass("highlighted", (segmentId == id));
+        }
+    }
+}
+
 bool RmlUiManager::WantsMouseInput() const {
     if (!initialized_ || !context_) return false;
     return context_->GetHoverElement() != nullptr;
@@ -1253,6 +1364,10 @@ void RmlUiManager::AddChatMessage(const ChatMessageInfo&) {}
 void RmlUiManager::SetChatChannel(const std::string&, int) {}
 void RmlUiManager::ShowContextMenu(const std::string&, const std::string&, float, float) {}
 void RmlUiManager::HideContextMenu() {}
+void RmlUiManager::SetContextMenuEntityId(const std::string&) {}
+void RmlUiManager::ShowRadialMenu(float, float, const std::string&) {}
+void RmlUiManager::HideRadialMenu() {}
+void RmlUiManager::UpdateRadialHighlight(const std::string&) {}
 
 bool RmlUiManager::WantsMouseInput() const { return false; }
 bool RmlUiManager::WantsKeyboardInput() const { return false; }

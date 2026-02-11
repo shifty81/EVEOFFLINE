@@ -296,7 +296,6 @@ set(IMGUI_UI_SOURCES
     src/ui/ui_manager.cpp
     src/ui/eve_panels.cpp
     src/ui/eve_target_list.cpp
-    src/ui/context_menu.cpp
     src/ui/tactical_overlay.cpp
     src/ui/inventory_panel.cpp
     src/ui/fitting_panel.cpp
@@ -310,7 +309,6 @@ set(IMGUI_UI_SOURCES
     src/ui/chat_panel.cpp
     src/ui/drone_control_panel.cpp
     src/ui/notification_manager.cpp
-    src/ui/radial_menu.cpp
     src/ui/probe_scanner_panel.cpp
 )
 
@@ -354,6 +352,8 @@ set(CLIENT_SOURCES
     src/network/network_manager.cpp
     src/ui/input_handler.cpp
     src/ui/entity_picker.cpp
+    src/ui/context_menu.cpp
+    src/ui/radial_menu.cpp
     src/ui/rml_ui_manager.cpp
     src/ui/photon/photon_renderer.cpp
     src/ui/photon/photon_context.cpp
