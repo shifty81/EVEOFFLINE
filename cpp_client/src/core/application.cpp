@@ -307,23 +307,7 @@ void Application::setupUICallbacks() {
     
     m_contextMenu->SetShowInfoCallback([this](const std::string& entityId) {
         std::cout << "[Info] Show info for: " << entityId << std::endl;
-        auto entity = m_gameClient->getEntityManager().getEntity(entityId);
-        if (entity && m_photonHUD) {
-            auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-            photon::InfoPanelData info;
-            info.name = entity->getShipName().empty() ? entityId : entity->getShipName();
-            info.type = entity->getShipType();
-            info.faction = entity->getFaction();
-            const auto& health = entity->getHealth();
-            info.shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
-            info.armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
-            info.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
-            info.hasHealth = true;
-            if (playerEntity) {
-                info.distance = glm::distance(playerEntity->getPosition(), entity->getPosition());
-            }
-            m_photonHUD->showInfoPanel(info);
-        }
+        openInfoPanelForEntity(entityId);
     });
     
     std::cout << "  - Context menu callbacks wired" << std::endl;
@@ -364,23 +348,7 @@ void Application::setupUICallbacks() {
             case UI::RadialMenu::Action::SHOW_INFO:
                 {
                     std::cout << "[Info] Show info for: " << entityId << std::endl;
-                    auto entity = m_gameClient->getEntityManager().getEntity(entityId);
-                    if (entity && m_photonHUD) {
-                        auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-                        photon::InfoPanelData info;
-                        info.name = entity->getShipName().empty() ? entityId : entity->getShipName();
-                        info.type = entity->getShipType();
-                        info.faction = entity->getFaction();
-                        const auto& health = entity->getHealth();
-                        info.shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
-                        info.armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
-                        info.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
-                        info.hasHealth = true;
-                        if (playerEntity) {
-                            info.distance = glm::distance(playerEntity->getPosition(), entity->getPosition());
-                        }
-                        m_photonHUD->showInfoPanel(info);
-                    }
+                    openInfoPanelForEntity(entityId);
                 }
                 break;
             default:
@@ -408,23 +376,7 @@ void Application::setupUICallbacks() {
     });
     m_photonHUD->setSelectedItemInfoCb([this]() {
         if (!m_currentTargetId.empty()) {
-            auto entity = m_gameClient->getEntityManager().getEntity(m_currentTargetId);
-            if (entity && m_photonHUD) {
-                auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-                photon::InfoPanelData info;
-                info.name = entity->getShipName().empty() ? m_currentTargetId : entity->getShipName();
-                info.type = entity->getShipType();
-                info.faction = entity->getFaction();
-                const auto& health = entity->getHealth();
-                info.shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
-                info.armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
-                info.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
-                info.hasHealth = true;
-                if (playerEntity) {
-                    info.distance = glm::distance(playerEntity->getPosition(), entity->getPosition());
-                }
-                m_photonHUD->showInfoPanel(info);
-            }
+            openInfoPanelForEntity(m_currentTargetId);
         }
     });
     std::cout << "  - Selected item panel callbacks wired" << std::endl;
@@ -1079,6 +1031,26 @@ void Application::showEntityContextMenu(const std::string& entityId, double x, d
     m_contextMenuX = x;
     m_contextMenuY = y;
     m_showContextMenu = true;
+}
+
+void Application::openInfoPanelForEntity(const std::string& entityId) {
+    auto entity = m_gameClient->getEntityManager().getEntity(entityId);
+    if (!entity || !m_photonHUD) return;
+
+    auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+    photon::InfoPanelData info;
+    info.name = entity->getShipName().empty() ? entityId : entity->getShipName();
+    info.type = entity->getShipType();
+    info.faction = entity->getFaction();
+    const auto& health = entity->getHealth();
+    info.shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
+    info.armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
+    info.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
+    info.hasHealth = true;
+    if (playerEntity) {
+        info.distance = glm::distance(playerEntity->getPosition(), entity->getPosition());
+    }
+    m_photonHUD->showInfoPanel(info);
 }
 
 void Application::commandApproach(const std::string& entityId) {

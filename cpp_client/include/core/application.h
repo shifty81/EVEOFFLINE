@@ -218,6 +218,9 @@ private:
     void spawnDemoNPCEntities();
     void updateLocalMovement(float deltaTime);
     void updateTargetListUi(const glm::vec3& playerPosition);
+    
+    // Build info panel data for an entity
+    void openInfoPanelForEntity(const std::string& entityId);
 
     static Application* s_instance;
 

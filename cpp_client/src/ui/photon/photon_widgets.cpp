@@ -8,6 +8,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+static constexpr float METERS_PER_AU = 149597870700.0f;
+
 namespace photon {
 
 // ── Panel ───────────────────────────────────────────────────────────
@@ -1152,7 +1154,7 @@ void infoPanelDraw(PhotonContext& ctx, PanelState& state,
     } else if (data.distance < 1000000.0f) {
         std::snprintf(distBuf, sizeof(distBuf), "Distance: %.1f km", data.distance / 1000.0f);
     } else {
-        std::snprintf(distBuf, sizeof(distBuf), "Distance: %.2f AU", data.distance / 149597870700.0f);
+        std::snprintf(distBuf, sizeof(distBuf), "Distance: %.2f AU", data.distance / METERS_PER_AU);
     }
     rr.drawText(distBuf, {x, y}, t.textPrimary);
     y += 16.0f;
