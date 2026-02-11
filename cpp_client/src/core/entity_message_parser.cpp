@@ -102,6 +102,10 @@ bool EntityMessageParser::parseStateUpdate(const std::string& dataJson, EntityMa
     try {
         auto data = nlohmann::json::parse(dataJson);
         
+        // Extract snapshot metadata
+        uint64_t sequence = data.value("sequence", 0ULL);
+        uint64_t timestamp = data.value("timestamp", 0ULL);
+        
         // Extract entities array
         if (!data.contains("entities") || !data["entities"].is_array()) {
             std::cerr << "STATE_UPDATE missing entities array" << std::endl;
