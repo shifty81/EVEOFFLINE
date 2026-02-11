@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <chrono>
 
 namespace eve {
 
@@ -309,8 +310,15 @@ void GameSession::handleChat(const network::ClientConnection& client,
 // ---------------------------------------------------------------------------
 
 std::string GameSession::buildStateUpdate() const {
+    // Increment snapshot sequence number for packet loss detection
+    uint64_t seq = snapshot_sequence_++;
+    
     std::ostringstream json;
-    json << "{\"type\":\"state_update\",\"data\":{\"entities\":[";
+    json << "{\"type\":\"state_update\",\"data\":{"
+         << "\"sequence\":" << seq << ","
+         << "\"timestamp\":" << std::chrono::duration_cast<std::chrono::milliseconds>(
+                std::chrono::steady_clock::now().time_since_epoch()).count() << ","
+         << "\"entities\":[";
 
     auto entities = world_->getAllEntities();
     bool first = true;

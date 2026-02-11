@@ -1023,6 +1023,41 @@ public:
     COMPONENT_TYPE(Leaderboard)
 };
 
+/**
+ * @brief Station entity — represents a dockable station in space
+ */
+class Station : public ecs::Component {
+public:
+    std::string station_name;
+    float docking_range = 2500.0f;       // metres
+    float repair_cost_per_hp = 1.0f;     // ISK per HP repaired
+    int docked_count = 0;                // number of ships currently docked
+
+    COMPONENT_TYPE(Station)
+};
+
+/**
+ * @brief Docked state — attached to entities that are inside a station
+ */
+class Docked : public ecs::Component {
+public:
+    std::string station_id;              // entity id of the station
+
+    COMPONENT_TYPE(Docked)
+};
+
+/**
+ * @brief Wreck entity — remains of a destroyed ship
+ */
+class Wreck : public ecs::Component {
+public:
+    std::string source_entity_id;        // entity that was destroyed
+    float lifetime_remaining = 1800.0f;  // seconds before despawn (default 30 min)
+    bool salvaged = false;               // true once a player has salvaged it
+
+    COMPONENT_TYPE(Wreck)
+};
+
 } // namespace components
 } // namespace eve
 
