@@ -108,10 +108,43 @@ public:
     /** Set callback for module slot clicks (slot index passed). */
     void setModuleCallback(const std::function<void(int)>& cb) { m_moduleCallback = cb; }
 
+    // ── Selected item action callbacks ──────────────────────────────
+
+    /** Set callback for selected item action buttons (orbit, approach, warp, info). */
+    void setSelectedItemOrbitCb(const std::function<void()>& cb)    { m_selOrbitCb = cb; }
+    void setSelectedItemApproachCb(const std::function<void()>& cb) { m_selApproachCb = cb; }
+    void setSelectedItemWarpCb(const std::function<void()>& cb)     { m_selWarpCb = cb; }
+    void setSelectedItemInfoCb(const std::function<void()>& cb)     { m_selInfoCb = cb; }
+
+    // ── Movement mode indicator ─────────────────────────────────────
+
+    /** Set the currently active movement mode text (empty to hide). */
+    void setModeIndicator(const std::string& text) { m_modeText = text; }
+
+    // ── Info panel ──────────────────────────────────────────────────
+
+    /** Show the info panel for an entity. */
+    void showInfoPanel(const InfoPanelData& data);
+
+    /** Close the info panel. */
+    void closeInfoPanel() { m_infoPanelState.open = false; }
+
+    /** Check if the info panel is open. */
+    bool isInfoPanelOpen() const { return m_infoPanelState.open; }
+
+    // ── Overview tab API ────────────────────────────────────────────
+
+    /** Get the active overview tab index. */
+    int  getActiveOverviewTab() const { return m_overviewActiveTab; }
+
+    /** Set the active overview tab index. */
+    void setActiveOverviewTab(int tab) { m_overviewActiveTab = tab; }
+
 private:
     // Panel states (persistent across frames)
     PanelState m_overviewState;
     PanelState m_selectedItemState;
+    PanelState m_infoPanelState;
 
     // Neocom config
     float m_neocomWidth = 40.0f;
@@ -120,6 +153,10 @@ private:
     // Callbacks
     std::function<void(int)> m_neocomCallback;
     std::function<void(int)> m_moduleCallback;
+    std::function<void()>    m_selOrbitCb;
+    std::function<void()>    m_selApproachCb;
+    std::function<void()>    m_selWarpCb;
+    std::function<void()>    m_selInfoCb;
 
     // Internal layout helpers
     void drawShipHUD(PhotonContext& ctx, const ShipHUDData& ship);
@@ -129,10 +166,21 @@ private:
                           const std::vector<OverviewEntry>& entries);
     void drawSelectedItemPanel(PhotonContext& ctx,
                               const SelectedItemInfo& info);
+    void drawModeIndicator(PhotonContext& ctx);
+    void drawInfoPanel(PhotonContext& ctx);
 
     // Animation state
     float m_displayCapFrac = 1.0f;   // smoothed capacitor display value
     float m_time           = 0.0f;   // accumulated time for pulse animations
+
+    // Mode indicator
+    std::string m_modeText;
+
+    // Overview tab state
+    int m_overviewActiveTab = 0;
+
+    // Info panel data
+    InfoPanelData m_infoPanelData;
 };
 
 } // namespace photon

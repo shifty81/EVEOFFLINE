@@ -365,6 +365,22 @@ bool textInput(PhotonContext& ctx, const char* label,
                const Rect& r, TextInputState& state,
                const char* placeholder = nullptr);
 
+// ── Mode Indicator ──────────────────────────────────────────────────
+
+/**
+ * Movement mode indicator — EVE-style on-screen text showing the
+ * currently active movement mode (Approach, Orbit, Keep at Range,
+ * Dock) near the ship HUD.
+ *
+ * @param ctx       Context.
+ * @param pos       Centre position for the indicator.
+ * @param modeText  Text to display (e.g. "APPROACH — click a target").
+ *                  Pass empty string or nullptr to hide.
+ * @param color     Accent color for the indicator.
+ */
+void modeIndicator(PhotonContext& ctx, Vec2 pos,
+                   const char* modeText, const Color& color = {});
+
 // ── Notification Toast ──────────────────────────────────────────────
 
 /**
@@ -377,5 +393,45 @@ bool textInput(PhotonContext& ctx, const char* label,
  */
 void notification(PhotonContext& ctx, const std::string& text,
                   const Color& color = {});
+
+// ── Info Panel ──────────────────────────────────────────────────────
+
+/**
+ * Data for the entity info panel (Show Info).
+ */
+struct InfoPanelData {
+    std::string name;
+    std::string type;           // e.g. "Frigate", "Cruiser", "Station"
+    std::string faction;        // e.g. "Crimson Order", "Venom Syndicate"
+    float shieldPct   = 0.0f;   // 0–1
+    float armorPct    = 0.0f;
+    float hullPct     = 0.0f;
+    float distance    = 0.0f;   // metres
+    float velocity    = 0.0f;   // m/s
+    float signature   = 0.0f;   // signature radius in metres
+    bool  hasHealth   = false;  // whether to show health bars
+
+    bool isEmpty() const { return name.empty(); }
+};
+
+/**
+ * Draw an entity info panel (the "Show Info" window).
+ *
+ * @param ctx    Context.
+ * @param state  Persistent panel state (position, open, minimized).
+ * @param data   Entity information to display.
+ */
+void infoPanelDraw(PhotonContext& ctx, PanelState& state,
+                   const InfoPanelData& data);
+
+// ── Overview Header with click support ──────────────────────────────
+
+/**
+ * Draw overview tab header with interactive tab switching.
+ * Returns the index of the clicked tab, or -1 if none clicked.
+ */
+int overviewHeaderInteractive(PhotonContext& ctx, const Rect& r,
+                              const std::vector<std::string>& tabs,
+                              int activeTab);
 
 } // namespace photon

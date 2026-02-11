@@ -8,6 +8,8 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+static constexpr float METERS_PER_AU = 149597870700.0f;
+
 namespace photon {
 
 // ── Panel ───────────────────────────────────────────────────────────
@@ -1067,6 +1069,182 @@ void notification(PhotonContext& ctx, const std::string& text,
     // Text
     float textY = notifY + (notifH - 13.0f) * 0.5f;
     rr.drawText(text, {notifX + 12.0f, textY}, t.textPrimary);
+}
+
+// ── Mode Indicator ──────────────────────────────────────────────────
+
+void modeIndicator(PhotonContext& ctx, Vec2 pos,
+                   const char* modeText, const Color& color) {
+    if (!modeText || modeText[0] == '\0') return;
+
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    float tw = rr.measureText(modeText);
+    float padding = 12.0f;
+    float w = tw + padding * 2.0f;
+    float h = 26.0f;
+    float x = pos.x - w * 0.5f;
+    float y = pos.y;
+
+    Color accentCol = (color.a > 0.01f) ? color : t.accentPrimary;
+
+    // Dark background pill
+    rr.drawRoundedRect({x, y, w, h}, t.bgPanel.withAlpha(0.85f), 4.0f);
+    rr.drawRoundedRectOutline({x, y, w, h}, accentCol.withAlpha(0.6f), 4.0f);
+
+    // Left accent bar
+    rr.drawRect({x, y + 2.0f, 3.0f, h - 4.0f}, accentCol);
+
+    // Text
+    float textY = y + (h - 13.0f) * 0.5f;
+    rr.drawText(modeText, {x + padding, textY}, accentCol);
+}
+
+// ── Info Panel ──────────────────────────────────────────────────────
+
+void infoPanelDraw(PhotonContext& ctx, PanelState& state,
+                   const InfoPanelData& data) {
+    if (!state.open || data.isEmpty()) return;
+
+    PanelFlags flags;
+    flags.showHeader   = true;
+    flags.showClose    = true;
+    flags.showMinimize = true;
+    flags.drawBorder   = true;
+
+    if (!panelBeginStateful(ctx, "Show Info", state, flags)) {
+        panelEnd(ctx);
+        return;
+    }
+
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+    float hh = t.headerHeight;
+    float x = state.bounds.x + t.padding;
+    float y = state.bounds.y + hh + 8.0f;
+    float contentW = state.bounds.w - t.padding * 2.0f;
+
+    // Entity name
+    rr.drawText(data.name, {x, y}, t.accentPrimary);
+    y += 18.0f;
+
+    // Type
+    char typeBuf[128];
+    std::snprintf(typeBuf, sizeof(typeBuf), "Type: %s", data.type.c_str());
+    rr.drawText(typeBuf, {x, y}, t.textSecondary);
+    y += 16.0f;
+
+    // Faction
+    if (!data.faction.empty()) {
+        char facBuf[128];
+        std::snprintf(facBuf, sizeof(facBuf), "Faction: %s", data.faction.c_str());
+        rr.drawText(facBuf, {x, y}, t.textSecondary);
+        y += 16.0f;
+    }
+
+    // Separator
+    rr.drawRect({x, y, contentW, 1.0f}, t.borderSubtle);
+    y += 8.0f;
+
+    // Distance
+    char distBuf[64];
+    if (data.distance < 1000.0f) {
+        std::snprintf(distBuf, sizeof(distBuf), "Distance: %.0f m", data.distance);
+    } else if (data.distance < 1000000.0f) {
+        std::snprintf(distBuf, sizeof(distBuf), "Distance: %.1f km", data.distance / 1000.0f);
+    } else {
+        std::snprintf(distBuf, sizeof(distBuf), "Distance: %.2f AU", data.distance / METERS_PER_AU);
+    }
+    rr.drawText(distBuf, {x, y}, t.textPrimary);
+    y += 16.0f;
+
+    // Velocity
+    if (data.velocity > 0.0f) {
+        char velBuf[64];
+        std::snprintf(velBuf, sizeof(velBuf), "Velocity: %.0f m/s", data.velocity);
+        rr.drawText(velBuf, {x, y}, t.textPrimary);
+        y += 16.0f;
+    }
+
+    // Signature radius
+    if (data.signature > 0.0f) {
+        char sigBuf[64];
+        std::snprintf(sigBuf, sizeof(sigBuf), "Signature: %.0f m", data.signature);
+        rr.drawText(sigBuf, {x, y}, t.textPrimary);
+        y += 16.0f;
+    }
+
+    // Health bars
+    if (data.hasHealth) {
+        rr.drawRect({x, y, contentW, 1.0f}, t.borderSubtle);
+        y += 6.0f;
+
+        float barW = contentW - 20.0f;
+        float barH = 12.0f;
+        Color bgBar = t.bgSecondary.withAlpha(0.4f);
+
+        rr.drawText("S", {x, y + 1.0f}, t.textSecondary);
+        rr.drawProgressBar({x + 14.0f, y, barW, barH}, data.shieldPct,
+                           t.shield, bgBar);
+        y += barH + 4.0f;
+
+        rr.drawText("A", {x, y + 1.0f}, t.textSecondary);
+        rr.drawProgressBar({x + 14.0f, y, barW, barH}, data.armorPct,
+                           t.armor, bgBar);
+        y += barH + 4.0f;
+
+        rr.drawText("H", {x, y + 1.0f}, t.textSecondary);
+        rr.drawProgressBar({x + 14.0f, y, barW, barH}, data.hullPct,
+                           t.hull, bgBar);
+        y += barH + 4.0f;
+    }
+
+    panelEnd(ctx);
+}
+
+// ── Overview Header Interactive ─────────────────────────────────────
+
+int overviewHeaderInteractive(PhotonContext& ctx, const Rect& r,
+                              const std::vector<std::string>& tabs,
+                              int activeTab) {
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    int clickedTab = -1;
+
+    // Header background
+    rr.drawRect(r, t.bgHeader);
+
+    // Tabs (clickable)
+    float tabX = r.x + 4.0f;
+    float tabH = r.h - 4.0f;
+    for (int i = 0; i < static_cast<int>(tabs.size()); ++i) {
+        float tw = rr.measureText(tabs[i]) + 16.0f;
+        Rect tabRect = {tabX, r.y + 2.0f, tw, tabH};
+
+        WidgetID tabID = hashID("ovtab") ^ static_cast<uint32_t>(i);
+        bool clicked = ctx.buttonBehavior(tabRect, tabID);
+        if (clicked) clickedTab = i;
+
+        bool hovered = ctx.isHot(tabID);
+
+        if (i == activeTab) {
+            rr.drawRect(tabRect, t.selection);
+            rr.drawText(tabs[i], {tabX + 8.0f, r.y + 5.0f}, t.textPrimary);
+        } else if (hovered) {
+            rr.drawRect(tabRect, t.hover);
+            rr.drawText(tabs[i], {tabX + 8.0f, r.y + 5.0f}, t.textPrimary);
+        } else {
+            rr.drawText(tabs[i], {tabX + 8.0f, r.y + 5.0f}, t.textSecondary);
+        }
+        tabX += tw + 2.0f;
+    }
+
+    // Bottom border
+    rr.drawRect({r.x, r.bottom() - 1.0f, r.w, 1.0f}, t.borderSubtle);
+
+    return clickedTab;
 }
 
 } // namespace photon

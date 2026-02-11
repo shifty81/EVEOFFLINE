@@ -218,6 +218,9 @@ private:
     void spawnDemoNPCEntities();
     void updateLocalMovement(float deltaTime);
     void updateTargetListUi(const glm::vec3& playerPosition);
+    
+    // Build info panel data for an entity
+    void openInfoPanelForEntity(const std::string& entityId);
 
     static Application* s_instance;
 
@@ -278,6 +281,9 @@ private:
     
     // D-key docking mode
     bool m_dockingModeActive = false;
+    
+    // Active movement mode indicator text
+    std::string m_activeModeText;
     
     // Local/demo mode
     bool m_localPlayerSpawned = false;
