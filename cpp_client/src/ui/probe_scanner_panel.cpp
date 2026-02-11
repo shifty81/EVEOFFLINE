@@ -1,5 +1,5 @@
 #include "ui/probe_scanner_panel.h"
-#include "ui/eve_panels.h"
+#include "ui/hud_panels.h"
 #include <imgui.h>
 #include <algorithm>
 
@@ -9,8 +9,8 @@ ProbeScannerPanel::ProbeScannerPanel() = default;
 
 void ProbeScannerPanel::RenderContents() {
     // Probe controls header
-    ImGui::TextColored(ImVec4(EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-                              EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]),
+    ImGui::TextColored(ImVec4(SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+                              SpaceColors::ACCENT_PRIMARY[2], SpaceColors::ACCENT_PRIMARY[3]),
                        "PROBE SCANNER");
     ImGui::Separator();
     ImGui::Spacing();
@@ -56,8 +56,8 @@ void ProbeScannerPanel::RenderContents() {
 
     // Results table
     if (m_results.empty()) {
-        ImGui::TextColored(ImVec4(EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-                                  EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+        ImGui::TextColored(ImVec4(SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+                                  SpaceColors::TEXT_SECONDARY[2], SpaceColors::TEXT_SECONDARY[3]),
                            "No scan results. Deploy probes and click Analyze.");
         return;
     }

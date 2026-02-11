@@ -18,9 +18,9 @@
 #include "rendering/window.h"
 #include "ui/ui_manager.h"
 #include "ui/dscan_panel.h"
-#include "ui/neocom_panel.h"
-#include "ui/eve_panels.h"
-#include "ui/photon/photon_context.h"
+#include "ui/sidebar_panel.h"
+#include "ui/hud_panels.h"
+#include "ui/atlas/atlas_context.h"
 #include <iostream>
 #include <cmath>
 
@@ -65,7 +65,7 @@ int main() {
     std::cout << "[Test] UIManager initialized" << std::endl;
 
     // ---- Setup Photon context for module rack rendering ----
-    photon::PhotonContext photonCtx;
+    atlas::AtlasContext atlasCtx;
 
     // ---- Setup demo ship status ----
     UI::ShipStatus shipStatus;
@@ -96,7 +96,7 @@ int main() {
     });
 
     // ---- Neocom is visible by default ----
-    auto* neocom = uiManager->GetNeocomPanel();
+    auto* neocom = uiManager->GetSidebarPanel();
     neocom->SetVisible(true);
 
     // Wire up a few Neocom callbacks for testing
@@ -151,7 +151,7 @@ int main() {
             ImGui::Begin("##ModuleRackDemo", nullptr,
                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground |
                 ImGuiWindowFlags_NoScrollbar);
-            UI::EVEPanels::RenderModuleRack(photonCtx, moduleSlots, 8);
+            UI::HUDPanels::RenderModuleRack(atlasCtx, moduleSlots, 8);
             ImGui::End();
         }
 

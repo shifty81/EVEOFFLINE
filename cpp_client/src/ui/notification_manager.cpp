@@ -1,6 +1,6 @@
 #include "ui/notification_manager.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_colors.h"
+#include "ui/space_colors.h"
 #include <imgui.h>
 #include <algorithm>
 #include <string>
@@ -107,22 +107,22 @@ void NotificationManager::RenderToast(Notification& notif, int index) {
     ImVec4 accentColor;
     switch (notif.type) {
         case NotificationType::Success:
-            accentColor = ImVec4(EVEColors::SUCCESS[0], EVEColors::SUCCESS[1],
-                                  EVEColors::SUCCESS[2], alpha);
+            accentColor = ImVec4(SpaceColors::SUCCESS[0], SpaceColors::SUCCESS[1],
+                                  SpaceColors::SUCCESS[2], alpha);
             break;
         case NotificationType::Warning:
-            accentColor = ImVec4(EVEColors::WARNING[0], EVEColors::WARNING[1],
-                                  EVEColors::WARNING[2], alpha);
+            accentColor = ImVec4(SpaceColors::WARNING[0], SpaceColors::WARNING[1],
+                                  SpaceColors::WARNING[2], alpha);
             break;
         case NotificationType::Danger:
         case NotificationType::Combat:
-            accentColor = ImVec4(EVEColors::DANGER[0], EVEColors::DANGER[1],
-                                  EVEColors::DANGER[2], alpha);
+            accentColor = ImVec4(SpaceColors::DANGER[0], SpaceColors::DANGER[1],
+                                  SpaceColors::DANGER[2], alpha);
             break;
         case NotificationType::Info:
         default:
-            accentColor = ImVec4(EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-                                  EVEColors::ACCENT_PRIMARY[2], alpha);
+            accentColor = ImVec4(SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+                                  SpaceColors::ACCENT_PRIMARY[2], alpha);
             break;
     }
 
@@ -132,8 +132,8 @@ void NotificationManager::RenderToast(Notification& notif, int index) {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 3.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 6));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(
-        EVEColors::BG_TOOLTIP[0], EVEColors::BG_TOOLTIP[1],
-        EVEColors::BG_TOOLTIP[2], EVEColors::BG_TOOLTIP[3] * alpha));
+        SpaceColors::BG_TOOLTIP[0], SpaceColors::BG_TOOLTIP[1],
+        SpaceColors::BG_TOOLTIP[2], SpaceColors::BG_TOOLTIP[3] * alpha));
     ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(
         accentColor.x, accentColor.y, accentColor.z, 0.6f * alpha));
 
@@ -152,8 +152,8 @@ void NotificationManager::RenderToast(Notification& notif, int index) {
     // Dismiss button
     ImGui::SameLine(TOAST_WIDTH - 35.0f);
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(
-        EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-        EVEColors::TEXT_SECONDARY[2], alpha));
+        SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+        SpaceColors::TEXT_SECONDARY[2], alpha));
     std::string dismissId = "x##dismiss_" + notif.id;
     if (ImGui::SmallButton(dismissId.c_str())) {
         notif.dismissed = true;
@@ -162,8 +162,8 @@ void NotificationManager::RenderToast(Notification& notif, int index) {
 
     // Message
     ImGui::TextColored(ImVec4(
-        EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
-        EVEColors::TEXT_PRIMARY[2], 0.9f * alpha),
+        SpaceColors::TEXT_PRIMARY[0], SpaceColors::TEXT_PRIMARY[1],
+        SpaceColors::TEXT_PRIMARY[2], 0.9f * alpha),
         "%s", notif.message.c_str());
 
     ImGui::End();

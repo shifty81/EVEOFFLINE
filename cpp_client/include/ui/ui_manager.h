@@ -6,9 +6,9 @@
 #include <memory>
 #include <unordered_map>
 #include <glm/glm.hpp>
-#include "ui/photon/photon_context.h"
-#include "ui/photon/photon_hud.h"
-#include "ui/photon/photon_widgets.h"
+#include "ui/atlas/atlas_context.h"
+#include "ui/atlas/atlas_hud.h"
+#include "ui/atlas/atlas_widgets.h"
 #include "ui/layout_manager.h"
 
 namespace eve {
@@ -18,14 +18,14 @@ namespace eve {
 namespace UI {
 
 // Forward declarations — legacy panel objects kept for data storage / API compat
-class EVETargetList;
+class TargetList;
 class InventoryPanel;
 class FittingPanel;
 class MissionPanel;
 class OverviewPanel;
 class MarketPanel;
 class DScanPanel;
-class NeocomPanel;
+class SidebarPanel;
 class ChatPanel;
 class DroneControlPanel;
 class NotificationManager;
@@ -148,7 +148,7 @@ public:
     void Shutdown();
 
     // Frame management — caller must fill InputState from GLFW each frame
-    void BeginFrame(const photon::InputState& input);
+    void BeginFrame(const atlas::InputState& input);
     void EndFrame();
 
     // Render all UI panels via Photon
@@ -170,7 +170,7 @@ public:
     bool IsPanelVisible(const std::string& panel_name) const;
 
     // Get target list
-    EVETargetList* GetTargetList() { return m_targetList.get(); }
+    TargetList* GetTargetList() { return m_targetList.get(); }
 
     // Panel accessors (legacy panel objects kept for data storage)
     InventoryPanel* GetInventoryPanel() { return m_inventoryPanel.get(); }
@@ -179,7 +179,7 @@ public:
     OverviewPanel* GetOverviewPanel() { return m_overviewPanel.get(); }
     MarketPanel* GetMarketPanel() { return m_marketPanel.get(); }
     DScanPanel* GetDScanPanel() { return m_dscanPanel.get(); }
-    NeocomPanel* GetNeocomPanel() { return m_neocomPanel.get(); }
+    SidebarPanel* GetSidebarPanel() { return m_sidebarPanel.get(); }
     ChatPanel* GetChatPanel() { return m_chatPanel.get(); }
     DroneControlPanel* GetDroneControlPanel() { return m_droneControlPanel.get(); }
     NotificationManager* GetNotificationManager() { return m_notificationManager.get(); }
@@ -226,12 +226,12 @@ public:
     void ToggleCompactMode();
 
     // Access Photon context for advanced / external usage
-    photon::PhotonContext& GetPhotonContext() { return m_ctx; }
+    atlas::AtlasContext& GetAtlasContext() { return m_ctx; }
 
 private:
     // Photon UI core
-    photon::PhotonContext m_ctx;
-    photon::PhotonHUD     m_hud;
+    atlas::AtlasContext m_ctx;
+    atlas::AtlasHUD     m_hud;
 
     // UI state
     ShipStatus ship_status_;
@@ -241,14 +241,14 @@ private:
     glm::vec3 m_playerPosition{0.0f};
 
     // Legacy panel objects (kept for data storage and API compatibility)
-    std::unique_ptr<EVETargetList> m_targetList;
+    std::unique_ptr<TargetList> m_targetList;
     std::unique_ptr<InventoryPanel> m_inventoryPanel;
     std::unique_ptr<FittingPanel> m_fittingPanel;
     std::unique_ptr<MissionPanel> m_missionPanel;
     std::unique_ptr<OverviewPanel> m_overviewPanel;
     std::unique_ptr<MarketPanel> m_marketPanel;
     std::unique_ptr<DScanPanel> m_dscanPanel;
-    std::unique_ptr<NeocomPanel> m_neocomPanel;
+    std::unique_ptr<SidebarPanel> m_sidebarPanel;
     std::unique_ptr<ChatPanel> m_chatPanel;
     std::unique_ptr<DroneControlPanel> m_droneControlPanel;
     std::unique_ptr<NotificationManager> m_notificationManager;
@@ -256,7 +256,7 @@ private:
 
     // Photon panel states (replaces DockingManager)
     struct PanelConfig {
-        photon::PanelState state;
+        atlas::PanelState state;
         std::string title;
     };
     std::unordered_map<std::string, PanelConfig> m_panelConfigs;

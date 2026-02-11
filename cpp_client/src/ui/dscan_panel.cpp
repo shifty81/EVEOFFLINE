@@ -1,6 +1,6 @@
 #include "ui/dscan_panel.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_colors.h"
+#include "ui/space_colors.h"
 #include <imgui.h>
 #include <algorithm>
 #include <cstdio>
@@ -50,8 +50,8 @@ void DScanPanel::SortResults() {
 void DScanPanel::RenderContents() {
     // ---- Scan controls ----
     ImGui::TextColored(
-        ImVec4(EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-               EVEColors::ACCENT_PRIMARY[2], 1.0f),
+        ImVec4(SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+               SpaceColors::ACCENT_PRIMARY[2], 1.0f),
         "Directional Scanner");
     ImGui::Separator();
     ImGui::Spacing();
@@ -74,14 +74,14 @@ void DScanPanel::RenderContents() {
 
     // Scan button — full width, EVE-teal accent
     ImGui::PushStyleColor(ImGuiCol_Button,
-        ImVec4(EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
-               EVEColors::ACCENT_DIM[2], 0.9f));
+        ImVec4(SpaceColors::ACCENT_DIM[0], SpaceColors::ACCENT_DIM[1],
+               SpaceColors::ACCENT_DIM[2], 0.9f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
-        ImVec4(EVEColors::ACCENT_PRIMARY[0] * 0.8f, EVEColors::ACCENT_PRIMARY[1] * 0.8f,
-               EVEColors::ACCENT_PRIMARY[2] * 0.8f, 1.0f));
+        ImVec4(SpaceColors::ACCENT_PRIMARY[0] * 0.8f, SpaceColors::ACCENT_PRIMARY[1] * 0.8f,
+               SpaceColors::ACCENT_PRIMARY[2] * 0.8f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive,
-        ImVec4(EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-               EVEColors::ACCENT_PRIMARY[2], 1.0f));
+        ImVec4(SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+               SpaceColors::ACCENT_PRIMARY[2], 1.0f));
 
     if (ImGui::Button("Scan  (V)", ImVec2(-1, 28))) {
         m_scanRequested = true;
@@ -103,8 +103,8 @@ void DScanPanel::RenderContents() {
 
     if (m_results.empty()) {
         ImGui::TextColored(
-            ImVec4(EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-                   EVEColors::TEXT_SECONDARY[2], 1.0f),
+            ImVec4(SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+                   SpaceColors::TEXT_SECONDARY[2], 1.0f),
             "No results. Press Scan to scan.");
         return;
     }

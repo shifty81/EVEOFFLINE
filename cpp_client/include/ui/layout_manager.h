@@ -14,7 +14,7 @@
  * "ui_layouts/" relative to the executable).
  */
 
-#include "photon/photon_types.h"
+#include "atlas/atlas_types.h"
 #include <string>
 #include <unordered_map>
 #include <vector>

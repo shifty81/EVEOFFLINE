@@ -1,6 +1,6 @@
 #include "ui/drone_control_panel.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_colors.h"
+#include "ui/space_colors.h"
 #include <imgui.h>
 #include <cstdio>
 
@@ -58,8 +58,8 @@ void DroneControlPanel::RenderBandwidthBar() {
                   m_data.used_bandwidth, m_data.max_bandwidth);
 
     ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(
-        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-        EVEColors::ACCENT_PRIMARY[2], 0.8f));
+        SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+        SpaceColors::ACCENT_PRIMARY[2], 0.8f));
     ImGui::ProgressBar(pct, ImVec2(-1, 16), label);
     ImGui::PopStyleColor();
 }
@@ -74,22 +74,22 @@ void DroneControlPanel::RenderBayCapacityBar() {
                   m_data.bay_used, m_data.bay_capacity);
 
     ImGui::PushStyleColor(ImGuiCol_PlotHistogram, ImVec4(
-        EVEColors::SHIELD_COLOR[0], EVEColors::SHIELD_COLOR[1],
-        EVEColors::SHIELD_COLOR[2], 0.8f));
+        SpaceColors::SHIELD_COLOR[0], SpaceColors::SHIELD_COLOR[1],
+        SpaceColors::SHIELD_COLOR[2], 0.8f));
     ImGui::ProgressBar(pct, ImVec2(-1, 16), label);
     ImGui::PopStyleColor();
 }
 
 void DroneControlPanel::RenderDronesInSpace() {
     ImGui::TextColored(ImVec4(
-        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-        EVEColors::ACCENT_PRIMARY[2], 1.0f),
+        SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+        SpaceColors::ACCENT_PRIMARY[2], 1.0f),
         "Drones in Space (%zu)", m_data.space_drones.size());
 
     if (m_data.space_drones.empty()) {
         ImGui::TextColored(ImVec4(
-            EVEColors::TEXT_DISABLED[0], EVEColors::TEXT_DISABLED[1],
-            EVEColors::TEXT_DISABLED[2], 1.0f),
+            SpaceColors::TEXT_DISABLED[0], SpaceColors::TEXT_DISABLED[1],
+            SpaceColors::TEXT_DISABLED[2], 1.0f),
             "  No drones deployed");
         return;
     }
@@ -104,14 +104,14 @@ void DroneControlPanel::RenderDronesInSpace() {
 
 void DroneControlPanel::RenderDronesInBay() {
     ImGui::TextColored(ImVec4(
-        EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-        EVEColors::TEXT_SECONDARY[2], 1.0f),
+        SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+        SpaceColors::TEXT_SECONDARY[2], 1.0f),
         "Drone Bay (%zu)", m_data.bay_drones.size());
 
     if (m_data.bay_drones.empty()) {
         ImGui::TextColored(ImVec4(
-            EVEColors::TEXT_DISABLED[0], EVEColors::TEXT_DISABLED[1],
-            EVEColors::TEXT_DISABLED[2], 1.0f),
+            SpaceColors::TEXT_DISABLED[0], SpaceColors::TEXT_DISABLED[1],
+            SpaceColors::TEXT_DISABLED[2], 1.0f),
             "  Drone bay empty");
         return;
     }
@@ -154,14 +154,14 @@ void DroneControlPanel::RenderDroneRow(const DroneDisplayInfo& drone, int index,
     // Color based on health
     ImVec4 hpColor;
     if (hpPct > 0.5f) {
-        hpColor = ImVec4(EVEColors::SUCCESS[0], EVEColors::SUCCESS[1],
-                          EVEColors::SUCCESS[2], 0.8f);
+        hpColor = ImVec4(SpaceColors::SUCCESS[0], SpaceColors::SUCCESS[1],
+                          SpaceColors::SUCCESS[2], 0.8f);
     } else if (hpPct > 0.25f) {
-        hpColor = ImVec4(EVEColors::WARNING[0], EVEColors::WARNING[1],
-                          EVEColors::WARNING[2], 0.8f);
+        hpColor = ImVec4(SpaceColors::WARNING[0], SpaceColors::WARNING[1],
+                          SpaceColors::WARNING[2], 0.8f);
     } else {
-        hpColor = ImVec4(EVEColors::DANGER[0], EVEColors::DANGER[1],
-                          EVEColors::DANGER[2], 0.8f);
+        hpColor = ImVec4(SpaceColors::DANGER[0], SpaceColors::DANGER[1],
+                          SpaceColors::DANGER[2], 0.8f);
     }
 
     ImGui::PushStyleColor(ImGuiCol_PlotHistogram, hpColor);
@@ -171,8 +171,8 @@ void DroneControlPanel::RenderDroneRow(const DroneDisplayInfo& drone, int index,
     // Engaging indicator
     if (is_space && drone.is_engaging) {
         ImGui::SameLine();
-        ImGui::TextColored(ImVec4(EVEColors::DANGER[0], EVEColors::DANGER[1],
-                                   EVEColors::DANGER[2], 1.0f), "*");
+        ImGui::TextColored(ImVec4(SpaceColors::DANGER[0], SpaceColors::DANGER[1],
+                                   SpaceColors::DANGER[2], 1.0f), "*");
     }
 
     ImGui::PopID();
@@ -183,8 +183,8 @@ void DroneControlPanel::RenderDroneActions() {
 
     // Group actions
     ImGui::TextColored(ImVec4(
-        EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-        EVEColors::TEXT_SECONDARY[2], 1.0f), "Group Actions:");
+        SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+        SpaceColors::TEXT_SECONDARY[2], 1.0f), "Group Actions:");
 
     if (ImGui::Button("Launch All", ImVec2(buttonWidth, 28))) {
         if (m_onLaunchAll) m_onLaunchAll();
@@ -204,8 +204,8 @@ void DroneControlPanel::RenderDroneActions() {
     if (m_selectedBayDrone >= 0 && m_selectedBayDrone < static_cast<int>(m_data.bay_drones.size())) {
         const auto& drone = m_data.bay_drones[m_selectedBayDrone];
         ImGui::TextColored(ImVec4(
-            EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-            EVEColors::TEXT_SECONDARY[2], 1.0f),
+            SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+            SpaceColors::TEXT_SECONDARY[2], 1.0f),
             "Selected: %s", drone.name.c_str());
         if (ImGui::Button("Launch", ImVec2(-1, 26))) {
             if (m_onLaunchDrone) m_onLaunchDrone(drone.drone_id);
@@ -215,8 +215,8 @@ void DroneControlPanel::RenderDroneActions() {
     if (m_selectedSpaceDrone >= 0 && m_selectedSpaceDrone < static_cast<int>(m_data.space_drones.size())) {
         const auto& drone = m_data.space_drones[m_selectedSpaceDrone];
         ImGui::TextColored(ImVec4(
-            EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-            EVEColors::TEXT_SECONDARY[2], 1.0f),
+            SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+            SpaceColors::TEXT_SECONDARY[2], 1.0f),
             "Selected: %s", drone.name.c_str());
 
         float halfWidth = (ImGui::GetContentRegionAvail().x - 4.0f) / 2.0f;
@@ -232,8 +232,8 @@ void DroneControlPanel::RenderDroneActions() {
     // Keyboard shortcut hints
     ImGui::Spacing();
     ImGui::TextColored(ImVec4(
-        EVEColors::TEXT_DISABLED[0], EVEColors::TEXT_DISABLED[1],
-        EVEColors::TEXT_DISABLED[2], 0.7f),
+        SpaceColors::TEXT_DISABLED[0], SpaceColors::TEXT_DISABLED[1],
+        SpaceColors::TEXT_DISABLED[2], 0.7f),
         "Shift+F: Launch  Shift+R: Return  F: Engage");
 }
 

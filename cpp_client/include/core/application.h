@@ -26,9 +26,9 @@ namespace UI {
     class RadialMenu;
 }
 
-namespace photon {
-    class PhotonHUD;
-    class PhotonContext;
+namespace atlas {
+    class AtlasHUD;
+    class AtlasContext;
 }
 
 namespace eve {
@@ -234,8 +234,8 @@ private:
     std::unique_ptr<UI::RmlUiManager> m_uiManager;
     std::unique_ptr<UI::EntityPicker> m_entityPicker;
     std::unique_ptr<SolarSystemScene> m_solarSystem;
-    std::unique_ptr<photon::PhotonContext> m_photonCtx;
-    std::unique_ptr<photon::PhotonHUD> m_photonHUD;
+    std::unique_ptr<atlas::AtlasContext> m_atlasCtx;
+    std::unique_ptr<atlas::AtlasHUD> m_atlasHUD;
     std::unique_ptr<UI::ContextMenu> m_contextMenu;
     std::unique_ptr<UI::RadialMenu> m_radialMenu;
 

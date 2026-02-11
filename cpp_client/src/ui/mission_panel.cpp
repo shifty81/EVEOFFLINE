@@ -1,6 +1,6 @@
 #include "ui/mission_panel.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_colors.h"
+#include "ui/space_colors.h"
 #include <imgui.h>
 
 namespace UI {
@@ -28,8 +28,8 @@ void MissionPanel::Render() {
     if (!m_data.is_active) {
         // No active mission
         ImGui::TextColored(ImVec4(
-            EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-            EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+            SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+            SpaceColors::TEXT_SECONDARY[2], SpaceColors::TEXT_SECONDARY[3]),
             "No active mission");
         ImGui::Text("Accept a mission from an agent to get started.");
     } else {
@@ -75,18 +75,18 @@ void MissionPanel::RenderMissionInfo() {
     if (m_data.time_limit > 0.0f) {
         float remaining = m_data.time_limit - m_data.time_elapsed;
         ImGui::TextColored(remaining < 1.0f ? 
-            ImVec4(EVEColors::DANGER[0], EVEColors::DANGER[1],
-                   EVEColors::DANGER[2], EVEColors::DANGER[3]) : 
-            ImVec4(EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-                   EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+            ImVec4(SpaceColors::DANGER[0], SpaceColors::DANGER[1],
+                   SpaceColors::DANGER[2], SpaceColors::DANGER[3]) : 
+            ImVec4(SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+                   SpaceColors::TEXT_SECONDARY[2], SpaceColors::TEXT_SECONDARY[3]),
                            "Time Remaining: %.1f hours", remaining);
     }
 }
 
 void MissionPanel::RenderObjectivesList() {
     ImGui::TextColored(ImVec4(
-        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-        EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]), "OBJECTIVES");
+        SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+        SpaceColors::ACCENT_PRIMARY[2], SpaceColors::ACCENT_PRIMARY[3]), "OBJECTIVES");
     ImGui::Spacing();
     
     // Display objectives in a scrollable list
@@ -98,12 +98,12 @@ void MissionPanel::RenderObjectivesList() {
         // Checkbox for completed objectives
         if (objective.completed) {
             ImGui::TextColored(ImVec4(
-                EVEColors::SUCCESS[0], EVEColors::SUCCESS[1],
-                EVEColors::SUCCESS[2], EVEColors::SUCCESS[3]), "[✓]");
+                SpaceColors::SUCCESS[0], SpaceColors::SUCCESS[1],
+                SpaceColors::SUCCESS[2], SpaceColors::SUCCESS[3]), "[✓]");
         } else {
             ImGui::TextColored(ImVec4(
-                EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-                EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]), "[ ]");
+                SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+                SpaceColors::TEXT_SECONDARY[2], SpaceColors::TEXT_SECONDARY[3]), "[ ]");
         }
         
         ImGui::SameLine();
@@ -112,8 +112,8 @@ void MissionPanel::RenderObjectivesList() {
     
     if (m_data.objectives.empty()) {
         ImGui::TextColored(ImVec4(
-            EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-            EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+            SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+            SpaceColors::TEXT_SECONDARY[2], SpaceColors::TEXT_SECONDARY[3]),
             "No objectives");
     }
     
@@ -122,8 +122,8 @@ void MissionPanel::RenderObjectivesList() {
 
 void MissionPanel::RenderRewards() {
     ImGui::TextColored(ImVec4(
-        EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-        EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]), "REWARDS");
+        SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+        SpaceColors::ACCENT_PRIMARY[2], SpaceColors::ACCENT_PRIMARY[3]), "REWARDS");
     ImGui::Spacing();
     
     // ISK reward
@@ -164,8 +164,8 @@ void MissionPanel::RenderActionButtons() {
     }
     
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
-        EVEColors::SUCCESS[0] * 0.5f, EVEColors::SUCCESS[1] * 0.5f,
-        EVEColors::SUCCESS[2] * 0.5f, 0.8f));
+        SpaceColors::SUCCESS[0] * 0.5f, SpaceColors::SUCCESS[1] * 0.5f,
+        SpaceColors::SUCCESS[2] * 0.5f, 0.8f));
     if (ImGui::Button("Complete Mission", ImVec2(150, 35))) {
         if (m_onComplete) {
             m_onComplete(m_data.mission_id);
@@ -181,8 +181,8 @@ void MissionPanel::RenderActionButtons() {
     
     // Decline button (can decline at any time, but with penalty)
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
-        EVEColors::DANGER[0] * 0.5f, EVEColors::DANGER[1] * 0.5f,
-        EVEColors::DANGER[2] * 0.5f, 0.8f));
+        SpaceColors::DANGER[0] * 0.5f, SpaceColors::DANGER[1] * 0.5f,
+        SpaceColors::DANGER[2] * 0.5f, 0.8f));
     if (ImGui::Button("Decline Mission", ImVec2(150, 35))) {
         if (m_onDecline) {
             m_onDecline(m_data.mission_id);
@@ -224,8 +224,8 @@ void MissionPanel::RenderContents() {
     if (!m_data.is_active) {
         // No active mission
         ImGui::TextColored(ImVec4(
-            EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-            EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+            SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+            SpaceColors::TEXT_SECONDARY[2], SpaceColors::TEXT_SECONDARY[3]),
             "No active mission");
         ImGui::Text("Accept a mission from an agent to get started.");
     } else {

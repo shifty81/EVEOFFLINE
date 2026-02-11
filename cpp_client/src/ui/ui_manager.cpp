@@ -1,13 +1,13 @@
 #include "ui/ui_manager.h"
-#include "ui/eve_panels.h"
-#include "ui/eve_target_list.h"
+#include "ui/hud_panels.h"
+#include "ui/target_list.h"
 #include "ui/inventory_panel.h"
 #include "ui/fitting_panel.h"
 #include "ui/mission_panel.h"
 #include "ui/overview_panel.h"
 #include "ui/market_panel.h"
 #include "ui/dscan_panel.h"
-#include "ui/neocom_panel.h"
+#include "ui/sidebar_panel.h"
 #include "ui/chat_panel.h"
 #include "ui/drone_control_panel.h"
 #include "ui/notification_manager.h"
@@ -35,14 +35,14 @@ UIManager::UIManager()
     , show_target_list_(true)
 {
     // Create legacy panel objects for data storage
-    m_targetList = std::make_unique<EVETargetList>();
+    m_targetList = std::make_unique<TargetList>();
     m_inventoryPanel = std::make_unique<InventoryPanel>();
     m_fittingPanel = std::make_unique<FittingPanel>();
     m_missionPanel = std::make_unique<MissionPanel>();
     m_overviewPanel = std::make_unique<OverviewPanel>();
     m_marketPanel = std::make_unique<MarketPanel>();
     m_dscanPanel = std::make_unique<DScanPanel>();
-    m_neocomPanel = std::make_unique<NeocomPanel>();
+    m_sidebarPanel = std::make_unique<SidebarPanel>();
     m_chatPanel = std::make_unique<ChatPanel>();
     m_droneControlPanel = std::make_unique<DroneControlPanel>();
     m_notificationManager = std::make_unique<NotificationManager>();
@@ -73,7 +73,7 @@ bool UIManager::Initialize(int windowW, int windowH) {
     m_hud.init(windowW, windowH);
 
     // Set up Neocom icon callbacks
-    m_hud.setNeocomCallback([this](int icon) {
+    m_hud.setSidebarCallback([this](int icon) {
         switch (icon) {
             case 0: ToggleInventory(); break;
             case 1: ToggleFitting(); break;
@@ -86,16 +86,16 @@ bool UIManager::Initialize(int windowW, int windowH) {
         }
     });
 
-    // Wire legacy NeocomPanel callbacks
-    if (m_neocomPanel) {
-        m_neocomPanel->SetInventoryCallback([this]() { ToggleInventory(); });
-        m_neocomPanel->SetFittingCallback([this]() { ToggleFitting(); });
-        m_neocomPanel->SetMarketCallback([this]() { ToggleMarket(); });
-        m_neocomPanel->SetMissionsCallback([this]() { ToggleMission(); });
-        m_neocomPanel->SetDScanCallback([this]() { ToggleDScan(); });
-        m_neocomPanel->SetMapCallback([this]() { ToggleMap(); });
-        m_neocomPanel->SetChatCallback([this]() { ToggleChat(); });
-        m_neocomPanel->SetDronesCallback([this]() { ToggleDrones(); });
+    // Wire legacy SidebarPanel callbacks
+    if (m_sidebarPanel) {
+        m_sidebarPanel->SetInventoryCallback([this]() { ToggleInventory(); });
+        m_sidebarPanel->SetFittingCallback([this]() { ToggleFitting(); });
+        m_sidebarPanel->SetMarketCallback([this]() { ToggleMarket(); });
+        m_sidebarPanel->SetMissionsCallback([this]() { ToggleMission(); });
+        m_sidebarPanel->SetDScanCallback([this]() { ToggleDScan(); });
+        m_sidebarPanel->SetMapCallback([this]() { ToggleMap(); });
+        m_sidebarPanel->SetChatCallback([this]() { ToggleChat(); });
+        m_sidebarPanel->SetDronesCallback([this]() { ToggleDrones(); });
     }
 
     // Initialize default data
@@ -114,7 +114,7 @@ void UIManager::InitPanelConfigs(int windowW, int windowH) {
                         float x, float y, float w, float h, bool visible) {
         PanelConfig cfg;
         cfg.title = title;
-        cfg.state.bounds = photon::Rect(x, y, w, h);
+        cfg.state.bounds = atlas::Rect(x, y, w, h);
         cfg.state.open = visible;
         m_panelConfigs[id] = cfg;
     };
@@ -138,7 +138,7 @@ void UIManager::Shutdown() {
 // Frame Management
 // ============================================================================
 
-void UIManager::BeginFrame(const photon::InputState& input) {
+void UIManager::BeginFrame(const atlas::InputState& input) {
     m_ctx.beginFrame(input);
 }
 
@@ -154,7 +154,7 @@ void UIManager::Render() {
     const auto& theme = m_ctx.theme();
 
     // --- Build ShipHUDData from current ship status ---
-    photon::ShipHUDData shipData;
+    atlas::ShipHUDData shipData;
     shipData.shieldPct    = safePct(ship_status_.shields, ship_status_.shields_max);
     shipData.armorPct     = safePct(ship_status_.armor, ship_status_.armor_max);
     shipData.hullPct      = safePct(ship_status_.hull, ship_status_.hull_max);
@@ -164,19 +164,19 @@ void UIManager::Render() {
 
     // Populate module slots
     for (int i = 0; i < m_moduleSlotCount && i < MAX_MODULE_SLOTS; ++i) {
-        photon::ShipHUDData::ModuleInfo mi;
+        atlas::ShipHUDData::ModuleInfo mi;
         mi.fitted   = m_moduleSlots[i].fitted;
         mi.active   = m_moduleSlots[i].active;
         mi.cooldown = m_moduleSlots[i].cooldown_pct;
         mi.overheat = m_moduleSlots[i].overheated ? 1.0f : 0.0f;
-        mi.color    = mi.active ? theme.accentPrimary : photon::Color(0.5f, 0.5f, 0.5f, 1.0f);
+        mi.color    = mi.active ? theme.accentPrimary : atlas::Color(0.5f, 0.5f, 0.5f, 1.0f);
         shipData.highSlots.push_back(mi);
     }
 
     // --- Build target cards from locked target info ---
-    std::vector<photon::TargetCardInfo> targets;
+    std::vector<atlas::TargetCardInfo> targets;
     if (target_info_.is_locked) {
-        photon::TargetCardInfo tc;
+        atlas::TargetCardInfo tc;
         tc.name      = target_info_.name;
         tc.shieldPct = safePct(target_info_.shields, target_info_.shields_max);
         tc.armorPct  = safePct(target_info_.armor, target_info_.armor_max);
@@ -188,10 +188,10 @@ void UIManager::Render() {
     }
 
     // --- Build overview entries (empty for now — filled by OverviewPanel data) ---
-    std::vector<photon::OverviewEntry> overview;
+    std::vector<atlas::OverviewEntry> overview;
 
     // --- Build selected item info ---
-    photon::SelectedItemInfo selectedInfo;
+    atlas::SelectedItemInfo selectedInfo;
     if (!m_selectedItem.isEmpty()) {
         selectedInfo.name     = m_selectedItem.name;
         if (m_selectedItem.distance >= 1000.0f) {
@@ -235,26 +235,26 @@ void UIManager::RenderDockablePanel(const std::string& id) {
     if (it == m_panelConfigs.end()) return;
 
     PanelConfig& cfg = it->second;
-    photon::PanelFlags flags;
+    atlas::PanelFlags flags;
     flags.locked = m_interfaceLocked;
     flags.compactMode = m_compactMode;
 
-    if (photon::panelBeginStateful(m_ctx, cfg.title.c_str(), cfg.state, flags)) {
+    if (atlas::panelBeginStateful(m_ctx, cfg.title.c_str(), cfg.state, flags)) {
         const auto& theme = m_ctx.theme();
-        const photon::Rect& b = cfg.state.bounds;
+        const atlas::Rect& b = cfg.state.bounds;
         float y = b.y + theme.headerHeight + theme.padding;
         float x = b.x + theme.padding;
         float contentW = b.w - theme.padding * 2.0f;
 
         // Stub content — label + separator indicating panel name
-        photon::label(m_ctx, photon::Vec2(x, y), cfg.title, theme.textPrimary);
+        atlas::label(m_ctx, atlas::Vec2(x, y), cfg.title, theme.textPrimary);
         y += 20.0f;
-        photon::separator(m_ctx, photon::Vec2(x, y), contentW);
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
         y += theme.itemSpacing + 4.0f;
-        photon::label(m_ctx, photon::Vec2(x, y),
+        atlas::label(m_ctx, atlas::Vec2(x, y),
                       "Panel content (Photon stub)", theme.textSecondary);
     }
-    photon::panelEnd(m_ctx);
+    atlas::panelEnd(m_ctx);
 }
 
 void UIManager::RenderCombatLogPanel() {
@@ -266,22 +266,22 @@ void UIManager::RenderCombatLogPanel() {
     float posX = 320.0f;
     float posY = static_cast<float>(input.windowH) - panelH - 60.0f;
 
-    photon::Rect bounds(posX, posY, panelW, panelH);
-    photon::PanelFlags flags;
+    atlas::Rect bounds(posX, posY, panelW, panelH);
+    atlas::PanelFlags flags;
     flags.locked = m_interfaceLocked;
 
     bool* openPtr = &show_combat_log_;
-    if (photon::panelBegin(m_ctx, "Combat Log", bounds, flags, openPtr)) {
+    if (atlas::panelBegin(m_ctx, "Combat Log", bounds, flags, openPtr)) {
         float y = bounds.y + theme.headerHeight + theme.padding;
         float x = bounds.x + theme.padding;
 
         for (const auto& msg : combat_log_) {
-            photon::label(m_ctx, photon::Vec2(x, y), msg, theme.textSecondary);
+            atlas::label(m_ctx, atlas::Vec2(x, y), msg, theme.textSecondary);
             y += 16.0f;
             if (y > bounds.bottom() - theme.padding) break;
         }
     }
-    photon::panelEnd(m_ctx);
+    atlas::panelEnd(m_ctx);
 }
 
 void UIManager::RenderStarMapPanel() {
@@ -295,37 +295,37 @@ void UIManager::RenderStarMapPanel() {
     float posX = (static_cast<float>(input.windowW) - mapW) * 0.5f;
     float posY = (static_cast<float>(input.windowH) - mapH) * 0.5f;
 
-    photon::Rect bounds(posX, posY, mapW, mapH);
-    photon::PanelFlags flags;
+    atlas::Rect bounds(posX, posY, mapW, mapH);
+    atlas::PanelFlags flags;
     flags.showClose = true;
 
-    if (photon::panelBegin(m_ctx, "Star Map (F10)", bounds, flags, &m_showStarMap)) {
+    if (atlas::panelBegin(m_ctx, "Star Map (F10)", bounds, flags, &m_showStarMap)) {
         auto& r = m_ctx.renderer();
         float y = bounds.y + theme.headerHeight + theme.padding;
         float x = bounds.x + theme.padding;
         float contentW = bounds.w - theme.padding * 2.0f;
 
-        photon::label(m_ctx, photon::Vec2(x, y),
+        atlas::label(m_ctx, atlas::Vec2(x, y),
                       "STAR MAP - Astralis", theme.accentPrimary);
         y += 22.0f;
-        photon::separator(m_ctx, photon::Vec2(x, y), contentW);
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
         y += 10.0f;
 
         // Draw dark map background
-        photon::Rect mapArea(x, y, contentW, bounds.bottom() - y - theme.padding - 20.0f);
-        r.drawRect(mapArea, photon::Color(0.02f, 0.03f, 0.06f, 0.95f));
+        atlas::Rect mapArea(x, y, contentW, bounds.bottom() - y - theme.padding - 20.0f);
+        r.drawRect(mapArea, atlas::Color(0.02f, 0.03f, 0.06f, 0.95f));
 
         // Grid lines
         float gridStep = 60.0f;
-        photon::Color gridColor(0.078f, 0.118f, 0.196f, 0.24f);
+        atlas::Color gridColor(0.078f, 0.118f, 0.196f, 0.24f);
         for (float gx = 0; gx < mapArea.w; gx += gridStep) {
-            r.drawLine(photon::Vec2(mapArea.x + gx, mapArea.y),
-                       photon::Vec2(mapArea.x + gx, mapArea.bottom()),
+            r.drawLine(atlas::Vec2(mapArea.x + gx, mapArea.y),
+                       atlas::Vec2(mapArea.x + gx, mapArea.bottom()),
                        gridColor);
         }
         for (float gy = 0; gy < mapArea.h; gy += gridStep) {
-            r.drawLine(photon::Vec2(mapArea.x, mapArea.y + gy),
-                       photon::Vec2(mapArea.right(), mapArea.y + gy),
+            r.drawLine(atlas::Vec2(mapArea.x, mapArea.y + gy),
+                       atlas::Vec2(mapArea.right(), mapArea.y + gy),
                        gridColor);
         }
 
@@ -344,38 +344,38 @@ void UIManager::RenderStarMapPanel() {
 
         // Connections
         for (auto& conn : connections) {
-            photon::Vec2 p1(mapArea.x + nodes[conn[0]].rx * mapArea.w,
+            atlas::Vec2 p1(mapArea.x + nodes[conn[0]].rx * mapArea.w,
                             mapArea.y + nodes[conn[0]].ry * mapArea.h);
-            photon::Vec2 p2(mapArea.x + nodes[conn[1]].rx * mapArea.w,
+            atlas::Vec2 p2(mapArea.x + nodes[conn[1]].rx * mapArea.w,
                             mapArea.y + nodes[conn[1]].ry * mapArea.h);
             r.drawLine(p1, p2, theme.accentDim.withAlpha(0.6f), 1.5f);
         }
 
         // Nodes
         for (int i = 0; i < nodeCount; ++i) {
-            photon::Vec2 pos(mapArea.x + nodes[i].rx * mapArea.w,
+            atlas::Vec2 pos(mapArea.x + nodes[i].rx * mapArea.w,
                              mapArea.y + nodes[i].ry * mapArea.h);
-            photon::Color nodeColor = nodes[i].security >= 0.5f
+            atlas::Color nodeColor = nodes[i].security >= 0.5f
                 ? theme.accentPrimary : theme.warning;
             r.drawCircle(pos, 6.0f, nodeColor);
             r.drawCircleOutline(pos, 8.0f, nodeColor.withAlpha(0.3f));
-            r.drawText(nodes[i].name, photon::Vec2(pos.x + 10, pos.y - 6),
+            r.drawText(nodes[i].name, atlas::Vec2(pos.x + 10, pos.y - 6),
                        theme.textPrimary);
 
             char secBuf[16];
             std::snprintf(secBuf, sizeof(secBuf), "%.1f", nodes[i].security);
-            photon::Color secColor = nodes[i].security >= 0.5f
+            atlas::Color secColor = nodes[i].security >= 0.5f
                 ? theme.success.withAlpha(0.7f) : theme.danger.withAlpha(0.7f);
-            r.drawText(secBuf, photon::Vec2(pos.x + 10, pos.y + 8), secColor);
+            r.drawText(secBuf, atlas::Vec2(pos.x + 10, pos.y + 8), secColor);
         }
 
         // Legend
         float legendY = mapArea.bottom() + 5.0f;
-        photon::label(m_ctx, photon::Vec2(x, legendY),
+        atlas::label(m_ctx, atlas::Vec2(x, legendY),
                       "Click system to set destination | Scroll to zoom",
                       theme.textSecondary);
     }
-    photon::panelEnd(m_ctx);
+    atlas::panelEnd(m_ctx);
 }
 
 void UIManager::RenderAlertStack() {
@@ -391,7 +391,7 @@ void UIManager::RenderAlertStack() {
         const HUDAlert& alert = m_alerts[i];
 
         // Choose color by priority
-        photon::Color color;
+        atlas::Color color;
         switch (alert.priority) {
             case HUDAlertPriority::CRITICAL: color = theme.danger;  break;
             case HUDAlertPriority::WARNING:  color = theme.warning; break;
@@ -408,13 +408,13 @@ void UIManager::RenderAlertStack() {
             alpha = alert.duration - alert.elapsed;
         }
 
-        photon::Rect alertRect(x, y, alertW, 24.0f);
+        atlas::Rect alertRect(x, y, alertW, 24.0f);
         m_ctx.renderer().drawRoundedRect(alertRect,
             theme.bgPanel.withAlpha(0.85f * alpha), 3.0f);
         m_ctx.renderer().drawRoundedRectOutline(alertRect,
             color.withAlpha(0.6f * alpha), 3.0f);
         m_ctx.renderer().drawText(alert.message,
-            photon::Vec2(x + 12.0f, y + 5.0f), color.withAlpha(alpha));
+            atlas::Vec2(x + 12.0f, y + 5.0f), color.withAlpha(alpha));
     }
 }
 
