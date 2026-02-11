@@ -71,6 +71,8 @@ set(SERVER_SOURCES
     src/systems/research_system.cpp
     src/systems/chat_system.cpp
     src/systems/character_creation_system.cpp
+    src/systems/tournament_system.cpp
+    src/systems/leaderboard_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -118,6 +120,8 @@ set(SERVER_HEADERS
     include/systems/research_system.h
     include/systems/chat_system.h
     include/systems/character_creation_system.h
+    include/systems/tournament_system.h
+    include/systems/leaderboard_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -227,6 +231,8 @@ if(BUILD_TESTS)
         src/systems/research_system.cpp
         src/systems/chat_system.cpp
         src/systems/character_creation_system.cpp
+        src/systems/tournament_system.cpp
+        src/systems/leaderboard_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

@@ -33,6 +33,8 @@
 #include "systems/research_system.h"
 #include "systems/chat_system.h"
 #include "systems/character_creation_system.h"
+#include "systems/tournament_system.h"
+#include "systems/leaderboard_system.h"
 #include "data/world_persistence.h"
 #include "data/npc_database.h"
 #include "systems/movement_system.h"
@@ -4818,6 +4820,353 @@ void testCharacterRaceAttributes() {
     assertTrue(s4->intelligence == 23, "Caldari intelligence is 23");
 }
 
+// ==================== TournamentSystem Tests ====================
+
+void testTournamentCreate() {
+    std::cout << "\n=== Tournament Create ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    bool created = tourneySys.createTournament("tourney_1", "pvp_tourney_1", "Arena Championship", 8, 10000.0, 300.0f);
+    assertTrue(created, "Tournament created");
+    assertTrue(tourneySys.getStatus("tourney_1") == "registration", "Status is registration");
+    assertTrue(tourneySys.getParticipantCount("tourney_1") == 0, "Zero participants initially");
+}
+
+void testTournamentRegister() {
+    std::cout << "\n=== Tournament Register ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Test Tournament", 4, 5000.0, 300.0f);
+
+    assertTrue(tourneySys.registerPlayer("tourney_1", "player_1", "Alice"), "Player 1 registered");
+    assertTrue(tourneySys.registerPlayer("tourney_1", "player_2", "Bob"), "Player 2 registered");
+    assertTrue(tourneySys.getParticipantCount("tourney_1") == 2, "Two participants registered");
+    assertTrue(approxEqual(static_cast<float>(tourneySys.getPrizePool("tourney_1")), 10000.0f), "Prize pool is 10K");
+}
+
+void testTournamentMaxParticipants() {
+    std::cout << "\n=== Tournament Max Participants ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Small Tourney", 2, 1000.0, 300.0f);
+
+    tourneySys.registerPlayer("tourney_1", "p1", "Alice");
+    tourneySys.registerPlayer("tourney_1", "p2", "Bob");
+    bool third = tourneySys.registerPlayer("tourney_1", "p3", "Charlie");
+    assertTrue(!third, "Third player rejected (tournament full)");
+    assertTrue(tourneySys.getParticipantCount("tourney_1") == 2, "Still 2 participants");
+}
+
+void testTournamentDuplicateRegister() {
+    std::cout << "\n=== Tournament Duplicate Register ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Test", 8, 0.0, 300.0f);
+
+    tourneySys.registerPlayer("tourney_1", "p1", "Alice");
+    bool dup = tourneySys.registerPlayer("tourney_1", "p1", "Alice Again");
+    assertTrue(!dup, "Duplicate registration rejected");
+    assertTrue(tourneySys.getParticipantCount("tourney_1") == 1, "Still 1 participant");
+}
+
+void testTournamentStart() {
+    std::cout << "\n=== Tournament Start ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Test", 8, 0.0, 300.0f);
+    tourneySys.registerPlayer("tourney_1", "p1", "Alice");
+    tourneySys.registerPlayer("tourney_1", "p2", "Bob");
+
+    bool started = tourneySys.startTournament("tourney_1");
+    assertTrue(started, "Tournament started");
+    assertTrue(tourneySys.getStatus("tourney_1") == "active", "Status is active");
+    assertTrue(tourneySys.getCurrentRound("tourney_1") == 1, "Round 1 started");
+}
+
+void testTournamentEmptyCannotStart() {
+    std::cout << "\n=== Tournament Empty Cannot Start ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Empty", 8, 0.0, 300.0f);
+
+    bool started = tourneySys.startTournament("tourney_1");
+    assertTrue(!started, "Empty tournament cannot start");
+    assertTrue(tourneySys.getStatus("tourney_1") == "registration", "Status stays registration");
+}
+
+void testTournamentScoring() {
+    std::cout << "\n=== Tournament Scoring ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Test", 8, 0.0, 300.0f);
+    tourneySys.registerPlayer("tourney_1", "p1", "Alice");
+    tourneySys.registerPlayer("tourney_1", "p2", "Bob");
+    tourneySys.startTournament("tourney_1");
+
+    tourneySys.recordKill("tourney_1", "p1", 5);
+    tourneySys.recordKill("tourney_1", "p2", 3);
+    tourneySys.recordKill("tourney_1", "p1", 2);
+
+    assertTrue(tourneySys.getPlayerScore("tourney_1", "p1") == 7, "Player 1 score is 7");
+    assertTrue(tourneySys.getPlayerScore("tourney_1", "p2") == 3, "Player 2 score is 3");
+}
+
+void testTournamentElimination() {
+    std::cout << "\n=== Tournament Elimination ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Test", 8, 0.0, 300.0f);
+    tourneySys.registerPlayer("tourney_1", "p1", "Alice");
+    tourneySys.registerPlayer("tourney_1", "p2", "Bob");
+    tourneySys.registerPlayer("tourney_1", "p3", "Charlie");
+    tourneySys.startTournament("tourney_1");
+
+    assertTrue(tourneySys.getActiveParticipantCount("tourney_1") == 3, "3 active before elimination");
+    tourneySys.eliminatePlayer("tourney_1", "p2");
+    assertTrue(tourneySys.getActiveParticipantCount("tourney_1") == 2, "2 active after elimination");
+
+    // Eliminated player cannot score
+    bool scored = tourneySys.recordKill("tourney_1", "p2", 1);
+    assertTrue(!scored, "Eliminated player cannot score");
+}
+
+void testTournamentRoundAdvance() {
+    std::cout << "\n=== Tournament Round Advance ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Test", 8, 0.0, 100.0f);
+    tourneySys.registerPlayer("tourney_1", "p1", "Alice");
+    tourneySys.registerPlayer("tourney_1", "p2", "Bob");
+    tourneySys.startTournament("tourney_1");
+
+    tourneySys.recordKill("tourney_1", "p1", 5);
+    assertTrue(tourneySys.getCurrentRound("tourney_1") == 1, "Still round 1 before update");
+
+    // Advance past round 1
+    tourneySys.update(101.0f);
+    assertTrue(tourneySys.getCurrentRound("tourney_1") == 2, "Advanced to round 2");
+}
+
+void testTournamentCompletion() {
+    std::cout << "\n=== Tournament Completion ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Test", 8, 1000.0, 50.0f);
+    tourneySys.registerPlayer("tourney_1", "p1", "Alice");
+    tourneySys.registerPlayer("tourney_1", "p2", "Bob");
+    tourneySys.startTournament("tourney_1");
+
+    // Advance through all 3 rounds
+    tourneySys.update(51.0f);  // end round 1 → start round 2
+    tourneySys.update(51.0f);  // end round 2 → start round 3
+    tourneySys.update(51.0f);  // end round 3 → completed
+
+    assertTrue(tourneySys.getStatus("tourney_1") == "completed", "Tournament completed after 3 rounds");
+}
+
+void testTournamentRegisterAfterStart() {
+    std::cout << "\n=== Tournament Register After Start ===" << std::endl;
+    ecs::World world;
+    systems::TournamentSystem tourneySys(&world);
+
+    world.createEntity("tourney_1");
+    tourneySys.createTournament("tourney_1", "t1", "Test", 8, 0.0, 300.0f);
+    tourneySys.registerPlayer("tourney_1", "p1", "Alice");
+    tourneySys.startTournament("tourney_1");
+
+    bool late = tourneySys.registerPlayer("tourney_1", "p2", "Bob");
+    assertTrue(!late, "Cannot register after tournament starts");
+}
+
+// ==================== LeaderboardSystem Tests ====================
+
+void testLeaderboardRecordKill() {
+    std::cout << "\n=== Leaderboard Record Kill ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.recordKill("board_1", "p1", "Alice");
+    lbSys.recordKill("board_1", "p1", "Alice");
+    lbSys.recordKill("board_1", "p1", "Alice");
+
+    assertTrue(lbSys.getPlayerKills("board_1", "p1") == 3, "Player has 3 kills");
+    assertTrue(lbSys.getEntryCount("board_1") == 1, "One entry on board");
+}
+
+void testLeaderboardMultiplePlayers() {
+    std::cout << "\n=== Leaderboard Multiple Players ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.recordKill("board_1", "p1", "Alice");
+    lbSys.recordKill("board_1", "p2", "Bob");
+    lbSys.recordKill("board_1", "p1", "Alice");
+
+    assertTrue(lbSys.getEntryCount("board_1") == 2, "Two entries on board");
+    assertTrue(lbSys.getPlayerKills("board_1", "p1") == 2, "Alice has 2 kills");
+    assertTrue(lbSys.getPlayerKills("board_1", "p2") == 1, "Bob has 1 kill");
+}
+
+void testLeaderboardIskTracking() {
+    std::cout << "\n=== Leaderboard ISK Tracking ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.recordIskEarned("board_1", "p1", "Alice", 50000.0);
+    lbSys.recordIskEarned("board_1", "p1", "Alice", 25000.0);
+
+    assertTrue(approxEqual(static_cast<float>(lbSys.getPlayerIskEarned("board_1", "p1")), 75000.0f), "ISK earned is 75K");
+}
+
+void testLeaderboardMissionTracking() {
+    std::cout << "\n=== Leaderboard Mission Tracking ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.recordMissionComplete("board_1", "p1", "Alice");
+    lbSys.recordMissionComplete("board_1", "p1", "Alice");
+
+    assertTrue(lbSys.getPlayerMissions("board_1", "p1") == 2, "Player completed 2 missions");
+}
+
+void testLeaderboardRanking() {
+    std::cout << "\n=== Leaderboard Ranking ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.recordKill("board_1", "p1", "Alice");
+    for (int i = 0; i < 5; ++i) lbSys.recordKill("board_1", "p2", "Bob");
+    for (int i = 0; i < 3; ++i) lbSys.recordKill("board_1", "p3", "Charlie");
+
+    auto ranking = lbSys.getRankingByKills("board_1");
+    assertTrue(static_cast<int>(ranking.size()) == 3, "Ranking has 3 entries");
+    assertTrue(ranking[0] == "p2", "Bob is rank 1 (5 kills)");
+    assertTrue(ranking[1] == "p3", "Charlie is rank 2 (3 kills)");
+    assertTrue(ranking[2] == "p1", "Alice is rank 3 (1 kill)");
+}
+
+void testLeaderboardAchievementDefine() {
+    std::cout << "\n=== Leaderboard Achievement Define ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.defineAchievement("board_1", "first_blood", "First Blood", "Get your first kill", "combat", "total_kills", 1);
+    lbSys.defineAchievement("board_1", "veteran", "Veteran", "Reach 100 kills", "combat", "total_kills", 100);
+
+    auto* lb = board->getComponent<components::Leaderboard>();
+    assertTrue(static_cast<int>(lb->achievements.size()) == 2, "Two achievements defined");
+}
+
+void testLeaderboardAchievementUnlock() {
+    std::cout << "\n=== Leaderboard Achievement Unlock ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.defineAchievement("board_1", "first_blood", "First Blood", "Get your first kill", "combat", "total_kills", 1);
+    lbSys.defineAchievement("board_1", "veteran", "Veteran", "Reach 100 kills", "combat", "total_kills", 100);
+
+    lbSys.recordKill("board_1", "p1", "Alice");
+    int unlocked = lbSys.checkAchievements("board_1", "p1", 1000.0f);
+
+    assertTrue(unlocked == 1, "One achievement unlocked");
+    assertTrue(lbSys.hasAchievement("board_1", "p1", "first_blood"), "First Blood unlocked");
+    assertTrue(!lbSys.hasAchievement("board_1", "p1", "veteran"), "Veteran not unlocked yet");
+}
+
+void testLeaderboardAchievementNoDuplicate() {
+    std::cout << "\n=== Leaderboard Achievement No Duplicate ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.defineAchievement("board_1", "first_blood", "First Blood", "Get first kill", "combat", "total_kills", 1);
+    lbSys.recordKill("board_1", "p1", "Alice");
+
+    lbSys.checkAchievements("board_1", "p1");
+    int second = lbSys.checkAchievements("board_1", "p1");
+
+    assertTrue(second == 0, "No duplicate unlock");
+    assertTrue(lbSys.getPlayerAchievementCount("board_1", "p1") == 1, "Still 1 achievement total");
+}
+
+void testLeaderboardNonexistentPlayer() {
+    std::cout << "\n=== Leaderboard Nonexistent Player ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    assertTrue(lbSys.getPlayerKills("board_1", "fake") == 0, "Zero kills for nonexistent");
+    assertTrue(approxEqual(static_cast<float>(lbSys.getPlayerIskEarned("board_1", "fake")), 0.0f), "Zero ISK for nonexistent");
+    assertTrue(lbSys.getPlayerMissions("board_1", "fake") == 0, "Zero missions for nonexistent");
+}
+
+void testLeaderboardDamageTracking() {
+    std::cout << "\n=== Leaderboard Damage Tracking ===" << std::endl;
+    ecs::World world;
+    systems::LeaderboardSystem lbSys(&world);
+
+    auto* board = world.createEntity("board_1");
+    addComp<components::Leaderboard>(board);
+
+    lbSys.recordDamageDealt("board_1", "p1", "Alice", 5000.0);
+    lbSys.recordDamageDealt("board_1", "p1", "Alice", 3000.0);
+
+    auto* lb = board->getComponent<components::Leaderboard>();
+    bool found = false;
+    for (const auto& e : lb->entries) {
+        if (e.player_id == "p1") {
+            found = true;
+            assertTrue(approxEqual(static_cast<float>(e.total_damage_dealt), 8000.0f), "Total damage is 8000");
+        }
+    }
+    assertTrue(found, "Player entry found for damage tracking");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -4829,6 +5178,7 @@ int main() {
     std::cout << "Loot, NpcDB, Drone, Insurance, Bounty, Market," << std::endl;
     std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
     std::cout << "PI, Manufacturing, Research," << std::endl;
+    std::cout << "Chat, CharacterCreation, Tournament, Leaderboard," << std::endl;
     std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
     
@@ -5067,6 +5417,31 @@ int main() {
     testCharacterSecurityStatus();
     testCharacterEmploymentHistory();
     testCharacterRaceAttributes();
+
+    // Tournament system tests
+    testTournamentCreate();
+    testTournamentRegister();
+    testTournamentMaxParticipants();
+    testTournamentDuplicateRegister();
+    testTournamentStart();
+    testTournamentEmptyCannotStart();
+    testTournamentScoring();
+    testTournamentElimination();
+    testTournamentRoundAdvance();
+    testTournamentCompletion();
+    testTournamentRegisterAfterStart();
+
+    // Leaderboard system tests
+    testLeaderboardRecordKill();
+    testLeaderboardMultiplePlayers();
+    testLeaderboardIskTracking();
+    testLeaderboardMissionTracking();
+    testLeaderboardRanking();
+    testLeaderboardAchievementDefine();
+    testLeaderboardAchievementUnlock();
+    testLeaderboardAchievementNoDuplicate();
+    testLeaderboardNonexistentPlayer();
+    testLeaderboardDamageTracking();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

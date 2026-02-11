@@ -197,7 +197,9 @@ Data-driven modding without code injection:
 | ResearchSystem | ✅ Complete | 18 assertions |
 | ChatSystem | ✅ Complete | 28 assertions |
 | CharacterCreationSystem | ✅ Complete | 23 assertions |
-| **Total** | **25 systems** | **785 assertions** |
+| TournamentSystem | ✅ Complete | 24 assertions |
+| LeaderboardSystem | ✅ Complete | 23 assertions |
+| **Total** | **27 systems** | **832 assertions** |
 
 ### Data Loaders Status
 
@@ -214,8 +216,10 @@ Data-driven modding without code injection:
 |--------|----------|-------------|
 | ~~ChatSystem~~ | ~~Medium~~ | ✅ Implemented (28 assertions) |
 | ~~CharacterCreationSystem~~ | ~~Low~~ | ✅ Implemented (23 assertions) |
-| TournamentSystem | Low | Competitive PvE events |
-| LeaderboardSystem | Low | Achievements, rankings |
+| ~~TournamentSystem~~ | ~~Low~~ | ✅ Implemented (24 assertions) |
+| ~~LeaderboardSystem~~ | ~~Low~~ | ✅ Implemented (23 assertions) |
+
+All baseline systems are now implemented.
 
 ---
 
@@ -908,8 +912,8 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 #### Additional Features
 - [ ] PvP toggle option (optional for those who want it)
-- [ ] Tournament system
-- [ ] Leaderboards and achievements
+- [x] Tournament system
+- [x] Leaderboards and achievements
 - [ ] In-game web browser (dotlan-style maps)
 - [ ] Voice chat integration
 - [ ] Mobile companion app
