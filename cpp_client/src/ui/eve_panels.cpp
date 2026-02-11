@@ -654,5 +654,156 @@ void RenderModuleRack(const ModuleSlotState slots[], int count) {
     ImGui::Dummy(ImVec2(rackWidth + 20, 0));
 }
 
+// ============================================================================
+// RenderAlertStack — EVE-style HUD warning/alert stack
+// ============================================================================
+void RenderAlertStack(const std::vector<HUDAlert>& alerts, float centerX, float baseY) {
+    if (alerts.empty()) return;
+
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+
+    float alertHeight = 22.0f;
+    float alertWidth = 200.0f;
+    float alertGap = 3.0f;
+    float startY = baseY;
+
+    for (int i = 0; i < static_cast<int>(alerts.size()); ++i) {
+        const auto& alert = alerts[i];
+
+        // Fade out as alert approaches expiry
+        float remaining = alert.duration - alert.elapsed;
+        float alpha = (remaining < 1.0f) ? remaining : 1.0f;
+        if (alpha <= 0.0f) continue;
+
+        float y = startY - (i + 1) * (alertHeight + alertGap);
+        float x = centerX - alertWidth / 2.0f;
+
+        // Background and border color by priority
+        ImU32 bgColor, borderColor, textColor;
+        switch (alert.priority) {
+            case HUDAlertPriority::CRITICAL:
+                bgColor = IM_COL32(120, 20, 20, static_cast<int>(200 * alpha));
+                borderColor = IM_COL32(255, 60, 60, static_cast<int>(220 * alpha));
+                textColor = IM_COL32(255, 100, 100, static_cast<int>(255 * alpha));
+                break;
+            case HUDAlertPriority::WARNING:
+                bgColor = IM_COL32(100, 80, 10, static_cast<int>(190 * alpha));
+                borderColor = IM_COL32(255, 200, 50, static_cast<int>(200 * alpha));
+                textColor = IM_COL32(255, 210, 80, static_cast<int>(255 * alpha));
+                break;
+            default:
+                bgColor = IM_COL32(20, 50, 80, static_cast<int>(170 * alpha));
+                borderColor = IM_COL32(69, 208, 232, static_cast<int>(160 * alpha));
+                textColor = IM_COL32(180, 220, 240, static_cast<int>(240 * alpha));
+                break;
+        }
+
+        // Draw alert box
+        ImVec2 tl(x, y);
+        ImVec2 br(x + alertWidth, y + alertHeight);
+        drawList->AddRectFilled(tl, br, bgColor, 2.0f);
+        drawList->AddRect(tl, br, borderColor, 2.0f, 0, 1.0f);
+
+        // Center text
+        ImVec2 textSize = ImGui::CalcTextSize(alert.message.c_str());
+        float textX = x + (alertWidth - textSize.x) / 2.0f;
+        float textY = y + (alertHeight - textSize.y) / 2.0f;
+        drawList->AddText(ImVec2(textX, textY), textColor, alert.message.c_str());
+    }
+}
+
+// ============================================================================
+// RenderSelectedItem — EVE-style Selected Item panel contents
+// ============================================================================
+void RenderSelectedItem(const SelectedItemData& item,
+                        bool* approach_clicked, bool* orbit_clicked,
+                        bool* lock_clicked, bool* warp_clicked) {
+    if (item.isEmpty()) {
+        ImGui::TextColored(ImVec4(EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
+                                  EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+                           "No item selected");
+        return;
+    }
+
+    // Name (colored by hostility)
+    if (item.is_hostile) {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(EVEColors::TARGET_HOSTILE[0], EVEColors::TARGET_HOSTILE[1],
+                                                     EVEColors::TARGET_HOSTILE[2], EVEColors::TARGET_HOSTILE[3]));
+    } else {
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
+                                                     EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]));
+    }
+    ImGui::Text("%s", item.name.c_str());
+    ImGui::PopStyleColor();
+
+    // Type
+    ImGui::TextColored(ImVec4(EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
+                              EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+                       "%s", item.type.c_str());
+
+    // Distance
+    ImGui::Spacing();
+    if (item.distance < 1000.0f) {
+        ImGui::Text("Distance: %.0f m", item.distance);
+    } else if (item.distance < 1000000.0f) {
+        ImGui::Text("Distance: %.1f km", item.distance / 1000.0f);
+    } else {
+        ImGui::Text("Distance: %.2f AU", item.distance / 149597870700.0f);
+    }
+
+    // Velocity & angular velocity
+    if (item.velocity > 0.0f) {
+        ImGui::Text("Velocity: %.0f m/s", item.velocity);
+    }
+    if (item.angular_velocity > 0.001f) {
+        ImGui::Text("Angular: %.3f rad/s", item.angular_velocity);
+    }
+
+    // Health bars if applicable
+    if (item.has_health) {
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+        RenderHealthBar("S", item.shields_pct, 1.0f, EVEColors::SHIELD_COLOR, 180.0f);
+        RenderHealthBar("A", item.armor_pct, 1.0f, EVEColors::ARMOR_COLOR, 180.0f);
+        RenderHealthBar("H", item.hull_pct, 1.0f, EVEColors::HULL_COLOR, 180.0f);
+    }
+
+    // Action buttons row
+    ImGui::Spacing();
+    ImGui::Separator();
+    ImGui::Spacing();
+
+    float buttonWidth = 65.0f;
+    float buttonHeight = 22.0f;
+    if (approach_clicked) {
+        *approach_clicked = ImGui::Button("Approach", ImVec2(buttonWidth, buttonHeight));
+    } else {
+        ImGui::Button("Approach", ImVec2(buttonWidth, buttonHeight));
+    }
+    ImGui::SameLine();
+    if (orbit_clicked) {
+        *orbit_clicked = ImGui::Button("Orbit", ImVec2(buttonWidth, buttonHeight));
+    } else {
+        ImGui::Button("Orbit", ImVec2(buttonWidth, buttonHeight));
+    }
+    ImGui::SameLine();
+    if (lock_clicked) {
+        if (item.is_locked) {
+            *lock_clicked = ImGui::Button("Unlock", ImVec2(buttonWidth, buttonHeight));
+        } else {
+            *lock_clicked = ImGui::Button("Lock", ImVec2(buttonWidth, buttonHeight));
+        }
+    } else {
+        ImGui::Button(item.is_locked ? "Unlock" : "Lock", ImVec2(buttonWidth, buttonHeight));
+    }
+    ImGui::SameLine();
+    if (warp_clicked) {
+        *warp_clicked = ImGui::Button("Warp To", ImVec2(buttonWidth, buttonHeight));
+    } else {
+        ImGui::Button("Warp To", ImVec2(buttonWidth, buttonHeight));
+    }
+}
+
 } // namespace EVEPanels
 } // namespace UI

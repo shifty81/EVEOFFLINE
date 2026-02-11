@@ -29,6 +29,14 @@ class NeocomPanel;
 class ChatPanel;
 class DroneControlPanel;
 class NotificationManager;
+class ProbeScannerPanel;
+
+// Forward declarations for HUD types (defined in eve_panels.h)
+struct ModuleSlotState;
+struct HUDAlert;
+struct SelectedItemData;
+struct ProbeScanResult;
+enum class HUDAlertPriority;
 
 struct EVEColors {
     // Background colors — deep dark blue-black (Photon UI style)
@@ -151,6 +159,7 @@ public:
     ChatPanel* GetChatPanel() { return m_chatPanel.get(); }
     DroneControlPanel* GetDroneControlPanel() { return m_droneControlPanel.get(); }
     NotificationManager* GetNotificationManager() { return m_notificationManager.get(); }
+    ProbeScannerPanel* GetProbeScannerPanel() { return m_probeScannerPanel.get(); }
     
     // Docking manager access
     DockingManager* GetDockingManager() { return m_dockingManager.get(); }
@@ -165,6 +174,7 @@ public:
     void ToggleMap();
     void ToggleChat();
     void ToggleDrones();
+    void ToggleProbeScanner();
     
     // Interface lock
     void SetInterfaceLocked(bool locked);
@@ -175,6 +185,24 @@ public:
     bool approach_active = false;
     bool orbit_active = false;
     bool keep_range_active = false;
+
+    // Selected item management
+    void SetSelectedItem(const SelectedItemData& item);
+    const SelectedItemData& GetSelectedItem() const { return m_selectedItem; }
+    void ClearSelectedItem();
+
+    // HUD alert management
+    void AddAlert(const std::string& message, HUDAlertPriority priority, float duration = 5.0f);
+    void ClearAlerts();
+    void UpdateAlerts(float deltaTime);
+
+    // Module rack data binding
+    void SetModuleSlots(const ModuleSlotState slots[], int count);
+
+    // Compact mode
+    void SetCompactMode(bool enabled);
+    bool IsCompactMode() const { return m_compactMode; }
+    void ToggleCompactMode();
 
 private:
     ImGuiContext* context_;
@@ -225,12 +253,33 @@ private:
     void RenderSpeedPanel();
     void RenderCombatLogPanel();
     void RenderStarMapPanel();
+    void RenderSelectedItemPanel();
     
     // Helper for health bars
     void RenderHealthBar(const char* label, float current, float max, const float color[4]);
     
     // Setup dockable panels in docking manager
     void SetupDockablePanels();
+
+    // Selected item state
+    SelectedItemData m_selectedItem;
+    bool m_showSelectedItem = true;
+
+    // HUD alert stack
+    std::vector<HUDAlert> m_alerts;
+    static constexpr size_t MAX_ALERTS = 5;
+
+    // Module rack state (data-bound)
+    static constexpr int MAX_MODULE_SLOTS = 8;
+    ModuleSlotState m_moduleSlots[8];
+    int m_moduleSlotCount = 8;
+    bool m_showModuleRack = true;
+
+    // Compact mode
+    bool m_compactMode = false;
+
+    // Probe scanner panel
+    std::unique_ptr<ProbeScannerPanel> m_probeScannerPanel;
 };
 
 } // namespace UI

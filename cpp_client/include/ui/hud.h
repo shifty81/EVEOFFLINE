@@ -10,11 +10,34 @@ namespace UI {
 namespace eve {
 
 /**
+ * Damage flash type for visual feedback when taking damage.
+ */
+enum class DamageLayer {
+    SHIELD,  // Blue ripple
+    ARMOR,   // Yellow/gold flash
+    HULL     // Red pulse
+};
+
+/**
+ * Active damage flash effect for HUD visual feedback.
+ */
+struct DamageFlash {
+    DamageLayer layer = DamageLayer::SHIELD;
+    float intensity = 1.0f;    // 0-1, fades over time
+    float elapsed = 0.0f;      // Time since flash started
+    float duration = 0.5f;     // Total flash duration
+
+    DamageFlash() = default;
+    DamageFlash(DamageLayer l, float dur = 0.5f)
+        : layer(l), intensity(1.0f), elapsed(0.0f), duration(dur) {}
+};
+
+/**
  * HUD (Heads-Up Display) for showing game information.
  *
  * Wraps the EVE-style circular ship status gauge (shield/armor/hull/capacitor
  * rings, speed readout, module rack) provided by EVEPanels, and maintains
- * a scrollable combat log.
+ * a scrollable combat log. Supports damage feedback visual effects.
  */
 class HUD {
 public:
@@ -53,6 +76,17 @@ public:
      */
     const std::vector<std::string>& getCombatLog() const { return m_combatLog; }
 
+    /**
+     * Trigger a damage feedback flash on the specified layer.
+     * Produces a visual pulse (blue for shield, gold for armor, red for hull).
+     */
+    void triggerDamageFlash(DamageLayer layer);
+
+    /**
+     * Check if any damage flash is currently active.
+     */
+    bool hasDamageFlash() const { return !m_damageFlashes.empty(); }
+
 private:
     std::vector<std::string> m_combatLog;
     static constexpr int MAX_LOG_MESSAGES = 50;
@@ -68,6 +102,10 @@ private:
     float m_capacitorMax = 100.0f;
     float m_velocity = 0.0f;
     float m_maxVelocity = 100.0f;
+
+    // Damage feedback flashes
+    std::vector<DamageFlash> m_damageFlashes;
+    static constexpr int MAX_FLASHES = 3;
 };
 
 } // namespace eve

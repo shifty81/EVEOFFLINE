@@ -313,6 +313,7 @@ set(IMGUI_UI_SOURCES
     src/ui/drone_control_panel.cpp
     src/ui/notification_manager.cpp
     src/ui/radial_menu.cpp
+    src/ui/probe_scanner_panel.cpp
 )
 
 set(CLIENT_SOURCES
@@ -423,6 +424,7 @@ set(CLIENT_HEADERS
     include/ui/chat_panel.h
     include/ui/drone_control_panel.h
     include/ui/notification_manager.h
+    include/ui/probe_scanner_panel.h
     include/ui/rml_ui_manager.h
     include/ui/radial_menu.h
     include/ui/photon/photon_types.h
@@ -706,6 +708,7 @@ if(BUILD_TESTS)
             src/ui/chat_panel.cpp
             src/ui/drone_control_panel.cpp
             src/ui/notification_manager.cpp
+            src/ui/probe_scanner_panel.cpp
             src/ui/photon/photon_renderer.cpp
             src/ui/photon/photon_context.cpp
             src/ui/photon/photon_widgets.cpp
@@ -824,6 +827,7 @@ if(BUILD_TESTS)
             src/ui/chat_panel.cpp
             src/ui/drone_control_panel.cpp
             src/ui/notification_manager.cpp
+            src/ui/probe_scanner_panel.cpp
             src/ui/photon/photon_renderer.cpp
             src/ui/photon/photon_context.cpp
             src/ui/photon/photon_widgets.cpp

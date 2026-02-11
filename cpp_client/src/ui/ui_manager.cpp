@@ -12,6 +12,7 @@
 #include "ui/chat_panel.h"
 #include "ui/drone_control_panel.h"
 #include "ui/notification_manager.h"
+#include "ui/probe_scanner_panel.h"
 #include "core/entity.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -44,6 +45,12 @@ UIManager::UIManager()
     m_chatPanel = std::make_unique<ChatPanel>();
     m_droneControlPanel = std::make_unique<DroneControlPanel>();
     m_notificationManager = std::make_unique<NotificationManager>();
+    m_probeScannerPanel = std::make_unique<ProbeScannerPanel>();
+
+    // Initialize module slots to default empty state
+    for (int i = 0; i < MAX_MODULE_SLOTS; ++i) {
+        m_moduleSlots[i] = ModuleSlotState();
+    }
 }
 
 UIManager::~UIManager() {
@@ -152,6 +159,11 @@ void UIManager::Render() {
         RenderCombatLogPanel();
     }
     
+    // Render Selected Item panel (top-right, EVE-style)
+    if (m_showSelectedItem && !m_selectedItem.isEmpty()) {
+        RenderSelectedItemPanel();
+    }
+    
     // Render EVE-style target list
     if (show_target_list_ && m_targetList) {
         m_targetList->render();
@@ -228,6 +240,12 @@ void UIManager::SetupDockablePanels() {
             ImVec2(60, 300), ImVec2(320, 400));
     }
     
+    if (m_probeScannerPanel) {
+        m_dockingManager->RegisterPanel("probe_scanner", "Probe Scanner",
+            [this]() { m_probeScannerPanel->RenderContents(); },
+            ImVec2(420, 50), ImVec2(400, 350));
+    }
+    
     // Set default visibility — Overview visible, others hidden by default
     m_dockingManager->SetPanelVisible("overview", true);
     m_dockingManager->SetPanelVisible("inventory", false);
@@ -237,6 +255,7 @@ void UIManager::SetupDockablePanels() {
     m_dockingManager->SetPanelVisible("dscan", false);
     m_dockingManager->SetPanelVisible("chat", false);
     m_dockingManager->SetPanelVisible("drones", false);
+    m_dockingManager->SetPanelVisible("probe_scanner", false);
     
     std::cout << "[UIManager] Dockable panels registered" << std::endl;
 }
@@ -476,8 +495,27 @@ void UIManager::RenderShipStatusPanel() {
     
     ImGui::Begin("##ShipHUD", &show_ship_status_, flags);
     
+    // Render alert stack above the ship status gauge
+    if (!m_alerts.empty()) {
+        float alertCenterX = posX + hudWidth * 0.5f;
+        float alertBaseY = posY - 5.0f;
+        EVEPanels::RenderAlertStack(m_alerts, alertCenterX, alertBaseY);
+    }
+    
     // Use the EVE Online-style circular gauge display
     EVEPanels::RenderShipStatusCircular(ship_status_);
+    
+    // Render data-bound module rack if we have module data
+    if (m_showModuleRack && m_moduleSlotCount > 0) {
+        bool hasAnyFitted = false;
+        for (int i = 0; i < m_moduleSlotCount; ++i) {
+            if (m_moduleSlots[i].fitted) { hasAnyFitted = true; break; }
+        }
+        if (hasAnyFitted) {
+            ImGui::Spacing();
+            EVEPanels::RenderModuleRack(m_moduleSlots, m_moduleSlotCount);
+        }
+    }
     
     ImGui::End();
 }
@@ -811,6 +849,121 @@ void UIManager::RenderStarMapPanel() {
     ImGui::End();
     
     ImGui::PopStyleColor();
+}
+
+// ============================================================================
+// Selected Item Panel
+// ============================================================================
+void UIManager::RenderSelectedItemPanel() {
+    ImGuiIO& io = ImGui::GetIO();
+    float panelWidth = 280.0f;
+    float panelHeight = 200.0f;
+    float posX = io.DisplaySize.x - panelWidth - 10.0f;
+    float posY = 10.0f;
+
+    ImGui::SetNextWindowPos(ImVec2(posX, posY), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSize(ImVec2(panelWidth, panelHeight), ImGuiCond_FirstUseEver);
+
+    ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+    if (m_dockingManager && m_dockingManager->IsInterfaceLocked()) {
+        flags |= ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize;
+    }
+
+    if (ImGui::Begin("Selected Item", &m_showSelectedItem, flags)) {
+        EVEPanels::RenderSelectedItem(m_selectedItem);
+    }
+    ImGui::End();
+}
+
+void UIManager::SetSelectedItem(const SelectedItemData& item) {
+    m_selectedItem = item;
+}
+
+void UIManager::ClearSelectedItem() {
+    m_selectedItem = SelectedItemData();
+}
+
+// ============================================================================
+// HUD Alert Management
+// ============================================================================
+void UIManager::AddAlert(const std::string& message, HUDAlertPriority priority, float duration) {
+    // Remove duplicate alerts with same message
+    m_alerts.erase(
+        std::remove_if(m_alerts.begin(), m_alerts.end(),
+            [&message](const HUDAlert& a) { return a.message == message; }),
+        m_alerts.end());
+
+    m_alerts.emplace_back(message, priority, duration);
+
+    // Sort by priority (critical first)
+    std::sort(m_alerts.begin(), m_alerts.end(),
+              [](const HUDAlert& a, const HUDAlert& b) {
+                  return static_cast<int>(a.priority) > static_cast<int>(b.priority);
+              });
+
+    // Limit max alerts
+    if (m_alerts.size() > MAX_ALERTS) {
+        m_alerts.resize(MAX_ALERTS);
+    }
+}
+
+void UIManager::ClearAlerts() {
+    m_alerts.clear();
+}
+
+void UIManager::UpdateAlerts(float deltaTime) {
+    // Update elapsed time and remove expired alerts
+    for (auto& alert : m_alerts) {
+        alert.elapsed += deltaTime;
+    }
+    m_alerts.erase(
+        std::remove_if(m_alerts.begin(), m_alerts.end(),
+            [](const HUDAlert& a) { return a.elapsed >= a.duration; }),
+        m_alerts.end());
+}
+
+// ============================================================================
+// Module Rack Data Binding
+// ============================================================================
+void UIManager::SetModuleSlots(const ModuleSlotState slots[], int count) {
+    m_moduleSlotCount = std::min(count, MAX_MODULE_SLOTS);
+    for (int i = 0; i < m_moduleSlotCount; ++i) {
+        m_moduleSlots[i] = slots[i];
+    }
+}
+
+// ============================================================================
+// Compact Mode
+// ============================================================================
+void UIManager::SetCompactMode(bool enabled) {
+    m_compactMode = enabled;
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (enabled) {
+        style.WindowPadding = ImVec2(4.0f, 4.0f);
+        style.FramePadding = ImVec2(3.0f, 2.0f);
+        style.ItemSpacing = ImVec2(4.0f, 2.0f);
+        style.ItemInnerSpacing = ImVec2(2.0f, 2.0f);
+    } else {
+        // Restore default EVE Photon spacing
+        style.WindowPadding = ImVec2(8.0f, 8.0f);
+        style.FramePadding = ImVec2(6.0f, 3.0f);
+        style.ItemSpacing = ImVec2(6.0f, 4.0f);
+        style.ItemInnerSpacing = ImVec2(4.0f, 4.0f);
+    }
+}
+
+void UIManager::ToggleCompactMode() {
+    SetCompactMode(!m_compactMode);
+}
+
+// ============================================================================
+// Probe Scanner Toggle
+// ============================================================================
+void UIManager::ToggleProbeScanner() {
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("probe_scanner");
+        m_dockingManager->SetPanelVisible("probe_scanner", !vis);
+    }
 }
 
 } // namespace UI
