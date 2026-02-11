@@ -37,9 +37,11 @@ This document outlines the comprehensive plan to implement the Atlas UI system i
   - ✅ Default presets — default, combat, mining layout presets
   - ✅ Per-panel opacity support
   - ✅ Naming convention — all UI components renamed to original names (see NAMING_CONVENTION.md)
-  - ⬜ Window snap-to-edge
-  - ⬜ UI scale controls
-  - ⬜ Color scheme switching
+  - ✅ Overview tab filtering — Combat/Mining/Custom tabs filter entities by type ✅ (Feb 11, 2026)
+  - ✅ UI scale controls — Global UI scale factor (0.5×–2.0×) ✅ (Feb 11, 2026)
+  - ✅ Color scheme switching — Default, Classic, Colorblind-safe themes ✅ (Feb 11, 2026)
+  - ✅ Combat log in HUD — Combat log messages rendered below ship status gauge ✅ (Feb 11, 2026)
+  - ⬜ Window snap-to-other-windows
 
 ---
 
@@ -444,16 +446,16 @@ This document outlines the comprehensive plan to implement the Atlas UI system i
   - [x] Reset to defaults — built-in presets
 
 #### Customization Options
-- [ ] **Color Schemes**
-  - Atlas UI (default)
-  - Classic theme
-  - Custom colors
-  - Color-blind modes
+- [x] **Color Schemes** ✅ (Feb 11, 2026)
+  - [x] Atlas UI (default)
+  - [x] Classic theme (amber/warm tones)
+  - [ ] Custom colors
+  - [x] Color-blind modes (deuteranopia-safe blue/orange)
   
-- [ ] **UI Scale**
-  - Global UI scale (50%-200%)
-  - Per-window scaling
-  - Font size adjustment
+- [x] **UI Scale** ✅ (Feb 11, 2026)
+  - [x] Global UI scale (50%-200%) via SetUIScale/GetUIScale
+  - [ ] Per-window scaling
+  - [ ] Font size adjustment
   
 - [ ] **Overview Customization**
   - Column visibility

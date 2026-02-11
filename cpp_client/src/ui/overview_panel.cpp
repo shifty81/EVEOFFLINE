@@ -21,23 +21,30 @@ OverviewPanel::OverviewPanel()
     allFilter.name = "All";
     m_savedFilters["All"] = allFilter;
     
-    OverviewFilter hostileFilter;
-    hostileFilter.name = "Hostile";
-    hostileFilter.show_friendly = false;
-    hostileFilter.show_neutral = false;
-    m_savedFilters["Hostile"] = hostileFilter;
+    // Combat filter — show hostile NPCs/players and warpable combat targets
+    OverviewFilter combatFilter;
+    combatFilter.name = "Combat";
+    combatFilter.show_friendly = false;
+    combatFilter.show_ship_types = {
+        "Frigate", "Destroyer", "Cruiser", "Battlecruiser", "Battleship",
+        "Carrier", "Dreadnought", "Titan", "Shuttle", "Industrial",
+        "Wormhole", "Stargate", "Station"
+    };
+    m_savedFilters["Combat"] = combatFilter;
     
-    OverviewFilter friendlyFilter;
-    friendlyFilter.name = "Friendly";
-    friendlyFilter.show_hostile = false;
-    friendlyFilter.show_neutral = false;
-    m_savedFilters["Friendly"] = friendlyFilter;
+    // Mining filter — show minable objects and resource-related celestials
+    OverviewFilter miningFilter;
+    miningFilter.name = "Mining";
+    miningFilter.show_hostile = false;
+    miningFilter.show_ship_types = {
+        "Asteroid Belt", "Moon", "Planet", "Station", "Industrial"
+    };
+    m_savedFilters["Mining"] = miningFilter;
     
-    OverviewFilter neutralFilter;
-    neutralFilter.name = "Neutral";
-    neutralFilter.show_hostile = false;
-    neutralFilter.show_friendly = false;
-    m_savedFilters["Neutral"] = neutralFilter;
+    // Custom filter — same as All by default, user can modify
+    OverviewFilter customFilter;
+    customFilter.name = "Custom";
+    m_savedFilters["Custom"] = customFilter;
     
     m_currentFilter = allFilter;
 }
