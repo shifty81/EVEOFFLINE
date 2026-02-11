@@ -30,10 +30,6 @@ class ChatPanel;
 class DroneControlPanel;
 class NotificationManager;
 
-namespace eve {
-    class StarMap;
-}
-
 struct EVEColors {
     // Background colors — deep dark blue-black (Photon UI style)
     // See docs/design/EVE_UI_STYLE_REFERENCE.md for full palette

@@ -243,3 +243,1063 @@ tbody td {
     background-color: #1E2A36;
     margin: 8dp 0dp;
 }
+
+/* ===================================================================
+   11. HEALTH / STATUS BARS
+   =================================================================== */
+
+.bar-track,
+.health-bar-track,
+.capacity-bar-track,
+.resource-bar-track {
+    background-color: #080C12;
+    height: 6dp;
+    border-radius: 2dp;
+    margin: 1dp 0dp;
+}
+
+.bar-fill,
+.health-bar-fill,
+.capacity-bar-fill,
+.resource-bar-fill {
+    height: 100%;
+    border-radius: 2dp;
+}
+
+.shield-fill { background-color: #3399FF; }
+.armor-fill  { background-color: #FFD040; }
+.hull-fill   { background-color: #E64545; }
+.cap-fill    { background-color: #45D0E8; }
+
+.health-display {
+    margin: 4dp 0dp;
+}
+
+.health-row {
+    height: 14dp;
+    margin: 2dp 0dp;
+}
+
+.health-label {
+    display: inline-block;
+    width: 60dp;
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.health-pct {
+    display: inline-block;
+    width: 30dp;
+    text-align: right;
+    font-size: 10dp;
+    color: #E6EDF3;
+}
+
+/* ===================================================================
+   12. STANDING INDICATORS
+   =================================================================== */
+
+.standing-dot {
+    display: inline-block;
+    width: 8dp;
+    height: 8dp;
+    border-radius: 4dp;
+    margin-right: 4dp;
+}
+
+.standing-dot.hostile  { background-color: #CC3333; }
+.standing-dot.friendly { background-color: #3399FF; }
+.standing-dot.neutral  { background-color: #AAAAAA; }
+
+.hostile  { color: #CC3333; }
+.friendly { color: #3399FF; }
+.neutral  { color: #AAAAAA; }
+
+/* ===================================================================
+   13. SHIP HUD
+   =================================================================== */
+
+.speed-section {
+    text-align: center;
+    margin: 4dp 0dp;
+}
+
+.speed-value {
+    font-size: 18dp;
+    font-weight: bold;
+    color: #E6EDF3;
+}
+
+.speed-unit {
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.max-speed {
+    font-size: 9dp;
+    color: #8B949E;
+}
+
+.combat-log {
+    max-height: 100dp;
+    overflow: auto;
+    padding: 4dp;
+    background-color: #080C1240;
+    border-radius: 2dp;
+}
+
+.message {
+    font-size: 10dp;
+    color: #8B949E;
+    padding: 1dp 0dp;
+}
+
+.module-rack {
+    margin: 4dp 0dp;
+}
+
+.rack-section {
+    margin: 2dp 0dp;
+}
+
+.rack-label {
+    font-size: 9dp;
+    color: #8B949E;
+    font-weight: bold;
+}
+
+.rack-row {
+    display: block;
+    margin: 2dp 0dp;
+}
+
+.module-slot {
+    display: inline-block;
+    width: 32dp;
+    height: 32dp;
+    background-color: #161B2280;
+    border: 1dp #283848;
+    border-radius: 2dp;
+    margin: 1dp;
+    text-align: center;
+    font-size: 9dp;
+    color: #8B949E;
+}
+
+.module-slot:hover {
+    border-color: #45D0E8;
+}
+
+.motion-cmds {
+    text-align: center;
+    margin: 4dp 0dp;
+}
+
+/* ===================================================================
+   14. OVERVIEW
+   =================================================================== */
+
+.overview-content {
+    overflow: auto;
+}
+
+.distance {
+    text-align: right;
+    color: #8B949E;
+    font-size: 10dp;
+}
+
+.entity-type {
+    color: #8B949E;
+    font-size: 10dp;
+}
+
+.sort-arrow {
+    font-size: 8dp;
+    color: #45D0E8;
+}
+
+/* ===================================================================
+   15. TARGET LIST
+   =================================================================== */
+
+.target-container {
+    max-height: 200dp;
+    overflow: auto;
+}
+
+/* ===================================================================
+   16. FITTING PANEL
+   =================================================================== */
+
+.fitting-content {
+    padding: 4dp;
+}
+
+.ship-name {
+    font-size: 14dp;
+    font-weight: bold;
+    color: #45D0E8;
+    text-align: center;
+    margin-bottom: 8dp;
+}
+
+.slot-section {
+    margin: 4dp 0dp;
+}
+
+.slot-section-label {
+    font-size: 10dp;
+    font-weight: bold;
+    color: #8B949E;
+    margin-bottom: 2dp;
+}
+
+.slot-row {
+    display: block;
+    margin: 2dp 0dp;
+}
+
+.fitting-slot {
+    display: inline-block;
+    width: 100%;
+    padding: 3dp 6dp;
+    background-color: #161B2260;
+    border: 1dp #28384880;
+    border-radius: 2dp;
+    margin: 1dp 0dp;
+    font-size: 10dp;
+}
+
+.fitting-slot:hover {
+    background-color: #1A3A4A60;
+    border-color: #45D0E880;
+}
+
+.slot-label {
+    color: #E6EDF3;
+    font-size: 10dp;
+}
+
+.resource-section {
+    margin: 6dp 0dp;
+}
+
+.resource-row {
+    margin: 3dp 0dp;
+}
+
+.resource-label {
+    display: inline-block;
+    width: 30dp;
+    font-size: 10dp;
+    color: #8B949E;
+    font-weight: bold;
+}
+
+.resource-value {
+    font-size: 10dp;
+    color: #E6EDF3;
+}
+
+.cpu-fill { background-color: #45D0E8; }
+.pg-fill  { background-color: #FFB833; }
+.cal-fill { background-color: #33CC66; }
+
+.stats-section {
+    margin: 6dp 0dp;
+    padding-top: 4dp;
+    border-top: 1dp #1E2A36;
+}
+
+.stat-row {
+    margin: 2dp 0dp;
+}
+
+.stat-name {
+    display: inline-block;
+    width: 80dp;
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.stat-value {
+    font-size: 10dp;
+    color: #E6EDF3;
+}
+
+/* ===================================================================
+   17. INVENTORY
+   =================================================================== */
+
+.capacity-section {
+    margin: 4dp 0dp;
+}
+
+.capacity-label {
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.capacity-value {
+    font-size: 10dp;
+    color: #E6EDF3;
+    float: right;
+}
+
+.item-list {
+    overflow: auto;
+}
+
+.item-name {
+    color: #E6EDF3;
+}
+
+/* ===================================================================
+   18. MARKET
+   =================================================================== */
+
+.market-tabs,
+.view-tabs {
+    display: block;
+    margin-bottom: 4dp;
+    border-bottom: 1dp #1E2A36;
+}
+
+.view-tab,
+.tab-btn {
+    display: inline-block;
+    padding: 4dp 10dp;
+    color: #8B949E;
+    font-size: 11dp;
+    border-bottom: 2dp #00000000;
+}
+
+.view-tab:hover,
+.tab-btn:hover {
+    color: #E6EDF3;
+}
+
+.view-tab.active,
+.tab-btn.active {
+    color: #45D0E8;
+    border-bottom-color: #45D0E8;
+}
+
+.search-bar {
+    margin: 4dp 0dp;
+}
+
+.search-input {
+    width: 100%;
+    padding: 4dp 8dp;
+    background-color: #161B22;
+    border: 1dp #283848;
+    border-radius: 2dp;
+    color: #E6EDF3;
+    font-size: 11dp;
+}
+
+.category-section {
+    margin: 4dp 0dp;
+}
+
+.cat-group {
+    margin: 2dp 0dp;
+}
+
+.cat-item {
+    padding: 2dp 8dp;
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.cat-item:hover {
+    color: #E6EDF3;
+    background-color: #1A3A4A40;
+}
+
+.item-meta {
+    font-size: 10dp;
+    color: #8B949E;
+    margin: 2dp 0dp;
+}
+
+.order-section-title {
+    font-size: 10dp;
+    font-weight: bold;
+    color: #45D0E8;
+    margin: 4dp 0dp;
+}
+
+.buy-btn {
+    background-color: #33CC6640;
+    border-color: #33CC6680;
+    color: #33CC66;
+}
+
+.buy-btn:hover {
+    background-color: #33CC66A0;
+}
+
+.sell-btn {
+    background-color: #CC333340;
+    border-color: #CC333380;
+    color: #CC3333;
+}
+
+.sell-btn:hover {
+    background-color: #CC3333A0;
+}
+
+/* ===================================================================
+   19. MISSION PANEL
+   =================================================================== */
+
+.mission-tabs {
+    display: block;
+    margin-bottom: 4dp;
+    border-bottom: 1dp #1E2A36;
+}
+
+.mission-list {
+    overflow: auto;
+    max-height: 150dp;
+}
+
+.mission-entry {
+    padding: 4dp 6dp;
+    border-bottom: 1dp #1E2A3640;
+}
+
+.mission-entry:hover {
+    background-color: #1A3A4A40;
+}
+
+.mission-entry.selected {
+    background-color: #1A3A4A80;
+    border-left: 2dp #45D0E8;
+}
+
+.mission-title {
+    font-size: 11dp;
+    color: #E6EDF3;
+    font-weight: bold;
+}
+
+.mission-level {
+    display: inline-block;
+    font-size: 9dp;
+    color: #45D0E8;
+    margin-right: 4dp;
+}
+
+.mission-agent {
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.mission-detail {
+    padding: 4dp;
+}
+
+.mission-actions {
+    margin-top: 6dp;
+    text-align: right;
+}
+
+.detail-section {
+    margin: 4dp 0dp;
+}
+
+.detail-title {
+    font-size: 13dp;
+    font-weight: bold;
+    color: #E6EDF3;
+    margin-bottom: 4dp;
+}
+
+.detail-desc {
+    font-size: 11dp;
+    color: #8B949E;
+    margin-bottom: 6dp;
+}
+
+.objective {
+    padding: 2dp 0dp;
+    font-size: 11dp;
+}
+
+.objective.complete {
+    color: #33CC66;
+}
+
+.objective.incomplete {
+    color: #8B949E;
+}
+
+.obj-marker {
+    display: inline-block;
+    width: 14dp;
+}
+
+.obj-marker.done {
+    color: #33CC66;
+}
+
+.obj-marker.pending {
+    color: #8B949E;
+}
+
+.reward-row {
+    margin: 2dp 0dp;
+}
+
+.reward-label {
+    display: inline-block;
+    width: 80dp;
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.reward-value {
+    font-size: 10dp;
+    color: #E6EDF3;
+}
+
+.reward-isk {
+    color: #FFB833;
+}
+
+.complete-btn {
+    background-color: #33CC6640;
+    border-color: #33CC6680;
+    color: #33CC66;
+}
+
+.decline-btn {
+    background-color: #CC333340;
+    border-color: #CC333380;
+    color: #CC3333;
+}
+
+/* ===================================================================
+   20. D-SCAN
+   =================================================================== */
+
+.scan-controls {
+    margin: 4dp 0dp;
+}
+
+.control-row {
+    margin: 3dp 0dp;
+}
+
+.control-label {
+    display: inline-block;
+    width: 50dp;
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.control-value {
+    font-size: 10dp;
+    color: #E6EDF3;
+}
+
+.slider-track {
+    display: inline-block;
+    width: 100dp;
+    height: 4dp;
+    background-color: #080C12;
+    border-radius: 2dp;
+    margin: 0dp 4dp;
+}
+
+.slider-fill {
+    height: 100%;
+    background-color: #45D0E8;
+    border-radius: 2dp;
+}
+
+.scan-btn {
+    background-color: #45D0E840;
+    border-color: #45D0E880;
+    color: #45D0E8;
+    padding: 4dp 16dp;
+    font-weight: bold;
+}
+
+.scan-btn:hover {
+    background-color: #45D0E8A0;
+}
+
+.results-header {
+    margin: 4dp 0dp;
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+.results-count {
+    color: #45D0E8;
+    font-weight: bold;
+}
+
+.results-content {
+    overflow: auto;
+}
+
+/* ===================================================================
+   21. NEOCOM SIDEBAR
+   =================================================================== */
+
+.neo-btn {
+    display: block;
+    width: 36dp;
+    height: 36dp;
+    background-color: #0D111780;
+    border: 1dp #28384860;
+    border-radius: 4dp;
+    margin: 2dp 0dp;
+    text-align: center;
+    padding-top: 6dp;
+    font-size: 16dp;
+    color: #8B949E;
+}
+
+.neo-btn:hover {
+    background-color: #1A3A4A80;
+    border-color: #45D0E880;
+    color: #45D0E8;
+}
+
+.neo-btn .icon {
+    font-size: 16dp;
+}
+
+.neo-btn .label {
+    font-size: 7dp;
+    color: #8B949E;
+    display: none;
+}
+
+.neocom-separator {
+    height: 1dp;
+    background-color: #1E2A36;
+    margin: 4dp 2dp;
+}
+
+.neocom-toggle {
+    display: block;
+    width: 36dp;
+    height: 20dp;
+    text-align: center;
+    font-size: 10dp;
+    color: #8B949E;
+    background-color: transparent;
+    border-width: 0dp;
+}
+
+.neocom-toggle:hover {
+    color: #45D0E8;
+}
+
+.shortcut-hint {
+    font-size: 7dp;
+    color: #484F58;
+}
+
+/* ===================================================================
+   22. CHAT
+   =================================================================== */
+
+.channel-tabs {
+    display: block;
+    border-bottom: 1dp #1E2A36;
+    margin-bottom: 4dp;
+}
+
+.channel-tab {
+    display: inline-block;
+    padding: 4dp 8dp;
+    font-size: 10dp;
+    color: #8B949E;
+    border-bottom: 2dp #00000000;
+}
+
+.channel-tab:hover {
+    color: #E6EDF3;
+}
+
+.channel-tab.active {
+    color: #45D0E8;
+    border-bottom-color: #45D0E8;
+}
+
+.member-bar {
+    font-size: 9dp;
+    color: #8B949E;
+    padding: 2dp 4dp;
+}
+
+.member-count {
+    color: #45D0E8;
+}
+
+.message-area {
+    overflow: auto;
+    max-height: 200dp;
+    padding: 4dp;
+    background-color: #080C1230;
+}
+
+.chat-msg {
+    margin: 2dp 0dp;
+    font-size: 11dp;
+}
+
+.msg-time {
+    font-size: 9dp;
+    color: #484F58;
+    margin-right: 4dp;
+}
+
+.msg-sender {
+    font-weight: bold;
+    margin-right: 4dp;
+}
+
+.msg-sender.self     { color: #E6EDF3; }
+.msg-sender.other    { color: #8B949E; }
+.msg-sender.system   { color: #FFB833; }
+.msg-sender.hostile   { color: #CC3333; }
+.msg-sender.friendly  { color: #3399FF; }
+
+.msg-text {
+    color: #E6EDF3;
+}
+
+.input-bar {
+    margin-top: 4dp;
+}
+
+.chat-input {
+    width: 100%;
+    padding: 4dp 8dp;
+    background-color: #161B22;
+    border: 1dp #283848;
+    border-radius: 2dp;
+    color: #E6EDF3;
+    font-size: 11dp;
+}
+
+/* ===================================================================
+   23. CONTEXT MENU
+   =================================================================== */
+
+.menu-header {
+    padding: 4dp 8dp;
+    border-bottom: 1dp #1E2A36;
+    font-weight: bold;
+    color: #E6EDF3;
+    font-size: 11dp;
+}
+
+.menu-type {
+    font-size: 9dp;
+    color: #8B949E;
+    font-weight: normal;
+}
+
+.menu-item {
+    padding: 4dp 12dp;
+    font-size: 11dp;
+    color: #E6EDF3;
+}
+
+.menu-item:hover {
+    background-color: #1A3A4A80;
+    color: #45D0E8;
+}
+
+.menu-item.disabled {
+    color: #484F58;
+}
+
+.menu-separator {
+    height: 1dp;
+    background-color: #1E2A36;
+    margin: 2dp 0dp;
+}
+
+.shortcut {
+    float: right;
+    font-size: 9dp;
+    color: #484F58;
+}
+
+.submenu-arrow {
+    float: right;
+    font-size: 10dp;
+    color: #8B949E;
+}
+
+/* ===================================================================
+   24. DRONE BAY
+   =================================================================== */
+
+.drone-list {
+    overflow: auto;
+}
+
+.section-header {
+    font-size: 10dp;
+    font-weight: bold;
+    color: #8B949E;
+    padding: 2dp 0dp;
+    border-bottom: 1dp #1E2A36;
+}
+
+.section-title {
+    color: #E6EDF3;
+}
+
+.section-count {
+    color: #45D0E8;
+    font-size: 9dp;
+}
+
+.action-bar {
+    margin-top: 6dp;
+    text-align: center;
+}
+
+.btn-engage {
+    background-color: #33CC6640;
+    border-color: #33CC6680;
+    color: #33CC66;
+    padding: 4dp 10dp;
+}
+
+.btn-engage:hover {
+    background-color: #33CC66A0;
+}
+
+.btn-danger {
+    background-color: #CC333340;
+    border-color: #CC333380;
+    color: #CC3333;
+    padding: 4dp 10dp;
+}
+
+.btn-danger:hover {
+    background-color: #CC3333A0;
+}
+
+.stop-btn {
+    background-color: #FFB83340;
+    border-color: #FFB83380;
+    color: #FFB833;
+}
+
+.stop-btn:hover {
+    background-color: #FFB833A0;
+}
+
+/* ===================================================================
+   25. TAB BAR (shared)
+   =================================================================== */
+
+.tab-bar {
+    display: block;
+    border-bottom: 1dp #1E2A36;
+    margin-bottom: 4dp;
+}
+
+/* ===================================================================
+   26. SECTION LABEL
+   =================================================================== */
+
+.section-label {
+    font-size: 10dp;
+    font-weight: bold;
+    color: #45D0E8;
+    margin: 6dp 0dp 2dp 0dp;
+    padding-bottom: 2dp;
+    border-bottom: 1dp #1E2A3640;
+}
+
+/* ===================================================================
+   27. SELECTED STATE
+   =================================================================== */
+
+.selected {
+    background-color: #1A3A4A80;
+}
+
+/* ===================================================================
+   28. TARGET CARDS (dynamically generated)
+   =================================================================== */
+
+.target-card {
+    background-color: #0D111780;
+    border: 1dp #28384860;
+    border-radius: 2dp;
+    padding: 4dp 6dp;
+    margin: 2dp 0dp;
+}
+
+.target-card.active {
+    border-color: #45D0E8CC;
+    background-color: #1A3A4A60;
+}
+
+.target-card.hostile {
+    border-left: 2dp #CC3333;
+}
+
+.target-card.friendly {
+    border-left: 2dp #3399FF;
+}
+
+.target-name {
+    font-size: 11dp;
+    font-weight: bold;
+    color: #E6EDF3;
+}
+
+.target-name.hostile {
+    color: #CC3333;
+}
+
+.target-name.friendly {
+    color: #3399FF;
+}
+
+.target-health {
+    margin: 2dp 0dp;
+}
+
+.target-bar-track {
+    background-color: #080C12;
+    height: 3dp;
+    border-radius: 1dp;
+    margin: 1dp 0dp;
+}
+
+.target-bar-fill {
+    height: 100%;
+    border-radius: 1dp;
+}
+
+.target-shield-fill { background-color: #3399FF; }
+.target-armor-fill  { background-color: #FFD040; }
+.target-hull-fill   { background-color: #E64545; }
+
+.target-distance {
+    font-size: 9dp;
+    color: #8B949E;
+    text-align: right;
+}
+
+/* ===================================================================
+   29. DRONE ROWS (dynamically generated)
+   =================================================================== */
+
+.drone-row {
+    padding: 2dp 4dp;
+    margin: 1dp 0dp;
+    border-bottom: 1dp #1E2A3620;
+}
+
+.drone-row:hover {
+    background-color: #1A3A4A30;
+}
+
+.drone-name {
+    font-size: 11dp;
+    color: #E6EDF3;
+    display: inline-block;
+    width: 80dp;
+}
+
+.drone-type {
+    font-size: 10dp;
+    color: #8B949E;
+    display: inline-block;
+    width: 60dp;
+}
+
+.drone-hp-track {
+    display: inline-block;
+    width: 50dp;
+    height: 4dp;
+    background-color: #080C12;
+    border-radius: 2dp;
+    margin: 0dp 4dp;
+}
+
+.drone-hp-fill {
+    height: 100%;
+    background-color: #33CC66;
+    border-radius: 2dp;
+}
+
+.drone-hp-fill.damaged {
+    background-color: #FFB833;
+}
+
+.drone-hp-fill.critical {
+    background-color: #CC3333;
+}
+
+.drone-status {
+    font-size: 9dp;
+    display: inline-block;
+}
+
+.drone-status.idle {
+    color: #8B949E;
+}
+
+.drone-status.engaging {
+    color: #33CC66;
+}
+
+/* ===================================================================
+   30. TABLE COLUMN HELPERS (dynamically generated)
+   =================================================================== */
+
+.price-col { text-align: right; color: #FFB833; }
+.qty-col   { text-align: right; }
+.loc-col   { color: #8B949E; }
+
+.result-type {
+    color: #8B949E;
+    font-size: 10dp;
+}
+
+.result-name {
+    color: #E6EDF3;
+}
+
+.result-distance {
+    text-align: right;
+    color: #8B949E;
+    font-size: 10dp;
+}
+
+.item-type {
+    color: #8B949E;
+    font-size: 10dp;
+}
+
+.item-qty {
+    text-align: right;
+}
+
+.item-volume {
+    text-align: right;
+    color: #8B949E;
+    font-size: 10dp;
+}
