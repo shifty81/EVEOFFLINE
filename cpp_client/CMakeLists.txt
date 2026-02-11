@@ -345,6 +345,7 @@ set(CLIENT_SOURCES
     src/rendering/frustum_culler.cpp
     src/rendering/instanced_renderer.cpp
     src/rendering/asteroid_field_renderer.cpp
+    src/rendering/station_renderer.cpp
     src/rendering/lighting.cpp
     src/rendering/shadow_map.cpp
     src/rendering/gbuffer.cpp
@@ -395,6 +396,7 @@ set(CLIENT_HEADERS
     include/rendering/frustum_culler.h
     include/rendering/instanced_renderer.h
     include/rendering/asteroid_field_renderer.h
+    include/rendering/station_renderer.h
     include/rendering/lighting.h
     include/rendering/shadow_map.h
     include/rendering/gbuffer.h
