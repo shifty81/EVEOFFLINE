@@ -45,6 +45,8 @@ public:
     void SetDScanCallback(ActionCallback cb) { m_onDScan = std::move(cb); }
     void SetMissionsCallback(ActionCallback cb) { m_onMissions = std::move(cb); }
     void SetSettingsCallback(ActionCallback cb) { m_onSettings = std::move(cb); }
+    void SetChatCallback(ActionCallback cb) { m_onChat = std::move(cb); }
+    void SetDronesCallback(ActionCallback cb) { m_onDrones = std::move(cb); }
 
 private:
     bool m_visible = true;
@@ -60,6 +62,8 @@ private:
     ActionCallback m_onDScan;
     ActionCallback m_onMissions;
     ActionCallback m_onSettings;
+    ActionCallback m_onChat;
+    ActionCallback m_onDrones;
 
     /** Helper to render a single sidebar button. Returns true if clicked. */
     bool RenderButton(const char* icon, const char* label, const char* tooltip);

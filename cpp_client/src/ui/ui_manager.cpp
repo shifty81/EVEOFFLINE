@@ -9,6 +9,9 @@
 #include "ui/docking_manager.h"
 #include "ui/dscan_panel.h"
 #include "ui/neocom_panel.h"
+#include "ui/chat_panel.h"
+#include "ui/drone_control_panel.h"
+#include "ui/notification_manager.h"
 #include "core/entity.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -38,6 +41,9 @@ UIManager::UIManager()
     m_dockingManager = std::make_unique<DockingManager>();
     m_dscanPanel = std::make_unique<DScanPanel>();
     m_neocomPanel = std::make_unique<NeocomPanel>();
+    m_chatPanel = std::make_unique<ChatPanel>();
+    m_droneControlPanel = std::make_unique<DroneControlPanel>();
+    m_notificationManager = std::make_unique<NotificationManager>();
 }
 
 UIManager::~UIManager() {
@@ -94,6 +100,8 @@ bool UIManager::Initialize(GLFWwindow* window) {
         m_neocomPanel->SetMissionsCallback([this]() { ToggleMission(); });
         m_neocomPanel->SetDScanCallback([this]() { ToggleDScan(); });
         m_neocomPanel->SetMapCallback([this]() { ToggleMap(); });
+        m_neocomPanel->SetChatCallback([this]() { ToggleChat(); });
+        m_neocomPanel->SetDronesCallback([this]() { ToggleDrones(); });
     }
     
     std::cout << "[UIManager] ImGui initialized successfully" << std::endl;
@@ -159,6 +167,11 @@ void UIManager::Render() {
     if (m_showStarMap) {
         RenderStarMapPanel();
     }
+    
+    // Render notifications (always on top)
+    if (m_notificationManager) {
+        m_notificationManager->Render();
+    }
 }
 
 void UIManager::SetupDockablePanels() {
@@ -203,6 +216,18 @@ void UIManager::SetupDockablePanels() {
             ImVec2(880, 460), ImVec2(350, 300));
     }
     
+    if (m_chatPanel) {
+        m_dockingManager->RegisterPanel("chat", "Chat",
+            [this]() { m_chatPanel->RenderContents(); },
+            ImVec2(60, 420), ImVec2(380, 300));
+    }
+    
+    if (m_droneControlPanel) {
+        m_dockingManager->RegisterPanel("drones", "Drones",
+            [this]() { m_droneControlPanel->RenderContents(); },
+            ImVec2(60, 300), ImVec2(320, 400));
+    }
+    
     // Set default visibility — Overview visible, others hidden by default
     m_dockingManager->SetPanelVisible("overview", true);
     m_dockingManager->SetPanelVisible("inventory", false);
@@ -210,6 +235,8 @@ void UIManager::SetupDockablePanels() {
     m_dockingManager->SetPanelVisible("mission", false);
     m_dockingManager->SetPanelVisible("market", false);
     m_dockingManager->SetPanelVisible("dscan", false);
+    m_dockingManager->SetPanelVisible("chat", false);
+    m_dockingManager->SetPanelVisible("drones", false);
     
     std::cout << "[UIManager] Dockable panels registered" << std::endl;
 }
@@ -586,6 +613,20 @@ void UIManager::ToggleDScan() {
 
 void UIManager::ToggleMap() {
     m_showStarMap = !m_showStarMap;
+}
+
+void UIManager::ToggleChat() {
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("chat");
+        m_dockingManager->SetPanelVisible("chat", !vis);
+    }
+}
+
+void UIManager::ToggleDrones() {
+    if (m_dockingManager) {
+        bool vis = m_dockingManager->IsPanelVisible("drones");
+        m_dockingManager->SetPanelVisible("drones", !vis);
+    }
 }
 
 // Interface lock delegated to docking manager

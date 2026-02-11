@@ -128,6 +128,18 @@ void NeocomPanel::Render() {
     }
 
     ImGui::Spacing();
+
+    if (RenderButton("[H]", "Chat", "Chat Channels")) {
+        if (m_onChat) m_onChat();
+    }
+
+    ImGui::Spacing();
+
+    if (RenderButton("[R]", "Drones", "Drone Control (Shift+F)")) {
+        if (m_onDrones) m_onDrones();
+    }
+
+    ImGui::Spacing();
     ImGui::Separator();
     ImGui::Spacing();
 
