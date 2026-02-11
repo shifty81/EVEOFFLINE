@@ -76,7 +76,7 @@ private:
     static constexpr float TOAST_MARGIN_RIGHT = 10.0f;
     static constexpr float TOAST_MARGIN_TOP = 10.0f;
 
-    void RenderToast(const Notification& notif, int index);
+    void RenderToast(Notification& notif, int index);
     void CleanupExpired();
 };
 

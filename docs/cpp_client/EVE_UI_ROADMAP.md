@@ -336,18 +336,18 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 **Priority**: Medium - Gameplay enhancement
 
 #### Drone Interface
-- [ ] **Drone Bay Window**
+- [x] **Drone Bay Window**
   - Available drones list
   - Drone in space list
   - Bandwidth bar (used/max)
   
-- [ ] **Drone Controls**
+- [x] **Drone Controls**
   - Launch drones (Shift+F)
   - Return drones (Shift+R)
   - Engage target (F)
   - Return and orbit (not engaging)
   
-- [ ] **Visual Indicators**
+- [x] **Visual Indicators**
   - Drones in space icons
   - Health bars
   - Engagement status
@@ -455,16 +455,16 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 - [ ] Warp to bookmark
 
 #### Chat System
-- [ ] Local chat
+- [x] Local chat
 - [ ] Private conversations
-- [ ] Fleet chat
-- [ ] Corporation chat
-- [ ] Chat window management
+- [x] Fleet chat
+- [x] Corporation chat
+- [x] Chat window management
 
 #### Notifications
-- [ ] Toast notifications
-- [ ] Warning messages
-- [ ] Combat notifications
+- [x] Toast notifications
+- [x] Warning messages
+- [x] Combat notifications
 - [ ] Mail notifications
 
 #### Performance

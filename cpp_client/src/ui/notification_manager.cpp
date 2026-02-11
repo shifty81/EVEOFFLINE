@@ -86,7 +86,7 @@ int NotificationManager::GetActiveCount() const {
     return count;
 }
 
-void NotificationManager::RenderToast(const Notification& notif, int index) {
+void NotificationManager::RenderToast(Notification& notif, int index) {
     ImGuiIO& io = ImGui::GetIO();
 
     // Position: top-right corner, stacked vertically
@@ -155,13 +155,7 @@ void NotificationManager::RenderToast(const Notification& notif, int index) {
         EVEColors::TEXT_SECONDARY[2], alpha));
     std::string dismissId = "x##dismiss_" + notif.id;
     if (ImGui::SmallButton(dismissId.c_str())) {
-        // Cannot modify notif directly since it's const ref; mark via id lookup
-        for (auto& n : m_notifications) {
-            if (n.id == notif.id) {
-                n.dismissed = true;
-                break;
-            }
-        }
+        notif.dismissed = true;
     }
     ImGui::PopStyleColor();
 

@@ -6,8 +6,6 @@
 #include <map>
 #include <functional>
 
-struct ImVec4;
-
 namespace UI {
 
 // Chat message entry
@@ -103,8 +101,6 @@ private:
     void RenderMessageArea();
     void RenderInputBar();
     void SendCurrentMessage();
-
-    ImVec4 GetSenderColor(ChatMessage::SenderType type) const;
 };
 
 } // namespace UI

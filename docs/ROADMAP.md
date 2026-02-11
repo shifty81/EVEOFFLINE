@@ -160,7 +160,7 @@ Data-driven modding without code injection:
 3. ✅ Ship/module/skill data pipeline
 4. ✅ Drone, Insurance, Bounty, Market systems
 5. 🔄 Snapshot replication & client interpolation
-6. 🔄 Custom UI windows (floating, then docking)
+6. 🔄 Custom UI windows (floating, then docking) — Chat, Drone, Notification panels added
 7. 🔄 Ship HUD (control ring, module rack, brackets)
 8. ⬜ AI economic actors (miners, haulers, traders)
 9. ⬜ Full economy simulation

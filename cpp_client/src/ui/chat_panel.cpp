@@ -6,6 +6,31 @@
 
 namespace UI {
 
+namespace {
+
+ImVec4 GetSenderColor(ChatMessage::SenderType type) {
+    switch (type) {
+        case ChatMessage::SenderType::Self:
+            return ImVec4(EVEColors::ACCENT_SECONDARY[0], EVEColors::ACCENT_SECONDARY[1],
+                          EVEColors::ACCENT_SECONDARY[2], 1.0f);
+        case ChatMessage::SenderType::System:
+            return ImVec4(EVEColors::WARNING[0], EVEColors::WARNING[1],
+                          EVEColors::WARNING[2], 1.0f);
+        case ChatMessage::SenderType::Hostile:
+            return ImVec4(EVEColors::TARGET_HOSTILE[0], EVEColors::TARGET_HOSTILE[1],
+                          EVEColors::TARGET_HOSTILE[2], 1.0f);
+        case ChatMessage::SenderType::Friendly:
+            return ImVec4(EVEColors::TARGET_FRIENDLY[0], EVEColors::TARGET_FRIENDLY[1],
+                          EVEColors::TARGET_FRIENDLY[2], 1.0f);
+        case ChatMessage::SenderType::Other:
+        default:
+            return ImVec4(EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
+                          EVEColors::TEXT_PRIMARY[2], 1.0f);
+    }
+}
+
+} // anonymous namespace
+
 ChatPanel::ChatPanel()
     : m_visible(false)
     , m_scrollToBottom(false)
@@ -179,7 +204,7 @@ void ChatPanel::RenderInputBar() {
 
     if (enterPressed || sendClicked) {
         SendCurrentMessage();
-        // Re-focus the input field after sending
+        // Re-focus the input text field (previous widget) after sending
         ImGui::SetKeyboardFocusHere(-1);
     }
 }
@@ -200,27 +225,6 @@ void ChatPanel::SendCurrentMessage() {
 
     // Clear input
     memset(m_inputBuffer, 0, sizeof(m_inputBuffer));
-}
-
-ImVec4 ChatPanel::GetSenderColor(ChatMessage::SenderType type) const {
-    switch (type) {
-        case ChatMessage::SenderType::Self:
-            return ImVec4(EVEColors::ACCENT_SECONDARY[0], EVEColors::ACCENT_SECONDARY[1],
-                          EVEColors::ACCENT_SECONDARY[2], 1.0f);
-        case ChatMessage::SenderType::System:
-            return ImVec4(EVEColors::WARNING[0], EVEColors::WARNING[1],
-                          EVEColors::WARNING[2], 1.0f);
-        case ChatMessage::SenderType::Hostile:
-            return ImVec4(EVEColors::TARGET_HOSTILE[0], EVEColors::TARGET_HOSTILE[1],
-                          EVEColors::TARGET_HOSTILE[2], 1.0f);
-        case ChatMessage::SenderType::Friendly:
-            return ImVec4(EVEColors::TARGET_FRIENDLY[0], EVEColors::TARGET_FRIENDLY[1],
-                          EVEColors::TARGET_FRIENDLY[2], 1.0f);
-        case ChatMessage::SenderType::Other:
-        default:
-            return ImVec4(EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
-                          EVEColors::TEXT_PRIMARY[2], 1.0f);
-    }
 }
 
 } // namespace UI
