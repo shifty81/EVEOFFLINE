@@ -199,7 +199,9 @@ Data-driven modding without code injection:
 | CharacterCreationSystem | ✅ Complete | 23 assertions |
 | TournamentSystem | ✅ Complete | 24 assertions |
 | LeaderboardSystem | ✅ Complete | 23 assertions |
-| **Total** | **27 systems** | **832 assertions** |
+| StationSystem | ✅ Complete | 29 assertions |
+| WreckSalvageSystem | ✅ Complete | 22 assertions |
+| **Total** | **29 systems** | **897 assertions** |
 
 ### Data Loaders Status
 
@@ -935,12 +937,12 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Procedural ship hull + weapons generation
 - [ ] Shield/armor/hull damage with visual feedback
 - [ ] Basic AI combat (engage, orbit, retreat)
-- [ ] Station docking and repair service
+- [x] Station docking and repair service — StationSystem with dock/undock/repair (29 tests)
 - **Success Criteria**: Player can undock, fight NPCs, take damage, dock and repair
 
 #### Phase 2 (Weeks 4-6): Wrecks, Salvage & Economy
-- [ ] Ship destruction → wreck spawning
-- [ ] Salvage gameplay mechanics
+- [x] Ship destruction → wreck spawning — WreckSalvageSystem with lifetime decay (22 tests)
+- [x] Salvage gameplay mechanics — salvageWreck with range check and item transfer
 - [ ] Basic mineral economy
 - [ ] Mining AI ships active
 - [ ] Resource tracking per system

@@ -5541,7 +5541,7 @@ void testConsoleInit() {
     std::cout << "\n=== Console Init ===" << std::endl;
     ServerConsole console;
     // Pass dummy references — the init only stores a flag
-    bool ok = console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    bool ok = console.init();
     assertTrue(ok, "Console initializes successfully");
     assertTrue(console.getCommandCount() >= 2, "Built-in commands registered (help, status)");
 }
@@ -5549,7 +5549,7 @@ void testConsoleInit() {
 void testConsoleHelpCommand() {
     std::cout << "\n=== Console Help Command ===" << std::endl;
     ServerConsole console;
-    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    console.init();
 
     std::string output = console.executeCommand("help");
     assertTrue(output.find("help") != std::string::npos, "Help output lists 'help' command");
@@ -5559,7 +5559,7 @@ void testConsoleHelpCommand() {
 void testConsoleStatusCommand() {
     std::cout << "\n=== Console Status Command ===" << std::endl;
     ServerConsole console;
-    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    console.init();
 
     std::string output = console.executeCommand("status");
     assertTrue(output.find("Server Status") != std::string::npos, "Status output has header");
@@ -5569,7 +5569,7 @@ void testConsoleStatusCommand() {
 void testConsoleUnknownCommand() {
     std::cout << "\n=== Console Unknown Command ===" << std::endl;
     ServerConsole console;
-    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    console.init();
 
     std::string output = console.executeCommand("foobar");
     assertTrue(output.find("Unknown command") != std::string::npos, "Unknown command error message");
@@ -5578,7 +5578,7 @@ void testConsoleUnknownCommand() {
 void testConsoleCustomCommand() {
     std::cout << "\n=== Console Custom Command ===" << std::endl;
     ServerConsole console;
-    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    console.init();
 
     console.registerCommand("ping", "Reply with pong",
         [](const std::vector<std::string>& /*args*/) -> std::string {
@@ -5593,7 +5593,7 @@ void testConsoleCustomCommand() {
 void testConsoleLogBuffer() {
     std::cout << "\n=== Console Log Buffer ===" << std::endl;
     ServerConsole console;
-    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    console.init();
 
     console.addLogMessage(utils::LogLevel::INFO, "Test message 1");
     console.addLogMessage(utils::LogLevel::INFO, "Test message 2");
@@ -5605,7 +5605,7 @@ void testConsoleLogBuffer() {
 void testConsoleEmptyCommand() {
     std::cout << "\n=== Console Empty Command ===" << std::endl;
     ServerConsole console;
-    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    console.init();
 
     std::string output = console.executeCommand("");
     assertTrue(output.empty(), "Empty command returns empty string");
@@ -5622,7 +5622,7 @@ void testConsoleNotInitialized() {
 void testConsoleShutdown() {
     std::cout << "\n=== Console Shutdown ===" << std::endl;
     ServerConsole console;
-    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    console.init();
     assertTrue(console.getCommandCount() >= 2, "Commands before shutdown");
 
     console.shutdown();

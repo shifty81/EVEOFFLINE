@@ -98,8 +98,7 @@ bool WreckSalvageSystem::salvageWreck(const std::string& player_entity_id,
 
     if (wreck_inv && player_inv) {
         for (const auto& item : wreck_inv->items) {
-            components::Inventory::Item copy = item;
-            player_inv->items.push_back(copy);
+            player_inv->items.push_back(item);
         }
         wreck_inv->items.clear();
     }

@@ -47,27 +47,22 @@ public:
 
     /**
      * Initialize the console and register built-in commands.
-     * @param server  Reference to the running server instance.
-     * @param config  Reference to the server configuration.
      * @return true on success.
+     *
+     * @note server and config parameters are reserved for Phase 2/3
+     *       when the console needs server stats and config access.
      */
     bool init(Server& server, const ServerConfig& config) {
         (void)server;
         (void)config;
-        m_initialized = true;
+        return initInternal();
+    }
 
-        // Register built-in commands
-        registerCommand("help", "List available commands",
-            [this](const std::vector<std::string>& /*args*/) -> std::string {
-                return helpText();
-            });
-
-        registerCommand("status", "Show server status summary",
-            [this](const std::vector<std::string>& /*args*/) -> std::string {
-                return statusText();
-            });
-
-        return true;
+    /**
+     * Initialize without server/config references (for headless or test use).
+     */
+    bool init() {
+        return initInternal();
     }
 
     /**
@@ -179,6 +174,23 @@ private:
             out << "  " << kv.first << " - " << kv.second.description << "\n";
         }
         return out.str();
+    }
+
+    /** Shared initialization logic for both init overloads. */
+    bool initInternal() {
+        m_initialized = true;
+
+        registerCommand("help", "List available commands",
+            [this](const std::vector<std::string>& /*args*/) -> std::string {
+                return helpText();
+            });
+
+        registerCommand("status", "Show server status summary",
+            [this](const std::vector<std::string>& /*args*/) -> std::string {
+                return statusText();
+            });
+
+        return true;
     }
 
     /** Build a short status summary. */
