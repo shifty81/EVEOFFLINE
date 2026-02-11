@@ -1,7 +1,7 @@
 #include "ui/hud.h"
 #include "ui/ui_manager.h"
 #include "ui/eve_panels.h"
-#include <imgui.h>
+#include "ui/photon/photon_context.h"
 #include <iostream>
 #include <algorithm>
 
@@ -18,7 +18,7 @@ bool HUD::initialize() {
     return true;
 }
 
-void HUD::render() {
+void HUD::render(photon::PhotonContext& ctx) {
     // Build a ShipStatus from cached values and delegate to the circular gauge
     UI::ShipStatus status;
     status.shields = m_shields;
@@ -32,39 +32,36 @@ void HUD::render() {
     status.velocity = m_velocity;
     status.max_velocity = m_maxVelocity;
 
-    UI::EVEPanels::RenderShipStatusCircular(status);
+    UI::EVEPanels::RenderShipStatusCircular(ctx, status);
 
     // Render active damage flashes as screen overlays
     if (!m_damageFlashes.empty()) {
-        ImDrawList* drawList = ImGui::GetWindowDrawList();
-        ImVec2 windowPos = ImGui::GetCursorScreenPos();
-        // Get approximate HUD center for flash overlay
+        auto& r = ctx.renderer();
         float outerRadius = 100.0f;
-        ImVec2 center(windowPos.x + outerRadius + 15, windowPos.y - 200.0f);
+        photon::Vec2 center(outerRadius + 15, outerRadius + 10);
 
         for (const auto& flash : m_damageFlashes) {
             float alpha = flash.intensity * (1.0f - flash.elapsed / flash.duration);
             if (alpha <= 0.0f) continue;
 
-            ImU32 flashColor;
+            photon::Color flashColor;
             float flashRadius;
             switch (flash.layer) {
                 case DamageLayer::SHIELD:
-                    flashColor = IM_COL32(0, 150, 255, static_cast<int>(80 * alpha));
+                    flashColor = photon::Color::fromRGBA(0, 150, 255, static_cast<int>(80 * alpha));
                     flashRadius = outerRadius + 12.0f;
                     break;
                 case DamageLayer::ARMOR:
-                    flashColor = IM_COL32(255, 200, 50, static_cast<int>(80 * alpha));
+                    flashColor = photon::Color::fromRGBA(255, 200, 50, static_cast<int>(80 * alpha));
                     flashRadius = outerRadius - 2.0f;
                     break;
                 case DamageLayer::HULL:
-                    flashColor = IM_COL32(255, 50, 50, static_cast<int>(100 * alpha));
+                    flashColor = photon::Color::fromRGBA(255, 50, 50, static_cast<int>(100 * alpha));
                     flashRadius = outerRadius - 16.0f;
                     break;
             }
 
-            // Draw a fading ring overlay for the damage layer
-            drawList->AddCircle(center, flashRadius, flashColor, 48, 3.0f * alpha);
+            r.drawCircleOutline(center, flashRadius, flashColor, 3.0f * alpha);
         }
     }
 }

@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+namespace photon { class PhotonContext; }
+
 namespace UI {
     struct ShipStatus;
 }
@@ -50,11 +52,11 @@ public:
     bool initialize();
 
     /**
-     * Render HUD elements using ImGui.
+     * Render HUD elements using Photon UI.
      * Renders the circular ship status display (via EVEPanels::RenderShipStatusCircular)
      * and the combat log.
      */
-    void render();
+    void render(photon::PhotonContext& ctx);
 
     /**
      * Update HUD with game state
