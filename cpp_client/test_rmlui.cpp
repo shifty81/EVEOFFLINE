@@ -134,7 +134,20 @@ int main() {
     glfwSetScrollCallback(window, [](GLFWwindow* w, double, double yoffset) {
         auto* ui = static_cast<UI::RmlUiManager*>(glfwGetWindowUserPointer(w));
         if (ui) {
-            ui->HandleScroll(yoffset, 0);
+            int mods = 0;
+            if (glfwGetKey(w, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+                glfwGetKey(w, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) {
+                mods |= GLFW_MOD_SHIFT;
+            }
+            if (glfwGetKey(w, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
+                glfwGetKey(w, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS) {
+                mods |= GLFW_MOD_CONTROL;
+            }
+            if (glfwGetKey(w, GLFW_KEY_LEFT_ALT) == GLFW_PRESS ||
+                glfwGetKey(w, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS) {
+                mods |= GLFW_MOD_ALT;
+            }
+            ui->HandleScroll(yoffset, mods);
         }
     });
     glfwSetFramebufferSizeCallback(window, [](GLFWwindow* w, int width, int height) {
