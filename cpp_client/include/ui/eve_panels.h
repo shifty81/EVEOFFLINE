@@ -2,6 +2,7 @@
 #define EVE_PANELS_H
 
 #include "ui_manager.h"
+#include "eve_colors.h"
 #include <string>
 #include <vector>
 

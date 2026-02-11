@@ -1,5 +1,6 @@
 #include "ui/overview_panel.h"
 #include "ui/ui_manager.h"
+#include "ui/eve_colors.h"
 #include "core/entity.h"
 #include "core/solar_system_scene.h"
 #include <imgui.h>

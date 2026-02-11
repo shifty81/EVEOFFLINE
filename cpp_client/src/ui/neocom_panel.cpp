@@ -1,5 +1,6 @@
 #include "ui/neocom_panel.h"
 #include "ui/ui_manager.h"
+#include "ui/eve_colors.h"
 #include <imgui.h>
 
 namespace UI {
