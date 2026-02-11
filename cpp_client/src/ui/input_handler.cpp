@@ -1,6 +1,7 @@
 #include "ui/input_handler.h"
 #include <GLFW/glfw3.h>
 #include <iostream>
+#include <cmath>
 
 namespace eve {
 
@@ -14,6 +15,16 @@ InputHandler::InputHandler()
     , m_shiftPressed(false)
     , m_altPressed(false)
 {
+}
+
+void InputHandler::beginFrame() {
+    // Clear per-frame transient state
+    for (int i = 0; i < 3; ++i) {
+        m_mouseClicked[i]  = false;
+        m_mouseReleased[i] = false;
+    }
+    m_scrollDeltaY = 0.0f;
+    m_doubleClick = false;
 }
 
 void InputHandler::handleKey(int key, int action, int mods) {
@@ -36,6 +47,32 @@ void InputHandler::handleKey(int key, int action, int mods) {
 void InputHandler::handleMouseButton(int button, int action, int mods, double xpos, double ypos) {
     // Update modifiers
     updateModifiers(mods);
+
+    // Track per-frame button transitions
+    if (button >= 0 && button < 3) {
+        if (action == GLFW_PRESS) {
+            m_mouseDown[button]    = true;
+            m_mouseClicked[button] = true;
+
+            // Double-click detection (left button only)
+            if (button == 0) {
+                double now = glfwGetTime();
+                double dt  = now - m_lastClickTime;
+                double dx  = xpos - m_lastClickX;
+                double dy  = ypos - m_lastClickY;
+                double dist = std::sqrt(dx * dx + dy * dy);
+                if (dt < DOUBLE_CLICK_TIME && dist < DOUBLE_CLICK_DIST) {
+                    m_doubleClick = true;
+                }
+                m_lastClickTime = now;
+                m_lastClickX    = xpos;
+                m_lastClickY    = ypos;
+            }
+        } else if (action == GLFW_RELEASE) {
+            m_mouseDown[button]     = false;
+            m_mouseReleased[button] = true;
+        }
+    }
     
     // Call registered callback
     if (m_mouseButtonCallback) {
@@ -68,6 +105,14 @@ void InputHandler::handleMouse(double xpos, double ypos) {
     // Call registered callback
     if (m_mouseMoveCallback) {
         m_mouseMoveCallback(xpos, ypos, deltaX, deltaY);
+    }
+}
+
+void InputHandler::handleScroll(double xoffset, double yoffset) {
+    m_scrollDeltaY += static_cast<float>(yoffset);
+
+    if (m_scrollCallback) {
+        m_scrollCallback(xoffset, yoffset);
     }
 }
 

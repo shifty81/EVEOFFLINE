@@ -5,6 +5,10 @@
 #include <functional>
 #include <vector>
 
+namespace atlas {
+    class AtlasContext;
+}
+
 namespace UI {
 
 // Context menu action types
@@ -70,7 +74,8 @@ enum class ContextMenuType {
 
 /**
  * EVE-style context menu system
- * Handles right-click context menus for entities and empty space
+ * Handles right-click context menus for entities and empty space.
+ * Renders via the Atlas UI renderer.
  */
 class ContextMenu {
 public:
@@ -93,9 +98,14 @@ public:
     void ShowEmptySpaceMenu(float world_x, float world_y, float world_z);
     
     /**
-     * Render the context menu (call each frame)
+     * Render the context menu via Atlas (call each frame between beginFrame/endFrame)
      */
     void Render();
+
+    /**
+     * Render using the Atlas context (called from application render loop)
+     */
+    void RenderAtlas(atlas::AtlasContext& ctx);
     
     /**
      * Close the context menu
@@ -106,6 +116,11 @@ public:
      * Check if menu is open
      */
     bool IsOpen() const { return m_menuType != ContextMenuType::NONE; }
+
+    /**
+     * Set the screen position where the menu was invoked
+     */
+    void SetScreenPosition(float x, float y) { m_screenX = x; m_screenY = y; }
     
     // Set callbacks
     void SetApproachCallback(ApproachCallback callback) { m_onApproach = callback; }
@@ -134,6 +149,10 @@ private:
     std::string m_targetEntityId;
     bool m_targetIsLocked;
     float m_worldX, m_worldY, m_worldZ;
+    float m_screenX = 0.0f, m_screenY = 0.0f;
+    
+    // Submenu state
+    int m_activeSubmenu = -1;  // -1 = none, 0 = orbit, 1 = keeprange, 2 = warpto
     
     // Callbacks
     ApproachCallback m_onApproach;
