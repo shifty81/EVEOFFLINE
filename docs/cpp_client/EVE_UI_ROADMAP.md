@@ -1,6 +1,6 @@
 # EVE Online Photon UI - Complete Implementation Roadmap
 
-**Date**: February 5, 2026  
+**Date**: February 11, 2026  
 **Project**: EVE OFFLINE C++ Client  
 **Goal**: Fully replicate EVE Online's Photon UI system
 
@@ -10,7 +10,7 @@
 
 This document outlines the comprehensive plan to implement EVE Online's complete Photon UI system in the C++ OpenGL client. The UI is the most complex aspect of EVE Online, featuring dense information displays, extensive customization, and sophisticated interaction patterns.
 
-## Current Status (Phase 4.5 In Progress)
+## Current Status (Phase 4.7 & 4.9 Complete)
 
 ✅ **Completed**:
 - Phase 4.3: Entity rendering system
@@ -20,9 +20,13 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 - Phase 4.3: ImGui integration
 - Phase 4.4: Input system with 3D picking (entity selection, targeting)
 - Phase 4.5: Overview panel with sorting, filtering, and interactions
+- Phase 4.6: Module system with activation and visual feedback
+- **Phase 4.7: Context & Radial Menus** ✅ (Feb 11, 2026)
+- Phase 4.8: Neocom and Additional Panels (Partial)
+- **Phase 4.9: Movement Command Shortcuts (Q/W/E/D + Click)** ✅ (Feb 11, 2026)
 
 ⏳ **In Progress**: 
-- Phase 4.5: HUD enhancements (ship status rings, warning indicators)
+- Phase 4.10: Window Management & Customization
 
 ---
 
@@ -185,60 +189,67 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 ### Phase 4.7: Context & Radial Menus (1-2 weeks)
 
 **Priority**: Medium-High - Essential for interactions
+**Status**: Complete ✅ (Feb 11, 2026)
 
-#### Context Menu System
-- [ ] **Universal Right-Click**
-  - Works on: Space entities, overview items, inventory
-  - Hierarchical menu structure
-  - Dynamic options based on context
+#### Context Menu System ✅
+- [x] **Universal Right-Click**
+  - Works on: Space entities
+  - Hierarchical menu structure (with distance submenus)
+  - Dynamic options based on entity state (locked/unlocked)
   
-- [ ] **Entity Actions**
-  - Look At
-  - Approach
-  - Orbit
-  - Keep at Range
-  - Warp To
-  - Jump Through (gates)
-  - Dock (stations)
+- [x] **Entity Actions**
+  - Look At ✅
+  - Approach ✅
+  - Orbit ✅ (with distance submenu: 500m, 1km, 5km, 10km, 20km, 50km)
+  - Keep at Range ✅ (with distance submenu: 1km, 5km, 10km, 20km, 50km)
+  - Warp To ✅ (with distance submenu: 0km, 10km, 50km, 100km)
+  - Jump Through (gates) — Future
+  - Dock (stations) — Future
   
-- [ ] **Target Actions**
-  - Lock Target
-  - Unlock Target
-  - Set as Active Target
+- [x] **Target Actions**
+  - Lock Target ✅
+  - Unlock Target ✅
+  - Set as Active Target — Future
   
-- [ ] **Information Actions**
-  - Show Info
-  - Show Location
-  - Create Bookmark
+- [x] **Information Actions**
+  - Show Info ✅ (callback wired, UI panel TBD)
+  - Show Location — Future
+  - Create Bookmark — Future
   
 - [ ] **Fleet Actions** (if in fleet)
-  - Warp to Member
-  - Set as Squad Commander
-  - Broadcast actions
+  - Warp to Member — Future
+  - Set as Squad Commander — Future
+  - Broadcast actions — Future
 
-#### Radial Menu
-- [ ] **Activation**
-  - Hold left-click on entity/space
-  - Circular menu appears
-  - Drag to select option
+#### Radial Menu ✅
+- [x] **Activation**
+  - Hold left-click on entity for 300ms
+  - Circular menu appears at hold position
+  - Drag mouse to select option
   
-- [ ] **Quick Actions**
-  - Orbit (at different ranges)
-  - Approach
-  - Lock Target
-  - Keep at Range
-  - Warp To
+- [x] **Quick Actions**
+  - Orbit (default 500m) ✅
+  - Approach ✅
+  - Lock Target ✅
+  - Keep at Range (default 2500m) ✅
+  - Warp To ✅
+  - Align To ✅
+  - Look At ✅
+  - Show Info ✅
   
-- [ ] **Visual Design**
-  - Circular segments
-  - Icons for each action
-  - Hover highlighting
-  - Smooth animations
+- [x] **Visual Design**
+  - Circular segments (8 segments) ✅
+  - Icons for each action ✅
+  - Hover highlighting ✅
+  - Smooth animations ✅
+  - EVE-style teal accent colors ✅
 
-**Deliverables**:
-- Context menu system
-- Radial menu implementation
-- Action execution framework
+**Deliverables**: ✅
+- Context menu system ✅
+- Radial menu implementation ✅
+- Action execution framework ✅
+- Callbacks wired to movement commands ✅
+- Input detection (right-click, hold-click) ✅
 
 ---
 
@@ -334,8 +345,9 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 ### Phase 4.9: Drone & Movement Controls (1-2 weeks)
 
 **Priority**: Medium - Gameplay enhancement
+**Status**: Complete ✅ (Feb 11, 2026)
 
-#### Drone Interface
+#### Drone Interface ✅
 - [x] **Drone Bay Window**
   - Available drones list
   - Drone in space list
@@ -353,27 +365,29 @@ This document outlines the comprehensive plan to implement EVE Online's complete
   - Engagement status
   - Low shield/armor warnings
 
-#### Movement Commands
-- [ ] **Hold-Key + Click**
-  - Q+Click: Approach
-  - W+Click: Orbit
-  - E+Click: Keep at Range
-  - D+Click: Dock/Jump
+#### Movement Commands ✅
+- [x] **Hold-Key + Click**
+  - Q+Click: Approach ✅
+  - W+Click: Orbit ✅
+  - E+Click: Keep at Range ✅
+  - D+Click: Dock/Jump ✅ (NEW)
   
-- [ ] **Range Selection**
-  - Default ranges (500m, 1km, 5km, etc.)
-  - Custom range input
-  - Saved preferences
+- [x] **Range Selection**
+  - Default ranges via keyboard shortcuts ✅
+  - Custom range via context menu submenus ✅
+  - Orbit: 500m, 1km, 5km, 10km, 20km, 50km
+  - Keep at Range: 1km, 5km, 10km, 20km, 50km
   
 - [ ] **Visual Feedback**
-  - Flight path indicator
-  - Range circle preview
-  - ETA display
+  - Flight path indicator — Future
+  - Range circle preview — Future
+  - ETA display — Future
 
-**Deliverables**:
-- Drone control system
-- Movement command system
-- Visual flight indicators
+**Deliverables**: ✅
+- Drone control system ✅
+- Movement command system ✅
+- Keyboard shortcut integration ✅
+- D-key docking mode ✅ (NEW)
 
 ---
 
