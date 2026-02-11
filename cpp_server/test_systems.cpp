@@ -28,6 +28,9 @@
 #include "systems/bounty_system.h"
 #include "systems/market_system.h"
 #include "systems/contract_system.h"
+#include "systems/pi_system.h"
+#include "systems/manufacturing_system.h"
+#include "systems/research_system.h"
 #include "data/world_persistence.h"
 #include "data/npc_database.h"
 #include "systems/movement_system.h"
@@ -3905,6 +3908,493 @@ void testSerializeDeserializeContractBoard() {
     assertTrue(board2->contracts[0].items_requested[0].item_id == "pye", "requested item_id preserved");
 }
 
+// ==================== PISystem Tests ====================
+
+void testPIInstallExtractor() {
+    std::cout << "\n=== PI Install Extractor ===" << std::endl;
+
+    ecs::World world;
+    systems::PISystem piSys(&world);
+
+    auto* entity = world.createEntity("colony1");
+    auto* colony = addComp<components::PlanetaryColony>(entity);
+    colony->colony_id = "col_1";
+    colony->owner_id = "player1";
+    colony->planet_type = "barren";
+    colony->cpu_max = 1675.0f;
+    colony->powergrid_max = 6000.0f;
+
+    bool ok = piSys.installExtractor("colony1", "base_metals", 100);
+    assertTrue(ok, "Extractor installed successfully");
+    assertTrue(piSys.getExtractorCount("colony1") == 1, "1 extractor present");
+    assertTrue(colony->extractors[0].resource_type == "base_metals", "Extractor resource type correct");
+    assertTrue(colony->extractors[0].quantity_per_cycle == 100, "Extractor quantity correct");
+}
+
+void testPIInstallProcessor() {
+    std::cout << "\n=== PI Install Processor ===" << std::endl;
+
+    ecs::World world;
+    systems::PISystem piSys(&world);
+
+    auto* entity = world.createEntity("colony2");
+    auto* colony = addComp<components::PlanetaryColony>(entity);
+    colony->colony_id = "col_2";
+    colony->owner_id = "player1";
+    colony->planet_type = "temperate";
+    colony->cpu_max = 1675.0f;
+    colony->powergrid_max = 6000.0f;
+
+    bool ok = piSys.installProcessor("colony2", "base_metals", "refined_metals", 40, 5);
+    assertTrue(ok, "Processor installed successfully");
+    assertTrue(piSys.getProcessorCount("colony2") == 1, "1 processor present");
+    assertTrue(colony->processors[0].input_type == "base_metals", "Processor input type correct");
+    assertTrue(colony->processors[0].output_type == "refined_metals", "Processor output type correct");
+}
+
+void testPIExtractionCycle() {
+    std::cout << "\n=== PI Extraction Cycle ===" << std::endl;
+
+    ecs::World world;
+    systems::PISystem piSys(&world);
+
+    auto* entity = world.createEntity("colony3");
+    auto* colony = addComp<components::PlanetaryColony>(entity);
+    colony->colony_id = "col_3";
+    colony->owner_id = "player1";
+    colony->planet_type = "lava";
+    colony->cpu_max = 1675.0f;
+    colony->powergrid_max = 6000.0f;
+    colony->storage_capacity = 10000.0f;
+
+    piSys.installExtractor("colony3", "heavy_metals", 50);
+    // Set short cycle time for testing
+    colony->extractors[0].cycle_time = 10.0f;
+
+    assertTrue(piSys.getTotalStored("colony3") == 0, "Storage starts empty");
+
+    // Tick for one full cycle
+    piSys.update(10.0f);
+    assertTrue(piSys.getStoredResource("colony3", "heavy_metals") == 50,
+               "50 heavy_metals extracted after 1 cycle");
+
+    // Tick for another cycle
+    piSys.update(10.0f);
+    assertTrue(piSys.getStoredResource("colony3", "heavy_metals") == 100,
+               "100 heavy_metals after 2 cycles");
+}
+
+void testPIProcessingCycle() {
+    std::cout << "\n=== PI Processing Cycle ===" << std::endl;
+
+    ecs::World world;
+    systems::PISystem piSys(&world);
+
+    auto* entity = world.createEntity("colony4");
+    auto* colony = addComp<components::PlanetaryColony>(entity);
+    colony->colony_id = "col_4";
+    colony->owner_id = "player1";
+    colony->planet_type = "oceanic";
+    colony->cpu_max = 1675.0f;
+    colony->powergrid_max = 6000.0f;
+    colony->storage_capacity = 10000.0f;
+
+    // Pre-load raw materials
+    components::PlanetaryColony::StoredResource sr;
+    sr.resource_type = "aqueous_liquids";
+    sr.quantity = 200;
+    colony->storage.push_back(sr);
+
+    piSys.installProcessor("colony4", "aqueous_liquids", "water", 40, 5);
+    colony->processors[0].cycle_time = 10.0f;
+
+    piSys.update(10.0f);
+    assertTrue(piSys.getStoredResource("colony4", "aqueous_liquids") == 160,
+               "40 aqueous_liquids consumed");
+    assertTrue(piSys.getStoredResource("colony4", "water") == 5,
+               "5 water produced");
+}
+
+void testPICpuPowergridLimit() {
+    std::cout << "\n=== PI CPU/PG Limit ===" << std::endl;
+
+    ecs::World world;
+    systems::PISystem piSys(&world);
+
+    auto* entity = world.createEntity("colony5");
+    auto* colony = addComp<components::PlanetaryColony>(entity);
+    colony->colony_id = "col_5";
+    colony->owner_id = "player1";
+    colony->planet_type = "gas";
+    colony->cpu_max = 100.0f;    // Very limited
+    colony->powergrid_max = 600.0f;
+
+    bool ok1 = piSys.installExtractor("colony5", "noble_gas", 50);
+    assertTrue(ok1, "First extractor fits");
+
+    // Second extractor should fail (cpu 45+45=90 fits, but pg 550+550=1100 > 600)
+    bool ok2 = piSys.installExtractor("colony5", "reactive_gas", 30);
+    assertTrue(!ok2, "Second extractor rejected (PG exceeded)");
+    assertTrue(piSys.getExtractorCount("colony5") == 1, "Still only 1 extractor");
+}
+
+void testPIStorageCapacityLimit() {
+    std::cout << "\n=== PI Storage Capacity Limit ===" << std::endl;
+
+    ecs::World world;
+    systems::PISystem piSys(&world);
+
+    auto* entity = world.createEntity("colony6");
+    auto* colony = addComp<components::PlanetaryColony>(entity);
+    colony->colony_id = "col_6";
+    colony->owner_id = "player1";
+    colony->planet_type = "barren";
+    colony->cpu_max = 1675.0f;
+    colony->powergrid_max = 6000.0f;
+    colony->storage_capacity = 100.0f;
+
+    piSys.installExtractor("colony6", "base_metals", 60);
+    colony->extractors[0].cycle_time = 10.0f;
+
+    // First cycle: 60 extracted (< 100 capacity)
+    piSys.update(10.0f);
+    assertTrue(piSys.getStoredResource("colony6", "base_metals") == 60,
+               "60 extracted (under capacity)");
+
+    // Second cycle: 60 + 60 = 120 > 100 capacity, should not extract
+    piSys.update(10.0f);
+    assertTrue(piSys.getStoredResource("colony6", "base_metals") == 60,
+               "Still 60 (storage full, extraction skipped)");
+}
+
+// ==================== ManufacturingSystem Tests ====================
+
+void testManufacturingStartJob() {
+    std::cout << "\n=== Manufacturing Start Job ===" << std::endl;
+
+    ecs::World world;
+    systems::ManufacturingSystem mfgSys(&world);
+
+    auto* station = world.createEntity("station1");
+    auto* facility = addComp<components::ManufacturingFacility>(station);
+    facility->facility_id = "fac_1";
+    facility->station_id = "station1";
+    facility->max_jobs = 2;
+
+    auto* player = world.createEntity("player1");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "player1";
+    pcomp->isk = 100000.0;
+
+    std::string job_id = mfgSys.startJob("station1", "player1", "fang_blueprint",
+                                           "fang", "Fang Frigate", 1, 3600.0f, 1000.0);
+    assertTrue(!job_id.empty(), "Job started successfully");
+    assertTrue(mfgSys.getActiveJobCount("station1") == 1, "1 active job");
+    assertTrue(approxEqual(static_cast<float>(pcomp->isk), 99000.0f), "Install cost deducted");
+}
+
+void testManufacturingJobCompletion() {
+    std::cout << "\n=== Manufacturing Job Completion ===" << std::endl;
+
+    ecs::World world;
+    systems::ManufacturingSystem mfgSys(&world);
+
+    auto* station = world.createEntity("station2");
+    auto* facility = addComp<components::ManufacturingFacility>(station);
+    facility->facility_id = "fac_2";
+    facility->max_jobs = 1;
+
+    auto* player = world.createEntity("player2");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "player2";
+    pcomp->isk = 100000.0;
+
+    mfgSys.startJob("station2", "player2", "autocannon_bp",
+                     "autocannon_i", "150mm Autocannon I", 1, 100.0f, 500.0);
+
+    assertTrue(mfgSys.getActiveJobCount("station2") == 1, "Job is active");
+    assertTrue(mfgSys.getCompletedJobCount("station2") == 0, "No completed jobs yet");
+
+    // Tick to completion
+    mfgSys.update(100.0f);
+    assertTrue(mfgSys.getActiveJobCount("station2") == 0, "No active jobs after completion");
+    assertTrue(mfgSys.getCompletedJobCount("station2") == 1, "1 completed job");
+    assertTrue(mfgSys.getTotalRunsCompleted("station2") == 1, "1 run completed");
+}
+
+void testManufacturingMultipleRuns() {
+    std::cout << "\n=== Manufacturing Multiple Runs ===" << std::endl;
+
+    ecs::World world;
+    systems::ManufacturingSystem mfgSys(&world);
+
+    auto* station = world.createEntity("station3");
+    auto* facility = addComp<components::ManufacturingFacility>(station);
+    facility->facility_id = "fac_3";
+    facility->max_jobs = 1;
+
+    auto* player = world.createEntity("player3");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "player3";
+    pcomp->isk = 100000.0;
+
+    mfgSys.startJob("station3", "player3", "drone_bp",
+                     "hobgoblin_i", "Hobgoblin I", 3, 50.0f, 200.0);
+
+    // First run
+    mfgSys.update(50.0f);
+    assertTrue(mfgSys.getTotalRunsCompleted("station3") == 1, "1 run after 50s");
+    assertTrue(mfgSys.getActiveJobCount("station3") == 1, "Job still active (more runs)");
+
+    // Second run
+    mfgSys.update(50.0f);
+    assertTrue(mfgSys.getTotalRunsCompleted("station3") == 2, "2 runs after 100s");
+
+    // Third run (final)
+    mfgSys.update(50.0f);
+    assertTrue(mfgSys.getTotalRunsCompleted("station3") == 3, "3 runs after 150s");
+    assertTrue(mfgSys.getCompletedJobCount("station3") == 1, "Job completed");
+    assertTrue(mfgSys.getActiveJobCount("station3") == 0, "No active jobs");
+}
+
+void testManufacturingJobSlotLimit() {
+    std::cout << "\n=== Manufacturing Job Slot Limit ===" << std::endl;
+
+    ecs::World world;
+    systems::ManufacturingSystem mfgSys(&world);
+
+    auto* station = world.createEntity("station4");
+    auto* facility = addComp<components::ManufacturingFacility>(station);
+    facility->facility_id = "fac_4";
+    facility->max_jobs = 1;
+
+    auto* player = world.createEntity("player4");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "player4";
+    pcomp->isk = 100000.0;
+
+    std::string job1 = mfgSys.startJob("station4", "player4", "bp1",
+                                         "item1", "Item 1", 1, 3600.0f, 100.0);
+    assertTrue(!job1.empty(), "First job started");
+
+    std::string job2 = mfgSys.startJob("station4", "player4", "bp2",
+                                         "item2", "Item 2", 1, 3600.0f, 100.0);
+    assertTrue(job2.empty(), "Second job rejected (slot full)");
+    assertTrue(mfgSys.getActiveJobCount("station4") == 1, "Still 1 active job");
+}
+
+void testManufacturingCancelJob() {
+    std::cout << "\n=== Manufacturing Cancel Job ===" << std::endl;
+
+    ecs::World world;
+    systems::ManufacturingSystem mfgSys(&world);
+
+    auto* station = world.createEntity("station5");
+    auto* facility = addComp<components::ManufacturingFacility>(station);
+    facility->facility_id = "fac_5";
+    facility->max_jobs = 2;
+
+    auto* player = world.createEntity("player5");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "player5";
+    pcomp->isk = 100000.0;
+
+    std::string job_id = mfgSys.startJob("station5", "player5", "bp_test",
+                                           "item_test", "Test Item", 1, 3600.0f, 100.0);
+    assertTrue(mfgSys.getActiveJobCount("station5") == 1, "1 active job");
+
+    bool cancelled = mfgSys.cancelJob("station5", job_id);
+    assertTrue(cancelled, "Job cancelled successfully");
+    assertTrue(mfgSys.getActiveJobCount("station5") == 0, "No active jobs after cancel");
+}
+
+void testManufacturingInsufficientFunds() {
+    std::cout << "\n=== Manufacturing Insufficient Funds ===" << std::endl;
+
+    ecs::World world;
+    systems::ManufacturingSystem mfgSys(&world);
+
+    auto* station = world.createEntity("station6");
+    auto* facility = addComp<components::ManufacturingFacility>(station);
+    facility->facility_id = "fac_6";
+    facility->max_jobs = 1;
+
+    auto* player = world.createEntity("player6");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "player6";
+    pcomp->isk = 50.0;  // Not enough
+
+    std::string job_id = mfgSys.startJob("station6", "player6", "bp_expensive",
+                                           "item_expensive", "Expensive Item", 1, 3600.0f, 1000.0);
+    assertTrue(job_id.empty(), "Job rejected (insufficient funds)");
+    assertTrue(mfgSys.getActiveJobCount("station6") == 0, "No active jobs");
+    assertTrue(approxEqual(static_cast<float>(pcomp->isk), 50.0f), "ISK unchanged");
+}
+
+// ==================== ResearchSystem Tests ====================
+
+void testResearchME() {
+    std::cout << "\n=== Research ME ===" << std::endl;
+
+    ecs::World world;
+    systems::ResearchSystem resSys(&world);
+
+    auto* station = world.createEntity("lab1");
+    auto* lab = addComp<components::ResearchLab>(station);
+    lab->lab_id = "lab_1";
+    lab->max_jobs = 1;
+
+    auto* player = world.createEntity("researcher1");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "researcher1";
+    pcomp->isk = 100000.0;
+
+    std::string job_id = resSys.startMEResearch("lab1", "researcher1", "fang_blueprint",
+                                                  5, 100.0f, 500.0);
+    assertTrue(!job_id.empty(), "ME research started");
+    assertTrue(resSys.getActiveJobCount("lab1") == 1, "1 active job");
+    assertTrue(approxEqual(static_cast<float>(pcomp->isk), 99500.0f), "Install cost deducted");
+
+    // Complete
+    resSys.update(100.0f);
+    assertTrue(resSys.getActiveJobCount("lab1") == 0, "No active jobs");
+    assertTrue(resSys.getCompletedJobCount("lab1") == 1, "1 completed job");
+}
+
+void testResearchTE() {
+    std::cout << "\n=== Research TE ===" << std::endl;
+
+    ecs::World world;
+    systems::ResearchSystem resSys(&world);
+
+    auto* station = world.createEntity("lab2");
+    auto* lab = addComp<components::ResearchLab>(station);
+    lab->lab_id = "lab_2";
+    lab->max_jobs = 1;
+
+    auto* player = world.createEntity("researcher2");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "researcher2";
+    pcomp->isk = 100000.0;
+
+    std::string job_id = resSys.startTEResearch("lab2", "researcher2", "autocannon_bp",
+                                                  10, 200.0f, 300.0);
+    assertTrue(!job_id.empty(), "TE research started");
+    assertTrue(resSys.getActiveJobCount("lab2") == 1, "1 active job");
+
+    resSys.update(200.0f);
+    assertTrue(resSys.getCompletedJobCount("lab2") == 1, "TE research completed");
+}
+
+void testResearchInvention() {
+    std::cout << "\n=== Research Invention ===" << std::endl;
+
+    ecs::World world;
+    systems::ResearchSystem resSys(&world);
+
+    auto* station = world.createEntity("lab3");
+    auto* lab = addComp<components::ResearchLab>(station);
+    lab->lab_id = "lab_3";
+    lab->max_jobs = 1;
+
+    auto* player = world.createEntity("researcher3");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "researcher3";
+    pcomp->isk = 100000.0;
+
+    std::string job_id = resSys.startInvention("lab3", "researcher3",
+                                                "fang_blueprint", "fang_ii_blueprint",
+                                                "datacore_mechanical_engineering",
+                                                "datacore_electronic_engineering",
+                                                1.0f, // 100% success for testing
+                                                50.0f, 1000.0);
+    assertTrue(!job_id.empty(), "Invention started");
+    assertTrue(resSys.getActiveJobCount("lab3") == 1, "1 active job");
+
+    resSys.update(50.0f);
+    // With 100% success chance, it should complete
+    assertTrue(resSys.getCompletedJobCount("lab3") == 1, "Invention succeeded");
+    assertTrue(resSys.getFailedJobCount("lab3") == 0, "No failed jobs");
+}
+
+void testResearchInventionFailure() {
+    std::cout << "\n=== Research Invention Failure ===" << std::endl;
+
+    ecs::World world;
+    systems::ResearchSystem resSys(&world);
+
+    auto* station = world.createEntity("lab4");
+    auto* lab = addComp<components::ResearchLab>(station);
+    lab->lab_id = "lab_4";
+    lab->max_jobs = 1;
+
+    auto* player = world.createEntity("researcher4");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "researcher4";
+    pcomp->isk = 100000.0;
+
+    std::string job_id = resSys.startInvention("lab4", "researcher4",
+                                                "fang_blueprint", "fang_ii_blueprint",
+                                                "datacore_mechanical_engineering",
+                                                "datacore_electronic_engineering",
+                                                0.0f, // 0% success = guaranteed fail
+                                                50.0f, 500.0);
+    assertTrue(!job_id.empty(), "Invention job started");
+
+    resSys.update(50.0f);
+    assertTrue(resSys.getFailedJobCount("lab4") == 1, "Invention failed (0% chance)");
+    assertTrue(resSys.getCompletedJobCount("lab4") == 0, "No completed jobs");
+}
+
+void testResearchJobSlotLimit() {
+    std::cout << "\n=== Research Job Slot Limit ===" << std::endl;
+
+    ecs::World world;
+    systems::ResearchSystem resSys(&world);
+
+    auto* station = world.createEntity("lab5");
+    auto* lab = addComp<components::ResearchLab>(station);
+    lab->lab_id = "lab_5";
+    lab->max_jobs = 1;
+
+    auto* player = world.createEntity("researcher5");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "researcher5";
+    pcomp->isk = 100000.0;
+
+    std::string job1 = resSys.startMEResearch("lab5", "researcher5", "bp1",
+                                                5, 1000.0f, 100.0);
+    assertTrue(!job1.empty(), "First research job started");
+
+    std::string job2 = resSys.startTEResearch("lab5", "researcher5", "bp2",
+                                                10, 1000.0f, 100.0);
+    assertTrue(job2.empty(), "Second job rejected (slot full)");
+    assertTrue(resSys.getActiveJobCount("lab5") == 1, "Still 1 active job");
+}
+
+void testResearchInsufficientFunds() {
+    std::cout << "\n=== Research Insufficient Funds ===" << std::endl;
+
+    ecs::World world;
+    systems::ResearchSystem resSys(&world);
+
+    auto* station = world.createEntity("lab6");
+    auto* lab = addComp<components::ResearchLab>(station);
+    lab->lab_id = "lab_6";
+    lab->max_jobs = 1;
+
+    auto* player = world.createEntity("researcher6");
+    auto* pcomp = addComp<components::Player>(player);
+    pcomp->player_id = "researcher6";
+    pcomp->isk = 10.0;  // Not enough
+
+    std::string job_id = resSys.startMEResearch("lab6", "researcher6", "bp_expensive",
+                                                  5, 1000.0f, 500.0);
+    assertTrue(job_id.empty(), "Job rejected (insufficient funds)");
+    assertTrue(resSys.getActiveJobCount("lab6") == 0, "No active jobs");
+    assertTrue(approxEqual(static_cast<float>(pcomp->isk), 10.0f), "ISK unchanged");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -3915,6 +4405,7 @@ int main() {
     std::cout << "Mission, Skill, Module, Inventory," << std::endl;
     std::cout << "Loot, NpcDB, Drone, Insurance, Bounty, Market," << std::endl;
     std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
+    std::cout << "PI, Manufacturing, Research," << std::endl;
     std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
     
@@ -4104,6 +4595,30 @@ int main() {
     testContractExpiry();
     testContractStatusQuery();
     testSerializeDeserializeContractBoard();
+
+    // PI system tests
+    testPIInstallExtractor();
+    testPIInstallProcessor();
+    testPIExtractionCycle();
+    testPIProcessingCycle();
+    testPICpuPowergridLimit();
+    testPIStorageCapacityLimit();
+
+    // Manufacturing system tests
+    testManufacturingStartJob();
+    testManufacturingJobCompletion();
+    testManufacturingMultipleRuns();
+    testManufacturingJobSlotLimit();
+    testManufacturingCancelJob();
+    testManufacturingInsufficientFunds();
+
+    // Research system tests
+    testResearchME();
+    testResearchTE();
+    testResearchInvention();
+    testResearchInventionFailure();
+    testResearchJobSlotLimit();
+    testResearchInsufficientFunds();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
