@@ -31,6 +31,10 @@ namespace UI {
 // UTF-8 encoding of the superscript 3 character (³) for m³ display
 static constexpr const char* CUBIC_METER_SUFFIX = " m\xc2\xb3";
 
+// UTF-8 encoding of checkmark (✓) and circle (○) for objective markers
+static constexpr const char* CHECK_MARK_UTF8 = "\xe2\x9c\x93";
+static constexpr const char* CIRCLE_MARKER_UTF8 = "\xe2\x97\x8b";
+
 // ============================================================================
 // RmlUiManager — uses official RmlUi GL3 + GLFW backends
 // ============================================================================
@@ -1013,12 +1017,14 @@ void RmlUiManager::UpdateMissionDetail(const MissionRmlInfo& mission) {
     for (const auto& obj : mission.objectives) {
         if (obj.complete) {
             detailRml += "<div class=\"objective complete\">"
-                         "<span class=\"obj-marker done\">\xe2\x9c\x93</span> "
-                         + obj.text + "</div>";
+                         "<span class=\"obj-marker done\">";
+            detailRml += CHECK_MARK_UTF8;
+            detailRml += "</span> " + obj.text + "</div>";
         } else {
             detailRml += "<div class=\"objective incomplete\">"
-                         "<span class=\"obj-marker pending\">\xe2\x97\x8b</span> "
-                         + obj.text + "</div>";
+                         "<span class=\"obj-marker pending\">";
+            detailRml += CIRCLE_MARKER_UTF8;
+            detailRml += "</span> " + obj.text + "</div>";
         }
     }
 
