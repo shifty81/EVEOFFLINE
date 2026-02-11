@@ -30,10 +30,7 @@ namespace eve {
 
 // Forward declarations
 class Server;
-
-namespace config {
-    class ServerConfig;
-}
+struct ServerConfig;
 
 namespace utils {
     enum class LogLevel;
@@ -60,7 +57,7 @@ public:
      * @param config  Reference to the server configuration.
      * @return true on success.
      */
-    bool init(Server& server, const config::ServerConfig& config) {
+    bool init(Server& server, const ServerConfig& config) {
         (void)server;
         (void)config;
         // TODO: Phase 1 — set up non-blocking stdin reader
