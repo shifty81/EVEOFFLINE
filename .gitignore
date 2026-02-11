@@ -42,6 +42,8 @@ env/
 logs/
 errorlog*.txt
 error_log*.txt
+errors*.txt
+upload.txt
 
 # Game Data (runtime generated)
 saves/
