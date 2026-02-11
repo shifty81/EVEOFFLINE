@@ -57,49 +57,32 @@ public:
      * @param config  Reference to the server configuration.
      * @return true on success.
      */
-    bool init(Server& server, const ServerConfig& config) {
-        (void)server;
-        (void)config;
-        // TODO: Phase 1 — set up non-blocking stdin reader
-        return true;
-    }
+    bool init(Server& server, const ServerConfig& config);
 
     /**
      * Process one frame of console I/O.
      * Call from the server's main loop each tick.
      */
-    void update() {
-        // TODO: Phase 1 — poll stdin for commands, dispatch
-    }
+    void update();
 
     /**
      * Shutdown the console and restore terminal state.
      */
-    void shutdown() {
-        // TODO: Phase 1 — cleanup
-    }
+    void shutdown();
 
     /**
      * Add a log message to the console output buffer.
      * @param level    Log severity level.
      * @param message  Log message text.
      */
-    void addLogMessage(utils::LogLevel level, const std::string& message) {
-        (void)level;
-        (void)message;
-        // TODO: Phase 1 — buffer for display
-    }
+    void addLogMessage(utils::LogLevel level, const std::string& message);
 
     /**
      * Execute a command string and return the result.
      * @param command  Command text (e.g. "status", "kick player1").
      * @return Command output string.
      */
-    std::string executeCommand(const std::string& command) {
-        (void)command;
-        // TODO: Phase 1 — command dispatcher
-        return "Console not yet implemented";
-    }
+    std::string executeCommand(const std::string& command);
 
     /**
      * Set whether the console operates in interactive mode.
@@ -113,6 +96,23 @@ public:
 
 private:
     bool m_interactive = false;
+    
+    // Server references
+    Server* server_ = nullptr;
+    const ServerConfig* config_ = nullptr;
+    
+    // Command input buffer
+    std::string command_buffer_;
+    
+    // Command handlers
+    std::string handleHelpCommand();
+    std::string handleStatusCommand();
+    std::string handlePlayersCommand();
+    std::string handleKickCommand(const std::string& player_name);
+    std::string handleStopCommand();
+    std::string handleMetricsCommand();
+    std::string handleSaveCommand();
+    std::string handleLoadCommand();
 };
 
 } // namespace eve
