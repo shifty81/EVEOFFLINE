@@ -162,6 +162,7 @@ data/
 
 **Modding Tools** (in `tools/`):
 - `validate_json.py` - Validate JSON syntax and structure
+- `create_ship.py` - Interactive ship creation wizard
 
 See the [Modding Guide](docs/MODDING_GUIDE.md) for detailed instructions.
 

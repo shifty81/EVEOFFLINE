@@ -31,15 +31,45 @@ python tools/validate_json.py --data-dir custom_mod/data
 
 **Note:** The validation rules are based on recommended structure. Some warnings may be acceptable depending on your mod's design goals.
 
+### create_ship.py
+
+Interactive ship creation tool that guides you through creating a new ship definition.
+
+**Usage:**
+```bash
+python tools/create_ship.py
+```
+
+**Features:**
+- Interactive prompts for all ship properties
+- Ship class selection menu
+- Default values for quick creation
+- Optional bonus definition
+- JSON output preview
+- Auto-save to file with overwrite protection
+
+**Example:**
+The tool will prompt you for ship details and generate a complete JSON definition like:
+```json
+{
+  "custom_frigate": {
+    "id": "custom_frigate",
+    "name": "Custom Frigate",
+    "class": "Frigate",
+    ...
+  }
+}
+```
+
 ## Future Tools
 
 The following tools are planned for future releases:
 
-### ship_builder.py (Planned)
-Interactive tool for creating ship JSON definitions with guided prompts.
-
 ### mission_editor.py (Planned)
-GUI or CLI tool for creating and editing mission files.
+GUI or CLI tool for creating and editing mission files with templates.
+
+### create_module.py (Planned)
+Interactive tool for creating module JSON definitions with guided prompts.
 
 ### balance_analyzer.py (Planned)
 Analyzes ship and module stats to identify balance issues.
