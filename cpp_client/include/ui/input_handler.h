@@ -50,6 +50,7 @@ public:
     bool isCtrlPressed() const { return m_ctrlPressed; }
     bool isShiftPressed() const { return m_shiftPressed; }
     bool isAltPressed() const { return m_altPressed; }
+    int getModifierMask() const;
     
     /**
      * Get mouse position

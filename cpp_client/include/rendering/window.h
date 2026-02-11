@@ -12,7 +12,7 @@ namespace eve {
  */
 class Window {
 public:
-    using KeyCallback = std::function<void(int key, int action, int mods)>;
+    using KeyCallback = std::function<void(int key, int scancode, int action, int mods)>;
     using CharCallback = std::function<void(unsigned int codepoint)>;
     using MouseCallback = std::function<void(double xpos, double ypos)>;
     using MouseButtonCallback = std::function<void(int button, int action, int mods)>;

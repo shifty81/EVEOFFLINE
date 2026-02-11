@@ -98,7 +98,7 @@ void Window::update() {
 void Window::keyCallbackStatic(GLFWwindow* window, int key, int scancode, int action, int mods) {
     Window* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
     if (instance && instance->m_keyCallback) {
-        instance->m_keyCallback(key, action, mods);
+        instance->m_keyCallback(key, scancode, action, mods);
     }
 }
 

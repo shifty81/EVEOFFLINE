@@ -114,7 +114,7 @@ void Application::initialize() {
     // Left-drag: nothing (UI uses it for interaction)
     // Right-drag: orbit camera around ship
     // Scroll: zoom camera
-    m_window->setKeyCallback([this](int key, int action, int mods) {
+    m_window->setKeyCallback([this](int key, int, int action, int mods) {
         // Handle ESC key to exit
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             shutdown();
@@ -151,16 +151,7 @@ void Application::initialize() {
     
     // Scroll callback — EVE uses mousewheel for camera zoom
     m_window->setScrollCallback([this](double xoffset, double yoffset) {
-        int mods = 0;
-        if (m_inputHandler->isCtrlPressed()) {
-            mods |= GLFW_MOD_CONTROL;
-        }
-        if (m_inputHandler->isShiftPressed()) {
-            mods |= GLFW_MOD_SHIFT;
-        }
-        if (m_inputHandler->isAltPressed()) {
-            mods |= GLFW_MOD_ALT;
-        }
+        int mods = m_inputHandler->getModifierMask();
         if (m_uiManager) {
             m_uiManager->HandleScroll(yoffset, mods);
         }
@@ -320,12 +311,11 @@ void Application::update(float deltaTime) {
 void Application::updateTargetListUi(const glm::vec3& playerPosition) {
     if (!m_uiManager) return;
 
+    m_uiManager->ClearTargets();
     if (m_targetList.empty()) {
-        m_uiManager->ClearTargets();
         return;
     }
 
-    m_uiManager->ClearTargets();
     for (const auto& targetId : m_targetList) {
         auto entity = m_gameClient->getEntityManager().getEntity(targetId);
         if (!entity) continue;
