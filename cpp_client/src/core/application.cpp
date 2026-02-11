@@ -10,6 +10,8 @@
 #include "ui/input_handler.h"
 #include "ui/rml_ui_manager.h"
 #include "ui/entity_picker.h"
+#include "ui/context_menu.h"
+#include "ui/radial_menu.h"
 #include <GLFW/glfw3.h>
 #include "ui/photon/photon_context.h"
 #include "ui/photon/photon_hud.h"
@@ -50,6 +52,8 @@ Application::Application(const std::string& title, int width, int height)
     m_solarSystem = std::make_unique<SolarSystemScene>();
     m_photonCtx = std::make_unique<photon::PhotonContext>();
     m_photonHUD = std::make_unique<photon::PhotonHUD>();
+    m_contextMenu = std::make_unique<UI::ContextMenu>();
+    m_radialMenu = std::make_unique<UI::RadialMenu>();
     
     // Initialize
     initialize();
@@ -259,6 +263,98 @@ void Application::setupUICallbacks() {
     
     std::cout << "  - Response callbacks wired for all panels" << std::endl;
     
+    // === Setup Context Menu Callbacks ===
+    m_contextMenu->SetApproachCallback([this](const std::string& entityId) {
+        commandApproach(entityId);
+    });
+    
+    m_contextMenu->SetOrbitCallback([this](const std::string& entityId, int distance_m) {
+        commandOrbit(entityId, static_cast<float>(distance_m));
+    });
+    
+    m_contextMenu->SetKeepAtRangeCallback([this](const std::string& entityId, int distance_m) {
+        commandKeepAtRange(entityId, static_cast<float>(distance_m));
+    });
+    
+    m_contextMenu->SetWarpToCallback([this](const std::string& entityId, int distance_m) {
+        // For now, warp just treats it as approach
+        std::cout << "[Movement] Warp to " << entityId << " at " << distance_m << "m distance" << std::endl;
+        commandWarpTo(entityId);
+    });
+    
+    m_contextMenu->SetLockTargetCallback([this](const std::string& entityId) {
+        if (std::find(m_targetList.begin(), m_targetList.end(), entityId) == m_targetList.end()) {
+            m_targetList.push_back(entityId);
+            std::cout << "[Targeting] Locked target: " << entityId << std::endl;
+        }
+    });
+    
+    m_contextMenu->SetUnlockTargetCallback([this](const std::string& entityId) {
+        auto it = std::find(m_targetList.begin(), m_targetList.end(), entityId);
+        if (it != m_targetList.end()) {
+            m_targetList.erase(it);
+            std::cout << "[Targeting] Unlocked target: " << entityId << std::endl;
+        }
+    });
+    
+    m_contextMenu->SetLookAtCallback([this](const std::string& entityId) {
+        auto entity = m_gameClient->getEntityManager().getEntity(entityId);
+        if (entity) {
+            m_camera->lookAt(entity->getPosition());
+            std::cout << "[Camera] Looking at: " << entityId << std::endl;
+        }
+    });
+    
+    m_contextMenu->SetShowInfoCallback([this](const std::string& entityId) {
+        std::cout << "[Info] Show info for: " << entityId << std::endl;
+        // TODO: Open info panel
+    });
+    
+    std::cout << "  - Context menu callbacks wired" << std::endl;
+    
+    // === Setup Radial Menu Callbacks ===
+    m_radialMenu->SetActionCallback([this](UI::RadialMenu::Action action, const std::string& entityId) {
+        switch (action) {
+            case UI::RadialMenu::Action::APPROACH:
+                commandApproach(entityId);
+                break;
+            case UI::RadialMenu::Action::ORBIT:
+                commandOrbit(entityId, 500.0f);  // Default orbit distance
+                break;
+            case UI::RadialMenu::Action::KEEP_AT_RANGE:
+                commandKeepAtRange(entityId, 2500.0f);  // Default range
+                break;
+            case UI::RadialMenu::Action::WARP_TO:
+                commandWarpTo(entityId);
+                break;
+            case UI::RadialMenu::Action::LOCK_TARGET:
+                if (std::find(m_targetList.begin(), m_targetList.end(), entityId) == m_targetList.end()) {
+                    m_targetList.push_back(entityId);
+                    std::cout << "[Targeting] Locked target: " << entityId << std::endl;
+                }
+                break;
+            case UI::RadialMenu::Action::ALIGN_TO:
+                commandAlignTo(entityId);
+                break;
+            case UI::RadialMenu::Action::LOOK_AT:
+                {
+                    auto entity = m_gameClient->getEntityManager().getEntity(entityId);
+                    if (entity) {
+                        m_camera->lookAt(entity->getPosition());
+                        std::cout << "[Camera] Looking at: " << entityId << std::endl;
+                    }
+                }
+                break;
+            case UI::RadialMenu::Action::SHOW_INFO:
+                std::cout << "[Info] Show info for: " << entityId << std::endl;
+                break;
+            default:
+                break;
+        }
+    });
+    
+    std::cout << "  - Radial menu callbacks wired" << std::endl;
+    
     std::cout << "UI callbacks setup complete" << std::endl;
 }
 
@@ -439,6 +535,16 @@ void Application::render() {
         m_photonCtx->endFrame();
     }
     
+    // Render Context Menu (if open)
+    if (m_contextMenu) {
+        m_contextMenu->Render();
+    }
+    
+    // Render Radial Menu (if open)
+    if (m_radialMenu && m_radialMenuOpen) {
+        m_radialMenu->Render();
+    }
+    
     // End rendering
     m_renderer->endFrame();
 }
@@ -576,22 +682,31 @@ void Application::handleKeyInput(int key, int action, int mods) {
     // Q + click = Approach (we just toggle approach mode)
     // W + click = Orbit
     // E + click = Keep at Range
-    // A + click = Align To
+    // D + click = Dock/Jump Through
     if (key == GLFW_KEY_Q) {
         m_approachActive = true;
         m_orbitActive = false;
         m_keepRangeActive = false;
+        m_dockingModeActive = false;
         std::cout << "[Controls] Approach mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_W) {
         m_approachActive = false;
         m_orbitActive = true;
         m_keepRangeActive = false;
+        m_dockingModeActive = false;
         std::cout << "[Controls] Orbit mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_E) {
         m_approachActive = false;
         m_orbitActive = false;
         m_keepRangeActive = true;
+        m_dockingModeActive = false;
         std::cout << "[Controls] Keep at Range mode active — click a target" << std::endl;
+    } else if (key == GLFW_KEY_D) {
+        m_approachActive = false;
+        m_orbitActive = false;
+        m_keepRangeActive = false;
+        m_dockingModeActive = true;
+        std::cout << "[Controls] Docking mode active — click a station or gate" << std::endl;
     } else if (key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL)) {
         commandStopShip();
     }
@@ -628,7 +743,28 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                     double dist = std::sqrt(dx * dx + dy * dy);
                     if (dist < 5.0) {
                         // Quick right-click — show EVE context menu
-                        showSpaceContextMenu(x, y);
+                        // Pick entity at mouse position
+                        auto entities = m_gameClient->getEntityManager().getAllEntities();
+                        std::vector<std::shared_ptr<Entity>> entityList;
+                        for (const auto& pair : entities) {
+                            if (pair.first != m_localPlayerId) {
+                                entityList.push_back(pair.second);
+                            }
+                        }
+                        
+                        std::string pickedId = m_entityPicker->pickEntity(
+                            x, y, m_window->getWidth(), m_window->getHeight(),
+                            *m_camera, entityList);
+                        
+                        if (!pickedId.empty()) {
+                            // Show entity context menu
+                            bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), pickedId) != m_targetList.end();
+                            m_contextMenu->ShowEntityMenu(pickedId, isLocked);
+                        } else {
+                            // Show empty space menu
+                            // For now, just close any existing menu
+                            m_contextMenu->Close();
+                        }
                     }
                 }
             }
@@ -639,7 +775,17 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
     if (button == GLFW_MOUSE_BUTTON_LEFT) {
         if (action == GLFW_PRESS) {
             m_leftMouseDown = true;
+            m_radialMenuStartX = x;
+            m_radialMenuStartY = y;
+            m_radialMenuHoldStartTime = glfwGetTime();
         } else if (action == GLFW_RELEASE) {
+            // Check if radial menu is open
+            if (m_radialMenuOpen) {
+                // Confirm selection
+                auto confirmedAction = m_radialMenu->Confirm();
+                m_radialMenuOpen = false;
+                m_radialMenu->Close();
+            }
             m_leftMouseDown = false;
         }
     }
@@ -676,6 +822,11 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             } else if (m_keepRangeActive) {
                 commandKeepAtRange(pickedEntityId);
                 m_keepRangeActive = false;
+            } else if (m_dockingModeActive) {
+                // D+Click for docking/jump through
+                std::cout << "[Movement] Dock/Jump through " << pickedEntityId << std::endl;
+                // TODO: Send dock/jump command to server
+                m_dockingModeActive = false;
             } else {
                 // Default: select / CTRL+click to lock target
                 bool addToTargets = (mods & GLFW_MOD_CONTROL) != 0;
@@ -686,6 +837,47 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
 }
 
 void Application::handleMouseMove(double x, double y, double deltaX, double deltaY) {
+    // Update radial menu if open
+    if (m_radialMenuOpen && m_radialMenu) {
+        m_radialMenu->UpdateMousePosition(static_cast<float>(x), static_cast<float>(y));
+    }
+    
+    // Check if we should open radial menu (left mouse held for RADIAL_MENU_HOLD_TIME)
+    if (m_leftMouseDown && !m_radialMenuOpen) {
+        double holdTime = glfwGetTime() - m_radialMenuHoldStartTime;
+        if (holdTime >= RADIAL_MENU_HOLD_TIME) {
+            // Check distance moved
+            double dx = x - m_radialMenuStartX;
+            double dy = y - m_radialMenuStartY;
+            double dist = std::sqrt(dx * dx + dy * dy);
+            
+            // Only open if not dragging significantly
+            if (dist < 10.0) {
+                // Pick entity at hold position
+                auto entities = m_gameClient->getEntityManager().getAllEntities();
+                std::vector<std::shared_ptr<Entity>> entityList;
+                for (const auto& pair : entities) {
+                    if (pair.first != m_localPlayerId) {
+                        entityList.push_back(pair.second);
+                    }
+                }
+                
+                std::string pickedId = m_entityPicker->pickEntity(
+                    m_radialMenuStartX, m_radialMenuStartY,
+                    m_window->getWidth(), m_window->getHeight(),
+                    *m_camera, entityList);
+                
+                if (!pickedId.empty()) {
+                    m_radialMenu->Open(static_cast<float>(m_radialMenuStartX), 
+                                      static_cast<float>(m_radialMenuStartY), 
+                                      pickedId);
+                    m_radialMenuOpen = true;
+                    std::cout << "[Radial Menu] Opened for entity: " << pickedId << std::endl;
+                }
+            }
+        }
+    }
+    
     // EVE-style camera: Right-click drag to orbit camera around ship
     if (m_rightMouseDown) {
         if (!m_uiManager || !m_uiManager->WantsMouseInput()) {
