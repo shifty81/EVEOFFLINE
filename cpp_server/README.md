@@ -339,7 +339,7 @@ make
 
 ### Running Tests
 
-The server includes a comprehensive test suite with 832 tests covering all game systems.
+The server includes a comprehensive test suite with 832 test assertions across 170+ test functions covering all game systems.
 
 **Quick build and test:**
 ```bash
@@ -356,42 +356,42 @@ The `run_tests.sh` script ensures tests are run from the repository root for cor
 cd /path/to/EVEOFFLINE
 ./cpp_server/build/bin/test_systems
 
-# All 832 tests should pass
+# All 832 test assertions should pass
 ```
 
 **Test Coverage:**
-- Capacitor & Shield Systems (15 tests)
-- Weapon & Combat Systems (32 tests)
-- Targeting System (8 tests)
-- AI System (4 tests)
-- Movement System (8 tests)
-- Ship Database (31 tests)
-- Wormhole System (15 tests)
-- Fleet System (49 tests)
-- Mission System (7 tests)
-- Skill System (9 tests)
-- Module System (13 tests)
-- Inventory System (15 tests)
-- Loot System (7 tests)
-- NPC Database (3 tests)
-- Drone System (33 tests)
-- Insurance System (21 tests)
-- Bounty System (14 tests)
-- Market System (11 tests)
-- Corporation System (37 tests)
-- Contract System (36 tests)
-- PI System (14 tests)
-- Manufacturing System (21 tests)
-- Research System (18 tests)
-- Chat System (28 tests)
-- Character Creation (23 tests)
-- Tournament System (24 tests)
-- Leaderboard System (23 tests)
-- World Persistence (91 tests)
-- Logger (24 tests)
-- Server Metrics (19 tests)
+- Capacitor & Shield Systems (15 assertions)
+- Weapon & Combat Systems (32 assertions)
+- Targeting System (8 assertions)
+- AI System (4 assertions)
+- Movement System (8 assertions)
+- Ship Database (31 assertions)
+- Wormhole System (15 assertions)
+- Fleet System (49 assertions)
+- Mission System (7 assertions)
+- Skill System (9 assertions)
+- Module System (13 assertions)
+- Inventory System (15 assertions)
+- Loot System (7 assertions)
+- NPC Database (3 assertions)
+- Drone System (33 assertions)
+- Insurance System (21 assertions)
+- Bounty System (14 assertions)
+- Market System (11 assertions)
+- Corporation System (37 assertions)
+- Contract System (36 assertions)
+- PI System (14 assertions)
+- Manufacturing System (21 assertions)
+- Research System (18 assertions)
+- Chat System (28 assertions)
+- Character Creation (23 assertions)
+- Tournament System (24 assertions)
+- Leaderboard System (23 assertions)
+- World Persistence (91 assertions)
+- Logger (24 assertions)
+- Server Metrics (19 assertions)
 
-Total: **832 test assertions**
+Total: **832 test assertions** across **170+ test functions**
 
 ### Adding Features
 
