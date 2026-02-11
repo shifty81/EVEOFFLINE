@@ -461,11 +461,6 @@ if(USE_VCPKG_IMGUI)
     target_link_libraries(eve_client imgui::imgui)
 endif()
 
-# Define HAS_IMGUI when ImGui is available
-if(IMGUI_AVAILABLE)
-    target_compile_definitions(eve_client PRIVATE HAS_IMGUI)
-endif()
-
 # Link RmlUi if available
 if(RMLUI_AVAILABLE)
     target_compile_definitions(eve_client PRIVATE USE_RMLUI)
