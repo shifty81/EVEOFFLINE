@@ -98,10 +98,10 @@ public:
     bool isOverviewOpen()      const { return m_overviewState.open; }
     bool isSelectedItemOpen()  const { return m_selectedItemState.open; }
 
-    // ── Neocom callback ─────────────────────────────────────────────
+    // ── Sidebar callback ──────────────────────────────────────────────
 
-    /** Set callback for Neocom icon clicks. */
-    void setNeocomCallback(const std::function<void(int)>& cb) { m_neocomCallback = cb; }
+    /** Set callback for sidebar icon clicks. */
+    void setSidebarCallback(const std::function<void(int)>& cb) { m_sidebarCallback = cb; }
 
     // ── Module click callback ───────────────────────────────────────
 
@@ -146,12 +146,12 @@ private:
     PanelState m_selectedItemState;
     PanelState m_infoPanelState;
 
-    // Neocom config
-    float m_neocomWidth = 40.0f;
-    int   m_neocomIcons = 8;
+    // Sidebar config
+    float m_sidebarWidth = 40.0f;
+    int   m_sidebarIcons = 8;
 
     // Callbacks
-    std::function<void(int)> m_neocomCallback;
+    std::function<void(int)> m_sidebarCallback;
     std::function<void(int)> m_moduleCallback;
     std::function<void()>    m_selOrbitCb;
     std::function<void()>    m_selApproachCb;

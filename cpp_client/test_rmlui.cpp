@@ -162,7 +162,7 @@ int main() {
     std::cout << "  - Ship HUD (bottom center) with health bars, speed, modules" << std::endl;
     std::cout << "  - Overview (top right) with entity table" << std::endl;
     std::cout << "  - Target List (top center) with locked target cards" << std::endl;
-    std::cout << "  - Neocom (left sidebar) with service icons" << std::endl;
+    std::cout << "  - Sidebar (left sidebar) with service icons" << std::endl;
     std::cout << "  - Fitting (hidden, toggle with F1)" << std::endl;
     std::cout << "  - Inventory (hidden, toggle with F2)" << std::endl;
     std::cout << "  - D-Scan (hidden, toggle with F3)" << std::endl;

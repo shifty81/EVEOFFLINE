@@ -12,7 +12,7 @@
  * properties supported by RmlUi 6.0 (see RmlUi documentation for details).
  *
  * Usage:
- *   <link type="text/rcss" href="photon_ui.rcss"/>
+ *   <link type="text/rcss" href="atlas_ui.rcss"/>
  */
 
 /* ===================================================================

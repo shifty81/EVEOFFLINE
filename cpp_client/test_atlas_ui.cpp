@@ -1,7 +1,7 @@
 /**
- * Test program for the Photon UI system.
+ * Test program for the Atlas UI system.
  *
- * Validates that the core Photon types, context, renderer, and widget
+ * Validates that the core Atlas types, context, renderer, and widget
  * functions work correctly in a headless (no OpenGL) environment.
  * GPU rendering is stubbed out, so these tests verify logic, hit-testing,
  * color/theme values, ID hashing, and widget state management.
@@ -485,12 +485,12 @@ void testAtlasHUD() {
     });
     assertTrue(true, "Module callback set without crash");
 
-    // Test with neocom callback
-    int clickedNeocom = -1;
-    hud.setSidebarCallback([&clickedNeocom](int idx) {
-        clickedNeocom = idx;
+    // Test with sidebar callback
+    int clickedSidebar = -1;
+    hud.setSidebarCallback([&clickedSidebar](int idx) {
+        clickedSidebar = idx;
     });
-    assertTrue(true, "Neocom callback set without crash");
+    assertTrue(true, "Sidebar callback set without crash");
 
     ctx.shutdown();
 }

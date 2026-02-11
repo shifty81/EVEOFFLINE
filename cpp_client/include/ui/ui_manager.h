@@ -261,7 +261,7 @@ private:
     };
     std::unordered_map<std::string, PanelConfig> m_panelConfigs;
 
-    // Star map (toggled by Map button in Neocom)
+    // Star map (toggled by Map button in Sidebar)
     bool m_showStarMap = false;
 
     // Panel visibility flags

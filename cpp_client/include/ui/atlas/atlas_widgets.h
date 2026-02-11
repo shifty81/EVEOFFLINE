@@ -251,10 +251,10 @@ bool treeNode(AtlasContext& ctx, const Rect& r,
 void scrollbar(AtlasContext& ctx, const Rect& track,
                float scrollOffset, float contentHeight, float viewHeight);
 
-// ── Neocom Bar ──────────────────────────────────────────────────────
+// ── Sidebar Bar ─────────────────────────────────────────────────────
 
 /**
- * Draw the Neocom sidebar (left edge, full height).
+ * Draw the sidebar (left edge, full height).
  *
  * @param ctx       Context.
  * @param x         Left edge X position (usually 0).
@@ -263,8 +263,8 @@ void scrollbar(AtlasContext& ctx, const Rect& track,
  * @param icons     Number of icon slots.
  * @param callback  Called with icon index when an icon is clicked.
  */
-void neocomBar(AtlasContext& ctx, float x, float width, float height,
-               int icons, const std::function<void(int)>& callback);
+void sidebarBar(AtlasContext& ctx, float x, float width, float height,
+                int icons, const std::function<void(int)>& callback);
 
 // ── Tooltip ─────────────────────────────────────────────────────────
 

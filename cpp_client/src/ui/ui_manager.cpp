@@ -72,7 +72,7 @@ bool UIManager::Initialize(int windowW, int windowH) {
     // Initialize HUD layout with window dimensions
     m_hud.init(windowW, windowH);
 
-    // Set up Neocom icon callbacks
+    // Set up Sidebar icon callbacks
     m_hud.setSidebarCallback([this](int icon) {
         switch (icon) {
             case 0: ToggleInventory(); break;

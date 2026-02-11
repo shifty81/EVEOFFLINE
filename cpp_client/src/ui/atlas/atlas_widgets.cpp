@@ -642,9 +642,9 @@ void scrollbar(AtlasContext& ctx, const Rect& track,
     rr.drawRect(thumb, t.accentDim);
 }
 
-// ── Neocom Bar ──────────────────────────────────────────────────────
+// ── Sidebar Bar ─────────────────────────────────────────────────────
 
-void neocomBar(AtlasContext& ctx, float x, float width, float height,
+void sidebarBar(AtlasContext& ctx, float x, float width, float height,
                int icons, const std::function<void(int)>& callback) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();

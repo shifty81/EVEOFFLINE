@@ -35,10 +35,10 @@ void AtlasHUD::update(AtlasContext& ctx,
                        const SelectedItemInfo& selectedItem) {
     // Draw elements in back-to-front order
 
-    // 1. Neocom sidebar (left edge)
-    neocomBar(ctx, 0.0f, m_neocomWidth,
+    // 1. Sidebar (left edge)
+    sidebarBar(ctx, 0.0f, m_sidebarWidth,
               static_cast<float>(ctx.input().windowH),
-              m_neocomIcons, m_neocomCallback);
+              m_sidebarIcons, m_sidebarCallback);
 
     // 2. Locked target cards (top-center row)
     drawTargetCards(ctx, targets);

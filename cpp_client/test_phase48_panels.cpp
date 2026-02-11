@@ -1,5 +1,5 @@
 /**
- * Test program for Phase 4.8 GUI panels: D-Scan and Neocom sidebar.
+ * Test program for Phase 4.8 GUI panels: D-Scan and Sidebar.
  * Also validates the enhanced module rack with data-bound slots.
  *
  * This is a visual/interactive test that renders the new panels in a
@@ -7,7 +7,7 @@
  *
  * Keyboard shortcuts:
  *   F1  — toggle D-Scan panel
- *   F2  — toggle Neocom sidebar
+ *   F2  — toggle Sidebar
  *   V   — trigger a D-Scan scan
  *   ESC — exit
  */
@@ -44,10 +44,10 @@ static std::vector<UI::DScanResult> GenerateDemoResults() {
 
 // ---------------------------------------------------------------------------
 int main() {
-    std::cout << "[Test] Phase 4.8 D-Scan + Neocom + Module Rack Test" << std::endl;
+    std::cout << "[Test] Phase 4.8 D-Scan + Sidebar + Module Rack Test" << std::endl;
 
     // Create window
-    Window window("Phase 4.8 D-Scan / Neocom Test", 1280, 720);
+    Window window("Phase 4.8 D-Scan / Sidebar Test", 1280, 720);
 
     // Initialize GLEW
     glewExperimental = GL_TRUE;
@@ -56,7 +56,7 @@ int main() {
         return -1;
     }
 
-    // Create UI manager (this now includes D-Scan and Neocom)
+    // Create UI manager (this now includes D-Scan and Sidebar)
     auto uiManager = std::make_unique<UI::UIManager>();
     if (!uiManager->Initialize(window.getHandle())) {
         std::cerr << "[Test] UIManager init failed" << std::endl;
@@ -95,16 +95,16 @@ int main() {
         dscan->SetResults(GenerateDemoResults());
     });
 
-    // ---- Neocom is visible by default ----
-    auto* neocom = uiManager->GetSidebarPanel();
-    neocom->SetVisible(true);
+    // ---- Sidebar is visible by default ----
+    auto* sidebar = uiManager->GetSidebarPanel();
+    sidebar->SetVisible(true);
 
-    // Wire up a few Neocom callbacks for testing
-    neocom->SetCharacterSheetCallback([]() {
-        std::cout << "[Test] Neocom: Character Sheet clicked" << std::endl;
+    // Wire up a few Sidebar callbacks for testing
+    sidebar->SetCharacterSheetCallback([]() {
+        std::cout << "[Test] Sidebar: Character Sheet clicked" << std::endl;
     });
-    neocom->SetSettingsCallback([]() {
-        std::cout << "[Test] Neocom: Settings clicked" << std::endl;
+    sidebar->SetSettingsCallback([]() {
+        std::cout << "[Test] Sidebar: Settings clicked" << std::endl;
     });
 
     // ---- Prepare module rack demo data ----
@@ -122,7 +122,7 @@ int main() {
     moduleSlots[7] = {true, false, false, 0.3f, "DCU II",      UI::ModuleSlotState::LOW};
 
     std::cout << "[Test] Entering render loop. ESC to exit." << std::endl;
-    std::cout << "  F1 = toggle D-Scan, F2 = toggle Neocom, V = scan" << std::endl;
+    std::cout << "  F1 = toggle D-Scan, F2 = toggle Sidebar, V = scan" << std::endl;
 
     double time = 0.0;
 
@@ -170,7 +170,7 @@ int main() {
         static bool f2_prev = false;
         bool f2 = glfwGetKey(window.getHandle(), GLFW_KEY_F2) == GLFW_PRESS;
         if (f2 && !f2_prev) {
-            neocom->SetVisible(!neocom->IsVisible());
+            sidebar->SetVisible(!sidebar->IsVisible());
         }
         f2_prev = f2;
 
