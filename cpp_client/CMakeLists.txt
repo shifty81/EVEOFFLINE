@@ -1093,6 +1093,7 @@ if(BUILD_TESTS)
         src/ui/photon/photon_context.cpp
         src/ui/photon/photon_widgets.cpp
         src/ui/photon/photon_hud.cpp
+        src/ui/rml_ui_manager.cpp
     )
     target_include_directories(test_photon_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     target_link_libraries(test_photon_ui

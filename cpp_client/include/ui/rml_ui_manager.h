@@ -150,6 +150,75 @@ public:
                             int usedBandwidth, int maxBandwidth,
                             float bayUsed, float bayCapacity);
 
+    // ---- Fitting ----
+    struct FittingSlotInfo {
+        std::string name;
+        bool online = false;
+    };
+    struct FittingRmlData {
+        std::string shipName;
+        std::vector<FittingSlotInfo> highSlots;
+        std::vector<FittingSlotInfo> midSlots;
+        std::vector<FittingSlotInfo> lowSlots;
+        float cpuUsed = 0.0f;
+        float cpuMax = 1.0f;
+        float pgUsed = 0.0f;
+        float pgMax = 1.0f;
+        float calUsed = 0.0f;
+        float calMax = 1.0f;
+        float ehp = 0.0f;
+        float dps = 0.0f;
+        float maxVelocity = 0.0f;
+        bool capStable = false;
+    };
+    void UpdateFittingData(const FittingRmlData& data);
+
+    // ---- Market ----
+    struct MarketOrderInfo {
+        float price = 0.0f;
+        int quantity = 0;
+        std::string location;
+    };
+    void UpdateMarketData(const std::string& itemName,
+                          const std::string& itemMeta,
+                          const std::vector<MarketOrderInfo>& sellOrders,
+                          const std::vector<MarketOrderInfo>& buyOrders);
+
+    // ---- Mission ----
+    struct MissionObjectiveInfo {
+        std::string text;
+        bool complete = false;
+    };
+    struct MissionRmlInfo {
+        std::string title;
+        std::string agentName;
+        std::string level;
+        std::string description;
+        std::vector<MissionObjectiveInfo> objectives;
+        float iskReward = 0.0f;
+        float bonusIsk = 0.0f;
+        std::string standingReward;
+        int lpReward = 0;
+    };
+    void UpdateMissionList(const std::vector<MissionRmlInfo>& missions);
+    void UpdateMissionDetail(const MissionRmlInfo& mission);
+
+    // ---- Chat ----
+    struct ChatMessageInfo {
+        std::string time;
+        std::string sender;
+        std::string text;
+        std::string senderClass; // "self", "other", "system", "hostile", "friendly"
+    };
+    void AddChatMessage(const ChatMessageInfo& msg);
+    void SetChatChannel(const std::string& channel, int memberCount);
+
+    // ---- Context Menu ----
+    void ShowContextMenu(const std::string& entityName,
+                         const std::string& entityType,
+                         float x, float y);
+    void HideContextMenu();
+
     // ---- State Queries ----
     bool IsInitialized() const { return initialized_; }
     bool WantsMouseInput() const;

@@ -31,6 +31,10 @@ namespace UI {
 // UTF-8 encoding of the superscript 3 character (³) for m³ display
 static constexpr const char* CUBIC_METER_SUFFIX = " m\xc2\xb3";
 
+// UTF-8 encoding of checkmark (✓) and circle (○) for objective markers
+static constexpr const char* CHECK_MARK_UTF8 = "\xe2\x9c\x93";
+static constexpr const char* CIRCLE_MARKER_UTF8 = "\xe2\x97\x8b";
+
 // ============================================================================
 // RmlUiManager — uses official RmlUi GL3 + GLFW backends
 // ============================================================================
@@ -818,6 +822,313 @@ void RmlUiManager::UpdateDroneBayData(
     }
 }
 
+void RmlUiManager::UpdateFittingData(const FittingRmlData& data) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("fitting");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+
+    // Ship name
+    auto* shipName = doc->GetElementById("ship-name");
+    if (shipName) {
+        shipName->SetInnerRML(data.shipName);
+    }
+
+    // Build slot rows helper
+    auto buildSlotRml = [](const std::vector<FittingSlotInfo>& slots, const char* prefix) {
+        std::string rml;
+        for (size_t i = 0; i < slots.size(); ++i) {
+            std::string label = slots[i].name.empty()
+                ? (std::string(prefix) + std::to_string(i + 1))
+                : slots[i].name;
+            std::string onlineClass = slots[i].online ? " style=\"border-color: #45D0E8;\"" : "";
+            rml += "<div class=\"fitting-slot\"" + onlineClass + "><span class=\"slot-label\">" + label + "</span></div>";
+        }
+        return rml;
+    };
+
+    auto* highSlots = doc->GetElementById("high-slots");
+    if (highSlots) {
+        highSlots->SetInnerRML(buildSlotRml(data.highSlots, "H"));
+    }
+
+    auto* midSlots = doc->GetElementById("mid-slots");
+    if (midSlots) {
+        midSlots->SetInnerRML(buildSlotRml(data.midSlots, "M"));
+    }
+
+    auto* lowSlots = doc->GetElementById("low-slots");
+    if (lowSlots) {
+        lowSlots->SetInnerRML(buildSlotRml(data.lowSlots, "L"));
+    }
+
+    // Resource bars
+    auto setResource = [&](const char* barId, const char* valueId,
+                           float used, float max, const char* unit) {
+        auto* bar = doc->GetElementById(barId);
+        if (bar && max > 0.0f) {
+            char style[64];
+            std::snprintf(style, sizeof(style), "width: %.1f%%", (used / max) * 100.0f);
+            bar->SetAttribute("style", Rml::String(style));
+        }
+        auto* val = doc->GetElementById(valueId);
+        if (val) {
+            char buf[64];
+            std::snprintf(buf, sizeof(buf), "%.0f / %.0f %s", used, max, unit);
+            val->SetInnerRML(buf);
+        }
+    };
+
+    setResource("cpu-fill", "cpu-value", data.cpuUsed, data.cpuMax, "tf");
+    setResource("pg-fill", "pg-value", data.pgUsed, data.pgMax, "MW");
+    setResource("cal-fill", "cal-value", data.calUsed, data.calMax, "");
+
+    // Stats
+    auto setStat = [&](const char* id, const std::string& value) {
+        auto* el = doc->GetElementById(id);
+        if (el) {
+            el->SetInnerRML(value);
+        }
+    };
+
+    char buf[64];
+    std::snprintf(buf, sizeof(buf), "%.0f", data.ehp);
+    setStat("stat-ehp", buf);
+    std::snprintf(buf, sizeof(buf), "%.0f", data.dps);
+    setStat("stat-dps", buf);
+    std::snprintf(buf, sizeof(buf), "%.0f m/s", data.maxVelocity);
+    setStat("stat-velocity", buf);
+    setStat("stat-cap-stable", data.capStable ? "Yes" : "No");
+}
+
+void RmlUiManager::UpdateMarketData(
+    const std::string& itemName,
+    const std::string& itemMeta,
+    const std::vector<MarketOrderInfo>& sellOrders,
+    const std::vector<MarketOrderInfo>& buyOrders)
+{
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("market");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+
+    auto* nameEl = doc->GetElementById("market-item-name");
+    if (nameEl) {
+        nameEl->SetInnerRML(itemName);
+    }
+
+    auto* metaEl = doc->GetElementById("market-item-meta");
+    if (metaEl) {
+        metaEl->SetInnerRML(itemMeta);
+    }
+
+    // Build order table rows
+    auto buildOrderRows = [](const std::vector<MarketOrderInfo>& orders) {
+        std::string rowsRml;
+        for (const auto& o : orders) {
+            char priceStr[32];
+            std::snprintf(priceStr, sizeof(priceStr), "%.2f ISK", o.price);
+            char qtyStr[16];
+            std::snprintf(qtyStr, sizeof(qtyStr), "%d", o.quantity);
+
+            rowsRml +=
+                "<tr>"
+                "<td class=\"price-col\">" + std::string(priceStr) + "</td>"
+                "<td class=\"qty-col\">" + qtyStr + "</td>"
+                "<td class=\"loc-col\">" + o.location + "</td>"
+                "</tr>";
+        }
+        return rowsRml;
+    };
+
+    auto* sellBody = doc->GetElementById("sell-orders-body");
+    if (sellBody) {
+        sellBody->SetInnerRML(buildOrderRows(sellOrders));
+    }
+
+    auto* buyBody = doc->GetElementById("buy-orders-body");
+    if (buyBody) {
+        buyBody->SetInnerRML(buildOrderRows(buyOrders));
+    }
+}
+
+void RmlUiManager::UpdateMissionList(const std::vector<MissionRmlInfo>& missions) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("mission");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* listEl = it->second->GetElementById("mission-list");
+    if (!listEl) return;
+
+    std::string rml;
+    for (size_t i = 0; i < missions.size(); ++i) {
+        const auto& m = missions[i];
+        std::string entryClass = "mission-entry";
+        if (i == 0) entryClass += " selected";
+
+        rml +=
+            "<div class=\"" + entryClass + "\">"
+            "<span class=\"mission-level\">" + m.level + "</span>"
+            "<div class=\"mission-title\">" + m.title + "</div>"
+            "<div class=\"mission-agent\">Agent: " + m.agentName + "</div>"
+            "</div>";
+    }
+
+    listEl->SetInnerRML(rml);
+
+    // Show detail for the first mission if available
+    if (!missions.empty()) {
+        UpdateMissionDetail(missions[0]);
+    }
+}
+
+void RmlUiManager::UpdateMissionDetail(const MissionRmlInfo& mission) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("mission");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+
+    auto* titleEl = doc->GetElementById("mission-detail-title");
+    if (titleEl) {
+        titleEl->SetInnerRML(mission.title);
+    }
+
+    auto* descEl = doc->GetElementById("mission-detail-desc");
+    if (descEl) {
+        descEl->SetInnerRML(mission.description);
+    }
+
+    // Build objectives
+    auto* detailEl = doc->GetElementById("mission-detail");
+    if (!detailEl) return;
+
+    std::string detailRml;
+    detailRml += "<div class=\"detail-title\">" + mission.title + "</div>";
+    detailRml += "<div class=\"detail-desc\">" + mission.description + "</div>";
+
+    detailRml += "<div class=\"section-label\">Objectives</div>";
+    for (const auto& obj : mission.objectives) {
+        if (obj.complete) {
+            detailRml += "<div class=\"objective complete\">"
+                         "<span class=\"obj-marker done\">";
+            detailRml += CHECK_MARK_UTF8;
+            detailRml += "</span> " + obj.text + "</div>";
+        } else {
+            detailRml += "<div class=\"objective incomplete\">"
+                         "<span class=\"obj-marker pending\">";
+            detailRml += CIRCLE_MARKER_UTF8;
+            detailRml += "</span> " + obj.text + "</div>";
+        }
+    }
+
+    // Rewards
+    detailRml += "<div class=\"section-label\">Rewards</div>";
+    char buf[64];
+    std::snprintf(buf, sizeof(buf), "%.0f ISK", mission.iskReward);
+    detailRml += "<div class=\"reward-row\"><span class=\"reward-label\">ISK Reward:</span>"
+                 "<span class=\"reward-value reward-isk\">" + std::string(buf) + "</span></div>";
+
+    if (mission.bonusIsk > 0.0f) {
+        std::snprintf(buf, sizeof(buf), "%.0f ISK", mission.bonusIsk);
+        detailRml += "<div class=\"reward-row\"><span class=\"reward-label\">Bonus ISK:</span>"
+                     "<span class=\"reward-value reward-isk\">" + std::string(buf) + "</span></div>";
+    }
+
+    if (!mission.standingReward.empty()) {
+        detailRml += "<div class=\"reward-row\"><span class=\"reward-label\">Standing:</span>"
+                     "<span class=\"reward-value\">" + mission.standingReward + "</span></div>";
+    }
+
+    if (mission.lpReward > 0) {
+        std::snprintf(buf, sizeof(buf), "%d LP", mission.lpReward);
+        detailRml += "<div class=\"reward-row\"><span class=\"reward-label\">LP Reward:</span>"
+                     "<span class=\"reward-value\">" + std::string(buf) + "</span></div>";
+    }
+
+    detailEl->SetInnerRML(detailRml);
+}
+
+void RmlUiManager::AddChatMessage(const ChatMessageInfo& msg) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("chat");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* msgArea = it->second->GetElementById("chat-messages");
+    if (!msgArea) return;
+
+    std::string msgRml =
+        "<div class=\"chat-msg\">"
+        "<span class=\"msg-time\">" + msg.time + "</span>"
+        "<span class=\"msg-sender " + msg.senderClass + "\">" + msg.sender + ":</span> "
+        "<span class=\"msg-text\">" + msg.text + "</span>"
+        "</div>";
+
+    msgArea->SetInnerRML(msgArea->GetInnerRML() + msgRml);
+    msgArea->SetScrollTop(msgArea->GetScrollHeight());
+}
+
+void RmlUiManager::SetChatChannel(const std::string& channel, int memberCount) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("chat");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* countEl = it->second->GetElementById("member-count");
+    if (countEl) {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%d", memberCount);
+        countEl->SetInnerRML(buf);
+    }
+}
+
+void RmlUiManager::ShowContextMenu(const std::string& entityName,
+                                    const std::string& entityType,
+                                    float x, float y) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("context_menu");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+
+    auto* nameEl = doc->GetElementById("ctx-entity-name");
+    if (nameEl) {
+        nameEl->SetInnerRML(entityName);
+    }
+
+    auto* typeEl = doc->GetElementById("ctx-entity-type");
+    if (typeEl) {
+        typeEl->SetInnerRML(entityType);
+    }
+
+    // Position the menu at cursor location
+    auto* menuEl = doc->GetElementById("context-menu");
+    if (menuEl) {
+        char style[128];
+        std::snprintf(style, sizeof(style), "top: %.0fdp; left: %.0fdp;", y, x);
+        menuEl->SetAttribute("style", Rml::String(style));
+    }
+
+    doc->Show();
+}
+
+void RmlUiManager::HideContextMenu() {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("context_menu");
+    if (it != documents_.end() && it->second) {
+        it->second->Hide();
+    }
+}
+
 bool RmlUiManager::WantsMouseInput() const {
     if (!initialized_ || !context_) return false;
     return context_->GetHoverElement() != nullptr;
@@ -895,6 +1206,15 @@ void RmlUiManager::UpdateDScanResults(
 void RmlUiManager::UpdateDroneBayData(
     const std::vector<DroneRmlInfo>&, const std::vector<DroneRmlInfo>&,
     int, int, float, float) {}
+void RmlUiManager::UpdateFittingData(const FittingRmlData&) {}
+void RmlUiManager::UpdateMarketData(const std::string&, const std::string&,
+    const std::vector<MarketOrderInfo>&, const std::vector<MarketOrderInfo>&) {}
+void RmlUiManager::UpdateMissionList(const std::vector<MissionRmlInfo>&) {}
+void RmlUiManager::UpdateMissionDetail(const MissionRmlInfo&) {}
+void RmlUiManager::AddChatMessage(const ChatMessageInfo&) {}
+void RmlUiManager::SetChatChannel(const std::string&, int) {}
+void RmlUiManager::ShowContextMenu(const std::string&, const std::string&, float, float) {}
+void RmlUiManager::HideContextMenu() {}
 
 bool RmlUiManager::WantsMouseInput() const { return false; }
 bool RmlUiManager::WantsKeyboardInput() const { return false; }
