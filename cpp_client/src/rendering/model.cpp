@@ -38,6 +38,9 @@
 #ifndef TINYGLTF_NO_INCLUDE_JSON
 #define TINYGLTF_NO_INCLUDE_JSON
 #endif
+// Use the same stb_image.h as texture.cpp to avoid symbol mismatches
+#define TINYGLTF_NO_INCLUDE_STB_IMAGE
+#include <stb_image.h>
 #include <nlohmann/json.hpp>
 #include <tiny_gltf.h>
 
