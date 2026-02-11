@@ -1,0 +1,113 @@
+<!-- EVE OFFLINE — Radial Menu (RML)
+     Circular hold-click radial menu for quick entity interaction.
+     Shows 8 action segments arranged around a central circle. -->
+<rml>
+<head>
+    <title>Radial Menu</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #radial-menu {
+            position: fixed;
+            width: 200dp;
+            height: 200dp;
+        }
+
+        .radial-ring {
+            width: 200dp;
+            height: 200dp;
+            position: relative;
+        }
+
+        /* Central dead-zone circle */
+        .radial-center {
+            position: absolute;
+            top: 70dp;
+            left: 70dp;
+            width: 60dp;
+            height: 60dp;
+            background-color: #0A0E14E0;
+            border: 1dp #45D0E850;
+            border-radius: 30dp;
+        }
+
+        /* Segment buttons arranged around the ring */
+        .radial-segment {
+            position: absolute;
+            width: 50dp;
+            height: 30dp;
+            text-align: center;
+            font-size: 9dp;
+            color: #C8D7E6CC;
+            background-color: #0D1117D0;
+            border: 1dp #28384860;
+            border-radius: 3dp;
+            padding: 4dp 2dp;
+        }
+
+        .radial-segment:hover,
+        .radial-segment.highlighted {
+            color: #45D0E8;
+            background-color: #1A3A4ACC;
+            border-color: #45D0E880;
+        }
+
+        .radial-segment .icon {
+            font-size: 12dp;
+            display: block;
+            color: #45D0E8AA;
+        }
+
+        .radial-segment:hover .icon,
+        .radial-segment.highlighted .icon {
+            color: #45D0E8;
+        }
+
+        /* Positions: 8 segments around a circle (200dp box) */
+        .pos-top        { top: 2dp;   left: 75dp; }
+        .pos-top-right  { top: 20dp;  left: 140dp; }
+        .pos-right      { top: 85dp;  left: 148dp; }
+        .pos-bot-right  { top: 150dp; left: 140dp; }
+        .pos-bottom     { top: 168dp; left: 75dp; }
+        .pos-bot-left   { top: 150dp; left: 8dp; }
+        .pos-left       { top: 85dp;  left: 2dp; }
+        .pos-top-left   { top: 20dp;  left: 8dp; }
+    </style>
+</head>
+<body>
+    <div id="radial-menu">
+        <div class="radial-ring">
+            <div class="radial-center"></div>
+
+            <button class="radial-segment pos-top" id="rad-approach">
+                <span class="icon">A</span>Approach
+            </button>
+            <button class="radial-segment pos-top-right" id="rad-orbit">
+                <span class="icon">O</span>Orbit
+            </button>
+            <button class="radial-segment pos-right" id="rad-warp">
+                <span class="icon">W</span>Warp To
+            </button>
+            <button class="radial-segment pos-bot-right" id="rad-lock">
+                <span class="icon">L</span>Lock
+            </button>
+            <button class="radial-segment pos-bottom" id="rad-range">
+                <span class="icon">R</span>Range
+            </button>
+            <button class="radial-segment pos-bot-left" id="rad-align">
+                <span class="icon">&gt;</span>Align
+            </button>
+            <button class="radial-segment pos-left" id="rad-info">
+                <span class="icon">i</span>Info
+            </button>
+            <button class="radial-segment pos-top-left" id="rad-look">
+                <span class="icon">@</span>Look At
+            </button>
+        </div>
+    </div>
+</body>
+</rml>

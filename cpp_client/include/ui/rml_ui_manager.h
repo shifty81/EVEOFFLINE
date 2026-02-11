@@ -18,9 +18,11 @@
 
 #include <string>
 #include <memory>
+#include <functional>
 #include <vector>
 #include <unordered_map>
 #include <glm/glm.hpp>
+#include "ui/rml_event_listener.h"
 
 // Forward declarations
 struct GLFWwindow;
@@ -219,6 +221,26 @@ public:
                          float x, float y);
     void HideContextMenu();
 
+    // ---- Context Menu Callbacks ----
+    using ContextMenuCallback = std::function<void(const std::string& entityId)>;
+    using ContextMenuDistCallback = std::function<void(const std::string& entityId, int distance_m)>;
+
+    void SetContextMenuEntityId(const std::string& entityId);
+    void SetOnLockTarget(ContextMenuCallback cb)      { onLockTarget_ = std::move(cb); }
+    void SetOnApproach(ContextMenuCallback cb)         { onApproach_ = std::move(cb); }
+    void SetOnOrbit(ContextMenuDistCallback cb)        { onOrbit_ = std::move(cb); }
+    void SetOnKeepAtRange(ContextMenuDistCallback cb)  { onKeepAtRange_ = std::move(cb); }
+    void SetOnAlignTo(ContextMenuCallback cb)          { onAlignTo_ = std::move(cb); }
+    void SetOnWarpTo(ContextMenuDistCallback cb)       { onWarpTo_ = std::move(cb); }
+    void SetOnShowInfo(ContextMenuCallback cb)         { onShowInfo_ = std::move(cb); }
+    void SetOnLookAt(ContextMenuCallback cb)           { onLookAt_ = std::move(cb); }
+
+    // ---- Radial Menu ----
+    void ShowRadialMenu(float centerX, float centerY,
+                        const std::string& entityId);
+    void HideRadialMenu();
+    void UpdateRadialHighlight(const std::string& segmentId);
+
     // ---- State Queries ----
     bool IsInitialized() const { return initialized_; }
     bool WantsMouseInput() const;
@@ -229,6 +251,17 @@ private:
     GLFWwindow* window_ = nullptr;
     std::string resourcePath_;
     int active_mods_ = 0;
+
+    // Context menu state (available with or without RmlUi)
+    std::string contextMenuEntityId_;
+    ContextMenuCallback onLockTarget_;
+    ContextMenuCallback onApproach_;
+    ContextMenuDistCallback onOrbit_;
+    ContextMenuDistCallback onKeepAtRange_;
+    ContextMenuCallback onAlignTo_;
+    ContextMenuDistCallback onWarpTo_;
+    ContextMenuCallback onShowInfo_;
+    ContextMenuCallback onLookAt_;
 
 #ifdef USE_RMLUI
     Rml::Context* context_ = nullptr;
@@ -257,8 +290,11 @@ private:
     // Overview filter state
     std::string overviewFilter_ = "all";
 
+    RmlEventInstaller contextMenuEvents_;
+
     // Internal helpers
     bool LoadDocuments();
+    void InstallContextMenuEvents();
     void UpdateHudElements();
     void UpdateTargetListElements();
 #endif

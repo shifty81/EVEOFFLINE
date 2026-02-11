@@ -312,6 +312,44 @@ void Application::setupUICallbacks() {
     
     std::cout << "  - Context menu callbacks wired" << std::endl;
     
+    // === Wire RmlUi context menu button events to the same callbacks ===
+    if (m_uiManager) {
+        m_uiManager->SetOnLockTarget([this](const std::string& entityId) {
+            if (std::find(m_targetList.begin(), m_targetList.end(), entityId) == m_targetList.end()) {
+                m_targetList.push_back(entityId);
+                std::cout << "[Targeting] Locked target: " << entityId << std::endl;
+            }
+        });
+        m_uiManager->SetOnApproach([this](const std::string& entityId) {
+            commandApproach(entityId);
+        });
+        m_uiManager->SetOnOrbit([this](const std::string& entityId, int dist) {
+            commandOrbit(entityId, static_cast<float>(dist));
+        });
+        m_uiManager->SetOnKeepAtRange([this](const std::string& entityId, int dist) {
+            commandKeepAtRange(entityId, static_cast<float>(dist));
+        });
+        m_uiManager->SetOnAlignTo([this](const std::string& entityId) {
+            commandAlignTo(entityId);
+        });
+        m_uiManager->SetOnWarpTo([this](const std::string& entityId, int dist) {
+            std::cout << "[Movement] Warp to " << entityId << " at " << dist << "m distance" << std::endl;
+            commandWarpTo(entityId);
+        });
+        m_uiManager->SetOnShowInfo([this](const std::string& entityId) {
+            std::cout << "[Info] Show info for: " << entityId << std::endl;
+            openInfoPanelForEntity(entityId);
+        });
+        m_uiManager->SetOnLookAt([this](const std::string& entityId) {
+            auto entity = m_gameClient->getEntityManager().getEntity(entityId);
+            if (entity) {
+                m_camera->setTarget(entity->getPosition());
+                std::cout << "[Camera] Looking at: " << entityId << std::endl;
+            }
+        });
+        std::cout << "  - RmlUi context menu events wired" << std::endl;
+    }
+    
     // === Setup Radial Menu Callbacks ===
     m_radialMenu->SetActionCallback([this](UI::RadialMenu::Action action, const std::string& entityId) {
         switch (action) {
@@ -793,10 +831,20 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                             // Show entity context menu
                             bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), pickedId) != m_targetList.end();
                             m_contextMenu->ShowEntityMenu(pickedId, isLocked);
+                            // Show via RmlUi
+                            if (m_uiManager) {
+                                auto entity = m_gameClient->getEntityManager().getEntity(pickedId);
+                                std::string name = entity ? entity->getShipName() : pickedId;
+                                std::string type = entity ? entity->getShipType() : "Unknown";
+                                m_uiManager->SetContextMenuEntityId(pickedId);
+                                m_uiManager->ShowContextMenu(name, type,
+                                    static_cast<float>(x), static_cast<float>(y));
+                            }
                         } else {
                             // Show empty space menu
                             // For now, just close any existing menu
                             m_contextMenu->Close();
+                            if (m_uiManager) m_uiManager->HideContextMenu();
                         }
                     }
                 }
@@ -818,6 +866,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                 auto confirmedAction = m_radialMenu->Confirm();
                 m_radialMenuOpen = false;
                 m_radialMenu->Close();
+                if (m_uiManager) m_uiManager->HideRadialMenu();
             }
             m_leftMouseDown = false;
         }
@@ -877,6 +926,23 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
     // Update radial menu if open
     if (m_radialMenuOpen && m_radialMenu) {
         m_radialMenu->UpdateMousePosition(static_cast<float>(x), static_cast<float>(y));
+        // Update RmlUi highlight based on current action
+        if (m_uiManager) {
+            auto action = m_radialMenu->GetHighlightedAction();
+            std::string segId;
+            switch (action) {
+                case UI::RadialMenu::Action::APPROACH:      segId = "rad-approach"; break;
+                case UI::RadialMenu::Action::ORBIT:         segId = "rad-orbit"; break;
+                case UI::RadialMenu::Action::WARP_TO:       segId = "rad-warp"; break;
+                case UI::RadialMenu::Action::LOCK_TARGET:   segId = "rad-lock"; break;
+                case UI::RadialMenu::Action::KEEP_AT_RANGE: segId = "rad-range"; break;
+                case UI::RadialMenu::Action::ALIGN_TO:      segId = "rad-align"; break;
+                case UI::RadialMenu::Action::SHOW_INFO:     segId = "rad-info"; break;
+                case UI::RadialMenu::Action::LOOK_AT:       segId = "rad-look"; break;
+                default: break;
+            }
+            m_uiManager->UpdateRadialHighlight(segId);
+        }
     }
     
     // Check if we should open radial menu (left mouse held for RADIAL_MENU_HOLD_TIME)
@@ -909,6 +975,12 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
                                       static_cast<float>(m_radialMenuStartY), 
                                       pickedId);
                     m_radialMenuOpen = true;
+                    if (m_uiManager) {
+                        m_uiManager->ShowRadialMenu(
+                            static_cast<float>(m_radialMenuStartX),
+                            static_cast<float>(m_radialMenuStartY),
+                            pickedId);
+                    }
                     std::cout << "[Radial Menu] Opened for entity: " << pickedId << std::endl;
                 }
             }
