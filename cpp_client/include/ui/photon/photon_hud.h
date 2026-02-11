@@ -53,8 +53,8 @@ struct ShipHUDData {
         bool   fitted    = false;
         bool   active    = false;
         float  cooldown  = 0.0f;    // 0-1 fraction remaining
-        float  overheat  = 0.0f;    // 0-1 heat damage level (1.0 = burnt out)
         Color  color     = {0.5f, 0.5f, 0.5f, 1.0f};
+        float  overheat  = 0.0f;    // 0-1 heat damage level (1.0 = burnt out)
     };
     std::vector<ModuleInfo> highSlots;
     std::vector<ModuleInfo> midSlots;

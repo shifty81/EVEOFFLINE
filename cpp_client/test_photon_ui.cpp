@@ -665,6 +665,119 @@ void testTextInputStateDefaults() {
     assertTrue(!state.focused, "TextInputState focused defaults to false");
 }
 
+// ─── Module Slot with Overheat test ────────────────────────────────
+
+void testModuleSlotEx() {
+    std::cout << "\n=== ModuleSlotEx (Overheat) ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {500.0f, 500.0f};  // Away from module
+        ctx.beginFrame(input);
+
+        // Module with no overheat
+        bool clicked = photon::moduleSlotEx(ctx, {200.0f, 200.0f}, 14.0f,
+                                             true, 0.5f,
+                                             photon::Color(0.8f, 0.2f, 0.2f, 1.0f),
+                                             0.0f, 1.0f);
+        assertTrue(!clicked, "ModuleSlotEx not clicked when mouse is away");
+
+        // Module with moderate overheat
+        clicked = photon::moduleSlotEx(ctx, {250.0f, 200.0f}, 14.0f,
+                                       true, 0.0f,
+                                       photon::Color(0.8f, 0.2f, 0.2f, 1.0f),
+                                       0.5f, 2.0f);
+        assertTrue(!clicked, "ModuleSlotEx with 50% overheat renders without crash");
+
+        // Module fully burnt out
+        clicked = photon::moduleSlotEx(ctx, {300.0f, 200.0f}, 14.0f,
+                                       false, 0.0f,
+                                       photon::Color(0.5f, 0.5f, 0.5f, 1.0f),
+                                       1.0f, 3.0f);
+        assertTrue(!clicked, "ModuleSlotEx at 100% overheat (burnt out) renders");
+
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── Capacitor Ring Animated test ──────────────────────────────────
+
+void testCapacitorRingAnimated() {
+    std::cout << "\n=== CapacitorRingAnimated ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    float displayFrac = 1.0f;  // Start at full cap
+
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        ctx.beginFrame(input);
+
+        // Animate toward 50% over several frames
+        photon::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
+                                       0.5f, displayFrac, 1.0f / 60.0f, 16);
+        assertTrue(displayFrac < 1.0f, "Display frac moves toward target after one frame");
+        assertTrue(displayFrac > 0.5f, "Display frac hasn't reached target in one frame");
+
+        ctx.endFrame();
+    }
+
+    // Simulate many frames to converge
+    for (int i = 0; i < 300; ++i) {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        ctx.beginFrame(input);
+        photon::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
+                                       0.5f, displayFrac, 1.0f / 60.0f, 16);
+        ctx.endFrame();
+    }
+    assertClose(displayFrac, 0.5f, "Display frac converges to target after many frames", 0.01f);
+
+    // Test snap-to-target when very close
+    displayFrac = 0.5005f;
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        ctx.beginFrame(input);
+        photon::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
+                                       0.5f, displayFrac, 1.0f / 60.0f, 16);
+        assertClose(displayFrac, 0.5f, "Display frac snaps when diff < 0.001");
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── ShipHUDData ModuleInfo overheat field test ─────────────────────
+
+void testModuleInfoOverheat() {
+    std::cout << "\n=== ModuleInfo Overheat Field ===" << std::endl;
+
+    // Test that overheat defaults to 0
+    photon::ShipHUDData::ModuleInfo mod;
+    assertClose(mod.overheat, 0.0f, "ModuleInfo overheat defaults to 0.0");
+    assertTrue(mod.fitted == false, "ModuleInfo fitted defaults to false");
+    assertTrue(mod.active == false, "ModuleInfo active defaults to false");
+    assertClose(mod.cooldown, 0.0f, "ModuleInfo cooldown defaults to 0.0");
+
+    // Test backward-compatible aggregate init (existing code style)
+    photon::ShipHUDData::ModuleInfo mod2 = {true, true, 0.3f, {0.8f, 0.2f, 0.2f, 1.0f}};
+    assertTrue(mod2.fitted == true, "Aggregate init: fitted");
+    assertTrue(mod2.active == true, "Aggregate init: active");
+    assertClose(mod2.cooldown, 0.3f, "Aggregate init: cooldown");
+    assertClose(mod2.overheat, 0.0f, "Aggregate init: overheat defaults to 0 (backward compat)");
+}
+
 // ─── Main ──────────────────────────────────────────────────────────────
 
 int main() {
@@ -692,6 +805,9 @@ int main() {
     testTextInput();
     testNotification();
     testTextInputStateDefaults();
+    testModuleSlotEx();
+    testCapacitorRingAnimated();
+    testModuleInfoOverheat();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun
