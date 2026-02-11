@@ -1129,27 +1129,6 @@ void testProbeScannerPanel() {
     assertTrue(signature.group == "Cosmic Signature", "Signature group correct");
 }
 
-// ─── ProbeScanResult tests ─────────────────────────────────────────────
-
-void testProbeScanResult() {
-    std::cout << "\n=== Probe Scan Result ===" << std::endl;
-
-    UI::ProbeScanResult result("XYZ-001", "Serpentis Hideaway", "Cosmic Anomaly",
-                                "Combat Site", 100.0f, 5.3f);
-    assertTrue(result.id == "XYZ-001", "Result ID correct");
-    assertTrue(result.name == "Serpentis Hideaway", "Result name correct");
-    assertTrue(result.group == "Cosmic Anomaly", "Result group correct");
-    assertTrue(result.type == "Combat Site", "Result type correct");
-    assertClose(result.signal_strength, 100.0f, "Result signal 100%");
-    assertClose(result.distance, 5.3f, "Result distance 5.3 AU");
-
-    // Default constructor
-    UI::ProbeScanResult empty;
-    assertTrue(empty.id.empty(), "Empty result ID");
-    assertClose(empty.signal_strength, 0.0f, "Empty result signal 0%");
-    assertClose(empty.distance, 0.0f, "Empty result distance 0");
-}
-
 // ─── Main ──────────────────────────────────────────────────────────────
 
 int main() {

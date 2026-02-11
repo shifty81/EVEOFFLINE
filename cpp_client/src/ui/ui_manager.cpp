@@ -19,6 +19,10 @@
 
 namespace UI {
 
+static float safePct(float current, float max) {
+    return max > 0.0f ? current / max : 0.0f;
+}
+
 // ============================================================================
 // Construction / Destruction
 // ============================================================================
@@ -151,14 +155,10 @@ void UIManager::Render() {
 
     // --- Build ShipHUDData from current ship status ---
     photon::ShipHUDData shipData;
-    shipData.shieldPct    = ship_status_.shields_max > 0.0f
-                            ? ship_status_.shields / ship_status_.shields_max : 0.0f;
-    shipData.armorPct     = ship_status_.armor_max > 0.0f
-                            ? ship_status_.armor / ship_status_.armor_max : 0.0f;
-    shipData.hullPct      = ship_status_.hull_max > 0.0f
-                            ? ship_status_.hull / ship_status_.hull_max : 0.0f;
-    shipData.capacitorPct = ship_status_.capacitor_max > 0.0f
-                            ? ship_status_.capacitor / ship_status_.capacitor_max : 0.0f;
+    shipData.shieldPct    = safePct(ship_status_.shields, ship_status_.shields_max);
+    shipData.armorPct     = safePct(ship_status_.armor, ship_status_.armor_max);
+    shipData.hullPct      = safePct(ship_status_.hull, ship_status_.hull_max);
+    shipData.capacitorPct = safePct(ship_status_.capacitor, ship_status_.capacitor_max);
     shipData.currentSpeed = ship_status_.velocity;
     shipData.maxSpeed     = ship_status_.max_velocity;
 
@@ -178,12 +178,9 @@ void UIManager::Render() {
     if (target_info_.is_locked) {
         photon::TargetCardInfo tc;
         tc.name      = target_info_.name;
-        tc.shieldPct = target_info_.shields_max > 0.0f
-                       ? target_info_.shields / target_info_.shields_max : 0.0f;
-        tc.armorPct  = target_info_.armor_max > 0.0f
-                       ? target_info_.armor / target_info_.armor_max : 0.0f;
-        tc.hullPct   = target_info_.hull_max > 0.0f
-                       ? target_info_.hull / target_info_.hull_max : 0.0f;
+        tc.shieldPct = safePct(target_info_.shields, target_info_.shields_max);
+        tc.armorPct  = safePct(target_info_.armor, target_info_.armor_max);
+        tc.hullPct   = safePct(target_info_.hull, target_info_.hull_max);
         tc.distance  = target_info_.distance;
         tc.isHostile = target_info_.is_hostile;
         tc.isActive  = true;

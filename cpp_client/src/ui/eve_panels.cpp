@@ -5,6 +5,7 @@
 #include <cstdio>
 
 static constexpr float PI = 3.14159265358979323846f;
+static constexpr float METERS_PER_AU = 149597870700.0f;
 
 static photon::Color toColor(const float c[4]) {
     return photon::Color(c[0], c[1], c[2], c[3]);
@@ -624,7 +625,7 @@ void RenderSelectedItem(photon::PhotonContext& ctx, const SelectedItemData& item
     } else if (item.distance < 1000000.0f) {
         snprintf(dist_buf, sizeof(dist_buf), "Distance: %.1f km", item.distance / 1000.0f);
     } else {
-        snprintf(dist_buf, sizeof(dist_buf), "Distance: %.2f AU", item.distance / 149597870700.0f);
+        snprintf(dist_buf, sizeof(dist_buf), "Distance: %.2f AU", item.distance / METERS_PER_AU);
     }
     r.drawText(dist_buf, {0, y}, toColor(EVEColors::TEXT_PRIMARY));
     y += 16.0f;
