@@ -1,7 +1,7 @@
 #include "ui/hud.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_panels.h"
-#include "ui/photon/photon_context.h"
+#include "ui/hud_panels.h"
+#include "ui/atlas/atlas_context.h"
 #include <iostream>
 #include <algorithm>
 
@@ -18,7 +18,7 @@ bool HUD::initialize() {
     return true;
 }
 
-void HUD::render(photon::PhotonContext& ctx) {
+void HUD::render(atlas::AtlasContext& ctx) {
     // Build a ShipStatus from cached values and delegate to the circular gauge
     UI::ShipStatus status;
     status.shields = m_shields;
@@ -32,31 +32,31 @@ void HUD::render(photon::PhotonContext& ctx) {
     status.velocity = m_velocity;
     status.max_velocity = m_maxVelocity;
 
-    UI::EVEPanels::RenderShipStatusCircular(ctx, status);
+    UI::HUDPanels::RenderShipStatusCircular(ctx, status);
 
     // Render active damage flashes as screen overlays
     if (!m_damageFlashes.empty()) {
         auto& r = ctx.renderer();
         float outerRadius = 100.0f;
-        photon::Vec2 center(outerRadius + 15, outerRadius + 10);
+        atlas::Vec2 center(outerRadius + 15, outerRadius + 10);
 
         for (const auto& flash : m_damageFlashes) {
             float alpha = flash.intensity * (1.0f - flash.elapsed / flash.duration);
             if (alpha <= 0.0f) continue;
 
-            photon::Color flashColor;
+            atlas::Color flashColor;
             float flashRadius;
             switch (flash.layer) {
                 case DamageLayer::SHIELD:
-                    flashColor = photon::Color::fromRGBA(0, 150, 255, static_cast<int>(80 * alpha));
+                    flashColor = atlas::Color::fromRGBA(0, 150, 255, static_cast<int>(80 * alpha));
                     flashRadius = outerRadius + 12.0f;
                     break;
                 case DamageLayer::ARMOR:
-                    flashColor = photon::Color::fromRGBA(255, 200, 50, static_cast<int>(80 * alpha));
+                    flashColor = atlas::Color::fromRGBA(255, 200, 50, static_cast<int>(80 * alpha));
                     flashRadius = outerRadius - 2.0f;
                     break;
                 case DamageLayer::HULL:
-                    flashColor = photon::Color::fromRGBA(255, 50, 50, static_cast<int>(100 * alpha));
+                    flashColor = atlas::Color::fromRGBA(255, 50, 50, static_cast<int>(100 * alpha));
                     flashRadius = outerRadius - 16.0f;
                     break;
             }

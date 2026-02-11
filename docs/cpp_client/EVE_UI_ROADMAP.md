@@ -1,28 +1,30 @@
-# EVE Online Photon UI - Complete Implementation Roadmap
+# Atlas UI - Complete Implementation Roadmap
 
 **Date**: February 11, 2026  
 **Project**: EVE OFFLINE C++ Client  
-**Goal**: Fully replicate EVE Online's Photon UI system
+**Goal**: Implement a complete Atlas UI system for the game client
 
 ---
 
 ## Overview
 
-This document outlines the comprehensive plan to implement EVE Online's complete Photon UI system in the C++ OpenGL client. The UI is the most complex aspect of EVE Online, featuring dense information displays, extensive customization, and sophisticated interaction patterns.
+This document outlines the comprehensive plan to implement the Atlas UI system in the C++ OpenGL client. The UI features dense information displays, extensive customization, and sophisticated interaction patterns.
+
+> **Note**: UI framework was renamed from "Photon" to "Atlas" and sidebar from "Neocom" to "Sidebar" to establish an original naming convention. See [NAMING_CONVENTION.md](../NAMING_CONVENTION.md).
 
 ## Current Status (Phase 4.10 In Progress)
 
 ✅ **Completed**:
 - Phase 4.3: Entity rendering system
 - Phase 4.3: Circular target icons with arc-based health indicators
-- Phase 4.3: Basic EVE color scheme
+- Phase 4.3: Basic color scheme
 - Phase 4.3: Entity visual management
 - Phase 4.3: ImGui integration
 - Phase 4.4: Input system with 3D picking (entity selection, targeting)
 - Phase 4.5: Overview panel with sorting, filtering, and interactions
 - Phase 4.6: Module system with activation and visual feedback
 - **Phase 4.7: Context & Radial Menus** ✅ (Feb 11, 2026)
-- Phase 4.8: Neocom and Additional Panels (Partial)
+- Phase 4.8: Sidebar and Additional Panels (Partial)
 - **Phase 4.9: Movement Command Shortcuts (Q/W/E/D + Click)** ✅ (Feb 11, 2026)
 - **Phase 4.9.1: Visual Mode Indicators** ✅ (Feb 11, 2026) — On-screen HUD indicator for active movement modes
 - **Phase 4.9.2: Info Panel** ✅ (Feb 11, 2026) — Show Info window with entity details, health, distance, faction
@@ -30,7 +32,14 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 - **Phase 4.9.4: Selected Item Panel Callbacks** ✅ (Feb 11, 2026) — Orbit/Approach/Warp/Info buttons wired to game logic
 
 ⏳ **In Progress**: 
-- Phase 4.10: Window Management & Customization
+- **Phase 4.10: Window Management & Customization** ⏳ (Feb 11, 2026)
+  - ✅ Layout Manager — JSON save/load for panel positions, sizes, visibility, opacity
+  - ✅ Default presets — default, combat, mining layout presets
+  - ✅ Per-panel opacity support
+  - ✅ Naming convention — all UI components renamed to original names (see NAMING_CONVENTION.md)
+  - ⬜ Window snap-to-edge
+  - ⬜ UI scale controls
+  - ⬜ Color scheme switching
 
 ---
 
@@ -400,41 +409,44 @@ This document outlines the comprehensive plan to implement EVE Online's complete
 ### Phase 4.10: Window Management & Customization (2 weeks)
 
 **Priority**: Medium-Low - Polish & UX
+**Status**: ⏳ In Progress (Feb 11, 2026)
 
 #### Window System
-- [ ] **Movement & Resizing**
+- [x] **Movement & Resizing** (existing via panelBeginStateful)
   - Drag title bar to move
   - Drag edges/corners to resize
-  - Snap to screen edges
-  - Snap to other windows
+  - [x] Snap to screen edges (via DockingManager)
+  - [ ] Snap to other windows
   
-- [ ] **Window States**
-  - Pin/unpin (lock position)
-  - Minimize to title bar
-  - Close window
-  - Restore defaults
+- [x] **Window States**
+  - Pin/unpin (lock position) — via interface lock
+  - Minimize to title bar — via panelBeginStateful
+  - Close window — via × button
+  - [x] Restore defaults — via ResetToDefaultLayout()
   
-- [ ] **Transparency**
-  - Opacity slider (per window)
-  - Global opacity hotkey
-  - Window blur effect
-  - Inactive window dimming
+- [x] **Transparency** (Partial)
+  - [x] Per-panel opacity (0.15–1.0) via SetPanelOpacity/GetPanelOpacity
+  - [ ] Global opacity hotkey
+  - [ ] Window blur effect
+  - [ ] Inactive window dimming
 
 #### Layouts & Presets
-- [ ] **Save Layouts**
-  - Multiple layout slots
-  - Quick switch hotkeys
-  - Export/import layouts
+- [x] **Save Layouts** ✅ (Feb 11, 2026)
+  - [x] LayoutManager with JSON serialization
+  - [x] Multiple named presets (default, combat, mining, custom)
+  - [x] SaveLayout / LoadLayout API
+  - [ ] Quick switch hotkeys
+  - [x] Export/import layouts (JSON files)
   
-- [ ] **Reset Options**
-  - Reset single window
-  - Reset all windows
-  - Reset to defaults
+- [x] **Reset Options** ✅ (Feb 11, 2026)
+  - [ ] Reset single window
+  - [x] Reset all windows — ResetToDefaultLayout()
+  - [x] Reset to defaults — built-in presets
 
 #### Customization Options
 - [ ] **Color Schemes**
-  - Photon UI (default)
-  - Classic EVE
+  - Atlas UI (default)
+  - Classic theme
   - Custom colors
   - Color-blind modes
   

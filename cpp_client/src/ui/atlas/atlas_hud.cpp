@@ -1,14 +1,14 @@
-#include "ui/photon/photon_hud.h"
+#include "ui/atlas/atlas_hud.h"
 
 #include <algorithm>
 #include <cstdio>
 
-namespace photon {
+namespace atlas {
 
-PhotonHUD::PhotonHUD() = default;
-PhotonHUD::~PhotonHUD() = default;
+AtlasHUD::AtlasHUD() = default;
+AtlasHUD::~AtlasHUD() = default;
 
-void PhotonHUD::init(int windowW, int windowH) {
+void AtlasHUD::init(int windowW, int windowH) {
     float w = static_cast<float>(windowW);
     float h = static_cast<float>(windowH);
 
@@ -28,17 +28,17 @@ void PhotonHUD::init(int windowW, int windowH) {
     m_infoPanelState.minimized = false;
 }
 
-void PhotonHUD::update(PhotonContext& ctx,
+void AtlasHUD::update(AtlasContext& ctx,
                        const ShipHUDData& ship,
                        const std::vector<TargetCardInfo>& targets,
                        const std::vector<OverviewEntry>& overview,
                        const SelectedItemInfo& selectedItem) {
     // Draw elements in back-to-front order
 
-    // 1. Neocom sidebar (left edge)
-    neocomBar(ctx, 0.0f, m_neocomWidth,
+    // 1. Sidebar (left edge)
+    sidebarBar(ctx, 0.0f, m_sidebarWidth,
               static_cast<float>(ctx.input().windowH),
-              m_neocomIcons, m_neocomCallback);
+              m_sidebarIcons, m_sidebarCallback);
 
     // 2. Locked target cards (top-center row)
     drawTargetCards(ctx, targets);
@@ -65,7 +65,7 @@ void PhotonHUD::update(PhotonContext& ctx,
 
 // ── Ship HUD ────────────────────────────────────────────────────────
 
-void PhotonHUD::drawShipHUD(PhotonContext& ctx, const ShipHUDData& ship) {
+void AtlasHUD::drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship) {
     float winW = static_cast<float>(ctx.input().windowW);
     float winH = static_cast<float>(ctx.input().windowH);
 
@@ -127,7 +127,7 @@ void PhotonHUD::drawShipHUD(PhotonContext& ctx, const ShipHUDData& ship) {
 
 // ── Target Cards ────────────────────────────────────────────────────
 
-void PhotonHUD::drawTargetCards(PhotonContext& ctx,
+void AtlasHUD::drawTargetCards(AtlasContext& ctx,
                                 const std::vector<TargetCardInfo>& targets) {
     if (targets.empty()) return;
 
@@ -148,7 +148,7 @@ void PhotonHUD::drawTargetCards(PhotonContext& ctx,
 
 // ── Overview Panel ──────────────────────────────────────────────────
 
-void PhotonHUD::drawOverviewPanel(PhotonContext& ctx,
+void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
                                   const std::vector<OverviewEntry>& entries) {
     PanelFlags flags;
     flags.showHeader = true;
@@ -202,7 +202,7 @@ void PhotonHUD::drawOverviewPanel(PhotonContext& ctx,
 
 // ── Selected Item Panel ─────────────────────────────────────────────
 
-void PhotonHUD::drawSelectedItemPanel(PhotonContext& ctx,
+void AtlasHUD::drawSelectedItemPanel(AtlasContext& ctx,
                                       const SelectedItemInfo& info) {
     PanelFlags flags;
     flags.showHeader = true;
@@ -260,7 +260,7 @@ void PhotonHUD::drawSelectedItemPanel(PhotonContext& ctx,
 
 // ── Mode Indicator ──────────────────────────────────────────────────
 
-void PhotonHUD::drawModeIndicator(PhotonContext& ctx) {
+void AtlasHUD::drawModeIndicator(AtlasContext& ctx) {
     if (m_modeText.empty()) return;
 
     float winW = static_cast<float>(ctx.input().windowW);
@@ -273,15 +273,15 @@ void PhotonHUD::drawModeIndicator(PhotonContext& ctx) {
 
 // ── Info Panel ──────────────────────────────────────────────────────
 
-void PhotonHUD::showInfoPanel(const InfoPanelData& data) {
+void AtlasHUD::showInfoPanel(const InfoPanelData& data) {
     m_infoPanelData = data;
     m_infoPanelState.open = true;
 }
 
-void PhotonHUD::drawInfoPanel(PhotonContext& ctx) {
+void AtlasHUD::drawInfoPanel(AtlasContext& ctx) {
     if (!m_infoPanelState.open || m_infoPanelData.isEmpty()) return;
 
     infoPanelDraw(ctx, m_infoPanelState, m_infoPanelData);
 }
 
-} // namespace photon
+} // namespace atlas

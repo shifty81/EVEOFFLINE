@@ -6,9 +6,10 @@
 #include <memory>
 #include <unordered_map>
 #include <glm/glm.hpp>
-#include "ui/photon/photon_context.h"
-#include "ui/photon/photon_hud.h"
-#include "ui/photon/photon_widgets.h"
+#include "ui/atlas/atlas_context.h"
+#include "ui/atlas/atlas_hud.h"
+#include "ui/atlas/atlas_widgets.h"
+#include "ui/layout_manager.h"
 
 namespace eve {
     class Entity;
@@ -17,14 +18,14 @@ namespace eve {
 namespace UI {
 
 // Forward declarations — legacy panel objects kept for data storage / API compat
-class EVETargetList;
+class TargetList;
 class InventoryPanel;
 class FittingPanel;
 class MissionPanel;
 class OverviewPanel;
 class MarketPanel;
 class DScanPanel;
-class NeocomPanel;
+class SidebarPanel;
 class ChatPanel;
 class DroneControlPanel;
 class NotificationManager;
@@ -140,17 +141,17 @@ public:
     UIManager();
     ~UIManager();
 
-    // Initialize Photon UI context and HUD layout
+    // Initialize Atlas UI context and HUD layout
     bool Initialize(int windowW, int windowH);
 
-    // Cleanup Photon GPU resources
+    // Cleanup Atlas GPU resources
     void Shutdown();
 
     // Frame management — caller must fill InputState from GLFW each frame
-    void BeginFrame(const photon::InputState& input);
+    void BeginFrame(const atlas::InputState& input);
     void EndFrame();
 
-    // Render all UI panels via Photon
+    // Render all UI panels via Atlas
     void Render();
 
     // Data setters
@@ -169,7 +170,7 @@ public:
     bool IsPanelVisible(const std::string& panel_name) const;
 
     // Get target list
-    EVETargetList* GetTargetList() { return m_targetList.get(); }
+    TargetList* GetTargetList() { return m_targetList.get(); }
 
     // Panel accessors (legacy panel objects kept for data storage)
     InventoryPanel* GetInventoryPanel() { return m_inventoryPanel.get(); }
@@ -178,7 +179,7 @@ public:
     OverviewPanel* GetOverviewPanel() { return m_overviewPanel.get(); }
     MarketPanel* GetMarketPanel() { return m_marketPanel.get(); }
     DScanPanel* GetDScanPanel() { return m_dscanPanel.get(); }
-    NeocomPanel* GetNeocomPanel() { return m_neocomPanel.get(); }
+    SidebarPanel* GetSidebarPanel() { return m_sidebarPanel.get(); }
     ChatPanel* GetChatPanel() { return m_chatPanel.get(); }
     DroneControlPanel* GetDroneControlPanel() { return m_droneControlPanel.get(); }
     NotificationManager* GetNotificationManager() { return m_notificationManager.get(); }
@@ -224,13 +225,37 @@ public:
     bool IsCompactMode() const { return m_compactMode; }
     void ToggleCompactMode();
 
-    // Access Photon context for advanced / external usage
-    photon::PhotonContext& GetPhotonContext() { return m_ctx; }
+    // Access Atlas context for advanced / external usage
+    atlas::AtlasContext& GetAtlasContext() { return m_ctx; }
+
+    // ── Layout management (Phase 4.10) ──────────────────────────────
+
+    /** Save current panel layout to a named preset. */
+    bool SaveLayout(const std::string& presetName);
+
+    /** Load a named preset and apply it to all panels. */
+    bool LoadLayout(const std::string& presetName);
+
+    /** Get list of available layout presets. */
+    std::vector<std::string> GetAvailableLayouts() const;
+
+    /** Reset all panels to the default layout. */
+    void ResetToDefaultLayout();
+
+    /** Get the active layout preset name. */
+    const std::string& GetActiveLayoutName() const { return m_activeLayoutName; }
+
+    // Per-panel opacity
+    void SetPanelOpacity(const std::string& panel_name, float opacity);
+    float GetPanelOpacity(const std::string& panel_name) const;
+
+    // Access layout manager
+    LayoutManager& GetLayoutManager() { return m_layoutManager; }
 
 private:
-    // Photon UI core
-    photon::PhotonContext m_ctx;
-    photon::PhotonHUD     m_hud;
+    // Atlas UI core
+    atlas::AtlasContext m_ctx;
+    atlas::AtlasHUD     m_hud;
 
     // UI state
     ShipStatus ship_status_;
@@ -240,27 +265,28 @@ private:
     glm::vec3 m_playerPosition{0.0f};
 
     // Legacy panel objects (kept for data storage and API compatibility)
-    std::unique_ptr<EVETargetList> m_targetList;
+    std::unique_ptr<TargetList> m_targetList;
     std::unique_ptr<InventoryPanel> m_inventoryPanel;
     std::unique_ptr<FittingPanel> m_fittingPanel;
     std::unique_ptr<MissionPanel> m_missionPanel;
     std::unique_ptr<OverviewPanel> m_overviewPanel;
     std::unique_ptr<MarketPanel> m_marketPanel;
     std::unique_ptr<DScanPanel> m_dscanPanel;
-    std::unique_ptr<NeocomPanel> m_neocomPanel;
+    std::unique_ptr<SidebarPanel> m_sidebarPanel;
     std::unique_ptr<ChatPanel> m_chatPanel;
     std::unique_ptr<DroneControlPanel> m_droneControlPanel;
     std::unique_ptr<NotificationManager> m_notificationManager;
     std::unique_ptr<ProbeScannerPanel> m_probeScannerPanel;
 
-    // Photon panel states (replaces DockingManager)
+    // Atlas panel states (replaces DockingManager)
     struct PanelConfig {
-        photon::PanelState state;
+        atlas::PanelState state;
         std::string title;
+        float opacity = 0.92f;  // Per-panel opacity (0.0–1.0)
     };
     std::unordered_map<std::string, PanelConfig> m_panelConfigs;
 
-    // Star map (toggled by Map button in Neocom)
+    // Star map (toggled by Map button in Sidebar)
     bool m_showStarMap = false;
 
     // Panel visibility flags
@@ -290,14 +316,24 @@ private:
     // Compact mode
     bool m_compactMode = false;
 
+    // Layout management (Phase 4.10)
+    LayoutManager m_layoutManager;
+    std::string m_activeLayoutName = "default";
+    int m_windowW = 1280;
+    int m_windowH = 720;
+
     // Panel initialization helper
     void InitPanelConfigs(int windowW, int windowH);
 
-    // Photon-based render helpers
+    // Atlas-based render helpers
     void RenderCombatLogPanel();
     void RenderStarMapPanel();
     void RenderAlertStack();
     void RenderDockablePanel(const std::string& id);
+
+    // Layout helper: convert between PanelConfig map and PanelLayout map
+    std::unordered_map<std::string, PanelLayout> ExportPanelLayouts() const;
+    void ImportPanelLayouts(const std::unordered_map<std::string, PanelLayout>& layouts);
 };
 
 } // namespace UI

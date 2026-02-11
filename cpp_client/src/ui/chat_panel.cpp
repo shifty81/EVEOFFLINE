@@ -1,6 +1,6 @@
 #include "ui/chat_panel.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_colors.h"
+#include "ui/space_colors.h"
 #include <imgui.h>
 #include <algorithm>
 #include <cstring>
@@ -12,21 +12,21 @@ namespace {
 ImVec4 GetSenderColor(ChatMessage::SenderType type) {
     switch (type) {
         case ChatMessage::SenderType::Self:
-            return ImVec4(EVEColors::ACCENT_SECONDARY[0], EVEColors::ACCENT_SECONDARY[1],
-                          EVEColors::ACCENT_SECONDARY[2], 1.0f);
+            return ImVec4(SpaceColors::ACCENT_SECONDARY[0], SpaceColors::ACCENT_SECONDARY[1],
+                          SpaceColors::ACCENT_SECONDARY[2], 1.0f);
         case ChatMessage::SenderType::System:
-            return ImVec4(EVEColors::WARNING[0], EVEColors::WARNING[1],
-                          EVEColors::WARNING[2], 1.0f);
+            return ImVec4(SpaceColors::WARNING[0], SpaceColors::WARNING[1],
+                          SpaceColors::WARNING[2], 1.0f);
         case ChatMessage::SenderType::Hostile:
-            return ImVec4(EVEColors::TARGET_HOSTILE[0], EVEColors::TARGET_HOSTILE[1],
-                          EVEColors::TARGET_HOSTILE[2], 1.0f);
+            return ImVec4(SpaceColors::TARGET_HOSTILE[0], SpaceColors::TARGET_HOSTILE[1],
+                          SpaceColors::TARGET_HOSTILE[2], 1.0f);
         case ChatMessage::SenderType::Friendly:
-            return ImVec4(EVEColors::TARGET_FRIENDLY[0], EVEColors::TARGET_FRIENDLY[1],
-                          EVEColors::TARGET_FRIENDLY[2], 1.0f);
+            return ImVec4(SpaceColors::TARGET_FRIENDLY[0], SpaceColors::TARGET_FRIENDLY[1],
+                          SpaceColors::TARGET_FRIENDLY[2], 1.0f);
         case ChatMessage::SenderType::Other:
         default:
-            return ImVec4(EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
-                          EVEColors::TEXT_PRIMARY[2], 1.0f);
+            return ImVec4(SpaceColors::TEXT_PRIMARY[0], SpaceColors::TEXT_PRIMARY[1],
+                          SpaceColors::TEXT_PRIMARY[2], 1.0f);
     }
 }
 
@@ -111,12 +111,12 @@ void ChatPanel::RenderChannelTabs() {
 
         if (isActive) {
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
-                EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
-                EVEColors::ACCENT_DIM[2], 0.8f));
+                SpaceColors::ACCENT_DIM[0], SpaceColors::ACCENT_DIM[1],
+                SpaceColors::ACCENT_DIM[2], 0.8f));
         } else {
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
-                EVEColors::BG_HEADER[0], EVEColors::BG_HEADER[1],
-                EVEColors::BG_HEADER[2], 0.8f));
+                SpaceColors::BG_HEADER[0], SpaceColors::BG_HEADER[1],
+                SpaceColors::BG_HEADER[2], 0.8f));
         }
 
         if (ImGui::Button(ch.channel_name.c_str(), ImVec2(80, 24))) {
@@ -144,8 +144,8 @@ void ChatPanel::RenderMemberBar() {
     }
 
     ImGui::TextColored(ImVec4(
-        EVEColors::TEXT_SECONDARY[0], EVEColors::TEXT_SECONDARY[1],
-        EVEColors::TEXT_SECONDARY[2], EVEColors::TEXT_SECONDARY[3]),
+        SpaceColors::TEXT_SECONDARY[0], SpaceColors::TEXT_SECONDARY[1],
+        SpaceColors::TEXT_SECONDARY[2], SpaceColors::TEXT_SECONDARY[3]),
         "Channel members: %d", memberCount);
     ImGui::Separator();
 }
@@ -164,8 +164,8 @@ void ChatPanel::RenderMessageArea() {
         for (const auto& msg : it->second) {
             // Timestamp
             ImGui::TextColored(ImVec4(
-                EVEColors::TEXT_DISABLED[0], EVEColors::TEXT_DISABLED[1],
-                EVEColors::TEXT_DISABLED[2], 1.0f),
+                SpaceColors::TEXT_DISABLED[0], SpaceColors::TEXT_DISABLED[1],
+                SpaceColors::TEXT_DISABLED[2], 1.0f),
                 "%s", msg.timestamp.c_str());
             ImGui::SameLine();
 
@@ -176,8 +176,8 @@ void ChatPanel::RenderMessageArea() {
 
             // Message content
             ImGui::TextColored(ImVec4(
-                EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
-                EVEColors::TEXT_PRIMARY[2], 0.9f),
+                SpaceColors::TEXT_PRIMARY[0], SpaceColors::TEXT_PRIMARY[1],
+                SpaceColors::TEXT_PRIMARY[2], 0.9f),
                 "%s", msg.content.c_str());
         }
     }

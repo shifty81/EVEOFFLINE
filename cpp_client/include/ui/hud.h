@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-namespace photon { class PhotonContext; }
+namespace atlas { class AtlasContext; }
 
 namespace UI {
     struct ShipStatus;
@@ -38,7 +38,7 @@ struct DamageFlash {
  * HUD (Heads-Up Display) for showing game information.
  *
  * Wraps the EVE-style circular ship status gauge (shield/armor/hull/capacitor
- * rings, speed readout, module rack) provided by EVEPanels, and maintains
+ * rings, speed readout, module rack) provided by HUDPanels, and maintains
  * a scrollable combat log. Supports damage feedback visual effects.
  */
 class HUD {
@@ -52,11 +52,11 @@ public:
     bool initialize();
 
     /**
-     * Render HUD elements using Photon UI.
-     * Renders the circular ship status display (via EVEPanels::RenderShipStatusCircular)
+     * Render HUD elements using Atlas UI.
+     * Renders the circular ship status display (via HUDPanels::RenderShipStatusCircular)
      * and the combat log.
      */
-    void render(photon::PhotonContext& ctx);
+    void render(atlas::AtlasContext& ctx);
 
     /**
      * Update HUD with game state

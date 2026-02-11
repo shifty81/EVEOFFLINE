@@ -294,8 +294,8 @@ endif()
 set(IMGUI_UI_SOURCES
     src/ui/hud.cpp
     src/ui/ui_manager.cpp
-    src/ui/eve_panels.cpp
-    src/ui/eve_target_list.cpp
+    src/ui/hud_panels.cpp
+    src/ui/target_list.cpp
     src/ui/tactical_overlay.cpp
     src/ui/inventory_panel.cpp
     src/ui/fitting_panel.cpp
@@ -305,11 +305,12 @@ set(IMGUI_UI_SOURCES
     src/ui/overview_panel.cpp
     src/ui/docking_manager.cpp
     src/ui/dscan_panel.cpp
-    src/ui/neocom_panel.cpp
+    src/ui/sidebar_panel.cpp
     src/ui/chat_panel.cpp
     src/ui/drone_control_panel.cpp
     src/ui/notification_manager.cpp
     src/ui/probe_scanner_panel.cpp
+    src/ui/layout_manager.cpp
 )
 
 set(CLIENT_SOURCES
@@ -355,10 +356,10 @@ set(CLIENT_SOURCES
     src/ui/context_menu.cpp
     src/ui/radial_menu.cpp
     src/ui/rml_ui_manager.cpp
-    src/ui/photon/photon_renderer.cpp
-    src/ui/photon/photon_context.cpp
-    src/ui/photon/photon_widgets.cpp
-    src/ui/photon/photon_hud.cpp
+    src/ui/atlas/atlas_renderer.cpp
+    src/ui/atlas/atlas_context.cpp
+    src/ui/atlas/atlas_widgets.cpp
+    src/ui/atlas/atlas_hud.cpp
     src/core/solar_system_scene.cpp
     src/core/ship_physics.cpp
     ${GLAD_SOURCES}
@@ -406,8 +407,8 @@ set(CLIENT_HEADERS
     include/ui/hud.h
     include/ui/input_handler.h
     include/ui/ui_manager.h
-    include/ui/eve_panels.h
-    include/ui/eve_target_list.h
+    include/ui/hud_panels.h
+    include/ui/target_list.h
     include/ui/entity_picker.h
     include/ui/context_menu.h
     include/ui/inventory_panel.h
@@ -418,18 +419,19 @@ set(CLIENT_HEADERS
     include/ui/overview_panel.h
     include/ui/docking_manager.h
     include/ui/dscan_panel.h
-    include/ui/neocom_panel.h
+    include/ui/sidebar_panel.h
     include/ui/chat_panel.h
     include/ui/drone_control_panel.h
     include/ui/notification_manager.h
     include/ui/probe_scanner_panel.h
     include/ui/rml_ui_manager.h
     include/ui/radial_menu.h
-    include/ui/photon/photon_types.h
-    include/ui/photon/photon_renderer.h
-    include/ui/photon/photon_context.h
-    include/ui/photon/photon_widgets.h
-    include/ui/photon/photon_hud.h
+    include/ui/layout_manager.h
+    include/ui/atlas/atlas_types.h
+    include/ui/atlas/atlas_renderer.h
+    include/ui/atlas/atlas_context.h
+    include/ui/atlas/atlas_widgets.h
+    include/ui/atlas/atlas_hud.h
     include/core/solar_system_scene.h
     include/core/ship_physics.h
     ${AUDIO_HEADERS}
@@ -694,8 +696,8 @@ if(BUILD_TESTS)
             src/rendering/reference_model_analyzer.cpp
             src/ui/input_handler.cpp
             src/ui/ui_manager.cpp
-            src/ui/eve_panels.cpp
-            src/ui/eve_target_list.cpp
+            src/ui/hud_panels.cpp
+            src/ui/target_list.cpp
             src/ui/inventory_panel.cpp
             src/ui/fitting_panel.cpp
             src/ui/mission_panel.cpp
@@ -703,14 +705,14 @@ if(BUILD_TESTS)
             src/ui/docking_manager.cpp
             src/ui/market_panel.cpp
             src/ui/dscan_panel.cpp
-            src/ui/neocom_panel.cpp
+            src/ui/sidebar_panel.cpp
             src/ui/chat_panel.cpp
             src/ui/drone_control_panel.cpp
             src/ui/notification_manager.cpp
             src/ui/probe_scanner_panel.cpp
-            src/ui/photon/photon_renderer.cpp
-            src/ui/photon/photon_context.cpp
-            src/ui/photon/photon_widgets.cpp
+            src/ui/atlas/atlas_renderer.cpp
+            src/ui/atlas/atlas_context.cpp
+            src/ui/atlas/atlas_widgets.cpp
             src/core/entity.cpp
             ${GLAD_SOURCES}
             ${IMGUI_SOURCES}
@@ -813,8 +815,8 @@ if(BUILD_TESTS)
             test_ui_system.cpp
             src/rendering/window.cpp
             src/ui/ui_manager.cpp
-            src/ui/eve_panels.cpp
-            src/ui/eve_target_list.cpp
+            src/ui/hud_panels.cpp
+            src/ui/target_list.cpp
             src/ui/inventory_panel.cpp
             src/ui/fitting_panel.cpp
             src/ui/mission_panel.cpp
@@ -822,14 +824,14 @@ if(BUILD_TESTS)
             src/ui/docking_manager.cpp
             src/ui/market_panel.cpp
             src/ui/dscan_panel.cpp
-            src/ui/neocom_panel.cpp
+            src/ui/sidebar_panel.cpp
             src/ui/chat_panel.cpp
             src/ui/drone_control_panel.cpp
             src/ui/notification_manager.cpp
             src/ui/probe_scanner_panel.cpp
-            src/ui/photon/photon_renderer.cpp
-            src/ui/photon/photon_context.cpp
-            src/ui/photon/photon_widgets.cpp
+            src/ui/atlas/atlas_renderer.cpp
+            src/ui/atlas/atlas_context.cpp
+            src/ui/atlas/atlas_widgets.cpp
             src/core/entity.cpp
             ${IMGUI_SOURCES}
         )
@@ -1091,22 +1093,35 @@ if(BUILD_TESTS)
         target_link_libraries(test_model_analyzer ws2_32)
     endif()
 
-    # Test: Photon UI System (headless — no GPU required)
-    add_executable(test_photon_ui
-        test_photon_ui.cpp
-        src/ui/photon/photon_renderer.cpp
-        src/ui/photon/photon_context.cpp
-        src/ui/photon/photon_widgets.cpp
-        src/ui/photon/photon_hud.cpp
+    # Test: Atlas UI System (headless — no GPU required)
+    add_executable(test_atlas_ui
+        test_atlas_ui.cpp
+        src/ui/atlas/atlas_renderer.cpp
+        src/ui/atlas/atlas_context.cpp
+        src/ui/atlas/atlas_widgets.cpp
+        src/ui/atlas/atlas_hud.cpp
         src/ui/rml_ui_manager.cpp
     )
-    target_include_directories(test_photon_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
-    target_link_libraries(test_photon_ui
+    target_include_directories(test_atlas_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(test_atlas_ui
         Threads::Threads
         glm::glm
     )
     if(WIN32)
-        target_link_libraries(test_photon_ui ws2_32)
+        target_link_libraries(test_atlas_ui ws2_32)
+    endif()
+
+    # Test: Layout Manager (headless — no GPU required)
+    add_executable(test_layout_manager
+        test_layout_manager.cpp
+        src/ui/layout_manager.cpp
+    )
+    target_include_directories(test_layout_manager PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(test_layout_manager
+        Threads::Threads
+    )
+    if(WIN32)
+        target_link_libraries(test_layout_manager ws2_32)
     endif()
 endif()
 

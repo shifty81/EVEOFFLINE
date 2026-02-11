@@ -1,19 +1,19 @@
 #pragma once
 
 /**
- * @file photon_renderer.h
- * @brief Low-level OpenGL 2D renderer for the Photon UI system
+ * @file atlas_renderer.h
+ * @brief Low-level OpenGL 2D renderer for the Atlas UI system
  *
  * Handles batched quad/triangle rendering with translucency, used by
- * all Photon widgets.  The renderer maintains its own shader, VAO and
+ * all Atlas widgets.  The renderer maintains its own shader, VAO and
  * VBO and expects an OpenGL 3.3+ core-profile context.
  */
 
-#include "photon_types.h"
+#include "atlas_types.h"
 #include <vector>
 #include <cstdint>
 
-namespace photon {
+namespace atlas {
 
 /**
  * Per-vertex data pushed into the GPU batch buffer.
@@ -25,7 +25,7 @@ struct UIVertex {
 };
 
 /**
- * PhotonRenderer — batched 2D renderer for UI primitives.
+ * AtlasRenderer — batched 2D renderer for UI primitives.
  *
  * Usage each frame:
  *   renderer.begin(windowW, windowH);
@@ -34,10 +34,10 @@ struct UIVertex {
  *   ...
  *   renderer.end();            // flushes GPU draw calls
  */
-class PhotonRenderer {
+class AtlasRenderer {
 public:
-    PhotonRenderer();
-    ~PhotonRenderer();
+    AtlasRenderer();
+    ~AtlasRenderer();
 
     /** Compile shaders and create GPU resources.  Call once at startup. */
     bool init();
@@ -139,4 +139,4 @@ private:
     void buildFontTexture();
 };
 
-} // namespace photon
+} // namespace atlas

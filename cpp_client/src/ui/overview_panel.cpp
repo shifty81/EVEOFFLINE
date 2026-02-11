@@ -1,6 +1,6 @@
 #include "ui/overview_panel.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_colors.h"
+#include "ui/space_colors.h"
 #include "core/entity.h"
 #include "core/solar_system_scene.h"
 #include <imgui.h>
@@ -155,13 +155,13 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     // Apply standing color
     ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(rowColor[0], rowColor[1], rowColor[2], rowColor[3]));
     
-    // Enhance hover highlighting with Photon UI teal accent
+    // Enhance hover highlighting with Atlas UI teal accent
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(
-        EVEColors::SELECTION[0], EVEColors::SELECTION[1],
-        EVEColors::SELECTION[2], 0.8f));
+        SpaceColors::SELECTION[0], SpaceColors::SELECTION[1],
+        SpaceColors::SELECTION[2], 0.8f));
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(
-        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
-        EVEColors::ACCENT_DIM[2], 0.9f));
+        SpaceColors::ACCENT_DIM[0], SpaceColors::ACCENT_DIM[1],
+        SpaceColors::ACCENT_DIM[2], 0.9f));
     
     ImGuiSelectableFlags selectableFlags = ImGuiSelectableFlags_SpanAllColumns | 
                                            ImGuiSelectableFlags_AllowOverlap;
@@ -179,8 +179,8 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     if (ImGui::IsItemHovered()) {
         ImGui::BeginTooltip();
         ImGui::TextColored(ImVec4(
-            EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-            EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]),
+            SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+            SpaceColors::ACCENT_PRIMARY[2], SpaceColors::ACCENT_PRIMARY[3]),
             "%s", entry.name.c_str());
         ImGui::Text("Type: %s", entry.ship_type.c_str());
         ImGui::Text("Distance: %s", FormatDistance(entry.distance).c_str());

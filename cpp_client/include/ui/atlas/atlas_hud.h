@@ -1,10 +1,10 @@
 #pragma once
 
 /**
- * @file photon_hud.h
- * @brief Full EVE-style HUD layout compositor using Photon widgets
+ * @file atlas_hud.h
+ * @brief Full EVE-style HUD layout compositor using Atlas widgets
  *
- * PhotonHUD assembles all individual Photon widgets into the complete
+ * AtlasHUD assembles all individual Atlas widgets into the complete
  * EVE Online-style game HUD layout:
  *
  *   ┌─────────┬───────────────────────────────────────┬──────────────┐
@@ -23,18 +23,18 @@
  *   └─────────┴───────────────────────────────────────┴──────────────┘
  *
  * Usage:
- *   photon::PhotonHUD hud;
+ *   atlas::AtlasHUD hud;
  *   hud.init(ctx);
  *   // Each frame:
  *   hud.update(ctx, shipData, targetData, overviewData);
  */
 
-#include "photon_context.h"
-#include "photon_widgets.h"
+#include "atlas_context.h"
+#include "atlas_widgets.h"
 #include <vector>
 #include <string>
 
-namespace photon {
+namespace atlas {
 
 /**
  * Ship status data fed into the HUD each frame.
@@ -62,15 +62,15 @@ struct ShipHUDData {
 };
 
 /**
- * PhotonHUD — assembles Photon widgets into a complete EVE-style HUD.
+ * AtlasHUD — assembles Atlas widgets into a complete EVE-style HUD.
  *
  * All layout is computed automatically based on window size.
  * Panels are movable via PanelState when unlocked.
  */
-class PhotonHUD {
+class AtlasHUD {
 public:
-    PhotonHUD();
-    ~PhotonHUD();
+    AtlasHUD();
+    ~AtlasHUD();
 
     /** Initialise panel states with default positions. Call once. */
     void init(int windowW, int windowH);
@@ -78,13 +78,13 @@ public:
     /**
      * Draw the complete HUD for one frame.
      *
-     * @param ctx          Photon context (must be between beginFrame/endFrame).
+     * @param ctx          Atlas context (must be between beginFrame/endFrame).
      * @param ship         Ship status data.
      * @param targets      Locked target list.
      * @param overview     Overview entries.
      * @param selectedItem Currently selected item info (may be empty name).
      */
-    void update(PhotonContext& ctx,
+    void update(AtlasContext& ctx,
                 const ShipHUDData& ship,
                 const std::vector<TargetCardInfo>& targets,
                 const std::vector<OverviewEntry>& overview,
@@ -98,10 +98,10 @@ public:
     bool isOverviewOpen()      const { return m_overviewState.open; }
     bool isSelectedItemOpen()  const { return m_selectedItemState.open; }
 
-    // ── Neocom callback ─────────────────────────────────────────────
+    // ── Sidebar callback ──────────────────────────────────────────────
 
-    /** Set callback for Neocom icon clicks. */
-    void setNeocomCallback(const std::function<void(int)>& cb) { m_neocomCallback = cb; }
+    /** Set callback for sidebar icon clicks. */
+    void setSidebarCallback(const std::function<void(int)>& cb) { m_sidebarCallback = cb; }
 
     // ── Module click callback ───────────────────────────────────────
 
@@ -146,12 +146,12 @@ private:
     PanelState m_selectedItemState;
     PanelState m_infoPanelState;
 
-    // Neocom config
-    float m_neocomWidth = 40.0f;
-    int   m_neocomIcons = 8;
+    // Sidebar config
+    float m_sidebarWidth = 40.0f;
+    int   m_sidebarIcons = 8;
 
     // Callbacks
-    std::function<void(int)> m_neocomCallback;
+    std::function<void(int)> m_sidebarCallback;
     std::function<void(int)> m_moduleCallback;
     std::function<void()>    m_selOrbitCb;
     std::function<void()>    m_selApproachCb;
@@ -159,15 +159,15 @@ private:
     std::function<void()>    m_selInfoCb;
 
     // Internal layout helpers
-    void drawShipHUD(PhotonContext& ctx, const ShipHUDData& ship);
-    void drawTargetCards(PhotonContext& ctx,
+    void drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship);
+    void drawTargetCards(AtlasContext& ctx,
                         const std::vector<TargetCardInfo>& targets);
-    void drawOverviewPanel(PhotonContext& ctx,
+    void drawOverviewPanel(AtlasContext& ctx,
                           const std::vector<OverviewEntry>& entries);
-    void drawSelectedItemPanel(PhotonContext& ctx,
+    void drawSelectedItemPanel(AtlasContext& ctx,
                               const SelectedItemInfo& info);
-    void drawModeIndicator(PhotonContext& ctx);
-    void drawInfoPanel(PhotonContext& ctx);
+    void drawModeIndicator(AtlasContext& ctx);
+    void drawInfoPanel(AtlasContext& ctx);
 
     // Animation state
     float m_displayCapFrac = 1.0f;   // smoothed capacitor display value
@@ -183,4 +183,4 @@ private:
     InfoPanelData m_infoPanelData;
 };
 
-} // namespace photon
+} // namespace atlas

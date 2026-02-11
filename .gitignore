@@ -121,3 +121,6 @@ cpp_client/assets/reference_models/
 # External downloaded dependencies
 cpp_client/external/imgui/
 3drenderon.png
+
+# UI layout presets (user-generated, not tracked)
+ui_layouts/

@@ -1,10 +1,10 @@
 #pragma once
 
 /**
- * @file photon_types.h
- * @brief Core types for the Photon UI system
+ * @file atlas_types.h
+ * @brief Core types for the Atlas UI system
  *
- * Photon UI is a custom EVE Photon-style UI framework for EVEOFFLINE.
+ * Atlas UI is a custom EVE-style UI framework for EVEOFFLINE.
  * It renders translucent dark panels with teal accent highlights using
  * raw OpenGL, replacing ImGui for in-game HUD and panel rendering.
  */
@@ -14,7 +14,7 @@
 #include <functional>
 #include <cstdint>
 
-namespace photon {
+namespace atlas {
 
 // ── Geometry ────────────────────────────────────────────────────────
 
@@ -58,7 +58,7 @@ struct Color {
     Color withAlpha(float a_) const { return {r, g, b, a_}; }
 };
 
-// ── Photon Theme (EVE Photon UI palette) ────────────────────────────
+// ── Atlas Theme (Atlas UI palette) ────────────────────────────
 
 struct Theme {
     // Backgrounds
@@ -154,4 +154,4 @@ inline WidgetID hashID(const char* s) {
     return h;
 }
 
-} // namespace photon
+} // namespace atlas

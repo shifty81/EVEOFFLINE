@@ -1,6 +1,6 @@
 #include "ui/docking_manager.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_colors.h"
+#include "ui/space_colors.h"
 #include <imgui.h>
 #include <algorithm>
 #include <iostream>
@@ -161,16 +161,16 @@ void DockingManager::RenderLockButton() {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     if (ImGui::Begin("##LockButton", nullptr, flags)) {
         const char* icon = m_interfaceLocked ? "L" : "U";
-        // Photon UI: teal accent for unlocked, warning for locked
+        // Atlas UI: teal accent for unlocked, warning for locked
         ImVec4 color = m_interfaceLocked
-            ? ImVec4(EVEColors::WARNING[0], EVEColors::WARNING[1],
-                     EVEColors::WARNING[2], EVEColors::WARNING[3])
-            : ImVec4(EVEColors::ACCENT_PRIMARY[0], EVEColors::ACCENT_PRIMARY[1],
-                     EVEColors::ACCENT_PRIMARY[2], EVEColors::ACCENT_PRIMARY[3]);
+            ? ImVec4(SpaceColors::WARNING[0], SpaceColors::WARNING[1],
+                     SpaceColors::WARNING[2], SpaceColors::WARNING[3])
+            : ImVec4(SpaceColors::ACCENT_PRIMARY[0], SpaceColors::ACCENT_PRIMARY[1],
+                     SpaceColors::ACCENT_PRIMARY[2], SpaceColors::ACCENT_PRIMARY[3]);
 
         ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(
-            EVEColors::BG_PANEL[0], EVEColors::BG_PANEL[1],
-            EVEColors::BG_PANEL[2], 0.8f));
+            SpaceColors::BG_PANEL[0], SpaceColors::BG_PANEL[1],
+            SpaceColors::BG_PANEL[2], 0.8f));
         ImGui::PushStyleColor(ImGuiCol_Text, color);
 
         if (ImGui::Button(icon, ImVec2(buttonSize - 4, buttonSize - 4))) {
@@ -207,8 +207,8 @@ void DockingManager::RenderFloatingPanel(DockablePanel& panel) {
     }
 
     // Apply per-panel background opacity; text stays nearly full opacity
-    ImVec4 panelBg(EVEColors::BG_PRIMARY[0], EVEColors::BG_PRIMARY[1],
-                   EVEColors::BG_PRIMARY[2], panel.opacity);
+    ImVec4 panelBg(SpaceColors::BG_PRIMARY[0], SpaceColors::BG_PRIMARY[1],
+                   SpaceColors::BG_PRIMARY[2], panel.opacity);
     ImGui::PushStyleColor(ImGuiCol_WindowBg, panelBg);
 
     if (ImGui::Begin(panel.title.c_str(), &panel.visible, flags)) {
@@ -253,8 +253,8 @@ void DockingManager::RenderFloatingPanel(DockablePanel& panel) {
             static constexpr float TEXT_ALPHA_BOOST = 0.08f;
             float textAlpha = std::max(0.75f, panel.opacity + TEXT_ALPHA_BOOST);
             ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(
-                EVEColors::TEXT_PRIMARY[0], EVEColors::TEXT_PRIMARY[1],
-                EVEColors::TEXT_PRIMARY[2], textAlpha));
+                SpaceColors::TEXT_PRIMARY[0], SpaceColors::TEXT_PRIMARY[1],
+                SpaceColors::TEXT_PRIMARY[2], textAlpha));
 
             panel.renderContents();
 

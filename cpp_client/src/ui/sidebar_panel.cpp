@@ -1,25 +1,25 @@
-#include "ui/neocom_panel.h"
+#include "ui/sidebar_panel.h"
 #include "ui/ui_manager.h"
-#include "ui/eve_colors.h"
+#include "ui/space_colors.h"
 #include <imgui.h>
 
 namespace UI {
 
-NeocomPanel::NeocomPanel() = default;
+SidebarPanel::SidebarPanel() = default;
 
-bool NeocomPanel::RenderButton(const char* icon, const char* label, const char* tooltip) {
+bool SidebarPanel::RenderButton(const char* icon, const char* label, const char* tooltip) {
     bool clicked = false;
 
     float buttonSize = 40.0f;
     float expandedWidth = 170.0f;
 
-    // Push Photon UI hover highlight colors
+    // Push hover highlight colors
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(
-        EVEColors::SELECTION[0], EVEColors::SELECTION[1],
-        EVEColors::SELECTION[2], 0.9f));
+        SpaceColors::SELECTION[0], SpaceColors::SELECTION[1],
+        SpaceColors::SELECTION[2], 0.9f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(
-        EVEColors::ACCENT_DIM[0], EVEColors::ACCENT_DIM[1],
-        EVEColors::ACCENT_DIM[2], 1.0f));
+        SpaceColors::ACCENT_DIM[0], SpaceColors::ACCENT_DIM[1],
+        SpaceColors::ACCENT_DIM[2], 1.0f));
 
     if (m_collapsed) {
         // Icon-only button
@@ -48,7 +48,7 @@ bool NeocomPanel::RenderButton(const char* icon, const char* label, const char* 
     return clicked;
 }
 
-void NeocomPanel::Render() {
+void SidebarPanel::Render() {
     if (!m_visible) return;
 
     // Position on the left edge, full height
@@ -64,13 +64,13 @@ void NeocomPanel::Render() {
         ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-    // Semi-transparent dark background — Photon UI Neocom
+    // Semi-transparent dark background — Sidebar panel
     ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(
-        EVEColors::BG_PANEL[0], EVEColors::BG_PANEL[1],
-        EVEColors::BG_PANEL[2], 0.92f));
+        SpaceColors::BG_PANEL[0], SpaceColors::BG_PANEL[1],
+        SpaceColors::BG_PANEL[2], 0.92f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(6, 8));
 
-    ImGui::Begin("##Neocom", nullptr, flags);
+    ImGui::Begin("##Sidebar", nullptr, flags);
 
     // ---- Collapse / Expand toggle ----
     {

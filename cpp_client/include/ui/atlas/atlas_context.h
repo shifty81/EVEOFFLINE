@@ -1,12 +1,12 @@
 #pragma once
 
 /**
- * @file photon_context.h
- * @brief Frame-level state manager for the Photon UI system
+ * @file atlas_context.h
+ * @brief Frame-level state manager for the Atlas UI system
  *
- * PhotonContext holds the per-frame input state, active/hot widget IDs
+ * AtlasContext holds the per-frame input state, active/hot widget IDs
  * (for click/hover tracking), and provides the bridge between the host
- * application's GLFW input and the Photon widget layer.
+ * application's GLFW input and the Atlas widget layer.
  *
  * Typical frame flow:
  *   ctx.beginFrame(input);
@@ -38,23 +38,23 @@
  *     Clock
  */
 
-#include "photon_types.h"
-#include "photon_renderer.h"
+#include "atlas_types.h"
+#include "atlas_renderer.h"
 #include <string>
 
-namespace photon {
+namespace atlas {
 
 /**
- * PhotonContext — per-frame UI state and the main entry point for
+ * AtlasContext — per-frame UI state and the main entry point for
  * immediate-mode-style widget calls.
  *
  * Widgets query the context for hot/active state (hover, pressed)
- * and push draw commands through the embedded PhotonRenderer.
+ * and push draw commands through the embedded AtlasRenderer.
  */
-class PhotonContext {
+class AtlasContext {
 public:
-    PhotonContext();
-    ~PhotonContext();
+    AtlasContext();
+    ~AtlasContext();
 
     // ── Lifecycle ───────────────────────────────────────────────────
 
@@ -72,7 +72,7 @@ public:
 
     // ── Accessors ───────────────────────────────────────────────────
 
-    PhotonRenderer& renderer() { return m_renderer; }
+    AtlasRenderer& renderer() { return m_renderer; }
     const Theme&    theme()    const { return m_theme; }
     const InputState& input()  const { return m_input; }
 
@@ -118,7 +118,7 @@ public:
     bool isMouseClicked() const { return m_input.mouseClicked[0]; }
 
 private:
-    PhotonRenderer m_renderer;
+    AtlasRenderer m_renderer;
     Theme          m_theme;
     InputState     m_input;
 
@@ -129,4 +129,4 @@ private:
     std::vector<WidgetID> m_idStack;
 };
 
-} // namespace photon
+} // namespace atlas

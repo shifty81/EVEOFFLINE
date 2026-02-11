@@ -1,4 +1,4 @@
-#include "ui/photon/photon_renderer.h"
+#include "ui/atlas/atlas_renderer.h"
 
 #include <cmath>
 #include <cstring>
@@ -17,9 +17,9 @@
 // stub types so the translation unit compiles without GPU access.
 #if __has_include(<glad/glad.h>)
 #include <glad/glad.h>
-#define PHOTON_HAS_GL 1
+#define ATLAS_HAS_GL 1
 #else
-#define PHOTON_HAS_GL 0
+#define ATLAS_HAS_GL 0
 // Minimal GL type stubs so the file compiles in headless builds.
 using GLuint   = unsigned int;
 using GLint    = int;
@@ -96,7 +96,7 @@ inline void glDeleteTextures(GLsizei, const GLuint*) {}
 #define M_PI 3.14159265358979323846
 #endif
 
-namespace photon {
+namespace atlas {
 
 // ── Shader sources ──────────────────────────────────────────────────
 
@@ -338,12 +338,12 @@ static const unsigned char kFontData[kFontCharCount][13] = {
     {0x00,0x76,0xDC,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00},
 };
 
-// ── PhotonRenderer implementation ───────────────────────────────────
+// ── AtlasRenderer implementation ───────────────────────────────────
 
-PhotonRenderer::PhotonRenderer() = default;
-PhotonRenderer::~PhotonRenderer() { shutdown(); }
+AtlasRenderer::AtlasRenderer() = default;
+AtlasRenderer::~AtlasRenderer() { shutdown(); }
 
-bool PhotonRenderer::init() {
+bool AtlasRenderer::init() {
     // Compile vertex shader
     GLuint vs = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vs, 1, &kVertexShader, nullptr);
@@ -353,7 +353,7 @@ bool PhotonRenderer::init() {
     if (!ok) {
         char log[512];
         glGetShaderInfoLog(vs, 512, nullptr, log);
-        std::cerr << "[PhotonRenderer] VS error: " << log << std::endl;
+        std::cerr << "[AtlasRenderer] VS error: " << log << std::endl;
         return false;
     }
 
@@ -365,7 +365,7 @@ bool PhotonRenderer::init() {
     if (!ok) {
         char log[512];
         glGetShaderInfoLog(fs, 512, nullptr, log);
-        std::cerr << "[PhotonRenderer] FS error: " << log << std::endl;
+        std::cerr << "[AtlasRenderer] FS error: " << log << std::endl;
         return false;
     }
 
@@ -378,7 +378,7 @@ bool PhotonRenderer::init() {
     if (!ok) {
         char log[512];
         glGetProgramInfoLog(m_shaderProgram, 512, nullptr, log);
-        std::cerr << "[PhotonRenderer] Link error: " << log << std::endl;
+        std::cerr << "[AtlasRenderer] Link error: " << log << std::endl;
         return false;
     }
     glDeleteShader(vs);
@@ -417,14 +417,14 @@ bool PhotonRenderer::init() {
     return true;
 }
 
-void PhotonRenderer::shutdown() {
+void AtlasRenderer::shutdown() {
     if (m_vao)           { glDeleteVertexArrays(1, &m_vao); m_vao = 0; }
     if (m_vbo)           { glDeleteBuffers(1, &m_vbo); m_vbo = 0; }
     if (m_shaderProgram) { glDeleteProgram(m_shaderProgram); m_shaderProgram = 0; }
     if (m_fontTexture)   { glDeleteTextures(1, &m_fontTexture); m_fontTexture = 0; }
 }
 
-void PhotonRenderer::buildFontTexture() {
+void AtlasRenderer::buildFontTexture() {
     // Pack all glyphs into a single-row atlas (kFontCharCount × 8 wide, 13 tall)
     int atlasW = kFontCharCount * kFontGlyphW;
     int atlasH = kFontGlyphH;
@@ -451,20 +451,20 @@ void PhotonRenderer::buildFontTexture() {
 
 // ── Frame management ────────────────────────────────────────────────
 
-void PhotonRenderer::begin(int windowW, int windowH) {
+void AtlasRenderer::begin(int windowW, int windowH) {
     m_windowW = windowW;
     m_windowH = windowH;
     m_inFrame = true;
     m_vertices.clear();
 }
 
-void PhotonRenderer::end() {
+void AtlasRenderer::end() {
     flush();
     m_inFrame = false;
     m_clipStack.clear();
 }
 
-void PhotonRenderer::flush() {
+void AtlasRenderer::flush() {
     if (m_vertices.empty()) return;
 
     // Save GL state we modify
@@ -504,7 +504,7 @@ void PhotonRenderer::flush() {
 
 // ── Primitive helpers ───────────────────────────────────────────────
 
-void PhotonRenderer::addQuad(float x0, float y0, float x1, float y1,
+void AtlasRenderer::addQuad(float x0, float y0, float x1, float y1,
                               float u0, float v0, float u1, float v1,
                               const Color& c) {
     UIVertex tl = {x0, y0, u0, v0, c.r, c.g, c.b, c.a};
@@ -519,7 +519,7 @@ void PhotonRenderer::addQuad(float x0, float y0, float x1, float y1,
     m_vertices.push_back(bl);
 }
 
-void PhotonRenderer::addQuadGradient(float x0, float y0, float x1, float y1,
+void AtlasRenderer::addQuadGradient(float x0, float y0, float x1, float y1,
                                       const Color& tl, const Color& tr,
                                       const Color& br, const Color& bl) {
     UIVertex vtl = {x0, y0, 0,0, tl.r, tl.g, tl.b, tl.a};
@@ -534,7 +534,7 @@ void PhotonRenderer::addQuadGradient(float x0, float y0, float x1, float y1,
     m_vertices.push_back(vbl);
 }
 
-void PhotonRenderer::addTriangle(float x0, float y0,
+void AtlasRenderer::addTriangle(float x0, float y0,
                                   float x1, float y1,
                                   float x2, float y2,
                                   const Color& c) {
@@ -548,11 +548,11 @@ void PhotonRenderer::addTriangle(float x0, float y0,
 
 // ── Drawing API ─────────────────────────────────────────────────────
 
-void PhotonRenderer::drawRect(const Rect& r, const Color& c) {
+void AtlasRenderer::drawRect(const Rect& r, const Color& c) {
     addQuad(r.x, r.y, r.right(), r.bottom(), 0,0,0,0, c);
 }
 
-void PhotonRenderer::drawRectGradient(const Rect& r,
+void AtlasRenderer::drawRectGradient(const Rect& r,
                                        const Color& topLeft,
                                        const Color& topRight,
                                        const Color& botRight,
@@ -561,7 +561,7 @@ void PhotonRenderer::drawRectGradient(const Rect& r,
                     topLeft, topRight, botRight, botLeft);
 }
 
-void PhotonRenderer::drawRoundedRect(const Rect& r, const Color& c,
+void AtlasRenderer::drawRoundedRect(const Rect& r, const Color& c,
                                       float radius) {
     // Approximate with centre rect + 4 edge rects + 4 corner fans
     float rad = std::min(radius, std::min(r.w, r.h) * 0.5f);
@@ -589,7 +589,7 @@ void PhotonRenderer::drawRoundedRect(const Rect& r, const Color& c,
     corner(r.x + rad,         r.bottom() - rad,   static_cast<float>(M_PI) * 0.5f);  // BL
 }
 
-void PhotonRenderer::drawRectOutline(const Rect& r, const Color& c,
+void AtlasRenderer::drawRectOutline(const Rect& r, const Color& c,
                                       float w) {
     drawRect({r.x,           r.y,            r.w, w},   c); // top
     drawRect({r.x,           r.bottom() - w, r.w, w},   c); // bottom
@@ -597,12 +597,12 @@ void PhotonRenderer::drawRectOutline(const Rect& r, const Color& c,
     drawRect({r.right() - w, r.y + w,        w, r.h - 2*w}, c); // right
 }
 
-void PhotonRenderer::drawRoundedRectOutline(const Rect& r, const Color& c,
+void AtlasRenderer::drawRoundedRectOutline(const Rect& r, const Color& c,
                                              float radius, float width) {
     // Simple approximation: draw filled rounded rect, then a smaller
     // inner one in the panel background color.  For a production system
     // this would use a proper stroke path, but this is sufficient for
-    // the Photon UI panel borders.
+    // the Atlas UI panel borders.
     drawRoundedRect(r, c, radius);
     Rect inner = {r.x + width, r.y + width,
                   r.w - 2*width, r.h - 2*width};
@@ -612,7 +612,7 @@ void PhotonRenderer::drawRoundedRectOutline(const Rect& r, const Color& c,
     (void)radius;
 }
 
-void PhotonRenderer::drawLine(Vec2 a, Vec2 b, const Color& c, float w) {
+void AtlasRenderer::drawLine(Vec2 a, Vec2 b, const Color& c, float w) {
     float dx = b.x - a.x;
     float dy = b.y - a.y;
     float len = std::sqrt(dx*dx + dy*dy);
@@ -625,7 +625,7 @@ void PhotonRenderer::drawLine(Vec2 a, Vec2 b, const Color& c, float w) {
                 b.x + nx, b.y + ny, c);
 }
 
-void PhotonRenderer::drawCircle(Vec2 centre, float radius, const Color& c,
+void AtlasRenderer::drawCircle(Vec2 centre, float radius, const Color& c,
                                  int segments) {
     for (int i = 0; i < segments; ++i) {
         float a0 = 2.0f * static_cast<float>(M_PI) * i / segments;
@@ -638,7 +638,7 @@ void PhotonRenderer::drawCircle(Vec2 centre, float radius, const Color& c,
     }
 }
 
-void PhotonRenderer::drawCircleOutline(Vec2 centre, float radius,
+void AtlasRenderer::drawCircleOutline(Vec2 centre, float radius,
                                         const Color& c, float w,
                                         int segments) {
     float r0 = radius - w * 0.5f;
@@ -647,7 +647,7 @@ void PhotonRenderer::drawCircleOutline(Vec2 centre, float radius,
             c, segments);
 }
 
-void PhotonRenderer::drawArc(Vec2 centre, float innerR, float outerR,
+void AtlasRenderer::drawArc(Vec2 centre, float innerR, float outerR,
                                float startAngle, float endAngle,
                                const Color& c, int segments) {
     float step = (endAngle - startAngle) / segments;
@@ -667,7 +667,7 @@ void PhotonRenderer::drawArc(Vec2 centre, float innerR, float outerR,
     }
 }
 
-void PhotonRenderer::drawProgressBar(const Rect& r, float fraction,
+void AtlasRenderer::drawProgressBar(const Rect& r, float fraction,
                                       const Color& fg, const Color& bg) {
     drawRect(r, bg);
     float fill = std::max(0.0f, std::min(1.0f, fraction));
@@ -678,7 +678,7 @@ void PhotonRenderer::drawProgressBar(const Rect& r, float fraction,
 
 // ── Text rendering ──────────────────────────────────────────────────
 
-float PhotonRenderer::drawText(const std::string& text, Vec2 pos,
+float AtlasRenderer::drawText(const std::string& text, Vec2 pos,
                                 const Color& c, float scale) {
     // Flush non-textured geometry first, then switch to textured mode
     flush();
@@ -741,13 +741,13 @@ float PhotonRenderer::drawText(const std::string& text, Vec2 pos,
     return cx - pos.x;
 }
 
-float PhotonRenderer::measureText(const std::string& text, float scale) const {
+float AtlasRenderer::measureText(const std::string& text, float scale) const {
     return static_cast<float>(text.size()) * kFontGlyphW * scale;
 }
 
 // ── Scissor / clip ──────────────────────────────────────────────────
 
-void PhotonRenderer::pushClip(const Rect& r) {
+void AtlasRenderer::pushClip(const Rect& r) {
     flush();
     m_clipStack.push_back(r);
     glEnable(GL_SCISSOR_TEST);
@@ -758,7 +758,7 @@ void PhotonRenderer::pushClip(const Rect& r) {
               static_cast<GLsizei>(r.h));
 }
 
-void PhotonRenderer::popClip() {
+void AtlasRenderer::popClip() {
     flush();
     if (!m_clipStack.empty()) m_clipStack.pop_back();
     if (m_clipStack.empty()) {
@@ -772,4 +772,4 @@ void PhotonRenderer::popClip() {
     }
 }
 
-} // namespace photon
+} // namespace atlas

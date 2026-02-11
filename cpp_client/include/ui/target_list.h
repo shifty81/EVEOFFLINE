@@ -1,5 +1,5 @@
-#ifndef EVE_TARGET_LIST_H
-#define EVE_TARGET_LIST_H
+#ifndef TARGET_LIST_H
+#define TARGET_LIST_H
 
 #include <string>
 #include <vector>
@@ -14,7 +14,9 @@ namespace eve {
 namespace UI {
 
 /**
- * EVE Online-style target information
+ * @file target_list.h
+ *
+ * Target information
  */
 struct TargetData {
     std::string entityId;
@@ -49,13 +51,13 @@ struct TargetData {
 };
 
 /**
- * EVE Online-style target list panel
+ * Target list panel
  * Displays circular target icons with arc-based health indicators
  */
-class EVETargetList {
+class TargetList {
 public:
-    EVETargetList();
-    ~EVETargetList();
+    TargetList();
+    ~TargetList();
     
     /**
      * Render the target list
@@ -120,4 +122,4 @@ private:
 
 } // namespace UI
 
-#endif // EVE_TARGET_LIST_H
+#endif // TARGET_LIST_H

@@ -127,7 +127,7 @@ int RadialMenu::GetSegmentAtAngle(float angle) const {
 }
 
 void RadialMenu::Render() {
-    // Rendering is handled by the Photon/RmlUi system
+    // Rendering is handled by the Atlas/RmlUi system
 }
 
 } // namespace UI

@@ -1,9 +1,9 @@
 /**
  * @file test_rmlui.cpp
- * @brief Test program for the RmlUi-based Photon UI implementation.
+ * @brief Test program for the RmlUi-based Atlas UI implementation.
  *
  * This test creates a GLFW window with OpenGL 3.3 core profile and
- * renders the EVE Photon UI panels using RmlUi. It demonstrates:
+ * renders the EVE Atlas UI panels using RmlUi. It demonstrates:
  *   - Ship HUD with animated health bars, speed readout, module rack
  *   - Overview panel with entity table
  *   - Dynamic ship status updates (animated)
@@ -37,7 +37,7 @@ static void glfwErrorCallback(int error, const char* description) {
 }
 
 int main() {
-    std::cout << "=== EVE OFFLINE — RmlUi Photon UI Test ===" << std::endl;
+    std::cout << "=== EVE OFFLINE — RmlUi Atlas UI Test ===" << std::endl;
     std::cout << "Controls:" << std::endl;
     std::cout << "  F1  - Toggle fitting panel" << std::endl;
     std::cout << "  F2  - Toggle inventory panel" << std::endl;
@@ -63,7 +63,7 @@ int main() {
 
     // Create window
     GLFWwindow* window = glfwCreateWindow(1440, 900,
-        "EVE OFFLINE — Photon UI (RmlUi)", nullptr, nullptr);
+        "EVE OFFLINE — Atlas UI (RmlUi)", nullptr, nullptr);
     if (!window) {
         std::cerr << "Failed to create GLFW window\n";
         glfwTerminate();
@@ -158,11 +158,11 @@ int main() {
     });
 
     std::cout << "\nRmlUi initialized successfully!" << std::endl;
-    std::cout << "Displaying EVE Photon UI panels:" << std::endl;
+    std::cout << "Displaying EVE Atlas UI panels:" << std::endl;
     std::cout << "  - Ship HUD (bottom center) with health bars, speed, modules" << std::endl;
     std::cout << "  - Overview (top right) with entity table" << std::endl;
     std::cout << "  - Target List (top center) with locked target cards" << std::endl;
-    std::cout << "  - Neocom (left sidebar) with service icons" << std::endl;
+    std::cout << "  - Sidebar (left sidebar) with service icons" << std::endl;
     std::cout << "  - Fitting (hidden, toggle with F1)" << std::endl;
     std::cout << "  - Inventory (hidden, toggle with F2)" << std::endl;
     std::cout << "  - D-Scan (hidden, toggle with F3)" << std::endl;

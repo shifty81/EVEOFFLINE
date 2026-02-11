@@ -13,8 +13,8 @@
 #include "ui/context_menu.h"
 #include "ui/radial_menu.h"
 #include <GLFW/glfw3.h>
-#include "ui/photon/photon_context.h"
-#include "ui/photon/photon_hud.h"
+#include "ui/atlas/atlas_context.h"
+#include "ui/atlas/atlas_hud.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -50,8 +50,8 @@ Application::Application(const std::string& title, int width, int height)
     m_uiManager = std::make_unique<UI::RmlUiManager>();
     m_entityPicker = std::make_unique<UI::EntityPicker>();
     m_solarSystem = std::make_unique<SolarSystemScene>();
-    m_photonCtx = std::make_unique<photon::PhotonContext>();
-    m_photonHUD = std::make_unique<photon::PhotonHUD>();
+    m_atlasCtx = std::make_unique<atlas::AtlasContext>();
+    m_atlasHUD = std::make_unique<atlas::AtlasHUD>();
     m_contextMenu = std::make_unique<UI::ContextMenu>();
     m_radialMenu = std::make_unique<UI::RadialMenu>();
     
@@ -108,9 +108,9 @@ void Application::initialize() {
         throw std::runtime_error("Failed to initialize UI manager");
     }
     
-    // Initialize Photon UI context
-    m_photonCtx->init();
-    m_photonHUD->init(m_window->getWidth(), m_window->getHeight());
+    // Initialize Atlas UI context
+    m_atlasCtx->init();
+    m_atlasHUD->init(m_window->getWidth(), m_window->getHeight());
     
     // Set up input callbacks — EVE Online style controls
     // Left-click: select/target, Double-click: approach
@@ -397,22 +397,22 @@ void Application::setupUICallbacks() {
     std::cout << "  - Radial menu callbacks wired" << std::endl;
     
     // === Setup Selected Item Panel Callbacks ===
-    m_photonHUD->setSelectedItemOrbitCb([this]() {
+    m_atlasHUD->setSelectedItemOrbitCb([this]() {
         if (!m_currentTargetId.empty()) {
             commandOrbit(m_currentTargetId);
         }
     });
-    m_photonHUD->setSelectedItemApproachCb([this]() {
+    m_atlasHUD->setSelectedItemApproachCb([this]() {
         if (!m_currentTargetId.empty()) {
             commandApproach(m_currentTargetId);
         }
     });
-    m_photonHUD->setSelectedItemWarpCb([this]() {
+    m_atlasHUD->setSelectedItemWarpCb([this]() {
         if (!m_currentTargetId.empty()) {
             commandWarpTo(m_currentTargetId);
         }
     });
-    m_photonHUD->setSelectedItemInfoCb([this]() {
+    m_atlasHUD->setSelectedItemInfoCb([this]() {
         if (!m_currentTargetId.empty()) {
             openInfoPanelForEntity(m_currentTargetId);
         }
@@ -516,20 +516,20 @@ void Application::render() {
     m_uiManager->Render();
     m_uiManager->EndFrame();
     
-    // Render Photon HUD overlay
+    // Render Atlas HUD overlay
     {
-        photon::InputState photonInput;
-        photonInput.windowW = m_window->getWidth();
-        photonInput.windowH = m_window->getHeight();
-        // Forward mouse state from GLFW to Photon for interactive widgets
-        photonInput.mousePos = {static_cast<float>(m_inputHandler->getMouseX()),
+        atlas::InputState atlasInput;
+        atlasInput.windowW = m_window->getWidth();
+        atlasInput.windowH = m_window->getHeight();
+        // Forward mouse state from GLFW to Atlas for interactive widgets
+        atlasInput.mousePos = {static_cast<float>(m_inputHandler->getMouseX()),
                                 static_cast<float>(m_inputHandler->getMouseY())};
-        photonInput.mouseDown[0] = m_leftMouseDown;
-        photonInput.mouseDown[1] = m_rightMouseDown;
+        atlasInput.mouseDown[0] = m_leftMouseDown;
+        atlasInput.mouseDown[1] = m_rightMouseDown;
         
-        m_photonCtx->beginFrame(photonInput);
+        m_atlasCtx->beginFrame(atlasInput);
         
-        photon::ShipHUDData shipData;
+        atlas::ShipHUDData shipData;
         // Connect to actual ship state from game client
         auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
         if (playerEntity) {
@@ -543,14 +543,14 @@ void Application::render() {
         shipData.currentSpeed = m_playerSpeed;
         shipData.maxSpeed = m_playerMaxSpeed;
         
-        // Build Photon target cards from target list
-        std::vector<photon::TargetCardInfo> photonTargets;
+        // Build Atlas target cards from target list
+        std::vector<atlas::TargetCardInfo> atlasTargets;
         if (playerEntity) {
             const auto playerPos = playerEntity->getPosition();
             for (const auto& targetId : m_targetList) {
                 auto targetEntity = m_gameClient->getEntityManager().getEntity(targetId);
                 if (!targetEntity) continue;
-                photon::TargetCardInfo card;
+                atlas::TargetCardInfo card;
                 card.name = targetEntity->getShipName().empty() ? targetEntity->getId() : targetEntity->getShipName();
                 const auto& th = targetEntity->getHealth();
                 card.shieldPct = th.maxShield > 0 ? th.currentShield / static_cast<float>(th.maxShield) : 0.0f;
@@ -558,48 +558,48 @@ void Application::render() {
                 card.hullPct = th.maxHull > 0 ? th.currentHull / static_cast<float>(th.maxHull) : 0.0f;
                 card.distance = glm::distance(playerPos, targetEntity->getPosition());
                 card.isActive = (targetId == m_currentTargetId);
-                photonTargets.push_back(card);
+                atlasTargets.push_back(card);
             }
         }
         
-        // Build Photon overview entries from entity manager
-        std::vector<photon::OverviewEntry> photonOverview;
+        // Build Atlas overview entries from entity manager
+        std::vector<atlas::OverviewEntry> atlasOverview;
         if (playerEntity) {
             const auto playerPos = playerEntity->getPosition();
             for (const auto& pair : m_gameClient->getEntityManager().getAllEntities()) {
                 if (pair.first == m_localPlayerId) continue;
-                photon::OverviewEntry entry;
+                atlas::OverviewEntry entry;
                 entry.name = pair.second->getShipName().empty() ? pair.first : pair.second->getShipName();
                 entry.type = pair.second->getShipType();
                 entry.distance = glm::distance(playerPos, pair.second->getPosition());
                 entry.selected = (pair.first == m_currentTargetId);
-                photonOverview.push_back(entry);
+                atlasOverview.push_back(entry);
             }
         }
         
         // Build selected item info
-        photon::SelectedItemInfo photonSelected;
+        atlas::SelectedItemInfo atlasSelected;
         if (!m_currentTargetId.empty() && playerEntity) {
             auto targetEntity = m_gameClient->getEntityManager().getEntity(m_currentTargetId);
             if (targetEntity) {
-                photonSelected.name = targetEntity->getShipName().empty() ? m_currentTargetId : targetEntity->getShipName();
+                atlasSelected.name = targetEntity->getShipName().empty() ? m_currentTargetId : targetEntity->getShipName();
                 float dist = glm::distance(playerEntity->getPosition(), targetEntity->getPosition());
                 if (dist >= 1000.0f) {
-                    photonSelected.distance = dist / 1000.0f;
-                    photonSelected.distanceUnit = "km";
+                    atlasSelected.distance = dist / 1000.0f;
+                    atlasSelected.distanceUnit = "km";
                 } else {
-                    photonSelected.distance = dist;
-                    photonSelected.distanceUnit = "m";
+                    atlasSelected.distance = dist;
+                    atlasSelected.distanceUnit = "m";
                 }
             }
         }
         
         // Update mode indicator text on the HUD
-        m_photonHUD->setModeIndicator(m_activeModeText);
+        m_atlasHUD->setModeIndicator(m_activeModeText);
         
-        m_photonHUD->update(*m_photonCtx, shipData, photonTargets, photonOverview, photonSelected);
+        m_atlasHUD->update(*m_atlasCtx, shipData, atlasTargets, atlasOverview, atlasSelected);
         
-        m_photonCtx->endFrame();
+        m_atlasCtx->endFrame();
     }
     
     // Render Context Menu (if open)
@@ -619,9 +619,9 @@ void Application::render() {
 void Application::cleanup() {
     std::cout << "Cleaning up application..." << std::endl;
     
-    // Shutdown Photon UI
-    if (m_photonCtx) {
-        m_photonCtx->shutdown();
+    // Shutdown Atlas UI
+    if (m_atlasCtx) {
+        m_atlasCtx->shutdown();
     }
     
     // Leave session and stop server if hosting
@@ -1107,10 +1107,10 @@ void Application::showEntityContextMenu(const std::string& entityId, double x, d
 
 void Application::openInfoPanelForEntity(const std::string& entityId) {
     auto entity = m_gameClient->getEntityManager().getEntity(entityId);
-    if (!entity || !m_photonHUD) return;
+    if (!entity || !m_atlasHUD) return;
 
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-    photon::InfoPanelData info;
+    atlas::InfoPanelData info;
     info.name = entity->getShipName().empty() ? entityId : entity->getShipName();
     info.type = entity->getShipType();
     info.faction = entity->getFaction();
@@ -1122,7 +1122,7 @@ void Application::openInfoPanelForEntity(const std::string& entityId) {
     if (playerEntity) {
         info.distance = glm::distance(playerEntity->getPosition(), entity->getPosition());
     }
-    m_photonHUD->showInfoPanel(info);
+    m_atlasHUD->showInfoPanel(info);
 }
 
 void Application::commandApproach(const std::string& entityId) {

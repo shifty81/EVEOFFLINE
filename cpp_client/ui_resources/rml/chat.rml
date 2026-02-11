@@ -3,7 +3,7 @@
 <rml>
 <head>
     <title>Chat</title>
-    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <link type="text/rcss" href="../rcss/atlas_ui.rcss"/>
     <style>
         body {
             font-family: Lato;

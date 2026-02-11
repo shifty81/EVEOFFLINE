@@ -514,7 +514,7 @@ bool RmlUiManager::LoadDocuments() {
         {"market",       resourcePath_ + "/rml/market.rml",        false},
         {"mission",      resourcePath_ + "/rml/mission.rml",       false},
         {"dscan",        resourcePath_ + "/rml/dscan.rml",         false},
-        {"neocom",       resourcePath_ + "/rml/neocom.rml",        true},
+        {"sidebar",      resourcePath_ + "/rml/sidebar.rml",        true},
         {"chat",         resourcePath_ + "/rml/chat.rml",          false},
         {"context_menu", resourcePath_ + "/rml/context_menu.rml",  false},
         {"radial_menu",  resourcePath_ + "/rml/radial_menu.rml",   false},
