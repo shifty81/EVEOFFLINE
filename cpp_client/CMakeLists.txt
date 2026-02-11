@@ -231,7 +231,6 @@ if(USE_RMLUI)
     if(RmlUi_FOUND)
         message(STATUS "RmlUi found via system/vcpkg — advanced Photon UI enabled")
         set(RMLUI_AVAILABLE ON)
-        add_definitions(-DUSE_RMLUI)
     else()
         # FetchContent fallback: clone from GitHub
         include(FetchContent)
@@ -250,7 +249,6 @@ if(USE_RMLUI)
         if(TARGET rmlui_core)
             message(STATUS "RmlUi fetched via FetchContent — advanced Photon UI enabled")
             set(RMLUI_AVAILABLE ON)
-            add_definitions(-DUSE_RMLUI)
         else()
             message(WARNING
                 "RmlUi not found and FetchContent failed.\n"
@@ -465,6 +463,7 @@ endif()
 
 # Link RmlUi if available
 if(RMLUI_AVAILABLE)
+    target_compile_definitions(eve_client PRIVATE USE_RMLUI)
     if(RmlUi_FOUND)
         target_link_libraries(eve_client RmlUi::RmlUi)
     elseif(TARGET rmlui_core)
@@ -1119,6 +1118,7 @@ if(BUILD_TESTS AND RMLUI_AVAILABLE)
         src/core/entity.cpp
         ${RMLUI_BACKEND_SOURCES}
     )
+    target_compile_definitions(test_rmlui PRIVATE USE_RMLUI)
     target_link_libraries(test_rmlui
         Threads::Threads
         OpenGL::GL

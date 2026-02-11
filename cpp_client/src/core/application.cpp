@@ -300,7 +300,7 @@ void Application::setupUICallbacks() {
     m_contextMenu->SetLookAtCallback([this](const std::string& entityId) {
         auto entity = m_gameClient->getEntityManager().getEntity(entityId);
         if (entity) {
-            m_camera->lookAt(entity->getPosition());
+            m_camera->setTarget(entity->getPosition());
             std::cout << "[Camera] Looking at: " << entityId << std::endl;
         }
     });
@@ -340,7 +340,7 @@ void Application::setupUICallbacks() {
                 {
                     auto entity = m_gameClient->getEntityManager().getEntity(entityId);
                     if (entity) {
-                        m_camera->lookAt(entity->getPosition());
+                        m_camera->setTarget(entity->getPosition());
                         std::cout << "[Camera] Looking at: " << entityId << std::endl;
                     }
                 }
