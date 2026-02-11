@@ -20,7 +20,7 @@ class SolarSystemScene;
 } // namespace eve
 
 namespace UI {
-    class UIManager;
+    class RmlUiManager;
     class EntityPicker;
 }
 
@@ -215,6 +215,7 @@ private:
     void spawnLocalPlayerEntity();
     void spawnDemoNPCEntities();
     void updateLocalMovement(float deltaTime);
+    void updateTargetListUi(const glm::vec3& playerPosition);
 
     static Application* s_instance;
 
@@ -225,7 +226,7 @@ private:
     std::unique_ptr<Camera> m_camera;
     std::unique_ptr<EmbeddedServer> m_embeddedServer;
     std::unique_ptr<SessionManager> m_sessionManager;
-    std::unique_ptr<UI::UIManager> m_uiManager;
+    std::unique_ptr<UI::RmlUiManager> m_uiManager;
     std::unique_ptr<UI::EntityPicker> m_entityPicker;
     std::unique_ptr<SolarSystemScene> m_solarSystem;
     std::unique_ptr<photon::PhotonContext> m_photonCtx;
@@ -254,6 +255,9 @@ private:
     glm::vec3 m_playerVelocity{0.0f};
     float m_playerSpeed = 0.0f;
     float m_playerMaxSpeed = 250.0f;
+    bool m_approachActive = false;
+    bool m_orbitActive = false;
+    bool m_keepRangeActive = false;
     
     // Context menu state
     bool m_showContextMenu = false;

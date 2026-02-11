@@ -1,0 +1,53 @@
+<!-- EVE OFFLINE — Mission Panel (RML placeholder) -->
+<rml>
+<head>
+    <title>Missions</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #mission {
+            position: fixed;
+            top: 90dp;
+            left: 80dp;
+            width: 360dp;
+            height: 280dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-body {
+            padding: 12dp;
+            font-size: 11dp;
+            color: #8B949E;
+        }
+    </style>
+</head>
+<body>
+    <div id="mission">
+        <div class="panel-header">
+            <span class="title">Missions</span>
+        </div>
+        <div class="panel-body">
+            Mission tracker UI is migrating to RmlUi. Objectives and rewards will appear here soon.
+        </div>
+    </div>
+</body>
+</rml>

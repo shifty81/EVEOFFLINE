@@ -12,7 +12,8 @@ namespace eve {
  */
 class Window {
 public:
-    using KeyCallback = std::function<void(int key, int action)>;
+    using KeyCallback = std::function<void(int key, int action, int mods)>;
+    using CharCallback = std::function<void(unsigned int codepoint)>;
     using MouseCallback = std::function<void(double xpos, double ypos)>;
     using MouseButtonCallback = std::function<void(int button, int action, int mods)>;
     using ScrollCallback = std::function<void(double xoffset, double yoffset)>;
@@ -46,6 +47,7 @@ public:
      * Set callbacks
      */
     void setKeyCallback(KeyCallback callback) { m_keyCallback = callback; }
+    void setCharCallback(CharCallback callback) { m_charCallback = callback; }
     void setMouseCallback(MouseCallback callback) { m_mouseCallback = callback; }
     void setMouseButtonCallback(MouseButtonCallback callback) { m_mouseButtonCallback = callback; }
     void setScrollCallback(ScrollCallback callback) { m_scrollCallback = callback; }
@@ -58,6 +60,7 @@ public:
 
 private:
     static void keyCallbackStatic(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void charCallbackStatic(GLFWwindow* window, unsigned int codepoint);
     static void cursorPosCallbackStatic(GLFWwindow* window, double xpos, double ypos);
     static void mouseButtonCallbackStatic(GLFWwindow* window, int button, int action, int mods);
     static void scrollCallbackStatic(GLFWwindow* window, double xoffset, double yoffset);
@@ -69,6 +72,7 @@ private:
     int m_height;
 
     KeyCallback m_keyCallback;
+    CharCallback m_charCallback;
     MouseCallback m_mouseCallback;
     MouseButtonCallback m_mouseButtonCallback;
     ScrollCallback m_scrollCallback;

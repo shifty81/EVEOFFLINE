@@ -1,0 +1,53 @@
+<!-- EVE OFFLINE — Market Panel (RML placeholder) -->
+<rml>
+<head>
+    <title>Market</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #market {
+            position: fixed;
+            top: 90dp;
+            left: 420dp;
+            width: 420dp;
+            height: 320dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-body {
+            padding: 12dp;
+            font-size: 11dp;
+            color: #8B949E;
+        }
+    </style>
+</head>
+<body>
+    <div id="market">
+        <div class="panel-header">
+            <span class="title">Market</span>
+        </div>
+        <div class="panel-body">
+            Market UI migration in progress. Core listing and order widgets will move here next.
+        </div>
+    </div>
+</body>
+</rml>

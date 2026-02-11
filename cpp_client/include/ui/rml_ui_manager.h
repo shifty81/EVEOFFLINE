@@ -7,8 +7,8 @@
  * stylesheets. It uses RmlUi's official GLFW platform and OpenGL 3 renderer
  * backends for a production-quality render pipeline.
  *
- * ImGui is retained for debug/developer overlays via the existing UIManager
- * class (ui_manager.h). Both systems can coexist in the render loop.
+ * ImGui is treated as a legacy optional UI path. The primary game UI now
+ * routes through RmlUi with ImGui disabled by default.
  *
  * Build with -DUSE_RMLUI=ON to enable RmlUi support.
  */
@@ -86,6 +86,14 @@ public:
     void Render();
     void EndFrame();
 
+    // ---- Input forwarding (call from GLFW callbacks) ----
+    void HandleKey(int key, int action, int mods);
+    void HandleChar(unsigned int codepoint);
+    void HandleCursorPos(double xpos, double ypos);
+    void HandleMouseButton(int button, int action, int mods);
+    void HandleScroll(double yoffset, int mods);
+    void HandleFramebufferSize(int width, int height);
+
     // ---- Ship Status ----
     void SetShipStatus(const RmlShipData& data);
     void SetShieldPercent(float pct);
@@ -132,11 +140,14 @@ public:
 
     // ---- State Queries ----
     bool IsInitialized() const { return initialized_; }
+    bool WantsMouseInput() const;
+    bool WantsKeyboardInput() const;
 
 private:
     bool initialized_ = false;
     GLFWwindow* window_ = nullptr;
     std::string resourcePath_;
+    int active_mods_ = 0;
 
 #ifdef USE_RMLUI
     Rml::Context* context_ = nullptr;

@@ -68,6 +68,7 @@ Window::Window(const std::string& title, int width, int height)
 
     // Set callbacks
     glfwSetKeyCallback(m_window, keyCallbackStatic);
+    glfwSetCharCallback(m_window, charCallbackStatic);
     glfwSetCursorPosCallback(m_window, cursorPosCallbackStatic);
     glfwSetMouseButtonCallback(m_window, mouseButtonCallbackStatic);
     glfwSetScrollCallback(m_window, scrollCallbackStatic);
@@ -97,7 +98,14 @@ void Window::update() {
 void Window::keyCallbackStatic(GLFWwindow* window, int key, int scancode, int action, int mods) {
     Window* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
     if (instance && instance->m_keyCallback) {
-        instance->m_keyCallback(key, action);
+        instance->m_keyCallback(key, action, mods);
+    }
+}
+
+void Window::charCallbackStatic(GLFWwindow* window, unsigned int codepoint) {
+    Window* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    if (instance && instance->m_charCallback) {
+        instance->m_charCallback(codepoint);
     }
 }
 

@@ -152,9 +152,6 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
         std::cerr << "[RmlUiManager] Warning: no system fonts found, text may not render\n";
     }
 
-    // Setup GLFW input callbacks
-    SetupInputCallbacks();
-
     // Load core documents
     if (!LoadDocuments()) {
         std::cerr << "[RmlUiManager] Warning: some documents failed to load\n";
@@ -178,13 +175,6 @@ void RmlUiManager::Shutdown() {
 
     Rml::Shutdown();
 
-    // Clean up the callback data stored in the GLFW user pointer
-    if (window_) {
-        auto* cbData = static_cast<RmlCallbackData*>(glfwGetWindowUserPointer(window_));
-        delete cbData;
-        glfwSetWindowUserPointer(window_, nullptr);
-    }
-
     renderInterface_.reset();
     systemInterface_.reset();
 
@@ -197,7 +187,7 @@ void RmlUiManager::Shutdown() {
 // ---- Per-frame methods ----
 
 void RmlUiManager::ProcessInput() {
-    // Input is handled via GLFW callbacks set up in SetupInputCallbacks()
+    // Input is forwarded via Handle* callbacks wired by the application.
 }
 
 void RmlUiManager::Update() {
@@ -225,6 +215,42 @@ void RmlUiManager::Render() {
 void RmlUiManager::EndFrame() {
     if (!initialized_ || !renderInterface_) return;
     renderInterface_->EndFrame();
+}
+
+// ---- Input forwarding ----
+
+void RmlUiManager::HandleKey(int key, int action, int mods) {
+    if (!initialized_ || !context_) return;
+    active_mods_ = mods;
+    RmlGLFW::ProcessKeyCallback(context_, key, action, mods);
+}
+
+void RmlUiManager::HandleChar(unsigned int codepoint) {
+    if (!initialized_ || !context_) return;
+    RmlGLFW::ProcessCharCallback(context_, codepoint);
+}
+
+void RmlUiManager::HandleCursorPos(double xpos, double ypos) {
+    if (!initialized_ || !context_ || !window_) return;
+    RmlGLFW::ProcessCursorPosCallback(context_, window_, xpos, ypos, active_mods_);
+}
+
+void RmlUiManager::HandleMouseButton(int button, int action, int mods) {
+    if (!initialized_ || !context_) return;
+    active_mods_ = mods;
+    RmlGLFW::ProcessMouseButtonCallback(context_, button, action, mods);
+}
+
+void RmlUiManager::HandleScroll(double yoffset, int mods) {
+    if (!initialized_ || !context_) return;
+    active_mods_ = mods;
+    RmlGLFW::ProcessScrollCallback(context_, yoffset, active_mods_);
+}
+
+void RmlUiManager::HandleFramebufferSize(int width, int height) {
+    if (!initialized_ || !context_ || !renderInterface_) return;
+    renderInterface_->SetViewport(width, height);
+    RmlGLFW::ProcessFramebufferSizeCallback(context_, width, height);
 }
 
 // ---- Ship Status ----
@@ -449,6 +475,8 @@ bool RmlUiManager::LoadDocuments() {
         {"fitting",      resourcePath_ + "/rml/fitting.rml",       false},
         {"target_list",  resourcePath_ + "/rml/target_list.rml",   true},
         {"inventory",    resourcePath_ + "/rml/inventory.rml",     false},
+        {"market",       resourcePath_ + "/rml/market.rml",        false},
+        {"mission",      resourcePath_ + "/rml/mission.rml",       false},
         {"dscan",        resourcePath_ + "/rml/dscan.rml",         false},
         {"neocom",       resourcePath_ + "/rml/neocom.rml",        true},
     };
@@ -683,6 +711,16 @@ void RmlUiManager::UpdateDScanResults(
     body->SetInnerRML(rowsRml);
 }
 
+bool RmlUiManager::WantsMouseInput() const {
+    if (!initialized_ || !context_) return false;
+    return context_->GetHoverElement() != nullptr;
+}
+
+bool RmlUiManager::WantsKeyboardInput() const {
+    if (!initialized_ || !context_) return false;
+    return context_->GetFocusElement() != nullptr;
+}
+
 void RmlUiManager::SetupInputCallbacks() {
     if (!window_ || !context_) return;
 
@@ -772,6 +810,13 @@ void RmlUiManager::BeginFrame() {}
 void RmlUiManager::Render() {}
 void RmlUiManager::EndFrame() {}
 
+void RmlUiManager::HandleKey(int, int, int) {}
+void RmlUiManager::HandleChar(unsigned int) {}
+void RmlUiManager::HandleCursorPos(double, double) {}
+void RmlUiManager::HandleMouseButton(int, int, int) {}
+void RmlUiManager::HandleScroll(double, int) {}
+void RmlUiManager::HandleFramebufferSize(int, int) {}
+
 void RmlUiManager::SetShipStatus(const RmlShipData&) {}
 void RmlUiManager::SetShieldPercent(float) {}
 void RmlUiManager::SetArmorPercent(float) {}
@@ -801,6 +846,9 @@ void RmlUiManager::UpdateInventoryData(
 void RmlUiManager::UpdateDScanResults(
     const std::vector<std::string>&, const std::vector<std::string>&,
     const std::vector<float>&) {}
+
+bool RmlUiManager::WantsMouseInput() const { return false; }
+bool RmlUiManager::WantsKeyboardInput() const { return false; }
 
 } // namespace UI
 
