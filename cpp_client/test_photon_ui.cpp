@@ -758,7 +758,7 @@ void testCapacitorRingAnimated() {
     ctx.shutdown();
 }
 
-// ─── ShipHUDData ModuleInfo overheat field test ─────────────────────
+// ─── ModuleInfo Overheat Field test ─────────────────────────────────
 
 void testModuleInfoOverheat() {
     std::cout << "\n=== ModuleInfo Overheat Field ===" << std::endl;
@@ -776,6 +776,177 @@ void testModuleInfoOverheat() {
     assertTrue(mod2.active == true, "Aggregate init: active");
     assertClose(mod2.cooldown, 0.3f, "Aggregate init: cooldown");
     assertClose(mod2.overheat, 0.0f, "Aggregate init: overheat defaults to 0 (backward compat)");
+}
+
+// ─── RmlUiManager Data Structure tests ─────────────────────────────
+
+#include "ui/rml_ui_manager.h"
+
+void testFittingRmlData() {
+    std::cout << "\n=== FittingRmlData ===" << std::endl;
+
+    UI::RmlUiManager::FittingSlotInfo slot;
+    assertTrue(slot.name.empty(), "FittingSlotInfo name defaults to empty");
+    assertTrue(slot.online == false, "FittingSlotInfo online defaults to false");
+
+    UI::RmlUiManager::FittingRmlData data;
+    assertTrue(data.shipName.empty(), "FittingRmlData shipName defaults to empty");
+    assertTrue(data.highSlots.empty(), "FittingRmlData highSlots defaults to empty");
+    assertTrue(data.midSlots.empty(), "FittingRmlData midSlots defaults to empty");
+    assertTrue(data.lowSlots.empty(), "FittingRmlData lowSlots defaults to empty");
+    assertClose(data.cpuUsed, 0.0f, "FittingRmlData cpuUsed defaults to 0");
+    assertClose(data.cpuMax, 1.0f, "FittingRmlData cpuMax defaults to 1");
+    assertClose(data.pgUsed, 0.0f, "FittingRmlData pgUsed defaults to 0");
+    assertClose(data.pgMax, 1.0f, "FittingRmlData pgMax defaults to 1");
+    assertClose(data.ehp, 0.0f, "FittingRmlData ehp defaults to 0");
+    assertClose(data.dps, 0.0f, "FittingRmlData dps defaults to 0");
+    assertTrue(data.capStable == false, "FittingRmlData capStable defaults to false");
+
+    // Populate and verify
+    data.shipName = "Rifter";
+    data.highSlots.push_back({"200mm AC", true});
+    data.highSlots.push_back({"200mm AC", true});
+    data.midSlots.push_back({"1MN AB", true});
+    data.lowSlots.push_back({"Gyro", true});
+    data.cpuUsed = 85.0f;
+    data.cpuMax = 120.0f;
+    data.pgUsed = 42.5f;
+    data.pgMax = 50.0f;
+    data.ehp = 4250.0f;
+    data.dps = 185.0f;
+    data.maxVelocity = 380.0f;
+    data.capStable = true;
+
+    assertTrue(data.shipName == "Rifter", "FittingRmlData shipName set correctly");
+    assertTrue(data.highSlots.size() == 2, "FittingRmlData has 2 high slots");
+    assertTrue(data.highSlots[0].name == "200mm AC", "High slot 0 name correct");
+    assertTrue(data.highSlots[0].online == true, "High slot 0 online correct");
+    assertClose(data.cpuUsed, 85.0f, "FittingRmlData cpuUsed set correctly");
+    assertClose(data.ehp, 4250.0f, "FittingRmlData ehp set correctly");
+    assertTrue(data.capStable == true, "FittingRmlData capStable set correctly");
+}
+
+void testMarketOrderInfo() {
+    std::cout << "\n=== MarketOrderInfo ===" << std::endl;
+
+    UI::RmlUiManager::MarketOrderInfo order;
+    assertClose(order.price, 0.0f, "MarketOrderInfo price defaults to 0");
+    assertTrue(order.quantity == 0, "MarketOrderInfo quantity defaults to 0");
+    assertTrue(order.location.empty(), "MarketOrderInfo location defaults to empty");
+
+    order.price = 15000.50f;
+    order.quantity = 100;
+    order.location = "Jita IV - Moon 4";
+    assertClose(order.price, 15000.50f, "MarketOrderInfo price set correctly");
+    assertTrue(order.quantity == 100, "MarketOrderInfo quantity set correctly");
+    assertTrue(order.location == "Jita IV - Moon 4", "MarketOrderInfo location set correctly");
+}
+
+void testMissionRmlInfo() {
+    std::cout << "\n=== MissionRmlInfo ===" << std::endl;
+
+    UI::RmlUiManager::MissionObjectiveInfo obj;
+    assertTrue(obj.text.empty(), "MissionObjectiveInfo text defaults to empty");
+    assertTrue(obj.complete == false, "MissionObjectiveInfo complete defaults to false");
+
+    UI::RmlUiManager::MissionRmlInfo mission;
+    assertTrue(mission.title.empty(), "MissionRmlInfo title defaults to empty");
+    assertTrue(mission.objectives.empty(), "MissionRmlInfo objectives defaults to empty");
+    assertClose(mission.iskReward, 0.0f, "MissionRmlInfo iskReward defaults to 0");
+    assertTrue(mission.lpReward == 0, "MissionRmlInfo lpReward defaults to 0");
+
+    mission.title = "Crimson Order Assault";
+    mission.agentName = "Commander Voss";
+    mission.level = "L3 Security";
+    mission.description = "Eliminate hostiles near Keldari station.";
+    mission.objectives.push_back({"Warp to site", true});
+    mission.objectives.push_back({"Destroy vessels", false});
+    mission.iskReward = 450000.0f;
+    mission.bonusIsk = 150000.0f;
+    mission.standingReward = "+0.15 Keldari Navy";
+    mission.lpReward = 800;
+
+    assertTrue(mission.title == "Crimson Order Assault", "MissionRmlInfo title set correctly");
+    assertTrue(mission.objectives.size() == 2, "MissionRmlInfo has 2 objectives");
+    assertTrue(mission.objectives[0].complete == true, "Objective 0 is complete");
+    assertTrue(mission.objectives[1].complete == false, "Objective 1 is incomplete");
+    assertClose(mission.iskReward, 450000.0f, "MissionRmlInfo iskReward set correctly");
+    assertTrue(mission.lpReward == 800, "MissionRmlInfo lpReward set correctly");
+}
+
+void testChatMessageInfo() {
+    std::cout << "\n=== ChatMessageInfo ===" << std::endl;
+
+    UI::RmlUiManager::ChatMessageInfo msg;
+    assertTrue(msg.time.empty(), "ChatMessageInfo time defaults to empty");
+    assertTrue(msg.sender.empty(), "ChatMessageInfo sender defaults to empty");
+    assertTrue(msg.text.empty(), "ChatMessageInfo text defaults to empty");
+    assertTrue(msg.senderClass.empty(), "ChatMessageInfo senderClass defaults to empty");
+
+    msg.time = "12:34";
+    msg.sender = "Player1";
+    msg.text = "Hello world";
+    msg.senderClass = "self";
+
+    assertTrue(msg.time == "12:34", "ChatMessageInfo time set correctly");
+    assertTrue(msg.sender == "Player1", "ChatMessageInfo sender set correctly");
+    assertTrue(msg.text == "Hello world", "ChatMessageInfo text set correctly");
+    assertTrue(msg.senderClass == "self", "ChatMessageInfo senderClass set correctly");
+}
+
+void testRmlUiManagerStub() {
+    std::cout << "\n=== RmlUiManager Stub ===" << std::endl;
+
+    UI::RmlUiManager mgr;
+    assertTrue(!mgr.IsInitialized(), "RmlUiManager starts uninitialized");
+
+    // All stubs should be callable without crash
+    mgr.SetShipStatus(UI::ShipStatusData{});
+    assertTrue(true, "SetShipStatus stub callable");
+
+    mgr.SetTarget("t1", "Test", 1.0f, 1.0f, 1.0f, 100.0f, false, false);
+    mgr.RemoveTarget("t1");
+    mgr.ClearTargets();
+    assertTrue(true, "Target stubs callable");
+
+    mgr.AddCombatLogMessage("test");
+    assertTrue(true, "AddCombatLogMessage stub callable");
+
+    mgr.UpdateInventoryData({}, {}, {}, {}, 0.0f, 0.0f);
+    assertTrue(true, "UpdateInventoryData stub callable");
+
+    mgr.UpdateDScanResults({}, {}, {});
+    assertTrue(true, "UpdateDScanResults stub callable");
+
+    mgr.UpdateDroneBayData({}, {}, 0, 0, 0.0f, 0.0f);
+    assertTrue(true, "UpdateDroneBayData stub callable");
+
+    mgr.UpdateFittingData(UI::RmlUiManager::FittingRmlData{});
+    assertTrue(true, "UpdateFittingData stub callable");
+
+    mgr.UpdateMarketData("", "", {}, {});
+    assertTrue(true, "UpdateMarketData stub callable");
+
+    mgr.UpdateMissionList({});
+    assertTrue(true, "UpdateMissionList stub callable");
+
+    mgr.UpdateMissionDetail(UI::RmlUiManager::MissionRmlInfo{});
+    assertTrue(true, "UpdateMissionDetail stub callable");
+
+    mgr.AddChatMessage(UI::RmlUiManager::ChatMessageInfo{});
+    assertTrue(true, "AddChatMessage stub callable");
+
+    mgr.SetChatChannel("local", 5);
+    assertTrue(true, "SetChatChannel stub callable");
+
+    mgr.ShowContextMenu("Entity", "Frigate", 100.0f, 200.0f);
+    assertTrue(true, "ShowContextMenu stub callable");
+
+    mgr.HideContextMenu();
+    assertTrue(true, "HideContextMenu stub callable");
+
+    assertTrue(!mgr.WantsMouseInput(), "WantsMouseInput returns false when uninitialized");
+    assertTrue(!mgr.WantsKeyboardInput(), "WantsKeyboardInput returns false when uninitialized");
 }
 
 // ─── Main ──────────────────────────────────────────────────────────────
@@ -808,6 +979,12 @@ int main() {
     testModuleSlotEx();
     testCapacitorRingAnimated();
     testModuleInfoOverheat();
+
+    testFittingRmlData();
+    testMarketOrderInfo();
+    testMissionRmlInfo();
+    testChatMessageInfo();
+    testRmlUiManagerStub();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

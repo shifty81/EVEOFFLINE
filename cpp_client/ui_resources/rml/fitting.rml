@@ -214,23 +214,23 @@
             <div class="resource-section">
                 <div class="resource-bar">
                     <span class="resource-label">CPU</span>
-                    <span class="resource-value">125 / 180 tf</span>
+                    <span class="resource-value" id="cpu-value">125 / 180 tf</span>
                     <div class="bar-track">
-                        <div class="bar-fill cpu-fill" style="width: 69%;"></div>
+                        <div class="bar-fill cpu-fill" id="cpu-fill" style="width: 69%;"></div>
                     </div>
                 </div>
                 <div class="resource-bar">
                     <span class="resource-label">Power Grid</span>
-                    <span class="resource-value">32 / 45 MW</span>
+                    <span class="resource-value" id="pg-value">32 / 45 MW</span>
                     <div class="bar-track">
-                        <div class="bar-fill pg-fill" style="width: 71%;"></div>
+                        <div class="bar-fill pg-fill" id="pg-fill" style="width: 71%;"></div>
                     </div>
                 </div>
                 <div class="resource-bar">
                     <span class="resource-label">Calibration</span>
-                    <span class="resource-value">250 / 400</span>
+                    <span class="resource-value" id="cal-value">250 / 400</span>
                     <div class="bar-track">
-                        <div class="bar-fill cal-fill" style="width: 62%;"></div>
+                        <div class="bar-fill cal-fill" id="cal-fill" style="width: 62%;"></div>
                     </div>
                 </div>
             </div>
@@ -241,19 +241,19 @@
             <div class="stats-section">
                 <div class="stat-row">
                     <span class="stat-name">Effective HP</span>
-                    <span class="stat-value">4,250</span>
+                    <span class="stat-value" id="stat-ehp">4,250</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-name">DPS</span>
-                    <span class="stat-value">185</span>
+                    <span class="stat-value" id="stat-dps">185</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-name">Max Velocity</span>
-                    <span class="stat-value">380 m/s</span>
+                    <span class="stat-value" id="stat-velocity">380 m/s</span>
                 </div>
                 <div class="stat-row">
                     <span class="stat-name">Cap Stable</span>
-                    <span class="stat-value" style="color: #33CC66;">Yes</span>
+                    <span class="stat-value" id="stat-cap-stable" style="color: #33CC66;">Yes</span>
                 </div>
             </div>
         </div>
