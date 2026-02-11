@@ -161,7 +161,7 @@ From ROADMAP.md "In Progress" section:
 - ✅ Docker containerization — Multi-stage Dockerfile for dedicated server
 - ✅ Crash reporting and logging — Structured Logger with levels (DEBUG–FATAL), file output, and exception handling in main()
 - ✅ Server monitoring and analytics — ServerMetrics tracking tick timing, entity/player counts, uptime, periodic stats logging
-- Cloud deployment guides
+- ✅ Cloud deployment guides — Comprehensive guide for AWS, GCP, Azure, Digital Ocean deployment
 
 #### 3.3 Additional Game Systems
 - PvP toggle option (optional for those who want it)
@@ -170,11 +170,11 @@ From ROADMAP.md "In Progress" section:
 - In-game web browser (dotlan-style maps)
 
 #### 3.4 Community & Modding
-- Mod manager utility
+- 🔄 **In Progress**: Mod manager utility — JSON validation tool created (tools/validate_json.py)
 - Content creation tools
 - Mission editor
 - Ship designer
-- Modding documentation
+- ✅ Modding documentation — Comprehensive guide exists (docs/MODDING_GUIDE.md)
 
 ---
 

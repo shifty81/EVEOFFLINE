@@ -89,6 +89,7 @@ For detailed setup instructions, see:
 - [Quick Start](docs/guides/QUICKSTART_VS2022.md)
 - [Full VS2022 Guide](docs/guides/VS2022_SETUP_GUIDE.md)
 - [Troubleshooting](docs/guides/TROUBLESHOOTING_VS2022.md)
+- [Cloud Deployment](docs/guides/CLOUD_DEPLOYMENT.md) — Deploy to AWS, GCP, Azure, Digital Ocean
 
 ### Building (CMake directly)
 
@@ -158,6 +159,12 @@ data/
 ├── asteroid_fields/    # Mining belt data
 └── planetary_interaction/ # PI resources
 ```
+
+**Modding Tools** (in `tools/`):
+- `validate_json.py` - Validate JSON syntax and structure
+- `create_ship.py` - Interactive ship creation wizard
+
+See the [Modding Guide](docs/MODDING_GUIDE.md) for detailed instructions.
 
 ## 📚 Documentation
 

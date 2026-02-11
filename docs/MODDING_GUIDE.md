@@ -458,10 +458,22 @@ Skills are in `data/skills/skills.json`
 ## Testing Your Mods
 
 ### Step 1: Validate JSON
-Use a JSON validator to check syntax:
+
+**Option 1: Use the built-in validation tool (recommended)**
+```bash
+# Validate all data files
+python tools/validate_json.py --verbose
+
+# Validate a specific file
+python tools/validate_json.py --file data/ships/my_custom_ships.json
+```
+
+**Option 2: Online validators**
 - [jsonlint.com](https://jsonlint.com)
 - VS Code with JSON extension
 - `jq` command line tool
+
+See [tools/README.md](../tools/README.md) for more modding utilities.
 
 ### Step 2: Start the Game
 ```bash
