@@ -492,6 +492,179 @@ void testPhotonHUD() {
     ctx.shutdown();
 }
 
+// ─── Slider test ───────────────────────────────────────────────────
+
+void testSlider() {
+    std::cout << "\n=== Slider ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    float value = 50.0f;
+    photon::Rect sliderRect(100, 100, 200, 20);
+
+    // Frame 1: Render slider without interaction
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {300.0f, 300.0f};  // Outside
+        ctx.beginFrame(input);
+        bool changed = photon::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
+        assertTrue(!changed, "Slider no change when not interacted with");
+        assertClose(value, 50.0f, "Slider value unchanged");
+        ctx.endFrame();
+    }
+
+    // Frame 2: Click inside slider track to set value
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        // Click at 75% of slider width (x=100 + 200*0.75 = 250)
+        input.mousePos = {250.0f, 110.0f};
+        input.mouseClicked[0] = true;
+        input.mouseDown[0] = true;
+        ctx.beginFrame(input);
+        bool changed = photon::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
+        assertTrue(changed, "Slider value changes on click");
+        assertClose(value, 75.0f, "Slider set to 75% on click at 75% position");
+        ctx.endFrame();
+    }
+
+    // Frame 3: Drag to new position
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        // Drag to 25% position (x=100 + 200*0.25 = 150)
+        input.mousePos = {150.0f, 110.0f};
+        input.mouseDown[0] = true;
+        ctx.beginFrame(input);
+        bool changed = photon::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
+        assertTrue(changed, "Slider value changes on drag");
+        assertClose(value, 25.0f, "Slider set to 25% on drag to 25% position");
+        ctx.endFrame();
+    }
+
+    // Test with null value pointer (should not crash)
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        ctx.beginFrame(input);
+        bool changed = photon::slider(ctx, "NullSlider", sliderRect, nullptr, 0.0f, 100.0f);
+        assertTrue(!changed, "Slider with null value returns false");
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── Text Input test ──────────────────────────────────────────────
+
+void testTextInput() {
+    std::cout << "\n=== TextInput ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    photon::TextInputState inputState;
+    inputState.text = "";
+    photon::Rect inputRect(100, 100, 200, 24);
+
+    // Frame 1: Render without interaction (unfocused)
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {300.0f, 300.0f};
+        ctx.beginFrame(input);
+        photon::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
+        assertTrue(!inputState.focused, "TextInput starts unfocused");
+        ctx.endFrame();
+    }
+
+    // Frame 2: Click inside to focus
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {150.0f, 110.0f};
+        input.mouseClicked[0] = true;
+        input.mouseDown[0] = true;
+        ctx.beginFrame(input);
+        photon::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
+        assertTrue(inputState.focused, "TextInput focused after click inside");
+        ctx.endFrame();
+    }
+
+    // Frame 3: Click outside to unfocus
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {500.0f, 500.0f};
+        input.mouseClicked[0] = true;
+        input.mouseDown[0] = true;
+        ctx.beginFrame(input);
+        photon::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
+        assertTrue(!inputState.focused, "TextInput unfocused after click outside");
+        ctx.endFrame();
+    }
+
+    // Test with pre-filled text
+    inputState.text = "Hello World";
+    inputState.cursorPos = 5;
+    {
+        photon::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {150.0f, 110.0f};
+        input.mouseClicked[0] = true;
+        ctx.beginFrame(input);
+        photon::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
+        assertTrue(inputState.focused, "TextInput focuses with pre-filled text");
+        assertTrue(inputState.text == "Hello World", "TextInput preserves existing text");
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── Notification test ───────────────────────────────────────────
+
+void testNotification() {
+    std::cout << "\n=== Notification ===" << std::endl;
+    photon::PhotonContext ctx;
+    ctx.init();
+
+    photon::InputState input;
+    input.windowW = 1920;
+    input.windowH = 1080;
+    input.mousePos = {500.0f, 400.0f};
+    ctx.beginFrame(input);
+
+    // Should not crash with default color
+    photon::notification(ctx, "Warp drive active");
+    assertTrue(true, "Notification renders without crash (default color)");
+
+    // Should not crash with custom color
+    photon::notification(ctx, "Shield warning!", photon::Color(1.0f, 0.2f, 0.2f, 1.0f));
+    assertTrue(true, "Notification renders without crash (custom color)");
+
+    ctx.endFrame();
+    ctx.shutdown();
+}
+
+// ─── TextInputState defaults test ──────────────────────────────────
+
+void testTextInputStateDefaults() {
+    std::cout << "\n=== TextInputState Defaults ===" << std::endl;
+    photon::TextInputState state;
+    assertTrue(state.text.empty(), "TextInputState text defaults to empty");
+    assertTrue(state.cursorPos == 0, "TextInputState cursorPos defaults to 0");
+    assertTrue(!state.focused, "TextInputState focused defaults to false");
+}
+
 // ─── Main ──────────────────────────────────────────────────────────────
 
 int main() {
@@ -514,6 +687,11 @@ int main() {
     testComboBox();
     testPanelState();
     testPhotonHUD();
+
+    testSlider();
+    testTextInput();
+    testNotification();
+    testTextInputStateDefaults();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun
