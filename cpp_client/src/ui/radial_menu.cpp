@@ -167,8 +167,6 @@ void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
             r.drawArc(center, INNER_RADIUS + 1.0f, OUTER_RADIUS - 1.0f,
                       seg.startAngle, seg.endAngle, bgHighlight, 8);
             // Teal accent border on highlighted segment
-            float midAngle = (seg.startAngle + seg.endAngle) * 0.5f;
-            float arcSpan = seg.endAngle - seg.startAngle;
             r.drawArc(center, OUTER_RADIUS - 3.0f, OUTER_RADIUS,
                       seg.startAngle, seg.endAngle, accentTeal, 8);
         }

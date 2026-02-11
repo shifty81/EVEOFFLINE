@@ -47,26 +47,27 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
     // Menu items for entity context menu
     struct MenuItem {
         const char* label;
+        ContextMenuAction action;
         int submenuIdx;  // -1 = no submenu
     };
 
     std::vector<MenuItem> items;
     if (m_menuType == ContextMenuType::ENTITY) {
-        items.push_back({"Approach",          -1});
-        items.push_back({"Orbit",              0});   // submenu
-        items.push_back({"Keep at Range",      1});   // submenu
-        items.push_back({"Warp To",            2});   // submenu
-        items.push_back({"Align To",          -1});
+        items.push_back({"Approach",       ContextMenuAction::APPROACH,       -1});
+        items.push_back({"Orbit",          ContextMenuAction::ORBIT,           0});
+        items.push_back({"Keep at Range",  ContextMenuAction::KEEP_AT_RANGE,   1});
+        items.push_back({"Warp To",        ContextMenuAction::WARP_TO,         2});
+        items.push_back({"Align To",       ContextMenuAction::NAVIGATE_TO,    -1});
         if (m_targetIsLocked) {
-            items.push_back({"Unlock Target",  -1});
+            items.push_back({"Unlock Target", ContextMenuAction::UNLOCK_TARGET, -1});
         } else {
-            items.push_back({"Lock Target",    -1});
+            items.push_back({"Lock Target",   ContextMenuAction::LOCK_TARGET,   -1});
         }
-        items.push_back({"Look At",           -1});
-        items.push_back({"Show Info",         -1});
+        items.push_back({"Look At",        ContextMenuAction::LOOK_AT,        -1});
+        items.push_back({"Show Info",      ContextMenuAction::SHOW_INFO,      -1});
     } else {
-        items.push_back({"Align To",          -1});
-        items.push_back({"Bookmark Location", -1});
+        items.push_back({"Align To",          ContextMenuAction::NAVIGATE_TO, -1});
+        items.push_back({"Bookmark Location", ContextMenuAction::BOOKMARK,    -1});
     }
 
     // Layout constants
@@ -116,41 +117,37 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
 
         // Click handling
         if (ctx.buttonBehavior(itemRect, id)) {
-            if (m_menuType == ContextMenuType::ENTITY) {
-                if (items[i].submenuIdx >= 0) {
-                    m_activeSubmenu = items[i].submenuIdx;
-                } else {
-                    // Execute action
-                    const char* label = items[i].label;
-                    if (label[0] == 'A' && label[1] == 'p') {  // Approach
-                        if (m_onApproach) m_onApproach(m_targetEntityId);
-                        Close();
-                    } else if (label[0] == 'A' && label[1] == 'l') {  // Align To
-                        // Align is treated as approach for now
-                        if (m_onApproach) m_onApproach(m_targetEntityId);
-                        Close();
-                    } else if (label[0] == 'L' && label[1] == 'o') {  // Lock/Unlock
-                        if (m_targetIsLocked) {
-                            if (m_onUnlockTarget) m_onUnlockTarget(m_targetEntityId);
-                        } else {
-                            if (m_onLockTarget) m_onLockTarget(m_targetEntityId);
-                        }
-                        Close();
-                    } else if (label[1] == 'n') {  // Unlock
-                        if (m_onUnlockTarget) m_onUnlockTarget(m_targetEntityId);
-                        Close();
-                    } else if (label[0] == 'L' && label[1] == 'o' && label[2] == 'o') {  // Look At
-                        if (m_onLookAt) m_onLookAt(m_targetEntityId);
-                        Close();
-                    } else if (label[0] == 'S') {  // Show Info
-                        if (m_onShowInfo) m_onShowInfo(m_targetEntityId);
-                        Close();
-                    }
-                }
+            if (items[i].submenuIdx >= 0) {
+                m_activeSubmenu = items[i].submenuIdx;
             } else {
-                // Empty space menu actions
-                if (items[i].label[0] == 'B') {
-                    if (m_onBookmark) m_onBookmark(m_worldX, m_worldY, m_worldZ);
+                switch (items[i].action) {
+                    case ContextMenuAction::APPROACH:
+                        if (m_onApproach) m_onApproach(m_targetEntityId);
+                        break;
+                    case ContextMenuAction::NAVIGATE_TO:
+                        if (m_menuType == ContextMenuType::ENTITY && m_onApproach) {
+                            m_onApproach(m_targetEntityId);
+                        } else if (m_onNavigateTo) {
+                            m_onNavigateTo(m_worldX, m_worldY, m_worldZ);
+                        }
+                        break;
+                    case ContextMenuAction::LOCK_TARGET:
+                        if (m_onLockTarget) m_onLockTarget(m_targetEntityId);
+                        break;
+                    case ContextMenuAction::UNLOCK_TARGET:
+                        if (m_onUnlockTarget) m_onUnlockTarget(m_targetEntityId);
+                        break;
+                    case ContextMenuAction::LOOK_AT:
+                        if (m_onLookAt) m_onLookAt(m_targetEntityId);
+                        break;
+                    case ContextMenuAction::SHOW_INFO:
+                        if (m_onShowInfo) m_onShowInfo(m_targetEntityId);
+                        break;
+                    case ContextMenuAction::BOOKMARK:
+                        if (m_onBookmark) m_onBookmark(m_worldX, m_worldY, m_worldZ);
+                        break;
+                    default:
+                        break;
                 }
                 Close();
             }
