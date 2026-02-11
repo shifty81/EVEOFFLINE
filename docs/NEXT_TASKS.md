@@ -44,6 +44,19 @@
 #### 1.1 Address Optional TODOs
 Most TODOs in the codebase are for optional/future features:
 
+**Server Console** (`cpp_server/include/ui/server_console.h`)
+- Status: ✅ **PHASE 1 COMPLETED** (February 2026)
+- Implementation:
+  - ✅ Non-blocking stdin reader with platform-specific code (Unix/Windows)
+  - ✅ Command dispatcher with 8 working commands
+  - ✅ Interactive command-line interface
+  - ✅ Integration with Server main loop
+  - ✅ Commands: help, status, players, kick*, stop, metrics, save, load*
+  - ✅ Case-insensitive command parsing
+  - ✅ Graceful shutdown with terminal restoration
+  - (* = placeholder awaiting additional API)
+- Future: Phase 2 (Terminal UI), Phase 3 (Graphical dashboard)
+
 **Steam Integration** (`cpp_server/src/auth/steam_auth.cpp`)
 - Status: Optional feature, requires Steam SDK
 - Priority: Low (nice-to-have)
