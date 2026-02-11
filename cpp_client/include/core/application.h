@@ -22,6 +22,8 @@ class SolarSystemScene;
 namespace UI {
     class RmlUiManager;
     class EntityPicker;
+    class ContextMenu;
+    class RadialMenu;
 }
 
 namespace photon {
@@ -231,6 +233,8 @@ private:
     std::unique_ptr<SolarSystemScene> m_solarSystem;
     std::unique_ptr<photon::PhotonContext> m_photonCtx;
     std::unique_ptr<photon::PhotonHUD> m_photonHUD;
+    std::unique_ptr<UI::ContextMenu> m_contextMenu;
+    std::unique_ptr<UI::RadialMenu> m_radialMenu;
 
     bool m_running;
     float m_lastFrameTime;
@@ -264,6 +268,16 @@ private:
     std::string m_contextMenuEntityId;
     double m_contextMenuX = 0.0;
     double m_contextMenuY = 0.0;
+    
+    // Radial menu state
+    bool m_radialMenuOpen = false;
+    double m_radialMenuStartX = 0.0;
+    double m_radialMenuStartY = 0.0;
+    double m_radialMenuHoldStartTime = 0.0;
+    const double RADIAL_MENU_HOLD_TIME = 0.3;  // 300ms hold to open radial menu
+    
+    // D-key docking mode
+    bool m_dockingModeActive = false;
     
     // Local/demo mode
     bool m_localPlayerSpawned = false;
