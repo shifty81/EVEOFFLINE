@@ -1,0 +1,281 @@
+<!-- EVE OFFLINE — Drone Bay Panel (RML)
+     Drone management: bandwidth/bay capacity, deployed drones, bay drones,
+     group actions. All elements use IDs for C++ manipulation via RmlUiManager. -->
+<rml>
+<head>
+    <title>Drones</title>
+    <link type="text/rcss" href="../rcss/photon_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #drone-bay {
+            position: fixed;
+            top: 200dp;
+            left: 60dp;
+            width: 320dp;
+            height: 420dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* Resource bars */
+        .resource-section {
+            padding: 6dp 8dp;
+            background-color: #0A0E1480;
+        }
+
+        .resource-row {
+            margin-bottom: 4dp;
+        }
+
+        .resource-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .resource-label {
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .resource-value {
+            font-size: 10dp;
+            color: #E6EDF3;
+            float: right;
+        }
+
+        .resource-bar-track {
+            height: 4dp;
+            background-color: #161B22;
+            border-radius: 2dp;
+            margin-top: 3dp;
+        }
+
+        .resource-bar-fill {
+            height: 100%;
+            border-radius: 2dp;
+            background-color: #45D0E8;
+        }
+
+        .resource-bar-fill.warning {
+            background-color: #FFB833;
+        }
+
+        .resource-bar-fill.critical {
+            background-color: #FF3333;
+        }
+
+        /* Section headers */
+        .section-header {
+            background-color: #0A0E14;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+            border-top: 1dp #1E2A36;
+        }
+
+        .section-title {
+            font-size: 10dp;
+            font-weight: bold;
+            color: #8B949E;
+            text-transform: uppercase;
+        }
+
+        .section-count {
+            float: right;
+            font-size: 10dp;
+            color: #45D0E8;
+        }
+
+        /* Drone lists */
+        .drone-list {
+            height: 120dp;
+            overflow: auto;
+            padding: 2dp 4dp;
+        }
+
+        .drone-row {
+            height: 24dp;
+            padding: 2dp 6dp;
+            border-bottom: 1dp #1E2A3640;
+        }
+
+        .drone-row:hover {
+            background-color: #1A3A4A40;
+        }
+
+        .drone-row.selected {
+            background-color: #1A3A4A80;
+            border-color: #45D0E8;
+        }
+
+        .drone-name {
+            font-size: 11dp;
+            color: #E6EDF3;
+            display: inline-block;
+            width: 140dp;
+        }
+
+        .drone-type {
+            font-size: 9dp;
+            color: #8B949E;
+            display: inline-block;
+            width: 80dp;
+        }
+
+        .drone-hp-track {
+            display: inline-block;
+            width: 60dp;
+            height: 4dp;
+            background-color: #161B22;
+            border-radius: 2dp;
+            vertical-align: middle;
+        }
+
+        .drone-hp-fill {
+            height: 100%;
+            border-radius: 2dp;
+            background-color: #33CC66;
+        }
+
+        .drone-hp-fill.damaged {
+            background-color: #FFB833;
+        }
+
+        .drone-hp-fill.critical {
+            background-color: #FF3333;
+        }
+
+        .drone-status {
+            font-size: 9dp;
+            color: #33CC66;
+            display: inline-block;
+            width: 60dp;
+            text-align: right;
+        }
+
+        .drone-status.engaging {
+            color: #FF3333;
+        }
+
+        .drone-status.idle {
+            color: #8B949E;
+        }
+
+        /* Action bar */
+        .action-bar {
+            padding: 4dp 8dp;
+            background-color: #0A0E14;
+            border-top: 1dp #1E2A36;
+        }
+
+        .action-bar button {
+            font-size: 10dp;
+            padding: 3dp 8dp;
+            margin: 0dp 2dp 2dp 0dp;
+        }
+
+        .action-bar .btn-engage {
+            background-color: #CC333370;
+            border-color: #CC333399;
+        }
+
+        .action-bar .btn-engage:hover {
+            background-color: #CC3333CC;
+        }
+
+        .shortcut-hint {
+            font-size: 9dp;
+            color: #8B949E66;
+            text-align: center;
+            padding: 2dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="drone-bay">
+        <div class="panel-header">
+            <span class="title">DRONES</span>
+            <span class="window-btn" id="drone-btn-close">x</span>
+            <span class="window-btn" id="drone-btn-minimize">-</span>
+        </div>
+
+        <!-- Resource bars -->
+        <div class="resource-section">
+            <div class="resource-row">
+                <span class="resource-label">Bandwidth</span>
+                <span class="resource-value" id="bandwidth-text">0 / 25 Mbit/s</span>
+                <div class="resource-bar-track">
+                    <div class="resource-bar-fill" id="bandwidth-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div class="resource-row">
+                <span class="resource-label">Drone Bay</span>
+                <span class="resource-value" id="bay-capacity-text">0.0 / 25.0 m³</span>
+                <div class="resource-bar-track">
+                    <div class="resource-bar-fill" id="bay-capacity-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Drones in space -->
+        <div class="section-header">
+            <span class="section-title">Drones in Space</span>
+            <span class="section-count" id="space-drone-count">0</span>
+        </div>
+        <div class="drone-list" id="space-drones-body">
+            <!-- Populated from C++ -->
+        </div>
+
+        <!-- Drones in bay -->
+        <div class="section-header">
+            <span class="section-title">Drone Bay</span>
+            <span class="section-count" id="bay-drone-count">0</span>
+        </div>
+        <div class="drone-list" id="bay-drones-body">
+            <!-- Populated from C++ -->
+        </div>
+
+        <!-- Action buttons -->
+        <div class="action-bar">
+            <button id="btn-launch-all">Launch All</button>
+            <button id="btn-return-all">Return All</button>
+            <button class="btn-engage" id="btn-engage-all">Engage All</button>
+        </div>
+
+        <div class="shortcut-hint">[R] Drones</div>
+    </div>
+</body>
+</rml>

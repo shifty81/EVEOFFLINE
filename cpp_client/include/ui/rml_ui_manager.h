@@ -138,6 +138,18 @@ public:
                             const std::vector<std::string>& types,
                             const std::vector<float>& distances);
 
+    // ---- Drone Bay ----
+    struct DroneRmlInfo {
+        std::string name;
+        std::string type;
+        float healthPct = 1.0f;
+        bool engaging = false;
+    };
+    void UpdateDroneBayData(const std::vector<DroneRmlInfo>& spaceDrones,
+                            const std::vector<DroneRmlInfo>& bayDrones,
+                            int usedBandwidth, int maxBandwidth,
+                            float bayUsed, float bayCapacity);
+
     // ---- State Queries ----
     bool IsInitialized() const { return initialized_; }
     bool WantsMouseInput() const;
