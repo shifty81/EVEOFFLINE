@@ -69,6 +69,8 @@ set(SERVER_SOURCES
     src/systems/pi_system.cpp
     src/systems/manufacturing_system.cpp
     src/systems/research_system.cpp
+    src/systems/chat_system.cpp
+    src/systems/character_creation_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -114,6 +116,8 @@ set(SERVER_HEADERS
     include/systems/pi_system.h
     include/systems/manufacturing_system.h
     include/systems/research_system.h
+    include/systems/chat_system.h
+    include/systems/character_creation_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -221,6 +225,8 @@ if(BUILD_TESTS)
         src/systems/pi_system.cpp
         src/systems/manufacturing_system.cpp
         src/systems/research_system.cpp
+        src/systems/chat_system.cpp
+        src/systems/character_creation_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

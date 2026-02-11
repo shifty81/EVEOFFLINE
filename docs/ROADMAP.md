@@ -195,7 +195,9 @@ Data-driven modding without code injection:
 | PISystem | ✅ Complete | 14 assertions |
 | ManufacturingSystem | ✅ Complete | 21 assertions |
 | ResearchSystem | ✅ Complete | 18 assertions |
-| **Total** | **23 systems** | **734 assertions** |
+| ChatSystem | ✅ Complete | 28 assertions |
+| CharacterCreationSystem | ✅ Complete | 23 assertions |
+| **Total** | **25 systems** | **785 assertions** |
 
 ### Data Loaders Status
 
@@ -210,8 +212,8 @@ Data-driven modding without code injection:
 
 | System | Priority | Description |
 |--------|----------|-------------|
-| ChatSystem | Medium | Persistent channels, moderation |
-| CharacterCreationSystem | Low | Races, bloodlines, clones, implants |
+| ~~ChatSystem~~ | ~~Medium~~ | ✅ Implemented (28 assertions) |
+| ~~CharacterCreationSystem~~ | ~~Low~~ | ✅ Implemented (23 assertions) |
 | TournamentSystem | Low | Competitive PvE events |
 | LeaderboardSystem | Low | Achievements, rankings |
 

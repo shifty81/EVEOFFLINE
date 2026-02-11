@@ -828,6 +828,114 @@ public:
     COMPONENT_TYPE(ResearchLab)
 };
 
+/**
+ * @brief Chat channel for persistent messaging
+ *
+ * Supports multiple channel types (local, corp, fleet, private)
+ * with message history, moderation, and member tracking.
+ */
+class ChatChannel : public ecs::Component {
+public:
+    std::string channel_id;
+    std::string channel_name;
+    std::string channel_type = "local";  // "local", "corp", "fleet", "alliance", "private"
+    std::string owner_id;                // channel creator/owner
+    std::string motd;                    // message of the day
+    int max_members = 0;                 // 0 = unlimited
+    bool is_moderated = false;
+
+    struct ChatMessage {
+        std::string message_id;
+        std::string sender_id;
+        std::string sender_name;
+        std::string content;
+        std::string timestamp;
+        bool is_system_message = false;
+    };
+
+    struct ChannelMember {
+        std::string player_id;
+        std::string player_name;
+        std::string role = "member";     // "member", "moderator", "operator", "owner"
+        bool is_muted = false;
+    };
+
+    std::vector<ChatMessage> messages;
+    std::vector<ChannelMember> members;
+    int max_history = 200;               // max messages to keep
+
+    int memberCount() const { return static_cast<int>(members.size()); }
+
+    COMPONENT_TYPE(ChatChannel)
+};
+
+/**
+ * @brief Character sheet for player identity and attributes
+ *
+ * Tracks race, bloodline, ancestry, clone, implants, and
+ * character attributes for creation and progression.
+ */
+class CharacterSheet : public ecs::Component {
+public:
+    std::string character_id;
+    std::string character_name;
+    std::string race = "Caldari";           // "Caldari", "Amarr", "Gallente", "Minmatar"
+    std::string bloodline;                   // race-specific bloodline
+    std::string ancestry;                    // background/origin
+    std::string gender = "male";             // "male", "female"
+    float date_of_birth = 0.0f;              // simulation time of creation
+
+    // Attributes (base values, modified by implants)
+    int intelligence = 20;
+    int perception = 20;
+    int charisma = 19;
+    int willpower = 20;
+    int memory = 20;
+
+    // Clone
+    std::string clone_grade = "alpha";       // "alpha", "omega"
+    std::string clone_location;              // station ID for medical clone
+    int clone_jump_cooldown = 0;             // seconds remaining
+
+    // Implants (slots 1-10)
+    struct Implant {
+        std::string implant_id;
+        std::string implant_name;
+        int slot = 0;                        // 1-10
+        std::string attribute_bonus;         // attribute boosted
+        int bonus_amount = 0;
+    };
+    std::vector<Implant> implants;
+
+    // Security status
+    float security_status = 0.0f;            // -10.0 to 10.0
+
+    // Employment history
+    struct EmploymentRecord {
+        std::string corp_id;
+        std::string corp_name;
+        float join_date = 0.0f;
+        float leave_date = 0.0f;
+    };
+    std::vector<EmploymentRecord> employment_history;
+
+    int getEffectiveAttribute(const std::string& attr) const {
+        int base = 0;
+        if (attr == "intelligence") base = intelligence;
+        else if (attr == "perception") base = perception;
+        else if (attr == "charisma") base = charisma;
+        else if (attr == "willpower") base = willpower;
+        else if (attr == "memory") base = memory;
+
+        for (const auto& imp : implants) {
+            if (imp.attribute_bonus == attr) base += imp.bonus_amount;
+        }
+        return base;
+    }
+
+    COMPONENT_TYPE(CharacterSheet)
+};
+
 } // namespace components
 } // namespace eve
 
