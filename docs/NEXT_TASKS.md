@@ -1,6 +1,6 @@
 # EVE OFFLINE - Next Tasks Recommendations
 
-> **Update (February 11, 2026)**: ChatSystem and CharacterCreationSystem added to C++ server. 25 server systems, 785 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
+> **Update (February 11, 2026)**: TournamentSystem and LeaderboardSystem added to C++ server. All baseline systems complete. 27 server systems, 832 test assertions, all passing. 102 ships, 159+ modules, 137 skills.
 
 ## Current Status (February 2026)
 
@@ -25,9 +25,9 @@
 - **10 mining missions** across levels 1-4
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
-- **18 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts)
+- **27 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **150+ test functions** all passing (785 assertions)
+- **170+ test functions** all passing (832 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture
@@ -129,8 +129,8 @@ From ROADMAP.md "In Progress" section:
 
 #### 3.3 Additional Game Systems
 - PvP toggle option (optional for those who want it)
-- Tournament system
-- Leaderboards and achievements
+- ✅ Tournament system — TournamentSystem with brackets, scoring, elimination, prizes (24 assertions)
+- ✅ Leaderboards and achievements — LeaderboardSystem with stat tracking, rankings, achievement unlocks (23 assertions)
 - In-game web browser (dotlan-style maps)
 
 #### 3.4 Community & Modding
@@ -404,7 +404,7 @@ From ROADMAP.md "In Progress" section:
     - ✅ Custom UI strategy (retained-mode, docking, EVE theme)
     - ✅ Modular procedural ship generation plan
     - ✅ Implementation priority order
-    - ✅ Complete systems status table (25 systems, 785 tests)
+    - ✅ Complete systems status table (27 systems, 832 tests)
     - ✅ Gap analysis with remaining systems to implement
 
 34. ✅ **Add C++ Server CorporationSystem** (COMPLETED - February 2026)
@@ -468,6 +468,27 @@ From ROADMAP.md "In Progress" section:
     - ✅ 4 races supported: Caldari, Amarr, Gallente, Minmatar
     - ✅ 23 test assertions, 100% pass rate
 
+41. ✅ **Add C++ Server TournamentSystem** (COMPLETED - February 2026)
+    - ✅ Tournament component with registration, rounds, scoring, and elimination
+    - ✅ TournamentSystem with create/register/start/score/eliminate lifecycle
+    - ✅ Round timer with automatic progression (configurable duration)
+    - ✅ Entry fee collection and prize pool accumulation
+    - ✅ Max participant enforcement and duplicate registration prevention
+    - ✅ Participant elimination with score-recording lockout
+    - ✅ Round result tracking with winner per round
+    - ✅ Tournament completion after configurable number of rounds
+    - ✅ 24 test assertions, 100% pass rate
+
+42. ✅ **Add C++ Server LeaderboardSystem** (COMPLETED - February 2026)
+    - ✅ Leaderboard component with player entries, achievements, and unlock tracking
+    - ✅ LeaderboardSystem with kill/ISK/mission/tournament/damage stat recording
+    - ✅ Achievement definition with category, stat_key, and requirement threshold
+    - ✅ Achievement unlock checking with duplicate prevention
+    - ✅ Player ranking by kills (sortable leaderboard)
+    - ✅ Auto-create player entry on first stat recording
+    - ✅ Multi-player stat tracking and comparison
+    - ✅ 23 test assertions, 100% pass rate
+
 ### Long-Term Goals (1-3 months each)
 
 1. **Performance Optimization**
@@ -486,7 +507,7 @@ From ROADMAP.md "In Progress" section:
    - Level 5 missions
    - ✅ Epic arcs
    - ✅ Incursions (group PVE)
-   - Tournament system
+   - ✅ Tournament system
 
 ---
 
@@ -534,4 +555,4 @@ The project has a solid foundation and can grow in multiple directions based on 
 ---
 
 *Last Updated: February 11, 2026*
-*Status: All major server systems implemented. ChatSystem and CharacterCreationSystem added. 25 server systems, 102 ships, 159+ modules, 785 test assertions. Ready for AI economic actors and custom UI implementation.*
+*Status: All baseline server systems implemented. TournamentSystem and LeaderboardSystem added. 27 server systems, 102 ships, 159+ modules, 832 test assertions. Ready for AI economic actors and custom UI implementation.*
