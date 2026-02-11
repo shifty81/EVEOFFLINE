@@ -1,7 +1,9 @@
 #include "ui/context_menu.h"
+#ifdef HAS_IMGUI
 #include "ui/ui_manager.h"
 #include "ui/eve_colors.h"
 #include <imgui.h>
+#endif
 #include <iostream>
 
 namespace UI {
@@ -19,7 +21,9 @@ void ContextMenu::ShowEntityMenu(const std::string& entity_id, bool is_locked) {
     m_menuType = ContextMenuType::ENTITY;
     m_targetEntityId = entity_id;
     m_targetIsLocked = is_locked;
+#ifdef HAS_IMGUI
     ImGui::OpenPopup("EntityContextMenu");
+#endif
 }
 
 void ContextMenu::ShowEmptySpaceMenu(float world_x, float world_y, float world_z) {
@@ -27,12 +31,16 @@ void ContextMenu::ShowEmptySpaceMenu(float world_x, float world_y, float world_z
     m_worldX = world_x;
     m_worldY = world_y;
     m_worldZ = world_z;
+#ifdef HAS_IMGUI
     ImGui::OpenPopup("EmptySpaceContextMenu");
+#endif
 }
 
 void ContextMenu::Close() {
     m_menuType = ContextMenuType::NONE;
+#ifdef HAS_IMGUI
     ImGui::CloseCurrentPopup();
+#endif
 }
 
 void ContextMenu::Render() {
@@ -40,6 +48,7 @@ void ContextMenu::Render() {
         return;
     }
     
+#ifdef HAS_IMGUI
     // Photon UI menu colors — teal accent hover, dark blue-black background
     ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(
         EVEColors::BG_TOOLTIP[0], EVEColors::BG_TOOLTIP[1],
@@ -166,9 +175,11 @@ void ContextMenu::Render() {
     }
     
     ImGui::PopStyleColor(4);
+#endif
 }
 
 void ContextMenu::RenderOrbitSubmenu() {
+#ifdef HAS_IMGUI
     if (ImGui::MenuItem("500m")) {
         if (m_onOrbit) {
             m_onOrbit(m_targetEntityId, static_cast<int>(OrbitDistance::ORBIT_500M));
@@ -205,9 +216,11 @@ void ContextMenu::RenderOrbitSubmenu() {
         }
         Close();
     }
+#endif
 }
 
 void ContextMenu::RenderKeepAtRangeSubmenu() {
+#ifdef HAS_IMGUI
     if (ImGui::MenuItem("1km")) {
         if (m_onKeepAtRange) {
             m_onKeepAtRange(m_targetEntityId, static_cast<int>(KeepAtRangeDistance::RANGE_1KM));
@@ -238,9 +251,11 @@ void ContextMenu::RenderKeepAtRangeSubmenu() {
         }
         Close();
     }
+#endif
 }
 
 void ContextMenu::RenderWarpToSubmenu() {
+#ifdef HAS_IMGUI
     if (ImGui::MenuItem("At 0km")) {
         if (m_onWarpTo) {
             m_onWarpTo(m_targetEntityId, static_cast<int>(WarpToDistance::WARP_0KM));
@@ -265,6 +280,7 @@ void ContextMenu::RenderWarpToSubmenu() {
         }
         Close();
     }
+#endif
 }
 
 } // namespace UI

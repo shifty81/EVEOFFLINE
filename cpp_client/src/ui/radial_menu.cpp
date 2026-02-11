@@ -1,5 +1,7 @@
 #include "ui/radial_menu.h"
+#ifdef HAS_IMGUI
 #include <imgui.h>
+#endif
 #include <cmath>
 
 #ifndef M_PI
