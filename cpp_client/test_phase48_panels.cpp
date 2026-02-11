@@ -20,6 +20,7 @@
 #include "ui/dscan_panel.h"
 #include "ui/neocom_panel.h"
 #include "ui/eve_panels.h"
+#include "ui/photon/photon_context.h"
 #include <iostream>
 #include <cmath>
 
@@ -62,6 +63,9 @@ int main() {
         return -1;
     }
     std::cout << "[Test] UIManager initialized" << std::endl;
+
+    // ---- Setup Photon context for module rack rendering ----
+    photon::PhotonContext photonCtx;
 
     // ---- Setup demo ship status ----
     UI::ShipStatus shipStatus;
@@ -147,7 +151,7 @@ int main() {
             ImGui::Begin("##ModuleRackDemo", nullptr,
                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBackground |
                 ImGuiWindowFlags_NoScrollbar);
-            UI::EVEPanels::RenderModuleRack(moduleSlots, 8);
+            UI::EVEPanels::RenderModuleRack(photonCtx, moduleSlots, 8);
             ImGui::End();
         }
 

@@ -1,5 +1,6 @@
 #include "ui/inventory_panel.h"
 #include "ui/ui_manager.h"
+#include "ui/eve_colors.h"
 #include <imgui.h>
 #include <algorithm>
 #include <cstring>  // for strncpy
