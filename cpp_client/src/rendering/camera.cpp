@@ -1,5 +1,6 @@
 #include "rendering/camera.h"
 #include <algorithm>
+#include <cmath>
 
 namespace eve {
 
@@ -16,12 +17,37 @@ Camera::Camera(float fov, float aspectRatio, float nearPlane, float farPlane)
     , m_forward(0.0f, 0.0f, -1.0f)
     , m_right(1.0f, 0.0f, 0.0f)
     , m_up(0.0f, 1.0f, 0.0f)
+    , m_targetDistance(500.0f)
 {
     updateVectors();
 }
 
 void Camera::update(float deltaTime) {
-    // Can add smooth interpolation here if needed
+    // ── Smooth zoom (exponential lerp toward target distance) ────────
+    float distDiff = m_targetDistance - m_distance;
+    if (std::abs(distDiff) > 0.01f) {
+        m_distance += distDiff * std::min(1.0f, ZOOM_LERP_SPEED * deltaTime);
+        m_distance = std::clamp(m_distance, MIN_DISTANCE, MAX_DISTANCE);
+    } else {
+        m_distance = m_targetDistance;
+    }
+
+    // ── Orbit inertia (spin continues and decays after mouse release) ─
+    if (std::abs(m_yawVelocity) > INERTIA_THRESHOLD ||
+        std::abs(m_pitchVelocity) > INERTIA_THRESHOLD) {
+        m_yaw   += m_yawVelocity   * deltaTime;
+        m_pitch += m_pitchVelocity * deltaTime;
+        m_pitch  = std::clamp(m_pitch, MIN_PITCH, MAX_PITCH);
+
+        // Exponential damping
+        float decay = std::exp(-INERTIA_DAMPING * deltaTime);
+        m_yawVelocity   *= decay;
+        m_pitchVelocity *= decay;
+    } else {
+        m_yawVelocity   = 0.0f;
+        m_pitchVelocity = 0.0f;
+    }
+
     updateVectors();
 }
 
@@ -43,9 +69,10 @@ glm::vec3 Camera::getPosition() const {
 }
 
 void Camera::zoom(float delta) {
-    m_distance -= delta * 50.0f;
-    m_distance = std::clamp(m_distance, MIN_DISTANCE, MAX_DISTANCE);
-    updateVectors();
+    // EVE-style: scroll zooms logarithmically (proportional to current distance)
+    float zoomFactor = m_targetDistance * 0.12f;
+    m_targetDistance -= delta * zoomFactor;
+    m_targetDistance = std::clamp(m_targetDistance, MIN_DISTANCE, MAX_DISTANCE);
 }
 
 void Camera::rotate(float deltaYaw, float deltaPitch) {
@@ -54,6 +81,12 @@ void Camera::rotate(float deltaYaw, float deltaPitch) {
     
     // Clamp pitch to prevent camera flipping
     m_pitch = std::clamp(m_pitch, MIN_PITCH, MAX_PITCH);
+
+    // Feed angular velocity for inertia when mouse is released
+    // The velocity is based on the most recent deltas (weighted toward
+    // responsiveness rather than averaging).
+    m_yawVelocity   = deltaYaw   * 60.0f;  // scale up since deltas are per-frame
+    m_pitchVelocity = deltaPitch * 60.0f;
     
     updateVectors();
 }
@@ -72,6 +105,24 @@ void Camera::setAspectRatio(float aspectRatio) {
 
 void Camera::setDistance(float distance) {
     m_distance = std::clamp(distance, MIN_DISTANCE, MAX_DISTANCE);
+    m_targetDistance = m_distance;
+    updateVectors();
+}
+
+void Camera::lookAt(const glm::vec3& worldPos) {
+    glm::vec3 dir = worldPos - m_target;
+    float dist = glm::length(dir);
+    if (dist < 0.01f) return;
+
+    dir = glm::normalize(dir);
+    m_yaw   = glm::degrees(std::atan2(dir.x, dir.z));
+    m_pitch = glm::degrees(std::asin(std::clamp(dir.y, -1.0f, 1.0f)));
+    m_pitch = std::clamp(m_pitch, MIN_PITCH, MAX_PITCH);
+
+    // Kill any lingering inertia so the snap feels intentional
+    m_yawVelocity   = 0.0f;
+    m_pitchVelocity = 0.0f;
+
     updateVectors();
 }
 

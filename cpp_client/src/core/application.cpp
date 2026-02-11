@@ -76,6 +76,9 @@ void Application::run() {
         float currentTime = static_cast<float>(glfwGetTime());
         float deltaTime = currentTime - m_lastFrameTime;
         m_lastFrameTime = currentTime;
+
+        // Reset per-frame input state before polling events
+        m_inputHandler->beginFrame();
         
         // Update
         update(deltaTime);
@@ -159,6 +162,7 @@ void Application::initialize() {
         if (m_uiManager) {
             m_uiManager->HandleScroll(yoffset, mods);
         }
+        m_inputHandler->handleScroll(xoffset, yoffset);
         handleScroll(xoffset, yoffset);
     });
     
@@ -521,11 +525,19 @@ void Application::render() {
         atlas::InputState atlasInput;
         atlasInput.windowW = m_window->getWidth();
         atlasInput.windowH = m_window->getHeight();
-        // Forward mouse state from GLFW to Atlas for interactive widgets
+        // Forward mouse state from InputHandler to Atlas for interactive widgets
         atlasInput.mousePos = {static_cast<float>(m_inputHandler->getMouseX()),
                                 static_cast<float>(m_inputHandler->getMouseY())};
-        atlasInput.mouseDown[0] = m_leftMouseDown;
-        atlasInput.mouseDown[1] = m_rightMouseDown;
+        atlasInput.mouseDown[0] = m_inputHandler->isMouseDown(0);
+        atlasInput.mouseDown[1] = m_inputHandler->isMouseDown(1);
+        atlasInput.mouseDown[2] = m_inputHandler->isMouseDown(2);
+        atlasInput.mouseClicked[0]  = m_inputHandler->isMouseClicked(0);
+        atlasInput.mouseClicked[1]  = m_inputHandler->isMouseClicked(1);
+        atlasInput.mouseClicked[2]  = m_inputHandler->isMouseClicked(2);
+        atlasInput.mouseReleased[0] = m_inputHandler->isMouseReleased(0);
+        atlasInput.mouseReleased[1] = m_inputHandler->isMouseReleased(1);
+        atlasInput.mouseReleased[2] = m_inputHandler->isMouseReleased(2);
+        atlasInput.scrollY = m_inputHandler->getScrollDeltaY();
         
         m_atlasCtx->beginFrame(atlasInput);
         
@@ -599,15 +611,24 @@ void Application::render() {
         
         m_atlasHUD->update(*m_atlasCtx, shipData, atlasTargets, atlasOverview, atlasSelected);
         
+        // Render Context Menu via Atlas (inside the Atlas frame)
+        if (m_contextMenu && m_contextMenu->IsOpen()) {
+            m_contextMenu->RenderAtlas(*m_atlasCtx);
+        }
+
+        // Render Radial Menu via Atlas (inside the Atlas frame)
+        if (m_radialMenu && m_radialMenuOpen) {
+            m_radialMenu->RenderAtlas(*m_atlasCtx);
+        }
+
         m_atlasCtx->endFrame();
     }
     
-    // Render Context Menu (if open)
+    // Legacy context/radial menu render stubs (retained for RmlUi fallback)
     if (m_contextMenu) {
         m_contextMenu->Render();
     }
     
-    // Render Radial Menu (if open)
     if (m_radialMenu && m_radialMenuOpen) {
         m_radialMenu->Render();
     }
@@ -831,6 +852,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                             // Show entity context menu
                             bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), pickedId) != m_targetList.end();
                             m_contextMenu->ShowEntityMenu(pickedId, isLocked);
+                            m_contextMenu->SetScreenPosition(static_cast<float>(x), static_cast<float>(y));
                             // Show via RmlUi
                             if (m_uiManager) {
                                 auto entity = m_gameClient->getEntityManager().getEntity(pickedId);
@@ -859,6 +881,12 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             m_radialMenuStartX = x;
             m_radialMenuStartY = y;
             m_radialMenuHoldStartTime = glfwGetTime();
+
+            // Close context menu when clicking elsewhere (EVE behaviour)
+            if (m_contextMenu && m_contextMenu->IsOpen()) {
+                m_contextMenu->Close();
+                if (m_uiManager) m_uiManager->HideContextMenu();
+            }
         } else if (action == GLFW_RELEASE) {
             // Check if radial menu is open
             if (m_radialMenuOpen) {
@@ -914,9 +942,14 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                 m_dockingModeActive = false;
                 m_activeModeText.clear();
             } else {
-                // Default: select / CTRL+click to lock target
-                bool addToTargets = (mods & GLFW_MOD_CONTROL) != 0;
-                targetEntity(pickedEntityId, addToTargets);
+                // Default: select / CTRL+click to lock target / double-click to approach
+                if (m_inputHandler->isDoubleClick()) {
+                    // EVE-style double-click: approach the entity
+                    commandApproach(pickedEntityId);
+                } else {
+                    bool addToTargets = (mods & GLFW_MOD_CONTROL) != 0;
+                    targetEntity(pickedEntityId, addToTargets);
+                }
             }
         }
     }

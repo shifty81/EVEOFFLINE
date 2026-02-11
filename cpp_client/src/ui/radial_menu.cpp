@@ -1,4 +1,5 @@
 #include "ui/radial_menu.h"
+#include "ui/atlas/atlas_context.h"
 #include <cmath>
 
 #ifndef M_PI
@@ -127,7 +128,84 @@ int RadialMenu::GetSegmentAtAngle(float angle) const {
 }
 
 void RadialMenu::Render() {
-    // Rendering is handled by the Atlas/RmlUi system
+    // Legacy stub — rendering now goes through RenderAtlas()
+}
+
+void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
+    if (!m_open) return;
+
+    const atlas::Theme& t = ctx.theme();
+    auto& r = ctx.renderer();
+
+    atlas::Vec2 center(m_centerX, m_centerY);
+
+    // EVE-style teal accent color
+    atlas::Color accentTeal  = t.accentPrimary;
+    atlas::Color accentDim   = t.accentDim;
+    atlas::Color bgDark      = atlas::Color(0.04f, 0.06f, 0.09f, 0.85f);
+    atlas::Color bgHighlight = atlas::Color(0.1f, 0.25f, 0.32f, 0.9f);
+
+    // Draw outer ring background
+    r.drawArc(center, INNER_RADIUS, OUTER_RADIUS,
+              0.0f, 2.0f * static_cast<float>(M_PI), bgDark, 48);
+
+    // Draw inner dead-zone circle (darker)
+    r.drawCircle(center, INNER_RADIUS, atlas::Color(0.02f, 0.03f, 0.05f, 0.9f));
+    r.drawCircleOutline(center, INNER_RADIUS, accentDim, 1.0f);
+
+    // Draw outer ring outline
+    r.drawCircleOutline(center, OUTER_RADIUS, accentDim, 1.5f);
+
+    // Draw segment divider lines and labels
+    float pi2 = 2.0f * static_cast<float>(M_PI);
+    for (int i = 0; i < static_cast<int>(m_segments.size()); ++i) {
+        const auto& seg = m_segments[i];
+        bool highlighted = (seg.action == m_highlightedAction && m_highlightedAction != Action::NONE);
+
+        // Highlight the selected segment
+        if (highlighted) {
+            r.drawArc(center, INNER_RADIUS + 1.0f, OUTER_RADIUS - 1.0f,
+                      seg.startAngle, seg.endAngle, bgHighlight, 8);
+            // Teal accent border on highlighted segment
+            float midAngle = (seg.startAngle + seg.endAngle) * 0.5f;
+            float arcSpan = seg.endAngle - seg.startAngle;
+            r.drawArc(center, OUTER_RADIUS - 3.0f, OUTER_RADIUS,
+                      seg.startAngle, seg.endAngle, accentTeal, 8);
+        }
+
+        // Divider line from inner to outer radius
+        float ca = std::cos(seg.startAngle);
+        float sa = std::sin(seg.startAngle);
+        atlas::Vec2 lineStart(center.x + ca * INNER_RADIUS,
+                              center.y + sa * INNER_RADIUS);
+        atlas::Vec2 lineEnd(center.x + ca * OUTER_RADIUS,
+                            center.y + sa * OUTER_RADIUS);
+        r.drawLine(lineStart, lineEnd, accentDim.withAlpha(0.4f), 1.0f);
+
+        // Label at midpoint of segment arc
+        float midAngle = (seg.startAngle + seg.endAngle) * 0.5f;
+        float labelX = center.x + std::cos(midAngle) * ICON_RADIUS;
+        float labelY = center.y + std::sin(midAngle) * ICON_RADIUS;
+
+        // Center the text approximately
+        float textW = r.measureText(seg.label);
+        atlas::Color labelColor = highlighted ? accentTeal : t.textPrimary;
+        r.drawText(seg.label,
+                   {labelX - textW * 0.5f, labelY - 6.0f},
+                   labelColor);
+    }
+
+    // Draw crosshair / mouse direction indicator
+    float dx = m_mouseX - m_centerX;
+    float dy = m_mouseY - m_centerY;
+    float dist = std::sqrt(dx * dx + dy * dy);
+    if (dist > INNER_RADIUS) {
+        float nx = dx / dist;
+        float ny = dy / dist;
+        atlas::Vec2 indicatorPos(center.x + nx * (INNER_RADIUS + 6.0f),
+                                 center.y + ny * (INNER_RADIUS + 6.0f));
+        r.drawCircle(indicatorPos, 3.0f, accentTeal);
+    }
 }
 
 } // namespace UI

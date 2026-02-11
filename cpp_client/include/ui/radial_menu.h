@@ -6,6 +6,10 @@
 #include <vector>
 #include <cmath>
 
+namespace atlas {
+    class AtlasContext;
+}
+
 namespace UI {
 
 /**
@@ -64,9 +68,14 @@ public:
     Action Confirm();
 
     /**
-     * Render the radial menu (call each frame between BeginFrame/EndFrame).
+     * Render the radial menu (legacy stub — no-op).
      */
     void Render();
+
+    /**
+     * Render the radial menu via Atlas (call between beginFrame/endFrame).
+     */
+    void RenderAtlas(atlas::AtlasContext& ctx);
 
     /**
      * Check if menu is currently open.
