@@ -2,6 +2,21 @@
 
 > **Update (February 11, 2026)**: Test infrastructure improved with dedicated test runner script. All 832 test assertions passing across 170+ test functions. Documentation updated with comprehensive testing guide. Project status: Excellent - all baseline systems complete, well-tested, and documented.
 
+> ⭐ **NEW**: See [DEVELOPMENT_GUIDANCE.md](DEVELOPMENT_GUIDANCE.md) for comprehensive guidance on the next major milestone: **Vertical Slice - One Full Star System**
+
+## Quick Start for Developers
+
+**Looking for what to work on next?** 
+
+👉 **Read [DEVELOPMENT_GUIDANCE.md](DEVELOPMENT_GUIDANCE.md)** - This document provides:
+- Clear prioritization of the Vertical Slice milestone
+- Detailed task breakdown for Phase 1 (Weeks 1-3)
+- Implementation plans with step-by-step guidance
+- Alternative priorities if vertical slice isn't the goal
+- Development process and testing requirements
+
+**TL;DR**: The highest priority task is **Task 1.1: Procedural Ship Hull + Weapons Generation** (1-2 weeks, medium complexity). This is the first step in the critical Vertical Slice milestone.
+
 ## Current Status (February 2026)
 
 ### Completed Phases
