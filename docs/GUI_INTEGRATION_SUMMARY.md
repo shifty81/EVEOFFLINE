@@ -183,7 +183,7 @@ The EVE OFFLINE C++ client had fully implemented Context Menu and Radial Menu UI
 
 6. **Distance Presets**: Radial menu uses hardcoded default distances (orbit: 500m, range: 2500m). Context menu has full submenu options.
 
-7. **Overview Tab Filtering**: Tabs are now interactive (clickable) but filtering logic (Combat/Mining/Custom filters) is not yet implemented — all tabs show the same entity list.
+7. ~~**Overview Tab Filtering**: Tabs are now interactive (clickable) but filtering logic (Combat/Mining/Custom filters) is not yet implemented — all tabs show the same entity list.~~ ✅ **RESOLVED** (Feb 11, 2026) — Overview tabs now filter entities by type: Combat shows hostile entities and combat ship types, Mining shows asteroid belts and resource-related objects.
 
 ---
 
@@ -202,7 +202,7 @@ The EVE OFFLINE C++ client had fully implemented Context Menu and Radial Menu UI
 - ~~Info panel implementation~~ ✅ Done
 - ~~Visual indicators for movement modes~~ ✅ Done
 - Range circle preview overlay
-- Overview tab filtering logic (Combat/Mining/Custom)
+- ~~Overview tab filtering logic (Combat/Mining/Custom)~~ ✅ Done
 
 ---
 

@@ -252,6 +252,25 @@ public:
     // Access layout manager
     LayoutManager& GetLayoutManager() { return m_layoutManager; }
 
+    // ── UI Scale (Phase 4.10) ───────────────────────────────────────
+
+    /** Set the global UI scale factor (0.5 – 2.0). */
+    void SetUIScale(float scale);
+
+    /** Get the current UI scale factor. */
+    float GetUIScale() const { return m_uiScale; }
+
+    // ── Color Scheme (Phase 4.10) ───────────────────────────────────
+
+    /** Available color scheme names. */
+    enum class ColorScheme { DEFAULT, CLASSIC, COLORBLIND };
+
+    /** Set the active color scheme. */
+    void SetColorScheme(ColorScheme scheme);
+
+    /** Get the active color scheme. */
+    ColorScheme GetColorScheme() const { return m_colorScheme; }
+
 private:
     // Atlas UI core
     atlas::AtlasContext m_ctx;
@@ -321,6 +340,12 @@ private:
     std::string m_activeLayoutName = "default";
     int m_windowW = 1280;
     int m_windowH = 720;
+
+    // UI Scale (Phase 4.10)
+    float m_uiScale = 1.0f;
+
+    // Color scheme (Phase 4.10)
+    ColorScheme m_colorScheme = ColorScheme::DEFAULT;
 
     // Panel initialization helper
     void InitPanelConfigs(int windowW, int windowH);

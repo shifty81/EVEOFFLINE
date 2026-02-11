@@ -731,4 +731,55 @@ void UIManager::ResetToDefaultLayout() {
     m_activeLayoutName = "default";
 }
 
+// ============================================================================
+// UI Scale (Phase 4.10)
+// ============================================================================
+
+void UIManager::SetUIScale(float scale) {
+    m_uiScale = std::max(0.5f, std::min(2.0f, scale));
+    std::cout << "[UIManager] UI scale set to " << m_uiScale << std::endl;
+}
+
+// ============================================================================
+// Color Scheme (Phase 4.10)
+// ============================================================================
+
+void UIManager::SetColorScheme(ColorScheme scheme) {
+    m_colorScheme = scheme;
+
+    atlas::Theme theme = m_ctx.theme();
+    switch (scheme) {
+        case ColorScheme::CLASSIC:
+            // Warmer, amber-tinted classic theme
+            theme.accentPrimary   = atlas::Color(0.90f, 0.75f, 0.30f, 1.0f);
+            theme.accentSecondary = atlas::Color(0.95f, 0.85f, 0.45f, 1.0f);
+            theme.accentDim       = atlas::Color(0.40f, 0.35f, 0.15f, 1.0f);
+            theme.bgPanel         = atlas::Color(0.06f, 0.05f, 0.04f, 0.95f);
+            theme.bgHeader        = atlas::Color(0.10f, 0.08f, 0.06f, 1.0f);
+            theme.textPrimary     = atlas::Color(0.93f, 0.90f, 0.82f, 1.0f);
+            theme.textSecondary   = atlas::Color(0.65f, 0.60f, 0.50f, 1.0f);
+            std::cout << "[UIManager] Color scheme set to Classic" << std::endl;
+            break;
+
+        case ColorScheme::COLORBLIND:
+            // Deuteranopia-safe: blue/orange instead of green/red
+            theme.accentPrimary   = atlas::Color(0.20f, 0.60f, 1.00f, 1.0f);
+            theme.accentSecondary = atlas::Color(0.40f, 0.75f, 1.00f, 1.0f);
+            theme.accentDim       = atlas::Color(0.10f, 0.30f, 0.50f, 1.0f);
+            theme.success         = atlas::Color(0.20f, 0.60f, 1.00f, 1.0f);
+            theme.warning         = atlas::Color(1.00f, 0.70f, 0.20f, 1.0f);
+            theme.danger          = atlas::Color(1.00f, 0.50f, 0.00f, 1.0f);
+            std::cout << "[UIManager] Color scheme set to Colorblind" << std::endl;
+            break;
+
+        case ColorScheme::DEFAULT:
+        default:
+            // Reset to default Atlas theme (teal/cyan)
+            theme = atlas::Theme{};
+            std::cout << "[UIManager] Color scheme set to Default" << std::endl;
+            break;
+    }
+    m_ctx.setTheme(theme);
+}
+
 } // namespace UI

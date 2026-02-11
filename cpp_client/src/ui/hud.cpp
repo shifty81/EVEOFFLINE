@@ -34,6 +34,11 @@ void HUD::render(atlas::AtlasContext& ctx) {
 
     UI::HUDPanels::RenderShipStatusCircular(ctx, status);
 
+    // Render combat log below the ship status gauge
+    if (!m_combatLog.empty()) {
+        UI::HUDPanels::RenderCombatLog(ctx, m_combatLog);
+    }
+
     // Render active damage flashes as screen overlays
     if (!m_damageFlashes.empty()) {
         auto& r = ctx.renderer();
