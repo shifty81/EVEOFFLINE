@@ -828,6 +828,47 @@ public:
     COMPONENT_TYPE(ResearchLab)
 };
 
+/**
+ * @brief Chat channel for persistent messaging
+ *
+ * Supports multiple channel types (local, corp, fleet, private)
+ * with message history, moderation, and member tracking.
+ */
+class ChatChannel : public ecs::Component {
+public:
+    std::string channel_id;
+    std::string channel_name;
+    std::string channel_type = "local";  // "local", "corp", "fleet", "alliance", "private"
+    std::string owner_id;                // channel creator/owner
+    std::string motd;                    // message of the day
+    int max_members = 0;                 // 0 = unlimited
+    bool is_moderated = false;
+
+    struct ChatMessage {
+        std::string message_id;
+        std::string sender_id;
+        std::string sender_name;
+        std::string content;
+        std::string timestamp;
+        bool is_system_message = false;
+    };
+
+    struct ChannelMember {
+        std::string player_id;
+        std::string player_name;
+        std::string role = "member";     // "member", "moderator", "operator", "owner"
+        bool is_muted = false;
+    };
+
+    std::vector<ChatMessage> messages;
+    std::vector<ChannelMember> members;
+    int max_history = 200;               // max messages to keep
+
+    int memberCount() const { return static_cast<int>(members.size()); }
+
+    COMPONENT_TYPE(ChatChannel)
+};
+
 } // namespace components
 } // namespace eve
 
