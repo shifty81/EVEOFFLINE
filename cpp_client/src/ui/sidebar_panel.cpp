@@ -13,7 +13,7 @@ bool SidebarPanel::RenderButton(const char* icon, const char* label, const char*
     float buttonSize = 40.0f;
     float expandedWidth = 170.0f;
 
-    // Push Photon UI hover highlight colors
+    // Push hover highlight colors
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(
         SpaceColors::SELECTION[0], SpaceColors::SELECTION[1],
         SpaceColors::SELECTION[2], 0.9f));
