@@ -46,7 +46,7 @@ namespace {
             struct termios new_termios = g_old_termios;
             
             // Disable canonical mode and echo
-            new_termios.c_lflag &= static_cast<unsigned>(~(ICANON | ECHO));
+            new_termios.c_lflag &= ~(ICANON | ECHO);
             new_termios.c_cc[VMIN] = 0;
             new_termios.c_cc[VTIME] = 0;
             
@@ -178,7 +178,7 @@ std::string ServerConsole::executeCommand(const std::string& command) {
     
     // Convert to lowercase for case-insensitive comparison
     std::transform(base_cmd.begin(), base_cmd.end(), base_cmd.begin(),
-                   [](unsigned char c){ return std::tolower(c); });
+                   [](unsigned char c) -> char { return static_cast<char>(std::tolower(c)); });
     
     // Dispatch to command handlers
     if (base_cmd == "help") {
