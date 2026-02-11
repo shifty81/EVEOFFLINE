@@ -1098,6 +1098,7 @@ if(BUILD_TESTS)
     target_include_directories(test_photon_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     target_link_libraries(test_photon_ui
         Threads::Threads
+        glm::glm
     )
     if(WIN32)
         target_link_libraries(test_photon_ui ws2_32)
