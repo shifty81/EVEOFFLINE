@@ -936,6 +936,93 @@ public:
     COMPONENT_TYPE(CharacterSheet)
 };
 
+/**
+ * @brief Tournament bracket for competitive PvE events
+ *
+ * Tracks tournament lifecycle: registration, active rounds,
+ * participant scoring, and final results with rewards.
+ */
+class Tournament : public ecs::Component {
+public:
+    std::string tournament_id;
+    std::string name;
+    std::string status = "registration";  // "registration", "active", "completed", "cancelled"
+
+    int max_participants = 16;
+    int current_round = 0;
+    int total_rounds = 0;
+    float round_duration = 600.0f;        // seconds per round
+    float round_timer = 0.0f;             // countdown for current round
+
+    double entry_fee = 0.0;
+    double prize_pool = 0.0;
+
+    struct Participant {
+        std::string player_id;
+        std::string player_name;
+        int score = 0;
+        int kills = 0;
+        bool eliminated = false;
+    };
+
+    std::vector<Participant> participants;
+
+    struct RoundResult {
+        int round_number = 0;
+        std::string winner_id;
+        int winner_score = 0;
+        int participant_count = 0;
+    };
+
+    std::vector<RoundResult> round_results;
+
+    COMPONENT_TYPE(Tournament)
+};
+
+/**
+ * @brief Leaderboard for tracking player rankings and achievements
+ *
+ * Aggregates player stats across categories (kills, ISK earned,
+ * missions completed, etc.) and tracks unlocked achievements.
+ */
+class Leaderboard : public ecs::Component {
+public:
+    struct PlayerEntry {
+        std::string player_id;
+        std::string player_name;
+        int total_kills = 0;
+        double total_isk_earned = 0.0;
+        int missions_completed = 0;
+        int tournaments_won = 0;
+        double total_bounty = 0.0;
+        int ships_destroyed = 0;
+        int ships_lost = 0;
+        double total_damage_dealt = 0.0;
+    };
+
+    struct Achievement {
+        std::string achievement_id;
+        std::string name;
+        std::string description;
+        std::string category;             // "combat", "industry", "exploration", "social"
+        int requirement = 1;              // threshold to unlock
+        std::string stat_key;             // which stat to check against requirement
+    };
+
+    struct UnlockedAchievement {
+        std::string achievement_id;
+        std::string player_id;
+        float unlock_time = 0.0f;
+    };
+
+    std::string board_id;
+    std::vector<PlayerEntry> entries;
+    std::vector<Achievement> achievements;
+    std::vector<UnlockedAchievement> unlocked;
+
+    COMPONENT_TYPE(Leaderboard)
+};
+
 } // namespace components
 } // namespace eve
 
