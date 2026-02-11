@@ -46,7 +46,8 @@ struct OverviewFilter {
     // Distance filter (in km, 0 = no limit)
     float max_distance_km = 0.0f;
     
-    // Type filters
+    // Type filters — matches against the entity's type string (ship types
+    // like "Frigate" as well as celestial labels like "Asteroid Belt").
     std::vector<std::string> show_ship_types;  // Empty = show all
     
     std::string name = "All";

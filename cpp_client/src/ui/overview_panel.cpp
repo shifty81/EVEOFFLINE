@@ -21,7 +21,9 @@ OverviewPanel::OverviewPanel()
     allFilter.name = "All";
     m_savedFilters["All"] = allFilter;
     
-    // Combat filter — show hostile NPCs/players and warpable combat targets
+    // Combat filter — show hostile NPCs/players and combat-relevant entities.
+    // Includes navigation targets (Wormhole, Stargate, Station) for quick
+    // warping during combat, matching EVE Online's combat overview behavior.
     OverviewFilter combatFilter;
     combatFilter.name = "Combat";
     combatFilter.show_friendly = false;
@@ -32,7 +34,9 @@ OverviewPanel::OverviewPanel()
     };
     m_savedFilters["Combat"] = combatFilter;
     
-    // Mining filter — show minable objects and resource-related celestials
+    // Mining filter — show minable objects and resource-related celestials.
+    // Uses the show_ship_types field which filters on the entity type string
+    // (applies to both ship types and celestial type labels).
     OverviewFilter miningFilter;
     miningFilter.name = "Mining";
     miningFilter.show_hostile = false;
