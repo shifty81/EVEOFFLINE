@@ -38,6 +38,9 @@
 #include "data/world_persistence.h"
 #include "data/npc_database.h"
 #include "systems/movement_system.h"
+#include "systems/station_system.h"
+#include "systems/wreck_salvage_system.h"
+#include "ui/server_console.h"
 #include "utils/logger.h"
 #include "utils/server_metrics.h"
 #include <iostream>
@@ -5167,6 +5170,473 @@ void testLeaderboardDamageTracking() {
     assertTrue(found, "Player entry found for damage tracking");
 }
 
+// ==================== StationSystem Tests ====================
+
+void testStationCreate() {
+    std::cout << "\n=== Station Create ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    bool ok = stationSys.createStation("station_1", "Test Hub", 100.0f, 0.0f, 200.0f, 3000.0f, 2.0f);
+    assertTrue(ok, "Station created successfully");
+
+    auto* entity = world.getEntity("station_1");
+    assertTrue(entity != nullptr, "Station entity exists");
+
+    auto* station = entity->getComponent<components::Station>();
+    assertTrue(station != nullptr, "Station component attached");
+    assertTrue(station->station_name == "Test Hub", "Station name is correct");
+    assertTrue(approxEqual(station->docking_range, 3000.0f), "Docking range is correct");
+    assertTrue(approxEqual(station->repair_cost_per_hp, 2.0f), "Repair cost per HP is correct");
+}
+
+void testStationDuplicateCreate() {
+    std::cout << "\n=== Station Duplicate Create ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub A", 0, 0, 0);
+    bool dup = stationSys.createStation("station_1", "Hub B", 0, 0, 0);
+    assertTrue(!dup, "Duplicate station creation rejected");
+}
+
+void testStationDockInRange() {
+    std::cout << "\n=== Station Dock In Range ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub", 0, 0, 0, 5000.0f);
+
+    auto* ship = world.createEntity("player_1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 100.0f;
+    addComp<components::Velocity>(ship);
+    addComp<components::Player>(ship);
+
+    bool ok = stationSys.dockAtStation("player_1", "station_1");
+    assertTrue(ok, "Docking succeeds when in range");
+    assertTrue(stationSys.isDocked("player_1"), "Player is docked");
+    assertTrue(stationSys.getDockedStation("player_1") == "station_1", "Docked at correct station");
+}
+
+void testStationDockOutOfRange() {
+    std::cout << "\n=== Station Dock Out Of Range ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub", 0, 0, 0, 500.0f);
+
+    auto* ship = world.createEntity("player_1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 9999.0f;
+    addComp<components::Velocity>(ship);
+
+    bool ok = stationSys.dockAtStation("player_1", "station_1");
+    assertTrue(!ok, "Docking fails when out of range");
+    assertTrue(!stationSys.isDocked("player_1"), "Player is not docked");
+}
+
+void testStationUndock() {
+    std::cout << "\n=== Station Undock ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub", 0, 0, 0, 5000.0f);
+
+    auto* ship = world.createEntity("player_1");
+    addComp<components::Position>(ship);
+    addComp<components::Velocity>(ship);
+
+    stationSys.dockAtStation("player_1", "station_1");
+    assertTrue(stationSys.isDocked("player_1"), "Docked before undock");
+
+    bool ok = stationSys.undockFromStation("player_1");
+    assertTrue(ok, "Undock succeeds");
+    assertTrue(!stationSys.isDocked("player_1"), "No longer docked after undock");
+}
+
+void testStationUndockNotDocked() {
+    std::cout << "\n=== Station Undock Not Docked ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    auto* ship = world.createEntity("player_1");
+    addComp<components::Position>(ship);
+
+    bool ok = stationSys.undockFromStation("player_1");
+    assertTrue(!ok, "Undock fails when not docked");
+}
+
+void testStationRepair() {
+    std::cout << "\n=== Station Repair ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub", 0, 0, 0, 5000.0f, 1.0f);
+
+    auto* ship = world.createEntity("player_1");
+    addComp<components::Position>(ship);
+    addComp<components::Velocity>(ship);
+
+    auto* hp = addComp<components::Health>(ship);
+    hp->shield_hp = 50.0f;  hp->shield_max = 100.0f;
+    hp->armor_hp  = 30.0f;  hp->armor_max  = 100.0f;
+    hp->hull_hp   = 80.0f;  hp->hull_max   = 100.0f;
+
+    auto* player = addComp<components::Player>(ship);
+    player->isk = 10000.0;
+
+    stationSys.dockAtStation("player_1", "station_1");
+
+    double cost = stationSys.repairShip("player_1");
+    // Damage = (100-50) + (100-30) + (100-80) = 50+70+20 = 140 HP, at 1 ISK/hp = 140
+    assertTrue(approxEqual(static_cast<float>(cost), 140.0f), "Repair cost is 140 ISK");
+    assertTrue(approxEqual(hp->shield_hp, 100.0f), "Shield fully repaired");
+    assertTrue(approxEqual(hp->armor_hp, 100.0f), "Armor fully repaired");
+    assertTrue(approxEqual(hp->hull_hp, 100.0f), "Hull fully repaired");
+    assertTrue(approxEqual(static_cast<float>(player->isk), 9860.0f), "ISK deducted");
+}
+
+void testStationRepairNoDamage() {
+    std::cout << "\n=== Station Repair No Damage ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub", 0, 0, 0, 5000.0f);
+
+    auto* ship = world.createEntity("player_1");
+    addComp<components::Position>(ship);
+    addComp<components::Velocity>(ship);
+
+    auto* hp = addComp<components::Health>(ship);
+    hp->shield_hp = hp->shield_max = 100.0f;
+    hp->armor_hp  = hp->armor_max  = 100.0f;
+    hp->hull_hp   = hp->hull_max   = 100.0f;
+
+    addComp<components::Player>(ship);
+
+    stationSys.dockAtStation("player_1", "station_1");
+
+    double cost = stationSys.repairShip("player_1");
+    assertTrue(approxEqual(static_cast<float>(cost), 0.0f), "No cost when no damage");
+}
+
+void testStationRepairNotDocked() {
+    std::cout << "\n=== Station Repair Not Docked ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    auto* ship = world.createEntity("player_1");
+    addComp<components::Position>(ship);
+    auto* hp = addComp<components::Health>(ship);
+    hp->shield_hp = 50.0f; hp->shield_max = 100.0f;
+
+    double cost = stationSys.repairShip("player_1");
+    assertTrue(approxEqual(static_cast<float>(cost), 0.0f), "No repair when not docked");
+}
+
+void testStationDockedCount() {
+    std::cout << "\n=== Station Docked Count ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub", 0, 0, 0, 5000.0f);
+
+    auto* s1 = world.createEntity("p1");
+    addComp<components::Position>(s1);
+    addComp<components::Velocity>(s1);
+
+    auto* s2 = world.createEntity("p2");
+    addComp<components::Position>(s2);
+    addComp<components::Velocity>(s2);
+
+    stationSys.dockAtStation("p1", "station_1");
+    stationSys.dockAtStation("p2", "station_1");
+
+    auto* station = world.getEntity("station_1")->getComponent<components::Station>();
+    assertTrue(station->docked_count == 2, "Two ships docked");
+
+    stationSys.undockFromStation("p1");
+    assertTrue(station->docked_count == 1, "One ship after undock");
+}
+
+void testStationDoubleDock() {
+    std::cout << "\n=== Station Double Dock ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub", 0, 0, 0, 5000.0f);
+
+    auto* ship = world.createEntity("p1");
+    addComp<components::Position>(ship);
+    addComp<components::Velocity>(ship);
+
+    stationSys.dockAtStation("p1", "station_1");
+    bool again = stationSys.dockAtStation("p1", "station_1");
+    assertTrue(!again, "Cannot dock when already docked");
+}
+
+void testStationMovementStopsOnDock() {
+    std::cout << "\n=== Station Movement Stops On Dock ===" << std::endl;
+    ecs::World world;
+    systems::StationSystem stationSys(&world);
+
+    stationSys.createStation("station_1", "Hub", 0, 0, 0, 5000.0f);
+
+    auto* ship = world.createEntity("p1");
+    addComp<components::Position>(ship);
+    auto* vel = addComp<components::Velocity>(ship);
+    vel->vx = 100.0f;
+    vel->vy = 50.0f;
+    vel->vz = 200.0f;
+
+    stationSys.dockAtStation("p1", "station_1");
+    assertTrue(approxEqual(vel->vx, 0.0f), "Velocity X zeroed on dock");
+    assertTrue(approxEqual(vel->vy, 0.0f), "Velocity Y zeroed on dock");
+    assertTrue(approxEqual(vel->vz, 0.0f), "Velocity Z zeroed on dock");
+}
+
+// ==================== WreckSalvageSystem Tests ====================
+
+void testWreckCreate() {
+    std::cout << "\n=== Wreck Create ===" << std::endl;
+    ecs::World world;
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    std::string wreck_id = wreckSys.createWreck("dead_ship_1", 100.0f, 0.0f, 200.0f, 600.0f);
+    assertTrue(!wreck_id.empty(), "Wreck created with valid id");
+
+    auto* entity = world.getEntity(wreck_id);
+    assertTrue(entity != nullptr, "Wreck entity exists");
+
+    auto* wreck = entity->getComponent<components::Wreck>();
+    assertTrue(wreck != nullptr, "Wreck component attached");
+    assertTrue(wreck->source_entity_id == "dead_ship_1", "Source entity id correct");
+    assertTrue(approxEqual(wreck->lifetime_remaining, 600.0f), "Lifetime is correct");
+    assertTrue(!wreck->salvaged, "Not yet salvaged");
+}
+
+void testWreckLifetimeDecay() {
+    std::cout << "\n=== Wreck Lifetime Decay ===" << std::endl;
+    ecs::World world;
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    wreckSys.createWreck("ship1", 0, 0, 0, 10.0f);
+    assertTrue(wreckSys.getActiveWreckCount() == 1, "One active wreck");
+
+    wreckSys.update(5.0f);
+    assertTrue(wreckSys.getActiveWreckCount() == 1, "Wreck still active after 5s");
+
+    wreckSys.update(6.0f);
+    assertTrue(wreckSys.getActiveWreckCount() == 0, "Wreck despawned after expiry");
+}
+
+void testSalvageWreckInRange() {
+    std::cout << "\n=== Salvage Wreck In Range ===" << std::endl;
+    ecs::World world;
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    std::string wreck_id = wreckSys.createWreck("ship1", 100.0f, 0.0f, 0.0f);
+
+    // Add loot to wreck
+    auto* wreck_entity = world.getEntity(wreck_id);
+    auto* wreck_inv = wreck_entity->getComponent<components::Inventory>();
+    components::Inventory::Item loot;
+    loot.item_id = "scrap_1";
+    loot.name = "Metal Scraps";
+    loot.type = "salvage";
+    loot.quantity = 5;
+    loot.volume = 1.0f;
+    wreck_inv->items.push_back(loot);
+
+    // Create player near the wreck
+    auto* player = world.createEntity("player_1");
+    auto* pos = addComp<components::Position>(player);
+    pos->x = 110.0f;
+    auto* inv = addComp<components::Inventory>(player);
+    inv->max_capacity = 1000.0f;
+
+    bool ok = wreckSys.salvageWreck("player_1", wreck_id, 2500.0f);
+    assertTrue(ok, "Salvage succeeds when in range");
+
+    assertTrue(inv->items.size() == 1, "Player received 1 item stack");
+    assertTrue(inv->items[0].name == "Metal Scraps", "Correct item transferred");
+    assertTrue(inv->items[0].quantity == 5, "Correct quantity transferred");
+}
+
+void testSalvageWreckOutOfRange() {
+    std::cout << "\n=== Salvage Wreck Out Of Range ===" << std::endl;
+    ecs::World world;
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    std::string wreck_id = wreckSys.createWreck("ship1", 0, 0, 0);
+
+    auto* player = world.createEntity("player_1");
+    auto* pos = addComp<components::Position>(player);
+    pos->x = 99999.0f;
+    addComp<components::Inventory>(player);
+
+    bool ok = wreckSys.salvageWreck("player_1", wreck_id, 2500.0f);
+    assertTrue(!ok, "Salvage fails when out of range");
+}
+
+void testSalvageAlreadySalvaged() {
+    std::cout << "\n=== Salvage Already Salvaged ===" << std::endl;
+    ecs::World world;
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    std::string wreck_id = wreckSys.createWreck("ship1", 0, 0, 0);
+
+    auto* player = world.createEntity("player_1");
+    addComp<components::Position>(player);
+    addComp<components::Inventory>(player);
+
+    wreckSys.salvageWreck("player_1", wreck_id, 5000.0f);
+    bool again = wreckSys.salvageWreck("player_1", wreck_id, 5000.0f);
+    assertTrue(!again, "Cannot salvage same wreck twice");
+}
+
+void testWreckActiveCount() {
+    std::cout << "\n=== Wreck Active Count ===" << std::endl;
+    ecs::World world;
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    wreckSys.createWreck("s1", 0, 0, 0);
+    wreckSys.createWreck("s2", 100, 0, 0);
+    wreckSys.createWreck("s3", 200, 0, 0);
+    assertTrue(wreckSys.getActiveWreckCount() == 3, "Three active wrecks");
+
+    // Salvage one
+    auto* player = world.createEntity("player_1");
+    addComp<components::Position>(player);
+    addComp<components::Inventory>(player);
+
+    auto entities = world.getAllEntities();
+    std::string first_wreck;
+    for (auto* e : entities) {
+        if (e->getComponent<components::Wreck>()) {
+            first_wreck = e->getId();
+            break;
+        }
+    }
+    wreckSys.salvageWreck("player_1", first_wreck, 999999.0f);
+    assertTrue(wreckSys.getActiveWreckCount() == 2, "Two active after one salvaged");
+}
+
+void testWreckHasInventory() {
+    std::cout << "\n=== Wreck Has Inventory ===" << std::endl;
+    ecs::World world;
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    std::string wreck_id = wreckSys.createWreck("ship1", 0, 0, 0);
+    auto* entity = world.getEntity(wreck_id);
+    auto* inv = entity->getComponent<components::Inventory>();
+    assertTrue(inv != nullptr, "Wreck has Inventory component");
+    assertTrue(approxEqual(inv->max_capacity, 500.0f), "Wreck cargo capacity is 500 m3");
+}
+
+// ==================== ServerConsole Tests ====================
+
+void testConsoleInit() {
+    std::cout << "\n=== Console Init ===" << std::endl;
+    ServerConsole console;
+    // Pass dummy references — the init only stores a flag
+    bool ok = console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    assertTrue(ok, "Console initializes successfully");
+    assertTrue(console.getCommandCount() >= 2, "Built-in commands registered (help, status)");
+}
+
+void testConsoleHelpCommand() {
+    std::cout << "\n=== Console Help Command ===" << std::endl;
+    ServerConsole console;
+    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+
+    std::string output = console.executeCommand("help");
+    assertTrue(output.find("help") != std::string::npos, "Help output lists 'help' command");
+    assertTrue(output.find("status") != std::string::npos, "Help output lists 'status' command");
+}
+
+void testConsoleStatusCommand() {
+    std::cout << "\n=== Console Status Command ===" << std::endl;
+    ServerConsole console;
+    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+
+    std::string output = console.executeCommand("status");
+    assertTrue(output.find("Server Status") != std::string::npos, "Status output has header");
+    assertTrue(output.find("Commands registered") != std::string::npos, "Status shows command count");
+}
+
+void testConsoleUnknownCommand() {
+    std::cout << "\n=== Console Unknown Command ===" << std::endl;
+    ServerConsole console;
+    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+
+    std::string output = console.executeCommand("foobar");
+    assertTrue(output.find("Unknown command") != std::string::npos, "Unknown command error message");
+}
+
+void testConsoleCustomCommand() {
+    std::cout << "\n=== Console Custom Command ===" << std::endl;
+    ServerConsole console;
+    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+
+    console.registerCommand("ping", "Reply with pong",
+        [](const std::vector<std::string>& /*args*/) -> std::string {
+            return "pong";
+        });
+
+    std::string output = console.executeCommand("ping");
+    assertTrue(output == "pong", "Custom command returns expected output");
+    assertTrue(console.getCommandCount() >= 3, "Custom command registered");
+}
+
+void testConsoleLogBuffer() {
+    std::cout << "\n=== Console Log Buffer ===" << std::endl;
+    ServerConsole console;
+    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+
+    console.addLogMessage(utils::LogLevel::INFO, "Test message 1");
+    console.addLogMessage(utils::LogLevel::INFO, "Test message 2");
+
+    assertTrue(console.getLogBuffer().size() == 2, "Two log entries buffered");
+    assertTrue(console.getLogBuffer()[0] == "Test message 1", "First log entry correct");
+}
+
+void testConsoleEmptyCommand() {
+    std::cout << "\n=== Console Empty Command ===" << std::endl;
+    ServerConsole console;
+    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+
+    std::string output = console.executeCommand("");
+    assertTrue(output.empty(), "Empty command returns empty string");
+}
+
+void testConsoleNotInitialized() {
+    std::cout << "\n=== Console Not Initialized ===" << std::endl;
+    ServerConsole console;
+
+    std::string output = console.executeCommand("help");
+    assertTrue(output.find("not initialized") != std::string::npos, "Not-initialized message");
+}
+
+void testConsoleShutdown() {
+    std::cout << "\n=== Console Shutdown ===" << std::endl;
+    ServerConsole console;
+    console.init(*(Server*)nullptr, *(ServerConfig*)nullptr);
+    assertTrue(console.getCommandCount() >= 2, "Commands before shutdown");
+
+    console.shutdown();
+    assertTrue(console.getCommandCount() == 0, "Commands cleared after shutdown");
+}
+
+void testConsoleInteractiveMode() {
+    std::cout << "\n=== Console Interactive Mode ===" << std::endl;
+    ServerConsole console;
+    assertTrue(!console.isInteractive(), "Default is non-interactive");
+    console.setInteractive(true);
+    assertTrue(console.isInteractive(), "Interactive mode set");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -5179,6 +5649,7 @@ int main() {
     std::cout << "WorldPersistence, Interdictors, StealthBombers," << std::endl;
     std::cout << "PI, Manufacturing, Research," << std::endl;
     std::cout << "Chat, CharacterCreation, Tournament, Leaderboard," << std::endl;
+    std::cout << "Station, WreckSalvage, ServerConsole," << std::endl;
     std::cout << "Logger, ServerMetrics" << std::endl;
     std::cout << "========================================" << std::endl;
     
@@ -5442,6 +5913,41 @@ int main() {
     testLeaderboardAchievementNoDuplicate();
     testLeaderboardNonexistentPlayer();
     testLeaderboardDamageTracking();
+
+    // Station system tests
+    testStationCreate();
+    testStationDuplicateCreate();
+    testStationDockInRange();
+    testStationDockOutOfRange();
+    testStationUndock();
+    testStationUndockNotDocked();
+    testStationRepair();
+    testStationRepairNoDamage();
+    testStationRepairNotDocked();
+    testStationDockedCount();
+    testStationDoubleDock();
+    testStationMovementStopsOnDock();
+
+    // Wreck & Salvage system tests
+    testWreckCreate();
+    testWreckLifetimeDecay();
+    testSalvageWreckInRange();
+    testSalvageWreckOutOfRange();
+    testSalvageAlreadySalvaged();
+    testWreckActiveCount();
+    testWreckHasInventory();
+
+    // Server console tests
+    testConsoleInit();
+    testConsoleHelpCommand();
+    testConsoleStatusCommand();
+    testConsoleUnknownCommand();
+    testConsoleCustomCommand();
+    testConsoleLogBuffer();
+    testConsoleEmptyCommand();
+    testConsoleNotInitialized();
+    testConsoleShutdown();
+    testConsoleInteractiveMode();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

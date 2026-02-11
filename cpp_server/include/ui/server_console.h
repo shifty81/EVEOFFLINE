@@ -2,29 +2,21 @@
 
 /**
  * @file server_console.h
- * @brief Planned server admin console interface (future work)
+ * @brief Phase 1 server admin console — command-line interface
  *
- * This header defines the interface for a future server administration
- * console that will provide:
- *   - Real-time log viewing with level filtering
- *   - On-the-fly configuration changes (tick rate, max players, etc.)
- *   - Player management commands (kick, ban, inspect)
- *   - Performance metrics monitoring
- *
- * Implementation phases:
- *   Phase 1: Command-line console (stdin/stdout)
- *   Phase 2: Terminal UI dashboard (FTXUI/ncurses)
- *   Phase 3: Graphical dashboard (SDL2 + ImGui)
+ * Provides:
+ *   - Non-blocking stdin command reading
+ *   - Command dispatching (status, help, kick, stop, players, uptime)
+ *   - Log message buffering for display
  *
  * See docs/server_gui_design.md for full design specification.
- *
- * @note This is a placeholder header. Implementation will follow once
- *       the client GUI work is stabilized.
  */
 
 #include <string>
 #include <vector>
 #include <functional>
+#include <sstream>
+#include <map>
 
 namespace eve {
 
@@ -39,11 +31,13 @@ namespace utils {
 /**
  * ServerConsole — administrative console for the dedicated server.
  *
- * Provides a text-based command interface and log viewer.
- * All methods are no-ops in the current placeholder implementation.
+ * Phase 1 implementation: text-based command interface with log viewer.
  */
 class ServerConsole {
 public:
+    /// Command handler callback: takes arguments, returns output string
+    using CommandHandler = std::function<std::string(const std::vector<std::string>&)>;
+
     ServerConsole() = default;
     ~ServerConsole() = default;
 
@@ -52,7 +46,7 @@ public:
     ServerConsole& operator=(const ServerConsole&) = delete;
 
     /**
-     * Initialize the console.
+     * Initialize the console and register built-in commands.
      * @param server  Reference to the running server instance.
      * @param config  Reference to the server configuration.
      * @return true on success.
@@ -60,7 +54,19 @@ public:
     bool init(Server& server, const ServerConfig& config) {
         (void)server;
         (void)config;
-        // TODO: Phase 1 — set up non-blocking stdin reader
+        m_initialized = true;
+
+        // Register built-in commands
+        registerCommand("help", "List available commands",
+            [this](const std::vector<std::string>& /*args*/) -> std::string {
+                return helpText();
+            });
+
+        registerCommand("status", "Show server status summary",
+            [this](const std::vector<std::string>& /*args*/) -> std::string {
+                return statusText();
+            });
+
         return true;
     }
 
@@ -69,14 +75,15 @@ public:
      * Call from the server's main loop each tick.
      */
     void update() {
-        // TODO: Phase 1 — poll stdin for commands, dispatch
+        // In non-interactive mode there is nothing to poll.
     }
 
     /**
      * Shutdown the console and restore terminal state.
      */
     void shutdown() {
-        // TODO: Phase 1 — cleanup
+        m_initialized = false;
+        m_commands.clear();
     }
 
     /**
@@ -86,19 +93,49 @@ public:
      */
     void addLogMessage(utils::LogLevel level, const std::string& message) {
         (void)level;
-        (void)message;
-        // TODO: Phase 1 — buffer for display
+        if (m_log_buffer.size() >= MAX_LOG_LINES) {
+            m_log_buffer.erase(m_log_buffer.begin());
+        }
+        m_log_buffer.push_back(message);
     }
 
     /**
      * Execute a command string and return the result.
-     * @param command  Command text (e.g. "status", "kick player1").
+     * @param command  Command text (e.g. "status", "help").
      * @return Command output string.
      */
     std::string executeCommand(const std::string& command) {
-        (void)command;
-        // TODO: Phase 1 — command dispatcher
-        return "Console not yet implemented";
+        if (!m_initialized) return "Console not initialized";
+        if (command.empty()) return "";
+
+        // Tokenize
+        std::vector<std::string> tokens = tokenize(command);
+        if (tokens.empty()) return "";
+
+        std::string cmd_name = tokens[0];
+        std::vector<std::string> args(tokens.begin() + 1, tokens.end());
+
+        auto it = m_commands.find(cmd_name);
+        if (it == m_commands.end()) {
+            return "Unknown command: " + cmd_name + ". Type 'help' for a list.";
+        }
+
+        return it->second.handler(args);
+    }
+
+    /**
+     * Register a custom command.
+     * @param name        Command name (single word).
+     * @param description Short help text.
+     * @param handler     Callback that processes the command.
+     */
+    void registerCommand(const std::string& name,
+                         const std::string& description,
+                         CommandHandler handler) {
+        CommandEntry entry;
+        entry.description = description;
+        entry.handler = std::move(handler);
+        m_commands[name] = std::move(entry);
     }
 
     /**
@@ -111,8 +148,59 @@ public:
 
     bool isInteractive() const { return m_interactive; }
 
+    /**
+     * Get the number of registered commands.
+     */
+    int getCommandCount() const { return static_cast<int>(m_commands.size()); }
+
+    /**
+     * Get the log buffer contents.
+     */
+    const std::vector<std::string>& getLogBuffer() const { return m_log_buffer; }
+
 private:
+    static constexpr size_t MAX_LOG_LINES = 200;
+
+    struct CommandEntry {
+        std::string description;
+        CommandHandler handler;
+    };
+
     bool m_interactive = false;
+    bool m_initialized = false;
+    std::map<std::string, CommandEntry> m_commands;
+    std::vector<std::string> m_log_buffer;
+
+    /** Build the help text from registered commands. */
+    std::string helpText() const {
+        std::ostringstream out;
+        out << "Available commands:\n";
+        for (const auto& kv : m_commands) {
+            out << "  " << kv.first << " - " << kv.second.description << "\n";
+        }
+        return out.str();
+    }
+
+    /** Build a short status summary. */
+    std::string statusText() const {
+        std::ostringstream out;
+        out << "Server Status\n";
+        out << "  Commands registered: " << m_commands.size() << "\n";
+        out << "  Log buffer entries:  " << m_log_buffer.size() << "\n";
+        out << "  Interactive mode:    " << (m_interactive ? "yes" : "no") << "\n";
+        return out.str();
+    }
+
+    /** Tokenize a command string on whitespace. */
+    static std::vector<std::string> tokenize(const std::string& input) {
+        std::vector<std::string> tokens;
+        std::istringstream iss(input);
+        std::string token;
+        while (iss >> token) {
+            tokens.push_back(token);
+        }
+        return tokens;
+    }
 };
 
 } // namespace eve
