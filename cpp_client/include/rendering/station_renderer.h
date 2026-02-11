@@ -118,16 +118,6 @@ private:
     void createStationMeshes();
     
     /**
-     * Create faction-specific station mesh
-     */
-    std::shared_ptr<Mesh> createFactionStation(FactionStyle faction);
-    
-    /**
-     * Create Upwell structure mesh
-     */
-    std::shared_ptr<Mesh> createUpwellStructure(UpwellType type);
-    
-    /**
      * Create Solari cathedral-style station
      */
     std::shared_ptr<Mesh> createSolariStation();
@@ -166,26 +156,6 @@ private:
      * Create Raitaru engineering complex
      */
     std::shared_ptr<Mesh> createRaitaru();
-    
-    /**
-     * Helper: Create a box mesh
-     */
-    std::shared_ptr<Mesh> createBox(float width, float height, float depth);
-    
-    /**
-     * Helper: Create a cylinder mesh
-     */
-    std::shared_ptr<Mesh> createCylinder(float radius, float height, int segments);
-    
-    /**
-     * Helper: Create a sphere mesh
-     */
-    std::shared_ptr<Mesh> createSphere(float radius, int segments);
-    
-    /**
-     * Helper: Create a cone/spire mesh
-     */
-    std::shared_ptr<Mesh> createCone(float radius, float height, int segments);
     
     /**
      * Initialize faction visual properties from JSON data

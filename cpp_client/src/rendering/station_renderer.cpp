@@ -90,7 +90,21 @@ const StationRenderer::FactionVisuals& StationRenderer::getFactionVisuals(Factio
         return it->second;
     }
     // Return Veyren as default
-    static FactionVisuals defaultVisuals;
+    auto veyrenIt = m_factionVisuals.find(FactionStyle::VEYREN);
+    if (veyrenIt != m_factionVisuals.end()) {
+        return veyrenIt->second;
+    }
+    // Fallback to hardcoded default if map is somehow empty
+    static FactionVisuals defaultVisuals = {
+        glm::vec3(0.5f, 0.5f, 0.5f), // primaryColor
+        glm::vec3(0.6f, 0.6f, 0.6f), // secondaryColor
+        glm::vec3(0.7f, 0.7f, 0.7f), // accentColor
+        glm::vec3(0.5f, 0.5f, 0.5f), // emissiveColor
+        1.0f,                         // emissiveIntensity
+        0.5f,                         // metallic
+        0.5f,                         // roughness
+        1.0f                          // sizeMultiplier
+    };
     return defaultVisuals;
 }
 
@@ -475,10 +489,32 @@ std::shared_ptr<Mesh> StationRenderer::createKeldariStation() {
         center + glm::vec3(-w/2,  h/2,  d/2)
     };
     
-    // Add box faces (simplified)
+    // Add box faces with proper vertex data
     for (int face = 0; face < 6; face++) {
+        glm::vec3 normal;
+        switch(face) {
+            case 0: normal = glm::vec3(0, 0, -1); break; // front
+            case 1: normal = glm::vec3(0, 0, 1); break;  // back
+            case 2: normal = glm::vec3(1, 0, 0); break;  // right
+            case 3: normal = glm::vec3(-1, 0, 0); break; // left
+            case 4: normal = glm::vec3(0, 1, 0); break;  // top
+            case 5: normal = glm::vec3(0, -1, 0); break; // bottom
+        }
+        
         for (int i = 0; i < 4; i++) {
             Vertex v;
+            // Map vertices to corners based on face
+            int cornerIdx = 0;
+            switch(face) {
+                case 0: cornerIdx = (i == 0) ? 0 : (i == 1) ? 1 : (i == 2) ? 2 : 3; break;
+                case 1: cornerIdx = (i == 0) ? 5 : (i == 1) ? 4 : (i == 2) ? 7 : 6; break;
+                case 2: cornerIdx = (i == 0) ? 1 : (i == 1) ? 5 : (i == 2) ? 6 : 2; break;
+                case 3: cornerIdx = (i == 0) ? 4 : (i == 1) ? 0 : (i == 2) ? 3 : 7; break;
+                case 4: cornerIdx = (i == 0) ? 3 : (i == 1) ? 2 : (i == 2) ? 6 : 7; break;
+                case 5: cornerIdx = (i == 0) ? 4 : (i == 1) ? 5 : (i == 2) ? 1 : 0; break;
+            }
+            v.position = corners[cornerIdx];
+            v.normal = normal;
             v.color = moduleColor;
             vertices.push_back(v);
         }
