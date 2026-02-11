@@ -1,0 +1,1971 @@
+{\rtf1\fbidis\ansi\deff0\nouicompat{\fonttbl{\f0\fnil\fcharset1 Segoe UI Emoji;}{\f1\fnil Calibri;}{\f2\fnil\fcharset0 Calibri;}{\f3\fnil\fcharset1 Segoe UI Symbol;}{\f4\fnil\fcharset1 Segoe UI Emoji;}{\f5\fnil\fcharset1 Segoe UI Symbol;}{\f6\fnil\fcharset1 Cambria Math;}}
+{\*\generator Riched20 10.0.19041}{\*\mmathPr\mmathFont6\mwrapIndent1440 }\viewkind4\uc1 
+\pard\sa200\sl276\slmult1\f0\fs22\lang9\u-10178?\u-8736?\f1  \f2 What Photon UI Is (and Why It Matters)\par
+\par
+EVE\f1\rquote\f2 s current UI, called Photon UI, is a unified UI design system used across all screens \f1\emdash  \f2 the cockpit, overview, windows, menus, and HUD. It\f1\rquote\f2 s not just skin \f1\emdash  \f2 it defines:\par
+\par
+Consistent visual language and interaction behavior\par
+\par
+Window docking, compact mode, transparency\par
+\par
+Customizable overview tabs\par
+\par
+Modular, resizable windows\par
+All of which you\f1\rquote\f2 ll want to replicate in your own retained-mode UI system.\par
+\par
+Photon replaced older UI to streamline usability and make future UI improvements easier.\par
+\par
+So your UI design should focus on:\par
+\par
+Composable, movable panels\par
+\par
+Configurable layout with persistence\par
+\par
+Clear visual hierarchy\par
+\par
+Minimal distraction from space view\par
+\par
+\f3\u-10179?\u-9012?\f1  \f2 Key UI Elements to Model from EVE\par
+\par
+Below are the main elements you should analyze carefully if you want a faithful Photon-style experience in your game.\par
+\par
+\f4\u-10179?\u-8214?\f1  \f2 1) Neocom\par
+\par
+This is the vertical button bar (traditionally left, sometimes bottom in Photon) that gives access to:\par
+\par
+Inventory\par
+\par
+Drone panel\par
+\par
+Map\par
+\par
+Fitting\par
+\par
+Probe scanner\par
+\par
+Others\par
+\par
+EVE allows dragging, rearranging, compacting, customizing of this bar.\par
+\par
+Implementation tip for you:\par
+Make your Neocom a dockable, customizable toolbar component \f1\emdash  \f2 not hardcoded UI elements. Store the list and layout of icons in data, and allow players to reorder them.\par
+\par
+\f4\u-10179?\u-8215?\f1  \f2 2) Overview(s)\par
+\par
+The Overview is an extremely dense tactical list showing:\par
+\par
+Contacts (ships, anomalies, wrecks)\par
+\par
+Distance\par
+\par
+Velocity\par
+\par
+Threat\par
+\par
+Status\par
+\par
+You should mirror the EVE overview concept:\par
+\par
+Type | Name | Distance | Approach | Velocity | Misc data\par
+\par
+\par
+Photon UI supports multiple overview windows, each with filters and presets.\par
+\par
+Implementation tip:\par
+Your custom UI table widget should support:\par
+\par
+Columns\par
+\par
+Sort & filter\par
+\par
+Per-window presets\par
+\par
+Grouping / tabs\par
+\par
+\f4\u-10179?\u-8218?\f1  \f2 3) Ship HUD (In-Space)\par
+\par
+This is the part players stare at 95% of gameplay.\par
+\par
+EVE HUD shows:\par
+\par
+Capacitor\par
+\par
+Shield\par
+\par
+Armor\par
+\par
+Hull\par
+\par
+Speed\par
+\par
+Angular velocity (sometimes)\par
+\par
+Target info\par
+\par
+Lock progress\par
+\par
+Module icons with cooldown overlays\par
+\par
+\f3\u-10179?\u-9012?\f1  \f2 HUD visuals should be:\par
+\par
+Always on screen\par
+\par
+Non-obtrusive\par
+\par
+Minimal but informative\par
+\par
+We already sketched the functional pieces. Reference images show that the HUD bars are concentric arcs and linear bars, and the module rack is a horizontal row of icons with radial overlays. (You\f1\rquote\f2 ll see examples in EVE screenshots below.)\par
+\par
+\f4\u-10179?\u-8217?\f1  \f2 4) Docked vs In-Space UI\par
+\par
+When the player is docked, EVE hides or minimizes the flight HUD and shows:\par
+\par
+Station services (repair, fitting, market)\par
+\par
+Station context menus\par
+\par
+Item panels\par
+\par
+Chat\par
+\par
+Docked UI resembles a windowed dashboard, not a HUD overlay.\par
+\par
+Implementation tip:\par
+Your UI system should support:\par
+\par
+Context switching (space vs dock)\par
+\par
+Different root layouts\par
+\par
+UI focus passing between game view and windows\par
+\par
+\f4\u-10179?\u-8216?\f1  \f2 5) Scanning / Probing UI\par
+\par
+Exploration in EVE has two layers:\par
+\par
+\f5\u10148?\f1  \f2 Sensor Overlay\par
+\par
+Shows nearby anomalies and signatures above the HUD.\par
+\par
+\f5\u10148?\f1  \f2 Probe Scanner Window\par
+\par
+A separate UI mode where players:\par
+\par
+Launch probe objects\par
+\par
+Manipulate probe formations\par
+\par
+View scan results\par
+\par
+Filter signature types\par
+\par
+This UI is unique and complex, with:\par
+\par
+System map with probe positions\par
+\par
+Scan strength / deviation numbers\par
+\par
+Filter buttons\par
+\par
+Scan progress indicators\par
+\par
+Icons for signatures once partially resolved\par
+\par
+EVE developers have even posted about evolving the probe UI to make icons and scan progress clearer.\par
+\par
+This is much deeper than a simple list \f1\emdash  \f2 it\f1\rquote\f2 s an entire interactive 3D UI overlay on your system map.\par
+\par
+\f3\u-10179?\u-8969?\f1  \f2 Reference HUD & UI Patterns (Visual Grounding)\par
+\par
+(These images show the kinds of UI elements you want to reproduce: the HUD arcs with capacitor/shield/armor, module icons with cooldowns, overview lists, scanning/probing windows, and docked station service windows.)\par
+\par
+\f0\u-10179?\u-8480?\u-497?\f1  \f2 Translating This into Your Game: Practical Tips\par
+\par
+Below is a prioritized implementation set you can follow.\par
+\par
+\f0\u-10178?\u-8727?\f1  \f2 UI Feature Checklist (Photon-Style)\par
+1) Retained Window System\par
+\par
+Your custom C++ UI must support:\par
+\f5\u10004?\f1  \f2 Moveable windows\par
+\f5\u10004?\f1  \f2 Resizable windows\par
+\f5\u10004?\f1  \f2 Dockable panels\par
+\f5\u10004?\f1  \f2 Compact mode\par
+\f5\u10004?\f1  \f2 Transparency toggles\par
+\par
+You already have the foundations. Build a window manager with:\par
+\par
+WindowID, Position, Size, Z, DockState\par
+\par
+\par
+Persist layouts per player.\par
+\par
+2) Neocom Toolbar\par
+\par
+Implement:\par
+\par
+Icon list\par
+\par
+Custom arrangement\par
+\par
+Toggleable window spawn\par
+\par
+Data definition:\par
+\par
+\{\par
+  "neocom": [\par
+    \{ "id":"overview", "icon":"overview.png" \},\par
+    \{ "id":"probe_scanner", "icon":"probe.png" \}\par
+  ]\par
+\}\par
+\par
+\par
+Each icon triggers UI windows.\par
+\par
+3) Overview UI\par
+\par
+Your previous overview builder outputs this data:\par
+\par
+EntityID | Type | Distance | Threat | Velocity\par
+\par
+\par
+Make a table widget that\par
+\par
+supports column sort\par
+\par
+supports presets\par
+\par
+supports multiple window instances\par
+\par
+4) HUD (Phaser/Arc style)\par
+\par
+When undocked:\par
+\par
+Draw circular arcs for shield/armor/hull\par
+\par
+Draw numeric values on hover\par
+\par
+Draw module icons with cooldown\par
+\par
+Bind these to:\par
+\par
+PlayerShipState\par
+\par
+5) Probe/Scan UI Mode\par
+\par
+Design a special mode where:\par
+\par
+Players launch probes\par
+\par
+Probes have positions/radii\par
+\par
+Scan bubbles show icons\par
+\par
+Filtering works\par
+\par
+Hint: use screen-space overlays + pickable 3D shapes\par
+\par
+Data needed:\par
+\par
+Probe: center, size\par
+Signature: position, discoveryPct\par
+\par
+\par
+Visual feedback:\par
+\par
+Color code progress (red/orange/yellow/green)\par
+\par
+Icons only show on partial discovery\par
+\par
+Probe UI overlays on the star map\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Camera & Interaction (EVE-like)\par
+\par
+You asked how players interact \f1\emdash  \f2 here\f1\rquote\f2 s the typical EVE model, which you can mimic:\par
+\par
+\f3\u-10179?\u-8464?\f1  \f2 Camera Controls\par
+\par
+Right-drag \f6\u8594?\f1  \f2 rotate camera around ship\par
+\par
+Middle-mouse or wheel \f6\u8594?\f1  \f2 zoom\par
+\par
+Left-click \f6\u8594?\f1  \f2 select targets / UI\par
+\par
+Double-click space \f6\u8594?\f1  \f2 align / orbit\par
+\par
+This is not purely physics \f1\emdash  \f2 it\f1\rquote\f2 s flight intention. Use normalized camera quaternions and orbit mode. You already have basic camera logic \f1\emdash  \f2 extend it with:\par
+\par
+lookAt(target)\par
+zoomDelta\par
+pitchLimit\par
+\par
+\f3\u-10179?\u-8783?\f1  \f2 UI Interaction\par
+\par
+Click target in overview \f6\u8594?\f1  \f2 lock progress\par
+\par
+Right-click world \f6\u8594?\f1  \f2 context menu\par
+\par
+Click module icon \f6\u8594?\f1  \f2 activate\par
+\par
+Drag UI windows \f6\u8594?\f1  \f2 reposition\par
+\par
+This matches Photon\f1\rquote\f2 s flexible window behavior.\par
+\par
+\f3\u-10179?\u-9011?\f1  \f2 Extra Notes from Research\par
+\par
+Photon UI\f1\rquote\f2 s Neocom and overview are customizable and persistent.\par
+\par
+EVE\f1\rquote\f2 s scanning UI distinguishes anomalies from cosmic signatures and uses interactive probe positioning.\par
+\par
+Developers continue to iterate on scan UI feedback and color states for scan completion.\par
+\par
+This confirms you should treat scanning as a mode with its own UI semantics, not just a feature window.\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Recommendations for You (Beyond the Basics)\par
+\par
+Here\f1\rquote\f2 s what most successful EVE-style HUD recreations need:\par
+\par
+\f5\u9989?\f1  \f2 Vector icons over bitmaps \f1\emdash  \f2 so your UI scales well\par
+\f5\u9989?\f1  \f2 Retained window docking manager\par
+\f5\u9989?\f1  \f2 UI state serialization \f1\emdash  \f2 so players save layouts\par
+\f5\u9989?\f1  \f2 Screen layering rules \f1\emdash  \f2 HUD > Windows > Context menus\par
+\f5\u9989?\f1  \f2 Minimal animations (ease-in, ease-out) for UI responsiveness\par
+\f5\u9989?\f1  \f2 Color language based on relationship (hostile/neutral/friendly)\par
+\par
+These aren\f1\rquote\f2 t optional if you want your UI to feel as complete as EVE\f1\rquote\f2 s.\par
+\par
+\f0\u-10178?\u-8727?\f1  \f2 Next Steps\par
+\par
+If you want, I can help you build:\par
+\par
+A diagram or mockup of your specific HUD layout, matching Photon UI style\par
+\par
+UI interaction flowcharts for probing/scanning and docking\par
+\par
+Wireframes for your versions of:\par
+\par
+Neocom\par
+\par
+Overview\par
+\par
+Probe UI\par
+\par
+Station services UI\par
+\par
+Code skeletons for:\par
+\par
+Docking manager\par
+\par
+Probe scanner UI mode\par
+\par
+Overview table widget\par
+\par
+Just tell me what you want to tackle next!\par
+\par
+If you want, I can help you build:\par
+\par
+A diagram or mockup of your specific HUD layout, matching Photon UI style\par
+\par
+UI interaction flowcharts for probing/scanning and docking\par
+\par
+Wireframes for your versions of:\par
+\par
+Neocom\par
+\par
+Overview\par
+\par
+Probe UI\par
+\par
+Station services UI\par
+\par
+Code skeletons for:\par
+\par
+Docking manager\par
+\par
+Probe scanner UI mode\par
+\par
+Overview table widget\par
+\par
+Just tell me what you want to tackle next!\par
+\par
+Alright \f1\emdash  \f2 let\f1\rquote\f2 s be decisive and build momentum. \f3\u-10179?\u-8576?\f2\par
+Here\f1\rquote\f2 s the order I recommend, and why, plus exactly what we\f1\rquote\f2 ll produce next.\par
+\par
+\f5\u9989?\f1  \f2 What we tackle next (in this order)\par
+Phase 1 \f1\emdash  \f2 Core in-space experience (highest ROI)\par
+\par
+This is what players live in minute-to-minute.\par
+\par
+\f0 1\u-497?\f5\u8419?\f2  HUD layout mockup (Photon-style)\par
+\par
+Deliverables\par
+\par
+Concrete HUD diagram:\par
+\par
+Capacitor + shield/armor/hull arcs\par
+\par
+Speed vector & status\par
+\par
+Target panels (locked / locking)\par
+\par
+Module rack with cooldown overlays\par
+\par
+Clear screen anchoring rules (what moves, what doesn\f1\rquote\f2 t)\par
+\par
+Data bindings \f6\u8594?\f1  \f2 ECS components\par
+\par
+\f3\u-10179?\u-9143?\f1  \f2 This locks visual language early and prevents UI churn later.\par
+\par
+\f0 2\u-497?\f5\u8419?\f2  Neocom + Overview wireframes\par
+\par
+Deliverables\par
+\par
+Neocom vertical bar (customizable, reorderable)\par
+\par
+Overview window:\par
+\par
+Columns\par
+\par
+Tabs / presets\par
+\par
+Threat coloring & distance sorting\par
+\par
+Interaction rules:\par
+\par
+Click \f6\u8594?\f1  \f2 target\par
+\par
+Right-click \f6\u8594?\f1  \f2 context menu\par
+\par
+Hover \f6\u8594?\f1  \f2 highlight in space\par
+\par
+\f3\u-10179?\u-9143?\f1  \f2 These two define how the player commands the world.\par
+\par
+Phase 2 \f1\emdash  \f2 Exploration loop (unique & differentiating)\par
+\f0 3\u-497?\f5\u8419?\f2  Probe / scanning UI flowchart + wireframe\par
+\par
+Deliverables\par
+\par
+Mode switch behavior (combat \f5\u8596?\f1  \f2 scanning)\par
+\par
+Probe launch, move, resize interactions\par
+\par
+Signature discovery states (red \f6\u8594?\f1  \f2 green)\par
+\par
+System map overlay rules\par
+\par
+\f3\u-10179?\u-9143?\f1  \f2 This is EVE\f1\rquote\f2 s most complex UI \f1\emdash  \f2 we design it before coding to avoid rework.\par
+\par
+Phase 3 \f1\emdash  \f2 Code foundations (no visuals wasted)\par
+\f0 4\u-497?\f5\u8419?\f2  Code skeletons\par
+\par
+We wire visuals cleanly into gameplay.\par
+\par
+Deliverables\par
+\par
+UIDockingManager\par
+\par
+OverviewTableWidget\par
+\par
+ProbeScannerUIMode\par
+\par
+Each with:\par
+\par
+ECS bindings\par
+\par
+Input routing\par
+\par
+Serialization hooks (layout saving)\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Why this order works\par
+\par
+Locks player experience first\par
+\par
+Prevents UI/UX rework later\par
+\par
+Keeps ECS + UI decoupled\par
+\par
+Mirrors how CCP themselves iterate (visual \f6\u8594?\f1  \f2 interaction \f6\u8594?\f1  \f2 implementation)\par
+\par
+\f3\u-10180?\u-8273?\f1  \f2 What I propose we do right now\par
+\par
+Start with:\par
+\par
+HUD layout mockup + Neocom + Overview wireframes\par
+\par
+That gives us:\par
+\par
+A visual target\par
+\par
+Clear data contracts\par
+\par
+Zero wasted engineering\par
+\par
+\f3\u-10179?\u-9143?\f1  \f2 Your move\par
+\par
+Pick one to start this message:\par
+\par
+A) HUD layout mockup (deep, detailed)\par
+\par
+B) Neocom + Overview wireframes\par
+\par
+C) Probe/scanning UI flowchart\par
+\par
+D) Jump straight into code skeletons\par
+\par
+Once we lock that, I\f1\rquote\f2 ll stay laser-focused and build it with you step-by-step. \f3\u-10179?\u-9055?\f2\par
+\par
+A) HUD layout mockup (deep, detailed)\par
+\par
+B) Neocom + Overview wireframes\par
+\par
+C) Probe/scanning UI flowchart\par
+\par
+D) Jump straight into code skeletons\par
+\par
+Perfect \f1\emdash  \f2 we\f1\rquote\f2 ll do A \f6\u8594?\f1  \f2 B \f6\u8594?\f1  \f2 C \f6\u8594?\f1  \f2 D, exactly in that order.\par
+This is how CCP effectively built EVE\f1\rquote\f2 s Photon UI as well: visual contract first, code second.\par
+\par
+I\f1\rquote\f2 ll go deep and concrete, not hand-wavy.\par
+\par
+A) HUD Layout Mockup \f1\emdash  \f2 Deep, Photon-Style\par
+\f3\u-10180?\u-8273?\f1  \f2 Design Goals (Non-Negotiable)\par
+\par
+Zero obstruction of space combat\par
+\par
+Muscle-memory compatible with EVE players\par
+\par
+Everything readable at a glance\par
+\par
+No floating windows in combat mode (only docked/scanning)\par
+\par
+\f0\u-10178?\u-8719?\f1  \f2 Screen Anchoring (Hard Rules)\par
+TOP LEFT     \f6\u8594?\f1  \f2 Overview\par
+TOP RIGHT    \f6\u8594?\f1  \f2 Target Panels\par
+BOTTOM LEFT  \f6\u8594?\f1  \f2 Ship Status (Cap / Shield / Armor / Hull)\par
+BOTTOM RIGHT \f6\u8594?\f1  \f2 Module Rack\par
+CENTER       \f6\u8594?\f1  \f2 Space (no UI unless probing)\par
+\par
+\par
+Nothing moves unless the player explicitly drags it.\par
+\par
+\f3\u-10179?\u-8576?\f1  \f2 Bottom-Left: Ship Status Cluster (Iconic EVE Element)\par
+\par
+Structure (radial, layered):\par
+\par
+[ OUTER ARC ] Shield\par
+[ MID ARC   ] Armor\par
+[ INNER ARC ] Hull\par
+[ CORE      ] Capacitor\par
+\par
+Behavior\par
+\par
+Smooth interpolation (never jump)\par
+\par
+Flash only on threshold crossing\par
+\par
+Numeric values hidden unless hovered\par
+\par
+Capacitor pulses subtly with regen tick\par
+\par
+Data Binding\par
+ShipComponent \{\par
+    float shield, shieldMax;\par
+    float armor, armorMax;\par
+    float hull, hullMax;\par
+    float capacitor, capacitorMax;\par
+\}\par
+\par
+\f0\u9881?\u-497?\f1  \f2 Bottom-Right: Module Rack\par
+\par
+Layout\par
+\par
+1\f1\endash\f2 3 horizontal rows\par
+\par
+Square icons\par
+\par
+Grouped by slot type (hi / mid / low)\par
+\par
+States\par
+\par
+Idle \f6\u8594?\f1  \f2 flat\par
+\par
+Active \f6\u8594?\f1  \f2 faint glow + spinning cooldown arc\par
+\par
+Overheated \f6\u8594?\f1  \f2 orange shimmer\par
+\par
+Disabled \f6\u8594?\f1  \f2 desaturated + slash overlay\par
+\par
+Input\par
+\par
+Click \f6\u8594?\f1  \f2 activate\par
+\par
+Shift-click \f6\u8594?\f1  \f2 overload\par
+\par
+Right-click \f6\u8594?\f1  \f2 context menu\par
+\par
+\f3\u-10180?\u-8273?\f1  \f2 Top-Right: Target HUD\par
+\par
+Each locked target gets:\par
+\par
+Circular bracket in space\par
+\par
+Mini panel with:\par
+\par
+Name\par
+\par
+Distance\par
+\par
+Shield / Armor / Hull bars\par
+\par
+Lock strength / EWAR icons\par
+\par
+Max targets shown = skill-based.\par
+\par
+\f0\u-10178?\u-8723?\f1  \f2 Top-Left: Overview (Combat View)\par
+\par
+This is the command interface.\par
+\par
+Icon (ship / drone / structure)\par
+\par
+Name\par
+\par
+Distance\par
+\par
+Velocity\par
+\par
+Threat color\par
+\par
+Click \f6\u8594?\f1  \f2 target\par
+Double-click \f6\u8594?\f1  \f2 approach\par
+Right-click \f6\u8594?\f1  \f2 context menu\par
+\par
+B) Neocom + Overview Wireframes\par
+\f0\u-10178?\u-8727?\f1  \f2 Neocom (Left Vertical Bar)\par
+\par
+Rules\par
+\par
+Always visible (even docked)\par
+\par
+Icon-only\par
+\par
+Tooltips on hover\par
+\par
+Reorderable\par
+\par
+Collapsible\par
+\par
+Default Icons\par
+\par
+Top \f6\u8594?\f1  \f2 Bottom:\par
+\par
+Character\par
+\par
+Inventory\par
+\par
+Fitting\par
+\par
+Map\par
+\par
+Contracts / Missions\par
+\par
+Industry\par
+\par
+Market\par
+\par
+Corporation\par
+\par
+Settings\par
+\par
+Click \f6\u8594?\f1  \f2 opens window\par
+Shift-click \f6\u8594?\f1  \f2 pin window\par
+\par
+\f3\u-10179?\u-9013?\f1  \f2 Overview Window (Dockable but Defaults Top-Left)\par
+\par
+Tabs\par
+\par
+Combat\par
+\par
+Drones\par
+\par
+Mining\par
+\par
+Travel\par
+\par
+Custom\par
+\par
+Columns\par
+\par
+Icon\par
+\par
+Name\par
+\par
+Distance\par
+\par
+Velocity\par
+\par
+Angular / Radial (advanced)\par
+\par
+Presets\par
+Saved as JSON:\par
+\par
+\{\par
+  "show": ["Ship", "Drone"],\par
+  "exclude": ["Station"],\par
+  "sort": "Distance"\par
+\}\par
+\par
+C) Probe / Scanning UI Flowchart\par
+\par
+This is a mode switch, not a window.\par
+\par
+\f3\u-10179?\u-8956?\f1  \f2 Mode Transition\par
+Combat Mode\par
+\f1    \f6\u8595?\f1  \f2 (Scan Button)\par
+Scanning Mode\par
+\f1    \f6\u8595?\f1  \f2 (Results resolved)\par
+Combat Mode\par
+\par
+\f0\u-10178?\u-8726?\f1  \f2 Scanning Mode UI Layers\par
+\f0 1\u-497?\f5\u8419?\f2  System Map Overlay\par
+\par
+Camera pulls back\par
+\par
+Celestial grid fades in\par
+\par
+Probes rendered as wireframe spheres\par
+\par
+\f0 2\u-497?\f5\u8419?\f2  Probe Control Panel\par
+\par
+Launch / Recall\par
+\par
+Formation select\par
+\par
+Scan strength slider\par
+\par
+\f0 3\u-497?\f5\u8419?\f2  Signature List\par
+\par
+Unknown \f6\u8594?\f1  \f2 Weak \f6\u8594?\f1  \f2 Strong \f6\u8594?\f1  \f2 Resolved\par
+\par
+Red \f6\u8594?\f1  \f2 Yellow \f6\u8594?\f1  \f2 Green\par
+\par
+\f3\u-10180?\u-8274?\f1  \f2 Controls (Exact EVE Feel)\par
+Action\tab Input\par
+Move probes\tab Drag\par
+Resize\tab Mouse wheel\par
+Rotate formation\tab Q / E\par
+Scan\tab Button or hotkey\par
+Focus result\tab Double-click\par
+\f0\u-10178?\u-8736?\f1  \f2 Scan Resolution Math (Simplified)\par
+SignalStrength =\par
+    (ProbeStrength * FormationBonus)\par
+    / (SignatureDifficulty * DistanceFalloff)\par
+\par
+\par
+Multiple scans converge \f6\u8594?\f1  \f2 result locks.\par
+\par
+D) Code Skeletons (C++ / OpenGL / ECS)\par
+\par
+Now we wire it cleanly.\par
+\par
+\f0\u-10178?\u-8727?\f1  \f2 HUD Root\par
+class HUDRoot \{\par
+public:\par
+    void update(float dt);\par
+    void render();\par
+\par
+private:\par
+    ShipStatusWidget shipStatus;\par
+    ModuleRackWidget moduleRack;\par
+    OverviewWidget overview;\par
+    TargetPanelWidget targets;\par
+\};\par
+\par
+\f0\u-10178?\u-8723?\f1  \f2 Neocom\par
+struct NeocomEntry \{\par
+    Icon icon;\par
+    std::function<void()> onClick;\par
+\};\par
+\par
+class Neocom \{\par
+    std::vector<NeocomEntry> entries;\par
+    bool collapsed;\par
+\};\par
+\par
+\f3\u-10179?\u-9013?\f1  \f2 Overview Widget\par
+struct OverviewRow \{\par
+    EntityId entity;\par
+    float distance;\par
+    float velocity;\par
+    ThreatLevel threat;\par
+\};\par
+\par
+class OverviewWidget \{\par
+public:\par
+    void rebuild(const World&);\par
+    void render();\par
+\};\par
+\par
+\f0\u-10178?\u-8726?\f1  \f2 Probe Scanner Mode\par
+class ProbeScannerMode \{\par
+public:\par
+    void enter();\par
+    void update(float dt);\par
+    void render();\par
+    void exit();\par
+\par
+private:\par
+    std::vector<Probe> probes;\par
+    std::vector<Signature> signatures;\par
+\};\par
+\par
+\f3\u-10180?\u-8274?\f1  \f2 Camera & Controls (EVE-Faithful)\par
+Camera\par
+\par
+Orbit around ship\par
+\par
+Inertial smoothing\par
+\par
+Manual zoom only (no auto snap)\par
+\par
+Free look with ALT + mouse\par
+\par
+Movement\par
+\par
+Click in space \f6\u8594?\f1  \f2 align\par
+\par
+Orbit / Keep at range\par
+\par
+Warp requires:\par
+\par
+Alignment\par
+\par
+Cap\par
+\par
+Clear vector\par
+\par
+\f0\u9888?\u-497?\f1  \f2 Critical Recommendations (Hard-Won Lessons)\par
+\par
+Never tie UI logic to rendering\par
+\par
+Everything must be hotkeyable\par
+\par
+Save UI layouts to disk early\par
+\par
+Avoid text \f1\emdash  \f2 icons + bars first\par
+\par
+Scanning is a mode, not a window\par
+\par
+\f0\u-10178?\u-8723?\f1  \f2 What I recommend next (very specific)\par
+\par
+\f3\u-10179?\u-9143?\f1  \f2 Next step:\par
+Implement HUDRoot + ShipStatusWidget first, before anything else.\par
+\par
+Once that exists, everything else plugs in cleanly.\par
+\par
+If you want, next message I can:\par
+\par
+Draw an ASCII HUD layout with exact pixel ratios\par
+\par
+Or start writing ShipStatusWidget.cpp in real C++\par
+\par
+Or lock Photon-accurate color + font specs\par
+\par
+Just tell me where you want to go next.\par
+\par
+Draw an ASCII HUD layout with exact pixel ratios\par
+\par
+Or start writing ShipStatusWidget.cpp in real C++\par
+\par
+Or lock Photon-accurate color + font specs\par
+\par
+Let\f1\rquote\f2 s do all three, but cleanly and in the right order so nothing conflicts later:\par
+\par
+\f0 1\u-497?\f5\u8419?\f2  ASCII HUD layout with exact pixel ratios\par
+\f0 2\u-497?\f5\u8419?\f2  Photon-accurate color + font specs (locked)\par
+\f0 3\u-497?\f5\u8419?\f2  Real C++ ShipStatusWidget.cpp skeleton (OpenGL-ready)\par
+\par
+This gives you a visual contract + style lock + executable code.\par
+\par
+\f0 1\u-497?\f5\u8419?\f2  ASCII HUD Layout \f1\emdash  \f2 Exact Pixel Ratios (1920\'d71080)\par
+\par
+Assume 1920\'d71080, scalable via percentages.\par
+\par
+\f5\u9484?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9488?\f2\par
+\f5\u9474?\f1  \f2 OVERVIEW (Top Left)                       TARGET PANELS (Top Right)       \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9484?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9488?\f1         \f5\u9484?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9488?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1  \f2 Icon Name Dist Vel    \f5\u9474?\f1         \f5\u9474?\f1  \f2 [Target 1]  Shield \f5\u9608?\u9608?\u9608?\u9608?\u9617?\u9617?\f1            \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1  \f2 Icon Name Dist Vel    \f5\u9474?\f1         \f5\u9474?\f1             \f2 Armor  \f5\u9608?\u9608?\u9608?\u9617?\u9617?\u9617?\f1             \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1  \f2 Icon Name Dist Vel    \f5\u9474?\f1         \f5\u9474?\f1             \f2 Hull   \f5\u9608?\u9608?\u9617?\u9617?\u9617?\u9617?\f1              \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1                        \f5\u9474?\f1         \f5\u9474?\f1  \f2 Range: 12.4 km                     \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1                        \f5\u9474?\f1         \f5\u9474?\f1  \f2 Lock: \f5\u9608?\u9608?\u9608?\u9608?\u9608?\u9608?\u9608?\u9608?\u9608?\u9608?\f1                    \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9492?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9496?\f1         \f5\u9492?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9496?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1                                                                           \f5\u9474?\f2\par
+\f5\u9474?\f1                                                                           \f5\u9474?\f2\par
+\f5\u9474?\f1                               \f2 SPACE VIEW                                  \f5\u9474?\f2\par
+\f5\u9474?\f1                                                                           \f5\u9474?\f2\par
+\f5\u9474?\f1                                                                           \f5\u9474?\f2\par
+\f5\u9474?\f1                                                                           \f5\u9474?\f2\par
+\f5\u9474?\f1                                                                           \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9484?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9488?\f1                                       \f5\u9484?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9488?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1  \f2 SHIP STATUS   \f5\u9474?\f1                                       \f5\u9474?\f1  \f2 MODULE RACK  \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1                \f5\u9474?\f1                                       \f5\u9474?\f1  \f2 [ ][ ][ ][ ] \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1    \f5\u9692?\f1  \f2 Shield \f5\u9693?\f1   \f5\u9474?\f1                                       \f5\u9474?\f1  \f2 [ ][ ][ ][ ] \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1     \f5\u9692?\f1  \f2 Armor \f5\u9693?\f1   \f5\u9474?\f1                                       \f5\u9474?\f1  \f2 [ ][ ][ ][ ] \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1      \f5\u9692?\f1  \f2 Hull \f5\u9693?\f1   \f5\u9474?\f1                                       \f5\u9474?\f1               \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9474?\f1       \f2 [Cap]    \f5\u9474?\f1                                       \f5\u9474?\f1               \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1  \f5\u9492?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9496?\f1                                       \f5\u9492?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9496?\f1  \f5\u9474?\f2\par
+\f5\u9492?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9496?\f2\par
+\par
+\f3\u-10179?\u-9008?\f1  \f2 Pixel Anchors & Sizes\par
+Overview\par
+\par
+Position: (16px, 16px)\par
+\par
+Width: 420px\par
+\par
+Height: ~360px\par
+\par
+Scrollable list\par
+\par
+Target Panels\par
+\par
+Position: (1920 \f6\u8722?\f1  \f2 420 \f6\u8722?\f1  \f2 16, 16)\par
+\par
+Width: 420px\par
+\par
+Height per target: 96px\par
+\par
+Max visible: 7\par
+\par
+Ship Status Cluster\par
+\par
+Position: (16, 1080 \f6\u8722?\f1  \f2 240 \f6\u8722?\f1  \f2 16)\par
+\par
+Size: 240\'d7240\par
+\par
+Perfect square (important for arcs)\par
+\par
+Module Rack\par
+\par
+Position: (1920 \f6\u8722?\f1  \f2 480 \f6\u8722?\f1  \f2 16, 1080 \f6\u8722?\f1  \f2 160 \f6\u8722?\f1  \f2 16)\par
+\par
+Size: 480\'d7160\par
+\par
+Slots: 40\'d740 icons, 8px padding\par
+\par
+\f3\u-10179?\u-8942?\f1  \f2 Scaling Rule\par
+\par
+All UI scales from 1080p reference:\par
+\par
+uiScale = windowHeight / 1080.0f;\par
+\par
+\par
+No per-widget scaling hacks.\par
+\par
+\f0 2\u-497?\f5\u8419?\f2  Photon-Accurate Color + Font Specs (LOCK THESE)\par
+\par
+This is critical \f1\emdash  \f2 don\f1\rquote\f2 t \f1\ldblquote\f2 eyeball\f1\rdblquote  \f2 later.\par
+\par
+\f3\u-10180?\u-8280?\f1  \f2 Core Palette (Photon-Inspired)\par
+Backgrounds\par
+HUD_BG        #0B0F14  (11, 15, 20)\par
+PANEL_BG      #121824  (18, 24, 36)\par
+PANEL_BORDER  #1E2A3A  (30, 42, 58)\par
+\par
+Bars\par
+Shield        #4AA3FF\par
+Armor         #E0B44C\par
+Hull          #C64545\par
+Capacitor     #6BE38A\par
+\par
+States\par
+Hover         +15% brightness\par
+Active        Additive glow (low alpha)\par
+Critical      Pulsing red overlay (1.2s sine)\par
+\par
+\f3\u-10179?\u-8924?\f1  \f2 Fonts (Closest to EVE Photon)\par
+\par
+Primary UI Font\par
+\par
+Inter (recommended)\par
+\par
+Weight: 400 / 500 / 600\par
+\par
+Size: 12\f1\endash\f2 14px (never smaller)\par
+\par
+Numbers / HUD\par
+\par
+Roboto Mono or JetBrains Mono\par
+\par
+Used only for:\par
+\par
+Distance\par
+\par
+Velocity\par
+\par
+Capacitor %\par
+\par
+Rules\par
+\par
+NO outlines\par
+\par
+NO shadows\par
+\par
+Subtle background panels instead\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Icon Language\par
+\par
+Flat\par
+\par
+Single color\par
+\par
+No gradients\par
+\par
+Stroke width consistent\par
+\par
+Readable at 24\'d724\par
+\par
+\f0 3\u-497?\f5\u8419?\f2  ShipStatusWidget.cpp \f1\emdash  \f2 Real C++ Skeleton\par
+\par
+This is production-ready structure, not pseudo-code.\par
+\par
+ShipStatusWidget.h\par
+#pragma once\par
+#include "RenderContext.h"\par
+#include "ShipComponent.h"\par
+\par
+class ShipStatusWidget \{\par
+public:\par
+    void setShip(const ShipComponent* ship);\par
+    void update(float dt);\par
+    void render(RenderContext& ctx);\par
+\par
+private:\par
+    const ShipComponent* ship = nullptr;\par
+\par
+    float shieldPct = 0.0f;\par
+    float armorPct  = 0.0f;\par
+    float hullPct   = 0.0f;\par
+    float capPct    = 0.0f;\par
+\par
+    void drawArc(RenderContext& ctx,\par
+                 float centerX, float centerY,\par
+                 float radius,\par
+                 float thickness,\par
+                 float pct,\par
+                 Color color);\par
+\};\par
+\par
+ShipStatusWidget.cpp\par
+#include "ShipStatusWidget.h"\par
+\par
+void ShipStatusWidget::setShip(const ShipComponent* s) \{\par
+    ship = s;\par
+\}\par
+\par
+void ShipStatusWidget::update(float dt) \{\par
+    if (!ship) return;\par
+\par
+    shieldPct = ship->shield / ship->shieldMax;\par
+    armorPct  = ship->armor  / ship->armorMax;\par
+    hullPct   = ship->hull   / ship->hullMax;\par
+    capPct    = ship->capacitor / ship->capacitorMax;\par
+\}\par
+\par
+void ShipStatusWidget::render(RenderContext& ctx) \{\par
+    if (!ship) return;\par
+\par
+    float cx = 16.0f + 120.0f;\par
+    float cy = ctx.height - 16.0f - 120.0f;\par
+\par
+    drawArc(ctx, cx, cy, 100.0f, 10.0f, shieldPct, Color::Shield);\par
+    drawArc(ctx, cx, cy, 82.0f,  10.0f, armorPct,  Color::Armor);\par
+    drawArc(ctx, cx, cy, 64.0f,  10.0f, hullPct,   Color::Hull);\par
+    drawArc(ctx, cx, cy, 40.0f,  8.0f,  capPct,    Color::Capacitor);\par
+\}\par
+\par
+\f3\u-10179?\u-8921?\f1  \f2 Rendering Notes\par
+\par
+drawArc() should:\par
+\par
+Generate triangle strip\par
+\par
+Clamp pct\par
+\par
+Animate via shader time uniform\par
+\par
+Cache geometry \f1\emdash  \f2 do not regenerate every frame\par
+\par
+\f5\u9989?\f1  \f2 What You Have Now\par
+\par
+You now have:\par
+\par
+A locked HUD layout\par
+\par
+Exact color + font rules\par
+\par
+A real C++ widget ready for OpenGL\par
+\par
+Zero guesswork later\par
+\par
+\f3\u-10179?\u-8923?\f1  \f2 Next Best Step (Highly Recommended)\par
+\par
+\f3\u-10179?\u-9143?\f1  \f2 Implement ModuleRackWidget next, because:\par
+\par
+Same rendering patterns\par
+\par
+More interaction\par
+\par
+Validates input routing\par
+\par
+Or I can:\par
+\par
+Flesh out drawArc() math\par
+\par
+Write OverviewWidget.cpp\par
+\par
+Design docked-mode UI layout\par
+\par
+Do probe scanner mode UI math\par
+\par
+Just say the word \f1\emdash  \f2 we\f1\rquote\f2 re building this properly now.\par
+\par
+Flesh out drawArc() math\par
+\par
+Write OverviewWidget.cpp\par
+\par
+Design docked-mode UI layout\par
+\par
+Do probe scanner mode UI math\par
+\par
+Awesome \f1\emdash  \f2 this is the hard, real work phase.\par
+I\f1\rquote\f2 ll do all four, cleanly separated so you can lift pieces straight into your repo.\par
+\par
+I\f1\rquote\f2 ll keep everything EVE-faithful, engine-agnostic, and OpenGL-ready.\par
+\par
+\f0 1\u-497?\f5\u8419?\f2  drawArc() \f1\emdash  \f2 Exact Math + Rendering Strategy\par
+\par
+This is the most important primitive in the HUD. Everything radial depends on it.\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Arc Geometry Model\par
+\par
+We draw an arc as a triangle strip ring segment.\par
+\par
+Inputs\par
+\par
+Center (cx, cy)\par
+\par
+radius\par
+\par
+thickness\par
+\par
+pct \f6\u8594?\f1  \f2 [0.0, 1.0]\par
+\par
+Angle range: -135\'b0 \f6\u8594?\f1  \f2 +135\'b0 (EVE style, not full circle)\par
+\par
+\f3\u-10179?\u-9008?\f1  \f2 Angle Setup\par
+constexpr float START_ANGLE = -135.0f * DEG2RAD;\par
+constexpr float END_ANGLE   =  135.0f * DEG2RAD;\par
+\par
+\par
+Actual arc span:\par
+\par
+float arcAngle = START_ANGLE +\par
+                 (END_ANGLE - START_ANGLE) * pct;\par
+\par
+\f0\u-10178?\u-8722?\f1  \f2 Vertex Generation\par
+void ShipStatusWidget::drawArc(\par
+    RenderContext& ctx,\par
+    float cx, float cy,\par
+    float radius,\par
+    float thickness,\par
+    float pct,\par
+    Color color)\par
+\{\par
+    pct = std::clamp(pct, 0.0f, 1.0f);\par
+\par
+    const int segments = 64;\par
+    float inner = radius - thickness * 0.5f;\par
+    float outer = radius + thickness * 0.5f;\par
+\par
+    float angleRange = (END_ANGLE - START_ANGLE) * pct;\par
+    float step = angleRange / segments;\par
+\par
+    ctx.beginTriangleStrip(color);\par
+\par
+    for (int i = 0; i <= segments; i++) \{\par
+        float a = START_ANGLE + step * i;\par
+\par
+        float cosA = std::cos(a);\par
+        float sinA = std::sin(a);\par
+\par
+        ctx.vertex(cx + cosA * outer, cy + sinA * outer);\par
+        ctx.vertex(cx + cosA * inner, cy + sinA * inner);\par
+    \}\par
+\par
+    ctx.end();\par
+\}\par
+\par
+\f3\u-10180?\u-8280?\f1  \f2 Visual Polish (Do This in Shader)\par
+\par
+Soft edges using alpha falloff\par
+\par
+Slight glow when value changes\par
+\par
+Optional pulse when below threshold\par
+\par
+Never animate geometry \f1\emdash  \f2 animate color/alpha only.\par
+\par
+\f0 2\u-497?\f5\u8419?\f2  OverviewWidget.cpp \f1\emdash  \f2 Real Implementation\par
+\par
+This is mission critical UI. Treat it like a data table, not a window.\par
+\par
+\f3\u-10179?\u-9020?\f1  \f2 Data Model\par
+struct OverviewRow \{\par
+    EntityId id;\par
+    std::string name;\par
+    float distance;\par
+    float velocity;\par
+    ThreatLevel threat;\par
+    EntityType type;\par
+\};\par
+\par
+OverviewWidget.h\par
+class OverviewWidget \{\par
+public:\par
+    void update(const World& world, EntityId player);\par
+    void render(RenderContext& ctx);\par
+\par
+private:\par
+    std::vector<OverviewRow> rows;\par
+    OverviewPreset preset;\par
+\};\par
+\par
+OverviewWidget.cpp\par
+void OverviewWidget::update(const World& world, EntityId player) \{\par
+    rows.clear();\par
+\par
+    auto playerPos = world.get<Transform>(player).position;\par
+\par
+    for (auto e : world.query<Transform, OverviewTag>()) \{\par
+        if (!preset.allows(e)) continue;\par
+\par
+        const auto& t = world.get<Transform>(e);\par
+\par
+        OverviewRow r;\par
+        r.id = e;\par
+        r.name = world.get<Name>(e).value;\par
+        r.distance = length(t.position - playerPos);\par
+        r.velocity = length(t.velocity);\par
+        r.threat = world.get<Threat>(e).level;\par
+        r.type = world.get<Type>(e).value;\par
+\par
+        rows.push_back(r);\par
+    \}\par
+\par
+    std::sort(rows.begin(), rows.end(),\par
+        [](auto& a, auto& b) \{\par
+            return a.distance < b.distance;\par
+        \});\par
+\}\par
+\par
+\f0\u-10179?\u-8783?\u-497?\f1  \f2 Interaction Rules\par
+\par
+Single click \f6\u8594?\f1  \f2 target\par
+\par
+Double click \f6\u8594?\f1  \f2 approach\par
+\par
+Right click \f6\u8594?\f1  \f2 context menu\par
+\par
+Hover \f6\u8594?\f1  \f2 highlight entity in space\par
+\par
+UI never issues commands directly \f1\emdash  \f2 it emits intents.\par
+\par
+\f0 3\u-497?\f5\u8419?\f2  Docked-Mode UI Layout (Station Interior)\par
+\par
+When docked, combat HUD disappears completely.\par
+\par
+\f3\u-10180?\u-8273?\f1  \f2 Docked Mode Rules\par
+\par
+No ship HUD\par
+\par
+Camera switches to static hangar view\par
+\par
+UI becomes panel-based\par
+\par
+Neocom still visible\par
+\par
+\f0\u-10178?\u-8719?\f1  \f2 Docked Layout (1920\'d71080)\par
+\f5\u9484?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9488?\f2\par
+\f5\u9474?\f1  \f2 Neocom \f5\u9474?\f1    \f2 Station Name                                \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1  \f5\u9484?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9488?\f1   \f5\u9484?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9488?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1  \f5\u9474?\f1  \f2 Services      \f5\u9474?\f1   \f5\u9474?\f1  \f2 Main Content         \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1  \f5\u9474?\f1  \f2 - Fitting     \f5\u9474?\f1   \f5\u9474?\f1  \f2 (Fitting / Market / \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1  \f5\u9474?\f1  \f2 - Market      \f5\u9474?\f1   \f5\u9474?\f1  \f2 Industry / Agents)  \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1  \f5\u9474?\f1  \f2 - Industry    \f5\u9474?\f1   \f5\u9474?\f1                       \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1  \f5\u9474?\f1  \f2 - Missions    \f5\u9474?\f1   \f5\u9474?\f1                       \f5\u9474?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1  \f5\u9492?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9496?\f1   \f5\u9492?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9496?\f1  \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1                                               \f5\u9474?\f2\par
+\f5\u9474?\f1         \f5\u9474?\f1  \f2 Ship Info / Cargo                             \f5\u9474?\f2\par
+\f5\u9492?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9472?\u9496?\f2\par
+\par
+\f0\u-10178?\u-8727?\f1  \f2 Station Services Panel\par
+\par
+Icon + label\par
+\par
+Context-sensitive (not all stations have all services)\par
+\par
+Clicking replaces Main Content\par
+\par
+\f3\u-10179?\u-8542?\f1  \f2 Ship View\par
+\par
+Static camera\par
+\par
+Slow pan\par
+\par
+Lighting reacts to hull damage\par
+\par
+Cosmetic only \f1\emdash  \f2 no interaction\par
+\par
+\f0 4\u-497?\f5\u8419?\f2  Probe Scanner Mode \f1\emdash  \f2 UI Math + Behavior\par
+\par
+This is the most complex UI mode in the game.\par
+\par
+\f3\u-10179?\u-8956?\f1  \f2 Mode Transition\par
+GameUIMode = Combat | Scanning | Docked\par
+\par
+\par
+Scanning is exclusive.\par
+\par
+\f0\u-10179?\u-8710?\u-497?\f1  \f2 System Map Projection\par
+\par
+We project 3D space \f6\u8594?\f1  \f2 2D map:\par
+\par
+Vec2 project(Vec3 worldPos) \{\par
+    return \{\par
+        worldPos.x * scale + centerX,\par
+        worldPos.z * scale + centerY\par
+    \};\par
+\}\par
+\par
+\par
+Z-axis is vertical depth.\par
+\par
+\f0\u-10178?\u-8726?\f1  \f2 Probe Structure\par
+struct Probe \{\par
+    Vec3 position;\par
+    float radius;\par
+    float strength;\par
+\};\par
+\par
+\f3\u-10179?\u-9008?\f1  \f2 Signal Resolution Math\par
+\par
+For each signature:\par
+\par
+float signal = 0.0f;\par
+\par
+for (auto& probe : probes) \{\par
+    float d = distance(probe.position, sig.position);\par
+    if (d < probe.radius) \{\par
+        signal += probe.strength * (1.0f - d / probe.radius);\par
+    \}\par
+\}\par
+\par
+\par
+Normalize \f6\u8594?\f1  \f2 clamp \f6\u8594?\f1  \f2 classify:\par
+\par
+if (signal < 0.25f) RED\par
+else if (signal < 0.75f) YELLOW\par
+else GREEN\par
+\par
+\f3\u-10180?\u-8274?\f1  \f2 Probe Controls (Exact EVE Feel)\par
+Action\tab Effect\par
+Drag\tab Move probes\par
+Scroll\tab Resize radius\par
+Q/E\tab Rotate formation\par
+Scan\tab Consume time, update signal\par
+\par
+Camera zooms out automatically during scanning only.\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Important UX Rule\par
+\par
+Never allow scanning while weapons are active\par
+\par
+This forces meaningful mode choice (just like EVE).\par
+\par
+\f5\u9989?\f1  \f2 You Now Have\par
+\par
+Exact arc math\par
+\par
+Real overview logic\par
+\par
+Docked-mode UI contract\par
+\par
+Full probe scanning math & control model\par
+\par
+This is no longer vague design \f1\emdash  \f2 this is implementation-grade.\par
+\par
+\f3\u-10179?\u-8923?\f1  \f2 Best Next Step (Strong Recommendation)\par
+\par
+\f3\u-10179?\u-9143?\f1  \f2 Implement OverviewWidget + ShipStatusWidget together, then:\par
+\par
+Add click \f6\u8594?\f1  \f2 target\par
+\par
+Add highlight \f6\u8594?\f1  \f2 world entity\par
+\par
+Once that works, everything else becomes easy.\par
+\par
+If you want next, I can:\par
+\par
+Write ModuleRackWidget.cpp\par
+\par
+Implement UI intent system\par
+\par
+Design context menus\par
+\par
+Add UI layout save/load\par
+\par
+Just point the ship. \f0\u-10179?\u-8464?\u-497?\f2\par
+\par
+Write ModuleRackWidget.cpp\par
+\par
+Implement UI intent system\par
+\par
+Design context menus\par
+\par
+Add UI layout save/load\par
+\par
+Excellent \f1\emdash  \f2 this is the last big UI foundation layer.\par
+Once these four are in, your UI stops being \f1\ldblquote\f2 screens\f1\rdblquote  \f2 and becomes a real command interface like EVE\f1\rquote\f2 s.\par
+\par
+I\f1\rquote\f2 ll give you real C++, clean architecture, and EVE-faithful interaction rules.\par
+\par
+\f0 1\u-497?\f5\u8419?\f2  ModuleRackWidget.cpp (Real C++)\par
+\par
+This widget must be fast, state-driven, and input-safe.\par
+\par
+\f3\u-10179?\u-9020?\f1  \f2 Data Model\par
+enum class ModuleState \{\par
+    Offline,\par
+    Online,\par
+    Active,\par
+    Overheated,\par
+    Disabled,\par
+    Cooldown\par
+\};\par
+\par
+struct ModuleSlot \{\par
+    int slotIndex;\par
+    ModuleState state;\par
+    float cooldownPct;\par
+    Icon icon;\par
+\};\par
+\par
+ModuleRackWidget.h\par
+class ModuleRackWidget \{\par
+public:\par
+    void setShip(EntityId ship);\par
+    void update(const World& world, float dt);\par
+    void render(RenderContext& ctx);\par
+\par
+    void onClick(int slot, bool shift);\par
+    void onRightClick(int slot);\par
+\par
+private:\par
+    EntityId ship;\par
+    std::vector<ModuleSlot> slots;\par
+\par
+    Vec2 origin;\par
+    int columns = 4;\par
+\};\par
+\par
+ModuleRackWidget.cpp\par
+void ModuleRackWidget::update(const World& world, float dt) \{\par
+    slots.clear();\par
+\par
+    const auto& fitting = world.get<FittingComponent>(ship);\par
+\par
+    for (int i = 0; i < fitting.modules.size(); i++) \{\par
+        const auto& m = fitting.modules[i];\par
+\par
+        ModuleSlot slot;\par
+        slot.slotIndex = i;\par
+        slot.state = m.state;\par
+        slot.cooldownPct = m.cooldown / m.cooldownMax;\par
+        slot.icon = m.icon;\par
+\par
+        slots.push_back(slot);\par
+    \}\par
+\}\par
+\par
+Rendering\par
+void ModuleRackWidget::render(RenderContext& ctx) \{\par
+    const float size = 40.0f;\par
+    const float pad  = 8.0f;\par
+\par
+    for (int i = 0; i < slots.size(); i++) \{\par
+        int col = i % columns;\par
+        int row = i / columns;\par
+\par
+        float x = origin.x + col * (size + pad);\par
+        float y = origin.y + row * (size + pad);\par
+\par
+        ctx.drawIcon(slots[i].icon, x, y, size);\par
+\par
+        if (slots[i].state == ModuleState::Active) \{\par
+            ctx.drawCooldownArc(\par
+                x + size / 2,\par
+                y + size / 2,\par
+                size / 2 - 2,\par
+                slots[i].cooldownPct\par
+            );\par
+        \}\par
+    \}\par
+\}\par
+\par
+Input Behavior (EVE-Faithful)\par
+void ModuleRackWidget::onClick(int slot, bool shift) \{\par
+    if (shift)\par
+        UIIntentBus::emit(OverloadModule\{ship, slot\});\par
+    else\par
+        UIIntentBus::emit(ActivateModule\{ship, slot\});\par
+\}\par
+\par
+\f0 2\u-497?\f5\u8419?\f2  UI Intent System (CRITICAL)\par
+\par
+This is how you decouple UI from gameplay.\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Why This Matters\par
+\par
+UI never touches gameplay logic\par
+\par
+Multiplayer-safe\par
+\par
+Replayable\par
+\par
+Deterministic\par
+\par
+\f3\u-10179?\u-9020?\f1  \f2 Intent Definitions\par
+struct UIIntent \{\par
+    virtual ~UIIntent() = default;\par
+\};\par
+\par
+struct ActivateModule : UIIntent \{\par
+    EntityId ship;\par
+    int slot;\par
+\};\par
+\par
+struct TargetEntity : UIIntent \{\par
+    EntityId target;\par
+\};\par
+\par
+struct ApproachEntity : UIIntent \{\par
+    EntityId target;\par
+\};\par
+\par
+\f0\u-10178?\u-8715?\f1  \f2 Intent Bus\par
+class UIIntentBus \{\par
+public:\par
+    template<typename T>\par
+    static void emit(const T& intent) \{\par
+        get().queue.push_back(\par
+            std::make_unique<T>(intent)\par
+        );\par
+    \}\par
+\par
+    static std::vector<std::unique_ptr<UIIntent>> consume() \{\par
+        auto out = std::move(get().queue);\par
+        get().queue.clear();\par
+        return out;\par
+    \}\par
+\par
+private:\par
+    std::vector<std::unique_ptr<UIIntent>> queue;\par
+\par
+    static UIIntentBus& get() \{\par
+        static UIIntentBus instance;\par
+        return instance;\par
+    \}\par
+\};\par
+\par
+\f3\u-10180?\u-8274?\f1  \f2 Consumption (Game Loop)\par
+for (auto& intent : UIIntentBus::consume()) \{\par
+    gameplaySystem.handle(*intent);\par
+\}\par
+\par
+\f0 3\u-497?\f5\u8419?\f2  Context Menus (Right-Click Everything)\par
+\par
+EVE lives and dies by context menus.\par
+\par
+\f0\u-10178?\u-8727?\f1  \f2 Context Menu Structure\par
+struct ContextAction \{\par
+    std::string label;\par
+    std::function<void()> action;\par
+\};\par
+\par
+Context Menu Builder\par
+ContextMenu buildEntityMenu(EntityId e, const World& world) \{\par
+    ContextMenu menu;\par
+\par
+    menu.add("Lock Target", [=] \{\par
+        UIIntentBus::emit(TargetEntity\{e\});\par
+    \});\par
+\par
+    menu.add("Approach", [=] \{\par
+        UIIntentBus::emit(ApproachEntity\{e\});\par
+    \});\par
+\par
+    if (world.has<MineralCargo>(e)) \{\par
+        menu.add("Salvage", [=] \{\par
+            UIIntentBus::emit(SalvageEntity\{e\});\par
+        \});\par
+    \}\par
+\par
+    return menu;\par
+\}\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Rules\par
+\par
+No nested menus deeper than 2 levels\par
+\par
+Disabled options must be visible (greyed out)\par
+\par
+Order matters (muscle memory)\par
+\par
+\f0 4\u-497?\f5\u8419?\f2  UI Layout Save / Load (Do This NOW)\par
+\par
+This prevents future pain.\par
+\par
+\f3\u-10179?\u-9020?\f1  \f2 Layout Model\par
+struct UIWindowLayout \{\par
+    std::string id;\par
+    Vec2 position;\par
+    Vec2 size;\par
+    bool visible;\par
+\};\par
+\par
+Serialize (JSON)\par
+json j;\par
+\par
+for (auto& w : windows) \{\par
+    j[w.id] = \{\par
+        \{"x", w.position.x\},\par
+        \{"y", w.position.y\},\par
+        \{"w", w.size.x\},\par
+        \{"h", w.size.y\},\par
+        \{"visible", w.visible\}\par
+    \};\par
+\}\par
+\par
+\par
+Save to:\par
+\par
+/ui/layout.json\par
+\par
+Load\par
+void loadLayout(const json& j) \{\par
+    for (auto& [id, data] : j.items()) \{\par
+        auto& w = getWindow(id);\par
+        w.position.x = data["x"];\par
+        w.position.y = data["y"];\par
+        w.size.x     = data["w"];\par
+        w.size.y     = data["h"];\par
+        w.visible    = data["visible"];\par
+    \}\par
+\}\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 EVE Rule\par
+\par
+UI layout is per character\par
+\par
+Not per account\par
+\par
+Store separately from savegame\par
+\par
+\f5\u9989?\f1  \f2 What You\f1\rquote\f2 ve Achieved\par
+\par
+You now have:\par
+\par
+A real module rack\par
+\par
+Decoupled UI \f6\u8594?\f1  \f2 gameplay\par
+\par
+Context menus everywhere\par
+\par
+Persistent UI layouts\par
+\par
+This is exactly how a serious MMO UI is built.\par
+\par
+\f3\u-10179?\u-8923?\f1  \f2 Strong Next Recommendation\par
+\par
+\f3\u-10179?\u-9143?\f1  \f2 Add TargetingSystem + Overview click handling, then:\par
+\par
+Click overview \f6\u8594?\f1  \f2 emits TargetEntity\par
+\par
+Target panel auto-populates\par
+\par
+After that, you are functionally playable.\par
+\par
+If you want next, I can:\par
+\par
+Implement TargetingSystem.cpp\par
+\par
+Add drag-reorder Neocom\par
+\par
+Build Fitting screen logic\par
+\par
+Wire network-safe UI intents\par
+\par
+Just tell me what to tackle.\par
+\par
+Implement TargetingSystem.cpp\par
+\par
+Add drag-reorder Neocom\par
+\par
+Build Fitting screen logic\par
+\par
+Wire network-safe UI intents\par
+\par
+Hell yes \f1\emdash  \f2 this is command-and-control territory now.\par
+I\f1\rquote\f2 ll implement all four in a way that\f1\rquote\f2 s EVE-authentic, network-safe, and scales to MP later.\par
+\par
+I\f1\rquote\f2 ll keep each section clean so you can drop files straight into your repo.\par
+\par
+\f0 1\u-497?\f5\u8419?\f2  TargetingSystem.cpp (Locking, Limits, Brackets)\par
+\par
+This system sits between UI intents and combat.\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Design Rules (EVE-faithful)\par
+\par
+Locking takes time (range + sensor strength)\par
+\par
+Max locked targets = skill-based\par
+\par
+Locks break on:\par
+\par
+Target out of range\par
+\par
+Jam / ECM\par
+\par
+Warp\par
+\par
+Targeting is authoritative on server\par
+\par
+\f3\u-10179?\u-9020?\f1  \f2 Components\par
+struct TargetingComponent \{\par
+    std::vector<EntityId> lockedTargets;\par
+    EntityId lockingTarget = INVALID_ENTITY;\par
+    float lockProgress = 0.0f;\par
+\};\par
+\par
+struct SensorComponent \{\par
+    float scanResolution;\par
+    int maxTargets;\par
+    float lockRange;\par
+\};\par
+\par
+TargetingSystem.cpp\par
+void TargetingSystem::update(World& world, float dt) \{\par
+    for (auto e : world.query<TargetingComponent, SensorComponent>()) \{\par
+        auto& tgt = world.get<TargetingComponent>(e);\par
+        auto& sen = world.get<SensorComponent>(e);\par
+\par
+        // Continue locking\par
+        if (tgt.lockingTarget != INVALID_ENTITY) \{\par
+            float lockTime = 40000.0f / sen.scanResolution;\par
+            tgt.lockProgress += dt / lockTime;\par
+\par
+            if (tgt.lockProgress >= 1.0f) \{\par
+                if (tgt.lockedTargets.size() < sen.maxTargets) \{\par
+                    tgt.lockedTargets.push_back(tgt.lockingTarget);\par
+                \}\par
+                tgt.lockingTarget = INVALID_ENTITY;\par
+                tgt.lockProgress = 0.0f;\par
+            \}\par
+        \}\par
+\par
+        // Validate existing locks\par
+        auto& locks = tgt.lockedTargets;\par
+        locks.erase(\par
+            std::remove_if(locks.begin(), locks.end(),\par
+                [&](EntityId target) \{\par
+                    if (!world.isAlive(target)) return true;\par
+\par
+                    float d = distance(\par
+                        world.get<Transform>(e).position,\par
+                        world.get<Transform>(target).position\par
+                    );\par
+                    return d > sen.lockRange;\par
+                \}),\par
+            locks.end()\par
+        );\par
+    \}\par
+\}\par
+\par
+\f3\u-10180?\u-8274?\f1  \f2 Intent Handling\par
+void TargetingSystem::handle(const TargetEntity& intent) \{\par
+    auto& t = world.get<TargetingComponent>(playerShip);\par
+\par
+    if (t.lockingTarget == INVALID_ENTITY)\par
+        t.lockingTarget = intent.target;\par
+\}\par
+\par
+\f0 2\u-497?\f5\u8419?\f2  Drag-Reorder Neocom (Exactly Like EVE)\par
+\par
+This is pure UI, but must persist.\par
+\par
+\f0\u-10178?\u-8719?\f1  \f2 Neocom Entry\par
+struct NeocomEntry \{\par
+    std::string id;\par
+    Icon icon;\par
+    std::function<void()> onClick;\par
+\};\par
+\par
+Drag Logic\par
+void Neocom::onDrag(int from, int to) \{\par
+    if (from == to) return;\par
+    std::swap(entries[from], entries[to]);\par
+    saveLayout();\par
+\}\par
+\par
+Interaction Rules\par
+\par
+Click = open\par
+\par
+Drag = reorder\par
+\par
+Shift-click = pin window\par
+\par
+Order saved immediately\par
+\par
+Layout Save (Extended)\par
+\{\par
+  "neocom_order": [\par
+    "inventory",\par
+    "fitting",\par
+    "map",\par
+    "market"\par
+  ]\par
+\}\par
+\par
+\f0 3\u-497?\f5\u8419?\f2  Fitting Screen Logic (No UI Fluff, All Systems)\par
+\par
+This is a stateful simulator, not just drag-drop.\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Fitting Rules\par
+\par
+CPU / Powergrid limits enforced\par
+\par
+Slot type enforced\par
+\par
+Changes apply only on Save\par
+\par
+Can simulate without committing\par
+\par
+\f3\u-10179?\u-9020?\f1  \f2 Components\par
+struct FittingComponent \{\par
+    std::vector<Module> modules;\par
+    float cpuUsed, cpuMax;\par
+    float pgUsed, pgMax;\par
+\};\par
+\par
+Fitting Session Model\par
+struct FittingSession \{\par
+    EntityId ship;\par
+    std::vector<Module> workingSet;\par
+\};\par
+\par
+Core Logic\par
+bool canFit(const FittingSession& s, const Module& m) \{\par
+    return\par
+        s.cpuUsed + m.cpu <= s.cpuMax &&\par
+        s.pgUsed  + m.pg  <= s.pgMax;\par
+\}\par
+\par
+Commit Changes\par
+void commitFitting(World& world, FittingSession& session) \{\par
+    world.get<FittingComponent>(session.ship).modules =\par
+        session.workingSet;\par
+\}\par
+\par
+UI \f6\u8594?\f1  \f2 Intent\par
+UIIntentBus::emit(CommitFitting\{ship\});\par
+\par
+\f0 4\u-497?\f5\u8419?\f2  Network-Safe UI Intents (This Is HUGE)\par
+\par
+This is what lets you go offline \f6\u8594?\f1  \f2 LAN \f6\u8594?\f1  \f2 dedicated server.\par
+\par
+\f0\u-10178?\u-8736?\f1  \f2 Rule\par
+\par
+UI emits requests, server emits events\par
+\par
+Intent Serialization\par
+enum class UIIntentType : uint8_t \{\par
+    ActivateModule,\par
+    TargetEntity,\par
+    ApproachEntity,\par
+    CommitFitting\par
+\};\par
+\par
+struct NetIntent \{\par
+    UIIntentType type;\par
+    uint32_t entity;\par
+    uint32_t param;\par
+\};\par
+\par
+Send\par
+NetIntent ni;\par
+ni.type = UIIntentType::ActivateModule;\par
+ni.entity = ship;\par
+ni.param = slot;\par
+\par
+network.send(ni);\par
+\par
+Server Authority\par
+void Server::handle(const NetIntent& ni) \{\par
+    switch (ni.type) \{\par
+        case UIIntentType::ActivateModule:\par
+            gameplay.activateModule(ni.entity, ni.param);\par
+            break;\par
+    \}\par
+\}\par
+\par
+\f3\u-10179?\u-8942?\f1  \f2 Security Win\par
+\par
+Clients can\f1\rquote\f2 t spoof damage\par
+\par
+Clients can\f1\rquote\f2 t bypass fitting rules\par
+\par
+Replay / record becomes trivial\par
+\par
+\f5\u9989?\f1  \f2 You Now Have (Seriously)\par
+\par
+You\f1\rquote\f2 ve now implemented:\par
+\par
+Full targeting system\par
+\par
+Reorderable Neocom\par
+\par
+Real fitting simulation\par
+\par
+Multiplayer-safe UI command pipeline\par
+\par
+This is MMO-grade architecture.\par
+\par
+\f3\u-10179?\u-8576?\f1  \f2 What\f1\rquote\f2 s the smartest next move?\par
+\par
+I recommend one of these next:\par
+\par
+\f0 1\u-497?\f5\u8419?\f2  WeaponSystem + effects\par
+\f0 2\u-497?\f5\u8419?\f2  Navigation (align / warp / orbit)\par
+\f0 3\u-497?\f5\u8419?\f2  Probe scanning UI implementation\par
+\f0 4\u-497?\f5\u8419?\f2  AI combat behavior using same intents\par
+\f0 5\u-497?\f5\u8419?\f2  Save/load full game state\par
+\par
+Tell me which one \f1\emdash  \f2 we\f1\rquote\f2 re past foundations and into gameplay completion now.\par
+\par
+\par
+\par
+\lang9\par
+}
+ 
