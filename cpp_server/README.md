@@ -337,6 +337,62 @@ cmake ..
 make
 ```
 
+### Running Tests
+
+The server includes a comprehensive test suite with 832 tests covering all game systems.
+
+**Quick build and test:**
+```bash
+cd cpp_server
+./build.sh       # Build the server and tests
+./run_tests.sh   # Run all tests
+```
+
+The `run_tests.sh` script ensures tests are run from the repository root for correct data file path resolution.
+
+**Manual test execution:**
+```bash
+# From repository root
+cd /path/to/EVEOFFLINE
+./cpp_server/build/bin/test_systems
+
+# All 832 tests should pass
+```
+
+**Test Coverage:**
+- Capacitor & Shield Systems (15 tests)
+- Weapon & Combat Systems (32 tests)
+- Targeting System (8 tests)
+- AI System (4 tests)
+- Movement System (8 tests)
+- Ship Database (31 tests)
+- Wormhole System (15 tests)
+- Fleet System (49 tests)
+- Mission System (7 tests)
+- Skill System (9 tests)
+- Module System (13 tests)
+- Inventory System (15 tests)
+- Loot System (7 tests)
+- NPC Database (3 tests)
+- Drone System (33 tests)
+- Insurance System (21 tests)
+- Bounty System (14 tests)
+- Market System (11 tests)
+- Corporation System (37 tests)
+- Contract System (36 tests)
+- PI System (14 tests)
+- Manufacturing System (21 tests)
+- Research System (18 tests)
+- Chat System (28 tests)
+- Character Creation (23 tests)
+- Tournament System (24 tests)
+- Leaderboard System (23 tests)
+- World Persistence (91 tests)
+- Logger (24 tests)
+- Server Metrics (19 tests)
+
+Total: **832 test assertions**
+
 ### Adding Features
 
 1. Add header files to `include/`
