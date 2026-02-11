@@ -106,6 +106,57 @@ int main() {
 #endif
     }
 
+    glfwSetWindowUserPointer(window, rmlUi.get());
+    glfwSetKeyCallback(window, [](GLFWwindow* w, int key, int, int action, int mods) {
+        auto* ui = static_cast<UI::RmlUiManager*>(glfwGetWindowUserPointer(w));
+        if (ui) {
+            ui->HandleKey(key, action, mods);
+        }
+    });
+    glfwSetCharCallback(window, [](GLFWwindow* w, unsigned int codepoint) {
+        auto* ui = static_cast<UI::RmlUiManager*>(glfwGetWindowUserPointer(w));
+        if (ui) {
+            ui->HandleChar(codepoint);
+        }
+    });
+    glfwSetCursorPosCallback(window, [](GLFWwindow* w, double xpos, double ypos) {
+        auto* ui = static_cast<UI::RmlUiManager*>(glfwGetWindowUserPointer(w));
+        if (ui) {
+            ui->HandleCursorPos(xpos, ypos);
+        }
+    });
+    glfwSetMouseButtonCallback(window, [](GLFWwindow* w, int button, int action, int mods) {
+        auto* ui = static_cast<UI::RmlUiManager*>(glfwGetWindowUserPointer(w));
+        if (ui) {
+            ui->HandleMouseButton(button, action, mods);
+        }
+    });
+    glfwSetScrollCallback(window, [](GLFWwindow* w, double, double yoffset) {
+        auto* ui = static_cast<UI::RmlUiManager*>(glfwGetWindowUserPointer(w));
+        if (ui) {
+            int mods = 0;
+            if (glfwGetKey(w, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS ||
+                glfwGetKey(w, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS) {
+                mods |= GLFW_MOD_SHIFT;
+            }
+            if (glfwGetKey(w, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS ||
+                glfwGetKey(w, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS) {
+                mods |= GLFW_MOD_CONTROL;
+            }
+            if (glfwGetKey(w, GLFW_KEY_LEFT_ALT) == GLFW_PRESS ||
+                glfwGetKey(w, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS) {
+                mods |= GLFW_MOD_ALT;
+            }
+            ui->HandleScroll(yoffset, mods);
+        }
+    });
+    glfwSetFramebufferSizeCallback(window, [](GLFWwindow* w, int width, int height) {
+        auto* ui = static_cast<UI::RmlUiManager*>(glfwGetWindowUserPointer(w));
+        if (ui) {
+            ui->HandleFramebufferSize(width, height);
+        }
+    });
+
     std::cout << "\nRmlUi initialized successfully!" << std::endl;
     std::cout << "Displaying EVE Photon UI panels:" << std::endl;
     std::cout << "  - Ship HUD (bottom center) with health bars, speed, modules" << std::endl;
@@ -123,7 +174,7 @@ int main() {
     rmlUi->AddCombatLogMessage("[12:35:02] Arrived at asteroid belt");
 
     // Initial ship status
-    UI::RmlShipData shipData;
+    UI::ShipStatusData shipData;
     shipData.shield_pct = 0.85f;
     shipData.armor_pct = 1.0f;
     shipData.hull_pct = 1.0f;

@@ -8,14 +8,9 @@
 #include "core/session_manager.h"
 #include "core/solar_system_scene.h"
 #include "ui/input_handler.h"
-#include "ui/ui_manager.h"
+#include "ui/rml_ui_manager.h"
 #include "ui/entity_picker.h"
-#include "ui/inventory_panel.h"
-#include "ui/fitting_panel.h"
-#include "ui/market_panel.h"
-#include "ui/overview_panel.h"
 #include <GLFW/glfw3.h>
-#include <imgui.h>
 #include "ui/photon/photon_context.h"
 #include "ui/photon/photon_hud.h"
 #include <iostream>
@@ -50,7 +45,7 @@ Application::Application(const std::string& title, int width, int height)
     m_camera = std::make_unique<Camera>(45.0f, static_cast<float>(width) / height, 0.1f, 10000.0f);
     m_embeddedServer = std::make_unique<EmbeddedServer>();
     m_sessionManager = std::make_unique<SessionManager>();
-    m_uiManager = std::make_unique<UI::UIManager>();
+    m_uiManager = std::make_unique<UI::RmlUiManager>();
     m_entityPicker = std::make_unique<UI::EntityPicker>();
     m_solarSystem = std::make_unique<SolarSystemScene>();
     m_photonCtx = std::make_unique<photon::PhotonContext>();
@@ -105,7 +100,7 @@ void Application::initialize() {
     }
     
     // Initialize UI manager
-    if (!m_uiManager->Initialize(m_window->getHandle())) {
+    if (!m_uiManager->Initialize(m_window->getHandle(), "ui_resources")) {
         throw std::runtime_error("Failed to initialize UI manager");
     }
     
@@ -116,23 +111,39 @@ void Application::initialize() {
     // Set up input callbacks — EVE Online style controls
     // Left-click: select/target, Double-click: approach
     // Right-click: context menu
-    // Left-drag: nothing (ImGui uses it for UI interaction)
+    // Left-drag: nothing (UI uses it for interaction)
     // Right-drag: orbit camera around ship
     // Scroll: zoom camera
-    m_window->setKeyCallback([this](int key, int action) {
+    m_window->setKeyCallback([this](int key, int, int action, int mods) {
         // Handle ESC key to exit
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
             shutdown();
         }
-        
-        m_inputHandler->handleKey(key, action, 0);
+
+        if (m_uiManager) {
+            m_uiManager->HandleKey(key, action, mods);
+        }
+
+        m_inputHandler->handleKey(key, action, mods);
+    });
+
+    m_window->setCharCallback([this](unsigned int codepoint) {
+        if (m_uiManager) {
+            m_uiManager->HandleChar(codepoint);
+        }
     });
     
     m_window->setMouseCallback([this](double xpos, double ypos) {
+        if (m_uiManager) {
+            m_uiManager->HandleCursorPos(xpos, ypos);
+        }
         m_inputHandler->handleMouse(xpos, ypos);
     });
     
     m_window->setMouseButtonCallback([this](int button, int action, int mods) {
+        if (m_uiManager) {
+            m_uiManager->HandleMouseButton(button, action, mods);
+        }
         double x = m_inputHandler->getMouseX();
         double y = m_inputHandler->getMouseY();
         m_inputHandler->handleMouseButton(button, action, mods, x, y);
@@ -140,11 +151,18 @@ void Application::initialize() {
     
     // Scroll callback — EVE uses mousewheel for camera zoom
     m_window->setScrollCallback([this](double xoffset, double yoffset) {
+        int mods = m_inputHandler->getModifierMask();
+        if (m_uiManager) {
+            m_uiManager->HandleScroll(yoffset, mods);
+        }
         handleScroll(xoffset, yoffset);
     });
     
     m_window->setResizeCallback([this](int width, int height) {
         m_renderer->setViewport(0, 0, width, height);
+        if (m_uiManager) {
+            m_uiManager->HandleFramebufferSize(width, height);
+        }
     });
     
     // Register input handler callbacks
@@ -208,126 +226,28 @@ void Application::setupUICallbacks() {
         return;
     }
     
-    // Get UI panels
-    auto* inventoryPanel = m_uiManager->GetInventoryPanel();
-    auto* fittingPanel = m_uiManager->GetFittingPanel();
-    auto* marketPanel = m_uiManager->GetMarketPanel();
-    
-    // === Setup Request Callbacks (UI → Network) ===
-    
-    // Inventory panel drag-drop callback
-    if (inventoryPanel) {
-        inventoryPanel->SetDragDropCallback([networkMgr, inventoryPanel](
-            const std::string& item_id, int quantity,
-            bool from_cargo, bool to_cargo, bool to_space) {
-            
-            // Set pending state
-            inventoryPanel->SetPendingOperation(true);
-            
-            if (to_space) {
-                // Jettison operation
-                networkMgr->sendInventoryJettison(item_id, quantity);
-            } else {
-                // Transfer operation
-                networkMgr->sendInventoryTransfer(item_id, quantity, from_cargo, to_cargo);
-            }
-        });
-        
-        std::cout << "  - Inventory panel request callbacks wired" << std::endl;
-    }
-    
-    // Fitting panel callbacks
-    if (fittingPanel) {
-        fittingPanel->SetFitModuleCallback([networkMgr, fittingPanel](const std::string& module_id, const std::string& slot_type, int slot_index) {
-            // Send module fit request to server
-            fittingPanel->SetPendingOperation(true);
-            networkMgr->sendModuleFit(module_id, slot_type, slot_index);
-        });
-        
-        fittingPanel->SetUnfitModuleCallback([networkMgr, fittingPanel](const std::string& slot_type, int slot_index) {
-            // Send module unfit request to server
-            fittingPanel->SetPendingOperation(true);
-            networkMgr->sendModuleUnfit(slot_type, slot_index);
-        });
-        
-        fittingPanel->SetOnlineModuleCallback([networkMgr, fittingPanel](const std::string& slot_type, int slot_index, bool online) {
-            // Module online/offline could trigger a server message if needed
-            // For now, this is client-side only
-            std::cout << "Module " << slot_type << "[" << slot_index << "] set to " 
-                      << (online ? "online" : "offline") << std::endl;
-        });
-        
-        std::cout << "  - Fitting panel request callbacks wired" << std::endl;
-    }
-    
-    // Market panel callbacks
-    if (marketPanel) {
-        marketPanel->SetBuyOrderCallback([networkMgr, marketPanel](const std::string& order_id, int quantity) {
-            // Send buy order fulfillment to server
-            // Note: Server will look up the actual price from the order_id
-            marketPanel->SetPendingOperation(true);
-            networkMgr->sendMarketBuy(order_id, quantity, 0.0);  // Price retrieved server-side
-        });
-        
-        marketPanel->SetSellOrderCallback([networkMgr, marketPanel](const std::string& item_id, int quantity, float price) {
-            // Send sell order creation to server with specified price
-            marketPanel->SetPendingOperation(true);
-            networkMgr->sendMarketSell(item_id, quantity, price);
-        });
-        
-        marketPanel->SetQuickBuyCallback([networkMgr, marketPanel](const std::string& item_id, int quantity) {
-            // Send instant buy to server - price of 0.0 signals server to use best available market price
-            marketPanel->SetPendingOperation(true);
-            networkMgr->sendMarketBuy(item_id, quantity, 0.0);
-        });
-        
-        marketPanel->SetQuickSellCallback([networkMgr, marketPanel](const std::string& item_id, int quantity) {
-            // Send instant sell to server - price of 0.0 signals server to use best available market price
-            marketPanel->SetPendingOperation(true);
-            networkMgr->sendMarketSell(item_id, quantity, 0.0);
-        });
-        
-        std::cout << "  - Market panel request callbacks wired" << std::endl;
-    }
-    
     // === Setup Response Callbacks (Network → UI) ===
-    
-    // Inventory response callback
-    networkMgr->setInventoryCallback([inventoryPanel](const eve::InventoryResponse& response) {
-        if (!inventoryPanel) return;
-        
+    networkMgr->setInventoryCallback([](const eve::InventoryResponse& response) {
         if (response.success) {
             std::cout << "✓ Inventory operation succeeded: " << response.message << std::endl;
-            inventoryPanel->ShowSuccess(response.message);
         } else {
             std::cerr << "✗ Inventory operation failed: " << response.message << std::endl;
-            inventoryPanel->ShowError(response.message);
         }
     });
-    
-    // Fitting response callback
-    networkMgr->setFittingCallback([fittingPanel](const eve::FittingResponse& response) {
-        if (!fittingPanel) return;
-        
+
+    networkMgr->setFittingCallback([](const eve::FittingResponse& response) {
         if (response.success) {
             std::cout << "✓ Fitting operation succeeded: " << response.message << std::endl;
-            fittingPanel->ShowSuccess(response.message);
         } else {
             std::cerr << "✗ Fitting operation failed: " << response.message << std::endl;
-            fittingPanel->ShowError(response.message);
         }
     });
-    
-    // Market response callback
-    networkMgr->setMarketCallback([marketPanel](const eve::MarketResponse& response) {
-        if (!marketPanel) return;
-        
+
+    networkMgr->setMarketCallback([](const eve::MarketResponse& response) {
         if (response.success) {
             std::cout << "✓ Market transaction succeeded: " << response.message << std::endl;
-            marketPanel->ShowSuccess(response.message);
         } else {
             std::cerr << "✗ Market transaction failed: " << response.message << std::endl;
-            marketPanel->ShowError(response.message);
         }
     });
     
@@ -338,38 +258,6 @@ void Application::setupUICallbacks() {
     });
     
     std::cout << "  - Response callbacks wired for all panels" << std::endl;
-    
-    // === Wire up overview panel movement callbacks ===
-    auto* overviewPanel = m_uiManager->GetOverviewPanel();
-    if (overviewPanel) {
-        overviewPanel->SetApproachCallback([this](const std::string& entityId) {
-            commandApproach(entityId);
-        });
-        overviewPanel->SetOrbitCallback([this](const std::string& entityId, int distance) {
-            commandOrbit(entityId, static_cast<float>(distance));
-        });
-        overviewPanel->SetKeepAtRangeCallback([this](const std::string& entityId, int distance) {
-            commandKeepAtRange(entityId, static_cast<float>(distance));
-        });
-        overviewPanel->SetAlignToCallback([this](const std::string& entityId) {
-            commandAlignTo(entityId);
-        });
-        overviewPanel->SetWarpToCallback([this](const std::string& entityId, int distance) {
-            commandWarpTo(entityId);
-            std::cout << "[Warp] Warping to " << entityId << " at " << distance << "m" << std::endl;
-        });
-        overviewPanel->SetLockTargetCallback([this](const std::string& entityId) {
-            targetEntity(entityId, true);
-        });
-        overviewPanel->SetLookAtCallback([this](const std::string& entityId) {
-            // Look At: point camera toward entity
-            auto entity = m_gameClient->getEntityManager().getEntity(entityId);
-            if (entity) {
-                m_camera->setTarget(entity->getPosition());
-            }
-        });
-        std::cout << "  - Overview panel movement callbacks wired" << std::endl;
-    }
     
     std::cout << "UI callbacks setup complete" << std::endl;
 }
@@ -394,36 +282,54 @@ void Application::update(float deltaTime) {
     // Update ship status in the HUD
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
     if (playerEntity) {
-        UI::ShipStatus status;
+        UI::ShipStatusData status;
         const auto& health = playerEntity->getHealth();
-        status.shields = health.currentShield;
-        status.shields_max = static_cast<float>(health.maxShield);
-        status.armor = health.currentArmor;
-        status.armor_max = static_cast<float>(health.maxArmor);
-        status.hull = health.currentHull;
-        status.hull_max = static_cast<float>(health.maxHull);
+        status.shield_pct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
+        status.armor_pct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
+        status.hull_pct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
         
         // Use real capacitor data from entity
         const auto& capacitor = playerEntity->getCapacitor();
-        status.capacitor = capacitor.current;
-        status.capacitor_max = capacitor.max;
+        status.capacitor_pct = capacitor.max > 0.0f ? capacitor.current / capacitor.max : 0.0f;
         
         status.velocity = m_playerSpeed;
         status.max_velocity = m_playerMaxSpeed;
         m_uiManager->SetShipStatus(status);
-        
-        // Update player position for UI calculations (e.g., distance in overview)
-        m_uiManager->SetPlayerPosition(playerEntity->getPosition());
-        
+
+        // Update player position for UI calculations (e.g., distance in overview/targets)
+        const auto playerPosition = playerEntity->getPosition();
+        m_uiManager->UpdateOverviewData(m_gameClient->getEntityManager().getAllEntities(), playerPosition);
+        updateTargetListUi(playerPosition);
+
         // Camera follows player ship
-        m_camera->setTarget(playerEntity->getPosition());
-        
-        // Update overview panel with celestial objects from solar system
-        auto* overviewPanel = m_uiManager->GetOverviewPanel();
-        if (overviewPanel && m_solarSystem) {
-            overviewPanel->UpdateCelestials(m_solarSystem->getCelestials(),
-                                            playerEntity->getPosition());
-        }
+        m_camera->setTarget(playerPosition);
+    } else if (m_uiManager) {
+        m_uiManager->ClearTargets();
+    }
+}
+
+void Application::updateTargetListUi(const glm::vec3& playerPosition) {
+    if (!m_uiManager) return;
+
+    m_uiManager->ClearTargets();
+    if (m_targetList.empty()) {
+        return;
+    }
+
+    for (const auto& targetId : m_targetList) {
+        auto entity = m_gameClient->getEntityManager().getEntity(targetId);
+        if (!entity) continue;
+
+        const auto& health = entity->getHealth();
+        const auto& position = entity->getPosition();
+        float shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
+        float armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
+        float hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
+        float distance = glm::distance(playerPosition, position);
+
+        std::string displayName = entity->getShipName().empty() ? entity->getId() : entity->getShipName();
+        bool isActive = targetId == m_currentTargetId;
+        m_uiManager->SetTarget(targetId, displayName, shieldPct, armorPct, hullPct, distance, false, isActive);
     }
 }
 
@@ -445,72 +351,8 @@ void Application::render() {
     m_renderer->renderScene(*m_camera);
     
     // Render UI
+    m_uiManager->Update();
     m_uiManager->BeginFrame();
-    m_uiManager->UpdateTargets(m_gameClient->getEntityManager().getAllEntities());
-    
-    // EVE-style right-click context menu
-    if (m_showContextMenu) {
-        ImGui::OpenPopup("##SpaceContextMenu");
-        m_showContextMenu = false;
-    }
-    
-    if (ImGui::BeginPopup("##SpaceContextMenu")) {
-        if (!m_contextMenuEntityId.empty()) {
-            // Entity context menu — PVE actions
-            auto entity = m_gameClient->getEntityManager().getEntity(m_contextMenuEntityId);
-            if (entity) {
-                ImGui::TextColored(ImVec4(0.27f, 0.82f, 0.91f, 1.0f), "%s",
-                                   entity->getShipName().empty() ? entity->getId().c_str() : entity->getShipName().c_str());
-                ImGui::Separator();
-                
-                if (ImGui::MenuItem("Approach")) {
-                    commandApproach(m_contextMenuEntityId);
-                }
-                if (ImGui::MenuItem("Orbit (500m)")) {
-                    commandOrbit(m_contextMenuEntityId, 500.0f);
-                }
-                if (ImGui::MenuItem("Keep at Range (2500m)")) {
-                    commandKeepAtRange(m_contextMenuEntityId, 2500.0f);
-                }
-                ImGui::Separator();
-                if (ImGui::MenuItem("Lock Target")) {
-                    targetEntity(m_contextMenuEntityId, true);
-                }
-                if (ImGui::MenuItem("Align To")) {
-                    commandAlignTo(m_contextMenuEntityId);
-                }
-                if (ImGui::MenuItem("Warp To")) {
-                    commandWarpTo(m_contextMenuEntityId);
-                }
-                ImGui::Separator();
-                if (ImGui::MenuItem("Show Info")) {
-                    // Placeholder for info panel
-                    std::cout << "[Info] Entity: " << m_contextMenuEntityId << std::endl;
-                }
-            }
-        } else {
-            // Empty space context menu
-            ImGui::TextColored(ImVec4(0.55f, 0.58f, 0.62f, 1.0f), "Space");
-            ImGui::Separator();
-            if (ImGui::MenuItem("Stop Ship")) {
-                commandStopShip();
-            }
-            ImGui::Separator();
-            if (ImGui::BeginMenu("Panels")) {
-                if (ImGui::MenuItem("Overview")) { m_uiManager->ToggleOverview(); }
-                if (ImGui::MenuItem("Inventory")) { m_uiManager->ToggleInventory(); }
-                if (ImGui::MenuItem("Fitting")) { m_uiManager->ToggleFitting(); }
-                if (ImGui::MenuItem("Market")) { m_uiManager->ToggleMarket(); }
-                if (ImGui::MenuItem("Missions")) { m_uiManager->ToggleMission(); }
-                ImGui::EndMenu();
-            }
-            if (ImGui::MenuItem("Lock Interface")) {
-                m_uiManager->ToggleInterfaceLock();
-            }
-        }
-        ImGui::EndPopup();
-    }
-    
     m_uiManager->Render();
     m_uiManager->EndFrame();
     
@@ -647,6 +489,10 @@ void Application::handleKeyInput(int key, int action, int mods) {
     if (action != GLFW_PRESS) {
         return;
     }
+
+    if (m_uiManager && m_uiManager->WantsKeyboardInput()) {
+        return;
+    }
     
     // Module activation (F1-F8) — EVE standard
     if (key >= GLFW_KEY_F1 && key <= GLFW_KEY_F8) {
@@ -673,19 +519,19 @@ void Application::handleKeyInput(int key, int action, int mods) {
     // E + click = Keep at Range
     // A + click = Align To
     if (key == GLFW_KEY_Q) {
-        m_uiManager->approach_active = true;
-        m_uiManager->orbit_active = false;
-        m_uiManager->keep_range_active = false;
+        m_approachActive = true;
+        m_orbitActive = false;
+        m_keepRangeActive = false;
         std::cout << "[Controls] Approach mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_W) {
-        m_uiManager->approach_active = false;
-        m_uiManager->orbit_active = true;
-        m_uiManager->keep_range_active = false;
+        m_approachActive = false;
+        m_orbitActive = true;
+        m_keepRangeActive = false;
         std::cout << "[Controls] Orbit mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_E) {
-        m_uiManager->approach_active = false;
-        m_uiManager->orbit_active = false;
-        m_uiManager->keep_range_active = true;
+        m_approachActive = false;
+        m_orbitActive = false;
+        m_keepRangeActive = true;
         std::cout << "[Controls] Keep at Range mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL)) {
         commandStopShip();
@@ -693,20 +539,15 @@ void Application::handleKeyInput(int key, int action, int mods) {
     
     // Panel toggles
     if (key == GLFW_KEY_I && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleInventory();
+        m_uiManager->ToggleDocument("inventory");
     } else if (key == GLFW_KEY_F && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleFitting();
+        m_uiManager->ToggleDocument("fitting");
     } else if (key == GLFW_KEY_O && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleOverview();
+        m_uiManager->ToggleDocument("overview");
     } else if (key == GLFW_KEY_R && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleMarket();
+        m_uiManager->ToggleDocument("market");
     } else if (key == GLFW_KEY_J && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleMission();
-    }
-    
-    // L — Toggle interface lock
-    if (key == GLFW_KEY_L && (mods & GLFW_MOD_CONTROL)) {
-        m_uiManager->ToggleInterfaceLock();
+        m_uiManager->ToggleDocument("mission");
     }
 }
 
@@ -719,11 +560,10 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             m_lastMouseDragY = y;
         } else if (action == GLFW_RELEASE) {
             // If right-click was a quick click (not a drag), show context menu
-            // Skip if ImGui already captured the mouse (e.g. overview panel handled it)
+            // Skip if UI already captured the mouse (e.g. overview panel handled it)
             // to prevent two context menus appearing simultaneously
             if (m_rightMouseDown) {
-                ImGuiIO& io = ImGui::GetIO();
-                if (!io.WantCaptureMouse) {
+                if (!m_uiManager || !m_uiManager->WantsMouseInput()) {
                     double dx = x - m_lastMouseDragX;
                     double dy = y - m_lastMouseDragY;
                     double dist = std::sqrt(dx * dx + dy * dy);
@@ -747,9 +587,8 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
     
     // Left-click: select entity / apply movement command
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        // Don't process clicks that ImGui captured
-        ImGuiIO& io = ImGui::GetIO();
-        if (io.WantCaptureMouse) return;
+        // Don't process clicks that UI captured
+        if (m_uiManager && m_uiManager->WantsMouseInput()) return;
         
         // Pick entity at mouse position
         auto entities = m_gameClient->getEntityManager().getAllEntities();
@@ -769,15 +608,15 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
         
         if (!pickedEntityId.empty()) {
             // EVE-style: Apply pending movement command if one is active
-            if (m_uiManager->approach_active) {
+            if (m_approachActive) {
                 commandApproach(pickedEntityId);
-                m_uiManager->approach_active = false;
-            } else if (m_uiManager->orbit_active) {
+                m_approachActive = false;
+            } else if (m_orbitActive) {
                 commandOrbit(pickedEntityId);
-                m_uiManager->orbit_active = false;
-            } else if (m_uiManager->keep_range_active) {
+                m_orbitActive = false;
+            } else if (m_keepRangeActive) {
                 commandKeepAtRange(pickedEntityId);
-                m_uiManager->keep_range_active = false;
+                m_keepRangeActive = false;
             } else {
                 // Default: select / CTRL+click to lock target
                 bool addToTargets = (mods & GLFW_MOD_CONTROL) != 0;
@@ -790,8 +629,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
 void Application::handleMouseMove(double x, double y, double deltaX, double deltaY) {
     // EVE-style camera: Right-click drag to orbit camera around ship
     if (m_rightMouseDown) {
-        ImGuiIO& io = ImGui::GetIO();
-        if (!io.WantCaptureMouse) {
+        if (!m_uiManager || !m_uiManager->WantsMouseInput()) {
             float sensitivity = 0.3f;
             m_camera->rotate(static_cast<float>(deltaX) * sensitivity,
                            static_cast<float>(-deltaY) * sensitivity);
@@ -801,8 +639,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
 
 void Application::handleScroll(double xoffset, double yoffset) {
     // EVE-style: mousewheel zooms camera
-    ImGuiIO& io = ImGui::GetIO();
-    if (!io.WantCaptureMouse) {
+    if (!m_uiManager || !m_uiManager->WantsMouseInput()) {
         m_camera->zoom(static_cast<float>(yoffset));
     }
 }
@@ -823,7 +660,6 @@ void Application::targetEntity(const std::string& entityId, bool addToTargets) {
         auto it = std::find(m_targetList.begin(), m_targetList.end(), entityId);
         if (it == m_targetList.end()) {
             m_targetList.push_back(entityId);
-            m_uiManager->AddTarget(entityId);
         }
     } else {
         // Replace current target
@@ -831,10 +667,6 @@ void Application::targetEntity(const std::string& entityId, bool addToTargets) {
         m_targetList.clear();
         m_targetList.push_back(entityId);
         m_currentTargetIndex = 0;
-        
-        // Update UI
-        m_uiManager->RemoveTarget("");  // Clear all (empty string)
-        m_uiManager->AddTarget(entityId);
     }
 }
 
@@ -844,9 +676,10 @@ void Application::clearTarget() {
     m_currentTargetId.clear();
     m_targetList.clear();
     m_currentTargetIndex = -1;
-    
-    // Update UI
-    m_uiManager->RemoveTarget("");  // Clear all
+
+    if (m_uiManager) {
+        m_uiManager->ClearTargets();
+    }
 }
 
 void Application::cycleTarget() {
@@ -949,9 +782,9 @@ void Application::commandStopShip() {
     m_moveTargetId.clear();
     m_playerVelocity = glm::vec3(0.0f);
     m_playerSpeed = 0.0f;
-    m_uiManager->approach_active = false;
-    m_uiManager->orbit_active = false;
-    m_uiManager->keep_range_active = false;
+    m_approachActive = false;
+    m_orbitActive = false;
+    m_keepRangeActive = false;
     std::cout << "[Movement] Ship stopped" << std::endl;
 }
 

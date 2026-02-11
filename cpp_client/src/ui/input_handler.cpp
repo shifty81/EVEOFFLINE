@@ -75,6 +75,20 @@ bool InputHandler::isKeyPressed(int key) const {
     return m_pressedKeys.find(key) != m_pressedKeys.end();
 }
 
+int InputHandler::getModifierMask() const {
+    int mods = 0;
+    if (m_ctrlPressed) {
+        mods |= GLFW_MOD_CONTROL;
+    }
+    if (m_shiftPressed) {
+        mods |= GLFW_MOD_SHIFT;
+    }
+    if (m_altPressed) {
+        mods |= GLFW_MOD_ALT;
+    }
+    return mods;
+}
+
 void InputHandler::updateModifiers(int mods) {
     m_ctrlPressed = (mods & GLFW_MOD_CONTROL) != 0;
     m_shiftPressed = (mods & GLFW_MOD_SHIFT) != 0;
