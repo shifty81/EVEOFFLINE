@@ -1,5 +1,6 @@
 #include "core/entity.h"
 #include <algorithm>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace eve {
 
@@ -54,7 +55,10 @@ void Entity::updateFromState(const glm::vec3& position, const glm::vec3& velocit
 
 void Entity::interpolate(float deltaTime, float interpolationTime) {
     if (m_interpolationProgress >= 1.0f) {
-        // Already at target
+        // Already at target - apply velocity-based extrapolation for smoother motion
+        if (glm::length(m_targetVelocity) > 0.001f) {
+            m_position += m_targetVelocity * deltaTime;
+        }
         return;
     }
     
@@ -67,8 +71,12 @@ void Entity::interpolate(float deltaTime, float interpolationTime) {
     float smoothT = 1.0f - std::pow(1.0f - t, 3.0f);  // Cubic ease-out
     
     m_position = m_prevPosition + (m_targetPosition - m_prevPosition) * smoothT;
+    
+    // Apply velocity for better prediction
     m_velocity = m_targetVelocity;
-    m_rotation = m_targetRotation;  // Could interpolate rotation too if needed
+    
+    // Interpolate rotation smoothly
+    m_rotation = m_rotation + (m_targetRotation - m_rotation) * smoothT;
 }
 
 } // namespace eve
