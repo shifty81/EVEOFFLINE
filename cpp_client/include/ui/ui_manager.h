@@ -356,6 +356,16 @@ private:
     void RenderAlertStack();
     void RenderDockablePanel(const std::string& id);
 
+    // Panel-specific content rendering (Atlas native)
+    void RenderInventoryContent(float x, float y, float contentW, float maxY);
+    void RenderFittingContent(float x, float y, float contentW, float maxY);
+    void RenderMissionContent(float x, float y, float contentW, float maxY);
+    void RenderDScanContent(float x, float y, float contentW, float maxY);
+    void RenderChatContent(float x, float y, float contentW, float maxY);
+    void RenderDroneContent(float x, float y, float contentW, float maxY);
+    void RenderMarketContent(float x, float y, float contentW, float maxY);
+    void RenderProbeScannerContent(float x, float y, float contentW, float maxY);
+
     // Layout helper: convert between PanelConfig map and PanelLayout map
     std::unordered_map<std::string, PanelLayout> ExportPanelLayouts() const;
     void ImportPanelLayouts(const std::unordered_map<std::string, PanelLayout>& layouts);
