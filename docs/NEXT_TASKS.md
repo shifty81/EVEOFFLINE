@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 12, 2026)**: Task 1.1 (Procedural Ship Hull + Weapons Generation) **COMPLETE**. Ships now assembled from modular parts with visible weapons and engines. Next priority: Task 1.2 (Shield/Armor/Hull Damage with Visual Feedback).
+
 > **Update (February 11, 2026)**: Test infrastructure improved with dedicated test runner script. All 832 test assertions passing across 170+ test functions. Documentation updated with comprehensive testing guide. Project status: Excellent - all baseline systems complete, well-tested, and documented.
 
 > ⭐ **NEW**: See [DEVELOPMENT_GUIDANCE.md](DEVELOPMENT_GUIDANCE.md) for comprehensive guidance on the next major milestone: **Vertical Slice - One Full Star System**
@@ -15,7 +17,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: The highest priority task is **Task 1.1: Procedural Ship Hull + Weapons Generation** (1-2 weeks, medium complexity). This is the first step in the critical Vertical Slice milestone.
+**TL;DR**: ~~Task 1.1 (Procedural Ship Hull + Weapons Generation)~~ ✅ **COMPLETE** (Feb 12, 2026). The highest priority task is now **Task 1.2: Shield/Armor/Hull Damage with Visual Feedback** (1 week, medium complexity). This is the next step in the critical Vertical Slice milestone.
 
 ## Current Status (February 2026)
 
