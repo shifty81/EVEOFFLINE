@@ -1423,7 +1423,12 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
                     float newX = nb.x + delta.x;
                     float newW = nb.w - delta.x;
                     float leftEdge = ctx.sidebarWidth();
-                    if (newW >= state.minW && newX >= leftEdge) { state.bounds.x = newX; state.bounds.w = newW; }
+                    // Clamp left edge to sidebar boundary
+                    if (newX < leftEdge) {
+                        newW -= (leftEdge - newX);
+                        newX = leftEdge;
+                    }
+                    if (newW >= state.minW) { state.bounds.x = newX; state.bounds.w = newW; }
                 }
                 if (state.resizeEdge & 2) { // right
                     float newW = nb.w + delta.x;
