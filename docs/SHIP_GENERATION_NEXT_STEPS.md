@@ -11,14 +11,21 @@
 - Enhanced detail functions
 - Ship naming guide (copyright-safe)
 - Comprehensive documentation
+- **Model class integration** (Step 1 complete - February 12, 2026)
+  - `addPartToMesh()` helper function added to Model class
+  - `createShipModelWithRacialDesign()` now uses modular part assembly
+  - Engines, turrets, and launchers placed based on class rules
+  - Faction-specific details (Solari spires, Keldari framework)
+  - Fallback to procedural generation if parts unavailable
 
 ⏳ **IN PROGRESS**:
-- Model class integration
 - Ship JSON data updates
+- Visual testing and validation
 
 🔜 **PLANNED**:
 - Procedural texturing
 - Complete testing suite
+- Performance optimization
 
 ## Recommended Integration Steps
 
