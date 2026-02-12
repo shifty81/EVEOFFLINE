@@ -1,4 +1,4 @@
-# EVE OFFLINE - Development Guidance (February 2026)
+# Atlas — Development Guidance (February 2026)
 
 ## Current Status
 

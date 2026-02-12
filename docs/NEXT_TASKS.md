@@ -1,4 +1,4 @@
-# EVE OFFLINE - Next Tasks Recommendations
+# Atlas — Next Tasks Recommendations
 
 > **Update (February 11, 2026)**: Test infrastructure improved with dedicated test runner script. All 832 test assertions passing across 170+ test functions. Documentation updated with comprehensive testing guide. Project status: Excellent - all baseline systems complete, well-tested, and documented.
 

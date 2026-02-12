@@ -1,8 +1,8 @@
-# EVE OFFLINE - Root CMakeLists.txt
+# Atlas - Root CMakeLists.txt
 # This creates a unified Visual Studio solution for both C++ client and server
 
 cmake_minimum_required(VERSION 3.15)
-project(EVEOffline VERSION 1.0.0 LANGUAGES C CXX)
+project(Atlas VERSION 1.0.0 LANGUAGES C CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -25,11 +25,11 @@ if(BUILD_SERVER)
 endif()
 
 message(STATUS "")
-message(STATUS "EVE OFFLINE Configuration:")
+message(STATUS "Atlas Configuration:")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Build Client: ${BUILD_CLIENT}")
 message(STATUS "  Build Server: ${BUILD_SERVER}")
 message(STATUS "")
 message(STATUS "After generation, open the solution file in Visual Studio:")
-message(STATUS "  build_vs/EVEOffline.sln")
+message(STATUS "  build_vs/Atlas.sln")
 message(STATUS "")

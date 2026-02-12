@@ -244,6 +244,7 @@ void PostProcessing::process(GLuint inputTexture, GLuint outputFBO) {
         // Simple pass-through when all effects disabled
         // Bind output and copy input texture directly
         glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
+        glViewport(0, 0, m_width, m_height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         
         // Use tone map shader but with neutral settings
@@ -383,6 +384,7 @@ GLuint PostProcessing::applyBloom(GLuint inputTexture) {
 
 void PostProcessing::toneMap(GLuint inputTexture, GLuint bloomTexture, GLuint outputFBO) {
     glBindFramebuffer(GL_FRAMEBUFFER, outputFBO);
+    glViewport(0, 0, m_width, m_height);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
     g_toneMapShader->use();

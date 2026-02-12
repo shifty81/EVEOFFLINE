@@ -1,6 +1,6 @@
-# EVE OFFLINE - Getting Started Tutorial
+# Atlas — Getting Started Tutorial
 
-Welcome to EVE OFFLINE! This tutorial will guide you through your first steps in the game.
+Welcome to Atlas! This tutorial will guide you through your first steps in the game.
 
 ## Table of Contents
 1. [First Launch](#first-launch)

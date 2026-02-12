@@ -1,190 +1,239 @@
-# EVE OFFLINE
-
-A PVE-focused space MMO heavily inspired by EVE Online, designed for small groups of players (2-20) or solo play with AI companions. Built with C++ and OpenGL. Features fleet/party systems supporting both AI and human players in cooperative PVE content.
-
-> **Note**: This project is heavily based on EVE Online's game mechanics and systems but uses entirely original naming conventions for all in-game content (ships, factions, resources, systems, etc.). All gameplay focuses on PVE and cooperative fleet content — no PVP.
-
-> **Status**: In active R&D and development — actively testing until further notice.
-
-## Project Structure
+# Atlas
 
 ```
-EVEOFFLINE/
-├── cpp_client/          # C++ OpenGL game client
-│   ├── src/             #   Source code (core, rendering, network, ui, audio)
-│   ├── include/         #   Header files
-│   ├── shaders/         #   GLSL shader files
-│   ├── assets/          #   Game assets (models, textures)
-│   └── external/        #   Third-party libraries (stb, etc.)
-├── cpp_server/          # C++ dedicated game server
-│   ├── src/             #   Source code (ECS, network, systems)
-│   ├── include/         #   Header files
-│   └── config/          #   Server configuration
-├── data/                # Game data (JSON - ships, modules, missions, etc.)
-├── docs/                # Documentation
-│   ├── guides/          #   Build & setup guides
-│   ├── cpp_client/      #   C++ client documentation
-│   └── sessions/        #   Development session notes
-├── archive/             # Legacy Python prototype (for reference only)
-├── CMakeLists.txt       # Root CMake build configuration
-├── build.sh             # Unix/macOS build script
-├── build.bat            # Windows build script
-├── build_vs.bat         # Visual Studio solution generator
-└── generate_solution.bat # Root VS solution generator
+      ___   _______ __       ___       _______.
+     /   \ |       |  |     /   \     /       |
+    /  ^  \|___|   |  |    /  ^  \   |   (----`
+   /  /_\  \   /  /|  |   /  /_\  \   \   \    
+  /  _____  \ /  /_|  |  /  _____  \----)   |   
+ /__/     \__\_____|__| /__/     \__\_______/    
+
+    ╔═══════════════════════════════════════════╗
+    ║  A  S P A C E  S I M U L A T O R  B U I L T
+    ║  W I T H  T H E  A T L A S  U I  E N G I N E
+    ╚═══════════════════════════════════════════╝
 ```
+
+A PVE-focused space simulator for small groups (2–20 players) or solo play with AI wingmates.
+Built with **C++ / OpenGL** and the custom **Atlas UI** framework — an immediate-mode, GPU-accelerated UI system designed for sci-fi cockpit interfaces.
+
+> **Status** — Active R&D · Builds on Linux, macOS, Windows
+
+---
+
+## ✨ At a Glance
+
+```
+ ┌─────────┬───────────────────────────────────────┬──────────────┐
+ │ NEOCOM  │                                       │  SELECTED    │
+ │ SIDEBAR │    Locked Target Cards (top-center)    │  ITEM PANEL  │
+ │         │                                       ├──────────────┤
+ │  ▓ Inv  │                                       │  OVERVIEW    │
+ │  ▓ Fit  │          ★  3D Space View  ★          │  ──────────  │
+ │  ▓ Mkt  │                                       │  ● Frigate   │
+ │  ▓ Mis  │                                       │  ● Station   │
+ │  ▓ DSc  │        ┌──── Ship HUD ────┐           │  ● Stargate  │
+ │  ▓ Ovw  │        │ Shield ████░░░   │           │  ● Asteroid  │
+ │  ▓ Cht  │        │ Armor  ██████░   │           │              │
+ │  ▓ Drn  │        │ Hull   ████████  │           │              │
+ │         │        │ ◎ Capacitor ring │           │              │
+ │         │        │ [F1][F2][F3][F4] │           │              │
+ │  ⏱ 23:14│        │ Speed: 142 m/s   │           │              │
+ └─────────┴────────┴──────────────────┴───────────┴──────────────┘
+```
+
+| Feature | Details |
+|---------|---------|
+| **Rendering** | OpenGL 3.3+ · Deferred shading · Shadow mapping · Post-processing |
+| **UI** | Atlas UI — custom immediate-mode framework (panels, HUD, context menus) |
+| **Audio** | OpenAL spatial sound for weapons, engines, and ambience |
+| **Networking** | TCP client/server · Embedded or dedicated server modes |
+| **AI** | NPC combat, mining, hauling — AI pilots can fill fleet roles |
+| **Content** | 102+ ships · 159+ modules · 137 skills · 4 factions · Full mission system |
+| **Modding** | All game data in JSON — ships, modules, missions, universe |
+
+---
 
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 - **CMake** 3.15+
-- **C++17** compiler (GCC 9+, Clang 10+, or Visual Studio 2019+)
-- **Dependencies**: GLFW3, GLM, GLEW, nlohmann-json, OpenAL (optional)
+- **C++17** compiler (GCC 9+, Clang 10+, MSVC 2019+)
+- **Libraries**: GLFW3 · GLM · GLEW · nlohmann-json · OpenAL (optional)
 
-### Building (Linux/macOS)
+### Linux / macOS
 
 ```bash
-# Install dependencies
-# Ubuntu/Debian:
-sudo apt-get install build-essential cmake libgl1-mesa-dev libglew-dev libglfw3-dev libglm-dev nlohmann-json3-dev libopenal-dev
+# Ubuntu/Debian
+sudo apt-get install build-essential cmake \
+  libgl1-mesa-dev libglew-dev libglfw3-dev libglm-dev \
+  nlohmann-json3-dev libopenal-dev libfreetype-dev
 
-# macOS:
-brew install cmake glfw glm glew nlohmann-json openal-soft
+# macOS
+brew install cmake glfw glm glew nlohmann-json openal-soft freetype
 
-# Build
+# Build & run
 ./build.sh
-# or
-./build.sh Debug
-
-# Run
-cd build/bin
-./eve_client "YourName"
+cd build/bin && ./eve_client "YourName"
 ```
 
-### Building (Windows - Visual Studio)
+### Windows (Visual Studio)
 
-**Install dependencies with vcpkg first:**
 ```cmd
-cd C:\
-git clone https://github.com/microsoft/vcpkg.git
-cd vcpkg
-.\bootstrap-vcpkg.bat
-.\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
-.\vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows
-```
+:: Install dependencies via vcpkg
+vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows ^
+              nlohmann-json:x64-windows freetype:x64-windows
 
-**Build:**
-```cmd
-build_vs.bat
-```
-
-**Or open in Visual Studio:**
-```cmd
+:: Generate & open solution
 build_vs.bat --open
 ```
 
-The executable will be at: `cpp_client\build_vs\bin\Release\eve_client.exe`
-
-For detailed setup instructions, see:
-- [Quick Start](docs/guides/QUICKSTART_VS2022.md)
-- [Full VS2022 Guide](docs/guides/VS2022_SETUP_GUIDE.md)
-- [Troubleshooting](docs/guides/TROUBLESHOOTING_VS2022.md)
-- [Cloud Deployment](docs/guides/CLOUD_DEPLOYMENT.md) — Deploy to AWS, GCP, Azure, Digital Ocean
-
-### Building (CMake directly)
+### CMake (any platform)
 
 ```bash
 mkdir build && cd build
-cmake .. -DCMAKE_BUILD_TYPE=Release
+cmake .. -DCMAKE_BUILD_TYPE=Release -DUSE_SYSTEM_LIBS=ON
 cmake --build . --config Release
 ```
 
-## 🎮 Features
+---
 
-### C++ Client (OpenGL)
-- **3D Rendering**: OpenGL 3.3+ with deferred rendering, shadow mapping, post-processing
-- **Sci-Fi Styled UI**: ImGui-based interface inspired by EVE Online's Photon UI
-- **Audio**: OpenAL spatial audio for weapons, explosions, and engines
-- **Networking**: TCP client connecting to the dedicated server
-- **Entity System**: Synchronized entity management with interpolation
+## 🗂️ Project Structure
 
-### C++ Server
-- **ECS Architecture**: Entity Component System for game logic
-- **Multiplayer**: TCP server supporting multiple concurrent clients
-- **AI Systems**: NPC behavior, combat, movement, and targeting — AI pilots can fill fleet roles
-- **Steam Integration**: Optional Steam authentication and server browser
-- **Cross-Platform**: Windows, Linux, macOS
+```
+Atlas/
+├── cpp_client/            # C++ OpenGL game client
+│   ├── src/               #   Source (core, rendering, network, ui, audio)
+│   ├── include/           #   Headers
+│   │   └── ui/atlas/      #   ★ Atlas UI framework headers
+│   ├── shaders/           #   GLSL shaders
+│   └── assets/            #   Models, textures
+├── cpp_server/            # C++ dedicated game server
+│   ├── src/               #   Server source (ECS, network, systems)
+│   └── config/            #   Server configuration
+├── data/                  # Game data — fully moddable JSON
+│   ├── ships/             #   102+ ship definitions
+│   ├── modules/           #   159+ module definitions
+│   ├── missions/          #   Mission templates (5 levels, 7 types)
+│   ├── universe/          #   Solar systems, stargates, stations
+│   └── ...                #   Skills, NPCs, market, industry, etc.
+├── docs/                  # Documentation
+│   ├── atlas-ui/          #   ★ Atlas UI framework docs
+│   ├── guides/            #   Build & setup guides
+│   └── ...                #   Design, features, development notes
+├── tools/                 # Utilities (ship creator, JSON validator)
+├── archive/               # Legacy code & deprecated files
+├── CMakeLists.txt         # Root build configuration
+├── build.sh / build.bat   # Build scripts
+└── Makefile               # Development task shortcuts
+```
 
-### Game Content (data/)
-All game content is moddable via JSON files:
-- 102+ ships (frigates to titans, Tech I and Tech II, plus capitals)
-  - Frigates, Destroyers, Cruisers, Battlecruisers, Battleships
-  - Interceptors, Covert Ops, Assault Frigates, Stealth Bombers, Marauders
-  - Interdictors, Command Ships, Logistics Cruisers, Recon Ships
-  - Carriers, Dreadnoughts, Titans
-  - Industrial haulers, Mining Barges, Exhumers
-  - Procedural 3D models with faction-specific designs
-- 159+ modules (weapons, defenses, utilities, Tech II, Faction, Officer)
-- 137 skills across 20 categories with attribute-based training
-- Missions across 5 levels with 7 types (combat, mining, courier, trade, scenario, exploration, storyline)
-- 4 playable factions: Solari, Veyren, Aurelian, Keldari
-- Character creation with races, bloodlines, and attributes
-- Clone system, implants, and Learning skills
-- AEGIS security enforcement and insurance
-- Corporation system with NPC and player corps
-- Contract/escrow system
-- Deadspace complexes with 5 difficulty tiers
-- Mining, manufacturing, market, and exploration systems
-- Fleet/party system with AI or player wingmates
-- Stations and asteroids with visual variety
+---
+
+## 🎨 Atlas UI Framework
+
+Atlas is both the game **and** its UI framework. The Atlas UI system is a custom, immediate-mode, GPU-accelerated UI toolkit built specifically for sci-fi game interfaces — and designed to be reusable in other projects.
+
+**→ [Full Atlas UI Documentation](docs/atlas-ui/README.md)**
+
+### Key Features
+
+- **Immediate-mode API** — no retained widget trees; simple `if (button(...))` pattern
+- **Single draw-call batching** — all UI rendered in one GPU pass
+- **EVE-style widget set** — panels, status arcs, capacitor rings, module racks, overview tables
+- **Interactive** — drag-to-move panels, click buttons, tab switching, scrolling
+- **Themeable** — full color scheme support (default teal, classic amber, colorblind-safe)
+- **Zero dependencies** beyond OpenGL 3.3
+
+### Quick Example
+
+```cpp
+#include "ui/atlas/atlas_context.h"
+#include "ui/atlas/atlas_widgets.h"
+
+atlas::AtlasContext ctx;
+ctx.init();
+
+// Each frame:
+atlas::InputState input = getInputFromGLFW();
+ctx.beginFrame(input);
+
+atlas::Rect panelBounds = {100, 100, 300, 200};
+if (atlas::panelBegin(ctx, "My Panel", panelBounds)) {
+    if (atlas::button(ctx, "Click Me", {110, 140, 80, 24})) {
+        // handle click
+    }
+    atlas::progressBar(ctx, {110, 170, 200, 16}, 0.75f,
+                       ctx.theme().shield, "Shield: 75%");
+}
+atlas::panelEnd(ctx);
+
+ctx.endFrame();
+```
+
+---
+
+## 🎮 Game Features
+
+### Four Factions
+
+| Faction | Style | Specialty |
+|---------|-------|-----------|
+| **Solari** | Golden / elegant | Armor tanking, energy weapons |
+| **Veyren** | Angular / utilitarian | Shield tanking, hybrid turrets |
+| **Aurelian** | Sleek / organic | Speed, drones, electronic warfare |
+| **Keldari** | Rugged / industrial | Missiles, shields, ECM |
+
+### Ship Classes
+Frigates · Destroyers · Cruisers · Battlecruisers · Battleships · Capitals
+Tech I · Tech II (Interceptors, Covert Ops, Assault Frigs, Stealth Bombers, Marauders, Logistics, Recon, Command Ships)
+Industrials · Mining Barges · Exhumers · Carriers · Dreadnoughts · Titans
+
+### Game Systems
+- **Combat** — Module activation, target locking, damage types, electronic warfare
+- **Movement** — Approach, orbit, keep-at-range, warp, align (EVE-style)
+- **Fleet** — Party system with AI or human wingmates
+- **Skills** — 137 skills across 20 categories with attribute-based training
+- **Industry** — Mining, manufacturing, market, contracts
+- **Exploration** — Probe scanning, deadspace complexes, wormholes
+- **Missions** — 5 levels × 7 types (combat, mining, courier, trade, scenario, exploration, storyline)
+
+---
 
 ## 🔧 Modding
 
-Edit JSON files in `data/` to customize game content:
-```
+All game content lives in `data/` as JSON files — fully moddable:
+
+```bash
 data/
-├── character_creation/ # Races, bloodlines, clones, implants
-├── ships/              # Ship definitions
-├── modules/            # Module definitions
-├── skills/             # Skill definitions
-├── npcs/               # NPC definitions
-├── missions/           # Mission templates
-├── universe/           # Solar system data
-├── security/           # AEGIS security, insurance
-├── corporations/       # NPC and player corps
-├── contracts/          # Contract/escrow system
-├── exploration/        # Signatures, deadspace complexes
-├── industry/           # Blueprints, manufacturing
-├── market/             # Pricing system
-├── asteroid_fields/    # Mining belt data
-└── planetary_interaction/ # PI resources
+├── ships/              # Ship stats, slots, bonuses
+├── modules/            # Weapons, defenses, utilities
+├── skills/             # Training requirements and bonuses
+├── missions/           # Mission templates and objectives
+├── npcs/               # NPC spawns and AI behavior
+├── universe/           # Solar systems and celestials
+├── market/             # Economy and pricing
+└── ...                 # Industry, exploration, corps, security
 ```
 
-**Modding Tools** (in `tools/`):
-- `validate_json.py` - Validate JSON syntax and structure
-- `create_ship.py` - Interactive ship creation wizard
+**Tools**: `tools/validate_json.py` (validate data) · `tools/create_ship.py` (ship wizard)
 
-See the [Modding Guide](docs/MODDING_GUIDE.md) for detailed instructions.
+See the [Modding Guide](docs/MODDING_GUIDE.md) for details.
+
+---
 
 ## 📚 Documentation
 
-All documentation is in [docs/](docs/):
+| Category | Links |
+|----------|-------|
+| **Get Started** | [Tutorial](docs/TUTORIAL.md) · [Build Guides](docs/guides/) |
+| **Atlas UI** | [Atlas UI Docs](docs/atlas-ui/README.md) · [Widget Reference](docs/atlas-ui/WIDGETS.md) |
+| **Development** | [Roadmap](docs/ROADMAP.md) · [Contributing](docs/CONTRIBUTING.md) |
+| **Design** | [Game Design](docs/design/DESIGN.md) · [Ship Modeling](docs/SHIP_MODELING.md) |
+| **Technical** | [C++ Client](docs/cpp_client/) · [Networking](docs/cpp_client/) |
 
-**Getting Started**
-- [Tutorial](docs/TUTORIAL.md) — New player guide: controls, combat, skills, ISK making
-- [Modding Guide](docs/MODDING_GUIDE.md) — Create custom ships, modules, and missions
-- [Build Guides](docs/guides/) — VS2022, vcpkg, build automation
-
-**Development**
-- [Development Guidance](docs/DEVELOPMENT_GUIDANCE.md) — ⭐ **START HERE** for next steps
-- [Roadmap](docs/ROADMAP.md) — Development progress and plans
-- [Next Tasks](docs/NEXT_TASKS.md) — Recommendations for upcoming work
-- [Design Document](docs/design/DESIGN.md) — Game systems design
-
-**Technical**
-- [C++ Client Docs](docs/cpp_client/) — Rendering, UI, audio, networking
-- [Ship Modeling](docs/SHIP_MODELING.md) — Procedural ship generation system
-- [Standings System](docs/STANDINGS_SYSTEM.md) — NPC relationships and faction standings
+---
 
 ## 🤝 Contributing
 
@@ -196,4 +245,4 @@ Contributions are welcome! See [CONTRIBUTING.md](docs/CONTRIBUTING.md).
 
 ---
 
-**Note**: This is an indie PVE space MMO project heavily inspired by EVE Online's game mechanics. It is not affiliated with or endorsed by CCP Games. All in-game content (ships, factions, resources, systems, etc.) uses original naming conventions. The game focuses exclusively on PVE and cooperative fleet content with AI or player wingmates.
+<sub>Atlas is an indie PVE space simulator. All in-game content uses original naming conventions. Not affiliated with CCP Games.</sub>

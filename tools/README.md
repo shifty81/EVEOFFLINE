@@ -1,4 +1,4 @@
-# EVE OFFLINE - Modding Tools
+# Atlas — Modding Tools
 
 This directory contains utilities to help modders create and validate custom content.
 
