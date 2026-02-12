@@ -140,6 +140,48 @@ public:
     /** Set the active overview tab index. */
     void setActiveOverviewTab(int tab) { m_overviewActiveTab = tab; }
 
+    // ── Combat log ──────────────────────────────────────────────────
+
+    /** Add a message to the HUD combat log. */
+    void addCombatLogMessage(const std::string& msg);
+
+    /** Get combat log messages (read-only). */
+    const std::vector<std::string>& getCombatLog() const { return m_combatLog; }
+
+    // ── Damage flash ────────────────────────────────────────────────
+
+    /** Trigger a damage flash (0 = shield, 1 = armor, 2 = hull). */
+    void triggerDamageFlash(int layer, float duration = 0.4f);
+
+    /** Check if any damage flash is currently active. */
+    bool hasDamageFlash() const;
+
+    // ── Drone status ────────────────────────────────────────────────
+
+    struct DroneStatusData {
+        int inSpace       = 0;
+        int inBay         = 0;
+        int bandwidthUsed = 0;
+        int bandwidthMax  = 0;
+    };
+
+    /** Set drone bay status for HUD display. */
+    void setDroneStatus(const DroneStatusData& data) { m_droneStatus = data; }
+
+    /** Toggle drone status bar visibility. */
+    void toggleDroneStatus() { m_showDroneStatus = !m_showDroneStatus; }
+    bool isDroneStatusVisible() const { return m_showDroneStatus; }
+
+    // ── Fleet broadcasts ────────────────────────────────────────────
+
+    /** Add a fleet broadcast to the HUD. */
+    void addFleetBroadcast(const std::string& sender,
+                           const std::string& message,
+                           const Color& color = {});
+
+    /** Get active fleet broadcasts (read-only). */
+    const std::vector<FleetBroadcast>& getFleetBroadcasts() const { return m_broadcasts; }
+
 private:
     // Panel states (persistent across frames)
     PanelState m_overviewState;
@@ -181,6 +223,34 @@ private:
 
     // Info panel data
     InfoPanelData m_infoPanelData;
+
+    // Combat log
+    std::vector<std::string> m_combatLog;
+    float m_combatLogScroll = 0.0f;
+    static constexpr int MAX_COMBAT_LOG = 50;
+
+    // Damage flash state
+    struct DamageFlashState {
+        int   layer     = 0;
+        float intensity = 1.0f;
+        float elapsed   = 0.0f;
+        float duration  = 0.4f;
+    };
+    std::vector<DamageFlashState> m_damageFlashes;
+
+    // Drone status
+    DroneStatusData m_droneStatus;
+    bool m_showDroneStatus = false;
+
+    // Fleet broadcasts
+    std::vector<FleetBroadcast> m_broadcasts;
+    static constexpr int MAX_BROADCASTS = 5;
+
+    // Internal draw helpers for new features
+    void drawCombatLog(AtlasContext& ctx);
+    void drawDamageFlashes(AtlasContext& ctx, Vec2 hudCentre, float hudRadius);
+    void drawDroneStatus(AtlasContext& ctx);
+    void drawFleetBroadcasts(AtlasContext& ctx);
 };
 
 } // namespace atlas
