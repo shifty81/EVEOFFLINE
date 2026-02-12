@@ -2085,6 +2085,333 @@ void testDroneStatusDataDefaults() {
     assertTrue(data.bandwidthMax == 0, "DroneStatusData bandwidthMax defaults to 0");
 }
 
+// ─── Key constants test ─────────────────────────────────────────────────
+
+void testKeyConstants() {
+    std::cout << "\n=== Key Constants ===" << std::endl;
+
+    assertTrue(atlas::Key::F1 == 290, "Key::F1 is 290 (GLFW value)");
+    assertTrue(atlas::Key::F2 == 291, "Key::F2 is 291");
+    assertTrue(atlas::Key::F8 == 297, "Key::F8 is 297");
+    assertTrue(atlas::Key::F12 == 301, "Key::F12 is 301");
+    assertTrue(atlas::Key::V == 86, "Key::V is 86");
+    assertTrue(atlas::Key::F2 - atlas::Key::F1 == 1, "F keys are sequential");
+}
+
+// ─── InputState keyboard fields test ────────────────────────────────────
+
+void testInputStateKeyboard() {
+    std::cout << "\n=== InputState Keyboard ===" << std::endl;
+
+    atlas::InputState input;
+    assertTrue(!input.keyPressed[atlas::Key::F1], "keyPressed[F1] defaults to false");
+    assertTrue(!input.keyDown[atlas::Key::F1], "keyDown[F1] defaults to false");
+    assertTrue(!input.keyPressed[atlas::Key::V], "keyPressed[V] defaults to false");
+
+    // Simulate F1 press
+    input.keyPressed[atlas::Key::F1] = true;
+    input.keyDown[atlas::Key::F1] = true;
+    assertTrue(input.keyPressed[atlas::Key::F1], "keyPressed[F1] set to true");
+    assertTrue(input.keyDown[atlas::Key::F1], "keyDown[F1] set to true");
+    assertTrue(!input.keyPressed[atlas::Key::F2], "keyPressed[F2] still false");
+}
+
+// ─── Keyboard module activation test ────────────────────────────────────
+
+void testKeyboardModuleActivation() {
+    std::cout << "\n=== Keyboard Module Activation ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::AtlasHUD hud;
+    hud.init(1920, 1080);
+
+    int lastModuleClicked = -1;
+    hud.setModuleCallback([&](int idx) { lastModuleClicked = idx; });
+
+    // Create ship data with fitted modules
+    atlas::ShipHUDData ship;
+    ship.highSlots.resize(4);
+    for (auto& s : ship.highSlots) { s.fitted = true; s.color = {0.8f, 0.2f, 0.2f, 1.0f}; }
+    ship.midSlots.resize(2);
+    for (auto& s : ship.midSlots) { s.fitted = true; s.color = {0.2f, 0.5f, 0.8f, 1.0f}; }
+
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo selectedItem;
+
+    // Frame with F1 key press
+    atlas::InputState input;
+    input.windowW = 1920;
+    input.windowH = 1080;
+    input.keyPressed[atlas::Key::F1] = true;
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, selectedItem);
+    ctx.endFrame();
+    assertTrue(lastModuleClicked == 0, "F1 activates module slot 0");
+
+    // Frame with F3 key press
+    lastModuleClicked = -1;
+    input.keyPressed[atlas::Key::F1] = false;
+    input.keyPressed[atlas::Key::F3] = true;
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, selectedItem);
+    ctx.endFrame();
+    assertTrue(lastModuleClicked == 2, "F3 activates module slot 2");
+
+    // Frame with no key press
+    lastModuleClicked = -1;
+    input.keyPressed[atlas::Key::F3] = false;
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, selectedItem);
+    ctx.endFrame();
+    assertTrue(lastModuleClicked == -1, "No key press = no module activation");
+
+    ctx.shutdown();
+}
+
+// ─── D-Scan data test ───────────────────────────────────────────────────
+
+void testDScanData() {
+    std::cout << "\n=== D-Scan Data ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1920, 1080);
+
+    // Default values
+    assertClose(hud.getDScanAngle(), 360.0f, "D-Scan angle defaults to 360");
+    assertClose(hud.getDScanRange(), 14.3f, "D-Scan range defaults to 14.3 AU");
+    assertTrue(hud.getDScanResults().empty(), "D-Scan results start empty");
+
+    // Set custom values
+    hud.setDScanAngle(90.0f);
+    hud.setDScanRange(5.0f);
+    assertClose(hud.getDScanAngle(), 90.0f, "D-Scan angle set to 90");
+    assertClose(hud.getDScanRange(), 5.0f, "D-Scan range set to 5.0 AU");
+
+    // Add results
+    std::vector<atlas::AtlasHUD::DScanEntry> results;
+    results.push_back({"Rifter", "Frigate", 2.3f});
+    results.push_back({"Stargate", "Structure", 8.1f});
+    hud.setDScanResults(results);
+    assertTrue(hud.getDScanResults().size() == 2, "D-Scan has 2 results");
+    assertTrue(hud.getDScanResults()[0].name == "Rifter", "Result 0 name is Rifter");
+    assertTrue(hud.getDScanResults()[1].type == "Structure", "Result 1 type is Structure");
+    assertClose(hud.getDScanResults()[1].distance, 8.1f, "Result 1 distance is 8.1 AU");
+
+    // D-Scan callback
+    bool scanFired = false;
+    hud.setDScanCallback([&]() { scanFired = true; });
+    assertTrue(!scanFired, "D-Scan callback not fired before trigger");
+}
+
+// ─── D-Scan panel rendering test ────────────────────────────────────────
+
+void testDScanPanelRendering() {
+    std::cout << "\n=== D-Scan Panel Rendering ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::AtlasHUD hud;
+    hud.init(1920, 1080);
+
+    // Set up D-Scan data
+    hud.setDScanAngle(180.0f);
+    hud.setDScanRange(7.5f);
+    std::vector<atlas::AtlasHUD::DScanEntry> results;
+    results.push_back({"Veldspar", "Asteroid", 0.5f});
+    hud.setDScanResults(results);
+    hud.toggleDScan();
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo selectedItem;
+
+    atlas::InputState input;
+    input.windowW = 1920;
+    input.windowH = 1080;
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, selectedItem);
+    ctx.endFrame();
+    assertTrue(true, "D-Scan panel with results renders without crash");
+
+    ctx.shutdown();
+}
+
+// ─── Mission data test ──────────────────────────────────────────────────
+
+void testMissionData() {
+    std::cout << "\n=== Mission Data ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1920, 1080);
+
+    // Default: no active mission
+    assertTrue(!hud.getMissionInfo().active, "Mission not active by default");
+
+    // Set mission data
+    atlas::AtlasHUD::MissionInfo mission;
+    mission.active = true;
+    mission.name = "The Blockade";
+    mission.type = "combat";
+    mission.agentName = "Agent Karde";
+    mission.level = 3;
+    mission.iskReward = 500000.0f;
+    mission.lpReward = 350.0f;
+    mission.timeLimitHours = 4.0f;
+    mission.timeElapsedHours = 1.5f;
+    mission.objectives.push_back({"Destroy all enemy ships", false});
+    mission.objectives.push_back({"Retrieve the cargo", false});
+    hud.setMissionInfo(mission);
+
+    assertTrue(hud.getMissionInfo().active, "Mission is active after set");
+    assertTrue(hud.getMissionInfo().name == "The Blockade", "Mission name correct");
+    assertTrue(hud.getMissionInfo().type == "combat", "Mission type correct");
+    assertTrue(hud.getMissionInfo().agentName == "Agent Karde", "Agent name correct");
+    assertTrue(hud.getMissionInfo().level == 3, "Mission level correct");
+    assertClose(hud.getMissionInfo().iskReward, 500000.0f, "ISK reward correct");
+    assertClose(hud.getMissionInfo().lpReward, 350.0f, "LP reward correct");
+    assertTrue(hud.getMissionInfo().objectives.size() == 2, "2 objectives");
+    assertTrue(!hud.getMissionInfo().objectives[0].completed, "Objective 0 incomplete");
+}
+
+// ─── Mission panel rendering test ───────────────────────────────────────
+
+void testMissionPanelRendering() {
+    std::cout << "\n=== Mission Panel Rendering ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::AtlasHUD hud;
+    hud.init(1920, 1080);
+
+    // Test with empty mission
+    hud.toggleMission();
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo selectedItem;
+
+    atlas::InputState input;
+    input.windowW = 1920;
+    input.windowH = 1080;
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, selectedItem);
+    ctx.endFrame();
+    assertTrue(true, "Mission panel (no mission) renders without crash");
+
+    // Test with active mission
+    atlas::AtlasHUD::MissionInfo mission;
+    mission.active = true;
+    mission.name = "Worlds Collide";
+    mission.type = "combat";
+    mission.level = 4;
+    mission.iskReward = 2000000.0f;
+    mission.lpReward = 1200.0f;
+    mission.timeLimitHours = 8.0f;
+    mission.timeElapsedHours = 7.5f;  // nearly expired!
+    mission.objectives.push_back({"Kill all pirates", true});
+    mission.objectives.push_back({"Loot the wreck", false});
+    hud.setMissionInfo(mission);
+
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, selectedItem);
+    ctx.endFrame();
+    assertTrue(true, "Mission panel (active, near expiry) renders without crash");
+
+    ctx.shutdown();
+}
+
+// ─── Probe Scanner data test ────────────────────────────────────────────
+
+void testProbeScannerData() {
+    std::cout << "\n=== Probe Scanner Data ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1920, 1080);
+
+    // Defaults
+    assertTrue(hud.getProbeCount() == 8, "Probe count defaults to 8");
+    assertClose(hud.getProbeRange(), 8.0f, "Probe range defaults to 8 AU");
+    assertTrue(hud.getProbeScanResults().empty(), "Probe results start empty");
+
+    // Set values
+    hud.setProbeCount(7);
+    hud.setProbeRange(4.0f);
+    assertTrue(hud.getProbeCount() == 7, "Probe count set to 7");
+    assertClose(hud.getProbeRange(), 4.0f, "Probe range set to 4 AU");
+
+    // Add results
+    std::vector<atlas::AtlasHUD::ProbeScanEntry> results;
+    results.push_back({"ABC-123", "Unknown", "Cosmic Signature", "???", 15.0f, 3.2f});
+    results.push_back({"DEF-456", "Serpentis Hideaway", "Cosmic Anomaly", "Combat Site", 100.0f, 1.1f});
+    results.push_back({"GHI-789", "Forgotten Relic", "Cosmic Signature", "Relic Site", 60.0f, 5.5f});
+    hud.setProbeScanResults(results);
+
+    assertTrue(hud.getProbeScanResults().size() == 3, "3 probe scan results");
+    assertTrue(hud.getProbeScanResults()[0].id == "ABC-123", "Result 0 ID correct");
+    assertClose(hud.getProbeScanResults()[0].signalStrength, 15.0f, "Result 0 signal 15%");
+    assertTrue(hud.getProbeScanResults()[1].group == "Cosmic Anomaly", "Result 1 group correct");
+    assertClose(hud.getProbeScanResults()[1].signalStrength, 100.0f, "Result 1 signal 100%");
+    assertTrue(hud.getProbeScanResults()[2].type == "Relic Site", "Result 2 type correct");
+
+    // Callback
+    bool analyzeFired = false;
+    hud.setProbeScanCallback([&]() { analyzeFired = true; });
+    assertTrue(!analyzeFired, "Probe scan callback not fired before trigger");
+
+    // Toggle
+    assertTrue(!hud.isProbeScannerOpen(), "Probe scanner closed by default");
+    hud.toggleProbeScanner();
+    assertTrue(hud.isProbeScannerOpen(), "Probe scanner open after toggle");
+    hud.toggleProbeScanner();
+    assertTrue(!hud.isProbeScannerOpen(), "Probe scanner closed after second toggle");
+}
+
+// ─── Probe Scanner panel rendering test ─────────────────────────────────
+
+void testProbeScannerRendering() {
+    std::cout << "\n=== Probe Scanner Rendering ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::AtlasHUD hud;
+    hud.init(1920, 1080);
+
+    hud.toggleProbeScanner();
+    std::vector<atlas::AtlasHUD::ProbeScanEntry> results;
+    results.push_back({"AAA-111", "Site Alpha", "Cosmic Signature", "Data Site", 85.0f, 2.0f});
+    results.push_back({"BBB-222", "Unknown", "Cosmic Signature", "???", 10.0f, 7.8f});
+    hud.setProbeScanResults(results);
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo selectedItem;
+
+    atlas::InputState input;
+    input.windowW = 1920;
+    input.windowH = 1080;
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, selectedItem);
+    ctx.endFrame();
+    assertTrue(true, "Probe scanner with results renders without crash");
+
+    // Test empty results
+    hud.setProbeScanResults({});
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, selectedItem);
+    ctx.endFrame();
+    assertTrue(true, "Probe scanner empty renders without crash");
+
+    ctx.shutdown();
+}
+
 
 // ─── Main ──────────────────────────────────────────────────────────────
 
@@ -2158,6 +2485,17 @@ int main() {
     testAtlasHUDDroneStatus();
     testAtlasHUDFleetBroadcast();
     testDroneStatusDataDefaults();
+
+    // GUI/HUD continuation tests
+    testKeyConstants();
+    testInputStateKeyboard();
+    testKeyboardModuleActivation();
+    testDScanData();
+    testDScanPanelRendering();
+    testMissionData();
+    testMissionPanelRendering();
+    testProbeScannerData();
+    testProbeScannerRendering();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun
