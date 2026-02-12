@@ -12,6 +12,17 @@ static constexpr float METERS_PER_AU = 149597870700.0f;
 
 namespace atlas {
 
+// Helper: truncate a string with "..." suffix if it exceeds maxWidth pixels
+static std::string truncateText(AtlasRenderer& rr, const std::string& text, float maxWidth) {
+    if (text.empty() || rr.measureText(text) <= maxWidth) return text;
+    std::string result = text;
+    while (result.size() > 1 && rr.measureText(result + "...") > maxWidth) {
+        result.pop_back();
+    }
+    result += "...";
+    return result;
+}
+
 // ── Panel ───────────────────────────────────────────────────────────
 
 bool panelBegin(AtlasContext& ctx, const char* title,
@@ -487,26 +498,12 @@ bool overviewRow(AtlasContext& ctx, const Rect& r,
 
     // Name — truncate with "..." if it exceeds column width
     float nameMaxW = nameColW - 6.0f;
-    std::string displayName = entry.name;
-    if (rr.measureText(displayName) > nameMaxW) {
-        while (displayName.size() > 1 &&
-               rr.measureText(displayName + "...") > nameMaxW) {
-            displayName.pop_back();
-        }
-        displayName += "...";
-    }
+    std::string displayName = truncateText(rr, entry.name, nameMaxW);
     rr.drawText(displayName, {nameColStart + 2.0f, textY}, t.textPrimary);
 
     // Type — truncate with "..." if it exceeds column width
     float typeMaxW = typeColW - 4.0f;
-    std::string displayType = entry.type;
-    if (rr.measureText(displayType) > typeMaxW) {
-        while (displayType.size() > 1 &&
-               rr.measureText(displayType + "...") > typeMaxW) {
-            displayType.pop_back();
-        }
-        displayType += "...";
-    }
+    std::string displayType = truncateText(rr, entry.type, typeMaxW);
     rr.drawText(displayType, {typeColStart + 2.0f, textY}, t.textSecondary);
 
     return clicked;
