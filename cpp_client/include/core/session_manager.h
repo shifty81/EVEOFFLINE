@@ -6,7 +6,7 @@
 #include <memory>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 
 // Forward declarations
 class EmbeddedServer;
@@ -141,4 +141,4 @@ private:
     std::unique_ptr<NetworkManager> m_networkManager;
 };
 
-} // namespace eve
+} // namespace atlas

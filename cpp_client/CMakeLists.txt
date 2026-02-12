@@ -438,10 +438,10 @@ set(CLIENT_HEADERS
 )
 
 # Main executable
-add_executable(eve_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
+add_executable(atlas_client ${CLIENT_SOURCES} ${CLIENT_HEADERS})
 
 # Link libraries
-target_link_libraries(eve_client 
+target_link_libraries(atlas_client 
     Threads::Threads
     OpenGL::GL
     glfw
@@ -450,26 +450,26 @@ target_link_libraries(eve_client
 
 # Link nlohmann_json if available
 if(nlohmann_json_FOUND)
-    target_link_libraries(eve_client nlohmann_json::nlohmann_json)
+    target_link_libraries(atlas_client nlohmann_json::nlohmann_json)
 endif()
 
 # Link GLEW if available
 if(USE_GLEW)
-    target_link_libraries(eve_client GLEW::GLEW)
+    target_link_libraries(atlas_client GLEW::GLEW)
 endif()
 
 # Link ImGui if using vcpkg
 if(USE_VCPKG_IMGUI)
-    target_link_libraries(eve_client imgui::imgui)
+    target_link_libraries(atlas_client imgui::imgui)
 endif()
 
 # Link RmlUi if available
 if(RMLUI_AVAILABLE)
-    target_compile_definitions(eve_client PRIVATE USE_RMLUI)
+    target_compile_definitions(atlas_client PRIVATE USE_RMLUI)
     if(RmlUi_FOUND)
-        target_link_libraries(eve_client RmlUi::RmlUi)
+        target_link_libraries(atlas_client RmlUi::RmlUi)
     elseif(TARGET rmlui_core)
-        target_link_libraries(eve_client rmlui_core rmlui_debugger)
+        target_link_libraries(atlas_client rmlui_core rmlui_debugger)
     endif()
 endif()
 
@@ -479,18 +479,18 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/ui_resources/
 
 # Link OpenAL if available
 if(OpenAL_FOUND)
-    target_link_libraries(eve_client ${OPENAL_LIBRARY})
-    target_include_directories(eve_client PRIVATE ${OPENAL_INCLUDE_DIR})
+    target_link_libraries(atlas_client ${OPENAL_LIBRARY})
+    target_include_directories(atlas_client PRIVATE ${OPENAL_INCLUDE_DIR})
 endif()
 
 # Platform-specific libraries
 if(WIN32)
-    target_link_libraries(eve_client ws2_32)
+    target_link_libraries(atlas_client ws2_32)
 elseif(UNIX AND NOT APPLE)
-    target_link_libraries(eve_client dl X11)
+    target_link_libraries(atlas_client dl X11)
 elseif(APPLE)
-    target_link_libraries(eve_client dl)
-    target_link_libraries(eve_client "-framework Cocoa -framework IOKit -framework CoreVideo")
+    target_link_libraries(atlas_client dl)
+    target_link_libraries(atlas_client "-framework Cocoa -framework IOKit -framework CoreVideo")
 endif()
 
 # Copy shaders to build directory
@@ -534,32 +534,32 @@ endif()
 # For multi-config generators (e.g., Visual Studio, Xcode) the executable is
 # placed in a per-configuration subdirectory (e.g., bin/Release/).  Copy the
 # shaders and assets next to the executable so they can be found at runtime.
-add_custom_command(TARGET eve_client POST_BUILD
+add_custom_command(TARGET atlas_client POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/shaders
-        $<TARGET_FILE_DIR:eve_client>/shaders
+        $<TARGET_FILE_DIR:atlas_client>/shaders
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/assets
-        $<TARGET_FILE_DIR:eve_client>/assets
+        $<TARGET_FILE_DIR:atlas_client>/assets
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/ui_resources
-        $<TARGET_FILE_DIR:eve_client>/ui_resources
+        $<TARGET_FILE_DIR:atlas_client>/ui_resources
     COMMENT "Copying shaders, assets, and UI resources next to executable"
 )
 
 # Copy extracted OBJ models next to executable for multi-config generators.
 # Always register this post-build step.  The make_directory call ensures the
 # destination exists, and we only copy from OBJ_MODELS_DIR when it is present.
-add_custom_command(TARGET eve_client POST_BUILD
+add_custom_command(TARGET atlas_client POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory
-        "$<TARGET_FILE_DIR:eve_client>/models/ships"
+        "$<TARGET_FILE_DIR:atlas_client>/models/ships"
     COMMENT "Ensuring models/ships directory exists next to executable"
 )
 if(EXISTS "${OBJ_MODELS_DIR}")
-    add_custom_command(TARGET eve_client POST_BUILD
+    add_custom_command(TARGET atlas_client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${OBJ_MODELS_DIR}"
-            "$<TARGET_FILE_DIR:eve_client>/models/ships"
+            "$<TARGET_FILE_DIR:atlas_client>/models/ships"
         COMMENT "Copying extracted OBJ ship models next to executable"
     )
 endif()
@@ -609,16 +609,16 @@ endif()
 set(SRC_MODELS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/models/ships")
 file(GLOB SRC_OBJ_FILES CONFIGURE_DEPENDS "${SRC_MODELS_DIR}/*.obj")
 if(SRC_OBJ_FILES)
-    add_custom_command(TARGET eve_client POST_BUILD
+    add_custom_command(TARGET atlas_client POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${SRC_MODELS_DIR}"
-            "$<TARGET_FILE_DIR:eve_client>/models/ships"
+            "$<TARGET_FILE_DIR:atlas_client>/models/ships"
         COMMENT "Copying source OBJ ship models next to executable"
     )
 endif()
 
 # Installation
-install(TARGETS eve_client
+install(TARGETS atlas_client
     RUNTIME DESTINATION bin
 )
 

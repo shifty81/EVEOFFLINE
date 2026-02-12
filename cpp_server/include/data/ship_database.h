@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace eve {
+namespace atlas {
 namespace data {
 
 /**
@@ -123,6 +123,6 @@ private:
 };
 
 } // namespace data
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_DATA_SHIP_DATABASE_H

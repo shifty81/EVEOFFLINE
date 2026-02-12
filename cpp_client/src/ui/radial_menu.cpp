@@ -131,26 +131,26 @@ void RadialMenu::Render() {
     // Legacy stub — rendering now goes through RenderAtlas()
 }
 
-void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
+void RadialMenu::RenderAtlas(aatlas::AtlasContext& ctx) {
     if (!m_open) return;
 
-    const atlas::Theme& t = ctx.theme();
+    const aatlas::Theme& t = ctx.theme();
     auto& r = ctx.renderer();
 
-    atlas::Vec2 center(m_centerX, m_centerY);
+    aatlas::Vec2 center(m_centerX, m_centerY);
 
     // EVE-style teal accent color
-    atlas::Color accentTeal  = t.accentPrimary;
-    atlas::Color accentDim   = t.accentDim;
-    atlas::Color bgDark      = atlas::Color(0.04f, 0.06f, 0.09f, 0.85f);
-    atlas::Color bgHighlight = atlas::Color(0.1f, 0.25f, 0.32f, 0.9f);
+    aatlas::Color accentTeal  = t.accentPrimary;
+    aatlas::Color accentDim   = t.accentDim;
+    aatlas::Color bgDark      = aatlas::Color(0.04f, 0.06f, 0.09f, 0.85f);
+    aatlas::Color bgHighlight = aatlas::Color(0.1f, 0.25f, 0.32f, 0.9f);
 
     // Draw outer ring background
     r.drawArc(center, INNER_RADIUS, OUTER_RADIUS,
               0.0f, 2.0f * static_cast<float>(M_PI), bgDark, 48);
 
     // Draw inner dead-zone circle (darker)
-    r.drawCircle(center, INNER_RADIUS, atlas::Color(0.02f, 0.03f, 0.05f, 0.9f));
+    r.drawCircle(center, INNER_RADIUS, aatlas::Color(0.02f, 0.03f, 0.05f, 0.9f));
     r.drawCircleOutline(center, INNER_RADIUS, accentDim, 1.0f);
 
     // Draw outer ring outline
@@ -174,9 +174,9 @@ void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
         // Divider line from inner to outer radius
         float ca = std::cos(seg.startAngle);
         float sa = std::sin(seg.startAngle);
-        atlas::Vec2 lineStart(center.x + ca * INNER_RADIUS,
+        aatlas::Vec2 lineStart(center.x + ca * INNER_RADIUS,
                               center.y + sa * INNER_RADIUS);
-        atlas::Vec2 lineEnd(center.x + ca * OUTER_RADIUS,
+        aatlas::Vec2 lineEnd(center.x + ca * OUTER_RADIUS,
                             center.y + sa * OUTER_RADIUS);
         r.drawLine(lineStart, lineEnd, accentDim.withAlpha(0.4f), 1.0f);
 
@@ -187,7 +187,7 @@ void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
 
         // Center the text approximately
         float textW = r.measureText(seg.label);
-        atlas::Color labelColor = highlighted ? accentTeal : t.textPrimary;
+        aatlas::Color labelColor = highlighted ? accentTeal : t.textPrimary;
         r.drawText(seg.label,
                    {labelX - textW * 0.5f, labelY - 6.0f},
                    labelColor);
@@ -200,7 +200,7 @@ void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
     if (dist > INNER_RADIUS) {
         float nx = dx / dist;
         float ny = dy / dist;
-        atlas::Vec2 indicatorPos(center.x + nx * (INNER_RADIUS + 6.0f),
+        aatlas::Vec2 indicatorPos(center.x + nx * (INNER_RADIUS + 6.0f),
                                  center.y + ny * (INNER_RADIUS + 6.0f));
         r.drawCircle(indicatorPos, 3.0f, accentTeal);
     }

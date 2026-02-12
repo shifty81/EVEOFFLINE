@@ -4,7 +4,7 @@
 #include <memory>
 #include <vector>
 
-namespace eve {
+namespace atlas {
 
 class Shader;
 class ParticleSystem;
@@ -119,4 +119,4 @@ private:
     void createBeamGeometry();
 };
 
-} // namespace eve
+} // namespace atlas

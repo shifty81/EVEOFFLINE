@@ -5,7 +5,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 // Forward declarations
 class Window;
@@ -17,7 +17,7 @@ class EmbeddedServer;
 class SessionManager;
 class SolarSystemScene;
 
-} // namespace eve
+} // namespace atlas
 
 namespace UI {
     class RmlUiManager;
@@ -31,7 +31,7 @@ namespace atlas {
     class AtlasContext;
 }
 
-namespace eve {
+namespace atlas {
 
 /**
  * Main application class for EVE OFFLINE client
@@ -234,8 +234,8 @@ private:
     std::unique_ptr<UI::RmlUiManager> m_uiManager;
     std::unique_ptr<UI::EntityPicker> m_entityPicker;
     std::unique_ptr<SolarSystemScene> m_solarSystem;
-    std::unique_ptr<atlas::AtlasContext> m_atlasCtx;
-    std::unique_ptr<atlas::AtlasHUD> m_atlasHUD;
+    std::unique_ptr<aatlas::AtlasContext> m_atlasCtx;
+    std::unique_ptr<aatlas::AtlasHUD> m_atlasHUD;
     std::unique_ptr<UI::ContextMenu> m_contextMenu;
     std::unique_ptr<UI::RadialMenu> m_radialMenu;
 
@@ -290,4 +290,4 @@ private:
     std::string m_localPlayerId = "player_local";
 };
 
-} // namespace eve
+} // namespace atlas

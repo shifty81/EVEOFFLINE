@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-namespace eve {
+namespace atlas {
 
 bool ServerConfig::loadFromFile(const std::string& filepath) {
     std::ifstream file(filepath);
@@ -95,4 +95,4 @@ bool ServerConfig::saveToFile(const std::string& filepath) const {
     return true;
 }
 
-} // namespace eve
+} // namespace atlas

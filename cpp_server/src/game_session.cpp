@@ -6,7 +6,7 @@
 #include <cmath>
 #include <chrono>
 
-namespace eve {
+namespace atlas {
 
 // Named constants
 static constexpr float NPC_AWARENESS_RANGE = 50000.0f;
@@ -797,4 +797,4 @@ float GameSession::extractJsonFloat(const std::string& json,
     }
 }
 
-} // namespace eve
+} // namespace atlas

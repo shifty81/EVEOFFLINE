@@ -17,7 +17,7 @@
     #include <sys/select.h>
 #endif
 
-namespace eve {
+namespace atlas {
 
 // Platform-specific stdin helpers
 namespace {
@@ -280,4 +280,4 @@ std::string ServerConsole::handleLoadCommand() {
     return "Load command not yet implemented (use at server startup only)";
 }
 
-} // namespace eve
+} // namespace atlas

@@ -8,7 +8,7 @@
 #include <direct.h>
 #endif
 
-namespace eve {
+namespace atlas {
 namespace utils {
 
 Logger& Logger::instance() {
@@ -136,4 +136,4 @@ std::string Logger::timestamp() {
 }
 
 } // namespace utils
-} // namespace eve
+} // namespace atlas

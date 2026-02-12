@@ -4,7 +4,7 @@
 #include "ecs/system.h"
 #include <string>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 class CorporationSystem : public ecs::System {
@@ -35,6 +35,6 @@ public:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_CORPORATION_SYSTEM_H

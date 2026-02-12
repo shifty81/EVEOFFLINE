@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace eve {
+namespace atlas {
 
 class Shader;
 
@@ -132,4 +132,4 @@ private:
     static constexpr float DEFAULT_MAX_RANGE = 100000.0f;       // 100km
 };
 
-} // namespace eve
+} // namespace atlas

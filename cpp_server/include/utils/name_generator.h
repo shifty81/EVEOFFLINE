@@ -5,7 +5,7 @@
 #include <vector>
 #include <random>
 
-namespace eve {
+namespace atlas {
 namespace utils {
 
 /**
@@ -88,6 +88,6 @@ private:
 };
 
 } // namespace utils
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_NAME_GENERATOR_H

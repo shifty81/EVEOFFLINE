@@ -3,7 +3,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Mesh class - holds vertex data
@@ -48,4 +48,4 @@ private:
     unsigned int m_VAO, m_VBO, m_EBO;
 };
 
-} // namespace eve
+} // namespace atlas

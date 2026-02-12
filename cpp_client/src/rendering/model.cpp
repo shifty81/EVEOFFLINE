@@ -44,7 +44,7 @@
 #include <nlohmann/json.hpp>
 #include <tiny_gltf.h>
 
-namespace eve {
+namespace atlas {
 
 // Returns the directory containing the running executable.
 static std::string getExecutableDir() {
@@ -1318,4 +1318,4 @@ std::unique_ptr<Model> Model::createAsteroidModel(const std::string& oreType) {
     return model;
 }
 
-} // namespace eve
+} // namespace atlas

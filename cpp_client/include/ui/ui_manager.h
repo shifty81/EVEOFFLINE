@@ -11,7 +11,7 @@
 #include "ui/atlas/atlas_widgets.h"
 #include "ui/layout_manager.h"
 
-namespace eve {
+namespace atlas {
     class Entity;
 }
 
@@ -148,7 +148,7 @@ public:
     void Shutdown();
 
     // Frame management — caller must fill InputState from GLFW each frame
-    void BeginFrame(const atlas::InputState& input);
+    void BeginFrame(const aatlas::InputState& input);
     void EndFrame();
 
     // Render all UI panels via Atlas
@@ -161,7 +161,7 @@ public:
     void SetPlayerPosition(const glm::vec3& position);
 
     // Target list management
-    void UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities);
+    void UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<::atlas::Entity>>& entities);
     void AddTarget(const std::string& entityId);
     void RemoveTarget(const std::string& entityId);
 
@@ -226,7 +226,7 @@ public:
     void ToggleCompactMode();
 
     // Access Atlas context for advanced / external usage
-    atlas::AtlasContext& GetAtlasContext() { return m_ctx; }
+    aatlas::AtlasContext& GetAtlasContext() { return m_ctx; }
 
     // ── Layout management (Phase 4.10) ──────────────────────────────
 
@@ -273,8 +273,8 @@ public:
 
 private:
     // Atlas UI core
-    atlas::AtlasContext m_ctx;
-    atlas::AtlasHUD     m_hud;
+    aatlas::AtlasContext m_ctx;
+    aatlas::AtlasHUD     m_hud;
 
     // UI state
     ShipStatus ship_status_;
@@ -299,7 +299,7 @@ private:
 
     // Atlas panel states (replaces DockingManager)
     struct PanelConfig {
-        atlas::PanelState state;
+        aatlas::PanelState state;
         std::string title;
         float opacity = 0.92f;  // Per-panel opacity (0.0–1.0)
     };

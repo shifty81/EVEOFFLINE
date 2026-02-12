@@ -8,7 +8,7 @@
 #include "steam/steam_api.h"
 #endif
 
-namespace eve {
+namespace atlas {
 namespace auth {
 
 /**
@@ -53,6 +53,6 @@ private:
 };
 
 } // namespace auth
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_STEAM_AUTH_H

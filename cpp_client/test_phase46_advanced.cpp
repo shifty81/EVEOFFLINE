@@ -11,7 +11,7 @@
 #include "ui/market_panel.h"
 #include <iostream>
 
-using namespace eve;
+using namespace atlas;
 
 int main() {
     std::cout << "[Test] Phase 4.6 Advanced Features Test Program" << std::endl;

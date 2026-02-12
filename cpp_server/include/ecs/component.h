@@ -5,7 +5,7 @@
 #include <memory>
 #include <typeindex>
 
-namespace eve {
+namespace atlas {
 namespace ecs {
 
 /**
@@ -35,6 +35,6 @@ public:
     }
 
 } // namespace ecs
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_ECS_COMPONENT_H

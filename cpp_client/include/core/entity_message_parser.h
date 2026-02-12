@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <string>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Helper class to parse entity-related network messages
@@ -47,4 +47,4 @@ private:
     static Capacitor parseCapacitor(const nlohmann::json& capacitorJson);
 };
 
-} // namespace eve
+} // namespace atlas

@@ -5,7 +5,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 WeaponSystem::WeaponSystem(ecs::World* world)
@@ -149,4 +149,4 @@ float WeaponSystem::calculateFalloff(float distance, float optimal_range, float 
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

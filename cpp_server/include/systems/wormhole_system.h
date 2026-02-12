@@ -5,7 +5,7 @@
 #include "data/wormhole_database.h"
 #include <string>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 /**
@@ -49,6 +49,6 @@ public:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_WORMHOLE_SYSTEM_H

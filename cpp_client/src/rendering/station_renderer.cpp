@@ -4,7 +4,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 StationRenderer::StationRenderer() {
 }
@@ -810,4 +810,4 @@ void StationRenderer::render(Shader* shader, const Camera& camera) {
     }
 }
 
-} // namespace eve
+} // namespace atlas

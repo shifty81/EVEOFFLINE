@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <limits>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 MarketSystem::MarketSystem(ecs::World* world)
@@ -232,4 +232,4 @@ int MarketSystem::getOrderCount(const std::string& station_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

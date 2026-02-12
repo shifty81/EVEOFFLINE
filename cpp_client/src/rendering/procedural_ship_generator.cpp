@@ -15,7 +15,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-namespace eve {
+namespace atlas {
 
 // ─────────────────────────────────────────────────────────────────────
 // OBJSeedMesh helpers
@@ -807,7 +807,7 @@ std::unique_ptr<Model> ProceduralShipGenerator::generate(
     // 8. Recompute normals after all modifications
     recomputeNormals(mesh);
 
-    // 9. Convert to eve::Model
+    // 9. Convert to atlas::Model
     auto model = std::make_unique<Model>();
 
     // Build Vertex array
@@ -992,4 +992,4 @@ std::string ProceduralShipGenerator::findTexture(const std::string& keyword) con
     return "";
 }
 
-} // namespace eve
+} // namespace atlas

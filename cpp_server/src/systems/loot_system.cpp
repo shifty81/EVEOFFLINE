@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 LootSystem::LootSystem(ecs::World* world)
@@ -121,4 +121,4 @@ bool LootSystem::collectLoot(const std::string& wreck_id,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

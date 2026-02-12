@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <memory>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Texture class for 2D textures
@@ -107,4 +107,4 @@ private:
     std::unordered_map<std::string, std::shared_ptr<Texture>> m_cache;
 };
 
-} // namespace eve
+} // namespace atlas

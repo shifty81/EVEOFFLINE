@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sys/stat.h>
 
-namespace eve {
+namespace atlas {
 namespace data {
 
 // Escape a string for safe JSON embedding
@@ -1238,4 +1238,4 @@ std::string WorldPersistence::extractObject(const std::string& json,
 }
 
 } // namespace data
-} // namespace eve
+} // namespace atlas

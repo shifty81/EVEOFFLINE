@@ -13,7 +13,7 @@
 #include <chrono>
 #include <sys/stat.h>
 
-namespace eve {
+namespace atlas {
 
 Server::Server(const std::string& config_path)
     : running_(false) {
@@ -275,4 +275,4 @@ bool Server::loadWorld() {
     return world_persistence_.loadWorld(game_world_.get(), filepath);
 }
 
-} // namespace eve
+} // namespace atlas

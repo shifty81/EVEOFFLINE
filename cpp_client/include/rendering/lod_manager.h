@@ -5,7 +5,7 @@
 #include <map>
 #include <memory>
 
-namespace eve {
+namespace atlas {
 
 // Forward declaration
 class FrustumCuller;
@@ -168,4 +168,4 @@ private:
     float getUpdateInterval(LODLevel lod) const;
 };
 
-} // namespace eve
+} // namespace atlas

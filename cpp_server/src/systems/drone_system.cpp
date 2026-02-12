@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 DroneSystem::DroneSystem(ecs::World* world)
@@ -172,4 +172,4 @@ int DroneSystem::getDeployedCount(const std::string& entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

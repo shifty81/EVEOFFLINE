@@ -13,7 +13,7 @@
 #include <iostream>
 #include <cmath>
 
-using namespace eve;
+using namespace atlas;
 
 int main() {
     std::cout << "[Test] Phase 4.5 Enhanced UI Test Program" << std::endl;

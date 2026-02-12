@@ -4,7 +4,7 @@
 #include <GL/glew.h>
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 // ============================================================================
 // InstanceBatch Implementation
@@ -278,4 +278,4 @@ void InstancedRenderer::clearAll() {
     m_stats.reset();
 }
 
-} // namespace eve
+} // namespace atlas

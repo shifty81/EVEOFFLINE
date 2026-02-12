@@ -18,7 +18,7 @@
 #include <sstream>
 #include <map>
 
-namespace eve {
+namespace atlas {
 
 // Forward declarations
 class Server;
@@ -161,4 +161,4 @@ private:
     }
 };
 
-} // namespace eve
+} // namespace atlas

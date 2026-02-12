@@ -7,7 +7,7 @@
 #include <cstdint>
 #include "core/ship_physics.h"
 
-namespace eve {
+namespace atlas {
 
 /**
  * Represents a celestial object in a solar system that can be warped to.
@@ -221,4 +221,4 @@ private:
     static constexpr float AU_IN_METERS = 149597870700.0f;
 };
 
-} // namespace eve
+} // namespace atlas

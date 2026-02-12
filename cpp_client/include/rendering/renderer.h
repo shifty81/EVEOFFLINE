@@ -6,7 +6,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 // Forward declarations
 class Shader;
@@ -252,4 +252,4 @@ private:
     bool m_initialized;
 };
 
-} // namespace eve
+} // namespace atlas

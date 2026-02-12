@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 MissionSystem::MissionSystem(ecs::World* world)
@@ -138,4 +138,4 @@ void MissionSystem::abandonMission(const std::string& entity_id,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

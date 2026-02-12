@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Camera class for 3D view
@@ -111,4 +111,4 @@ private:
     static constexpr float INERTIA_THRESHOLD  = 0.05f; // stop when below this
 };
 
-} // namespace eve
+} // namespace atlas

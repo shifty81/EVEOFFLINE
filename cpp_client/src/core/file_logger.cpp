@@ -2,7 +2,7 @@
 
 #include <iomanip>
 
-namespace eve {
+namespace atlas {
 
 std::ofstream FileLogger::s_logFile;
 std::mutex FileLogger::s_mutex;
@@ -99,4 +99,4 @@ bool FileLogger::isActive() {
     return s_active;
 }
 
-} // namespace eve
+} // namespace atlas

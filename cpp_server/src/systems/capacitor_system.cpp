@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 CapacitorSystem::CapacitorSystem(ecs::World* world)
@@ -51,4 +51,4 @@ float CapacitorSystem::getCapacitorPercentage(const std::string& entity_id) cons
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

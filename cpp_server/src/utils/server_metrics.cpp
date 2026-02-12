@@ -4,7 +4,7 @@
 #include <iomanip>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace utils {
 
 ServerMetrics::ServerMetrics()
@@ -143,4 +143,4 @@ void ServerMetrics::resetWindow() {
 }
 
 } // namespace utils
-} // namespace eve
+} // namespace atlas

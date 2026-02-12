@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cctype>
 
-namespace eve {
+namespace atlas {
 namespace data {
 
 // ---------------------------------------------------------------------------
@@ -286,4 +286,4 @@ std::string ShipDatabase::extractBlock(const std::string& json, const std::strin
 }
 
 } // namespace data
-} // namespace eve
+} // namespace atlas

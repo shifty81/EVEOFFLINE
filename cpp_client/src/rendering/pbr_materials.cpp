@@ -1,7 +1,7 @@
 #include "rendering/pbr_materials.h"
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 PBRMaterialLibrary::PBRMaterialLibrary() {
 }
@@ -206,4 +206,4 @@ void PBRMaterialLibrary::createFactionMaterials() {
     addMaterial("Crimson_Order_hull", crimsonOrder);
 }
 
-} // namespace eve
+} // namespace atlas

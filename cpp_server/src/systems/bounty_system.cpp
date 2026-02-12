@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <memory>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 BountySystem::BountySystem(ecs::World* world)
@@ -77,4 +77,4 @@ int BountySystem::getTotalKills(const std::string& entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

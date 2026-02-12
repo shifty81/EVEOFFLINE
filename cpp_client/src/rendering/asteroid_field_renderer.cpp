@@ -5,7 +5,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 
 AsteroidFieldRenderer::AsteroidFieldRenderer()
     : m_fieldCenter(0.0f, 0.0f, 0.0f)
@@ -381,4 +381,4 @@ void AsteroidFieldRenderer::render(Shader* shader, const Camera& camera) {
     m_renderer->renderAll(shader);
 }
 
-} // namespace eve
+} // namespace atlas

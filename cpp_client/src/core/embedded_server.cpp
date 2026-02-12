@@ -2,7 +2,7 @@
 #include <iostream>
 #include <chrono>
 
-namespace eve {
+namespace atlas {
 
 EmbeddedServer::EmbeddedServer()
     : m_running(false)
@@ -137,4 +137,4 @@ void EmbeddedServer::serverThread() {
     std::cout << "[Server Thread] Stopped" << std::endl;
 }
 
-} // namespace eve
+} // namespace atlas

@@ -6,7 +6,7 @@
 #include <functional>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Faction design styles for ship generation rules
@@ -219,4 +219,4 @@ private:
     void initializeCapitalRules();
 };
 
-} // namespace eve
+} // namespace atlas

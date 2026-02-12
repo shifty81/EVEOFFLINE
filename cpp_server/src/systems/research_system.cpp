@@ -2,7 +2,7 @@
 #include "ecs/world.h"
 #include "components/game_components.h"
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 ResearchSystem::ResearchSystem(ecs::World* world)
@@ -202,4 +202,4 @@ int ResearchSystem::getFailedJobCount(const std::string& lab_entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

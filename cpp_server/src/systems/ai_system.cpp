@@ -5,7 +5,7 @@
 #include <cmath>
 #include <limits>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 AISystem::AISystem(ecs::World* world)
@@ -229,4 +229,4 @@ void AISystem::fleeBehavior(ecs::Entity* entity) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

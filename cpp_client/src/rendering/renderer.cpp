@@ -16,7 +16,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-namespace eve {
+namespace atlas {
 
 Renderer::Renderer()
     : m_nebulaVAO(0)
@@ -527,4 +527,4 @@ void Renderer::renderSun(Camera& camera, const glm::vec3& sunPosition,
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
-} // namespace eve
+} // namespace atlas

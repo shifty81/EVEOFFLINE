@@ -42,8 +42,8 @@ void assertClose(float a, float b, const std::string& testName, float eps = 0.00
 
 void testVec2() {
     std::cout << "\n=== Vec2 ===" << std::endl;
-    atlas::Vec2 a(3.0f, 4.0f);
-    atlas::Vec2 b(1.0f, 2.0f);
+    aatlas::Vec2 a(3.0f, 4.0f);
+    aatlas::Vec2 b(1.0f, 2.0f);
     auto c = a + b;
     assertTrue(c.x == 4.0f && c.y == 6.0f, "Vec2 addition");
     auto d = a - b;
@@ -56,7 +56,7 @@ void testVec2() {
 
 void testRect() {
     std::cout << "\n=== Rect ===" << std::endl;
-    atlas::Rect r(10.0f, 20.0f, 100.0f, 50.0f);
+    aatlas::Rect r(10.0f, 20.0f, 100.0f, 50.0f);
     assertTrue(r.right() == 110.0f, "Rect right()");
     assertTrue(r.bottom() == 70.0f, "Rect bottom()");
     auto c = r.center();
@@ -73,11 +73,11 @@ void testRect() {
 
 void testColor() {
     std::cout << "\n=== Color ===" << std::endl;
-    atlas::Color c(0.5f, 0.6f, 0.7f, 0.8f);
+    aatlas::Color c(0.5f, 0.6f, 0.7f, 0.8f);
     auto c2 = c.withAlpha(0.3f);
     assertTrue(c2.r == 0.5f && c2.g == 0.6f && c2.b == 0.7f && c2.a == 0.3f,
                "Color withAlpha preserves RGB");
-    auto c3 = atlas::Color::fromRGBA(255, 128, 0, 255);
+    auto c3 = aatlas::Color::fromRGBA(255, 128, 0, 255);
     assertClose(c3.r, 1.0f, "Color fromRGBA red");
     assertClose(c3.g, 128.0f / 255.0f, "Color fromRGBA green");
     assertClose(c3.b, 0.0f, "Color fromRGBA blue");
@@ -88,7 +88,7 @@ void testColor() {
 
 void testTheme() {
     std::cout << "\n=== Theme ===" << std::endl;
-    const atlas::Theme& t = atlas::defaultTheme();
+    const aatlas::Theme& t = aatlas::defaultTheme();
     assertTrue(t.bgPanel.a > 0.9f, "Panel background is nearly opaque");
     assertTrue(t.accentPrimary.r < t.accentPrimary.g, "Accent is teal (G > R)");
     assertTrue(t.accentPrimary.b > t.accentPrimary.g, "Accent is teal (B > G)");
@@ -103,12 +103,12 @@ void testTheme() {
 
 void testHashID() {
     std::cout << "\n=== Widget ID Hashing ===" << std::endl;
-    atlas::WidgetID a = atlas::hashID("Overview");
-    atlas::WidgetID b = atlas::hashID("Overview");
-    atlas::WidgetID c = atlas::hashID("Fitting");
+    aatlas::WidgetID a = aatlas::hashID("Overview");
+    aatlas::WidgetID b = aatlas::hashID("Overview");
+    aatlas::WidgetID c = aatlas::hashID("Fitting");
     assertTrue(a == b, "Same string produces same ID");
     assertTrue(a != c, "Different strings produce different IDs");
-    assertTrue(atlas::hashID("") != atlas::hashID("x"),
+    assertTrue(aatlas::hashID("") != aatlas::hashID("x"),
                "Empty vs non-empty are different");
 }
 
@@ -116,11 +116,11 @@ void testHashID() {
 
 void testContext() {
     std::cout << "\n=== AtlasContext ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     // init() will create stub GL resources in headless mode
     assertTrue(ctx.init(), "Context init succeeds (headless)");
 
-    atlas::InputState input;
+    aatlas::InputState input;
     input.windowW = 1920;
     input.windowH = 1080;
     input.mousePos = {500.0f, 400.0f};
@@ -131,13 +131,13 @@ void testContext() {
     ctx.beginFrame(input);
 
     // Hover test
-    atlas::Rect inside(400, 350, 200, 100);
-    atlas::Rect outside(800, 800, 100, 100);
+    aatlas::Rect inside(400, 350, 200, 100);
+    aatlas::Rect outside(800, 800, 100, 100);
     assertTrue(ctx.isHovered(inside), "Mouse is inside rect");
     assertTrue(!ctx.isHovered(outside), "Mouse is outside rect");
 
     // Hot/Active state
-    atlas::WidgetID testID = atlas::hashID("testWidget");
+    aatlas::WidgetID testID = aatlas::hashID("testWidget");
     ctx.setHot(testID);
     assertTrue(ctx.isHot(testID), "Widget is hot after setHot");
     ctx.setActive(testID);
@@ -150,10 +150,10 @@ void testContext() {
     // ID stack
     ctx.beginFrame(input);
     ctx.pushID("parent");
-    atlas::WidgetID idA = ctx.currentID("child");
+    aatlas::WidgetID idA = ctx.currentID("child");
     ctx.popID();
     ctx.pushID("other_parent");
-    atlas::WidgetID idB = ctx.currentID("child");
+    aatlas::WidgetID idB = ctx.currentID("child");
     ctx.popID();
     assertTrue(idA != idB, "Same child label under different parents produces different IDs");
     ctx.endFrame();
@@ -165,15 +165,15 @@ void testContext() {
 
 void testButtonBehavior() {
     std::cout << "\n=== Button Behavior ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
-    atlas::Rect btn(100, 100, 80, 30);
-    atlas::WidgetID btnID = atlas::hashID("testBtn");
+    aatlas::Rect btn(100, 100, 80, 30);
+    aatlas::WidgetID btnID = aatlas::hashID("testBtn");
 
     // Frame 1: mouse hovers over button
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {140.0f, 115.0f};
@@ -186,7 +186,7 @@ void testButtonBehavior() {
 
     // Frame 2: mouse presses (clicked)
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {140.0f, 115.0f};
@@ -201,7 +201,7 @@ void testButtonBehavior() {
 
     // Frame 3: mouse releases (click completes)
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {140.0f, 115.0f};
@@ -215,7 +215,7 @@ void testButtonBehavior() {
     // Frame 4: mouse releases outside button (no click)
     {
         // First, press inside
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {140.0f, 115.0f};
@@ -227,7 +227,7 @@ void testButtonBehavior() {
     }
     {
         // Then release outside
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {300.0f, 300.0f};  // outside button
@@ -245,7 +245,7 @@ void testButtonBehavior() {
 
 void testTextMeasurement() {
     std::cout << "\n=== Text Measurement ===" << std::endl;
-    atlas::AtlasRenderer renderer;
+    aatlas::AtlasRenderer renderer;
     renderer.init();
 
     float w1 = renderer.measureText("Hello");
@@ -263,7 +263,7 @@ void testTextMeasurement() {
 
 void testInputState() {
     std::cout << "\n=== InputState Defaults ===" << std::endl;
-    atlas::InputState input;
+    aatlas::InputState input;
     assertTrue(input.mouseDown[0] == false, "mouseDown[0] defaults to false");
     assertTrue(input.mouseClicked[0] == false, "mouseClicked[0] defaults to false");
     assertTrue(input.mouseReleased[0] == false, "mouseReleased[0] defaults to false");
@@ -276,17 +276,17 @@ void testInputState() {
 
 void testTooltip() {
     std::cout << "\n=== Tooltip ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
-    atlas::InputState input;
+    aatlas::InputState input;
     input.windowW = 1920;
     input.windowH = 1080;
     input.mousePos = {500.0f, 400.0f};
     ctx.beginFrame(input);
 
     // Should not crash and should draw tooltip elements
-    atlas::tooltip(ctx, "This is a test tooltip");
+    aatlas::tooltip(ctx, "This is a test tooltip");
     assertTrue(true, "Tooltip renders without crash");
 
     ctx.endFrame();
@@ -297,34 +297,34 @@ void testTooltip() {
 
 void testCheckbox() {
     std::cout << "\n=== Checkbox ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
     bool checked = false;
-    atlas::Rect cbRect(100, 100, 200, 20);
+    aatlas::Rect cbRect(100, 100, 200, 20);
 
     // Frame 1: Click on checkbox
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {110.0f, 110.0f};  // Inside the checkbox box
         input.mouseClicked[0] = true;
         input.mouseDown[0] = true;
         ctx.beginFrame(input);
-        atlas::checkbox(ctx, "Test Check", cbRect, &checked);
+        aatlas::checkbox(ctx, "Test Check", cbRect, &checked);
         ctx.endFrame();
     }
 
     // Frame 2: Release on checkbox
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {110.0f, 110.0f};
         input.mouseReleased[0] = true;
         ctx.beginFrame(input);
-        bool changed = atlas::checkbox(ctx, "Test Check", cbRect, &checked);
+        bool changed = aatlas::checkbox(ctx, "Test Check", cbRect, &checked);
         assertTrue(changed, "Checkbox value changes on click-release");
         assertTrue(checked, "Checkbox becomes checked after click");
         ctx.endFrame();
@@ -332,24 +332,24 @@ void testCheckbox() {
 
     // Frame 3: Click again to uncheck
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {110.0f, 110.0f};
         input.mouseClicked[0] = true;
         input.mouseDown[0] = true;
         ctx.beginFrame(input);
-        atlas::checkbox(ctx, "Test Check", cbRect, &checked);
+        aatlas::checkbox(ctx, "Test Check", cbRect, &checked);
         ctx.endFrame();
     }
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {110.0f, 110.0f};
         input.mouseReleased[0] = true;
         ctx.beginFrame(input);
-        bool changed = atlas::checkbox(ctx, "Test Check", cbRect, &checked);
+        bool changed = aatlas::checkbox(ctx, "Test Check", cbRect, &checked);
         assertTrue(changed, "Checkbox value changes on second click");
         assertTrue(!checked, "Checkbox becomes unchecked after second click");
         ctx.endFrame();
@@ -362,22 +362,22 @@ void testCheckbox() {
 
 void testComboBox() {
     std::cout << "\n=== ComboBox ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
     std::vector<std::string> items = {"All", "Combat", "Mining", "Custom"};
     int selected = 0;
     bool dropdownOpen = false;
-    atlas::Rect cbRect(100, 100, 200, 24);
+    aatlas::Rect cbRect(100, 100, 200, 24);
 
     // Frame 1: Render combo in closed state
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {300.0f, 300.0f};  // Outside
         ctx.beginFrame(input);
-        bool changed = atlas::comboBox(ctx, "TestCombo", cbRect, items, &selected, &dropdownOpen);
+        bool changed = aatlas::comboBox(ctx, "TestCombo", cbRect, items, &selected, &dropdownOpen);
         assertTrue(!changed, "ComboBox no change when not interacted with");
         assertTrue(!dropdownOpen, "ComboBox starts closed");
         ctx.endFrame();
@@ -392,26 +392,26 @@ void testComboBox() {
 
 void testPanelState() {
     std::cout << "\n=== PanelState ===" << std::endl;
-    atlas::PanelState state;
+    aatlas::PanelState state;
     state.bounds = {100, 100, 300, 400};
     assertTrue(state.open, "PanelState defaults to open");
     assertTrue(!state.minimized, "PanelState defaults to not minimized");
     assertTrue(!state.dragging, "PanelState defaults to not dragging");
     
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
     // Render a stateful panel
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {500.0f, 500.0f};  // Outside panel
         ctx.beginFrame(input);
-        atlas::PanelFlags flags;
-        bool contentVisible = atlas::panelBeginStateful(ctx, "Test Panel", state, flags);
+        aatlas::PanelFlags flags;
+        bool contentVisible = aatlas::panelBeginStateful(ctx, "Test Panel", state, flags);
         assertTrue(contentVisible, "Stateful panel content is visible when open");
-        atlas::panelEnd(ctx);
+        aatlas::panelEnd(ctx);
         ctx.endFrame();
     }
     
@@ -422,10 +422,10 @@ void testPanelState() {
 
 void testAtlasHUD() {
     std::cout << "\n=== AtlasHUD ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
-    atlas::AtlasHUD hud;
+    aatlas::AtlasHUD hud;
     hud.init(1920, 1080);
 
     assertTrue(hud.isOverviewOpen(), "HUD overview defaults to open");
@@ -438,7 +438,7 @@ void testAtlasHUD() {
     assertTrue(hud.isOverviewOpen(), "HUD overview toggled back to open");
 
     // Render a full HUD frame
-    atlas::ShipHUDData ship;
+    aatlas::ShipHUDData ship;
     ship.shieldPct = 0.85f;
     ship.armorPct = 1.0f;
     ship.hullPct = 1.0f;
@@ -450,24 +450,24 @@ void testAtlasHUD() {
     ship.midSlots = {{true, false, 0.0f, {0.2f, 0.6f, 1.0f}}};
     ship.lowSlots = {{true, false, 0.0f, {0.5f, 0.5f, 0.5f}}};
 
-    std::vector<atlas::TargetCardInfo> targets = {
+    std::vector<aatlas::TargetCardInfo> targets = {
         {"Pirate Frigate", 0.6f, 0.3f, 0.9f, 12000.0f, true, true},
         {"Asteroid", 1.0f, 1.0f, 1.0f, 5000.0f, false, false},
     };
 
-    std::vector<atlas::OverviewEntry> overview = {
+    std::vector<aatlas::OverviewEntry> overview = {
         {"Pirate Frigate", "Frigate", 12000.0f, 350.0f, {0.8f, 0.2f, 0.2f}, true},
         {"Mining Barge", "Mining Barge", 5000.0f, 0.0f, {0.2f, 0.6f, 1.0f}, false},
         {"Station", "Station", 45000.0f, 0.0f, {0.667f, 0.667f, 0.667f}, false},
     };
 
-    atlas::SelectedItemInfo selected;
+    aatlas::SelectedItemInfo selected;
     selected.name = "Pirate Frigate";
     selected.distance = 12000.0f;
     selected.distanceUnit = "m";
 
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {960.0f, 540.0f};
@@ -499,20 +499,20 @@ void testAtlasHUD() {
 
 void testSlider() {
     std::cout << "\n=== Slider ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
     float value = 50.0f;
-    atlas::Rect sliderRect(100, 100, 200, 20);
+    aatlas::Rect sliderRect(100, 100, 200, 20);
 
     // Frame 1: Render slider without interaction
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {300.0f, 300.0f};  // Outside
         ctx.beginFrame(input);
-        bool changed = atlas::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
+        bool changed = aatlas::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
         assertTrue(!changed, "Slider no change when not interacted with");
         assertClose(value, 50.0f, "Slider value unchanged");
         ctx.endFrame();
@@ -520,7 +520,7 @@ void testSlider() {
 
     // Frame 2: Click inside slider track to set value
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         // Click at 75% of slider width (x=100 + 200*0.75 = 250)
@@ -528,7 +528,7 @@ void testSlider() {
         input.mouseClicked[0] = true;
         input.mouseDown[0] = true;
         ctx.beginFrame(input);
-        bool changed = atlas::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
+        bool changed = aatlas::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
         assertTrue(changed, "Slider value changes on click");
         assertClose(value, 75.0f, "Slider set to 75% on click at 75% position");
         ctx.endFrame();
@@ -536,14 +536,14 @@ void testSlider() {
 
     // Frame 3: Drag to new position
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         // Drag to 25% position (x=100 + 200*0.25 = 150)
         input.mousePos = {150.0f, 110.0f};
         input.mouseDown[0] = true;
         ctx.beginFrame(input);
-        bool changed = atlas::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
+        bool changed = aatlas::slider(ctx, "TestSlider", sliderRect, &value, 0.0f, 100.0f, "%.0f");
         assertTrue(changed, "Slider value changes on drag");
         assertClose(value, 25.0f, "Slider set to 25% on drag to 25% position");
         ctx.endFrame();
@@ -551,11 +551,11 @@ void testSlider() {
 
     // Test with null value pointer (should not crash)
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         ctx.beginFrame(input);
-        bool changed = atlas::slider(ctx, "NullSlider", sliderRect, nullptr, 0.0f, 100.0f);
+        bool changed = aatlas::slider(ctx, "NullSlider", sliderRect, nullptr, 0.0f, 100.0f);
         assertTrue(!changed, "Slider with null value returns false");
         ctx.endFrame();
     }
@@ -567,49 +567,49 @@ void testSlider() {
 
 void testTextInput() {
     std::cout << "\n=== TextInput ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
-    atlas::TextInputState inputState;
+    aatlas::TextInputState inputState;
     inputState.text = "";
-    atlas::Rect inputRect(100, 100, 200, 24);
+    aatlas::Rect inputRect(100, 100, 200, 24);
 
     // Frame 1: Render without interaction (unfocused)
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {300.0f, 300.0f};
         ctx.beginFrame(input);
-        atlas::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
+        aatlas::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
         assertTrue(!inputState.focused, "TextInput starts unfocused");
         ctx.endFrame();
     }
 
     // Frame 2: Click inside to focus
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {150.0f, 110.0f};
         input.mouseClicked[0] = true;
         input.mouseDown[0] = true;
         ctx.beginFrame(input);
-        atlas::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
+        aatlas::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
         assertTrue(inputState.focused, "TextInput focused after click inside");
         ctx.endFrame();
     }
 
     // Frame 3: Click outside to unfocus
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {500.0f, 500.0f};
         input.mouseClicked[0] = true;
         input.mouseDown[0] = true;
         ctx.beginFrame(input);
-        atlas::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
+        aatlas::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
         assertTrue(!inputState.focused, "TextInput unfocused after click outside");
         ctx.endFrame();
     }
@@ -618,13 +618,13 @@ void testTextInput() {
     inputState.text = "Hello World";
     inputState.cursorPos = 5;
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {150.0f, 110.0f};
         input.mouseClicked[0] = true;
         ctx.beginFrame(input);
-        atlas::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
+        aatlas::textInput(ctx, "TestInput", inputRect, inputState, "Search...");
         assertTrue(inputState.focused, "TextInput focuses with pre-filled text");
         assertTrue(inputState.text == "Hello World", "TextInput preserves existing text");
         ctx.endFrame();
@@ -637,21 +637,21 @@ void testTextInput() {
 
 void testNotification() {
     std::cout << "\n=== Notification ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
-    atlas::InputState input;
+    aatlas::InputState input;
     input.windowW = 1920;
     input.windowH = 1080;
     input.mousePos = {500.0f, 400.0f};
     ctx.beginFrame(input);
 
     // Should not crash with default color
-    atlas::notification(ctx, "Warp drive active");
+    aatlas::notification(ctx, "Warp drive active");
     assertTrue(true, "Notification renders without crash (default color)");
 
     // Should not crash with custom color
-    atlas::notification(ctx, "Shield warning!", atlas::Color(1.0f, 0.2f, 0.2f, 1.0f));
+    aatlas::notification(ctx, "Shield warning!", aatlas::Color(1.0f, 0.2f, 0.2f, 1.0f));
     assertTrue(true, "Notification renders without crash (custom color)");
 
     ctx.endFrame();
@@ -662,7 +662,7 @@ void testNotification() {
 
 void testTextInputStateDefaults() {
     std::cout << "\n=== TextInputState Defaults ===" << std::endl;
-    atlas::TextInputState state;
+    aatlas::TextInputState state;
     assertTrue(state.text.empty(), "TextInputState text defaults to empty");
     assertTrue(state.cursorPos == 0, "TextInputState cursorPos defaults to 0");
     assertTrue(!state.focused, "TextInputState focused defaults to false");
@@ -672,34 +672,34 @@ void testTextInputStateDefaults() {
 
 void testModuleSlotEx() {
     std::cout << "\n=== ModuleSlotEx (Overheat) ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {500.0f, 500.0f};  // Away from module
         ctx.beginFrame(input);
 
         // Module with no overheat
-        bool clicked = atlas::moduleSlotEx(ctx, {200.0f, 200.0f}, 14.0f,
+        bool clicked = aatlas::moduleSlotEx(ctx, {200.0f, 200.0f}, 14.0f,
                                              true, 0.5f,
-                                             atlas::Color(0.8f, 0.2f, 0.2f, 1.0f),
+                                             aatlas::Color(0.8f, 0.2f, 0.2f, 1.0f),
                                              0.0f, 1.0f);
         assertTrue(!clicked, "ModuleSlotEx not clicked when mouse is away");
 
         // Module with moderate overheat
-        clicked = atlas::moduleSlotEx(ctx, {250.0f, 200.0f}, 14.0f,
+        clicked = aatlas::moduleSlotEx(ctx, {250.0f, 200.0f}, 14.0f,
                                        true, 0.0f,
-                                       atlas::Color(0.8f, 0.2f, 0.2f, 1.0f),
+                                       aatlas::Color(0.8f, 0.2f, 0.2f, 1.0f),
                                        0.5f, 2.0f);
         assertTrue(!clicked, "ModuleSlotEx with 50% overheat renders without crash");
 
         // Module fully burnt out
-        clicked = atlas::moduleSlotEx(ctx, {300.0f, 200.0f}, 14.0f,
+        clicked = aatlas::moduleSlotEx(ctx, {300.0f, 200.0f}, 14.0f,
                                        false, 0.0f,
-                                       atlas::Color(0.5f, 0.5f, 0.5f, 1.0f),
+                                       aatlas::Color(0.5f, 0.5f, 0.5f, 1.0f),
                                        1.0f, 3.0f);
         assertTrue(!clicked, "ModuleSlotEx at 100% overheat (burnt out) renders");
 
@@ -713,19 +713,19 @@ void testModuleSlotEx() {
 
 void testCapacitorRingAnimated() {
     std::cout << "\n=== CapacitorRingAnimated ===" << std::endl;
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
     float displayFrac = 1.0f;  // Start at full cap
 
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         ctx.beginFrame(input);
 
         // Animate toward 50% over several frames
-        atlas::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
+        aatlas::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
                                        0.5f, displayFrac, 1.0f / 60.0f, 16);
         assertTrue(displayFrac < 1.0f, "Display frac moves toward target after one frame");
         assertTrue(displayFrac > 0.5f, "Display frac hasn't reached target in one frame");
@@ -735,11 +735,11 @@ void testCapacitorRingAnimated() {
 
     // Simulate many frames to converge
     for (int i = 0; i < 300; ++i) {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         ctx.beginFrame(input);
-        atlas::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
+        aatlas::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
                                        0.5f, displayFrac, 1.0f / 60.0f, 16);
         ctx.endFrame();
     }
@@ -748,11 +748,11 @@ void testCapacitorRingAnimated() {
     // Test snap-to-target when very close
     displayFrac = 0.5005f;
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         ctx.beginFrame(input);
-        atlas::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
+        aatlas::capacitorRingAnimated(ctx, {960.0f, 540.0f}, 40.0f, 48.0f,
                                        0.5f, displayFrac, 1.0f / 60.0f, 16);
         assertClose(displayFrac, 0.5f, "Display frac snaps when diff < 0.001");
         ctx.endFrame();
@@ -767,14 +767,14 @@ void testModuleInfoOverheat() {
     std::cout << "\n=== ModuleInfo Overheat Field ===" << std::endl;
 
     // Test that overheat defaults to 0
-    atlas::ShipHUDData::ModuleInfo mod;
+    aatlas::ShipHUDData::ModuleInfo mod;
     assertClose(mod.overheat, 0.0f, "ModuleInfo overheat defaults to 0.0");
     assertTrue(mod.fitted == false, "ModuleInfo fitted defaults to false");
     assertTrue(mod.active == false, "ModuleInfo active defaults to false");
     assertClose(mod.cooldown, 0.0f, "ModuleInfo cooldown defaults to 0.0");
 
     // Test backward-compatible aggregate init (existing code style)
-    atlas::ShipHUDData::ModuleInfo mod2 = {true, true, 0.3f, {0.8f, 0.2f, 0.2f, 1.0f}};
+    aatlas::ShipHUDData::ModuleInfo mod2 = {true, true, 0.3f, {0.8f, 0.2f, 0.2f, 1.0f}};
     assertTrue(mod2.fitted == true, "Aggregate init: fitted");
     assertTrue(mod2.active == true, "Aggregate init: active");
     assertClose(mod2.cooldown, 0.3f, "Aggregate init: cooldown");
@@ -1095,26 +1095,26 @@ void testDamageFeedback() {
     std::cout << "\n=== Damage Feedback ===" << std::endl;
 
     // Test DamageFlash struct
-    eve::DamageFlash flash(eve::DamageLayer::ARMOR, 0.3f);
-    assertTrue(flash.layer == eve::DamageLayer::ARMOR, "Flash layer is armor");
+    atlas::DamageFlash flash(atlas::DamageLayer::ARMOR, 0.3f);
+    assertTrue(flash.layer == atlas::DamageLayer::ARMOR, "Flash layer is armor");
     assertClose(flash.intensity, 1.0f, "Flash initial intensity");
     assertClose(flash.duration, 0.3f, "Flash custom duration");
     assertClose(flash.elapsed, 0.0f, "Flash initial elapsed");
 
     // Test shield layer
-    eve::DamageFlash shieldFlash(eve::DamageLayer::SHIELD);
-    assertTrue(shieldFlash.layer == eve::DamageLayer::SHIELD, "Shield flash layer");
+    atlas::DamageFlash shieldFlash(atlas::DamageLayer::SHIELD);
+    assertTrue(shieldFlash.layer == atlas::DamageLayer::SHIELD, "Shield flash layer");
     assertClose(shieldFlash.duration, 0.5f, "Default flash duration 0.5s");
 
     // Test hull layer
-    eve::DamageFlash hullFlash(eve::DamageLayer::HULL, 0.8f);
-    assertTrue(hullFlash.layer == eve::DamageLayer::HULL, "Hull flash layer");
+    atlas::DamageFlash hullFlash(atlas::DamageLayer::HULL, 0.8f);
+    assertTrue(hullFlash.layer == atlas::DamageLayer::HULL, "Hull flash layer");
     assertClose(hullFlash.duration, 0.8f, "Hull flash custom duration");
 
     // Test DamageLayer enum values are distinct
-    assertTrue(eve::DamageLayer::SHIELD != eve::DamageLayer::ARMOR, "Shield != Armor layer");
-    assertTrue(eve::DamageLayer::ARMOR != eve::DamageLayer::HULL, "Armor != Hull layer");
-    assertTrue(eve::DamageLayer::SHIELD != eve::DamageLayer::HULL, "Shield != Hull layer");
+    assertTrue(atlas::DamageLayer::SHIELD != atlas::DamageLayer::ARMOR, "Shield != Armor layer");
+    assertTrue(atlas::DamageLayer::ARMOR != atlas::DamageLayer::HULL, "Armor != Hull layer");
+    assertTrue(atlas::DamageLayer::SHIELD != atlas::DamageLayer::HULL, "Shield != Hull layer");
 }
 
 // ─── Mode Indicator tests ──────────────────────────────────────────────
@@ -1123,28 +1123,28 @@ void testModeIndicator() {
     std::cout << "\n=== Mode Indicator ===" << std::endl;
 
     // Test that modeIndicator doesn't crash with null or empty text
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
-    atlas::InputState input;
+    aatlas::InputState input;
     input.windowW = 1920;
     input.windowH = 1080;
     ctx.beginFrame(input);
 
     // Empty text should be a no-op
-    atlas::modeIndicator(ctx, {960.0f, 500.0f}, "");
+    aatlas::modeIndicator(ctx, {960.0f, 500.0f}, "");
     assertTrue(true, "modeIndicator with empty text does not crash");
 
     // Null text should be a no-op
-    atlas::modeIndicator(ctx, {960.0f, 500.0f}, nullptr);
+    aatlas::modeIndicator(ctx, {960.0f, 500.0f}, nullptr);
     assertTrue(true, "modeIndicator with null text does not crash");
 
     // Valid text
-    atlas::modeIndicator(ctx, {960.0f, 500.0f}, "APPROACH - click a target");
+    aatlas::modeIndicator(ctx, {960.0f, 500.0f}, "APPROACH - click a target");
     assertTrue(true, "modeIndicator with valid text does not crash");
 
     // With custom color
-    atlas::Color yellow = {1.0f, 1.0f, 0.0f, 1.0f};
-    atlas::modeIndicator(ctx, {960.0f, 500.0f}, "ORBIT - click a target", yellow);
+    aatlas::Color yellow = {1.0f, 1.0f, 0.0f, 1.0f};
+    aatlas::modeIndicator(ctx, {960.0f, 500.0f}, "ORBIT - click a target", yellow);
     assertTrue(true, "modeIndicator with custom color does not crash");
 
     ctx.endFrame();
@@ -1156,12 +1156,12 @@ void testModeIndicator() {
 void testInfoPanelData() {
     std::cout << "\n=== Info Panel Data ===" << std::endl;
 
-    atlas::InfoPanelData empty;
+    aatlas::InfoPanelData empty;
     assertTrue(empty.isEmpty(), "Empty InfoPanelData is empty");
     assertTrue(empty.name.empty(), "Empty InfoPanelData name is empty");
     assertClose(empty.distance, 0.0f, "Empty InfoPanelData distance is 0");
 
-    atlas::InfoPanelData data;
+    aatlas::InfoPanelData data;
     data.name = "Crimson Order Raider";
     data.type = "Cruiser";
     data.faction = "Crimson Order";
@@ -1187,18 +1187,18 @@ void testInfoPanelData() {
 void testInfoPanelRendering() {
     std::cout << "\n=== Info Panel Rendering ===" << std::endl;
 
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
-    atlas::InputState input;
+    aatlas::InputState input;
     input.windowW = 1920;
     input.windowH = 1080;
     ctx.beginFrame(input);
 
-    atlas::PanelState state;
+    aatlas::PanelState state;
     state.bounds = {100.0f, 100.0f, 280.0f, 260.0f};
     state.open = true;
 
-    atlas::InfoPanelData data;
+    aatlas::InfoPanelData data;
     data.name = "Test Entity";
     data.type = "Frigate";
     data.faction = "TestCorp";
@@ -1209,17 +1209,17 @@ void testInfoPanelRendering() {
     data.hullPct = 1.0f;
     data.hasHealth = true;
 
-    atlas::infoPanelDraw(ctx, state, data);
+    aatlas::infoPanelDraw(ctx, state, data);
     assertTrue(true, "infoPanelDraw renders without crash");
 
     // Empty data should be a no-op
-    atlas::InfoPanelData emptyData;
-    atlas::infoPanelDraw(ctx, state, emptyData);
+    aatlas::InfoPanelData emptyData;
+    aatlas::infoPanelDraw(ctx, state, emptyData);
     assertTrue(true, "infoPanelDraw with empty data does not crash");
 
     // Closed panel should be a no-op
     state.open = false;
-    atlas::infoPanelDraw(ctx, state, data);
+    aatlas::infoPanelDraw(ctx, state, data);
     assertTrue(true, "infoPanelDraw with closed panel does not crash");
 
     ctx.endFrame();
@@ -1231,20 +1231,20 @@ void testInfoPanelRendering() {
 void testOverviewTabSwitching() {
     std::cout << "\n=== Overview Tab Switching ===" << std::endl;
 
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
     // Frame with mouse not on any tab
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {0.0f, 0.0f};
         ctx.beginFrame(input);
 
         std::vector<std::string> tabs = {"All", "Combat", "Mining", "Custom"};
-        atlas::Rect tabRect = {100.0f, 100.0f, 300.0f, 24.0f};
-        int clicked = atlas::overviewHeaderInteractive(ctx, tabRect, tabs, 0);
+        aatlas::Rect tabRect = {100.0f, 100.0f, 300.0f, 24.0f};
+        int clicked = aatlas::overviewHeaderInteractive(ctx, tabRect, tabs, 0);
         assertTrue(clicked == -1, "No tab clicked when mouse is away");
 
         ctx.endFrame();
@@ -1258,7 +1258,7 @@ void testOverviewTabSwitching() {
 void testAtlasHUDModeIndicator() {
     std::cout << "\n=== AtlasHUD Mode Indicator ===" << std::endl;
 
-    atlas::AtlasHUD hud;
+    aatlas::AtlasHUD hud;
     hud.init(1920, 1080);
 
     // Initially empty
@@ -1279,12 +1279,12 @@ void testAtlasHUDModeIndicator() {
 void testAtlasHUDInfoPanel() {
     std::cout << "\n=== AtlasHUD Info Panel ===" << std::endl;
 
-    atlas::AtlasHUD hud;
+    aatlas::AtlasHUD hud;
     hud.init(1920, 1080);
 
     assertTrue(!hud.isInfoPanelOpen(), "Info panel initially closed");
 
-    atlas::InfoPanelData data;
+    aatlas::InfoPanelData data;
     data.name = "Test Ship";
     data.type = "Destroyer";
     data.faction = "Iron Corsairs";
@@ -1306,7 +1306,7 @@ void testAtlasHUDInfoPanel() {
 void testAtlasHUDOverviewTab() {
     std::cout << "\n=== AtlasHUD Overview Tab ===" << std::endl;
 
-    atlas::AtlasHUD hud;
+    aatlas::AtlasHUD hud;
     hud.init(1920, 1080);
 
     assertTrue(hud.getActiveOverviewTab() == 0, "Default overview tab is 0");
@@ -1323,7 +1323,7 @@ void testAtlasHUDOverviewTab() {
 void testSelectedItemCallbacks() {
     std::cout << "\n=== Selected Item Callbacks ===" << std::endl;
 
-    atlas::AtlasHUD hud;
+    aatlas::AtlasHUD hud;
     hud.init(1920, 1080);
 
     bool orbitCalled = false;
@@ -1386,10 +1386,10 @@ void testProbeScannerPanel() {
 void testSidebarCallback() {
     std::cout << "\n=== Sidebar Callback ===" << std::endl;
 
-    atlas::AtlasContext ctx;
+    aatlas::AtlasContext ctx;
     ctx.init();
 
-    atlas::AtlasHUD hud;
+    aatlas::AtlasHUD hud;
     hud.init(1920, 1080);
 
     int lastClickedIcon = -1;
@@ -1402,7 +1402,7 @@ void testSidebarCallback() {
     // Simulate a sidebar icon click by rendering a frame with mouse position
     // over the first icon and mouse clicked state
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         // Position mouse over first sidebar icon (x=2..38, y=8..44)
@@ -1411,16 +1411,16 @@ void testSidebarCallback() {
         input.mouseClicked[0] = true;
         ctx.beginFrame(input);
 
-        atlas::ShipHUDData ship;
-        std::vector<atlas::TargetCardInfo> targets;
-        std::vector<atlas::OverviewEntry> overview;
-        atlas::SelectedItemInfo selected;
+        aatlas::ShipHUDData ship;
+        std::vector<aatlas::TargetCardInfo> targets;
+        std::vector<aatlas::OverviewEntry> overview;
+        aatlas::SelectedItemInfo selected;
         hud.update(ctx, ship, targets, overview, selected);
         ctx.endFrame();
     }
     // Release mouse to complete click cycle
     {
-        atlas::InputState input;
+        aatlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
         input.mousePos = {20.0f, 26.0f};
@@ -1428,10 +1428,10 @@ void testSidebarCallback() {
         input.mouseReleased[0] = true;
         ctx.beginFrame(input);
 
-        atlas::ShipHUDData ship;
-        std::vector<atlas::TargetCardInfo> targets;
-        std::vector<atlas::OverviewEntry> overview;
-        atlas::SelectedItemInfo selected;
+        aatlas::ShipHUDData ship;
+        std::vector<aatlas::TargetCardInfo> targets;
+        std::vector<aatlas::OverviewEntry> overview;
+        aatlas::SelectedItemInfo selected;
         hud.update(ctx, ship, targets, overview, selected);
         ctx.endFrame();
     }

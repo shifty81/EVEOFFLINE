@@ -4,7 +4,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 class Shader;
 
@@ -130,4 +130,4 @@ private:
     void updateBuffers();
 };
 
-} // namespace eve
+} // namespace atlas

@@ -7,7 +7,7 @@
 #include <random>
 #include <filesystem>
 
-namespace eve {
+namespace atlas {
 
 // ────────────────────────────────────────────────────────────────────────
 // Construction / destruction
@@ -532,4 +532,4 @@ std::vector<float> ReferenceModelAnalyzer::generateLearnedRadiusMultipliers(
     return multipliers;
 }
 
-} // namespace eve
+} // namespace atlas

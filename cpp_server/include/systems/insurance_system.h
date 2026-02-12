@@ -4,7 +4,7 @@
 #include "ecs/system.h"
 #include <string>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 /**
@@ -47,6 +47,6 @@ public:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_INSURANCE_SYSTEM_H

@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include "rendering/ship_generation_rules.h"
 
-namespace eve {
+namespace atlas {
 
 /**
  * Geometric traits extracted from a single reference OBJ model.
@@ -211,4 +211,4 @@ private:
     static std::string inferClass(const std::string& filename, int vertexCount);
 };
 
-} // namespace eve
+} // namespace atlas

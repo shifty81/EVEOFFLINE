@@ -19,7 +19,7 @@
 
 using json = nlohmann::json;
 
-namespace eve {
+namespace atlas {
 
 StarMap::StarMap()
     : m_visible(false)
@@ -748,4 +748,4 @@ StarMap::SystemNode* StarMap::findSystemAtScreenPos(int x, int y) {
     return nullptr;
 }
 
-} // namespace eve
+} // namespace atlas

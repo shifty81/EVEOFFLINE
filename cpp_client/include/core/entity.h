@@ -3,7 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Health structure for entities
@@ -126,4 +126,4 @@ private:
     std::string m_faction;
 };
 
-} // namespace eve
+} // namespace atlas

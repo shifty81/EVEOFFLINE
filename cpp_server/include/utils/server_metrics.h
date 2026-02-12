@@ -6,7 +6,7 @@
 #include <mutex>
 #include <cstdint>
 
-namespace eve {
+namespace atlas {
 namespace utils {
 
 /**
@@ -86,6 +86,6 @@ private:
 };
 
 } // namespace utils
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SERVER_METRICS_H

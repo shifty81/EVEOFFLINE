@@ -30,7 +30,7 @@ const unsigned int SCR_WIDTH = 1280;
 const unsigned int SCR_HEIGHT = 720;
 
 // Camera
-std::unique_ptr<eve::Camera> camera;
+std::unique_ptr<atlas::Camera> camera;
 
 // Timing
 float deltaTime = 0.0f;
@@ -58,10 +58,10 @@ unsigned int cubeVBO = 0;
 
 int main() {
     // Initialize window
-    eve::Window window("Post-Processing Test (Bloom & HDR)", SCR_WIDTH, SCR_HEIGHT);
+    atlas::Window window("Post-Processing Test (Bloom & HDR)", SCR_WIDTH, SCR_HEIGHT);
     
     // Create camera
-    camera = std::make_unique<eve::Camera>(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT);
+    camera = std::make_unique<atlas::Camera>(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT);
     camera->setTarget(glm::vec3(0.0f, 0.0f, 0.0f));
     camera->zoom(-20.0f);  // Move camera back
     
@@ -78,7 +78,7 @@ int main() {
     glEnable(GL_CULL_FACE);
     
     // Load shaders
-    eve::Shader lightingShader;
+    atlas::Shader lightingShader;
     lightingShader.loadFromFiles("shaders/multi_light.vert", "shaders/multi_light.frag");
     
     // Setup post-processing

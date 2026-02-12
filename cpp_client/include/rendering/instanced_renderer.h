@@ -7,7 +7,7 @@
 #include <memory>
 #include <unordered_map>
 
-namespace eve {
+namespace atlas {
 
 // Forward declarations
 class Mesh;
@@ -235,4 +235,4 @@ private:
     int generateInstanceId() { return m_nextInstanceId++; }
 };
 
-} // namespace eve
+} // namespace atlas

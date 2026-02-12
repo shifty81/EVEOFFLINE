@@ -4,7 +4,7 @@
 #include "ecs/world.h"
 #include <string>
 
-namespace eve {
+namespace atlas {
 namespace data {
 
 /**
@@ -52,6 +52,6 @@ private:
 };
 
 } // namespace data
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_DATA_WORLD_PERSISTENCE_H

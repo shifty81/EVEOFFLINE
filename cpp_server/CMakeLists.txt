@@ -164,26 +164,26 @@ if(USE_STEAM_SDK)
 endif()
 
 # Main executable
-add_executable(eve_dedicated_server ${SERVER_SOURCES} ${SERVER_HEADERS})
+add_executable(atlas_dedicated_server ${SERVER_SOURCES} ${SERVER_HEADERS})
 
 # Link libraries
-target_link_libraries(eve_dedicated_server 
+target_link_libraries(atlas_dedicated_server 
     Threads::Threads
 )
 
 if(USE_STEAM_SDK AND STEAM_LIBRARIES)
-    target_link_libraries(eve_dedicated_server ${STEAM_LIBRARIES})
+    target_link_libraries(atlas_dedicated_server ${STEAM_LIBRARIES})
 endif()
 
 # Platform-specific libraries
 if(WIN32)
-    target_link_libraries(eve_dedicated_server ws2_32)
+    target_link_libraries(atlas_dedicated_server ws2_32)
 elseif(UNIX)
-    target_link_libraries(eve_dedicated_server dl)
+    target_link_libraries(atlas_dedicated_server dl)
 endif()
 
 # Installation
-install(TARGETS eve_dedicated_server
+install(TARGETS atlas_dedicated_server
     RUNTIME DESTINATION bin
 )
 

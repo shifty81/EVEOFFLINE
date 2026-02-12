@@ -1,6 +1,6 @@
 #include "ecs/entity.h"
 
-namespace eve {
+namespace atlas {
 namespace ecs {
 
 Entity::Entity(const std::string& id) : id_(id) {
@@ -16,4 +16,4 @@ bool Entity::hasComponents(const std::vector<std::type_index>& types) const {
 }
 
 } // namespace ecs
-} // namespace eve
+} // namespace atlas

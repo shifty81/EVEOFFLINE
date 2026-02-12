@@ -11,7 +11,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 // Mock classes for testing without OpenGL
-namespace eve {
+namespace atlas {
 
 struct Vertex {
     glm::vec3 position;
@@ -60,7 +60,7 @@ struct InstanceData {
         , _padding1(0.0f), _padding2(0.0f) {}
 };
 
-} // namespace eve
+} // namespace atlas
 
 // Test framework
 struct TestResult {
@@ -98,7 +98,7 @@ void printTestSummary() {
 void testInstanceData() {
     std::cout << "\n=== Test 1: InstanceData Structure ===" << std::endl;
     
-    eve::InstanceData data;
+    atlas::InstanceData data;
     
     // Test defaults
     runTest("Default transform is identity", data.transform == glm::mat4(1.0f));
@@ -117,17 +117,17 @@ void testInstanceData() {
     
     // Test size (for GPU buffer alignment)
     size_t expectedSize = sizeof(glm::mat4) + sizeof(glm::vec4) + 4 * sizeof(float);
-    runTest("InstanceData size is correct", sizeof(eve::InstanceData) == expectedSize);
+    runTest("InstanceData size is correct", sizeof(atlas::InstanceData) == expectedSize);
 }
 
 // Test 2: Mesh creation and properties
 void testMeshCreation() {
     std::cout << "\n=== Test 2: Mesh Creation ===" << std::endl;
     
-    std::vector<eve::Vertex> vertices(8); // Cube vertices
+    std::vector<atlas::Vertex> vertices(8); // Cube vertices
     std::vector<unsigned int> indices = {0, 1, 2, 2, 3, 0}; // 2 triangles
     
-    auto mesh = std::make_shared<eve::Mesh>(vertices, indices);
+    auto mesh = std::make_shared<atlas::Mesh>(vertices, indices);
     
     runTest("Mesh created successfully", mesh != nullptr);
     runTest("Mesh has correct index count", mesh->getIndexCount() == 6);
@@ -155,12 +155,12 @@ void testInstanceDataArray() {
     std::cout << "\n=== Test 4: Instance Data Array ===" << std::endl;
     
     const int NUM_INSTANCES = 100;
-    std::vector<eve::InstanceData> instances;
+    std::vector<atlas::InstanceData> instances;
     instances.reserve(NUM_INSTANCES);
     
     // Create instances in a grid
     for (int i = 0; i < NUM_INSTANCES; i++) {
-        eve::InstanceData data;
+        atlas::InstanceData data;
         float x = (i % 10) * 5.0f;
         float z = (i / 10) * 5.0f;
         data.transform = glm::translate(glm::mat4(1.0f), glm::vec3(x, 0, z));
@@ -181,10 +181,10 @@ void testFleetFormation() {
     // Create a circular fleet formation
     const int FLEET_SIZE = 20;
     const float RADIUS = 50.0f;
-    std::vector<eve::InstanceData> fleet;
+    std::vector<atlas::InstanceData> fleet;
     
     for (int i = 0; i < FLEET_SIZE; i++) {
-        eve::InstanceData ship;
+        atlas::InstanceData ship;
         float angle = (i / (float)FLEET_SIZE) * 2.0f * glm::pi<float>();
         float x = RADIUS * cos(angle);
         float z = RADIUS * sin(angle);
@@ -228,17 +228,17 @@ void testMemoryLayout() {
     std::cout << "\n=== Test 7: Memory Layout ===" << std::endl;
     
     // Verify structure packing for GPU
-    std::cout << "  sizeof(InstanceData): " << sizeof(eve::InstanceData) << " bytes" << std::endl;
+    std::cout << "  sizeof(InstanceData): " << sizeof(atlas::InstanceData) << " bytes" << std::endl;
     std::cout << "  sizeof(glm::mat4): " << sizeof(glm::mat4) << " bytes" << std::endl;
     std::cout << "  sizeof(glm::vec4): " << sizeof(glm::vec4) << " bytes" << std::endl;
     
     // Check alignment (should be multiple of 16 for GPU)
-    bool aligned = (sizeof(eve::InstanceData) % 16) == 0;
+    bool aligned = (sizeof(atlas::InstanceData) % 16) == 0;
     
     runTest("InstanceData is 16-byte aligned", aligned);
     
     // Verify offsets
-    eve::InstanceData data;
+    atlas::InstanceData data;
     size_t transformOffset = (size_t)&data.transform - (size_t)&data;
     size_t colorOffset = (size_t)&data.color - (size_t)&data;
     

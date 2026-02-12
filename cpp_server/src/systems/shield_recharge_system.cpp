@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 ShieldRechargeSystem::ShieldRechargeSystem(ecs::World* world)
@@ -36,4 +36,4 @@ float ShieldRechargeSystem::getShieldPercentage(const std::string& entity_id) co
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

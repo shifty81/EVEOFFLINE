@@ -3,7 +3,7 @@
 #include <random>
 #include <stdexcept>
 
-namespace eve {
+namespace atlas {
 
 // ────────────────────────────────────────────────────────────────────────
 // Mathematical constants
@@ -571,4 +571,4 @@ TriangulatedMesh buildSegmentedHull(int sides, int segments,
     return triangulateFaces(allFaces, color);
 }
 
-} // namespace eve
+} // namespace atlas

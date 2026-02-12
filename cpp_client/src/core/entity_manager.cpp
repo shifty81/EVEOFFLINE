@@ -2,7 +2,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 
 EntityManager::EntityManager() {
 }
@@ -132,4 +132,4 @@ void EntityManager::clear() {
     m_entities.clear();
 }
 
-} // namespace eve
+} // namespace atlas

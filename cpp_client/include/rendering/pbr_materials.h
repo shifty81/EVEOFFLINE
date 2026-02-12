@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-namespace eve {
+namespace atlas {
 
 class Texture;
 
@@ -112,4 +112,4 @@ private:
     void createFactionMaterials();
 };
 
-} // namespace eve
+} // namespace atlas

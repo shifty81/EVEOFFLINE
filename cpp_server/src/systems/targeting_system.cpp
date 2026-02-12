@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 TargetingSystem::TargetingSystem(ecs::World* world)
@@ -117,4 +117,4 @@ bool TargetingSystem::isTargetLocked(const std::string& entity_id, const std::st
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

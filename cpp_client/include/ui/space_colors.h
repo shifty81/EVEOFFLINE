@@ -8,7 +8,7 @@ namespace UI {
  *
  * Space-themed UI color palette.
  *
- * Legacy compatibility header — prefer atlas::Theme (atlas_types.h) for
+ * Legacy compatibility header — prefer aatlas::Theme (atlas_types.h) for
  * new Atlas-based code.  Kept so existing ImGui-based panels continue to
  * compile while they are incrementally migrated to Atlas widgets.
  */

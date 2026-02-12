@@ -112,22 +112,34 @@ bool button(AtlasContext& ctx, const char* label, const Rect& r) {
 }
 
 bool iconButton(AtlasContext& ctx, WidgetID id, const Rect& r,
-                const Color& iconColor) {
+                const Color& iconColor, const char* symbol) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
 
     bool clicked = ctx.buttonBehavior(r, id);
 
-    Color bg = t.bgPrimary;
-    if (ctx.isActive(id))      bg = t.selection;
-    else if (ctx.isHot(id))    bg = t.hover;
+    // Neocom-style: subtle background that only shows on hover/active
+    bool hovered = ctx.isHot(id);
+    bool active  = ctx.isActive(id);
 
-    rr.drawRect(r, bg);
+    if (active) {
+        rr.drawRect(r, t.selection);
+        // Left accent bar when active
+        rr.drawRect({r.x, r.y, 2.0f, r.h}, t.accentPrimary);
+    } else if (hovered) {
+        rr.drawRect(r, t.hover);
+        // Left accent bar on hover
+        rr.drawRect({r.x, r.y, 2.0f, r.h}, t.accentPrimary.withAlpha(0.6f));
+    }
 
-    // Draw a small filled circle as icon placeholder
-    Vec2 c = r.center();
-    float iconR = std::min(r.w, r.h) * 0.3f;
-    rr.drawCircle(c, iconR, iconColor);
+    // Draw letter/symbol icon centered in the slot
+    if (symbol && symbol[0]) {
+        float tw = rr.measureText(symbol);
+        float tx = r.x + (r.w - tw) * 0.5f;
+        float ty = r.y + (r.h - 13.0f) * 0.5f;
+        Color textCol = hovered ? t.accentPrimary : iconColor;
+        rr.drawText(symbol, {tx, ty}, textCol);
+    }
 
     return clicked;
 }
@@ -649,30 +661,111 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
 
-    // Full-height dark background
+    // Neocom-style dark solid background bar
     Rect bar = {x, 0, width, height};
-    rr.drawRect(bar, t.bgPrimary);
+    rr.drawRect(bar, t.bgPanel);
+    // Right edge border
     rr.drawRect({x + width - 1.0f, 0, 1.0f, height}, t.borderSubtle);
 
-    // Icon buttons (stacked vertically from top)
-    float iconSz = width - 4.0f;
-    float iconY = 8.0f;
-    float iconGap = 4.0f;
+    // Neocom icon labels (letter-based symbols like EVE Online)
+    static const char* neocomLabels[] = {
+        "I",   // 0: Inventory
+        "F",   // 1: Fitting
+        "M",   // 2: Market
+        "J",   // 3: Journal/Missions
+        "D",   // 4: D-Scan
+        "O",   // 5: Overview
+        "C",   // 6: Chat
+        "Dr",  // 7: Drones
+    };
+    static const char* neocomTooltips[] = {
+        "Inventory",
+        "Ship Fitting",
+        "Market",
+        "Missions",
+        "Directional Scan",
+        "Overview",
+        "Chat",
+        "Drones",
+    };
 
-    for (int i = 0; i < icons; ++i) {
-        Rect iconRect = {x + 2.0f, iconY, iconSz, iconSz};
+    // Icon slot dimensions — square slots with small gap
+    float slotSz = width - 4.0f;
+    float iconY = 8.0f;
+    float iconGap = 2.0f;
+
+    // Top group: Character/Ship (first 2 icons)
+    int topGroup = std::min(icons, 2);
+    for (int i = 0; i < topGroup; ++i) {
+        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
         WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
 
-        // Alternate icon colors for visual variety
-        Color iconColor = (i % 3 == 0) ? t.accentPrimary
-                        : (i % 3 == 1) ? t.textSecondary
-                                       : t.accentDim;
+        const char* sym = (i < 8) ? neocomLabels[i] : "?";
+        Color iconColor = t.textSecondary;
 
-        if (iconButton(ctx, iconID, iconRect, iconColor)) {
+        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
             if (callback) callback(i);
         }
 
-        iconY += iconSz + iconGap;
+        // Show tooltip on hover
+        if (ctx.isHot(iconID) && i < 8) {
+            tooltip(ctx, neocomTooltips[i]);
+        }
+
+        iconY += slotSz + iconGap;
+    }
+
+    // Separator line between groups
+    if (topGroup > 0 && icons > topGroup) {
+        iconY += 2.0f;
+        rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f}, t.borderSubtle);
+        iconY += 5.0f;
+    }
+
+    // Middle group: Services (icons 2..5)
+    int midGroup = std::min(icons, 6);
+    for (int i = topGroup; i < midGroup; ++i) {
+        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
+        WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
+
+        const char* sym = (i < 8) ? neocomLabels[i] : "?";
+        Color iconColor = t.textSecondary;
+
+        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
+            if (callback) callback(i);
+        }
+
+        if (ctx.isHot(iconID) && i < 8) {
+            tooltip(ctx, neocomTooltips[i]);
+        }
+
+        iconY += slotSz + iconGap;
+    }
+
+    // Separator before bottom group
+    if (midGroup > topGroup && icons > midGroup) {
+        iconY += 2.0f;
+        rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f}, t.borderSubtle);
+        iconY += 5.0f;
+    }
+
+    // Bottom group: Social (icons 6+)
+    for (int i = midGroup; i < icons; ++i) {
+        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
+        WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
+
+        const char* sym = (i < 8) ? neocomLabels[i] : "?";
+        Color iconColor = t.textSecondary;
+
+        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
+            if (callback) callback(i);
+        }
+
+        if (ctx.isHot(iconID) && i < 8) {
+            tooltip(ctx, neocomTooltips[i]);
+        }
+
+        iconY += slotSz + iconGap;
     }
 }
 

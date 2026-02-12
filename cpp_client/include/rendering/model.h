@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include "rendering/mesh.h"
 
-namespace eve {
+namespace atlas {
 
 class Mesh;
 
@@ -204,4 +204,4 @@ private:
     static std::map<std::string, std::shared_ptr<Model>> s_modelCache;
 };
 
-} // namespace eve
+} // namespace atlas

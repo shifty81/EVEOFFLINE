@@ -8,7 +8,7 @@
 #include <memory>
 #include <vector>
 
-namespace eve {
+namespace atlas {
 namespace ecs {
 
 /**
@@ -90,6 +90,6 @@ bool Entity::hasComponent() const {
 }
 
 } // namespace ecs
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_ECS_ENTITY_H

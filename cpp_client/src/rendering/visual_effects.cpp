@@ -6,7 +6,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 
 // Numerical stability threshold for rotation axis calculations
 constexpr float ROTATION_AXIS_EPSILON = 0.001f;
@@ -272,4 +272,4 @@ void VisualEffects::createBeamGeometry() {
     glBindVertexArray(0);
 }
 
-} // namespace eve
+} // namespace atlas

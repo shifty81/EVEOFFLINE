@@ -23,7 +23,7 @@ typedef int socket_t;
 #define SOCKET_ERROR -1
 #endif
 
-namespace eve {
+namespace atlas {
 namespace network {
 
 struct ClientConnection {
@@ -87,6 +87,6 @@ private:
 };
 
 } // namespace network
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_TCP_SERVER_H

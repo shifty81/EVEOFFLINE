@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <cmath>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 static constexpr float DEFAULT_DOCKING_RANGE = 2500.0f;
@@ -190,4 +190,4 @@ std::string StationSystem::getDockedStation(const std::string& entity_id) const 
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

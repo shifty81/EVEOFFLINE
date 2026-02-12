@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 class MarketSystem : public ecs::System {
@@ -71,6 +71,6 @@ private:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_MARKET_SYSTEM_H

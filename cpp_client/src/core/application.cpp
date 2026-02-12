@@ -21,7 +21,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace eve {
+namespace atlas {
 
 Application* Application::s_instance = nullptr;
 
@@ -50,8 +50,8 @@ Application::Application(const std::string& title, int width, int height)
     m_uiManager = std::make_unique<UI::RmlUiManager>();
     m_entityPicker = std::make_unique<UI::EntityPicker>();
     m_solarSystem = std::make_unique<SolarSystemScene>();
-    m_atlasCtx = std::make_unique<atlas::AtlasContext>();
-    m_atlasHUD = std::make_unique<atlas::AtlasHUD>();
+    m_atlasCtx = std::make_unique<aatlas::AtlasContext>();
+    m_atlasHUD = std::make_unique<aatlas::AtlasHUD>();
     m_contextMenu = std::make_unique<UI::ContextMenu>();
     m_radialMenu = std::make_unique<UI::RadialMenu>();
     
@@ -118,15 +118,40 @@ void Application::initialize() {
     
     // Wire Atlas sidebar icon callbacks so clicking sidebar opens panels
     m_atlasHUD->setSidebarCallback([this](int icon) {
+        std::cout << "[Neocom] Sidebar icon " << icon << " clicked" << std::endl;
         switch (icon) {
-            case 0: if (m_uiManager) m_uiManager->ToggleDocument("inventory"); break;
-            case 1: if (m_uiManager) m_uiManager->ToggleDocument("fitting"); break;
-            case 2: if (m_uiManager) m_uiManager->ToggleDocument("market"); break;
-            case 3: if (m_uiManager) m_uiManager->ToggleDocument("mission"); break;
-            case 4: if (m_uiManager) m_uiManager->ToggleDocument("dscan"); break;
-            case 5: m_atlasHUD->toggleOverview(); break;
-            case 6: if (m_uiManager) m_uiManager->ToggleDocument("chat"); break;
-            case 7: if (m_uiManager) m_uiManager->ToggleDocument("drones"); break;
+            case 0:
+                std::cout << "[Neocom] Toggle Inventory" << std::endl;
+                if (m_uiManager) m_uiManager->ToggleDocument("inventory");
+                break;
+            case 1:
+                std::cout << "[Neocom] Toggle Fitting" << std::endl;
+                if (m_uiManager) m_uiManager->ToggleDocument("fitting");
+                break;
+            case 2:
+                std::cout << "[Neocom] Toggle Market" << std::endl;
+                if (m_uiManager) m_uiManager->ToggleDocument("market");
+                break;
+            case 3:
+                std::cout << "[Neocom] Toggle Missions" << std::endl;
+                if (m_uiManager) m_uiManager->ToggleDocument("mission");
+                break;
+            case 4:
+                std::cout << "[Neocom] Toggle D-Scan" << std::endl;
+                if (m_uiManager) m_uiManager->ToggleDocument("dscan");
+                break;
+            case 5:
+                std::cout << "[Neocom] Toggle Overview" << std::endl;
+                m_atlasHUD->toggleOverview();
+                break;
+            case 6:
+                std::cout << "[Neocom] Toggle Chat" << std::endl;
+                if (m_uiManager) m_uiManager->ToggleDocument("chat");
+                break;
+            case 7:
+                std::cout << "[Neocom] Toggle Drones" << std::endl;
+                if (m_uiManager) m_uiManager->ToggleDocument("drones");
+                break;
         }
     });
     
@@ -250,7 +275,7 @@ void Application::setupUICallbacks() {
     }
     
     // === Setup Response Callbacks (Network → UI) ===
-    networkMgr->setInventoryCallback([](const eve::InventoryResponse& response) {
+    networkMgr->setInventoryCallback([](const atlas::InventoryResponse& response) {
         if (response.success) {
             std::cout << "✓ Inventory operation succeeded: " << response.message << std::endl;
         } else {
@@ -258,7 +283,7 @@ void Application::setupUICallbacks() {
         }
     });
 
-    networkMgr->setFittingCallback([](const eve::FittingResponse& response) {
+    networkMgr->setFittingCallback([](const atlas::FittingResponse& response) {
         if (response.success) {
             std::cout << "✓ Fitting operation succeeded: " << response.message << std::endl;
         } else {
@@ -266,7 +291,7 @@ void Application::setupUICallbacks() {
         }
     });
 
-    networkMgr->setMarketCallback([](const eve::MarketResponse& response) {
+    networkMgr->setMarketCallback([](const atlas::MarketResponse& response) {
         if (response.success) {
             std::cout << "✓ Market transaction succeeded: " << response.message << std::endl;
         } else {
@@ -537,7 +562,7 @@ void Application::render() {
     
     // Render Atlas HUD overlay
     {
-        atlas::InputState atlasInput;
+        aatlas::InputState atlasInput;
         atlasInput.windowW = m_window->getWidth();
         atlasInput.windowH = m_window->getHeight();
         // Forward mouse state from InputHandler to Atlas for interactive widgets
@@ -556,7 +581,7 @@ void Application::render() {
         
         m_atlasCtx->beginFrame(atlasInput);
         
-        atlas::ShipHUDData shipData;
+        aatlas::ShipHUDData shipData;
         // Connect to actual ship state from game client
         auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
         if (playerEntity) {
@@ -571,13 +596,13 @@ void Application::render() {
         shipData.maxSpeed = m_playerMaxSpeed;
         
         // Build Atlas target cards from target list
-        std::vector<atlas::TargetCardInfo> atlasTargets;
+        std::vector<aatlas::TargetCardInfo> atlasTargets;
         if (playerEntity) {
             const auto playerPos = playerEntity->getPosition();
             for (const auto& targetId : m_targetList) {
                 auto targetEntity = m_gameClient->getEntityManager().getEntity(targetId);
                 if (!targetEntity) continue;
-                atlas::TargetCardInfo card;
+                aatlas::TargetCardInfo card;
                 card.name = targetEntity->getShipName().empty() ? targetEntity->getId() : targetEntity->getShipName();
                 const auto& th = targetEntity->getHealth();
                 card.shieldPct = th.maxShield > 0 ? th.currentShield / static_cast<float>(th.maxShield) : 0.0f;
@@ -590,12 +615,12 @@ void Application::render() {
         }
         
         // Build Atlas overview entries from entity manager
-        std::vector<atlas::OverviewEntry> atlasOverview;
+        std::vector<aatlas::OverviewEntry> atlasOverview;
         if (playerEntity) {
             const auto playerPos = playerEntity->getPosition();
             for (const auto& pair : m_gameClient->getEntityManager().getAllEntities()) {
                 if (pair.first == m_localPlayerId) continue;
-                atlas::OverviewEntry entry;
+                aatlas::OverviewEntry entry;
                 entry.name = pair.second->getShipName().empty() ? pair.first : pair.second->getShipName();
                 entry.type = pair.second->getShipType();
                 entry.distance = glm::distance(playerPos, pair.second->getPosition());
@@ -606,18 +631,18 @@ void Application::render() {
             // Add solar system celestials (planets, stations, gates, belts)
             if (m_solarSystem) {
                 for (const auto& c : m_solarSystem->getCelestials()) {
-                    if (c.type == eve::Celestial::Type::SUN) continue;
-                    atlas::OverviewEntry entry;
+                    if (c.type == atlas::Celestial::Type::SUN) continue;
+                    aatlas::OverviewEntry entry;
                     entry.name = c.name;
                     entry.distance = glm::distance(playerPos, c.position);
                     entry.selected = false;
                     switch (c.type) {
-                        case eve::Celestial::Type::PLANET:        entry.type = "Planet";        break;
-                        case eve::Celestial::Type::MOON:          entry.type = "Moon";          break;
-                        case eve::Celestial::Type::STATION:       entry.type = "Station";       break;
-                        case eve::Celestial::Type::STARGATE:      entry.type = "Stargate";      break;
-                        case eve::Celestial::Type::ASTEROID_BELT: entry.type = "Asteroid Belt"; break;
-                        case eve::Celestial::Type::WORMHOLE:      entry.type = "Wormhole";      break;
+                        case atlas::Celestial::Type::PLANET:        entry.type = "Planet";        break;
+                        case atlas::Celestial::Type::MOON:          entry.type = "Moon";          break;
+                        case atlas::Celestial::Type::STATION:       entry.type = "Station";       break;
+                        case atlas::Celestial::Type::STARGATE:      entry.type = "Stargate";      break;
+                        case atlas::Celestial::Type::ASTEROID_BELT: entry.type = "Asteroid Belt"; break;
+                        case atlas::Celestial::Type::WORMHOLE:      entry.type = "Wormhole";      break;
                         default:                                  entry.type = "Celestial";     break;
                     }
                     atlasOverview.push_back(entry);
@@ -626,7 +651,7 @@ void Application::render() {
         }
         
         // Build selected item info
-        atlas::SelectedItemInfo atlasSelected;
+        aatlas::SelectedItemInfo atlasSelected;
         if (!m_currentTargetId.empty() && playerEntity) {
             auto targetEntity = m_gameClient->getEntityManager().getEntity(m_currentTargetId);
             if (targetEntity) {
@@ -1180,7 +1205,7 @@ void Application::openInfoPanelForEntity(const std::string& entityId) {
     if (!entity || !m_atlasHUD) return;
 
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-    atlas::InfoPanelData info;
+    aatlas::InfoPanelData info;
     info.name = entity->getShipName().empty() ? entityId : entity->getShipName();
     info.type = entity->getShipType();
     info.faction = entity->getFaction();
@@ -1442,4 +1467,4 @@ void Application::updateLocalMovement(float deltaTime) {
         m_localPlayerId, playerPos, m_playerVelocity, rotation, currentHealth);
 }
 
-} // namespace eve
+} // namespace atlas

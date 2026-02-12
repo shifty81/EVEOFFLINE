@@ -3,7 +3,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 
 LODManager::LODManager() 
     : m_frustumCuller(std::make_unique<FrustumCuller>())
@@ -207,4 +207,4 @@ const FrustumCuller* LODManager::getFrustumCuller() const {
     return m_frustumCuller.get();
 }
 
-} // namespace eve
+} // namespace atlas

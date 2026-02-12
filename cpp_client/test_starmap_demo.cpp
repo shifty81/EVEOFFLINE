@@ -5,7 +5,7 @@
 #include "core/ship_physics.h"
 
 // Global state for interaction
-eve::StarMap* g_starMap = nullptr;
+atlas::StarMap* g_starMap = nullptr;
 bool g_mousePressed = false;
 
 void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -22,13 +22,13 @@ void keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         }
         else if (key == GLFW_KEY_1) {
             if (g_starMap) {
-                g_starMap->setViewMode(eve::StarMap::ViewMode::GALAXY);
+                g_starMap->setViewMode(atlas::StarMap::ViewMode::GALAXY);
                 std::cout << "Switched to galaxy view" << std::endl;
             }
         }
         else if (key == GLFW_KEY_2) {
             if (g_starMap) {
-                g_starMap->setViewMode(eve::StarMap::ViewMode::SOLAR_SYSTEM);
+                g_starMap->setViewMode(atlas::StarMap::ViewMode::SOLAR_SYSTEM);
                 std::cout << "Switched to solar system view" << std::endl;
             }
         }
@@ -119,14 +119,14 @@ int main() {
     glClearColor(0.0f, 0.0f, 0.05f, 1.0f);
 
     // Create star map
-    eve::StarMap starMap;
+    atlas::StarMap starMap;
     g_starMap = &starMap;
     starMap.initialize("../data/universe/systems.json");
     starMap.setVisible(true);  // Show by default for demo
 
     // Create ship physics example
-    eve::ShipPhysics shipPhysics;
-    eve::ShipPhysics::ShipStats frigateStats;
+    atlas::ShipPhysics shipPhysics;
+    atlas::ShipPhysics::ShipStats frigateStats;
     frigateStats.mass = 1200000.0f;
     frigateStats.inertiaModifier = 3.2f;
     frigateStats.maxVelocity = 400.0f;

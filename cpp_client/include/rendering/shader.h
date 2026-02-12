@@ -3,7 +3,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Shader program management
@@ -58,4 +58,4 @@ private:
     unsigned int m_programID;
 };
 
-} // namespace eve
+} // namespace atlas

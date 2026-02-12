@@ -51,7 +51,7 @@
 #include <fstream>
 #include <thread>
 
-using namespace eve;
+using namespace atlas;
 
 // Test counters
 int testsRun = 0;

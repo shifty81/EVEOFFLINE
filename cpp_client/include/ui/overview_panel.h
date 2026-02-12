@@ -8,7 +8,7 @@
 #include <memory>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
     class Entity;
     struct Celestial;
 }
@@ -87,11 +87,11 @@ public:
     void RenderContents();
     
     // Update overview from entity list
-    void UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities,
+    void UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<::atlas::Entity>>& entities,
                         const glm::vec3& playerPosition = glm::vec3(0.0f));
     
     // Update overview with celestials from solar system (planets, moons, belts, stations, gates)
-    void UpdateCelestials(const std::vector<::eve::Celestial>& celestials,
+    void UpdateCelestials(const std::vector<::atlas::Celestial>& celestials,
                           const glm::vec3& playerPosition = glm::vec3(0.0f));
     
     // Visibility

@@ -24,7 +24,7 @@
 #include <iostream>
 #include <cmath>
 
-using namespace eve;
+using namespace atlas;
 
 // ---------------------------------------------------------------------------
 // Demo data for D-Scan
@@ -65,7 +65,7 @@ int main() {
     std::cout << "[Test] UIManager initialized" << std::endl;
 
     // ---- Setup Atlas context for module rack rendering ----
-    atlas::AtlasContext atlasCtx;
+    aatlas::AtlasContext atlasCtx;
 
     // ---- Setup demo ship status ----
     UI::ShipStatus shipStatus;

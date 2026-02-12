@@ -14,7 +14,7 @@
 #include "rendering/lighting.h"
 #include "ui/input_handler.h"
 
-using namespace eve;
+using namespace atlas;
 
 // Window dimensions
 const unsigned int SCR_WIDTH = 1280;

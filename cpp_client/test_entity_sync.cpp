@@ -10,7 +10,7 @@
 #include <chrono>
 #include <thread>
 
-using namespace eve;
+using namespace atlas;
 
 void printSeparator() {
     std::cout << "========================================" << std::endl;

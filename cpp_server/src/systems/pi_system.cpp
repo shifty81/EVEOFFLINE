@@ -2,7 +2,7 @@
 #include "ecs/world.h"
 #include "components/game_components.h"
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 PISystem::PISystem(ecs::World* world)
@@ -187,4 +187,4 @@ int PISystem::getProcessorCount(const std::string& colony_entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

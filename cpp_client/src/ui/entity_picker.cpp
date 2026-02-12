@@ -22,8 +22,8 @@ std::string EntityPicker::pickEntity(
     double mouseY,
     int screenWidth,
     int screenHeight,
-    const ::eve::Camera& camera,
-    const std::vector<std::shared_ptr<::eve::Entity>>& entities
+    const ::atlas::Camera& camera,
+    const std::vector<std::shared_ptr<::atlas::Entity>>& entities
 ) {
     // Convert screen coordinates to world space ray
     glm::vec3 rayOrigin, rayDirection;

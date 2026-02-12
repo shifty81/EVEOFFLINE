@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <cmath>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 // Minimum distance required to initiate warp (150 km)
@@ -221,4 +221,4 @@ bool MovementSystem::commandWarp(const std::string& entity_id,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

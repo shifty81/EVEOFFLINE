@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <cctype>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 CorporationSystem::CorporationSystem(ecs::World* world)
@@ -141,4 +141,4 @@ int CorporationSystem::getMemberCount(const std::string& corp_entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

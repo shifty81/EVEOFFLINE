@@ -6,7 +6,7 @@
 #include <memory>
 #include <functional>
 
-namespace eve {
+namespace atlas {
 
 // Forward declarations
 class Camera;
@@ -184,4 +184,4 @@ private:
     glm::vec4 m_waypointColor;
 };
 
-} // namespace eve
+} // namespace atlas

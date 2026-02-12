@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace eve {
+namespace atlas {
 
 Camera::Camera(float fov, float aspectRatio, float nearPlane, float farPlane)
     : m_target(0.0f, 0.0f, 0.0f)
@@ -144,4 +144,4 @@ void Camera::updateVectors() {
     m_up = glm::normalize(glm::cross(m_right, m_forward));
 }
 
-} // namespace eve
+} // namespace atlas

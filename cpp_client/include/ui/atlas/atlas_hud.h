@@ -23,7 +23,7 @@
  *   └─────────┴───────────────────────────────────────┴──────────────┘
  *
  * Usage:
- *   atlas::AtlasHUD hud;
+ *   aatlas::AtlasHUD hud;
  *   hud.init(ctx);
  *   // Each frame:
  *   hud.update(ctx, shipData, targetData, overviewData);

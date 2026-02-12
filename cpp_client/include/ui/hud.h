@@ -9,7 +9,7 @@ namespace UI {
     struct ShipStatus;
 }
 
-namespace eve {
+namespace atlas {
 
 /**
  * Damage flash type for visual feedback when taking damage.
@@ -56,7 +56,7 @@ public:
      * Renders the circular ship status display (via HUDPanels::RenderShipStatusCircular)
      * and the combat log.
      */
-    void render(atlas::AtlasContext& ctx);
+    void render(aatlas::AtlasContext& ctx);
 
     /**
      * Update HUD with game state
@@ -110,4 +110,4 @@ private:
     static constexpr int MAX_FLASHES = 3;
 };
 
-} // namespace eve
+} // namespace atlas

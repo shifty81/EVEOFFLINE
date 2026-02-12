@@ -2,7 +2,7 @@
 #include "ecs/world.h"
 #include "components/game_components.h"
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 ContractSystem::ContractSystem(ecs::World* world)
@@ -130,4 +130,4 @@ int ContractSystem::getContractsByStatus(const std::string& board_entity_id,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
