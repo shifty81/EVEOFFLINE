@@ -10,6 +10,7 @@
 namespace atlas {
 
 class Mesh;
+struct ShipPart;
 
 /**
  * Faction color scheme
