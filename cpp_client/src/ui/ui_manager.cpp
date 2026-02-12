@@ -438,8 +438,9 @@ void UIManager::RenderMissionContent(float x, float y, float contentW, float max
         if (y > maxY - 20.0f) break;
         atlas::Color objColor = obj.completed ? theme.success : theme.textSecondary;
         const char* marker = obj.completed ? "[x] " : "[ ] ";
-        std::string objText = marker + obj.description;
-        r.drawText(objText, atlas::Vec2(x + 8.0f, y), objColor, 1.0f);
+        char objBuf[256];
+        std::snprintf(objBuf, sizeof(objBuf), "%s%s", marker, obj.description.c_str());
+        r.drawText(objBuf, atlas::Vec2(x + 8.0f, y), objColor, 1.0f);
         y += 14.0f;
     }
 
@@ -578,8 +579,10 @@ void UIManager::RenderChatContent(float x, float y, float contentW, float maxY) 
                 case ChatMessage::SenderType::System:   nameColor = theme.warning; break;
                 default:                                nameColor = theme.textSecondary; break;
             }
-            std::string line = "[" + msg.timestamp + "] " + msg.sender_name + ": " + msg.content;
-            r.drawText(line, atlas::Vec2(x + 2, drawY), nameColor, 1.0f);
+            char lineBuf[256];
+            std::snprintf(lineBuf, sizeof(lineBuf), "[%s] %s: %s",
+                          msg.timestamp.c_str(), msg.sender_name.c_str(), msg.content.c_str());
+            r.drawText(lineBuf, atlas::Vec2(x + 2, drawY), nameColor, 1.0f);
             drawY += 14.0f;
         }
     } else {
