@@ -586,6 +586,39 @@ static std::unique_ptr<Model> buildShipFromParams(
     const HullParams& params,
     const FactionColors& colors);
 
+/**
+ * Helper function to add a ShipPart's geometry to accumulated mesh data with a transform
+ */
+void Model::addPartToMesh(const ShipPart* part, const glm::mat4& transform,
+                          std::vector<Vertex>& allVertices, std::vector<unsigned int>& allIndices) {
+    if (!part || part->vertices.empty() || part->indices.empty()) {
+        return;
+    }
+    
+    unsigned int baseIndex = static_cast<unsigned int>(allVertices.size());
+    
+    // Transform and add vertices
+    for (const auto& v : part->vertices) {
+        Vertex transformedVertex;
+        glm::vec4 pos = transform * glm::vec4(v.position, 1.0f);
+        transformedVertex.position = glm::vec3(pos.x / pos.w, pos.y / pos.w, pos.z / pos.w);
+        
+        // Transform normal (use inverse transpose for proper normal transformation)
+        glm::mat3 normalMatrix = glm::mat3(glm::transpose(glm::inverse(transform)));
+        transformedVertex.normal = glm::normalize(normalMatrix * v.normal);
+        
+        transformedVertex.texCoords = v.texCoords;
+        transformedVertex.color = v.color;
+        
+        allVertices.push_back(transformedVertex);
+    }
+    
+    // Add indices with offset
+    for (const auto& idx : part->indices) {
+        allIndices.push_back(baseIndex + idx);
+    }
+}
+
 std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string& shipType, const std::string& faction) {
     // Try OBJ model first
     std::string objPath = findOBJModelPath(shipType, faction);
@@ -622,57 +655,196 @@ std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string&
     variation.proportionJitter = 0.3f;
     variation.scaleJitter = 0.1f;
 
-    ShipPartLibrary library;
-    library.initialize();
+    // Initialize libraries (using static variables to avoid repeated initialization)
+    static ShipPartLibrary library;
+    static ShipGenerationRules rules;
+    static bool initialized = false;
+    if (!initialized) {
+        library.initialize();
+        rules.initialize();
+        initialized = true;
+    }
+    
     ShipAssemblyConfig config = library.createVariedAssemblyConfig(shipClass, faction, variation);
+    auto classRules = rules.getClassRules(shipClass);
 
-    // Map assembly config to hull parameters using faction-appropriate sides
-    HullParams p;
-    p.sides = getFactionSides(faction);
-    p.seed = variation.seed;
-    p.scaleX = config.proportions.y / config.proportions.x;
-    p.scaleZ = config.proportions.z / config.proportions.x;
+    // Create model and accumulate geometry
+    auto model = std::make_unique<Model>();
+    std::vector<Vertex> allVertices;
+    std::vector<unsigned int> allIndices;
 
-    // Map ship class to segment count and dimensions — small ships tuned for clean silhouettes
-    if (shipClass == "Frigate") {
-        p.segments = 5;
-        p.segmentLength = config.overallScale / 5.5f;   // Tighter segments
-        p.baseRadius = config.overallScale * 0.09f;      // Sleeker radius
-    } else if (shipClass == "Destroyer") {
-        p.segments = 6;
-        p.segmentLength = config.overallScale / 6.0f;
-        p.baseRadius = config.overallScale * 0.065f;     // Thinner, more elongated
-    } else if (shipClass == "Cruiser") {
-        p.segments = 6;
-        p.segmentLength = config.overallScale / 6.0f;
-        p.baseRadius = config.overallScale * 0.12f;
-    } else if (shipClass == "Battlecruiser") {
-        p.segments = 7;
-        p.segmentLength = config.overallScale / 7.0f;
-        p.baseRadius = config.overallScale * 0.10f;
-    } else if (shipClass == "Battleship") {
-        p.segments = 8;
-        p.segmentLength = config.overallScale / 8.0f;
-        p.baseRadius = config.overallScale * 0.09f;
-    } else if (shipClass == "Carrier") {
-        p.segments = 10;
-        p.segmentLength = config.overallScale / 10.0f;
-        p.baseRadius = config.overallScale * 0.08f;
-    } else if (shipClass == "Dreadnought") {
-        p.segments = 8;
-        p.segmentLength = config.overallScale / 8.0f;
-        p.baseRadius = config.overallScale * 0.11f;
-    } else if (shipClass == "Titan") {
-        p.segments = 12;
-        p.segmentLength = config.overallScale / 12.0f;
-        p.baseRadius = config.overallScale * 0.07f;
-    } else {
-        p.segments = 4;
-        p.segmentLength = config.overallScale / 4.0f;
-        p.baseRadius = config.overallScale * 0.13f;
+    // Retrieve and add hull parts from the library
+    const ShipPart* forward = library.getPart(config.hullForwardId);
+    const ShipPart* main = library.getPart(config.hullMainId);
+    const ShipPart* rear = library.getPart(config.hullRearId);
+
+    // Add forward hull section
+    if (forward) {
+        glm::mat4 forwardTransform = glm::translate(glm::mat4(1.0f), 
+            glm::vec3(config.overallScale * 0.4f, 0.0f, 0.0f));
+        forwardTransform = glm::scale(forwardTransform, glm::vec3(config.overallScale));
+        addPartToMesh(forward, forwardTransform, allVertices, allIndices);
     }
 
-    return buildShipFromParams(p, colors);
+    // Add main hull section
+    if (main) {
+        glm::mat4 mainTransform = glm::scale(glm::mat4(1.0f), 
+            glm::vec3(config.overallScale));
+        addPartToMesh(main, mainTransform, allVertices, allIndices);
+    }
+
+    // Add rear hull section
+    if (rear) {
+        glm::mat4 rearTransform = glm::translate(glm::mat4(1.0f), 
+            glm::vec3(-config.overallScale * 0.4f, 0.0f, 0.0f));
+        rearTransform = glm::scale(rearTransform, glm::vec3(config.overallScale));
+        addPartToMesh(rear, rearTransform, allVertices, allIndices);
+    }
+
+    // Add engines at the rear
+    auto engines = library.getPartsByType(ShipPartType::ENGINE_MAIN, faction);
+    if (!engines.empty()) {
+        int engineCount = (classRules.minEngines + classRules.maxEngines) / 2;
+        engineCount = std::min(engineCount, static_cast<int>(engines.size()));
+        
+        for (int i = 0; i < engineCount; ++i) {
+            // Distribute engines vertically at the rear of the ship
+            float yOffset = 0.0f;
+            if (engineCount > 1) {
+                yOffset = (i - (engineCount - 1) / 2.0f) * 0.3f * config.overallScale;
+            }
+            glm::vec3 enginePos(-config.overallScale * 0.6f, yOffset, 0.0f);
+            glm::mat4 engineTransform = glm::translate(glm::mat4(1.0f), enginePos);
+            engineTransform = glm::scale(engineTransform, glm::vec3(config.overallScale * 0.3f));
+            addPartToMesh(engines[i % engines.size()], engineTransform, allVertices, allIndices);
+        }
+    }
+
+    // Add weapon hardpoints (turrets)
+    auto turrets = library.getPartsByType(ShipPartType::WEAPON_TURRET, faction);
+    if (!turrets.empty()) {
+        int turretCount = (classRules.minTurretHardpoints + classRules.maxTurretHardpoints) / 2;
+        turretCount = std::min(turretCount, 8);  // Cap at 8 turrets
+        
+        for (int i = 0; i < turretCount; ++i) {
+            // Distribute turrets along the dorsal spine of the ship
+            float xPos = -0.2f + (i / float(turretCount)) * 0.6f;
+            float yPos = config.overallScale * 0.15f;  // Above the hull
+            float zPos = 0.0f;
+            
+            // Alternate sides for some visual variety
+            if (i % 2 == 1 && !config.enforceSymmetry) {
+                zPos = config.overallScale * 0.1f * (i % 2 == 0 ? 1.0f : -1.0f);
+            }
+            
+            glm::vec3 turretPos(xPos * config.overallScale, yPos, zPos);
+            glm::mat4 turretTransform = glm::translate(glm::mat4(1.0f), turretPos);
+            turretTransform = glm::scale(turretTransform, glm::vec3(config.overallScale * 0.1f));
+            addPartToMesh(turrets[i % turrets.size()], turretTransform, allVertices, allIndices);
+        }
+    }
+
+    // Add missile launchers
+    auto launchers = library.getPartsByType(ShipPartType::WEAPON_LAUNCHER, faction);
+    if (!launchers.empty() && classRules.maxLauncherHardpoints > 0) {
+        int launcherCount = (classRules.minLauncherHardpoints + classRules.maxLauncherHardpoints) / 2;
+        launcherCount = std::min(launcherCount, 4);  // Cap at 4 launchers
+        
+        for (int i = 0; i < launcherCount; ++i) {
+            // Place launchers on the sides
+            float xPos = 0.1f * config.overallScale;
+            float yPos = 0.0f;
+            float zPos = config.overallScale * 0.2f * (i % 2 == 0 ? 1.0f : -1.0f);
+            
+            glm::vec3 launcherPos(xPos, yPos, zPos);
+            glm::mat4 launcherTransform = glm::translate(glm::mat4(1.0f), launcherPos);
+            launcherTransform = glm::scale(launcherTransform, glm::vec3(config.overallScale * 0.12f));
+            addPartToMesh(launchers[i % launchers.size()], launcherTransform, allVertices, allIndices);
+        }
+    }
+
+    // Add faction-specific details
+    if (faction.find("Solari") != std::string::npos || faction.find("Sanctum") != std::string::npos) {
+        // Add spires for Solari
+        auto spires = library.getPartsByType(ShipPartType::SPIRE_ORNAMENT, faction);
+        if (!spires.empty()) {
+            for (int i = 0; i < 2; ++i) {
+                float xPos = -0.1f + i * 0.3f;
+                glm::vec3 spirePos(xPos * config.overallScale, config.overallScale * 0.3f, 0.0f);
+                glm::mat4 spireTransform = glm::translate(glm::mat4(1.0f), spirePos);
+                spireTransform = glm::scale(spireTransform, glm::vec3(config.overallScale * 0.15f));
+                addPartToMesh(spires[0], spireTransform, allVertices, allIndices);
+            }
+        }
+    } else if (faction.find("Keldari") != std::string::npos || faction.find("Rust") != std::string::npos) {
+        // Add exposed framework for Keldari
+        auto framework = library.getPartsByType(ShipPartType::FRAMEWORK_EXPOSED, faction);
+        if (!framework.empty()) {
+            glm::vec3 frameworkPos(0.0f, config.overallScale * 0.12f, config.overallScale * 0.15f);
+            glm::mat4 frameworkTransform = glm::translate(glm::mat4(1.0f), frameworkPos);
+            frameworkTransform = glm::scale(frameworkTransform, glm::vec3(config.overallScale * 0.2f));
+            addPartToMesh(framework[0], frameworkTransform, allVertices, allIndices);
+        }
+    }
+
+    // If no parts were generated, fall back to procedural extrusion
+    if (allVertices.empty()) {
+        // Fallback to old procedural generation
+        HullParams p;
+        p.sides = getFactionSides(faction);
+        p.seed = variation.seed;
+        p.scaleX = config.proportions.y / config.proportions.x;
+        p.scaleZ = config.proportions.z / config.proportions.x;
+
+        // Map ship class to segment count and dimensions
+        if (shipClass == "Frigate") {
+            p.segments = 5;
+            p.segmentLength = config.overallScale / 5.5f;
+            p.baseRadius = config.overallScale * 0.09f;
+        } else if (shipClass == "Destroyer") {
+            p.segments = 6;
+            p.segmentLength = config.overallScale / 6.0f;
+            p.baseRadius = config.overallScale * 0.065f;
+        } else if (shipClass == "Cruiser") {
+            p.segments = 6;
+            p.segmentLength = config.overallScale / 6.0f;
+            p.baseRadius = config.overallScale * 0.12f;
+        } else if (shipClass == "Battlecruiser") {
+            p.segments = 7;
+            p.segmentLength = config.overallScale / 7.0f;
+            p.baseRadius = config.overallScale * 0.10f;
+        } else if (shipClass == "Battleship") {
+            p.segments = 8;
+            p.segmentLength = config.overallScale / 8.0f;
+            p.baseRadius = config.overallScale * 0.09f;
+        } else if (shipClass == "Carrier") {
+            p.segments = 10;
+            p.segmentLength = config.overallScale / 10.0f;
+            p.baseRadius = config.overallScale * 0.08f;
+        } else if (shipClass == "Dreadnought") {
+            p.segments = 8;
+            p.segmentLength = config.overallScale / 8.0f;
+            p.baseRadius = config.overallScale * 0.11f;
+        } else if (shipClass == "Titan") {
+            p.segments = 12;
+            p.segmentLength = config.overallScale / 12.0f;
+            p.baseRadius = config.overallScale * 0.07f;
+        } else {
+            p.segments = 4;
+            p.segmentLength = config.overallScale / 4.0f;
+            p.baseRadius = config.overallScale * 0.13f;
+        }
+
+        return buildShipFromParams(p, colors);
+    }
+
+    // Create mesh from accumulated vertices and indices
+    if (!allVertices.empty() && !allIndices.empty()) {
+        auto mesh = std::make_unique<Mesh>(allVertices, allIndices);
+        model->addMesh(std::move(mesh));
+    }
+
+    return model;
 }
 
 void Model::draw() const {

@@ -195,6 +195,17 @@ private:
                                float posZ, float height, const glm::vec3& color);
     static void addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices,
                                     float posZ, float offset, const glm::vec3& color);
+    
+    /**
+     * Helper function for modular ship part assembly
+     * Adds a ShipPart's geometry to the accumulated vertices and indices with a transform.
+     * @param part Pointer to the ShipPart to add
+     * @param transform Transformation matrix to apply to the part
+     * @param allVertices Accumulated vertices array
+     * @param allIndices Accumulated indices array
+     */
+    static void addPartToMesh(const ShipPart* part, const glm::mat4& transform,
+                              std::vector<Vertex>& allVertices, std::vector<unsigned int>& allIndices);
 
     /**
      * Model cache for sharing geometry between instances
