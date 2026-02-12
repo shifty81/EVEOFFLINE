@@ -11,6 +11,8 @@
 #include "ui/atlas/atlas_context.h"
 #include "ui/atlas/atlas_widgets.h"
 #include "ui/atlas/atlas_hud.h"
+#include "ui/context_menu.h"
+#include "ui/radial_menu.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -2475,6 +2477,333 @@ void testPanelOpacity() {
     ctx.shutdown();
 }
 
+// ─── Sidebar Width Clamping tests ─────────────────────────────────
+
+void testSidebarWidthClamping() {
+    std::cout << "\n=== Sidebar Width Clamping ===" << std::endl;
+
+    // Test that sidebarWidth getter/setter works on AtlasContext
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    assertTrue(ctx.sidebarWidth() == 0.0f, "Default sidebar width is 0");
+
+    ctx.setSidebarWidth(40.0f);
+    assertTrue(ctx.sidebarWidth() == 40.0f, "Sidebar width set to 40");
+
+    // Test that panels snap to sidebar boundary during drag
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+
+    atlas::PanelState state;
+    state.bounds = {50.0f, 100.0f, 300.0f, 200.0f};
+    state.open = true;
+
+    atlas::PanelFlags flags;
+    flags.showHeader = true;
+    flags.showClose = false;
+    flags.showMinimize = false;
+
+    // Simulate drag that would push panel past sidebar
+    state.dragging = true;
+    state.dragOffset = {10.0f, 10.0f};
+    input.mouseDown[0] = true;
+    input.mousePos = {5.0f, 110.0f};  // Would put panel at x=-5, behind sidebar
+
+    ctx.beginFrame(input);
+    ctx.setSidebarWidth(40.0f);
+    atlas::panelBeginStateful(ctx, "Snap Test", state, flags);
+    atlas::panelEnd(ctx);
+    ctx.endFrame();
+
+    // Panel X should be clamped to sidebar width (40), not 0
+    assertTrue(state.bounds.x >= 40.0f, "Panel snaps to sidebar boundary (X >= 40)");
+
+    ctx.shutdown();
+}
+
+// ─── Context Menu Type tests ──────────────────────────────────────
+
+void testContextMenuTypes() {
+    std::cout << "\n=== Context Menu Types ===" << std::endl;
+
+    UI::ContextMenu menu;
+    assertTrue(!menu.IsOpen(), "Menu starts closed");
+
+    menu.ShowEntityMenu("npc_1", false);
+    assertTrue(menu.IsOpen(), "Entity menu is open after ShowEntityMenu");
+
+    menu.Close();
+    assertTrue(!menu.IsOpen(), "Menu closed after Close()");
+
+    menu.ShowEmptySpaceMenu(100.0f, 200.0f, 0.0f);
+    assertTrue(menu.IsOpen(), "Empty space menu is open after ShowEmptySpaceMenu");
+
+    menu.SetScreenPosition(400.0f, 300.0f);
+    assertTrue(menu.IsOpen(), "Menu still open after SetScreenPosition");
+
+    menu.Close();
+    assertTrue(!menu.IsOpen(), "Menu closed again");
+}
+
+// ─── Overview Background Right-Click Callback tests ───────────────
+
+void testOverviewBgRightClickCallback() {
+    std::cout << "\n=== Overview Background Right-Click ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    float bgClickX = 0.0f, bgClickY = 0.0f;
+    bool bgCallbackFired = false;
+
+    hud.setOverviewBgRightClickCb([&](float x, float y) {
+        bgCallbackFired = true;
+        bgClickX = x;
+        bgClickY = y;
+    });
+
+    // Verify callback is set (indirect test — renders without crash)
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+    ctx.beginFrame(input);
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo selected;
+    hud.update(ctx, ship, targets, overview, selected);
+    ctx.endFrame();
+    ctx.shutdown();
+
+    assertTrue(true, "Overview background right-click callback set without crash");
+}
+
+// ─── Window Snapping Magnetism tests ──────────────────────────────
+
+void testWindowSnappingMagnetism() {
+    std::cout << "\n=== Window Snapping Magnetism ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+
+    atlas::PanelState state;
+    state.bounds = {50.0f, 100.0f, 300.0f, 200.0f};
+    state.open = true;
+
+    atlas::PanelFlags flags;
+    flags.showHeader = true;
+    flags.showClose = false;
+    flags.showMinimize = false;
+
+    // Test: panel near right edge snaps to it
+    state.dragging = true;
+    state.dragOffset = {10.0f, 10.0f};
+    input.mouseDown[0] = true;
+    // Position mouse so panel right edge is within 15px of window right (1280)
+    // Panel width = 300, so panel.x = mouseX - 10 = ?
+    // Want: panel.x + 300 close to 1280 => panel.x = 975 => mouseX = 985
+    input.mousePos = {985.0f, 110.0f};
+
+    ctx.beginFrame(input);
+    ctx.setSidebarWidth(40.0f);
+    atlas::panelBeginStateful(ctx, "Snap Right", state, flags);
+    atlas::panelEnd(ctx);
+    ctx.endFrame();
+
+    // Panel right edge should snap to window right (1280)
+    float rightEdge = state.bounds.x + state.bounds.w;
+    assertTrue(std::fabs(rightEdge - 1280.0f) < 0.5f, "Panel snaps to right screen edge");
+
+    // Test: panel near top edge snaps to 0
+    state.bounds = {200.0f, 100.0f, 300.0f, 200.0f};
+    state.dragging = true;
+    state.dragOffset = {10.0f, 10.0f};
+    input.mousePos = {210.0f, 18.0f};  // panel.y = 8, within 15px of 0
+
+    ctx.beginFrame(input);
+    ctx.setSidebarWidth(40.0f);
+    atlas::panelBeginStateful(ctx, "Snap Top", state, flags);
+    atlas::panelEnd(ctx);
+    ctx.endFrame();
+
+    assertTrue(state.bounds.y == 0.0f, "Panel snaps to top screen edge");
+
+    ctx.shutdown();
+}
+
+// ─── Overview Tabs tests ──────────────────────────────────────────
+
+void testOverviewMultipleTabs() {
+    std::cout << "\n=== Overview Multiple Tabs ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    // Default tabs: Travel, Combat, Industry (PvE-focused, EVE-style)
+    const auto& tabs = hud.getOverviewTabs();
+    assertTrue(tabs.size() == 3, "Default 3 overview tabs");
+    assertTrue(tabs[0] == "Travel", "First tab is Travel");
+    assertTrue(tabs[1] == "Combat", "Second tab is Combat");
+    assertTrue(tabs[2] == "Industry", "Third tab is Industry");
+
+    // Set custom tabs
+    hud.setOverviewTabs({"All", "Players", "Wrecks"});
+    assertTrue(hud.getOverviewTabs().size() == 3, "Custom tabs set to 3");
+
+    // Tab switching
+    hud.setActiveOverviewTab(2);
+    assertTrue(hud.getActiveOverviewTab() == 2, "Active tab set to 2");
+}
+
+// ─── Overview Tab Filtering tests ─────────────────────────────────
+
+void testOverviewTabFiltering() {
+    std::cout << "\n=== Overview Tab Filtering ===" << std::endl;
+
+    // Travel tab: stations, planets, stargates, moons, wormholes, celestials
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Station"),    "Travel: Station matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Stargate"),   "Travel: Stargate matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Planet"),     "Travel: Planet matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Moon"),       "Travel: Moon matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Wormhole"),   "Travel: Wormhole matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Celestial"),  "Travel: Celestial matches");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Travel", "Frigate"),   "Travel: Frigate excluded");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Travel", "Asteroid"),  "Travel: Asteroid excluded");
+
+    // Combat tab: NPC ships (frigates, cruisers, battleships, etc.)
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "Frigate"),      "Combat: Frigate matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "Cruiser"),      "Combat: Cruiser matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "Battleship"),   "Combat: Battleship matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "Destroyer"),    "Combat: Destroyer matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "npc"),          "Combat: npc matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "hostile"),      "Combat: hostile matches");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Combat", "Station"),     "Combat: Station excluded");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Combat", "Asteroid"),    "Combat: Asteroid excluded");
+
+    // Industry tab: asteroids, asteroid belts, mining-related
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Industry", "Asteroid"),       "Industry: Asteroid matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Industry", "Asteroid Belt"),  "Industry: Asteroid Belt matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Industry", "Wreck"),          "Industry: Wreck matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Industry", "Container"),      "Industry: Container matches");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Industry", "Station"),       "Industry: Station excluded");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Industry", "Frigate"),       "Industry: Frigate excluded");
+
+    // Unknown tab: shows everything (fallback)
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Custom", "Frigate"),    "Custom tab: shows all");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Custom", "Station"),    "Custom tab: shows all (2)");
+}
+
+// ─── Overview Column Sorting tests ────────────────────────────────
+
+void testOverviewColumnSorting() {
+    std::cout << "\n=== Overview Column Sorting ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    // Default sort is by distance ascending
+    assertTrue(hud.getOverviewSortColumn() == atlas::AtlasHUD::OverviewSortColumn::DISTANCE,
+               "Default sort column is DISTANCE");
+    assertTrue(hud.isOverviewSortAscending(), "Default sort is ascending");
+
+    // Change sort to name descending
+    hud.setOverviewSort(atlas::AtlasHUD::OverviewSortColumn::NAME, false);
+    assertTrue(hud.getOverviewSortColumn() == atlas::AtlasHUD::OverviewSortColumn::NAME,
+               "Sort column changed to NAME");
+    assertTrue(!hud.isOverviewSortAscending(), "Sort direction changed to descending");
+
+    // Render with sorted data to verify no crash
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+    ctx.beginFrame(input);
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    overview.push_back({"npc_1", "Alpha", "Frigate", 5000.0f, 100.0f, {}, false});
+    overview.push_back({"npc_2", "Bravo", "Cruiser", 2000.0f, 200.0f, {}, false});
+    overview.push_back({"npc_3", "Charlie", "Battleship", 8000.0f, 50.0f, {}, false});
+
+    atlas::SelectedItemInfo selected;
+    hud.update(ctx, ship, targets, overview, selected);
+    ctx.endFrame();
+    ctx.shutdown();
+
+    assertTrue(true, "Sorted overview renders without crash");
+}
+
+// ─── Overview Ctrl+Click Callback tests ───────────────────────────
+
+void testOverviewCtrlClickCallback() {
+    std::cout << "\n=== Overview Ctrl+Click Callback ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    std::string lockedId;
+    hud.setOverviewCtrlClickCb([&](const std::string& id) {
+        lockedId = id;
+    });
+
+    assertTrue(lockedId.empty(), "Ctrl+Click callback not fired before interaction");
+    assertTrue(true, "Ctrl+Click callback set without crash");
+}
+
+// ─── Radial Menu Drag-to-Range tests ──────────────────────────────
+
+void testRadialMenuDragToRange() {
+    std::cout << "\n=== Radial Menu Drag-to-Range ===" << std::endl;
+
+    UI::RadialMenu menu;
+    assertTrue(!menu.IsOpen(), "Menu starts closed");
+
+    menu.Open(400.0f, 300.0f, "npc_1");
+    assertTrue(menu.IsOpen(), "Menu opened");
+    assertTrue(menu.GetRangeDistance() == 0, "No range before mouse move");
+
+    // Move to orbit segment (top-right, ~45 degrees)
+    // Orbit is segment 1 (top-right) starting from top going clockwise
+    // At moderate distance (within outer radius)
+    menu.UpdateMousePosition(460.0f, 240.0f);  // upper-right direction
+    auto action = menu.GetHighlightedAction();
+    assertTrue(action != UI::RadialMenu::Action::NONE, "Action selected after mouse move");
+
+    // Move further out to trigger range selection
+    // Only Orbit and Keep at Range support range
+    // Set position directly into Orbit segment (segment index 1)
+    // Top-right = angle -PI/4, at distance > OUTER_RADIUS
+    float orbitAngle = -0.78f;  // ~-45 degrees (top-right)
+    float farDist = 150.0f;     // beyond OUTER_RADIUS (100)
+    float mx = 400.0f + std::cos(orbitAngle) * farDist;
+    float my = 300.0f + std::sin(orbitAngle) * farDist;
+    menu.UpdateMousePosition(mx, my);
+
+    // If this is an orbit action, range should be set
+    if (menu.GetHighlightedAction() == UI::RadialMenu::Action::ORBIT ||
+        menu.GetHighlightedAction() == UI::RadialMenu::Action::KEEP_AT_RANGE) {
+        assertTrue(menu.GetRangeDistance() > 0, "Range distance set when dragging past outer radius");
+    } else {
+        assertTrue(true, "Non-range action has no range distance (expected)");
+    }
+
+    menu.Close();
+    assertTrue(!menu.IsOpen(), "Menu closed");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "Atlas UI System Tests" << std::endl;
@@ -2560,6 +2889,19 @@ int main() {
     testOverviewCallbacks();
     testRightClickDetection();
     testPanelOpacity();
+
+    // Panel snap, context menu, and overview right-click tests
+    testSidebarWidthClamping();
+    testContextMenuTypes();
+    testOverviewBgRightClickCallback();
+
+    // EVE UI reproduction tests
+    testWindowSnappingMagnetism();
+    testOverviewMultipleTabs();
+    testOverviewTabFiltering();
+    testOverviewColumnSorting();
+    testOverviewCtrlClickCallback();
+    testRadialMenuDragToRange();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

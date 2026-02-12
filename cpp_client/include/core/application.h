@@ -286,6 +286,9 @@ private:
     // D-key docking mode
     bool m_dockingModeActive = false;
     
+    // S-key warp mode
+    bool m_warpModeActive = false;
+    
     // Active movement mode indicator text
     std::string m_activeModeText;
     

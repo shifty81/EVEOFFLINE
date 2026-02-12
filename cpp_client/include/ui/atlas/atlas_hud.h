@@ -132,6 +132,9 @@ public:
     /** Set callback for overview row right-click (context menu). */
     void setOverviewRightClickCb(const std::function<void(const std::string&, float, float)>& cb) { m_overviewRightClickCb = cb; }
 
+    /** Set callback for overview background right-click (empty-space context menu). */
+    void setOverviewBgRightClickCb(const std::function<void(float, float)>& cb) { m_overviewBgRightClickCb = cb; }
+
     // ── Selected item action callbacks ──────────────────────────────
 
     /** Set callback for selected item action buttons (orbit, approach, warp, info). */
@@ -168,6 +171,35 @@ public:
 
     /** Set the active overview tab index. */
     void setActiveOverviewTab(int tab) { m_overviewActiveTab = tab; }
+
+    /** Overview column sort field. */
+    enum class OverviewSortColumn { DISTANCE = 0, NAME, TYPE, VELOCITY };
+
+    /** Get/set overview sort column and direction. */
+    OverviewSortColumn getOverviewSortColumn() const { return m_overviewSortCol; }
+    bool isOverviewSortAscending() const { return m_overviewSortAsc; }
+    void setOverviewSort(OverviewSortColumn col, bool ascending) {
+        m_overviewSortCol = col;
+        m_overviewSortAsc = ascending;
+    }
+
+    /** Get/set overview tab labels. */
+    const std::vector<std::string>& getOverviewTabs() const { return m_overviewTabs; }
+    void setOverviewTabs(const std::vector<std::string>& tabs) { m_overviewTabs = tabs; }
+
+    /**
+     * Check if an entity type should appear under a given overview tab.
+     *
+     * Tab filter rules (PvE-focused, EVE-style):
+     *   Travel   — Stations, Stargates, Planets, Moons, Wormholes, Celestials
+     *   Combat   — Frigates, Cruisers, Battleships, Destroyers, NPCs, hostiles
+     *   Industry — Asteroids, Asteroid Belts, Wrecks, Containers, mining objects
+     *   Unknown  — shows everything (fallback for custom tabs)
+     */
+    static bool matchesOverviewTab(const std::string& tab, const std::string& entityType);
+
+    /** Set callback for overview Ctrl+Click (lock target). */
+    void setOverviewCtrlClickCb(const std::function<void(const std::string&)>& cb) { m_overviewCtrlClickCb = cb; }
 
     // ── Combat log ──────────────────────────────────────────────────
 
@@ -299,6 +331,8 @@ private:
     std::function<void(int)> m_moduleCallback;
     std::function<void(const std::string&)> m_overviewSelectCb;
     std::function<void(const std::string&, float, float)> m_overviewRightClickCb;
+    std::function<void(float, float)> m_overviewBgRightClickCb;
+    std::function<void(const std::string&)> m_overviewCtrlClickCb;
     std::function<void()>    m_selOrbitCb;
     std::function<void()>    m_selApproachCb;
     std::function<void()>    m_selWarpCb;
@@ -331,6 +365,11 @@ private:
 
     // Overview tab state
     int m_overviewActiveTab = 0;
+    std::vector<std::string> m_overviewTabs = {"Travel", "Combat", "Industry"};
+
+    // Overview column sorting
+    OverviewSortColumn m_overviewSortCol = OverviewSortColumn::DISTANCE;
+    bool m_overviewSortAsc = true;
 
     // Info panel data
     InfoPanelData m_infoPanelData;

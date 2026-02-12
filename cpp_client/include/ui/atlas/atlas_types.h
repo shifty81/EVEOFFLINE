@@ -166,6 +166,7 @@ namespace Key {
     constexpr int F11 = 300;
     constexpr int F12 = 301;
     constexpr int V   = 86;   // D-Scan shortcut
+    constexpr int LeftControl = 341;  // GLFW_KEY_LEFT_CONTROL
 }
 
 // ── Input state snapshot (filled each frame by the host app) ────────

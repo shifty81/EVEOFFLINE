@@ -1362,11 +1362,30 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
                 state.bounds.x = ctx.input().mousePos.x - state.dragOffset.x;
                 state.bounds.y = ctx.input().mousePos.y - state.dragOffset.y;
 
-                // Clamp to window bounds
+                // Clamp to window bounds (sidebar is the left border)
                 float winW = static_cast<float>(ctx.input().windowW);
                 float winH = static_cast<float>(ctx.input().windowH);
-                state.bounds.x = std::max(0.0f, std::min(state.bounds.x, winW - state.bounds.w));
+                float leftEdge = ctx.sidebarWidth();
+                state.bounds.x = std::max(leftEdge, std::min(state.bounds.x, winW - state.bounds.w));
                 state.bounds.y = std::max(0.0f, std::min(state.bounds.y, winH - t.headerHeight));
+
+                // ── EVE-style edge magnetism / snapping ────────────────
+                // Panels snap to screen edges and the Neocom sidebar
+                // when within the snap threshold (Photon UI principle).
+                constexpr float snapThreshold = 15.0f;
+
+                // Snap left edge to sidebar
+                if (std::fabs(state.bounds.x - leftEdge) < snapThreshold)
+                    state.bounds.x = leftEdge;
+                // Snap right edge to window right
+                if (std::fabs(state.bounds.right() - winW) < snapThreshold)
+                    state.bounds.x = winW - state.bounds.w;
+                // Snap top edge to window top
+                if (std::fabs(state.bounds.y) < snapThreshold)
+                    state.bounds.y = 0.0f;
+                // Snap bottom edge to window bottom
+                if (std::fabs(state.bounds.bottom() - winH) < snapThreshold)
+                    state.bounds.y = winH - state.bounds.h;
             } else {
                 state.dragging = false;
                 ctx.clearActive();
@@ -1421,6 +1440,12 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
                 if (state.resizeEdge & 1) { // left
                     float newX = nb.x + delta.x;
                     float newW = nb.w - delta.x;
+                    float leftEdge = ctx.sidebarWidth();
+                    // Clamp left edge to sidebar boundary
+                    if (newX < leftEdge) {
+                        newW -= (leftEdge - newX);
+                        newX = leftEdge;
+                    }
                     if (newW >= state.minW) { state.bounds.x = newX; state.bounds.w = newW; }
                 }
                 if (state.resizeEdge & 2) { // right
