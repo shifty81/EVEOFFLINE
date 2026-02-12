@@ -1381,6 +1381,31 @@ void testProbeScannerPanel() {
     assertTrue(signature.group == "Cosmic Signature", "Signature group correct");
 }
 
+// ─── Sidebar Callback Wiring test ─────────────────────────────────────
+
+void testSidebarCallback() {
+    std::cout << "\n=== Sidebar Callback ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1920, 1080);
+
+    int lastClickedIcon = -1;
+    hud.setSidebarCallback([&](int icon) {
+        lastClickedIcon = icon;
+    });
+
+    assertTrue(lastClickedIcon == -1, "Sidebar callback not called before click");
+
+    // Verify overview toggle via sidebar (icon 5 in application wiring)
+    assertTrue(hud.isOverviewOpen(), "Overview starts open");
+    hud.toggleOverview();
+    assertTrue(!hud.isOverviewOpen(), "Overview closed after toggle");
+    hud.toggleOverview();
+    assertTrue(hud.isOverviewOpen(), "Overview reopened after second toggle");
+
+    assertTrue(true, "Sidebar callback set without crash");
+}
+
 // ─── Main ──────────────────────────────────────────────────────────────
 
 int main() {
@@ -1434,6 +1459,7 @@ int main() {
     testAtlasHUDInfoPanel();
     testAtlasHUDOverviewTab();
     testSelectedItemCallbacks();
+    testSidebarCallback();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

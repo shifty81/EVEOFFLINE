@@ -106,14 +106,28 @@ void Application::initialize() {
         throw std::runtime_error("Failed to initialize renderer");
     }
     
-    // Initialize UI manager
+    // Initialize UI manager (non-fatal — Atlas HUD provides fallback UI)
     if (!m_uiManager->Initialize(m_window->getHandle(), "ui_resources")) {
-        throw std::runtime_error("Failed to initialize UI manager");
+        std::cerr << "Warning: RmlUi UI manager failed to initialize, using Atlas HUD only" << std::endl;
     }
     
     // Initialize Atlas UI context
     m_atlasCtx->init();
     m_atlasHUD->init(m_window->getWidth(), m_window->getHeight());
+    
+    // Wire Atlas sidebar icon callbacks so clicking sidebar opens panels
+    m_atlasHUD->setSidebarCallback([this](int icon) {
+        switch (icon) {
+            case 0: if (m_uiManager) m_uiManager->ToggleDocument("inventory"); break;
+            case 1: if (m_uiManager) m_uiManager->ToggleDocument("fitting"); break;
+            case 2: if (m_uiManager) m_uiManager->ToggleDocument("market"); break;
+            case 3: if (m_uiManager) m_uiManager->ToggleDocument("mission"); break;
+            case 4: if (m_uiManager) m_uiManager->ToggleDocument("dscan"); break;
+            case 5: m_atlasHUD->toggleOverview(); break;
+            case 6: if (m_uiManager) m_uiManager->ToggleDocument("chat"); break;
+            case 7: if (m_uiManager) m_uiManager->ToggleDocument("drones"); break;
+        }
+    });
     
     // Set up input callbacks — EVE Online style controls
     // Left-click: select/target, Double-click: approach
@@ -587,6 +601,27 @@ void Application::render() {
                 entry.selected = (pair.first == m_currentTargetId);
                 atlasOverview.push_back(entry);
             }
+            
+            // Add solar system celestials (planets, stations, gates, belts)
+            if (m_solarSystem) {
+                for (const auto& c : m_solarSystem->getCelestials()) {
+                    if (c.type == eve::Celestial::Type::SUN) continue;
+                    atlas::OverviewEntry entry;
+                    entry.name = c.name;
+                    entry.distance = glm::distance(playerPos, c.position);
+                    entry.selected = false;
+                    switch (c.type) {
+                        case eve::Celestial::Type::PLANET:        entry.type = "Planet";        break;
+                        case eve::Celestial::Type::MOON:          entry.type = "Moon";          break;
+                        case eve::Celestial::Type::STATION:       entry.type = "Station";       break;
+                        case eve::Celestial::Type::STARGATE:      entry.type = "Stargate";      break;
+                        case eve::Celestial::Type::ASTEROID_BELT: entry.type = "Asteroid Belt"; break;
+                        case eve::Celestial::Type::WORMHOLE:      entry.type = "Wormhole";      break;
+                        default:                                  entry.type = "Celestial";     break;
+                    }
+                    atlasOverview.push_back(entry);
+                }
+            }
         }
         
         // Build selected item info
@@ -805,15 +840,16 @@ void Application::handleKeyInput(int key, int action, int mods) {
     
     // Panel toggles
     if (key == GLFW_KEY_I && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleDocument("inventory");
+        if (m_uiManager) m_uiManager->ToggleDocument("inventory");
     } else if (key == GLFW_KEY_F && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleDocument("fitting");
+        if (m_uiManager) m_uiManager->ToggleDocument("fitting");
     } else if (key == GLFW_KEY_O && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleDocument("overview");
+        if (m_uiManager) m_uiManager->ToggleDocument("overview");
+        m_atlasHUD->toggleOverview();
     } else if (key == GLFW_KEY_R && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleDocument("market");
+        if (m_uiManager) m_uiManager->ToggleDocument("market");
     } else if (key == GLFW_KEY_J && (mods & GLFW_MOD_ALT)) {
-        m_uiManager->ToggleDocument("mission");
+        if (m_uiManager) m_uiManager->ToggleDocument("mission");
     }
 }
 
