@@ -71,6 +71,9 @@ public:
     // Visibility
     void SetVisible(bool visible) { m_visible = visible; }
     bool IsVisible() const { return m_visible; }
+    const std::vector<ChatChannelInfo>& GetChannels() const { return m_channels; }
+    const std::map<std::string, std::vector<ChatMessage>>& GetAllMessages() const { return m_messages; }
+    const std::string& GetActiveChannel() const { return m_activeChannelId; }
 
     // Callbacks
     void SetSendMessageCallback(SendMessageCallback callback) { m_onSendMessage = callback; }

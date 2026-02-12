@@ -48,6 +48,7 @@ public:
     /** Get current scan parameters. */
     float GetScanAngle() const { return m_scanAngle; }
     float GetScanRange() const { return m_scanRange; }
+    const std::vector<DScanResult>& GetResults() const { return m_results; }
 
     /** Set scan parameters programmatically. */
     void SetScanAngle(float degrees);

@@ -66,6 +66,8 @@ public:
     // Visibility
     void SetVisible(bool visible) { m_visible = visible; }
     bool IsVisible() const { return m_visible; }
+    const std::vector<MarketOrder>& GetBuyOrders() const { return m_buyOrders; }
+    const std::vector<MarketOrder>& GetSellOrders() const { return m_sellOrders; }
     
     // Callbacks
     void SetBuyOrderCallback(BuyOrderCallback callback) { m_onBuyOrder = callback; }

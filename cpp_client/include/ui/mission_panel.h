@@ -64,6 +64,7 @@ public:
     // Visibility
     void SetVisible(bool visible) { m_visible = visible; }
     bool IsVisible() const { return m_visible; }
+    const MissionData& GetData() const { return m_data; }
     
     // Callbacks
     void SetAcceptCallback(AcceptMissionCallback callback) { m_onAccept = callback; }

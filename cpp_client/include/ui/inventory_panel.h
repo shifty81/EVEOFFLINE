@@ -54,6 +54,7 @@ public:
     // Visibility
     void SetVisible(bool visible) { m_visible = visible; }
     bool IsVisible() const { return m_visible; }
+    const InventoryData& GetData() const { return m_data; }
     
     // Callbacks
     void SetTransferCallback(TransferItemCallback callback) { m_onTransfer = callback; }
