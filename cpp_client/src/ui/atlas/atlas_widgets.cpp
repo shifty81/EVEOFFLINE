@@ -666,6 +666,158 @@ void scrollbar(AtlasContext& ctx, const Rect& track,
     rr.drawRect(thumb, t.accentDim);
 }
 
+// ── Sidebar Icon Shape Helpers ──────────────────────────────────────
+// Draw shape-based icons modelled after EVE Online's Neocom Photon UI.
+// Each icon uses simple geometric primitives (rect, circle, line, arc,
+// triangle) to create a distinctive silhouette recognizable at a glance.
+
+static void drawIconInventory(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
+    // Open box: rectangle body with angled lid
+    float hs = sz * 0.38f;
+    rr.drawRectOutline({c.x - hs, c.y - hs * 0.6f, hs * 2, hs * 1.6f}, col, 1.5f);
+    // Lid top line
+    rr.drawLine({c.x - hs * 1.1f, c.y - hs * 0.6f},
+                {c.x + hs * 1.1f, c.y - hs * 0.6f}, col, 1.5f);
+    // Handle tab at top center
+    rr.drawLine({c.x - hs * 0.3f, c.y - hs * 0.6f},
+                {c.x - hs * 0.3f, c.y - hs * 0.95f}, col, 1.5f);
+    rr.drawLine({c.x + hs * 0.3f, c.y - hs * 0.6f},
+                {c.x + hs * 0.3f, c.y - hs * 0.95f}, col, 1.5f);
+    rr.drawLine({c.x - hs * 0.3f, c.y - hs * 0.95f},
+                {c.x + hs * 0.3f, c.y - hs * 0.95f}, col, 1.5f);
+}
+
+static void drawIconFitting(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
+    // Wrench: diagonal tool shape
+    float hs = sz * 0.38f;
+    // Shaft (diagonal line)
+    rr.drawLine({c.x - hs * 0.7f, c.y + hs * 0.7f},
+                {c.x + hs * 0.4f, c.y - hs * 0.4f}, col, 2.0f);
+    // Jaw (U shape at top-right end)
+    rr.drawArc(c + Vec2(hs * 0.5f, -hs * 0.5f),
+               hs * 0.2f, hs * 0.45f,
+               -0.5f, 2.1f, col, 6);
+    // Handle end (small rect at bottom-left)
+    rr.drawCircle(c + Vec2(-hs * 0.7f, hs * 0.7f), hs * 0.15f, col, 6);
+}
+
+static void drawIconMarket(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
+    // Bar chart: three vertical bars ascending left-to-right
+    float hs = sz * 0.35f;
+    float bw = hs * 0.45f;
+    float gap = hs * 0.15f;
+    float baseY = c.y + hs;
+    // Bar 1 (short)
+    float x0 = c.x - hs;
+    rr.drawRect({x0, baseY - hs * 0.8f, bw, hs * 0.8f}, col.withAlpha(0.7f));
+    // Bar 2 (medium)
+    float x1 = x0 + bw + gap;
+    rr.drawRect({x1, baseY - hs * 1.3f, bw, hs * 1.3f}, col.withAlpha(0.85f));
+    // Bar 3 (tall)
+    float x2 = x1 + bw + gap;
+    rr.drawRect({x2, baseY - hs * 1.8f, bw, hs * 1.8f}, col);
+    // Baseline
+    rr.drawLine({c.x - hs * 1.1f, baseY}, {c.x + hs * 1.1f, baseY}, col.withAlpha(0.5f), 1.0f);
+}
+
+static void drawIconMission(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
+    // Journal/document: rectangle with horizontal text lines
+    float hs = sz * 0.35f;
+    Rect doc = {c.x - hs, c.y - hs * 1.1f, hs * 2, hs * 2.2f};
+    rr.drawRectOutline(doc, col, 1.5f);
+    // Text lines inside
+    float lineX = doc.x + hs * 0.3f;
+    float lineW = hs * 1.4f;
+    for (int i = 0; i < 4; ++i) {
+        float ly = doc.y + hs * 0.4f + i * hs * 0.45f;
+        rr.drawLine({lineX, ly}, {lineX + lineW * (i == 3 ? 0.6f : 1.0f), ly},
+                    col.withAlpha(0.6f), 1.0f);
+    }
+}
+
+static void drawIconDScan(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
+    // Radar sweep: circle outline with a sweep wedge
+    float r = sz * 0.38f;
+    rr.drawCircleOutline(c, r, col.withAlpha(0.5f), 1.0f, 16);
+    // Sweep arc (bright wedge)
+    rr.drawArc(c, 0.0f, r, -0.3f, 0.8f, col.withAlpha(0.7f), 8);
+    // Centre dot
+    rr.drawCircle(c, r * 0.12f, col, 6);
+    // Cross-hairs
+    rr.drawLine({c.x, c.y - r * 0.5f}, {c.x, c.y + r * 0.5f}, col.withAlpha(0.3f), 1.0f);
+    rr.drawLine({c.x - r * 0.5f, c.y}, {c.x + r * 0.5f, c.y}, col.withAlpha(0.3f), 1.0f);
+}
+
+static void drawIconOverview(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
+    // Table/list: horizontal lines in a frame
+    float hs = sz * 0.35f;
+    Rect frame = {c.x - hs, c.y - hs * 0.9f, hs * 2, hs * 1.8f};
+    rr.drawRectOutline(frame, col.withAlpha(0.6f), 1.0f);
+    // Header line
+    rr.drawRect({frame.x, frame.y, frame.w, hs * 0.35f}, col.withAlpha(0.3f));
+    // Data rows
+    for (int i = 0; i < 3; ++i) {
+        float ly = frame.y + hs * 0.5f + i * hs * 0.45f;
+        rr.drawLine({frame.x + 2, ly}, {frame.right() - 2, ly},
+                    col.withAlpha(0.4f), 1.0f);
+    }
+}
+
+static void drawIconChat(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
+    // Speech bubble: rounded rect with a tail
+    float hs = sz * 0.35f;
+    Rect bubble = {c.x - hs, c.y - hs * 0.8f, hs * 2, hs * 1.3f};
+    rr.drawRectOutline(bubble, col, 1.5f);
+    // Tail (triangle pointing down-left)
+    float tx = bubble.x + hs * 0.4f;
+    float ty = bubble.bottom();
+    rr.drawLine({tx, ty}, {tx - hs * 0.3f, ty + hs * 0.5f}, col, 1.5f);
+    rr.drawLine({tx - hs * 0.3f, ty + hs * 0.5f}, {tx + hs * 0.3f, ty}, col, 1.5f);
+    // Dots (ellipsis inside bubble)
+    float dotY = bubble.center().y;
+    for (int i = 0; i < 3; ++i) {
+        float dx = c.x - hs * 0.4f + i * hs * 0.4f;
+        rr.drawCircle({dx, dotY}, 1.5f, col.withAlpha(0.7f), 4);
+    }
+}
+
+static void drawIconDrone(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
+    // Drone: disc body with symmetric wing struts
+    float r = sz * 0.2f;
+    rr.drawCircle(c, r, col.withAlpha(0.6f), 8);
+    rr.drawCircleOutline(c, r, col, 1.0f, 8);
+    // Wing struts (4 arms extending outward)
+    float armLen = sz * 0.35f;
+    float angles[] = {0.6f, 2.5f, 3.7f, 5.6f};
+    for (float a : angles) {
+        Vec2 tip = c + Vec2(std::cos(a) * armLen, std::sin(a) * armLen);
+        rr.drawLine(c + Vec2(std::cos(a) * r, std::sin(a) * r), tip, col, 1.5f);
+        rr.drawCircle(tip, r * 0.35f, col.withAlpha(0.5f), 4);
+    }
+}
+
+// Dispatch: draw the shape icon for a given sidebar slot index.
+static void drawSidebarIconShape(AtlasRenderer& rr, int index,
+                                  Vec2 centre, float slotSz,
+                                  const Color& col) {
+    switch (index) {
+        case 0: drawIconInventory(rr, centre, slotSz, col); break;
+        case 1: drawIconFitting(rr, centre, slotSz, col);   break;
+        case 2: drawIconMarket(rr, centre, slotSz, col);    break;
+        case 3: drawIconMission(rr, centre, slotSz, col);   break;
+        case 4: drawIconDScan(rr, centre, slotSz, col);     break;
+        case 5: drawIconOverview(rr, centre, slotSz, col);  break;
+        case 6: drawIconChat(rr, centre, slotSz, col);      break;
+        case 7: drawIconDrone(rr, centre, slotSz, col);     break;
+        default: {
+            // Fallback: draw "?" letter
+            float tw = rr.measureText("?");
+            rr.drawText("?", {centre.x - tw * 0.5f, centre.y - 6.5f}, col);
+            break;
+        }
+    }
+}
+
 // ── Sidebar Bar ─────────────────────────────────────────────────────
 
 void sidebarBar(AtlasContext& ctx, float x, float width, float height,
@@ -685,7 +837,7 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
     float iconGap = 2.0f;
     float pad = 3.0f;
 
-    // ── "E" Menu Button (top of sidebar) ────────────────────────────
+    // ── "A" Menu Button (top of sidebar) ────────────────────────────
     {
         Rect eRect = {x + pad, iconY, slotSz, slotSz};
         WidgetID eID = hashID("sidebar_emenu");
@@ -701,7 +853,7 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
         rr.drawRect(eRect, eBg);
         rr.drawRectOutline(eRect, t.accentPrimary.withAlpha(0.4f));
 
-        // "A" letter centred (Atlas menu icon)
+        // "A" letter centered (Atlas menu icon)
         float tw = rr.measureText("A");
         float tx = eRect.x + (eRect.w - tw) * 0.5f;
         float ty = eRect.y + (eRect.h - 13.0f) * 0.5f;
@@ -768,16 +920,6 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
     iconY += 5.0f;
 
     // ── Service icon definitions ────────────────────────────────────
-    static const char* sidebarLabels[] = {
-        "I",   // 0: Inventory
-        "F",   // 1: Fitting
-        "M",   // 2: Market
-        "J",   // 3: Journal/Missions
-        "D",   // 4: D-Scan
-        "O",   // 5: Overview
-        "C",   // 6: Chat
-        "Dr",  // 7: Drones
-    };
     static const char* sidebarTooltips[] = {
         "Inventory",
         "Ship Fitting",
@@ -832,13 +974,9 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
                          accentCol.withAlpha(0.5f));
         }
 
-        // Icon letter
-        const char* sym = (i < 8) ? sidebarLabels[i] : "?";
-        Color textCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
-        float tw = rr.measureText(sym);
-        float tx = iconRect.x + (iconRect.w - tw) * 0.5f;
-        float ty = iconRect.y + (iconRect.h - 13.0f) * 0.5f;
-        rr.drawText(sym, {tx, ty}, textCol);
+        // Shape-based icon (EVE Photon style)
+        Color iconCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
+        drawSidebarIconShape(rr, i, iconRect.center(), slotSz, iconCol);
 
         if (ctx.buttonBehavior(iconRect, iconID)) {
             if (callback) callback(i);
@@ -888,12 +1026,9 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
                          accentCol.withAlpha(0.5f));
         }
 
-        const char* sym = (i < 8) ? sidebarLabels[i] : "?";
-        Color textCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
-        float tw = rr.measureText(sym);
-        float tx = iconRect.x + (iconRect.w - tw) * 0.5f;
-        float ty = iconRect.y + (iconRect.h - 13.0f) * 0.5f;
-        rr.drawText(sym, {tx, ty}, textCol);
+        // Shape-based icon (EVE Photon style)
+        Color iconCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
+        drawSidebarIconShape(rr, i, iconRect.center(), slotSz, iconCol);
 
         if (ctx.buttonBehavior(iconRect, iconID)) {
             if (callback) callback(i);
@@ -942,12 +1077,9 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
                          accentCol.withAlpha(0.5f));
         }
 
-        const char* sym = (i < 8) ? sidebarLabels[i] : "?";
-        Color textCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
-        float tw = rr.measureText(sym);
-        float tx = iconRect.x + (iconRect.w - tw) * 0.5f;
-        float ty = iconRect.y + (iconRect.h - 13.0f) * 0.5f;
-        rr.drawText(sym, {tx, ty}, textCol);
+        // Shape-based icon (EVE Photon style)
+        Color iconCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
+        drawSidebarIconShape(rr, i, iconRect.center(), slotSz, iconCol);
 
         if (ctx.buttonBehavior(iconRect, iconID)) {
             if (callback) callback(i);
