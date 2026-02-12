@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 220" width="900" height="220">
+  <defs>
+    <linearGradient id="bgGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e17"/>
+      <stop offset="100%" style="stop-color:#0d1a2d"/>
+    </linearGradient>
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#12202e"/>
+      <stop offset="100%" style="stop-color:#0c1620"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="220" fill="url(#bgGrad3)" rx="4"/>
+
+  <!-- Title -->
+  <text x="450" y="28" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="12" letter-spacing="4" fill="#4ecdc4" opacity="0.6">FEATURES AT A GLANCE</text>
+  <line x1="200" y1="36" x2="700" y2="36" stroke="#4ecdc4" stroke-width="0.5" opacity="0.15"/>
+
+  <!-- Card 1: Rendering -->
+  <rect x="20" y="50" width="165" height="155" rx="4" fill="url(#cardGrad)" stroke="#4ecdc4" stroke-width="0.6" opacity="0.8"/>
+  <text x="102" y="76" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="20" fill="#4ecdc4" opacity="0.8">◈</text>
+  <text x="102" y="98" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#4ecdc4" font-weight="600" letter-spacing="1">RENDERING</text>
+  <text x="102" y="116" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">OpenGL 3.3+</text>
+  <text x="102" y="130" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Deferred Shading</text>
+  <text x="102" y="144" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Shadow Mapping</text>
+  <text x="102" y="158" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Post-Processing</text>
+  <text x="102" y="172" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">GLSL Shaders</text>
+
+  <!-- Card 2: Atlas UI -->
+  <rect x="195" y="50" width="165" height="155" rx="4" fill="url(#cardGrad)" stroke="#4ecdc4" stroke-width="0.6" opacity="0.8"/>
+  <text x="277" y="76" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="20" fill="#4ecdc4" opacity="0.8">◩</text>
+  <text x="277" y="98" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#4ecdc4" font-weight="600" letter-spacing="1">ATLAS UI</text>
+  <text x="277" y="116" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">Immediate-Mode</text>
+  <text x="277" y="130" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">GPU-Accelerated</text>
+  <text x="277" y="144" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Single Draw-Call</text>
+  <text x="277" y="158" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Themeable</text>
+  <text x="277" y="172" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">EVE-Style Widgets</text>
+
+  <!-- Card 3: Content -->
+  <rect x="370" y="50" width="165" height="155" rx="4" fill="url(#cardGrad)" stroke="#4ecdc4" stroke-width="0.6" opacity="0.8"/>
+  <text x="452" y="76" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="20" fill="#4ecdc4" opacity="0.8">✦</text>
+  <text x="452" y="98" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#4ecdc4" font-weight="600" letter-spacing="1">CONTENT</text>
+  <text x="452" y="116" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">102+ Ships</text>
+  <text x="452" y="130" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">159+ Modules</text>
+  <text x="452" y="144" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">137 Skills</text>
+  <text x="452" y="158" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">4 Factions</text>
+  <text x="452" y="172" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Full Mission System</text>
+
+  <!-- Card 4: Multiplayer -->
+  <rect x="545" y="50" width="165" height="155" rx="4" fill="url(#cardGrad)" stroke="#4ecdc4" stroke-width="0.6" opacity="0.8"/>
+  <text x="627" y="76" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="20" fill="#4ecdc4" opacity="0.8">⬡</text>
+  <text x="627" y="98" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#4ecdc4" font-weight="600" letter-spacing="1">MULTIPLAYER</text>
+  <text x="627" y="116" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">2–20 Players</text>
+  <text x="627" y="130" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">AI Wingmates</text>
+  <text x="627" y="144" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">TCP Client/Server</text>
+  <text x="627" y="158" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Embedded or Dedicated</text>
+  <text x="627" y="172" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Fleet System</text>
+
+  <!-- Card 5: Modding -->
+  <rect x="720" y="50" width="165" height="155" rx="4" fill="url(#cardGrad)" stroke="#4ecdc4" stroke-width="0.6" opacity="0.8"/>
+  <text x="802" y="76" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="20" fill="#4ecdc4" opacity="0.8">⚙</text>
+  <text x="802" y="98" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#4ecdc4" font-weight="600" letter-spacing="1">MODDING</text>
+  <text x="802" y="116" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">All Data in JSON</text>
+  <text x="802" y="130" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Ships &amp; Modules</text>
+  <text x="802" y="144" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Missions &amp; Universe</text>
+  <text x="802" y="158" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Validation Tools</text>
+  <text x="802" y="172" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#5a7a8a" opacity="0.6">Ship Creator Wizard</text>
+
+  <!-- Border -->
+  <rect x="1" y="1" width="898" height="218" rx="4" fill="none" stroke="#4ecdc4" stroke-width="0.5" opacity="0.1"/>
+</svg>
