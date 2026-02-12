@@ -434,4 +434,99 @@ int overviewHeaderInteractive(AtlasContext& ctx, const Rect& r,
                               const std::vector<std::string>& tabs,
                               int activeTab);
 
+
+
+// ── Tab Bar (reusable tabbed header) ────────────────────────────────
+
+/**
+ * Draw a generic tab bar.  Returns the index of the clicked tab,
+ * or -1 if none was clicked this frame.
+ *
+ * @param ctx        Context.
+ * @param r          Bounding rectangle for the tab bar.
+ * @param labels     Tab label strings.
+ * @param activeIdx  Currently selected tab index.
+ */
+int tabBar(AtlasContext& ctx, const Rect& r,
+           const std::vector<std::string>& labels, int activeIdx);
+
+// ── Combat Log Widget ───────────────────────────────────────────────
+
+/**
+ * Draw a scrollable combat log message list.
+ *
+ * Messages are drawn newest-at-bottom in a dark panel with a thin
+ * accent border.  Older messages scroll up and fade out.
+ *
+ * @param ctx        Context.
+ * @param r          Bounding rectangle.
+ * @param messages   List of log strings (newest at end).
+ * @param scrollOff  Scroll offset (updated on mouse wheel).
+ * @param maxVisible Maximum visible rows (0 = compute from height).
+ */
+void combatLogWidget(AtlasContext& ctx, const Rect& r,
+                     const std::vector<std::string>& messages,
+                     float& scrollOff, int maxVisible = 0);
+
+// ── Damage Flash Overlay ────────────────────────────────────────────
+
+/**
+ * Draw a screen-edge damage flash overlay.
+ *
+ * Renders a coloured translucent vignette around the ship HUD centre
+ * that fades over time.  Colour depends on the layer hit:
+ *   Shield -> blue, Armor -> gold, Hull -> red.
+ *
+ * @param ctx       Context.
+ * @param centre    Centre of the HUD (flash radiates outward).
+ * @param radius    Outer radius of the flash effect.
+ * @param layer     0 = shield, 1 = armor, 2 = hull.
+ * @param intensity Current intensity (0-1, fading toward 0).
+ */
+void damageFlashOverlay(AtlasContext& ctx, Vec2 centre, float radius,
+                        int layer, float intensity);
+
+// ── Drone Status Bar ────────────────────────────────────────────────
+
+/**
+ * Draw a compact drone status summary widget showing deployed/bay
+ * counts and bandwidth usage.
+ *
+ * @param ctx           Context.
+ * @param r             Bounding rectangle.
+ * @param inSpace       Number of drones in space.
+ * @param inBay         Number of drones in bay.
+ * @param bandwidthUsed Current bandwidth used (Mbit/s).
+ * @param bandwidthMax  Maximum bandwidth capacity.
+ */
+void droneStatusBar(AtlasContext& ctx, const Rect& r,
+                    int inSpace, int inBay,
+                    int bandwidthUsed, int bandwidthMax);
+
+// ── Fleet Broadcast Banner ──────────────────────────────────────────
+
+/**
+ * Data for a single fleet broadcast.
+ */
+struct FleetBroadcast {
+    std::string sender;
+    std::string message;        // e.g. "Need Armor", "Align To", "Warp To"
+    Color       color;          // broadcast type accent color
+    float       age = 0.0f;     // seconds since broadcast (for fade)
+    float       maxAge = 8.0f;  // total display time
+};
+
+/**
+ * Draw a fleet broadcast banner above the target cards.
+ *
+ * Shows the most recent broadcast with sender, message, and a fade
+ * indicator.  Older broadcasts drop off automatically.
+ *
+ * @param ctx         Context.
+ * @param r           Bounding rectangle.
+ * @param broadcasts  Active broadcasts (newest last).
+ */
+void fleetBroadcastBanner(AtlasContext& ctx, const Rect& r,
+                          const std::vector<FleetBroadcast>& broadcasts);
+
 } // namespace atlas
