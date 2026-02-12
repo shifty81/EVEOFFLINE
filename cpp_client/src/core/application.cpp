@@ -900,7 +900,10 @@ void Application::handleKeyInput(int key, int action, int mods) {
         m_warpModeActive = false;
         m_activeModeText = "DOCK / JUMP - click a station or gate";
         std::cout << "[Controls] Docking mode active — click a station or gate" << std::endl;
-    } else if (key == GLFW_KEY_S && !(mods & GLFW_MOD_CONTROL)) {
+    } else if (key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL)) {
+        // Ctrl+S = stop ship (EVE standard) — checked before bare S
+        commandStopShip();
+    } else if (key == GLFW_KEY_S) {
         // S + Click = Warp To (EVE standard)
         m_approachActive = false;
         m_orbitActive = false;
@@ -913,8 +916,6 @@ void Application::handleKeyInput(int key, int action, int mods) {
         // F = Engage/Recall drones (EVE standard)
         std::cout << "[Controls] Drone command: engage/recall" << std::endl;
         // TODO: Send drone engage/recall command to server
-    } else if (key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL)) {
-        commandStopShip();
     }
     
     // Panel toggles

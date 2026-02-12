@@ -301,12 +301,15 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
         colX += cw;
     }
 
-    // Sort entries
-    std::vector<OverviewEntry> sorted = entries;
+    // Sort entries by index (avoids copying the entire entries vector)
+    std::vector<int> sortedIdx(entries.size());
+    for (int i = 0; i < static_cast<int>(entries.size()); ++i) sortedIdx[i] = i;
     auto sortCol = m_overviewSortCol;
     bool sortAsc = m_overviewSortAsc;
-    std::sort(sorted.begin(), sorted.end(),
-        [sortCol, sortAsc](const OverviewEntry& a, const OverviewEntry& b) {
+    std::sort(sortedIdx.begin(), sortedIdx.end(),
+        [&entries, sortCol, sortAsc](int ai, int bi) {
+            const OverviewEntry& a = entries[ai];
+            const OverviewEntry& b = entries[bi];
             int cmp = 0;
             switch (sortCol) {
                 case OverviewSortColumn::DISTANCE:
@@ -329,27 +332,28 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
     float rowH = 22.0f;
     float rowY = colY + colH + 2.0f;
     int maxRows = static_cast<int>((contentArea.bottom() - rowY) / rowH);
-    int count = std::min(static_cast<int>(sorted.size()), maxRows);
+    int count = std::min(static_cast<int>(sortedIdx.size()), maxRows);
 
     for (int i = 0; i < count; ++i) {
+        const OverviewEntry& entry = entries[sortedIdx[i]];
         Rect rowRect = {contentArea.x, rowY + i * rowH, contentArea.w, rowH};
         // overviewRow returns true when the row receives a left-click (press+release)
-        bool clicked = overviewRow(ctx, rowRect, sorted[i], (i % 2 == 1));
+        bool clicked = overviewRow(ctx, rowRect, entry, (i % 2 == 1));
 
         // Left-click: select the entity
-        if (clicked && !sorted[i].entityId.empty()) {
+        if (clicked && !entry.entityId.empty()) {
             // Ctrl+Click = lock target (EVE standard)
-            if (ctx.input().keyDown[341] && m_overviewCtrlClickCb) {  // 341 = GLFW_KEY_LEFT_CONTROL
-                m_overviewCtrlClickCb(sorted[i].entityId);
+            if (ctx.input().keyDown[Key::LeftControl] && m_overviewCtrlClickCb) {
+                m_overviewCtrlClickCb(entry.entityId);
             } else if (m_overviewSelectCb) {
-                m_overviewSelectCb(sorted[i].entityId);
+                m_overviewSelectCb(entry.entityId);
             }
         }
 
         // Right-click: show context menu for the entity
         if (!ctx.isMouseConsumed() && ctx.isHovered(rowRect) && ctx.isRightMouseClicked()) {
-            if (!sorted[i].entityId.empty() && m_overviewRightClickCb) {
-                m_overviewRightClickCb(sorted[i].entityId,
+            if (!entry.entityId.empty() && m_overviewRightClickCb) {
+                m_overviewRightClickCb(entry.entityId,
                                        ctx.input().mousePos.x,
                                        ctx.input().mousePos.y);
                 ctx.consumeMouse();
@@ -358,13 +362,13 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
     }
 
     // Scrollbar if needed
-    if (static_cast<int>(sorted.size()) > maxRows) {
+    if (static_cast<int>(sortedIdx.size()) > maxRows) {
         Rect scrollTrack = {contentArea.right() - 6.0f,
                            rowY,
                            6.0f,
                            contentArea.bottom() - rowY};
         scrollbar(ctx, scrollTrack, 0.0f,
-                 sorted.size() * rowH, contentArea.bottom() - rowY);
+                 sortedIdx.size() * rowH, contentArea.bottom() - rowY);
     }
 
     // Right-click on overview panel background (not on an entity row)
