@@ -132,6 +132,9 @@ public:
     /** Set callback for overview row right-click (context menu). */
     void setOverviewRightClickCb(const std::function<void(const std::string&, float, float)>& cb) { m_overviewRightClickCb = cb; }
 
+    /** Set callback for overview background right-click (empty-space context menu). */
+    void setOverviewBgRightClickCb(const std::function<void(float, float)>& cb) { m_overviewBgRightClickCb = cb; }
+
     // ── Selected item action callbacks ──────────────────────────────
 
     /** Set callback for selected item action buttons (orbit, approach, warp, info). */
@@ -299,6 +302,7 @@ private:
     std::function<void(int)> m_moduleCallback;
     std::function<void(const std::string&)> m_overviewSelectCb;
     std::function<void(const std::string&, float, float)> m_overviewRightClickCb;
+    std::function<void(float, float)> m_overviewBgRightClickCb;
     std::function<void()>    m_selOrbitCb;
     std::function<void()>    m_selApproachCb;
     std::function<void()>    m_selWarpCb;

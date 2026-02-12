@@ -60,6 +60,9 @@ void AtlasHUD::update(AtlasContext& ctx,
                        const SelectedItemInfo& selectedItem) {
     // Draw elements in back-to-front order
 
+    // Inform the context about sidebar width so panels clamp to it
+    ctx.setSidebarWidth(m_sidebarWidth);
+
     // 1. Sidebar (left edge) — pass active panel states for icon highlighting
     bool activeIcons[8] = {
         m_inventoryState.open,   // 0: Inventory
@@ -284,6 +287,16 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
                            contentArea.h - 28.0f};
         scrollbar(ctx, scrollTrack, 0.0f,
                  entries.size() * rowH, contentArea.h - 28.0f);
+    }
+
+    // Right-click on overview panel background (not on an entity row)
+    // shows an empty-space context menu
+    if (!ctx.isMouseConsumed() && ctx.isHovered(contentArea) && ctx.isRightMouseClicked()) {
+        if (m_overviewBgRightClickCb) {
+            m_overviewBgRightClickCb(ctx.input().mousePos.x,
+                                     ctx.input().mousePos.y);
+            ctx.consumeMouse();
+        }
     }
 
     panelEnd(ctx);

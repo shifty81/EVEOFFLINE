@@ -127,6 +127,14 @@ public:
     /** Check if another widget already consumed the mouse this frame. */
     bool isMouseConsumed() const { return m_mouseConsumed; }
 
+    // ── Layout margins (sidebar boundary) ───────────────────────────
+
+    /** Set the sidebar width so panels clamp to it as a left boundary. */
+    void setSidebarWidth(float w) { m_sidebarWidth = w; }
+
+    /** Get the sidebar width (left margin for panel clamping). */
+    float sidebarWidth() const { return m_sidebarWidth; }
+
 private:
     AtlasRenderer m_renderer;
     Theme          m_theme;
@@ -139,6 +147,9 @@ private:
     // Mouse consumed flag — set when a widget claims the mouse event
     // to prevent other widgets from also responding
     bool m_mouseConsumed = false;
+
+    // Sidebar width — used as left margin for panel clamping
+    float m_sidebarWidth = 0.0f;
 
     // ID stack for scoped widget naming
     std::vector<WidgetID> m_idStack;

@@ -480,6 +480,12 @@ void Application::setupUICallbacks() {
         std::cout << "[Overview] Right-click context menu for: " << entityId << std::endl;
     });
 
+    m_atlasHUD->setOverviewBgRightClickCb([this](float screenX, float screenY) {
+        m_contextMenu->ShowEmptySpaceMenu(0.0f, 0.0f, 0.0f);
+        m_contextMenu->SetScreenPosition(screenX, screenY);
+        std::cout << "[Overview] Right-click empty space context menu" << std::endl;
+    });
+
     std::cout << "  - Overview interaction callbacks wired" << std::endl;
     
     std::cout << "UI callbacks setup complete" << std::endl;
@@ -940,10 +946,9 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                             m_contextMenu->ShowEntityMenu(pickedId, isLocked);
                             m_contextMenu->SetScreenPosition(static_cast<float>(x), static_cast<float>(y));
                         } else {
-                            // Show empty space menu
-                            // For now, just close any existing menu
-                            m_contextMenu->Close();
-                            if (m_uiManager) m_uiManager->HideContextMenu();
+                            // Show empty space context menu
+                            m_contextMenu->ShowEmptySpaceMenu(0.0f, 0.0f, 0.0f);
+                            m_contextMenu->SetScreenPosition(static_cast<float>(x), static_cast<float>(y));
                         }
                     }
                 }

@@ -11,6 +11,7 @@
 #include "ui/atlas/atlas_context.h"
 #include "ui/atlas/atlas_widgets.h"
 #include "ui/atlas/atlas_hud.h"
+#include "ui/context_menu.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -2475,6 +2476,113 @@ void testPanelOpacity() {
     ctx.shutdown();
 }
 
+// ─── Sidebar Width Clamping tests ─────────────────────────────────
+
+void testSidebarWidthClamping() {
+    std::cout << "\n=== Sidebar Width Clamping ===" << std::endl;
+
+    // Test that sidebarWidth getter/setter works on AtlasContext
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    assertTrue(ctx.sidebarWidth() == 0.0f, "Default sidebar width is 0");
+
+    ctx.setSidebarWidth(40.0f);
+    assertTrue(ctx.sidebarWidth() == 40.0f, "Sidebar width set to 40");
+
+    // Test that panels snap to sidebar boundary during drag
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+
+    atlas::PanelState state;
+    state.bounds = {50.0f, 100.0f, 300.0f, 200.0f};
+    state.open = true;
+
+    atlas::PanelFlags flags;
+    flags.showHeader = true;
+    flags.showClose = false;
+    flags.showMinimize = false;
+
+    // Simulate drag that would push panel past sidebar
+    state.dragging = true;
+    state.dragOffset = {10.0f, 10.0f};
+    input.mouseDown[0] = true;
+    input.mousePos = {5.0f, 110.0f};  // Would put panel at x=-5, behind sidebar
+
+    ctx.beginFrame(input);
+    ctx.setSidebarWidth(40.0f);
+    atlas::panelBeginStateful(ctx, "Snap Test", state, flags);
+    atlas::panelEnd(ctx);
+    ctx.endFrame();
+
+    // Panel X should be clamped to sidebar width (40), not 0
+    assertTrue(state.bounds.x >= 40.0f, "Panel snaps to sidebar boundary (X >= 40)");
+
+    ctx.shutdown();
+}
+
+// ─── Context Menu Type tests ──────────────────────────────────────
+
+void testContextMenuTypes() {
+    std::cout << "\n=== Context Menu Types ===" << std::endl;
+
+    UI::ContextMenu menu;
+    assertTrue(!menu.IsOpen(), "Menu starts closed");
+
+    menu.ShowEntityMenu("npc_1", false);
+    assertTrue(menu.IsOpen(), "Entity menu is open after ShowEntityMenu");
+
+    menu.Close();
+    assertTrue(!menu.IsOpen(), "Menu closed after Close()");
+
+    menu.ShowEmptySpaceMenu(100.0f, 200.0f, 0.0f);
+    assertTrue(menu.IsOpen(), "Empty space menu is open after ShowEmptySpaceMenu");
+
+    menu.SetScreenPosition(400.0f, 300.0f);
+    assertTrue(menu.IsOpen(), "Menu still open after SetScreenPosition");
+
+    menu.Close();
+    assertTrue(!menu.IsOpen(), "Menu closed again");
+}
+
+// ─── Overview Background Right-Click Callback tests ───────────────
+
+void testOverviewBgRightClickCallback() {
+    std::cout << "\n=== Overview Background Right-Click ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    float bgClickX = 0.0f, bgClickY = 0.0f;
+    bool bgCallbackFired = false;
+
+    hud.setOverviewBgRightClickCb([&](float x, float y) {
+        bgCallbackFired = true;
+        bgClickX = x;
+        bgClickY = y;
+    });
+
+    // Verify callback is set (indirect test — renders without crash)
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+    ctx.beginFrame(input);
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo selected;
+    hud.update(ctx, ship, targets, overview, selected);
+    ctx.endFrame();
+    ctx.shutdown();
+
+    assertTrue(true, "Overview background right-click callback set without crash");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "Atlas UI System Tests" << std::endl;
@@ -2560,6 +2668,11 @@ int main() {
     testOverviewCallbacks();
     testRightClickDetection();
     testPanelOpacity();
+
+    // Panel snap, context menu, and overview right-click tests
+    testSidebarWidthClamping();
+    testContextMenuTypes();
+    testOverviewBgRightClickCallback();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

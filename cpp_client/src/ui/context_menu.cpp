@@ -87,6 +87,13 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
     r.drawRect(bg, t.bgPanel);
     r.drawRectOutline(bg, t.borderNormal);
 
+    // Consume mouse events within the context menu area to prevent click-through
+    if (ctx.isHovered(bg)) {
+        if (ctx.isMouseClicked() || ctx.isRightMouseClicked()) {
+            ctx.consumeMouse();
+        }
+    }
+
     // Header line (entity name)
     if (m_menuType == ContextMenuType::ENTITY && !m_targetEntityId.empty()) {
         r.drawText(m_targetEntityId,
@@ -105,6 +112,14 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
         if (hovered) {
             r.drawRect(itemRect, t.hover);
             ctx.setHot(id);
+
+            // EVE-style: submenus open on hover, not click
+            if (items[i].submenuIdx >= 0) {
+                m_activeSubmenu = items[i].submenuIdx;
+            } else {
+                // Hovering a non-submenu item closes any open submenu
+                m_activeSubmenu = -1;
+            }
         }
 
         r.drawText(items[i].label, {menuX + padX, curY + 5.0f},
@@ -115,12 +130,10 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
             r.drawText(">", {menuX + menuW - 16.0f, curY + 5.0f}, t.textSecondary);
         }
 
-        // Click handling
-        if (ctx.buttonBehavior(itemRect, id)) {
-            if (items[i].submenuIdx >= 0) {
-                m_activeSubmenu = items[i].submenuIdx;
-            } else {
-                switch (items[i].action) {
+        // Click handling — submenu items are opened by hover, so clicking
+        // a submenu parent is a no-op; only non-submenu items fire actions
+        if (items[i].submenuIdx < 0 && ctx.buttonBehavior(itemRect, id)) {
+            switch (items[i].action) {
                     case ContextMenuAction::APPROACH:
                         if (m_onApproach) m_onApproach(m_targetEntityId);
                         break;
@@ -151,7 +164,6 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
                 }
                 Close();
             }
-        }
         curY += itemH;
     }
 
@@ -184,6 +196,13 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
         atlas::Rect subBg(subX, subY, subW, subH);
         r.drawRect(subBg, t.bgPanel);
         r.drawRectOutline(subBg, t.borderNormal);
+
+        // Consume mouse events within submenu to prevent click-through
+        if (ctx.isHovered(subBg)) {
+            if (ctx.isMouseClicked() || ctx.isRightMouseClicked()) {
+                ctx.consumeMouse();
+            }
+        }
 
         float sy = subY + 2.0f;
         for (int j = 0; j < static_cast<int>(subItems.size()); ++j) {
