@@ -6,7 +6,7 @@
 #pragma comment(lib, "ws2_32.lib")
 #endif
 
-namespace eve {
+namespace atlas {
 namespace network {
 
 TCPServer::TCPServer(const std::string& host, uint16_t port, int max_connections)
@@ -246,4 +246,4 @@ void TCPServer::cleanupSockets() {
 }
 
 } // namespace network
-} // namespace eve
+} // namespace atlas

@@ -8,7 +8,7 @@
 #include "rendering/mesh.h"
 #include "rendering/procedural_mesh_ops.h"
 
-namespace eve {
+namespace atlas {
 
 class Model;
 
@@ -115,7 +115,7 @@ struct ReferenceAssetConfig {
  *   6. Optionally apply noise displacement for organic variation
  *   7. Attach procedural engine/weapon/antenna modules at mount points
  *   8. Enforce symmetry by mirroring modifications across the X axis
- *   9. Recompute normals and output as eve::Model
+ *   9. Recompute normals and output as atlas::Model
  *
  * The same seed + OBJ file always produces the same ship, making the
  * system suitable for networked games where clients must agree on
@@ -285,4 +285,4 @@ private:
     static float noise3D(float x, float y, float z);
 };
 
-} // namespace eve
+} // namespace atlas

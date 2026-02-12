@@ -38,7 +38,7 @@ class RenderInterface_GL3;
 class SystemInterface_GLFW;
 #endif
 
-namespace eve {
+namespace atlas {
     class Entity;
 }
 
@@ -116,7 +116,7 @@ public:
 
     // ---- Overview ----
     void UpdateOverviewData(
-        const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities,
+        const std::unordered_map<std::string, std::shared_ptr<::atlas::Entity>>& entities,
         const glm::vec3& playerPos);
     void SetOverviewFilter(const std::string& filter);
 

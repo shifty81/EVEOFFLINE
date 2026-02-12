@@ -16,7 +16,7 @@
 #include <climits>
 #endif
 
-namespace eve {
+namespace atlas {
 
 // Returns the directory containing the running executable.
 static std::string getExecutableDir() {
@@ -230,4 +230,4 @@ std::string Shader::readFile(const std::string& filePath) {
     return buffer.str();
 }
 
-} // namespace eve
+} // namespace atlas

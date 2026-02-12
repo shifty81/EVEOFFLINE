@@ -67,7 +67,7 @@ bool button(AtlasContext& ctx, const char* label, const Rect& r);
 
 /** Small icon-style square button (Neocom style). */
 bool iconButton(AtlasContext& ctx, WidgetID id, const Rect& r,
-                const Color& iconColor);
+                const Color& iconColor, const char* symbol = nullptr);
 
 // ── Progress / Status Bars ──────────────────────────────────────────
 

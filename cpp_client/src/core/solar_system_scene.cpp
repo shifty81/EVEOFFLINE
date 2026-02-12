@@ -6,7 +6,7 @@
 #include <random>
 #include <sstream>
 
-namespace eve {
+namespace atlas {
 
 SolarSystemScene::SolarSystemScene()
     : m_securityLevel(1.0f)
@@ -554,4 +554,4 @@ void SolarSystemScene::generateSystem(uint32_t seed, const std::string& systemNa
               << std::endl;
 }
 
-} // namespace eve
+} // namespace atlas

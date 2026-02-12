@@ -1,7 +1,7 @@
 #include "auth/steam_auth.h"
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 namespace auth {
 
 SteamAuth::SteamAuth()
@@ -129,4 +129,4 @@ bool SteamAuth::isSteamRunning() const {
 }
 
 } // namespace auth
-} // namespace eve
+} // namespace atlas

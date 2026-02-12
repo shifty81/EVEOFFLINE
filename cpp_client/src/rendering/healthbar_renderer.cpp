@@ -4,7 +4,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 // Configuration constants
 constexpr float HEALTH_BAR_BORDER_WIDTH = 2.0f;
@@ -175,4 +175,4 @@ void HealthBarRenderer::drawBar(const glm::vec3& position, float value, const gl
     glBindVertexArray(0);
 }
 
-} // namespace eve
+} // namespace atlas

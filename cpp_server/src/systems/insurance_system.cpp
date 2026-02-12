@@ -2,7 +2,7 @@
 #include "ecs/world.h"
 #include "components/game_components.h"
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 InsuranceSystem::InsuranceSystem(ecs::World* world)
@@ -102,4 +102,4 @@ bool InsuranceSystem::hasActivePolicy(const std::string& entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 InventorySystem::InventorySystem(ecs::World* world)
@@ -126,4 +126,4 @@ bool InventorySystem::hasItem(const std::string& entity_id,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

@@ -3,7 +3,7 @@
 #include <string>
 #include <functional>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Protocol handler for game messages (JSON-based)
@@ -74,4 +74,4 @@ private:
     MessageHandler m_messageHandler;
 };
 
-} // namespace eve
+} // namespace atlas

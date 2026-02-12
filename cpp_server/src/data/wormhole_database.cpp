@@ -4,7 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace data {
 
 // ---------------------------------------------------------------------------
@@ -317,4 +317,4 @@ std::vector<std::string> WormholeDatabase::parseStringArray(const std::string& a
 }
 
 } // namespace data
-} // namespace eve
+} // namespace atlas

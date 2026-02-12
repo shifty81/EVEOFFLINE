@@ -5,7 +5,7 @@
 #include <cmath>
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 FleetSystem::FleetSystem(ecs::World* world)
@@ -457,4 +457,4 @@ void FleetSystem::removeFleetBonuses(const std::string& entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

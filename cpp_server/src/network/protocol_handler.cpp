@@ -1,7 +1,7 @@
 #include "network/protocol_handler.h"
 #include <sstream>
 
-namespace eve {
+namespace atlas {
 namespace network {
 
 ProtocolHandler::ProtocolHandler() {
@@ -142,4 +142,4 @@ bool ProtocolHandler::validateMessage(const std::string& json) {
 }
 
 } // namespace network
-} // namespace eve
+} // namespace atlas

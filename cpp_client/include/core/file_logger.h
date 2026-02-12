@@ -15,7 +15,7 @@
 #define MKDIR(dir) mkdir(dir, 0755)
 #endif
 
-namespace eve {
+namespace atlas {
 
 /**
  * Simple file logger that duplicates stdout/stderr to a log file.
@@ -98,4 +98,4 @@ private:
     static bool s_active;
 };
 
-} // namespace eve
+} // namespace atlas

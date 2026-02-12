@@ -6,13 +6,13 @@
 #include <atomic>
 
 // Forward declare server components
-namespace eve {
+namespace atlas {
 namespace server {
     class Server;
 }
 }
 
-namespace eve {
+namespace atlas {
 
 /**
  * Embedded server manager for hosting games from the client
@@ -112,4 +112,4 @@ private:
     std::string m_currentSystem;
 };
 
-} // namespace eve
+} // namespace atlas

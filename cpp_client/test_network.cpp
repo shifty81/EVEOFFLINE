@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
     std::cout << std::endl;
 
     // Create network manager
-    eve::NetworkManager network;
+    atlas::NetworkManager network;
 
     // Register message handlers
     int entityCount = 0;

@@ -5,7 +5,7 @@
 #include <functional>
 #include <map>
 
-namespace eve {
+namespace atlas {
 namespace network {
 
 /**
@@ -59,6 +59,6 @@ private:
 };
 
 } // namespace network
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_PROTOCOL_HANDLER_H

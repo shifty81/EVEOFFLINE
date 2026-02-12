@@ -5,7 +5,7 @@
 #include <string>
 #include <cstdint>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 /**
@@ -49,6 +49,6 @@ private:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_LOOT_SYSTEM_H

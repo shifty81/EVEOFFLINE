@@ -4,7 +4,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 CombatSystem::CombatSystem(ecs::World* world)
@@ -149,4 +149,4 @@ float CombatSystem::getResistance(float em_resist, float thermal_resist,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

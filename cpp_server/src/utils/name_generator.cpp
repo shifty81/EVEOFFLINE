@@ -2,7 +2,7 @@
 #include <sstream>
 #include <chrono>
 
-namespace eve {
+namespace atlas {
 namespace utils {
 
 NameGenerator::NameGenerator() {
@@ -257,4 +257,4 @@ bool NameGenerator::randomBool(float probability) {
 }
 
 } // namespace utils
-} // namespace eve
+} // namespace atlas

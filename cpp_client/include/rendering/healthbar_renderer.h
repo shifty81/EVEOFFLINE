@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-namespace eve {
+namespace atlas {
 
 class Shader;
 
@@ -85,4 +85,4 @@ private:
     void drawBar(const glm::vec3& position, float value, const glm::vec4& color, float yOffset);
 };
 
-} // namespace eve
+} // namespace atlas

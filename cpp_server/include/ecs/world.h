@@ -10,7 +10,7 @@
 #include <typeindex>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace ecs {
 
 /**
@@ -80,6 +80,6 @@ std::vector<Entity*> World::getEntities() {
 }
 
 } // namespace ecs
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_ECS_WORLD_H

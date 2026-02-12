@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include "rendering/mesh.h"
 
-namespace eve {
+namespace atlas {
 
 /**
  * Procedural mesh generation operations inspired by extrusion-based
@@ -46,7 +46,7 @@ struct PolyFace {
 
 /**
  * Result of triangulating a set of PolyFaces into renderable geometry
- * compatible with eve::Mesh / eve::ShipPart.
+ * compatible with atlas::Mesh / atlas::ShipPart.
  */
 struct TriangulatedMesh {
     std::vector<Vertex> vertices;
@@ -201,7 +201,7 @@ std::vector<glm::vec3> sampleBezierQuadratic(const glm::vec3& a,
  * @param scaleX            Non-uniform X scale on the cross-section.
  * @param scaleZ            Non-uniform Z scale on the cross-section.
  * @param color             Vertex colour for the hull.
- * @return  TriangulatedMesh ready for eve::Mesh construction.
+ * @return  TriangulatedMesh ready for atlas::Mesh construction.
  */
 TriangulatedMesh buildSegmentedHull(int sides, int segments,
                                     float segmentLength, float baseRadius,
@@ -239,4 +239,4 @@ TriangulatedMesh triangulateFace(const PolyFace& face, const glm::vec3& color);
 TriangulatedMesh triangulateFaces(const std::vector<PolyFace>& faces,
                                   const glm::vec3& color);
 
-} // namespace eve
+} // namespace atlas

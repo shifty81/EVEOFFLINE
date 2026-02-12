@@ -24,7 +24,7 @@
 #include <iostream>
 #include <cmath>
 
-using namespace eve;
+using namespace atlas;
 
 // ---------------------------------------------------------------------------
 // Demo data for D-Scan

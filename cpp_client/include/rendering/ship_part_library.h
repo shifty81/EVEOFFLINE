@@ -9,7 +9,7 @@
 #include "rendering/procedural_mesh_ops.h"
 #include "rendering/reference_model_analyzer.h"
 
-namespace eve {
+namespace atlas {
 
 /**
  * Types of ship parts for modular assembly
@@ -199,4 +199,4 @@ private:
                                      const glm::vec4& color, ShipPartType type);
 };
 
-} // namespace eve
+} // namespace atlas

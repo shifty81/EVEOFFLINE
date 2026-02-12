@@ -2,7 +2,7 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 NetworkManager::NetworkManager()
     : m_tcpClient(std::make_unique<TCPClient>())
@@ -291,4 +291,4 @@ void NetworkManager::handleErrorResponse(const std::string& dataJson) {
     }
 }
 
-} // namespace eve
+} // namespace atlas

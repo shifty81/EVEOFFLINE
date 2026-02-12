@@ -7,7 +7,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-namespace eve {
+namespace atlas {
 
 Texture::Texture()
     : m_textureID(0)
@@ -188,4 +188,4 @@ void TextureCache::clear() {
     m_cache.clear();
 }
 
-} // namespace eve
+} // namespace atlas

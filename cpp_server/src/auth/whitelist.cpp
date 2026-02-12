@@ -3,7 +3,7 @@
 #include <sstream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace auth {
 
 Whitelist::Whitelist() {
@@ -167,4 +167,4 @@ bool Whitelist::isEmpty() const {
 }
 
 } // namespace auth
-} // namespace eve
+} // namespace atlas

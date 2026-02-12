@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <memory>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 LeaderboardSystem::LeaderboardSystem(ecs::World* world)
@@ -272,4 +272,4 @@ std::vector<std::string> LeaderboardSystem::getRankingByKills(const std::string&
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <memory>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 TournamentSystem::TournamentSystem(ecs::World* world)
@@ -222,4 +222,4 @@ double TournamentSystem::getPrizePool(const std::string& entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

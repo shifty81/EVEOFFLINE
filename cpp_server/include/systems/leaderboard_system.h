@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 /**
@@ -130,6 +130,6 @@ private:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_LEADERBOARD_SYSTEM_H

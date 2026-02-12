@@ -3,7 +3,7 @@
 #include <iostream>
 #include <cmath>
 
-namespace eve {
+namespace atlas {
 
 InputHandler::InputHandler()
     : m_lastMouseX(0.0)
@@ -140,4 +140,4 @@ void InputHandler::updateModifiers(int mods) {
     m_altPressed = (mods & GLFW_MOD_ALT) != 0;
 }
 
-} // namespace eve
+} // namespace atlas

@@ -1,7 +1,7 @@
 #include "rendering/gbuffer.h"
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 GBuffer::GBuffer(unsigned int width, unsigned int height)
     : m_width(width)
@@ -170,4 +170,4 @@ void GBuffer::cleanup() {
     m_initialized = false;
 }
 
-} // namespace eve
+} // namespace atlas

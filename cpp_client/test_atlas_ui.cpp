@@ -1095,26 +1095,26 @@ void testDamageFeedback() {
     std::cout << "\n=== Damage Feedback ===" << std::endl;
 
     // Test DamageFlash struct
-    eve::DamageFlash flash(eve::DamageLayer::ARMOR, 0.3f);
-    assertTrue(flash.layer == eve::DamageLayer::ARMOR, "Flash layer is armor");
+    atlas::DamageFlash flash(atlas::DamageLayer::ARMOR, 0.3f);
+    assertTrue(flash.layer == atlas::DamageLayer::ARMOR, "Flash layer is armor");
     assertClose(flash.intensity, 1.0f, "Flash initial intensity");
     assertClose(flash.duration, 0.3f, "Flash custom duration");
     assertClose(flash.elapsed, 0.0f, "Flash initial elapsed");
 
     // Test shield layer
-    eve::DamageFlash shieldFlash(eve::DamageLayer::SHIELD);
-    assertTrue(shieldFlash.layer == eve::DamageLayer::SHIELD, "Shield flash layer");
+    atlas::DamageFlash shieldFlash(atlas::DamageLayer::SHIELD);
+    assertTrue(shieldFlash.layer == atlas::DamageLayer::SHIELD, "Shield flash layer");
     assertClose(shieldFlash.duration, 0.5f, "Default flash duration 0.5s");
 
     // Test hull layer
-    eve::DamageFlash hullFlash(eve::DamageLayer::HULL, 0.8f);
-    assertTrue(hullFlash.layer == eve::DamageLayer::HULL, "Hull flash layer");
+    atlas::DamageFlash hullFlash(atlas::DamageLayer::HULL, 0.8f);
+    assertTrue(hullFlash.layer == atlas::DamageLayer::HULL, "Hull flash layer");
     assertClose(hullFlash.duration, 0.8f, "Hull flash custom duration");
 
     // Test DamageLayer enum values are distinct
-    assertTrue(eve::DamageLayer::SHIELD != eve::DamageLayer::ARMOR, "Shield != Armor layer");
-    assertTrue(eve::DamageLayer::ARMOR != eve::DamageLayer::HULL, "Armor != Hull layer");
-    assertTrue(eve::DamageLayer::SHIELD != eve::DamageLayer::HULL, "Shield != Hull layer");
+    assertTrue(atlas::DamageLayer::SHIELD != atlas::DamageLayer::ARMOR, "Shield != Armor layer");
+    assertTrue(atlas::DamageLayer::ARMOR != atlas::DamageLayer::HULL, "Armor != Hull layer");
+    assertTrue(atlas::DamageLayer::SHIELD != atlas::DamageLayer::HULL, "Shield != Hull layer");
 }
 
 // ─── Mode Indicator tests ──────────────────────────────────────────────

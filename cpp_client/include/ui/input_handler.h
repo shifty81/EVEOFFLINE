@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Input handler for keyboard and mouse.
@@ -125,4 +125,4 @@ private:
     static constexpr double DOUBLE_CLICK_DIST = 8.0;
 };
 
-} // namespace eve
+} // namespace atlas

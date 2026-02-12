@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Ship Physics System
@@ -218,4 +218,4 @@ private:
     static constexpr float COLLISION_PUSH_MARGIN = 100.0f;     // Extra meters to push ship outside collision zone
 };
 
-} // namespace eve
+} // namespace atlas

@@ -24,7 +24,7 @@ const int WINDOW_WIDTH = 1280;
 const int WINDOW_HEIGHT = 720;
 
 // Camera settings
-using namespace eve;
+using namespace atlas;
 Camera camera;
 InputHandler inputHandler;
 

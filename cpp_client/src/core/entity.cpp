@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <glm/gtc/type_ptr.hpp>
 
-namespace eve {
+namespace atlas {
 
 Entity::Entity(const std::string& id)
     : m_id(id)
@@ -79,4 +79,4 @@ void Entity::interpolate(float deltaTime, float interpolationTime) {
     m_rotation = m_rotation + (m_targetRotation - m_rotation) * smoothT;
 }
 
-} // namespace eve
+} // namespace atlas

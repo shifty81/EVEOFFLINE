@@ -1,7 +1,7 @@
 #include "rendering/mesh.h"
 #include <GL/glew.h>
 
-namespace eve {
+namespace atlas {
 
 Mesh::Mesh(const std::vector<Vertex>& vertices, const std::vector<unsigned int>& indices)
     : m_vertices(vertices)
@@ -63,4 +63,4 @@ void Mesh::setup() {
     glBindVertexArray(0);
 }
 
-} // namespace eve
+} // namespace atlas

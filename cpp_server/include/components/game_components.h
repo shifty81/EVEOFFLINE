@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 
-namespace eve {
+namespace atlas {
 namespace components {
 
 /**
@@ -1059,6 +1059,6 @@ public:
 };
 
 } // namespace components
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_COMPONENTS_GAME_COMPONENTS_H

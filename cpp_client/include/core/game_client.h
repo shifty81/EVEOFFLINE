@@ -6,7 +6,7 @@
 #include <memory>
 #include <functional>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Game client - manages connection to server and game state
@@ -92,4 +92,4 @@ private:
     std::string m_characterName;
 };
 
-} // namespace eve
+} // namespace atlas

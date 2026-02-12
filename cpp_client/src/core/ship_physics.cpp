@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cmath>
 
-namespace eve {
+namespace atlas {
 
 ShipPhysics::ShipPhysics()
     : m_position(0.0f)
@@ -535,4 +535,4 @@ glm::vec3 ShipPhysics::resolveCollision(const std::vector<CelestialCollisionZone
     return m_position;
 }
 
-} // namespace eve
+} // namespace atlas

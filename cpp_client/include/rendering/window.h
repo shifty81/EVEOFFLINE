@@ -5,7 +5,7 @@
 
 struct GLFWwindow;
 
-namespace eve {
+namespace atlas {
 
 /**
  * Window management class using GLFW
@@ -79,4 +79,4 @@ private:
     ResizeCallback m_resizeCallback;
 };
 
-} // namespace eve
+} // namespace atlas

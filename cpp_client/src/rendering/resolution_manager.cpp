@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 ResolutionManager::ResolutionManager()
     : m_targetWidth(1920)
@@ -153,4 +153,4 @@ glm::vec2 ResolutionManager::virtualToScreen(const glm::vec2& virtualPos) const 
     return glm::vec2(screenX, screenY);
 }
 
-} // namespace eve
+} // namespace atlas

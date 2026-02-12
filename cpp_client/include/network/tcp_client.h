@@ -8,7 +8,7 @@
 #include <queue>
 #include <mutex>
 
-namespace eve {
+namespace atlas {
 
 /**
  * TCP Client for connecting to game server
@@ -68,4 +68,4 @@ private:
     std::mutex m_queueMutex;
 };
 
-} // namespace eve
+} // namespace atlas

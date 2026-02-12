@@ -2,7 +2,7 @@
 #include "core/entity_message_parser.h"
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 GameClient::GameClient() {
     std::cout << "GameClient created" << std::endl;
@@ -112,4 +112,4 @@ void GameClient::handleConnectAck(const std::string& dataJson) {
     }
 }
 
-} // namespace eve
+} // namespace atlas

@@ -3,7 +3,7 @@
 #include "ecs/entity.h"
 #include "components/game_components.h"
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 WormholeSystem::WormholeSystem(ecs::World* world)
@@ -83,4 +83,4 @@ float WormholeSystem::getRemainingLifetimeFraction(const std::string& wormhole_e
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

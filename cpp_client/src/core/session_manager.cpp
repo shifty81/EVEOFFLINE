@@ -18,7 +18,7 @@
     #include <unistd.h>
 #endif
 
-namespace eve {
+namespace atlas {
 
 SessionManager::SessionManager()
     : m_currentType(SessionType::SinglePlayer)
@@ -381,4 +381,4 @@ void SessionManager::update(float deltaTime) {
     }
 }
 
-} // namespace eve
+} // namespace atlas

@@ -1,7 +1,7 @@
 #include "rendering/ship_generation_rules.h"
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 ShipGenerationRules::ShipGenerationRules() {
 }
@@ -544,4 +544,4 @@ ReferenceModelTraits ShipGenerationRules::getClassReferenceTraits(const std::str
     return ReferenceModelTraits();
 }
 
-} // namespace eve
+} // namespace atlas

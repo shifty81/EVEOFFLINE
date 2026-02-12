@@ -2,7 +2,7 @@
 #include "ecs/world.h"
 #include "components/game_components.h"
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 ManufacturingSystem::ManufacturingSystem(ecs::World* world)
@@ -130,4 +130,4 @@ int ManufacturingSystem::getTotalRunsCompleted(const std::string& facility_entit
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

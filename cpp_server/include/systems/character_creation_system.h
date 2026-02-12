@@ -4,7 +4,7 @@
 #include "ecs/system.h"
 #include <string>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 class CharacterCreationSystem : public ecs::System {
@@ -57,6 +57,6 @@ public:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_CHARACTER_CREATION_SYSTEM_H

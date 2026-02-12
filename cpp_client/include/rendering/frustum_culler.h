@@ -3,7 +3,7 @@
 #include <glm/glm.hpp>
 #include <array>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Represents a single plane in 3D space
@@ -174,4 +174,4 @@ private:
     mutable Stats m_stats;  // mutable so we can update stats in const methods
 };
 
-} // namespace eve
+} // namespace atlas

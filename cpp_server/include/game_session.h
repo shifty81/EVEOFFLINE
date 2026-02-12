@@ -10,7 +10,7 @@
 #include <mutex>
 #include <atomic>
 
-namespace eve {
+namespace atlas {
 
 // Forward declaration
 namespace systems { class TargetingSystem; }
@@ -223,6 +223,6 @@ private:
     mutable std::atomic<uint64_t> snapshot_sequence_{0};  // Sequence number for snapshots
 };
 
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_GAME_SESSION_H

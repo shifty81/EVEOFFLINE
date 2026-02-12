@@ -7,7 +7,7 @@
 #include <map>
 #include <string>
 
-namespace eve {
+namespace atlas {
 
 // Response callback types
 struct InventoryResponse {
@@ -166,4 +166,4 @@ private:
     State m_state;
 };
 
-} // namespace eve
+} // namespace atlas

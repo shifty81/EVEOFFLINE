@@ -6,7 +6,7 @@
 #include <mutex>
 #include <memory>
 
-namespace eve {
+namespace atlas {
 namespace utils {
 
 /**
@@ -92,6 +92,6 @@ private:
 };
 
 } // namespace utils
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_LOGGER_H

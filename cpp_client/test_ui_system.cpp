@@ -11,7 +11,7 @@
 #include "rendering/window.h"
 #include "ui/ui_manager.h"
 
-using namespace eve;
+using namespace atlas;
 
 int main() {
     std::cout << "=== EVE UI System Test ===" << std::endl;

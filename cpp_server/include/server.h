@@ -15,7 +15,7 @@
 #include "utils/server_metrics.h"
 #include "ui/server_console.h"
 
-namespace eve {
+namespace atlas {
 
 /**
  * @brief Main dedicated server class
@@ -71,6 +71,6 @@ private:
     void initializeGameWorld();
 };
 
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SERVER_H

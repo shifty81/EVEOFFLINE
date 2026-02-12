@@ -11,7 +11,7 @@
 #include "ui/atlas/atlas_widgets.h"
 #include "ui/layout_manager.h"
 
-namespace eve {
+namespace atlas {
     class Entity;
 }
 
@@ -161,7 +161,7 @@ public:
     void SetPlayerPosition(const glm::vec3& position);
 
     // Target list management
-    void UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities);
+    void UpdateTargets(const std::unordered_map<std::string, std::shared_ptr<::atlas::Entity>>& entities);
     void AddTarget(const std::string& entityId);
     void RemoveTarget(const std::string& entityId);
 

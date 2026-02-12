@@ -5,7 +5,7 @@
 #include "ecs/entity.h"
 #include <string>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 /**
@@ -93,6 +93,6 @@ private:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_AI_SYSTEM_H

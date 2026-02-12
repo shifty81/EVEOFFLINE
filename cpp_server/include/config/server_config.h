@@ -5,7 +5,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace eve {
+namespace atlas {
 
 /**
  * @brief Server configuration structure
@@ -52,6 +52,6 @@ struct ServerConfig {
     bool saveToFile(const std::string& filepath) const;
 };
 
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SERVER_CONFIG_H

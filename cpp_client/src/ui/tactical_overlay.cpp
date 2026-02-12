@@ -10,7 +10,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-namespace eve {
+namespace atlas {
 
 TacticalOverlay::TacticalOverlay()
     : m_visible(false)
@@ -342,4 +342,4 @@ void TacticalOverlay::generateCircleVertices(float radius, int segments, std::ve
     }
 }
 
-} // namespace eve
+} // namespace atlas

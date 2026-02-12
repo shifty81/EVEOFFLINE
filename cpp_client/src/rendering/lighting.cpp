@@ -49,7 +49,7 @@ void LightManager::clearLights() {
     m_lights.clear();
 }
 
-void LightManager::uploadToShader(eve::Shader* shader) const {
+void LightManager::uploadToShader(atlas::Shader* shader) const {
     if (!shader) return;
     
     shader->use();

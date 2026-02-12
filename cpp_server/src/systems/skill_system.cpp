@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 // Base skill points awarded per level of training
@@ -123,4 +123,4 @@ int SkillSystem::getSkillLevel(const std::string& entity_id,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

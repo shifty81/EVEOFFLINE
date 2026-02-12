@@ -2,7 +2,7 @@
 
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Resolution and viewport management
@@ -119,4 +119,4 @@ private:
     AspectRatioMode m_aspectRatioMode;
 };
 
-} // namespace eve
+} // namespace atlas

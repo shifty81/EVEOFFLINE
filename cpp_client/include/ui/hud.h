@@ -9,7 +9,7 @@ namespace UI {
     struct ShipStatus;
 }
 
-namespace eve {
+namespace atlas {
 
 /**
  * Damage flash type for visual feedback when taking damage.
@@ -110,4 +110,4 @@ private:
     static constexpr int MAX_FLASHES = 3;
 };
 
-} // namespace eve
+} // namespace atlas

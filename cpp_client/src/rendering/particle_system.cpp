@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <random>
 
-namespace eve {
+namespace atlas {
 
 // Random number generator
 static std::random_device s_rd;
@@ -290,4 +290,4 @@ void ParticleSystem::updateBuffers() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-} // namespace eve
+} // namespace atlas

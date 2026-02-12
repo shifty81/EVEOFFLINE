@@ -5,7 +5,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 static constexpr int CLONE_JUMP_COOLDOWN_SECONDS = 86400;  // 24 hours
@@ -211,4 +211,4 @@ bool CharacterCreationSystem::addEmploymentRecord(const std::string& entity_id,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

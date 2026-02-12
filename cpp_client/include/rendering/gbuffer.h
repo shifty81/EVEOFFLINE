@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <memory>
 
-namespace eve {
+namespace atlas {
 
 /**
  * G-Buffer for deferred rendering
@@ -137,4 +137,4 @@ private:
     bool m_initialized;
 };
 
-} // namespace eve
+} // namespace atlas

@@ -5,7 +5,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 
 HUD::HUD() {
 }
@@ -118,4 +118,4 @@ void HUD::triggerDamageFlash(DamageLayer layer) {
     }
 }
 
-} // namespace eve
+} // namespace atlas

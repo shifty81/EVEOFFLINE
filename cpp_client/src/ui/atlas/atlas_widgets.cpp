@@ -22,12 +22,12 @@ bool panelBegin(AtlasContext& ctx, const char* title,
 
     ctx.pushID(title);
 
-    // Panel background (sharp-cornered dark translucent rect)
+    // Photon-style panel: dark translucent fill with skeletal frame
     r.drawRect(bounds, t.bgPanel);
 
-    // Border
+    // Frame border (thin, skeletal — not a heavy box)
     if (flags.drawBorder) {
-        r.drawRectOutline(bounds, t.borderSubtle, t.borderWidth);
+        r.drawRectOutline(bounds, t.borderNormal, t.borderWidth);
     }
 
     // Header bar
@@ -36,7 +36,7 @@ bool panelBegin(AtlasContext& ctx, const char* title,
         Rect headerRect = {bounds.x, bounds.y, bounds.w, hh};
         r.drawRect(headerRect, t.bgHeader);
 
-        // Title text
+        // Title text (uppercase for headers per Photon guidelines)
         float textY = bounds.y + (hh - 13.0f) * 0.5f;
         r.drawText(title, {bounds.x + t.padding, textY}, t.textPrimary);
 
@@ -50,10 +50,10 @@ bool panelBegin(AtlasContext& ctx, const char* title,
             bool hovered = ctx.isHovered(closeRect);
             if (hovered) ctx.setHot(closeID);
             Color closeBg = hovered ? t.danger.withAlpha(0.6f)
-                                    : t.bgSecondary;
+                                    : Color(0, 0, 0, 0);
             r.drawRect(closeRect, closeBg);
             r.drawText("x", {closeRect.x + 3.0f, closeRect.y + 1.0f},
-                       t.textPrimary);
+                       hovered ? t.textPrimary : t.textSecondary);
             if (ctx.buttonBehavior(closeRect, closeID)) {
                 *open = false;
             }
@@ -69,15 +69,15 @@ bool panelBegin(AtlasContext& ctx, const char* title,
             WidgetID minID = ctx.currentID("_min");
             bool hovered = ctx.isHovered(minRect);
             if (hovered) ctx.setHot(minID);
-            Color minBg = hovered ? t.hover : t.bgSecondary;
+            Color minBg = hovered ? t.hover : Color(0, 0, 0, 0);
             r.drawRect(minRect, minBg);
             r.drawText("-", {minRect.x + 3.0f, minRect.y + 1.0f},
-                       t.textPrimary);
+                       hovered ? t.textPrimary : t.textSecondary);
         }
 
-        // Thin accent line under header
+        // Photon accent line under header (frame separator)
         r.drawRect({bounds.x, bounds.y + hh - 1.0f, bounds.w, 1.0f},
-                   t.accentDim);
+                   t.accentPrimary.withAlpha(0.3f));
     }
 
     return true;  // panel is open (minimize state not yet tracked)
@@ -112,22 +112,34 @@ bool button(AtlasContext& ctx, const char* label, const Rect& r) {
 }
 
 bool iconButton(AtlasContext& ctx, WidgetID id, const Rect& r,
-                const Color& iconColor) {
+                const Color& iconColor, const char* symbol) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
 
     bool clicked = ctx.buttonBehavior(r, id);
 
-    Color bg = t.bgPrimary;
-    if (ctx.isActive(id))      bg = t.selection;
-    else if (ctx.isHot(id))    bg = t.hover;
+    // Neocom-style: subtle background that only shows on hover/active
+    bool hovered = ctx.isHot(id);
+    bool active  = ctx.isActive(id);
 
-    rr.drawRect(r, bg);
+    if (active) {
+        rr.drawRect(r, t.selection);
+        // Left accent bar when active
+        rr.drawRect({r.x, r.y, 2.0f, r.h}, t.accentPrimary);
+    } else if (hovered) {
+        rr.drawRect(r, t.hover);
+        // Left accent bar on hover
+        rr.drawRect({r.x, r.y, 2.0f, r.h}, t.accentPrimary.withAlpha(0.6f));
+    }
 
-    // Draw a small filled circle as icon placeholder
-    Vec2 c = r.center();
-    float iconR = std::min(r.w, r.h) * 0.3f;
-    rr.drawCircle(c, iconR, iconColor);
+    // Draw letter/symbol icon centered in the slot
+    if (symbol && symbol[0]) {
+        float tw = rr.measureText(symbol);
+        float tx = r.x + (r.w - tw) * 0.5f;
+        float ty = r.y + (r.h - 13.0f) * 0.5f;
+        Color textCol = hovered ? t.accentPrimary : iconColor;
+        rr.drawText(symbol, {tx, ty}, textCol);
+    }
 
     return clicked;
 }
@@ -428,37 +440,44 @@ bool overviewRow(AtlasContext& ctx, const Rect& r,
     WidgetID id = hashID(entry.name.c_str());
     bool clicked = ctx.buttonBehavior(r, id);
 
-    // Row background
-    Color bg = isAlternate ? t.bgSecondary.withAlpha(0.3f)
-                           : t.bgPanel.withAlpha(0.2f);
-    if (entry.selected) bg = t.selection;
-    else if (ctx.isHot(id)) bg = t.hover;
+    // Photon-style: neutral row background (alternating for scanability)
+    Color bg = isAlternate ? t.bgSecondary.withAlpha(0.2f)
+                           : Color(0, 0, 0, 0);
+    if (ctx.isHot(id)) bg = t.hover;
     rr.drawRect(r, bg);
 
-    // Standing color indicator (small square, 4px)
-    rr.drawRect({r.x + 2.0f, r.y + 3.0f, 4.0f, r.h - 6.0f},
+    // Photon selection: thin 2px accent bar on the left (not row fill)
+    if (entry.selected) {
+        rr.drawRect({r.x, r.y, t.selectionBarWidth, r.h}, t.accentPrimary);
+    }
+
+    // Standing/threat icon indicator (small square — color the icon, not the row)
+    rr.drawRect({r.x + 4.0f, r.y + (r.h - 8.0f) * 0.5f, 8.0f, 8.0f},
                 entry.standingColor);
 
-    // Columns: Distance | Name | Type | Velocity
-    float colX = r.x + 10.0f;
+    // Columns: Distance | Name | Type (monospace numeric, right-aligned distance)
     float textY = r.y + (r.h - 13.0f) * 0.5f;
 
-    // Distance
+    // Distance (right-aligned in its column for readability)
     char distBuf[32];
-    if (entry.distance >= 1000.0f) {
+    if (entry.distance >= METERS_PER_AU * 0.01f) {
+        std::snprintf(distBuf, sizeof(distBuf), "%.1f AU", entry.distance / METERS_PER_AU);
+    } else if (entry.distance >= 1000.0f) {
         std::snprintf(distBuf, sizeof(distBuf), "%.0f km", entry.distance / 1000.0f);
     } else {
         std::snprintf(distBuf, sizeof(distBuf), "%.0f m", entry.distance);
     }
-    rr.drawText(distBuf, {colX, textY}, t.textSecondary);
+    float distW = rr.measureText(distBuf);
+    float distColEnd = r.x + 90.0f;
+    rr.drawText(distBuf, {distColEnd - distW, textY}, t.textSecondary);
 
     // Name
-    colX += 80.0f;
-    rr.drawText(entry.name, {colX, textY}, t.textPrimary);
+    float nameX = r.x + 96.0f;
+    rr.drawText(entry.name, {nameX, textY}, t.textPrimary);
 
     // Type
-    colX += 120.0f;
-    rr.drawText(entry.type, {colX, textY}, t.textSecondary);
+    float typeX = r.x + 216.0f;
+    rr.drawText(entry.type, {typeX, textY}, t.textSecondary);
 
     return clicked;
 }
@@ -649,30 +668,111 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
 
-    // Full-height dark background
+    // Neocom-style dark solid background bar
     Rect bar = {x, 0, width, height};
-    rr.drawRect(bar, t.bgPrimary);
+    rr.drawRect(bar, t.bgPanel);
+    // Right edge border
     rr.drawRect({x + width - 1.0f, 0, 1.0f, height}, t.borderSubtle);
 
-    // Icon buttons (stacked vertically from top)
-    float iconSz = width - 4.0f;
-    float iconY = 8.0f;
-    float iconGap = 4.0f;
+    // Neocom icon labels (letter-based symbols like EVE Online)
+    static const char* neocomLabels[] = {
+        "I",   // 0: Inventory
+        "F",   // 1: Fitting
+        "M",   // 2: Market
+        "J",   // 3: Journal/Missions
+        "D",   // 4: D-Scan
+        "O",   // 5: Overview
+        "C",   // 6: Chat
+        "Dr",  // 7: Drones
+    };
+    static const char* neocomTooltips[] = {
+        "Inventory",
+        "Ship Fitting",
+        "Market",
+        "Missions",
+        "Directional Scan",
+        "Overview",
+        "Chat",
+        "Drones",
+    };
 
-    for (int i = 0; i < icons; ++i) {
-        Rect iconRect = {x + 2.0f, iconY, iconSz, iconSz};
+    // Icon slot dimensions — square slots with small gap
+    float slotSz = width - 4.0f;
+    float iconY = 8.0f;
+    float iconGap = 2.0f;
+
+    // Top group: Character/Ship (first 2 icons)
+    int topGroup = std::min(icons, 2);
+    for (int i = 0; i < topGroup; ++i) {
+        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
         WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
 
-        // Alternate icon colors for visual variety
-        Color iconColor = (i % 3 == 0) ? t.accentPrimary
-                        : (i % 3 == 1) ? t.textSecondary
-                                       : t.accentDim;
+        const char* sym = (i < 8) ? neocomLabels[i] : "?";
+        Color iconColor = t.textSecondary;
 
-        if (iconButton(ctx, iconID, iconRect, iconColor)) {
+        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
             if (callback) callback(i);
         }
 
-        iconY += iconSz + iconGap;
+        // Show tooltip on hover
+        if (ctx.isHot(iconID) && i < 8) {
+            tooltip(ctx, neocomTooltips[i]);
+        }
+
+        iconY += slotSz + iconGap;
+    }
+
+    // Separator line between groups
+    if (topGroup > 0 && icons > topGroup) {
+        iconY += 2.0f;
+        rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f}, t.borderSubtle);
+        iconY += 5.0f;
+    }
+
+    // Middle group: Services (icons 2..5)
+    int midGroup = std::min(icons, 6);
+    for (int i = topGroup; i < midGroup; ++i) {
+        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
+        WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
+
+        const char* sym = (i < 8) ? neocomLabels[i] : "?";
+        Color iconColor = t.textSecondary;
+
+        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
+            if (callback) callback(i);
+        }
+
+        if (ctx.isHot(iconID) && i < 8) {
+            tooltip(ctx, neocomTooltips[i]);
+        }
+
+        iconY += slotSz + iconGap;
+    }
+
+    // Separator before bottom group
+    if (midGroup > topGroup && icons > midGroup) {
+        iconY += 2.0f;
+        rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f}, t.borderSubtle);
+        iconY += 5.0f;
+    }
+
+    // Bottom group: Social (icons 6+)
+    for (int i = midGroup; i < icons; ++i) {
+        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
+        WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
+
+        const char* sym = (i < 8) ? neocomLabels[i] : "?";
+        Color iconColor = t.textSecondary;
+
+        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
+            if (callback) callback(i);
+        }
+
+        if (ctx.isHot(iconID) && i < 8) {
+            tooltip(ctx, neocomTooltips[i]);
+        }
+
+        iconY += slotSz + iconGap;
     }
 }
 
@@ -861,9 +961,9 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
 
     rr.drawRect(drawBounds, t.bgPanel);
 
-    // Border
+    // Border (Photon skeletal frame)
     if (flags.drawBorder) {
-        rr.drawRectOutline(drawBounds, t.borderSubtle, t.borderWidth);
+        rr.drawRectOutline(drawBounds, t.borderNormal, t.borderWidth);
     }
 
     // Header bar
@@ -875,7 +975,7 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
         float textY = drawBounds.y + (hh - 13.0f) * 0.5f;
         rr.drawText(title, {drawBounds.x + t.padding, textY}, t.textPrimary);
 
-        // Close button (×)
+        // Close button (×) — minimal chrome, feedback on hover
         if (flags.showClose) {
             float btnSz = 14.0f;
             Rect closeRect = {drawBounds.right() - btnSz - 4.0f,
@@ -884,9 +984,10 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
             WidgetID closeID = ctx.currentID("_close");
             bool hovered = ctx.isHovered(closeRect);
             if (hovered) ctx.setHot(closeID);
-            Color closeBg = hovered ? t.danger.withAlpha(0.6f) : t.bgSecondary;
+            Color closeBg = hovered ? t.danger.withAlpha(0.6f) : Color(0, 0, 0, 0);
             rr.drawRect(closeRect, closeBg);
-            rr.drawText("x", {closeRect.x + 3.0f, closeRect.y + 1.0f}, t.textPrimary);
+            rr.drawText("x", {closeRect.x + 3.0f, closeRect.y + 1.0f},
+                        hovered ? t.textPrimary : t.textSecondary);
             if (ctx.buttonBehavior(closeRect, closeID)) {
                 state.open = false;
             }
@@ -902,17 +1003,18 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
             WidgetID minID = ctx.currentID("_min");
             bool hovered = ctx.isHovered(minRect);
             if (hovered) ctx.setHot(minID);
-            Color minBg = hovered ? t.hover : t.bgSecondary;
+            Color minBg = hovered ? t.hover : Color(0, 0, 0, 0);
             rr.drawRect(minRect, minBg);
-            rr.drawText("-", {minRect.x + 3.0f, minRect.y + 1.0f}, t.textPrimary);
+            rr.drawText("-", {minRect.x + 3.0f, minRect.y + 1.0f},
+                        hovered ? t.textPrimary : t.textSecondary);
             if (ctx.buttonBehavior(minRect, minID)) {
                 state.minimized = !state.minimized;
             }
         }
 
-        // Thin accent line under header
+        // Photon accent line under header
         rr.drawRect({drawBounds.x, drawBounds.y + hh - 1.0f, drawBounds.w, 1.0f},
-                    t.accentDim);
+                    t.accentPrimary.withAlpha(0.3f));
     }
 
     return !state.minimized;
@@ -1216,7 +1318,7 @@ int overviewHeaderInteractive(AtlasContext& ctx, const Rect& r,
     // Header background
     rr.drawRect(r, t.bgHeader);
 
-    // Tabs (clickable)
+    // Photon-style tabs: text-only with accent underline on active
     float tabX = r.x + 4.0f;
     float tabH = r.h - 4.0f;
     for (int i = 0; i < static_cast<int>(tabs.size()); ++i) {
@@ -1230,8 +1332,10 @@ int overviewHeaderInteractive(AtlasContext& ctx, const Rect& r,
         bool hovered = ctx.isHot(tabID);
 
         if (i == activeTab) {
-            rr.drawRect(tabRect, t.selection);
+            // Active tab: bright text + accent underline indicator
             rr.drawText(tabs[i], {tabX + 8.0f, r.y + 5.0f}, t.textPrimary);
+            rr.drawRect({tabX + 4.0f, tabRect.bottom() - 2.0f, tw - 8.0f, 2.0f},
+                        t.accentPrimary);
         } else if (hovered) {
             rr.drawRect(tabRect, t.hover);
             rr.drawText(tabs[i], {tabX + 8.0f, r.y + 5.0f}, t.textPrimary);

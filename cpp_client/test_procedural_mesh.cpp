@@ -16,7 +16,7 @@
 #include <string>
 #include <cmath>
 
-using namespace eve;
+using namespace atlas;
 
 // ─── Test helpers ──────────────────────────────────────────────────────
 

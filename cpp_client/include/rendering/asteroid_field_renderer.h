@@ -9,7 +9,7 @@
 #include "shader.h"
 #include "camera.h"
 
-namespace eve {
+namespace atlas {
 
 /**
  * Asteroid Field Renderer
@@ -164,4 +164,4 @@ private:
     float hash(int seed, int index) const;
 };
 
-} // namespace eve
+} // namespace atlas

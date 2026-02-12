@@ -5,7 +5,7 @@
 #include <iostream>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 ChatSystem::ChatSystem(ecs::World* world) : System(world) {}
@@ -241,4 +241,4 @@ bool ChatSystem::isMember(const std::string& channel_entity_id,
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

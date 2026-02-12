@@ -5,7 +5,7 @@
 
 using json = nlohmann::json;
 
-namespace eve {
+namespace atlas {
 
 ProtocolHandler::ProtocolHandler() {
 }
@@ -181,4 +181,4 @@ bool ProtocolHandler::isMarketResponse(const std::string& type) {
            (isSuccessResponse(type) || isErrorResponse(type));
 }
 
-} // namespace eve
+} // namespace atlas

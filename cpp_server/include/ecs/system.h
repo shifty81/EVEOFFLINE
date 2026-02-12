@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace eve {
+namespace atlas {
 namespace ecs {
 
 // Forward declaration
@@ -36,6 +36,6 @@ protected:
 };
 
 } // namespace ecs
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_ECS_SYSTEM_H

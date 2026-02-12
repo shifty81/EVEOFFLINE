@@ -379,7 +379,7 @@ void OverviewPanel::RenderEntityRow(const OverviewEntry& entry, int row_index) {
     }
 }
 
-void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<::eve::Entity>>& entities,
+void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::shared_ptr<::atlas::Entity>>& entities,
                                    const glm::vec3& playerPosition) {
     m_entries.clear();
     
@@ -434,13 +434,13 @@ void OverviewPanel::UpdateEntities(const std::unordered_map<std::string, std::sh
     SortEntries();
 }
 
-void OverviewPanel::UpdateCelestials(const std::vector<::eve::Celestial>& celestials,
+void OverviewPanel::UpdateCelestials(const std::vector<::atlas::Celestial>& celestials,
                                       const glm::vec3& playerPosition) {
     // Append celestial entries to existing entity entries
     // (call after UpdateEntities, or standalone for celestial-only view)
     for (const auto& c : celestials) {
         // Skip sun — typically not shown in EVE overview
-        if (c.type == ::eve::Celestial::Type::SUN) continue;
+        if (c.type == ::atlas::Celestial::Type::SUN) continue;
 
         OverviewEntry entry;
         entry.entity_id = c.id;
@@ -453,12 +453,12 @@ void OverviewPanel::UpdateCelestials(const std::vector<::eve::Celestial>& celest
 
         // Map celestial type to display string
         switch (c.type) {
-            case ::eve::Celestial::Type::PLANET:        entry.ship_type = "Planet";        break;
-            case ::eve::Celestial::Type::MOON:          entry.ship_type = "Moon";          break;
-            case ::eve::Celestial::Type::STATION:       entry.ship_type = "Station";       break;
-            case ::eve::Celestial::Type::STARGATE:      entry.ship_type = "Stargate";      break;
-            case ::eve::Celestial::Type::ASTEROID_BELT: entry.ship_type = "Asteroid Belt"; break;
-            case ::eve::Celestial::Type::WORMHOLE:      entry.ship_type = "Wormhole";      break;
+            case ::atlas::Celestial::Type::PLANET:        entry.ship_type = "Planet";        break;
+            case ::atlas::Celestial::Type::MOON:          entry.ship_type = "Moon";          break;
+            case ::atlas::Celestial::Type::STATION:       entry.ship_type = "Station";       break;
+            case ::atlas::Celestial::Type::STARGATE:      entry.ship_type = "Stargate";      break;
+            case ::atlas::Celestial::Type::ASTEROID_BELT: entry.ship_type = "Asteroid Belt"; break;
+            case ::atlas::Celestial::Type::WORMHOLE:      entry.ship_type = "Wormhole";      break;
             default:                                    entry.ship_type = "Celestial";     break;
         }
 

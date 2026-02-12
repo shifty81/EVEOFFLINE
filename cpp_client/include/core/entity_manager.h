@@ -7,7 +7,7 @@
 #include <string>
 #include <functional>
 
-namespace eve {
+namespace atlas {
 
 /**
  * Client-side entity manager
@@ -100,4 +100,4 @@ private:
     EntityCallback m_onEntityUpdated;
 };
 
-} // namespace eve
+} // namespace atlas

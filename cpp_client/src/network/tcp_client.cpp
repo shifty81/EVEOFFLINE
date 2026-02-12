@@ -19,7 +19,7 @@
     #define SOCKET_ERROR -1
 #endif
 
-namespace eve {
+namespace atlas {
 
 #ifdef _WIN32
 struct WSAInitializer {
@@ -231,4 +231,4 @@ void TCPClient::receiveThread() {
     }
 }
 
-} // namespace eve
+} // namespace atlas

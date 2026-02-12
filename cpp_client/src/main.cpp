@@ -4,10 +4,10 @@
 #include <cstdlib>
 
 int main(int argc, char** argv) {
-    // Initialize file logging so all output is captured to logs/eve_client.log.
+    // Initialize file logging so all output is captured to logs/atlas_client.log.
     // This ensures error messages are preserved even if the console window
     // closes immediately on crash or exit.
-    eve::FileLogger::init();
+    atlas::FileLogger::init();
 
     try {
         // Parse command line arguments
@@ -22,17 +22,17 @@ int main(int argc, char** argv) {
         std::cout << std::endl;
 
         // Create and run application
-        eve::Application app("EVE OFFLINE - " + characterName, 1280, 720);
+        atlas::Application app("EVE OFFLINE - " + characterName, 1280, 720);
         app.run();
 
         std::cout << "Client shutting down gracefully." << std::endl;
-        eve::FileLogger::shutdown();
+        atlas::FileLogger::shutdown();
         return EXIT_SUCCESS;
     }
     catch (const std::exception& e) {
         std::cerr << "Fatal error: " << e.what() << std::endl;
-        std::cerr << "See logs/eve_client.log for details." << std::endl;
-        eve::FileLogger::shutdown();
+        std::cerr << "See logs/atlas_client.log for details." << std::endl;
+        atlas::FileLogger::shutdown();
         return EXIT_FAILURE;
     }
 }

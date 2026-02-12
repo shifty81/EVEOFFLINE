@@ -4,7 +4,7 @@
 #include <cmath>
 #include <sstream>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 static uint32_t s_next_wreck_id = 1;
@@ -121,4 +121,4 @@ int WreckSalvageSystem::getActiveWreckCount() const {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

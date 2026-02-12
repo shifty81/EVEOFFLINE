@@ -10,7 +10,7 @@
 #include "rendering/frustum_culler.h"
 #include "rendering/lod_manager.h"
 
-using namespace eve;
+using namespace atlas;
 
 // Simple test framework
 struct TestResult {

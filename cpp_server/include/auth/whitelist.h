@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <mutex>
 
-namespace eve {
+namespace atlas {
 namespace auth {
 
 /**
@@ -49,6 +49,6 @@ private:
 };
 
 } // namespace auth
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_WHITELIST_H

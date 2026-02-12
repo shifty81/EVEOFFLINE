@@ -1,7 +1,7 @@
 #include "core/entity_message_parser.h"
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 
 glm::vec3 EntityMessageParser::parsePosition(const nlohmann::json& posJson) {
     float x = posJson.value("x", 0.0f);
@@ -181,4 +181,4 @@ bool EntityMessageParser::parseStateUpdate(const std::string& dataJson, EntityMa
     }
 }
 
-} // namespace eve
+} // namespace atlas

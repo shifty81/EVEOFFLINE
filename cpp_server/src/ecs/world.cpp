@@ -1,7 +1,7 @@
 #include "ecs/world.h"
 #include <iostream>
 
-namespace eve {
+namespace atlas {
 namespace ecs {
 
 Entity* World::createEntity(const std::string& id) {
@@ -53,4 +53,4 @@ void World::update(float delta_time) {
 }
 
 } // namespace ecs
-} // namespace eve
+} // namespace atlas

@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 /**
@@ -182,6 +182,6 @@ private:
 };
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas
 
 #endif // EVE_SYSTEMS_FLEET_SYSTEM_H

@@ -9,7 +9,7 @@
 #include "shader.h"
 #include "camera.h"
 
-namespace eve {
+namespace atlas {
 
 /**
  * Station Renderer
@@ -168,4 +168,4 @@ private:
     const FactionVisuals& getFactionVisuals(FactionStyle faction) const;
 };
 
-} // namespace eve
+} // namespace atlas

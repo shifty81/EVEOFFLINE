@@ -3,7 +3,7 @@
 #include "components/game_components.h"
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 namespace systems {
 
 ModuleSystem::ModuleSystem(ecs::World* world)
@@ -154,4 +154,4 @@ bool ModuleSystem::validateFitting(const std::string& entity_id) {
 }
 
 } // namespace systems
-} // namespace eve
+} // namespace atlas

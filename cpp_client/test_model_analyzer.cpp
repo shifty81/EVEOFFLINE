@@ -19,7 +19,7 @@
 #include <cmath>
 #include <filesystem>
 
-using namespace eve;
+using namespace atlas;
 
 // ─── Test helpers ──────────────────────────────────────────────────────
 

@@ -7,7 +7,7 @@
 #include <iostream>
 #include <random>
 
-namespace eve {
+namespace atlas {
 
 // Mathematical constants
 constexpr float PI = 3.14159265358979323846f;
@@ -682,4 +682,4 @@ void ShipPartLibrary::createPartsFromLearnedModels(const ReferenceModelAnalyzer&
               << partIdPrefix << "'" << std::endl;
 }
 
-} // namespace eve
+} // namespace atlas

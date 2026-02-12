@@ -5,7 +5,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-namespace eve {
+namespace atlas {
 
 // Forward declarations
 class Window;
@@ -17,7 +17,7 @@ class EmbeddedServer;
 class SessionManager;
 class SolarSystemScene;
 
-} // namespace eve
+} // namespace atlas
 
 namespace UI {
     class RmlUiManager;
@@ -31,7 +31,7 @@ namespace atlas {
     class AtlasContext;
 }
 
-namespace eve {
+namespace atlas {
 
 /**
  * Main application class for EVE OFFLINE client
@@ -290,4 +290,4 @@ private:
     std::string m_localPlayerId = "player_local";
 };
 
-} // namespace eve
+} // namespace atlas

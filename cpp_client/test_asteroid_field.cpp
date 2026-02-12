@@ -16,7 +16,7 @@
 #include "rendering/asteroid_field_renderer.h"
 #include "ui/input_handler.h"
 
-using namespace eve;
+using namespace atlas;
 
 // Window dimensions
 const int WINDOW_WIDTH = 1280;

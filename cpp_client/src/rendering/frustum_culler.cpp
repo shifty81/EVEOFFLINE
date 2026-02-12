@@ -3,7 +3,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace eve {
+namespace atlas {
 
 // ============================================================================
 // Frustum Implementation
@@ -172,4 +172,4 @@ bool FrustumCuller::isVisible(const glm::vec3& min, const glm::vec3& max) const 
     return visible;
 }
 
-} // namespace eve
+} // namespace atlas

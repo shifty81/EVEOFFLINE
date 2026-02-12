@@ -4,7 +4,7 @@
 #include <iostream>
 #include <stdexcept>
 
-namespace eve {
+namespace atlas {
 
 Window::Window(const std::string& title, int width, int height)
     : m_window(nullptr)
@@ -141,4 +141,4 @@ void Window::scrollCallbackStatic(GLFWwindow* window, double xoffset, double yof
     }
 }
 
-} // namespace eve
+} // namespace atlas

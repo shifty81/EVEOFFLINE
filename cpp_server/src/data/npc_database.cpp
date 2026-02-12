@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cctype>
 
-namespace eve {
+namespace atlas {
 namespace data {
 
 // ---------------------------------------------------------------------------
@@ -340,4 +340,4 @@ std::string NpcDatabase::extractBlock(const std::string& json, const std::string
 }
 
 } // namespace data
-} // namespace eve
+} // namespace atlas
