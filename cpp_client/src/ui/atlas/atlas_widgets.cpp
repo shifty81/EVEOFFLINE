@@ -1547,7 +1547,8 @@ void fleetBroadcastBanner(AtlasContext& ctx, const Rect& r,
 
     for (int i = 0; i < count; ++i) {
         const auto& bc = broadcasts[start + i];
-        float alpha = 1.0f - (bc.age / std::max(bc.maxAge, 0.01f));
+        float safeMaxAge = bc.maxAge > 0.0f ? bc.maxAge : 0.01f;
+        float alpha = 1.0f - (bc.age / safeMaxAge);
         if (alpha <= 0.0f) continue;
 
         float y = r.y + i * rowH;

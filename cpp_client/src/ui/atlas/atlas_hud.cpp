@@ -383,11 +383,15 @@ void AtlasHUD::drawDroneStatus(AtlasContext& ctx) {
 void AtlasHUD::addFleetBroadcast(const std::string& sender,
                                   const std::string& message,
                                   const Color& color) {
+    // Detect default (white) color and substitute a themed accent
+    auto isDefaultColor = [](const Color& c) {
+        return c.r == 1.0f && c.g == 1.0f && c.b == 1.0f;
+    };
+
     FleetBroadcast bc;
     bc.sender = sender;
     bc.message = message;
-    bc.color = (color.r == 1.0f && color.g == 1.0f && color.b == 1.0f)
-                ? atlas::defaultTheme().accentCombat : color;
+    bc.color = isDefaultColor(color) ? atlas::defaultTheme().accentCombat : color;
     bc.age = 0.0f;
     bc.maxAge = 8.0f;
     m_broadcasts.push_back(bc);
