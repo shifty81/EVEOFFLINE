@@ -22,6 +22,11 @@ bool panelBegin(AtlasContext& ctx, const char* title,
 
     ctx.pushID(title);
 
+    // Consume mouse if clicking within the panel body to prevent click-through
+    if (ctx.isHovered(bounds) && ctx.isMouseClicked() && !ctx.isMouseConsumed()) {
+        ctx.consumeMouse();
+    }
+
     // Photon-style panel: dark translucent fill with skeletal frame
     r.drawRect(bounds, t.bgPanel);
 
@@ -928,14 +933,16 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
         Rect headerHit = {state.bounds.x, state.bounds.y, state.bounds.w, hh};
         WidgetID dragID = ctx.currentID("_drag");
 
-        if (ctx.isHovered(headerHit) && ctx.isMouseClicked()) {
+        if (!ctx.isMouseConsumed() && ctx.isHovered(headerHit) && ctx.isMouseClicked()) {
             state.dragging = true;
             state.dragOffset = {ctx.input().mousePos.x - state.bounds.x,
                                 ctx.input().mousePos.y - state.bounds.y};
             ctx.setActive(dragID);
+            ctx.consumeMouse();
         }
 
         if (state.dragging) {
+            ctx.consumeMouse();
             if (ctx.isMouseDown()) {
                 state.bounds.x = ctx.input().mousePos.x - state.dragOffset.x;
                 state.bounds.y = ctx.input().mousePos.y - state.dragOffset.y;
@@ -950,6 +957,11 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
                 ctx.clearActive();
             }
         }
+    }
+
+    // Consume mouse if clicking within the panel body to prevent click-through
+    if (ctx.isHovered(state.bounds) && ctx.isMouseClicked() && !ctx.isMouseConsumed()) {
+        ctx.consumeMouse();
     }
 
     // Draw panel background
