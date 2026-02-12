@@ -1,4 +1,4 @@
-# Contributing to EVE OFFLINE
+# Contributing to Atlas
 
 Thank you for your interest in contributing to EVE OFFLINE! This document provides guidelines for contributing to the project.
 

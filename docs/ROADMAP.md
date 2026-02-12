@@ -1,4 +1,4 @@
-# EVE OFFLINE - Project Roadmap
+# Atlas — Project Roadmap
 
 **Status**: In active R&D and development — actively testing until further notice
 

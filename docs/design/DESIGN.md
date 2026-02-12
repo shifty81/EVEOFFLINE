@@ -1,4 +1,4 @@
-# EVE OFFLINE - Design Document
+# Atlas — Design Document
 
 > **Status**: In active R&D and development. Actively testing until further notice.
 

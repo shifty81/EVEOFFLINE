@@ -1,4 +1,4 @@
-# EVE OFFLINE - Modding Guide
+# Atlas — Modding Guide
 
 Welcome to the EVE OFFLINE modding guide! This document will teach you how to create and modify game content using JSON files and custom 3D models.
 
