@@ -466,6 +466,21 @@ void Application::setupUICallbacks() {
         }
     });
     std::cout << "  - Selected item panel callbacks wired" << std::endl;
+
+    // === Setup Overview Interaction Callbacks ===
+    m_atlasHUD->setOverviewSelectCb([this](const std::string& entityId) {
+        targetEntity(entityId, false);
+        std::cout << "[Overview] Selected entity: " << entityId << std::endl;
+    });
+
+    m_atlasHUD->setOverviewRightClickCb([this](const std::string& entityId, float screenX, float screenY) {
+        bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), entityId) != m_targetList.end();
+        m_contextMenu->ShowEntityMenu(entityId, isLocked);
+        m_contextMenu->SetScreenPosition(screenX, screenY);
+        std::cout << "[Overview] Right-click context menu for: " << entityId << std::endl;
+    });
+
+    std::cout << "  - Overview interaction callbacks wired" << std::endl;
     
     std::cout << "UI callbacks setup complete" << std::endl;
 }
@@ -625,6 +640,7 @@ void Application::render() {
             for (const auto& pair : m_gameClient->getEntityManager().getAllEntities()) {
                 if (pair.first == m_localPlayerId) continue;
                 atlas::OverviewEntry entry;
+                entry.entityId = pair.first;
                 entry.name = pair.second->getShipName().empty() ? pair.first : pair.second->getShipName();
                 entry.type = pair.second->getShipType();
                 entry.distance = glm::distance(playerPos, pair.second->getPosition());
@@ -674,18 +690,18 @@ void Application::render() {
         // Update mode indicator text on the HUD
         m_atlasHUD->setModeIndicator(m_activeModeText);
         
-        m_atlasHUD->update(*m_atlasCtx, shipData, atlasTargets, atlasOverview, atlasSelected);
-        
-        // Render Context Menu via Atlas (inside the Atlas frame)
+        // Render Context Menu FIRST — it must get input priority over panels
         if (m_contextMenu && m_contextMenu->IsOpen()) {
             m_contextMenu->RenderAtlas(*m_atlasCtx);
         }
 
-        // Render Radial Menu via Atlas (inside the Atlas frame)
+        // Render Radial Menu (also higher priority than panels)
         if (m_radialMenu && m_radialMenuOpen) {
             m_radialMenu->RenderAtlas(*m_atlasCtx);
         }
 
+        m_atlasHUD->update(*m_atlasCtx, shipData, atlasTargets, atlasOverview, atlasSelected);
+        
         m_atlasCtx->endFrame();
 
         // Record whether Atlas UI consumed the mouse this frame so that
@@ -919,19 +935,10 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                             *m_camera, entityList);
                         
                         if (!pickedId.empty()) {
-                            // Show entity context menu
+                            // Show entity context menu (Atlas only — no RmlUi duplicate)
                             bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), pickedId) != m_targetList.end();
                             m_contextMenu->ShowEntityMenu(pickedId, isLocked);
                             m_contextMenu->SetScreenPosition(static_cast<float>(x), static_cast<float>(y));
-                            // Show via RmlUi
-                            if (m_uiManager) {
-                                auto entity = m_gameClient->getEntityManager().getEntity(pickedId);
-                                std::string name = entity ? entity->getShipName() : pickedId;
-                                std::string type = entity ? entity->getShipType() : "Unknown";
-                                m_uiManager->SetContextMenuEntityId(pickedId);
-                                m_uiManager->ShowContextMenu(name, type,
-                                    static_cast<float>(x), static_cast<float>(y));
-                            }
                         } else {
                             // Show empty space menu
                             // For now, just close any existing menu
@@ -1234,6 +1241,7 @@ void Application::openInfoPanelForEntity(const std::string& entityId) {
 void Application::commandApproach(const std::string& entityId) {
     m_currentMoveCommand = MoveCommand::Approach;
     m_moveTargetId = entityId;
+    m_activeModeText = "APPROACHING";
     std::cout << "[Movement] Approaching " << entityId << std::endl;
 }
 
@@ -1241,6 +1249,7 @@ void Application::commandOrbit(const std::string& entityId, float distance) {
     m_currentMoveCommand = MoveCommand::Orbit;
     m_moveTargetId = entityId;
     m_orbitDistance = distance;
+    m_activeModeText = "ORBITING";
     std::cout << "[Movement] Orbiting " << entityId << " at " << distance << "m" << std::endl;
 }
 
@@ -1248,18 +1257,21 @@ void Application::commandKeepAtRange(const std::string& entityId, float distance
     m_currentMoveCommand = MoveCommand::KeepAtRange;
     m_moveTargetId = entityId;
     m_keepAtRangeDistance = distance;
+    m_activeModeText = "KEEP AT RANGE";
     std::cout << "[Movement] Keeping at range " << distance << "m from " << entityId << std::endl;
 }
 
 void Application::commandAlignTo(const std::string& entityId) {
     m_currentMoveCommand = MoveCommand::AlignTo;
     m_moveTargetId = entityId;
+    m_activeModeText = "ALIGNING";
     std::cout << "[Movement] Aligning to " << entityId << std::endl;
 }
 
 void Application::commandWarpTo(const std::string& entityId) {
     m_currentMoveCommand = MoveCommand::WarpTo;
     m_moveTargetId = entityId;
+    m_activeModeText = "WARPING";
     std::cout << "[Movement] Warping to " << entityId << std::endl;
 }
 

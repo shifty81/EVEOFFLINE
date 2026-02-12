@@ -116,6 +116,9 @@ public:
     /** Check if left mouse was just clicked this frame. */
     bool isMouseClicked() const { return m_input.mouseClicked[0]; }
 
+    /** Check if right mouse was just clicked this frame. */
+    bool isRightMouseClicked() const { return m_input.mouseClicked[1]; }
+
     // ── Mouse consumption (prevents click-through) ──────────────────
 
     /** Mark the mouse as consumed — subsequent widgets should ignore clicks. */

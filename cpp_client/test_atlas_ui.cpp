@@ -453,9 +453,9 @@ void testAtlasHUD() {
     };
 
     std::vector<atlas::OverviewEntry> overview = {
-        {"Pirate Frigate", "Frigate", 12000.0f, 350.0f, {0.8f, 0.2f, 0.2f}, true},
-        {"Mining Barge", "Mining Barge", 5000.0f, 0.0f, {0.2f, 0.6f, 1.0f}, false},
-        {"Station", "Station", 45000.0f, 0.0f, {0.667f, 0.667f, 0.667f}, false},
+        {"pirate_1", "Pirate Frigate", "Frigate", 12000.0f, 350.0f, {0.8f, 0.2f, 0.2f}, true},
+        {"miner_1", "Mining Barge", "Mining Barge", 5000.0f, 0.0f, {0.2f, 0.6f, 1.0f}, false},
+        {"station_1", "Station", "Station", 45000.0f, 0.0f, {0.667f, 0.667f, 0.667f}, false},
     };
 
     atlas::SelectedItemInfo selected;
