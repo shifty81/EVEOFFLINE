@@ -732,9 +732,9 @@ std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string&
             float yPos = config.overallScale * 0.15f;  // Above the hull
             float zPos = 0.0f;
             
-            // Alternate sides for some visual variety
-            if (i % 2 == 1 && !config.enforceSymmetry) {
-                zPos = config.overallScale * 0.1f * (i % 2 == 0 ? 1.0f : -1.0f);
+            // Alternate sides for some visual variety (if asymmetry allowed)
+            if (config.allowAsymmetry && i % 2 == 1) {
+                zPos = config.overallScale * 0.1f;
             }
             
             glm::vec3 turretPos(xPos * config.overallScale, yPos, zPos);
