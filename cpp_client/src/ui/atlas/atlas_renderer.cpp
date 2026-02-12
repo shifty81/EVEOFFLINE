@@ -15,10 +15,12 @@
 // When building inside the full client the real GL headers are
 // available via GLAD or GLEW.  For the server-side test build we provide
 // stub types so the translation unit compiles without GPU access.
-#if __has_include(<GL/glew.h>)
+// ATLAS_HEADLESS is defined for test targets to force stub mode even
+// when GLEW/GLAD headers are present in the build environment.
+#if !defined(ATLAS_HEADLESS) && __has_include(<GL/glew.h>)
 #include <GL/glew.h>
 #define ATLAS_HAS_GL 1
-#elif __has_include(<glad/glad.h>)
+#elif !defined(ATLAS_HEADLESS) && __has_include(<glad/glad.h>)
 #include <glad/glad.h>
 #define ATLAS_HAS_GL 1
 #else
@@ -602,17 +604,34 @@ void AtlasRenderer::drawRectOutline(const Rect& r, const Color& c,
 
 void AtlasRenderer::drawRoundedRectOutline(const Rect& r, const Color& c,
                                              float radius, float width) {
-    // Simple approximation: draw filled rounded rect, then a smaller
-    // inner one in the panel background color.  For a production system
-    // this would use a proper stroke path, but this is sufficient for
-    // the Atlas UI panel borders.
-    drawRoundedRect(r, c, radius);
-    Rect inner = {r.x + width, r.y + width,
-                  r.w - 2*width, r.h - 2*width};
-    // We can't "erase" here, so outline is done via drawRectOutline
-    // for the sharp-corner fallback.
-    (void)inner;
-    (void)radius;
+    // Draw each edge as a thin filled rect and each corner as a small arc.
+    // Top edge (between the two top corners)
+    drawRect({r.x + radius, r.y, r.w - 2*radius, width}, c);
+    // Bottom edge
+    drawRect({r.x + radius, r.bottom() - width, r.w - 2*radius, width}, c);
+    // Left edge
+    drawRect({r.x, r.y + radius, width, r.h - 2*radius}, c);
+    // Right edge
+    drawRect({r.right() - width, r.y + radius, width, r.h - 2*radius}, c);
+
+    // Corner arcs (quarter circles)
+    int segs = 8;
+    float pi = 3.14159265358979323846f;
+    float halfW = width * 0.5f;
+    float arcR = radius - halfW;  // radius of the arc centreline
+    if (arcR < 0.5f) return;      // radius too small for arcs, edges are enough
+    // Top-left corner
+    drawArc({r.x + radius, r.y + radius}, arcR - halfW, arcR + halfW,
+            pi, pi * 1.5f, c, segs);
+    // Top-right corner
+    drawArc({r.right() - radius, r.y + radius}, arcR - halfW, arcR + halfW,
+            pi * 1.5f, pi * 2.0f, c, segs);
+    // Bottom-right corner
+    drawArc({r.right() - radius, r.bottom() - radius}, arcR - halfW, arcR + halfW,
+            0.0f, pi * 0.5f, c, segs);
+    // Bottom-left corner
+    drawArc({r.x + radius, r.bottom() - radius}, arcR - halfW, arcR + halfW,
+            pi * 0.5f, pi, c, segs);
 }
 
 void AtlasRenderer::drawLine(Vec2 a, Vec2 b, const Color& c, float w) {

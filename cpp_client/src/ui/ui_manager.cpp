@@ -488,7 +488,7 @@ void UIManager::RenderDScanContent(float x, float y, float contentW, float maxY)
     // Scan button
     atlas::Rect scanBtn(x, y, 80.0f, 22.0f);
     if (atlas::button(m_ctx, "SCAN", scanBtn)) {
-        // Scan button pressed
+        if (m_dscanPanel) m_dscanPanel->ConsumesScanRequest();
     }
     y += 30.0f;
 
@@ -727,17 +727,31 @@ void UIManager::RenderProbeScannerContent(float x, float y, float contentW, floa
     const auto& theme = m_ctx.theme();
     auto& r = m_ctx.renderer();
 
-    atlas::label(m_ctx, atlas::Vec2(x, y), "Probe Scanner", theme.textPrimary);
+    if (!m_probeScannerPanel) return;
+
+    // Probe deployment info
+    char probeBuf[64];
+    std::snprintf(probeBuf, sizeof(probeBuf), "Probes: %d deployed",
+                  m_probeScannerPanel->GetProbeCount());
+    r.drawText(probeBuf, atlas::Vec2(x, y), theme.textPrimary, 1.0f);
+    y += 16.0f;
+    char rangeBuf[64];
+    std::snprintf(rangeBuf, sizeof(rangeBuf), "Scan Range: %.1f AU",
+                  m_probeScannerPanel->GetProbeRange());
+    r.drawText(rangeBuf, atlas::Vec2(x, y), theme.textSecondary, 1.0f);
     y += 20.0f;
-    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
-    y += 8.0f;
 
     // Scan button
     atlas::Rect scanBtn(x, y, 100.0f, 22.0f);
     if (atlas::button(m_ctx, "Analyze", scanBtn)) {
-        // Trigger scan
+        if (m_probeScannerPanel->ConsumesScanRequest()) {
+            // Callback handled internally
+        }
     }
     y += 30.0f;
+
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
 
     atlas::label(m_ctx, atlas::Vec2(x, y), "Deploy probes and scan to find signatures", theme.textSecondary);
 }

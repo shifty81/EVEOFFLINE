@@ -1103,6 +1103,7 @@ if(BUILD_TESTS)
         src/ui/rml_ui_manager.cpp
     )
     target_include_directories(test_atlas_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_compile_definitions(test_atlas_ui PRIVATE ATLAS_HEADLESS)
     target_link_libraries(test_atlas_ui
         Threads::Threads
         glm::glm

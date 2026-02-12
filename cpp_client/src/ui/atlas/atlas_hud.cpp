@@ -48,6 +48,9 @@ void AtlasHUD::init(int windowW, int windowH) {
 
     m_dronePanelState.bounds = {60.0f, 300.0f, 320.0f, 400.0f};
     m_dronePanelState.open = false;
+
+    m_probeScannerState.bounds = {420.0f, 300.0f, 380.0f, 420.0f};
+    m_probeScannerState.open = false;
 }
 
 void AtlasHUD::update(AtlasContext& ctx,
@@ -114,6 +117,7 @@ void AtlasHUD::update(AtlasContext& ctx,
     drawDockablePanel(ctx, "D-Scan", m_dscanState);
     drawDockablePanel(ctx, "Chat", m_chatState);
     drawDockablePanel(ctx, "Drones", m_dronePanelState);
+    drawDockablePanel(ctx, "Probe Scanner", m_probeScannerState);
 
     // 12. Damage flashes (on top of everything)
     float winW = static_cast<float>(ctx.input().windowW);
@@ -182,6 +186,16 @@ void AtlasHUD::drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship) {
     // Speed indicator (below module rack)
     speedIndicator(ctx, {hudCentre.x, winH - 12.0f},
                    ship.currentSpeed, ship.maxSpeed);
+
+    // Keyboard shortcuts: F1–F8 activate high-slot modules
+    if (m_moduleCallback) {
+        const auto& input = ctx.input();
+        for (int k = 0; k < 8; ++k) {
+            if (input.keyPressed[Key::F1 + k]) {
+                m_moduleCallback(k);
+            }
+        }
+    }
 }
 
 // ── Target Cards ────────────────────────────────────────────────────
@@ -577,35 +591,146 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
         label(ctx, Vec2(x + 8, y), "No buy orders", t.textSecondary);
 
     } else if (titleStr == "Missions") {
-        label(ctx, Vec2(x, y), "No Active Mission", t.textSecondary);
-        y += 20.0f;
-        label(ctx, Vec2(x, y), "Visit an agent to accept a mission", t.textSecondary);
+        if (!m_missionInfo.active) {
+            label(ctx, Vec2(x, y), "No Active Mission", t.textSecondary);
+            y += 20.0f;
+            label(ctx, Vec2(x, y), "Visit an agent to accept a mission", t.textSecondary);
+        } else {
+            // Mission name
+            r.drawText(m_missionInfo.name, Vec2(x, y), t.accentPrimary, 1.0f);
+            y += 18.0f;
+
+            // Mission type and level
+            char infoBuf[128];
+            std::snprintf(infoBuf, sizeof(infoBuf), "Level %d %s",
+                          m_missionInfo.level, m_missionInfo.type.c_str());
+            r.drawText(infoBuf, Vec2(x, y), t.textSecondary, 1.0f);
+            y += 16.0f;
+
+            if (!m_missionInfo.agentName.empty()) {
+                char agentBuf[128];
+                std::snprintf(agentBuf, sizeof(agentBuf), "Agent: %s",
+                              m_missionInfo.agentName.c_str());
+                r.drawText(agentBuf, Vec2(x, y), t.textSecondary, 1.0f);
+                y += 16.0f;
+            }
+
+            // Time limit
+            if (m_missionInfo.timeLimitHours > 0.0f && y < maxY - 60.0f) {
+                char timeBuf[64];
+                float remaining = m_missionInfo.timeLimitHours - m_missionInfo.timeElapsedHours;
+                if (remaining < 0.0f) remaining = 0.0f;
+                std::snprintf(timeBuf, sizeof(timeBuf), "Time: %.1f / %.1f hrs",
+                              m_missionInfo.timeElapsedHours, m_missionInfo.timeLimitHours);
+                r.drawText(timeBuf, Vec2(x, y),
+                           remaining < 1.0f ? t.danger : t.textSecondary, 1.0f);
+                y += 16.0f;
+                float timePct = m_missionInfo.timeElapsedHours / m_missionInfo.timeLimitHours;
+                Rect timeBar(x, y, contentW, 10.0f);
+                Color barColor = timePct > 0.8f ? t.danger : t.accentPrimary;
+                r.drawProgressBar(timeBar, timePct, barColor, t.bgHeader);
+                y += 16.0f;
+            }
+
+            y += 4.0f;
+            separator(ctx, Vec2(x, y), contentW);
+            y += 8.0f;
+
+            // Objectives
+            r.drawText("Objectives:", Vec2(x, y), t.textPrimary, 1.0f);
+            y += 16.0f;
+            for (const auto& obj : m_missionInfo.objectives) {
+                if (y > maxY - 40.0f) break;
+                Color objColor = obj.completed ? t.success : t.textSecondary;
+                const char* marker = obj.completed ? "[x] " : "[ ] ";
+                char objBuf[256];
+                std::snprintf(objBuf, sizeof(objBuf), "%s%s",
+                              marker, obj.description.c_str());
+                r.drawText(objBuf, Vec2(x + 8.0f, y), objColor, 1.0f);
+                y += 14.0f;
+            }
+
+            y += 8.0f;
+            separator(ctx, Vec2(x, y), contentW);
+            y += 8.0f;
+
+            // Rewards
+            if (y < maxY - 40.0f) {
+                r.drawText("Rewards:", Vec2(x, y), t.textPrimary, 1.0f);
+                y += 16.0f;
+                if (m_missionInfo.iskReward > 0) {
+                    char iskBuf[64];
+                    std::snprintf(iskBuf, sizeof(iskBuf), "ISK: %.0f",
+                                  m_missionInfo.iskReward);
+                    r.drawText(iskBuf, Vec2(x + 8.0f, y), t.warning, 1.0f);
+                    y += 14.0f;
+                }
+                if (m_missionInfo.lpReward > 0) {
+                    char lpBuf[64];
+                    std::snprintf(lpBuf, sizeof(lpBuf), "LP: %.0f",
+                                  m_missionInfo.lpReward);
+                    r.drawText(lpBuf, Vec2(x + 8.0f, y), t.accentSecondary, 1.0f);
+                    y += 14.0f;
+                }
+            }
+        }
 
     } else if (titleStr == "D-Scan") {
         // Scan controls
-        r.drawText("Angle: 360 deg", Vec2(x, y), t.textSecondary, 1.0f);
+        char angleBuf[32];
+        std::snprintf(angleBuf, sizeof(angleBuf), "Angle: %.0f deg", m_dscanAngle);
+        r.drawText(angleBuf, Vec2(x, y), t.textSecondary, 1.0f);
         y += 16.0f;
-        r.drawText("Range: 14.3 AU", Vec2(x, y), t.textSecondary, 1.0f);
+        char rangeBuf[32];
+        std::snprintf(rangeBuf, sizeof(rangeBuf), "Range: %.1f AU", m_dscanRange);
+        r.drawText(rangeBuf, Vec2(x, y), t.textSecondary, 1.0f);
         y += 20.0f;
-        // Scan button
+        // Scan button (also triggered by V key)
         Rect scanBtn(x, y, 80.0f, 22.0f);
-        if (button(ctx, "SCAN", scanBtn)) {
-            // Scan button pressed
+        bool scanPressed = button(ctx, "SCAN", scanBtn);
+        if (ctx.input().keyPressed[Key::V]) scanPressed = true;
+        if (scanPressed && m_dscanCallback) {
+            m_dscanCallback();
         }
         y += 30.0f;
         separator(ctx, Vec2(x, y), contentW);
         y += 8.0f;
 
         // Results header
-        r.drawText("Results: 0", Vec2(x, y), t.textPrimary, 1.0f);
+        char countBuf[32];
+        std::snprintf(countBuf, sizeof(countBuf), "Results: %d",
+                      static_cast<int>(m_dscanResults.size()));
+        r.drawText(countBuf, Vec2(x, y), t.textPrimary, 1.0f);
         y += 18.0f;
-        r.drawText("Name", Vec2(x, y), t.textSecondary, 1.0f);
-        r.drawText("Type", Vec2(x + contentW * 0.5f, y), t.textSecondary, 1.0f);
-        r.drawText("Dist", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
-        y += 16.0f;
-        separator(ctx, Vec2(x, y), contentW);
-        y += 8.0f;
-        label(ctx, Vec2(x, y), "No scan results", t.textSecondary);
+
+        if (m_dscanResults.empty()) {
+            label(ctx, Vec2(x, y), "No scan results", t.textSecondary);
+        } else {
+            // Column headers
+            r.drawText("Name", Vec2(x, y), t.textSecondary, 1.0f);
+            r.drawText("Type", Vec2(x + contentW * 0.5f, y), t.textSecondary, 1.0f);
+            r.drawText("Dist", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
+            y += 16.0f;
+            separator(ctx, Vec2(x, y), contentW);
+            y += 4.0f;
+
+            for (size_t i = 0; i < m_dscanResults.size() && y < maxY - 16.0f; ++i) {
+                if (i % 2 == 1) {
+                    r.drawRect(Rect(x, y, contentW, 16.0f),
+                               t.bgHeader.withAlpha(0.3f));
+                }
+                r.drawText(m_dscanResults[i].name,
+                           Vec2(x + 2, y + 1), t.textPrimary, 1.0f);
+                r.drawText(m_dscanResults[i].type,
+                           Vec2(x + contentW * 0.5f, y + 1), t.textSecondary, 1.0f);
+                char distBuf[32];
+                std::snprintf(distBuf, sizeof(distBuf), "%.1f AU",
+                              m_dscanResults[i].distance);
+                r.drawText(distBuf,
+                           Vec2(x + contentW * 0.8f, y + 1), t.textSecondary, 1.0f);
+                y += 16.0f;
+            }
+        }
 
     } else if (titleStr == "Chat") {
         // Channel tab
@@ -640,6 +765,91 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
         r.drawText("In Space (0)", Vec2(x, y), t.textPrimary, 1.0f);
         y += 18.0f;
         r.drawText("In Bay (0)", Vec2(x, y), t.textPrimary, 1.0f);
+
+    } else if (titleStr == "Probe Scanner") {
+        // Probe deployment info
+        char probeBuf[64];
+        std::snprintf(probeBuf, sizeof(probeBuf), "Probes: %d deployed", m_probeCount);
+        r.drawText(probeBuf, Vec2(x, y), t.textPrimary, 1.0f);
+        y += 16.0f;
+        char rangeBuf[64];
+        std::snprintf(rangeBuf, sizeof(rangeBuf), "Scan Range: %.1f AU", m_probeRange);
+        r.drawText(rangeBuf, Vec2(x, y), t.textSecondary, 1.0f);
+        y += 20.0f;
+
+        // Analyze button
+        Rect analyzeBtn(x, y, 100.0f, 22.0f);
+        if (button(ctx, "Analyze", analyzeBtn)) {
+            if (m_probeScanCallback) m_probeScanCallback();
+        }
+        y += 30.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Filter checkboxes row
+        r.drawText("Filters:", Vec2(x, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+        r.drawText("Anomalies | Signatures | Ships", Vec2(x + 4.0f, y), t.textMuted, 1.0f);
+        y += 18.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Results
+        char countBuf[32];
+        std::snprintf(countBuf, sizeof(countBuf), "Results: %d",
+                      static_cast<int>(m_probeScanResults.size()));
+        r.drawText(countBuf, Vec2(x, y), t.textPrimary, 1.0f);
+        y += 18.0f;
+
+        if (m_probeScanResults.empty()) {
+            label(ctx, Vec2(x, y), "Deploy probes and scan to find signatures", t.textSecondary);
+        } else {
+            // Column headers
+            r.drawText("ID", Vec2(x, y), t.textSecondary, 1.0f);
+            r.drawText("Group", Vec2(x + contentW * 0.2f, y), t.textSecondary, 1.0f);
+            r.drawText("Type", Vec2(x + contentW * 0.5f, y), t.textSecondary, 1.0f);
+            r.drawText("Signal", Vec2(x + contentW * 0.78f, y), t.textSecondary, 1.0f);
+            y += 16.0f;
+            separator(ctx, Vec2(x, y), contentW);
+            y += 4.0f;
+
+            for (size_t i = 0; i < m_probeScanResults.size() && y < maxY - 16.0f; ++i) {
+                const auto& res = m_probeScanResults[i];
+                if (i % 2 == 1) {
+                    r.drawRect(Rect(x, y, contentW, 16.0f),
+                               t.bgHeader.withAlpha(0.3f));
+                }
+
+                // Signal strength color: red < 25%, yellow < 75%, green >= 75%
+                Color sigColor = t.danger;
+                if (res.signalStrength >= 75.0f) sigColor = t.success;
+                else if (res.signalStrength >= 25.0f) sigColor = t.warning;
+
+                r.drawText(res.id.substr(0, 7),
+                           Vec2(x + 2, y + 1), t.textMuted, 1.0f);
+                r.drawText(res.group,
+                           Vec2(x + contentW * 0.2f, y + 1), t.textPrimary, 1.0f);
+
+                std::string typeStr = res.signalStrength >= 25.0f ? res.type : "???";
+                r.drawText(typeStr,
+                           Vec2(x + contentW * 0.5f, y + 1), t.textSecondary, 1.0f);
+
+                char sigBuf[16];
+                std::snprintf(sigBuf, sizeof(sigBuf), "%.0f%%", res.signalStrength);
+                r.drawText(sigBuf,
+                           Vec2(x + contentW * 0.78f, y + 1), sigColor, 1.0f);
+
+                // Signal strength bar
+                float barX = x + contentW * 0.88f;
+                float barW = contentW * 0.12f - 2.0f;
+                Rect sigBar(barX, y + 3.0f, barW, 10.0f);
+                r.drawProgressBar(sigBar, res.signalStrength / 100.0f, sigColor, t.bgHeader);
+
+                y += 16.0f;
+            }
+        }
 
     } else {
         // Generic fallback

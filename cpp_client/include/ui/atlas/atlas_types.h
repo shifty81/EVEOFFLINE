@@ -150,6 +150,24 @@ inline const Theme& defaultTheme() {
     return t;
 }
 
+// ── Key codes (mirrors GLFW values so Atlas stays GLFW-free) ────────
+
+namespace Key {
+    constexpr int F1  = 290;
+    constexpr int F2  = 291;
+    constexpr int F3  = 292;
+    constexpr int F4  = 293;
+    constexpr int F5  = 294;
+    constexpr int F6  = 295;
+    constexpr int F7  = 296;
+    constexpr int F8  = 297;
+    constexpr int F9  = 298;
+    constexpr int F10 = 299;
+    constexpr int F11 = 300;
+    constexpr int F12 = 301;
+    constexpr int V   = 86;   // D-Scan shortcut
+}
+
 // ── Input state snapshot (filled each frame by the host app) ────────
 
 struct InputState {
@@ -160,6 +178,10 @@ struct InputState {
     float scrollY = 0.0f;        // vertical scroll delta this frame
     int  windowW = 1280;
     int  windowH = 720;
+
+    // Keyboard state (for module hotkeys F1-F8, panel shortcuts, etc.)
+    bool keyPressed[512] = {};   // true on the frame a key goes down (GLFW key codes)
+    bool keyDown[512] = {};      // true while a key is held
 };
 
 // ── Panel persistent state ──────────────────────────────────────────

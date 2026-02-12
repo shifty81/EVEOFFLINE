@@ -101,6 +101,7 @@ public:
     void toggleDScan()         { m_dscanState.open = !m_dscanState.open; }
     void toggleChat()          { m_chatState.open = !m_chatState.open; }
     void toggleDronePanel()    { m_dronePanelState.open = !m_dronePanelState.open; }
+    void toggleProbeScanner()  { m_probeScannerState.open = !m_probeScannerState.open; }
 
     bool isOverviewOpen()      const { return m_overviewState.open; }
     bool isSelectedItemOpen()  const { return m_selectedItemState.open; }
@@ -111,6 +112,7 @@ public:
     bool isDScanOpen()         const { return m_dscanState.open; }
     bool isChatOpen()          const { return m_chatState.open; }
     bool isDronePanelOpen()    const { return m_dronePanelState.open; }
+    bool isProbeScannerOpen()  const { return m_probeScannerState.open; }
 
     // ── Sidebar callback ──────────────────────────────────────────────
 
@@ -175,6 +177,71 @@ public:
     /** Check if any damage flash is currently active. */
     bool hasDamageFlash() const;
 
+    // ── D-Scan data ────────────────────────────────────────────────────
+
+    struct DScanEntry {
+        std::string name;
+        std::string type;
+        float distance = 0.0f;  // AU
+    };
+
+    /** Set D-Scan parameters and results. */
+    void setDScanAngle(float degrees) { m_dscanAngle = degrees; }
+    void setDScanRange(float au)      { m_dscanRange = au; }
+    void setDScanResults(const std::vector<DScanEntry>& results) { m_dscanResults = results; }
+    float getDScanAngle() const { return m_dscanAngle; }
+    float getDScanRange() const { return m_dscanRange; }
+    const std::vector<DScanEntry>& getDScanResults() const { return m_dscanResults; }
+
+    /** Set callback for D-Scan button presses. */
+    void setDScanCallback(const std::function<void()>& cb) { m_dscanCallback = cb; }
+
+    // ── Mission data ────────────────────────────────────────────────────
+
+    struct MissionObjectiveInfo {
+        std::string description;
+        bool completed = false;
+    };
+
+    struct MissionInfo {
+        bool active = false;
+        std::string name;
+        std::string type;       // combat, courier, mining, exploration
+        std::string agentName;
+        int level = 1;
+        std::vector<MissionObjectiveInfo> objectives;
+        float iskReward = 0.0f;
+        float lpReward  = 0.0f;
+        float timeLimitHours = 0.0f;
+        float timeElapsedHours = 0.0f;
+    };
+
+    /** Set mission data for the mission panel. */
+    void setMissionInfo(const MissionInfo& info) { m_missionInfo = info; }
+    const MissionInfo& getMissionInfo() const { return m_missionInfo; }
+
+    // ── Probe Scanner data ──────────────────────────────────────────────
+
+    struct ProbeScanEntry {
+        std::string id;
+        std::string name;
+        std::string group;     // "Cosmic Signature", "Cosmic Anomaly", "Ship"
+        std::string type;      // "Combat Site", "Relic Site", etc.
+        float signalStrength = 0.0f;  // 0-100%
+        float distance = 0.0f;        // AU
+    };
+
+    /** Set probe scanner data. */
+    void setProbeCount(int count)           { m_probeCount = count; }
+    void setProbeRange(float au)            { m_probeRange = au; }
+    void setProbeScanResults(const std::vector<ProbeScanEntry>& results) { m_probeScanResults = results; }
+    int  getProbeCount() const              { return m_probeCount; }
+    float getProbeRange() const             { return m_probeRange; }
+    const std::vector<ProbeScanEntry>& getProbeScanResults() const { return m_probeScanResults; }
+
+    /** Set callback for probe scan button presses. */
+    void setProbeScanCallback(const std::function<void()>& cb) { m_probeScanCallback = cb; }
+
     // ── Drone status ────────────────────────────────────────────────
 
     struct DroneStatusData {
@@ -213,6 +280,7 @@ private:
     PanelState m_dscanState;
     PanelState m_chatState;
     PanelState m_dronePanelState;
+    PanelState m_probeScannerState;
 
     // Sidebar config
     float m_sidebarWidth = 40.0f;
@@ -225,6 +293,8 @@ private:
     std::function<void()>    m_selApproachCb;
     std::function<void()>    m_selWarpCb;
     std::function<void()>    m_selInfoCb;
+    std::function<void()>    m_dscanCallback;
+    std::function<void()>    m_probeScanCallback;
 
     // Internal layout helpers
     void drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship);
@@ -276,6 +346,19 @@ private:
     // Fleet broadcasts
     std::vector<FleetBroadcast> m_broadcasts;
     static constexpr int MAX_BROADCASTS = 5;
+
+    // D-Scan data
+    float m_dscanAngle = 360.0f;
+    float m_dscanRange = 14.3f;
+    std::vector<DScanEntry> m_dscanResults;
+
+    // Mission data
+    MissionInfo m_missionInfo;
+
+    // Probe Scanner data
+    int m_probeCount = 8;
+    float m_probeRange = 8.0f;
+    std::vector<ProbeScanEntry> m_probeScanResults;
 
     // Internal draw helpers for new features
     void drawCombatLog(AtlasContext& ctx);
