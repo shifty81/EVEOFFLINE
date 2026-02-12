@@ -38,8 +38,9 @@ public:
         ALIGN_TO
     };
 
-    // Callback for when an action is selected
+    // Callback for when an action is selected (with optional distance)
     using ActionCallback = std::function<void(Action action, const std::string& entityId)>;
+    using RangedActionCallback = std::function<void(Action action, const std::string& entityId, int distance_m)>;
 
     RadialMenu();
     ~RadialMenu() = default;
@@ -88,6 +89,12 @@ public:
     void SetActionCallback(ActionCallback cb) { m_onAction = std::move(cb); }
 
     /**
+     * Set callback for ranged actions (Orbit, Keep at Range).
+     * Distance is determined by how far the mouse is dragged from center.
+     */
+    void SetRangedActionCallback(RangedActionCallback cb) { m_onRangedAction = std::move(cb); }
+
+    /**
      * Get the currently highlighted action.
      */
     Action GetHighlightedAction() const { return m_highlightedAction; }
@@ -96,6 +103,12 @@ public:
      * Get targeted entity ID.
      */
     const std::string& GetTargetEntity() const { return m_entityId; }
+
+    /**
+     * Get the drag-to-range distance (metres) for the current selection.
+     * Only meaningful when highlighted action is ORBIT or KEEP_AT_RANGE.
+     */
+    int GetRangeDistance() const { return m_rangeDistance; }
 
 private:
     // Menu segment layout
@@ -109,21 +122,25 @@ private:
 
     void SetupSegments();
     int GetSegmentAtAngle(float angle) const;
+    void UpdateRangeDistance(float dist);
 
     bool m_open;
     float m_centerX, m_centerY;        // Screen center of the menu
     float m_mouseX, m_mouseY;          // Current mouse position
     std::string m_entityId;            // Target entity
     Action m_highlightedAction;        // Currently highlighted segment
+    int m_rangeDistance = 0;            // Drag-to-range distance (metres)
 
     std::vector<Segment> m_segments;
 
     ActionCallback m_onAction;
+    RangedActionCallback m_onRangedAction;
 
     // Visual constants
     static constexpr float INNER_RADIUS = 30.0f;   // Dead zone radius
     static constexpr float OUTER_RADIUS = 100.0f;  // Menu outer radius
     static constexpr float ICON_RADIUS = 65.0f;    // Where icons/labels are drawn
+    static constexpr float MAX_RANGE_RADIUS = 180.0f; // Max drag radius for range selection
 };
 
 } // namespace UI

@@ -172,6 +172,24 @@ public:
     /** Set the active overview tab index. */
     void setActiveOverviewTab(int tab) { m_overviewActiveTab = tab; }
 
+    /** Overview column sort field. */
+    enum class OverviewSortColumn { DISTANCE = 0, NAME, TYPE, VELOCITY };
+
+    /** Get/set overview sort column and direction. */
+    OverviewSortColumn getOverviewSortColumn() const { return m_overviewSortCol; }
+    bool isOverviewSortAscending() const { return m_overviewSortAsc; }
+    void setOverviewSort(OverviewSortColumn col, bool ascending) {
+        m_overviewSortCol = col;
+        m_overviewSortAsc = ascending;
+    }
+
+    /** Get/set overview tab labels. */
+    const std::vector<std::string>& getOverviewTabs() const { return m_overviewTabs; }
+    void setOverviewTabs(const std::vector<std::string>& tabs) { m_overviewTabs = tabs; }
+
+    /** Set callback for overview Ctrl+Click (lock target). */
+    void setOverviewCtrlClickCb(const std::function<void(const std::string&)>& cb) { m_overviewCtrlClickCb = cb; }
+
     // ── Combat log ──────────────────────────────────────────────────
 
     /** Add a message to the HUD combat log. */
@@ -303,6 +321,7 @@ private:
     std::function<void(const std::string&)> m_overviewSelectCb;
     std::function<void(const std::string&, float, float)> m_overviewRightClickCb;
     std::function<void(float, float)> m_overviewBgRightClickCb;
+    std::function<void(const std::string&)> m_overviewCtrlClickCb;
     std::function<void()>    m_selOrbitCb;
     std::function<void()>    m_selApproachCb;
     std::function<void()>    m_selWarpCb;
@@ -335,6 +354,11 @@ private:
 
     // Overview tab state
     int m_overviewActiveTab = 0;
+    std::vector<std::string> m_overviewTabs = {"Default", "PvP", "Mining", "Travel"};
+
+    // Overview column sorting
+    OverviewSortColumn m_overviewSortCol = OverviewSortColumn::DISTANCE;
+    bool m_overviewSortAsc = true;
 
     // Info panel data
     InfoPanelData m_infoPanelData;

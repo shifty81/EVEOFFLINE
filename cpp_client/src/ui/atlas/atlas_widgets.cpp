@@ -1368,6 +1368,24 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
                 float leftEdge = ctx.sidebarWidth();
                 state.bounds.x = std::max(leftEdge, std::min(state.bounds.x, winW - state.bounds.w));
                 state.bounds.y = std::max(0.0f, std::min(state.bounds.y, winH - t.headerHeight));
+
+                // ── EVE-style edge magnetism / snapping ────────────────
+                // Panels snap to screen edges and the Neocom sidebar
+                // when within the snap threshold (Photon UI principle).
+                constexpr float snapThreshold = 15.0f;
+
+                // Snap left edge to sidebar
+                if (std::fabs(state.bounds.x - leftEdge) < snapThreshold)
+                    state.bounds.x = leftEdge;
+                // Snap right edge to window right
+                if (std::fabs(state.bounds.right() - winW) < snapThreshold)
+                    state.bounds.x = winW - state.bounds.w;
+                // Snap top edge to window top
+                if (std::fabs(state.bounds.y) < snapThreshold)
+                    state.bounds.y = 0.0f;
+                // Snap bottom edge to window bottom
+                if (std::fabs(state.bounds.bottom() - winH) < snapThreshold)
+                    state.bounds.y = winH - state.bounds.h;
             } else {
                 state.dragging = false;
                 ctx.clearActive();

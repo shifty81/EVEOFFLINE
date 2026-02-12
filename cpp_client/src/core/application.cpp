@@ -486,6 +486,12 @@ void Application::setupUICallbacks() {
         std::cout << "[Overview] Right-click empty space context menu" << std::endl;
     });
 
+    // Ctrl+Click on overview row = lock target (EVE standard)
+    m_atlasHUD->setOverviewCtrlClickCb([this](const std::string& entityId) {
+        targetEntity(entityId, true);  // addToTargets = true for lock
+        std::cout << "[Overview] Ctrl+Click lock target: " << entityId << std::endl;
+    });
+
     std::cout << "  - Overview interaction callbacks wired" << std::endl;
     
     std::cout << "UI callbacks setup complete" << std::endl;
@@ -867,6 +873,7 @@ void Application::handleKeyInput(int key, int action, int mods) {
         m_orbitActive = false;
         m_keepRangeActive = false;
         m_dockingModeActive = false;
+        m_warpModeActive = false;
         m_activeModeText = "APPROACH - click a target";
         std::cout << "[Controls] Approach mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_W) {
@@ -874,6 +881,7 @@ void Application::handleKeyInput(int key, int action, int mods) {
         m_orbitActive = true;
         m_keepRangeActive = false;
         m_dockingModeActive = false;
+        m_warpModeActive = false;
         m_activeModeText = "ORBIT - click a target";
         std::cout << "[Controls] Orbit mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_E) {
@@ -881,6 +889,7 @@ void Application::handleKeyInput(int key, int action, int mods) {
         m_orbitActive = false;
         m_keepRangeActive = true;
         m_dockingModeActive = false;
+        m_warpModeActive = false;
         m_activeModeText = "KEEP AT RANGE - click a target";
         std::cout << "[Controls] Keep at Range mode active — click a target" << std::endl;
     } else if (key == GLFW_KEY_D) {
@@ -888,8 +897,22 @@ void Application::handleKeyInput(int key, int action, int mods) {
         m_orbitActive = false;
         m_keepRangeActive = false;
         m_dockingModeActive = true;
+        m_warpModeActive = false;
         m_activeModeText = "DOCK / JUMP - click a station or gate";
         std::cout << "[Controls] Docking mode active — click a station or gate" << std::endl;
+    } else if (key == GLFW_KEY_S && !(mods & GLFW_MOD_CONTROL)) {
+        // S + Click = Warp To (EVE standard)
+        m_approachActive = false;
+        m_orbitActive = false;
+        m_keepRangeActive = false;
+        m_dockingModeActive = false;
+        m_warpModeActive = true;
+        m_activeModeText = "WARP TO - click a target";
+        std::cout << "[Controls] Warp mode active — click a target" << std::endl;
+    } else if (key == GLFW_KEY_F) {
+        // F = Engage/Recall drones (EVE standard)
+        std::cout << "[Controls] Drone command: engage/recall" << std::endl;
+        // TODO: Send drone engage/recall command to server
     } else if (key == GLFW_KEY_S && (mods & GLFW_MOD_CONTROL)) {
         commandStopShip();
     }
@@ -1025,6 +1048,11 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                 std::cout << "[Movement] Dock/Jump through " << pickedEntityId << std::endl;
                 // TODO: Send dock/jump command to server
                 m_dockingModeActive = false;
+                m_activeModeText.clear();
+            } else if (m_warpModeActive) {
+                // S+Click for warp to (EVE standard)
+                commandWarpTo(pickedEntityId);
+                m_warpModeActive = false;
                 m_activeModeText.clear();
             } else {
                 // Default: select / CTRL+click to lock target / double-click to approach

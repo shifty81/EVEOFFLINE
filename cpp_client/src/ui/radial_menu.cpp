@@ -1,6 +1,8 @@
 #include "ui/radial_menu.h"
 #include "ui/atlas/atlas_context.h"
 #include <cmath>
+#include <cstdio>
+#include <algorithm>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -15,6 +17,7 @@ RadialMenu::RadialMenu()
     , m_mouseX(0.0f)
     , m_mouseY(0.0f)
     , m_highlightedAction(Action::NONE)
+    , m_rangeDistance(0)
 {
     SetupSegments();
 }
@@ -62,6 +65,7 @@ void RadialMenu::Open(float screenX, float screenY, const std::string& entityId)
     m_mouseY = screenY;
     m_entityId = entityId;
     m_highlightedAction = Action::NONE;
+    m_rangeDistance = 0;
 }
 
 void RadialMenu::Close() {
@@ -83,6 +87,7 @@ void RadialMenu::UpdateMousePosition(float mouseX, float mouseY) {
     if (dist < INNER_RADIUS) {
         // In dead zone — no selection
         m_highlightedAction = Action::NONE;
+        m_rangeDistance = 0;
         return;
     }
 
@@ -94,6 +99,36 @@ void RadialMenu::UpdateMousePosition(float mouseX, float mouseY) {
     } else {
         m_highlightedAction = Action::NONE;
     }
+
+    // EVE-style drag-to-range: dragging further from center selects
+    // a larger distance for Orbit and Keep at Range actions
+    UpdateRangeDistance(dist);
+}
+
+void RadialMenu::UpdateRangeDistance(float dist) {
+    // Only compute range for distance-based actions
+    if (m_highlightedAction != Action::ORBIT &&
+        m_highlightedAction != Action::KEEP_AT_RANGE) {
+        m_rangeDistance = 0;
+        return;
+    }
+
+    // Map drag distance (OUTER_RADIUS to MAX_RANGE_RADIUS) to distance presets
+    // Distance steps: 500m, 1000m, 2500m, 5000m, 10000m, 20000m, 50000m
+    static const int distanceSteps[] = {500, 1000, 2500, 5000, 10000, 20000, 50000};
+    static const int numSteps = 7;
+
+    if (dist <= OUTER_RADIUS) {
+        // Default: closest range
+        m_rangeDistance = distanceSteps[0];
+        return;
+    }
+
+    float rangeFrac = (dist - OUTER_RADIUS) / (MAX_RANGE_RADIUS - OUTER_RADIUS);
+    rangeFrac = std::max(0.0f, std::min(1.0f, rangeFrac));
+    int stepIdx = static_cast<int>(rangeFrac * (numSteps - 1));
+    stepIdx = std::max(0, std::min(numSteps - 1, stepIdx));
+    m_rangeDistance = distanceSteps[stepIdx];
 }
 
 RadialMenu::Action RadialMenu::Confirm() {
@@ -101,8 +136,14 @@ RadialMenu::Action RadialMenu::Confirm() {
 
     Action selected = m_highlightedAction;
 
-    if (selected != Action::NONE && m_onAction) {
-        m_onAction(selected, m_entityId);
+    if (selected != Action::NONE) {
+        // Fire ranged callback for distance-based actions
+        if (m_rangeDistance > 0 && m_onRangedAction &&
+            (selected == Action::ORBIT || selected == Action::KEEP_AT_RANGE)) {
+            m_onRangedAction(selected, m_entityId, m_rangeDistance);
+        } else if (m_onAction) {
+            m_onAction(selected, m_entityId);
+        }
     }
 
     Close();
@@ -203,6 +244,30 @@ void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
         atlas::Vec2 indicatorPos(center.x + nx * (INNER_RADIUS + 6.0f),
                                  center.y + ny * (INNER_RADIUS + 6.0f));
         r.drawCircle(indicatorPos, 3.0f, accentTeal);
+    }
+
+    // ── Drag-to-range distance indicator ───────────────────────────
+    // When dragging beyond the outer radius on Orbit/Keep at Range,
+    // show the selected distance as an arc + text label
+    if (m_rangeDistance > 0 && dist > OUTER_RADIUS &&
+        (m_highlightedAction == Action::ORBIT || m_highlightedAction == Action::KEEP_AT_RANGE)) {
+        // Draw range indicator arc at current drag radius
+        float rangeR = std::min(dist, MAX_RANGE_RADIUS);
+        r.drawCircleOutline(center, rangeR, accentTeal.withAlpha(0.3f), 1.0f);
+
+        // Format distance text
+        char rangeBuf[32];
+        if (m_rangeDistance >= 1000) {
+            std::snprintf(rangeBuf, sizeof(rangeBuf), "%d km", m_rangeDistance / 1000);
+        } else {
+            std::snprintf(rangeBuf, sizeof(rangeBuf), "%d m", m_rangeDistance);
+        }
+
+        // Draw distance label near the mouse
+        float labelW = r.measureText(rangeBuf);
+        r.drawText(rangeBuf,
+                   {m_mouseX - labelW * 0.5f, m_mouseY - 18.0f},
+                   accentTeal);
     }
 }
 

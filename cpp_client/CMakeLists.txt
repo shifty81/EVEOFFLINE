@@ -787,6 +787,7 @@ if(BUILD_TESTS)
         src/ui/atlas/atlas_hud.cpp
         src/ui/rml_ui_manager.cpp
         src/ui/context_menu.cpp
+        src/ui/radial_menu.cpp
     )
     target_include_directories(test_atlas_ui PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
     target_compile_definitions(test_atlas_ui PRIVATE ATLAS_HEADLESS)

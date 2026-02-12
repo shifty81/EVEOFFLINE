@@ -244,34 +244,112 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
                         m_overviewState.bounds.w,
                         m_overviewState.bounds.h - hh};
 
-    // Tab header (interactive — single Default tab to start)
-    std::vector<std::string> tabs = {"Default"};
+    // Tab header (interactive — multiple customizable tabs)
     Rect tabRect = {contentArea.x, contentArea.y, contentArea.w, 24.0f};
-    int clickedTab = overviewHeaderInteractive(ctx, tabRect, tabs, m_overviewActiveTab);
+    int clickedTab = overviewHeaderInteractive(ctx, tabRect, m_overviewTabs, m_overviewActiveTab);
     if (clickedTab >= 0) {
         m_overviewActiveTab = clickedTab;
     }
 
+    // ── Column header row (sortable) ───────────────────────────────
+    float colY = contentArea.y + 28.0f;
+    float colH = 18.0f;
+    float colX = contentArea.x;
+    float totalW = contentArea.w;
+
+    // Column layout: Distance(25%), Name(35%), Type(20%), Velocity(20%)
+    struct ColDef {
+        const char* label;
+        float widthPct;
+        OverviewSortColumn col;
+    };
+    ColDef cols[] = {
+        {"Dist",  0.25f, OverviewSortColumn::DISTANCE},
+        {"Name",  0.35f, OverviewSortColumn::NAME},
+        {"Type",  0.20f, OverviewSortColumn::TYPE},
+        {"Vel",   0.20f, OverviewSortColumn::VELOCITY},
+    };
+
+    for (int c = 0; c < 4; ++c) {
+        float cw = totalW * cols[c].widthPct;
+        Rect colRect = {colX, colY, cw, colH};
+        WidgetID colID = hashID("ovcol") ^ static_cast<uint32_t>(c);
+
+        bool hovered = ctx.isHovered(colRect);
+        if (hovered) {
+            ctx.renderer().drawRect(colRect, t.hover);
+            ctx.setHot(colID);
+        }
+
+        // Draw column label with sort indicator
+        std::string colText = cols[c].label;
+        if (m_overviewSortCol == cols[c].col) {
+            colText += m_overviewSortAsc ? " ^" : " v";
+        }
+        ctx.renderer().drawText(colText,
+            {colX + 4.0f, colY + 2.0f}, t.textSecondary);
+
+        // Click to sort
+        if (ctx.buttonBehavior(colRect, colID)) {
+            if (m_overviewSortCol == cols[c].col) {
+                m_overviewSortAsc = !m_overviewSortAsc;
+            } else {
+                m_overviewSortCol = cols[c].col;
+                m_overviewSortAsc = true;
+            }
+        }
+        colX += cw;
+    }
+
+    // Sort entries
+    std::vector<OverviewEntry> sorted = entries;
+    auto sortCol = m_overviewSortCol;
+    bool sortAsc = m_overviewSortAsc;
+    std::sort(sorted.begin(), sorted.end(),
+        [sortCol, sortAsc](const OverviewEntry& a, const OverviewEntry& b) {
+            int cmp = 0;
+            switch (sortCol) {
+                case OverviewSortColumn::DISTANCE:
+                    cmp = (a.distance < b.distance) ? -1 : (a.distance > b.distance) ? 1 : 0;
+                    break;
+                case OverviewSortColumn::NAME:
+                    cmp = a.name.compare(b.name);
+                    break;
+                case OverviewSortColumn::TYPE:
+                    cmp = a.type.compare(b.type);
+                    break;
+                case OverviewSortColumn::VELOCITY:
+                    cmp = (a.velocity < b.velocity) ? -1 : (a.velocity > b.velocity) ? 1 : 0;
+                    break;
+            }
+            return sortAsc ? (cmp < 0) : (cmp > 0);
+        });
+
     // Rows
     float rowH = 22.0f;
-    float rowY = contentArea.y + 28.0f;
-    int maxRows = static_cast<int>((contentArea.h - 28.0f) / rowH);
-    int count = std::min(static_cast<int>(entries.size()), maxRows);
+    float rowY = colY + colH + 2.0f;
+    int maxRows = static_cast<int>((contentArea.bottom() - rowY) / rowH);
+    int count = std::min(static_cast<int>(sorted.size()), maxRows);
 
     for (int i = 0; i < count; ++i) {
         Rect rowRect = {contentArea.x, rowY + i * rowH, contentArea.w, rowH};
         // overviewRow returns true when the row receives a left-click (press+release)
-        bool clicked = overviewRow(ctx, rowRect, entries[i], (i % 2 == 1));
+        bool clicked = overviewRow(ctx, rowRect, sorted[i], (i % 2 == 1));
 
         // Left-click: select the entity
-        if (clicked && !entries[i].entityId.empty() && m_overviewSelectCb) {
-            m_overviewSelectCb(entries[i].entityId);
+        if (clicked && !sorted[i].entityId.empty()) {
+            // Ctrl+Click = lock target (EVE standard)
+            if (ctx.input().keyDown[341] && m_overviewCtrlClickCb) {  // 341 = GLFW_KEY_LEFT_CONTROL
+                m_overviewCtrlClickCb(sorted[i].entityId);
+            } else if (m_overviewSelectCb) {
+                m_overviewSelectCb(sorted[i].entityId);
+            }
         }
 
         // Right-click: show context menu for the entity
         if (!ctx.isMouseConsumed() && ctx.isHovered(rowRect) && ctx.isRightMouseClicked()) {
-            if (!entries[i].entityId.empty() && m_overviewRightClickCb) {
-                m_overviewRightClickCb(entries[i].entityId,
+            if (!sorted[i].entityId.empty() && m_overviewRightClickCb) {
+                m_overviewRightClickCb(sorted[i].entityId,
                                        ctx.input().mousePos.x,
                                        ctx.input().mousePos.y);
                 ctx.consumeMouse();
@@ -280,13 +358,13 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
     }
 
     // Scrollbar if needed
-    if (static_cast<int>(entries.size()) > maxRows) {
+    if (static_cast<int>(sorted.size()) > maxRows) {
         Rect scrollTrack = {contentArea.right() - 6.0f,
-                           contentArea.y + 28.0f,
+                           rowY,
                            6.0f,
-                           contentArea.h - 28.0f};
+                           contentArea.bottom() - rowY};
         scrollbar(ctx, scrollTrack, 0.0f,
-                 entries.size() * rowH, contentArea.h - 28.0f);
+                 sorted.size() * rowH, contentArea.bottom() - rowY);
     }
 
     // Right-click on overview panel background (not on an entity row)
