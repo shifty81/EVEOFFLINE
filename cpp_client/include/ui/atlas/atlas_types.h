@@ -192,6 +192,22 @@ struct PanelState {
     bool minimized = false;  // true = collapsed to header-only
     bool dragging = false;   // true while header is being dragged
     Vec2 dragOffset;         // offset from mouse to panel origin during drag
+
+    // Resize state
+    bool resizing = false;       // true while an edge/corner is being dragged
+    int  resizeEdge = 0;         // bitmask: 1=left, 2=right, 4=top, 8=bottom
+    Vec2 resizeAnchor;           // mouse position at resize start
+    Rect resizeOrigBounds;       // bounds at resize start
+    float minW = 150.0f;         // minimum panel width
+    float minH = 80.0f;          // minimum panel height
+
+    // Lock state — prevents drag and resize when true
+    bool locked = false;
+
+    // Per-panel settings
+    bool  settingsOpen = false;  // true when settings dropdown is visible
+    float opacity = 1.0f;        // panel opacity (0.0–1.0)
+    bool  compactRows = false;   // compact row display mode
 };
 
 // ── Widget IDs ──────────────────────────────────────────────────────

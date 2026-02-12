@@ -257,7 +257,23 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
 
     for (int i = 0; i < count; ++i) {
         Rect rowRect = {contentArea.x, rowY + i * rowH, contentArea.w, rowH};
-        overviewRow(ctx, rowRect, entries[i], (i % 2 == 1));
+        // overviewRow returns true when the row receives a left-click (press+release)
+        bool clicked = overviewRow(ctx, rowRect, entries[i], (i % 2 == 1));
+
+        // Left-click: select the entity
+        if (clicked && !entries[i].entityId.empty() && m_overviewSelectCb) {
+            m_overviewSelectCb(entries[i].entityId);
+        }
+
+        // Right-click: show context menu for the entity
+        if (!ctx.isMouseConsumed() && ctx.isHovered(rowRect) && ctx.isRightMouseClicked()) {
+            if (!entries[i].entityId.empty() && m_overviewRightClickCb) {
+                m_overviewRightClickCb(entries[i].entityId,
+                                       ctx.input().mousePos.x,
+                                       ctx.input().mousePos.y);
+                ctx.consumeMouse();
+            }
+        }
     }
 
     // Scrollbar if needed

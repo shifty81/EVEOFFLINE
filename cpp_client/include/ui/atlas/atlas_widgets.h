@@ -173,6 +173,7 @@ void speedIndicator(AtlasContext& ctx, Vec2 pos,
 // ── Overview Widgets ────────────────────────────────────────────────
 
 struct OverviewEntry {
+    std::string entityId;     // unique entity identifier (for selection/targeting)
     std::string name;
     std::string type;
     float distance = 0.0f;

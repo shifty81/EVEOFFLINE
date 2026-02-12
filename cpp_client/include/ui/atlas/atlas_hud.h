@@ -124,6 +124,14 @@ public:
     /** Set callback for module slot clicks (slot index passed). */
     void setModuleCallback(const std::function<void(int)>& cb) { m_moduleCallback = cb; }
 
+    // ── Overview interaction callbacks ──────────────────────────────
+
+    /** Set callback for overview row left-click (entity selection). */
+    void setOverviewSelectCb(const std::function<void(const std::string&)>& cb) { m_overviewSelectCb = cb; }
+
+    /** Set callback for overview row right-click (context menu). */
+    void setOverviewRightClickCb(const std::function<void(const std::string&, float, float)>& cb) { m_overviewRightClickCb = cb; }
+
     // ── Selected item action callbacks ──────────────────────────────
 
     /** Set callback for selected item action buttons (orbit, approach, warp, info). */
@@ -289,6 +297,8 @@ private:
     // Callbacks
     std::function<void(int)> m_sidebarCallback;
     std::function<void(int)> m_moduleCallback;
+    std::function<void(const std::string&)> m_overviewSelectCb;
+    std::function<void(const std::string&, float, float)> m_overviewRightClickCb;
     std::function<void()>    m_selOrbitCb;
     std::function<void()>    m_selApproachCb;
     std::function<void()>    m_selWarpCb;

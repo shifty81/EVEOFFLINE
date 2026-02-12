@@ -1268,9 +1268,14 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
 
     ctx.pushID(title);
 
+    // Effective locked state: PanelFlags OR PanelState lock
+    bool effectivelyLocked = flags.locked || state.locked;
+
     // Pre-compute header button rects so the drag handler can exclude them
     float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
     float btnSz = 14.0f;
+
+    // Right-side buttons: [gear] [minimize] [close]  (right to left)
     Rect closeRect = {state.bounds.right() - btnSz - 4.0f,
                       state.bounds.y + (hh - btnSz) * 0.5f,
                       btnSz, btnSz};
@@ -1278,10 +1283,22 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
     Rect minRect = {state.bounds.right() - btnSz - minOffset,
                     state.bounds.y + (hh - btnSz) * 0.5f,
                     btnSz, btnSz};
+    float gearOffset = minOffset + (flags.showMinimize ? 18.0f : 0.0f);
+    Rect gearRect = {state.bounds.right() - btnSz - gearOffset,
+                     state.bounds.y + (hh - btnSz) * 0.5f,
+                     btnSz, btnSz};
 
-    // Process close/minimize buttons BEFORE drag, so they get priority
+    // Left-side button: [lock] just after title
+    float titleW = rr.measureText(title);
+    Rect lockRect = {state.bounds.x + t.padding + titleW + 6.0f,
+                     state.bounds.y + (hh - btnSz) * 0.5f,
+                     btnSz, btnSz};
+
+    // Process close/minimize/lock/gear buttons BEFORE drag, so they get priority
     bool closeBtnClicked = false;
     bool minBtnClicked = false;
+    bool lockBtnClicked = false;
+    bool gearBtnClicked = false;
     if (flags.showHeader && !ctx.isMouseConsumed()) {
         if (flags.showClose) {
             WidgetID closeID = ctx.currentID("_close");
@@ -1299,21 +1316,41 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
                 ctx.consumeMouse();
             }
         }
+        // Lock button
+        if (!ctx.isMouseConsumed()) {
+            WidgetID lockID = ctx.currentID("_lock");
+            lockBtnClicked = ctx.buttonBehavior(lockRect, lockID);
+            if (lockBtnClicked) {
+                state.locked = !state.locked;
+                ctx.consumeMouse();
+            }
+        }
+        // Gear/settings button
+        if (!ctx.isMouseConsumed()) {
+            WidgetID gearID = ctx.currentID("_gear");
+            gearBtnClicked = ctx.buttonBehavior(gearRect, gearID);
+            if (gearBtnClicked) {
+                state.settingsOpen = !state.settingsOpen;
+                ctx.consumeMouse();
+            }
+        }
     }
 
-    // Handle dragging (header-bar drag to move) — skip if a button was clicked
-    if (!flags.locked && flags.showHeader && !closeBtnClicked && !minBtnClicked) {
+    // Handle dragging (header-bar drag to move) — skip if locked or a button was clicked
+    bool anyBtnClicked = closeBtnClicked || minBtnClicked || lockBtnClicked || gearBtnClicked;
+    if (!effectivelyLocked && flags.showHeader && !anyBtnClicked) {
         Rect headerHit = {state.bounds.x, state.bounds.y, state.bounds.w, hh};
         WidgetID dragID = ctx.currentID("_drag");
 
         if (!ctx.isMouseConsumed() && ctx.isHovered(headerHit) && ctx.isMouseClicked()) {
             // Don't start drag if mouse is over a header button
-            bool overButton = (flags.showClose && closeRect.contains(ctx.input().mousePos)) ||
-                              (flags.showMinimize && minRect.contains(ctx.input().mousePos));
+            Vec2 mp = ctx.input().mousePos;
+            bool overButton = (flags.showClose && closeRect.contains(mp)) ||
+                              (flags.showMinimize && minRect.contains(mp)) ||
+                              lockRect.contains(mp) || gearRect.contains(mp);
             if (!overButton) {
                 state.dragging = true;
-                state.dragOffset = {ctx.input().mousePos.x - state.bounds.x,
-                                    ctx.input().mousePos.y - state.bounds.y};
+                state.dragOffset = {mp.x - state.bounds.x, mp.y - state.bounds.y};
                 ctx.setActive(dragID);
                 ctx.consumeMouse();
             }
@@ -1337,31 +1374,124 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
         }
     }
 
+    // Handle resizing (edge/corner drag) — skip if locked or minimized
+    if (!effectivelyLocked && !state.minimized && !anyBtnClicked && !state.dragging) {
+        constexpr float edgeGrab = 6.0f;  // grab zone in pixels
+        const Rect& b = state.bounds;
+
+        // Edge hit-test rects
+        Rect leftEdge   = {b.x - edgeGrab, b.y + edgeGrab, edgeGrab * 2, b.h - edgeGrab * 2};
+        Rect rightEdge  = {b.right() - edgeGrab, b.y + edgeGrab, edgeGrab * 2, b.h - edgeGrab * 2};
+        Rect topEdge    = {b.x + edgeGrab, b.y - edgeGrab, b.w - edgeGrab * 2, edgeGrab * 2};
+        Rect bottomEdge = {b.x + edgeGrab, b.bottom() - edgeGrab, b.w - edgeGrab * 2, edgeGrab * 2};
+
+        // Corner hit-test rects
+        Rect topLeft     = {b.x - edgeGrab, b.y - edgeGrab, edgeGrab * 2, edgeGrab * 2};
+        Rect topRight    = {b.right() - edgeGrab, b.y - edgeGrab, edgeGrab * 2, edgeGrab * 2};
+        Rect bottomLeft  = {b.x - edgeGrab, b.bottom() - edgeGrab, edgeGrab * 2, edgeGrab * 2};
+        Rect bottomRight = {b.right() - edgeGrab, b.bottom() - edgeGrab, edgeGrab * 2, edgeGrab * 2};
+
+        if (!ctx.isMouseConsumed() && ctx.isMouseClicked() && !state.resizing) {
+            int edge = 0;
+            Vec2 mp = ctx.input().mousePos;
+            if (bottomRight.contains(mp))      edge = 2 | 8;
+            else if (bottomLeft.contains(mp))  edge = 1 | 8;
+            else if (topRight.contains(mp))    edge = 2 | 4;
+            else if (topLeft.contains(mp))     edge = 1 | 4;
+            else if (leftEdge.contains(mp))    edge = 1;
+            else if (rightEdge.contains(mp))   edge = 2;
+            else if (topEdge.contains(mp))     edge = 4;
+            else if (bottomEdge.contains(mp))  edge = 8;
+
+            if (edge != 0) {
+                state.resizing = true;
+                state.resizeEdge = edge;
+                state.resizeAnchor = mp;
+                state.resizeOrigBounds = state.bounds;
+                ctx.consumeMouse();
+            }
+        }
+
+        if (state.resizing) {
+            ctx.consumeMouse();
+            if (ctx.isMouseDown()) {
+                Vec2 delta = ctx.input().mousePos - state.resizeAnchor;
+                Rect nb = state.resizeOrigBounds;
+
+                if (state.resizeEdge & 1) { // left
+                    float newX = nb.x + delta.x;
+                    float newW = nb.w - delta.x;
+                    if (newW >= state.minW) { state.bounds.x = newX; state.bounds.w = newW; }
+                }
+                if (state.resizeEdge & 2) { // right
+                    float newW = nb.w + delta.x;
+                    if (newW >= state.minW) { state.bounds.w = newW; }
+                }
+                if (state.resizeEdge & 4) { // top
+                    float newY = nb.y + delta.y;
+                    float newH = nb.h - delta.y;
+                    if (newH >= state.minH) { state.bounds.y = newY; state.bounds.h = newH; }
+                }
+                if (state.resizeEdge & 8) { // bottom
+                    float newH = nb.h + delta.y;
+                    if (newH >= state.minH) { state.bounds.h = newH; }
+                }
+            } else {
+                state.resizing = false;
+                state.resizeEdge = 0;
+            }
+        }
+    }
+
     // Consume mouse if clicking within the panel body to prevent click-through
     if (ctx.isHovered(state.bounds) && ctx.isMouseClicked() && !ctx.isMouseConsumed()) {
         ctx.consumeMouse();
     }
 
-    // Draw panel background
+    // Draw panel background (apply opacity)
     Rect drawBounds = state.bounds;
     if (state.minimized) {
         drawBounds.h = hh;
     }
 
-    rr.drawRect(drawBounds, t.bgPanel);
+    Color panelBg = t.bgPanel.withAlpha(t.bgPanel.a * state.opacity);
+    rr.drawRect(drawBounds, panelBg);
 
     // Border (Photon skeletal frame)
     if (flags.drawBorder) {
         rr.drawRectOutline(drawBounds, t.borderNormal, t.borderWidth);
     }
 
+    // Resize grip indicator (bottom-right corner dots when not locked)
+    if (!effectivelyLocked && !state.minimized) {
+        float gx = drawBounds.right() - 10.0f;
+        float gy = drawBounds.bottom() - 10.0f;
+        Color gripColor = t.textMuted.withAlpha(0.4f);
+        rr.drawRect({gx + 4.0f, gy + 4.0f, 3.0f, 3.0f}, gripColor);
+        rr.drawRect({gx,        gy + 4.0f, 3.0f, 3.0f}, gripColor);
+        rr.drawRect({gx + 4.0f, gy,        3.0f, 3.0f}, gripColor);
+    }
+
     // Header bar
     if (flags.showHeader) {
         Rect headerRect = {drawBounds.x, drawBounds.y, drawBounds.w, hh};
-        rr.drawRect(headerRect, t.bgHeader);
+        rr.drawRect(headerRect, t.bgHeader.withAlpha(t.bgHeader.a * state.opacity));
 
         float textY = drawBounds.y + (hh - 13.0f) * 0.5f;
         rr.drawText(title, {drawBounds.x + t.padding, textY}, t.textPrimary);
+
+        // Lock button (left side, after title) — padlock icon
+        {
+            WidgetID lockID = ctx.currentID("_lock");
+            bool hovered = ctx.isHovered(lockRect);
+            if (hovered) ctx.setHot(lockID);
+            Color lockBg = hovered ? t.hover : Color(0, 0, 0, 0);
+            rr.drawRect(lockRect, lockBg);
+            const char* lockIcon = state.locked ? "L" : "U";
+            Color lockColor = state.locked ? t.accentPrimary : t.textMuted;
+            if (hovered) lockColor = t.textPrimary;
+            rr.drawText(lockIcon, {lockRect.x + 2.0f, lockRect.y + 1.0f}, lockColor);
+        }
 
         // Close button (×) — visual only, behavior handled above
         if (flags.showClose) {
@@ -1385,9 +1515,65 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
                         hovered ? t.textPrimary : t.textSecondary);
         }
 
+        // Gear/settings button — visual only, behavior handled above
+        {
+            WidgetID gearID = ctx.currentID("_gear");
+            bool hovered = ctx.isHovered(gearRect);
+            if (hovered) ctx.setHot(gearID);
+            Color gearBg = (hovered || state.settingsOpen) ? t.hover : Color(0, 0, 0, 0);
+            rr.drawRect(gearRect, gearBg);
+            Color gearColor = state.settingsOpen ? t.accentPrimary : (hovered ? t.textPrimary : t.textSecondary);
+            rr.drawText("*", {gearRect.x + 3.0f, gearRect.y + 1.0f}, gearColor);
+        }
+
         // Photon accent line under header
         rr.drawRect({drawBounds.x, drawBounds.y + hh - 1.0f, drawBounds.w, 1.0f},
                     t.accentPrimary.withAlpha(0.3f));
+    }
+
+    // Settings dropdown popup (below gear button)
+    if (state.settingsOpen && flags.showHeader) {
+        float popW = 180.0f;
+        float popH = 72.0f;
+        float popX = std::min(gearRect.x, static_cast<float>(ctx.input().windowW) - popW - 4.0f);
+        float popY = state.bounds.y + hh + 2.0f;
+
+        Rect popBg(popX, popY, popW, popH);
+        rr.drawRect(popBg, t.bgPanel);
+        rr.drawRectOutline(popBg, t.borderNormal);
+
+        // Consume mouse within popup
+        if (ctx.isHovered(popBg) && ctx.isMouseClicked() && !ctx.isMouseConsumed()) {
+            ctx.consumeMouse();
+        }
+
+        float py = popY + 4.0f;
+
+        // Opacity slider — use 20–100 range for display; convert back to 0.0–1.0
+        rr.drawText("Opacity", {popX + 6.0f, py + 1.0f}, t.textSecondary);
+        py += 16.0f;
+        Rect opacitySlider(popX + 6.0f, py, popW - 12.0f, 14.0f);
+        float opacityPct = state.opacity * 100.0f;
+        if (slider(ctx, "_opacity", opacitySlider, &opacityPct, 20.0f, 100.0f, "%.0f%%")) {
+            state.opacity = opacityPct / 100.0f;
+        }
+        py += 22.0f;
+
+        // Compact rows toggle
+        Rect compactRect(popX + 6.0f, py, popW - 12.0f, 14.0f);
+        checkbox(ctx, "Compact rows", compactRect, &state.compactRows);
+    }
+
+    // Close settings popup when clicking outside it
+    if (state.settingsOpen && ctx.isMouseClicked()) {
+        float popW = 180.0f;
+        float popH = 72.0f;
+        float popX = std::min(gearRect.x, static_cast<float>(ctx.input().windowW) - popW - 4.0f);
+        float popY = state.bounds.y + hh + 2.0f;
+        Rect popBg(popX, popY, popW, popH);
+        if (!ctx.isHovered(popBg) && !ctx.isHovered(gearRect)) {
+            state.settingsOpen = false;
+        }
     }
 
     return !state.minimized;

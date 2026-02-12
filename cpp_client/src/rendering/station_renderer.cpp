@@ -3,6 +3,7 @@
 #include <glm/gtc/constants.hpp>
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 namespace atlas {
 
@@ -579,7 +580,7 @@ std::shared_ptr<Mesh> StationRenderer::createAstrahus() {
             float theta = (float)i / 6 * 2.0f * glm::pi<float>();
             glm::vec3 perp1 = glm::normalize(glm::cross(direction, glm::vec3(0, 1, 0)));
             glm::vec3 perp2 = glm::cross(direction, perp1);
-            glm::vec3 offset = (perp1 * cos(theta) + perp2 * sin(theta)) * armRadius;
+            glm::vec3 offset = (perp1 * cosf(theta) + perp2 * sinf(theta)) * armRadius;
             
             Vertex vStart;
             vStart.position = armStart + offset;
