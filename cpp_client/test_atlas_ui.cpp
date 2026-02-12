@@ -11,9 +11,6 @@
 #include "ui/atlas/atlas_context.h"
 #include "ui/atlas/atlas_widgets.h"
 #include "ui/atlas/atlas_hud.h"
-#include "ui/hud_panels.h"
-#include "ui/hud.h"
-#include "ui/probe_scanner_panel.h"
 #include <iostream>
 #include <cassert>
 #include <string>
@@ -976,146 +973,7 @@ void testRmlUiManagerStub() {
     assertTrue(!mgr.WantsKeyboardInput(), "WantsKeyboardInput returns false when uninitialized");
 }
 
-// ─── HUD Alert Stack tests ────────────────────────────────────────────
-
-void testHUDAlertTypes() {
-    std::cout << "\n=== HUD Alert Types ===" << std::endl;
-
-    // Test HUDAlert construction
-    UI::HUDAlert alert("CAP LOW", UI::HUDAlertPriority::WARNING, 5.0f);
-    assertTrue(alert.message == "CAP LOW", "HUDAlert message");
-    assertTrue(alert.priority == UI::HUDAlertPriority::WARNING, "HUDAlert priority");
-    assertClose(alert.duration, 5.0f, "HUDAlert duration");
-    assertClose(alert.elapsed, 0.0f, "HUDAlert initial elapsed");
-
-    // Test critical alert
-    UI::HUDAlert critical("STRUCTURE CRITICAL", UI::HUDAlertPriority::CRITICAL, 3.0f);
-    assertTrue(critical.priority == UI::HUDAlertPriority::CRITICAL, "Critical alert priority");
-
-    // Test info alert
-    UI::HUDAlert info("Warp Drive Active", UI::HUDAlertPriority::INFO);
-    assertTrue(info.priority == UI::HUDAlertPriority::INFO, "Info alert priority");
-    assertClose(info.duration, 5.0f, "Default alert duration");
-
-    // Test priority ordering
-    assertTrue(static_cast<int>(UI::HUDAlertPriority::CRITICAL) >
-               static_cast<int>(UI::HUDAlertPriority::WARNING),
-               "Critical > Warning priority");
-    assertTrue(static_cast<int>(UI::HUDAlertPriority::WARNING) >
-               static_cast<int>(UI::HUDAlertPriority::INFO),
-               "Warning > Info priority");
-}
-
-// ─── Selected Item Data tests ──────────────────────────────────────────
-
-void testSelectedItemData() {
-    std::cout << "\n=== Selected Item Data ===" << std::endl;
-
-    // Test default state
-    UI::SelectedItemData item;
-    assertTrue(item.isEmpty(), "Default item is empty");
-    assertTrue(item.name.empty(), "Default name is empty");
-    assertClose(item.distance, 0.0f, "Default distance");
-    assertTrue(!item.is_hostile, "Default not hostile");
-    assertTrue(!item.is_locked, "Default not locked");
-    assertTrue(!item.has_health, "Default no health");
-
-    // Test populated item
-    UI::SelectedItemData ship;
-    ship.name = "Keldari Frigate";
-    ship.type = "Frigate";
-    ship.distance = 15000.0f;
-    ship.shields_pct = 0.8f;
-    ship.armor_pct = 1.0f;
-    ship.hull_pct = 1.0f;
-    ship.velocity = 350.0f;
-    ship.is_hostile = true;
-    ship.is_locked = true;
-    ship.has_health = true;
-
-    assertTrue(!ship.isEmpty(), "Named item is not empty");
-    assertTrue(ship.name == "Keldari Frigate", "Item name correct");
-    assertTrue(ship.type == "Frigate", "Item type correct");
-    assertClose(ship.distance, 15000.0f, "Item distance correct");
-    assertClose(ship.shields_pct, 0.8f, "Item shield pct correct");
-    assertTrue(ship.is_hostile, "Item hostile flag correct");
-    assertTrue(ship.is_locked, "Item locked flag correct");
-    assertTrue(ship.has_health, "Item has_health flag correct");
-}
-
-// ─── Module Slot State tests ───────────────────────────────────────────
-
-void testModuleSlotState() {
-    std::cout << "\n=== Module Slot State ===" << std::endl;
-
-    UI::ModuleSlotState slot;
-    assertTrue(!slot.fitted, "Default slot not fitted");
-    assertTrue(!slot.active, "Default slot not active");
-    assertTrue(!slot.overheated, "Default slot not overheated");
-    assertClose(slot.cooldown_pct, 0.0f, "Default cooldown 0");
-    assertTrue(slot.name.empty(), "Default slot name empty");
-    assertTrue(slot.slotType == UI::ModuleSlotState::HIGH, "Default slot type HIGH");
-
-    // Test fitted module
-    UI::ModuleSlotState gun;
-    gun.fitted = true;
-    gun.active = true;
-    gun.cooldown_pct = 0.5f;
-    gun.name = "200mm AC II";
-    gun.slotType = UI::ModuleSlotState::HIGH;
-
-    assertTrue(gun.fitted, "Gun is fitted");
-    assertTrue(gun.active, "Gun is active");
-    assertClose(gun.cooldown_pct, 0.5f, "Gun cooldown 50%");
-    assertTrue(gun.name == "200mm AC II", "Gun name correct");
-
-    // Test mid slot
-    UI::ModuleSlotState mid;
-    mid.fitted = true;
-    mid.slotType = UI::ModuleSlotState::MID;
-    assertTrue(mid.slotType == UI::ModuleSlotState::MID, "Mid slot type correct");
-
-    // Test low slot
-    UI::ModuleSlotState low;
-    low.fitted = true;
-    low.slotType = UI::ModuleSlotState::LOW;
-    assertTrue(low.slotType == UI::ModuleSlotState::LOW, "Low slot type correct");
-
-    // Test overheat
-    UI::ModuleSlotState heated;
-    heated.fitted = true;
-    heated.active = true;
-    heated.overheated = true;
-    assertTrue(heated.overheated, "Overheated module detected");
-}
-
 // ─── Damage Feedback tests ─────────────────────────────────────────────
-
-void testDamageFeedback() {
-    std::cout << "\n=== Damage Feedback ===" << std::endl;
-
-    // Test DamageFlash struct
-    atlas::DamageFlash flash(atlas::DamageLayer::ARMOR, 0.3f);
-    assertTrue(flash.layer == atlas::DamageLayer::ARMOR, "Flash layer is armor");
-    assertClose(flash.intensity, 1.0f, "Flash initial intensity");
-    assertClose(flash.duration, 0.3f, "Flash custom duration");
-    assertClose(flash.elapsed, 0.0f, "Flash initial elapsed");
-
-    // Test shield layer
-    atlas::DamageFlash shieldFlash(atlas::DamageLayer::SHIELD);
-    assertTrue(shieldFlash.layer == atlas::DamageLayer::SHIELD, "Shield flash layer");
-    assertClose(shieldFlash.duration, 0.5f, "Default flash duration 0.5s");
-
-    // Test hull layer
-    atlas::DamageFlash hullFlash(atlas::DamageLayer::HULL, 0.8f);
-    assertTrue(hullFlash.layer == atlas::DamageLayer::HULL, "Hull flash layer");
-    assertClose(hullFlash.duration, 0.8f, "Hull flash custom duration");
-
-    // Test DamageLayer enum values are distinct
-    assertTrue(atlas::DamageLayer::SHIELD != atlas::DamageLayer::ARMOR, "Shield != Armor layer");
-    assertTrue(atlas::DamageLayer::ARMOR != atlas::DamageLayer::HULL, "Armor != Hull layer");
-    assertTrue(atlas::DamageLayer::SHIELD != atlas::DamageLayer::HULL, "Shield != Hull layer");
-}
 
 // ─── Mode Indicator tests ──────────────────────────────────────────────
 
@@ -1343,42 +1201,6 @@ void testSelectedItemCallbacks() {
 
     // Callbacks are wired and can be set
     assertTrue(true, "All selected item callbacks set without crash");
-}
-
-// ─── Probe Scanner Panel tests ─────────────────────────────────────────
-
-void testProbeScannerPanel() {
-    std::cout << "\n=== Probe Scanner Panel ===" << std::endl;
-
-    // Test ProbeScanResult struct (header-only)
-    UI::ProbeScanResult result("XYZ-001", "Serpentis Hideaway", "Cosmic Anomaly",
-                                "Combat Site", 100.0f, 5.3f);
-    assertTrue(result.id == "XYZ-001", "Result ID correct");
-    assertTrue(result.name == "Serpentis Hideaway", "Result name correct");
-    assertTrue(result.group == "Cosmic Anomaly", "Result group correct");
-    assertTrue(result.type == "Combat Site", "Result type correct");
-    assertClose(result.signal_strength, 100.0f, "Result signal 100%");
-    assertClose(result.distance, 5.3f, "Result distance 5.3 AU");
-
-    // Default constructor
-    UI::ProbeScanResult empty;
-    assertTrue(empty.id.empty(), "Empty result ID");
-    assertClose(empty.signal_strength, 0.0f, "Empty result signal 0%");
-    assertClose(empty.distance, 0.0f, "Empty result distance 0");
-
-    // Multiple results with different signal levels
-    UI::ProbeScanResult partial("ABC-002", "Unknown", "Cosmic Signature", "---", 35.0f, 8.0f);
-    assertTrue(partial.signal_strength < 100.0f, "Partial signal < 100%");
-    assertTrue(partial.signal_strength >= 25.0f, "Partial signal >= 25% (name visible)");
-
-    UI::ProbeScanResult weak("DEF-003", "Unknown", "Cosmic Signature", "---", 10.0f, 15.0f);
-    assertTrue(weak.signal_strength < 25.0f, "Weak signal < 25% (name hidden)");
-
-    // Anomaly vs signature grouping
-    UI::ProbeScanResult anomaly("GHI-004", "Blood Rally", "Cosmic Anomaly", "Combat Site", 100.0f, 3.0f);
-    assertTrue(anomaly.group == "Cosmic Anomaly", "Anomaly group correct");
-    UI::ProbeScanResult signature("JKL-005", "Ruins", "Cosmic Signature", "Relic Site", 80.0f, 7.0f);
-    assertTrue(signature.group == "Cosmic Signature", "Signature group correct");
 }
 
 // ─── Sidebar Callback Wiring test ─────────────────────────────────────
@@ -2451,11 +2273,6 @@ int main() {
     testRmlUiManagerStub();
 
     // New GUI/HUD tests
-    testHUDAlertTypes();
-    testSelectedItemData();
-    testModuleSlotState();
-    testDamageFeedback();
-    testProbeScannerPanel();
 
     // Phase 4.10+ GUI/HUD enhancement tests
     testModeIndicator();

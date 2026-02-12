@@ -203,7 +203,7 @@ if(USE_RMLUI)
                 "RmlUi not found and FetchContent failed.\n"
                 "  Install via vcpkg:  vcpkg install rmlui:x64-windows\n"
                 "  Or on Linux:        sudo apt install librmlui-dev\n"
-                "  Falling back to stub UI (enable USE_IMGUI for legacy panels).")
+                "  Falling back to stub UI.")
         endif()
     endif()
 

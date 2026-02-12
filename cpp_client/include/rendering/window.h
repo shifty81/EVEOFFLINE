@@ -37,6 +37,18 @@ public:
     void update();
 
     /**
+     * Poll window events (keyboard, mouse, resize).
+     * Call after resetting per-frame input state so that transient
+     * flags (clicked, released) are available during the same frame.
+     */
+    void pollEvents();
+
+    /**
+     * Swap the front and back buffers.
+     */
+    void swapBuffers();
+
+    /**
      * Get window dimensions
      */
     int getWidth() const { return m_width; }
