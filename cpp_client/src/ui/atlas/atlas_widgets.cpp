@@ -669,18 +669,106 @@ void scrollbar(AtlasContext& ctx, const Rect& track,
 // ── Sidebar Bar ─────────────────────────────────────────────────────
 
 void sidebarBar(AtlasContext& ctx, float x, float width, float height,
-               int icons, const std::function<void(int)>& callback) {
+               int icons, const std::function<void(int)>& callback,
+               const bool* activeIcons, float skillQueuePct) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
 
-    // Neocom-style dark solid background bar
+    // ── Background: dark semi-transparent panel ─────────────────────
     Rect bar = {x, 0, width, height};
-    rr.drawRect(bar, t.bgPanel);
-    // Right edge border
+    rr.drawRect(bar, t.bgPanel.withAlpha(0.92f));
+    // Right edge border (thin skeletal frame)
     rr.drawRect({x + width - 1.0f, 0, 1.0f, height}, t.borderSubtle);
 
-    // Neocom icon labels (letter-based symbols like EVE Online)
-    static const char* neocomLabels[] = {
+    float iconY = 4.0f;
+    float slotSz = width - 6.0f;
+    float iconGap = 2.0f;
+    float pad = 3.0f;
+
+    // ── "E" Menu Button (top of sidebar) ────────────────────────────
+    {
+        Rect eRect = {x + pad, iconY, slotSz, slotSz};
+        WidgetID eID = hashID("sidebar_emenu");
+
+        bool hovered = ctx.isHovered(eRect);
+        if (hovered) ctx.setHot(eID);
+        bool active = ctx.isActive(eID);
+
+        // Accent-coloured background for the A button
+        Color eBg = active  ? t.accentPrimary.withAlpha(0.5f) :
+                    hovered ? t.accentPrimary.withAlpha(0.3f) :
+                              t.accentPrimary.withAlpha(0.12f);
+        rr.drawRect(eRect, eBg);
+        rr.drawRectOutline(eRect, t.accentPrimary.withAlpha(0.4f));
+
+        // "A" letter centred (Atlas menu icon)
+        float tw = rr.measureText("A");
+        float tx = eRect.x + (eRect.w - tw) * 0.5f;
+        float ty = eRect.y + (eRect.h - 13.0f) * 0.5f;
+        rr.drawText("A", {tx, ty}, t.accentPrimary);
+
+        // Click behavior (currently informational — master menu)
+        ctx.buttonBehavior(eRect, eID);
+        if (ctx.isHot(eID)) {
+            tooltip(ctx, "Atlas Menu");
+        }
+
+        iconY += slotSz + iconGap;
+    }
+
+    // ── Character Portrait Area ─────────────────────────────────────
+    {
+        float portraitSz = slotSz;
+        Rect portraitRect = {x + pad, iconY, portraitSz, portraitSz};
+
+        // Dark recessed area for portrait
+        rr.drawRect(portraitRect, t.bgSecondary.withAlpha(0.8f));
+        rr.drawRectOutline(portraitRect, t.borderSubtle);
+
+        // Placeholder silhouette (draw a simple head/shoulders shape)
+        Vec2 pCentre = portraitRect.center();
+        float headR = portraitSz * 0.2f;
+        rr.drawCircle(pCentre + Vec2(0, -headR * 0.5f), headR,
+                       t.textMuted.withAlpha(0.4f), 12);
+        // Shoulders arc
+        rr.drawArc(pCentre + Vec2(0, headR * 0.8f),
+                    headR * 0.8f, headR * 1.6f,
+                    static_cast<float>(M_PI), 2.0f * static_cast<float>(M_PI),
+                    t.textMuted.withAlpha(0.3f), 8);
+
+        if (ctx.isHovered(portraitRect)) {
+            tooltip(ctx, "Character Sheet");
+        }
+
+        iconY += portraitSz + 2.0f;
+    }
+
+    // ── Skill Queue Progress Bar ────────────────────────────────────
+    {
+        float barH = 3.0f;
+        Rect sqRect = {x + pad, iconY, slotSz, barH};
+        rr.drawRect(sqRect, t.bgSecondary.withAlpha(0.6f));
+        float fill = std::max(0.0f, std::min(1.0f, skillQueuePct));
+        if (fill > 0.0f) {
+            rr.drawRect({sqRect.x, sqRect.y, sqRect.w * fill, barH},
+                         t.accentSecondary.withAlpha(0.8f));
+        }
+        rr.drawRectOutline(sqRect, t.borderSubtle.withAlpha(0.4f), 1.0f);
+
+        if (ctx.isHovered(sqRect)) {
+            tooltip(ctx, "Skill Queue");
+        }
+
+        iconY += barH + 6.0f;
+    }
+
+    // ── Separator ───────────────────────────────────────────────────
+    rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f},
+                t.borderSubtle.withAlpha(0.6f));
+    iconY += 5.0f;
+
+    // ── Service icon definitions ────────────────────────────────────
+    static const char* sidebarLabels[] = {
         "I",   // 0: Inventory
         "F",   // 1: Fitting
         "M",   // 2: Market
@@ -690,7 +778,7 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
         "C",   // 6: Chat
         "Dr",  // 7: Drones
     };
-    static const char* neocomTooltips[] = {
+    static const char* sidebarTooltips[] = {
         "Inventory",
         "Ship Fitting",
         "Market",
@@ -700,81 +788,173 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
         "Chat",
         "Drones",
     };
+    // Per-icon accent colours (EVE lets users colour-code icons)
+    static const Color iconAccentColors[] = {
+        Color(0.35f, 0.75f, 0.45f, 1.0f),  // Inventory: green
+        Color(0.85f, 0.50f, 0.25f, 1.0f),  // Fitting: orange
+        Color(0.40f, 0.65f, 0.90f, 1.0f),  // Market: blue
+        Color(0.80f, 0.75f, 0.30f, 1.0f),  // Missions: gold
+        Color(0.60f, 0.80f, 0.90f, 1.0f),  // D-Scan: light cyan
+        Color(0.50f, 0.70f, 0.85f, 1.0f),  // Overview: steel blue
+        Color(0.65f, 0.55f, 0.85f, 1.0f),  // Chat: purple
+        Color(0.45f, 0.80f, 0.65f, 1.0f),  // Drones: teal
+    };
 
-    // Icon slot dimensions — square slots with small gap
-    float slotSz = width - 4.0f;
-    float iconY = 8.0f;
-    float iconGap = 2.0f;
-
-    // Top group: Character/Ship (first 2 icons)
+    // ── Top group: Inventory & Fitting (icons 0–1) ──────────────────
     int topGroup = std::min(icons, 2);
     for (int i = 0; i < topGroup; ++i) {
-        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
-        WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
+        Rect iconRect = {x + pad, iconY, slotSz, slotSz};
+        WidgetID iconID = hashID("sidebar") ^ static_cast<uint32_t>(i);
 
-        const char* sym = (i < 8) ? neocomLabels[i] : "?";
-        Color iconColor = t.textSecondary;
+        bool isOpen = activeIcons ? activeIcons[i] : false;
+        bool hovered = ctx.isHovered(iconRect);
+        if (hovered) ctx.setHot(iconID);
+        bool pressing = ctx.isActive(iconID);
 
-        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
+        // Background: show persistent highlight when panel is open
+        Color bg(0, 0, 0, 0);
+        Color accentCol = (i < 8) ? iconAccentColors[i] : t.accentPrimary;
+        if (pressing) {
+            bg = accentCol.withAlpha(0.35f);
+        } else if (isOpen) {
+            bg = accentCol.withAlpha(0.18f);
+        } else if (hovered) {
+            bg = t.hover;
+        }
+        rr.drawRect(iconRect, bg);
+
+        // Left accent bar: bright when open, subtle on hover
+        if (isOpen) {
+            rr.drawRect({iconRect.x, iconRect.y, 2.0f, iconRect.h},
+                         accentCol);
+        } else if (hovered) {
+            rr.drawRect({iconRect.x, iconRect.y, 2.0f, iconRect.h},
+                         accentCol.withAlpha(0.5f));
+        }
+
+        // Icon letter
+        const char* sym = (i < 8) ? sidebarLabels[i] : "?";
+        Color textCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
+        float tw = rr.measureText(sym);
+        float tx = iconRect.x + (iconRect.w - tw) * 0.5f;
+        float ty = iconRect.y + (iconRect.h - 13.0f) * 0.5f;
+        rr.drawText(sym, {tx, ty}, textCol);
+
+        if (ctx.buttonBehavior(iconRect, iconID)) {
             if (callback) callback(i);
         }
 
-        // Show tooltip on hover
         if (ctx.isHot(iconID) && i < 8) {
-            tooltip(ctx, neocomTooltips[i]);
+            tooltip(ctx, sidebarTooltips[i]);
         }
 
         iconY += slotSz + iconGap;
     }
 
-    // Separator line between groups
+    // ── Separator ───────────────────────────────────────────────────
     if (topGroup > 0 && icons > topGroup) {
         iconY += 2.0f;
-        rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f}, t.borderSubtle);
+        rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f},
+                    t.borderSubtle.withAlpha(0.6f));
         iconY += 5.0f;
     }
 
-    // Middle group: Services (icons 2..5)
+    // ── Middle group: Market, Missions, D-Scan, Overview (icons 2–5) ─
     int midGroup = std::min(icons, 6);
     for (int i = topGroup; i < midGroup; ++i) {
-        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
-        WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
+        Rect iconRect = {x + pad, iconY, slotSz, slotSz};
+        WidgetID iconID = hashID("sidebar") ^ static_cast<uint32_t>(i);
 
-        const char* sym = (i < 8) ? neocomLabels[i] : "?";
-        Color iconColor = t.textSecondary;
+        bool isOpen = activeIcons ? activeIcons[i] : false;
+        bool hovered = ctx.isHovered(iconRect);
+        if (hovered) ctx.setHot(iconID);
+        bool pressing = ctx.isActive(iconID);
 
-        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
+        Color accentCol = (i < 8) ? iconAccentColors[i] : t.accentPrimary;
+        Color bg(0, 0, 0, 0);
+        if (pressing) {
+            bg = accentCol.withAlpha(0.35f);
+        } else if (isOpen) {
+            bg = accentCol.withAlpha(0.18f);
+        } else if (hovered) {
+            bg = t.hover;
+        }
+        rr.drawRect(iconRect, bg);
+
+        if (isOpen) {
+            rr.drawRect({iconRect.x, iconRect.y, 2.0f, iconRect.h}, accentCol);
+        } else if (hovered) {
+            rr.drawRect({iconRect.x, iconRect.y, 2.0f, iconRect.h},
+                         accentCol.withAlpha(0.5f));
+        }
+
+        const char* sym = (i < 8) ? sidebarLabels[i] : "?";
+        Color textCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
+        float tw = rr.measureText(sym);
+        float tx = iconRect.x + (iconRect.w - tw) * 0.5f;
+        float ty = iconRect.y + (iconRect.h - 13.0f) * 0.5f;
+        rr.drawText(sym, {tx, ty}, textCol);
+
+        if (ctx.buttonBehavior(iconRect, iconID)) {
             if (callback) callback(i);
         }
 
         if (ctx.isHot(iconID) && i < 8) {
-            tooltip(ctx, neocomTooltips[i]);
+            tooltip(ctx, sidebarTooltips[i]);
         }
 
         iconY += slotSz + iconGap;
     }
 
-    // Separator before bottom group
+    // ── Separator before bottom group ───────────────────────────────
     if (midGroup > topGroup && icons > midGroup) {
         iconY += 2.0f;
-        rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f}, t.borderSubtle);
+        rr.drawRect({x + 6.0f, iconY, width - 12.0f, 1.0f},
+                    t.borderSubtle.withAlpha(0.6f));
         iconY += 5.0f;
     }
 
-    // Bottom group: Social (icons 6+)
+    // ── Bottom group: Chat, Drones (icons 6+) ───────────────────────
     for (int i = midGroup; i < icons; ++i) {
-        Rect iconRect = {x + 2.0f, iconY, slotSz, slotSz};
-        WidgetID iconID = hashID("neocom") ^ static_cast<uint32_t>(i);
+        Rect iconRect = {x + pad, iconY, slotSz, slotSz};
+        WidgetID iconID = hashID("sidebar") ^ static_cast<uint32_t>(i);
 
-        const char* sym = (i < 8) ? neocomLabels[i] : "?";
-        Color iconColor = t.textSecondary;
+        bool isOpen = activeIcons ? activeIcons[i] : false;
+        bool hovered = ctx.isHovered(iconRect);
+        if (hovered) ctx.setHot(iconID);
+        bool pressing = ctx.isActive(iconID);
 
-        if (iconButton(ctx, iconID, iconRect, iconColor, sym)) {
+        Color accentCol = (i < 8) ? iconAccentColors[i] : t.accentPrimary;
+        Color bg(0, 0, 0, 0);
+        if (pressing) {
+            bg = accentCol.withAlpha(0.35f);
+        } else if (isOpen) {
+            bg = accentCol.withAlpha(0.18f);
+        } else if (hovered) {
+            bg = t.hover;
+        }
+        rr.drawRect(iconRect, bg);
+
+        if (isOpen) {
+            rr.drawRect({iconRect.x, iconRect.y, 2.0f, iconRect.h}, accentCol);
+        } else if (hovered) {
+            rr.drawRect({iconRect.x, iconRect.y, 2.0f, iconRect.h},
+                         accentCol.withAlpha(0.5f));
+        }
+
+        const char* sym = (i < 8) ? sidebarLabels[i] : "?";
+        Color textCol = isOpen ? accentCol : (hovered ? t.textPrimary : t.textSecondary);
+        float tw = rr.measureText(sym);
+        float tx = iconRect.x + (iconRect.w - tw) * 0.5f;
+        float ty = iconRect.y + (iconRect.h - 13.0f) * 0.5f;
+        rr.drawText(sym, {tx, ty}, textCol);
+
+        if (ctx.buttonBehavior(iconRect, iconID)) {
             if (callback) callback(i);
         }
 
         if (ctx.isHot(iconID) && i < 8) {
-            tooltip(ctx, neocomTooltips[i]);
+            tooltip(ctx, sidebarTooltips[i]);
         }
 
         iconY += slotSz + iconGap;

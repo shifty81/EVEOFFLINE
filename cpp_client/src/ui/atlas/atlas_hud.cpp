@@ -26,6 +26,28 @@ void AtlasHUD::init(int windowW, int windowH) {
     m_infoPanelState.bounds = {60.0f, 100.0f, 280.0f, 260.0f};
     m_infoPanelState.open = false;
     m_infoPanelState.minimized = false;
+
+    // Dockable panels (opened via Neocom sidebar)
+    m_inventoryState.bounds = {50.0f, 300.0f, 350.0f, 400.0f};
+    m_inventoryState.open = false;
+
+    m_fittingState.bounds = {420.0f, 300.0f, 400.0f, 450.0f};
+    m_fittingState.open = false;
+
+    m_marketState.bounds = {420.0f, 50.0f, 450.0f, 500.0f};
+    m_marketState.open = false;
+
+    m_missionState.bounds = {50.0f, 50.0f, 400.0f, 350.0f};
+    m_missionState.open = false;
+
+    m_dscanState.bounds = {w - 360.0f, 460.0f, 350.0f, 300.0f};
+    m_dscanState.open = false;
+
+    m_chatState.bounds = {60.0f, 420.0f, 380.0f, 300.0f};
+    m_chatState.open = false;
+
+    m_dronePanelState.bounds = {60.0f, 300.0f, 320.0f, 400.0f};
+    m_dronePanelState.open = false;
 }
 
 void AtlasHUD::update(AtlasContext& ctx,
@@ -35,10 +57,21 @@ void AtlasHUD::update(AtlasContext& ctx,
                        const SelectedItemInfo& selectedItem) {
     // Draw elements in back-to-front order
 
-    // 1. Sidebar (left edge)
+    // 1. Sidebar (left edge) — pass active panel states for icon highlighting
+    bool activeIcons[8] = {
+        m_inventoryState.open,   // 0: Inventory
+        m_fittingState.open,     // 1: Fitting
+        m_marketState.open,      // 2: Market
+        m_missionState.open,     // 3: Missions
+        m_dscanState.open,       // 4: D-Scan
+        m_overviewState.open,    // 5: Overview
+        m_chatState.open,        // 6: Chat
+        m_dronePanelState.open,  // 7: Drones
+    };
     sidebarBar(ctx, 0.0f, m_sidebarWidth,
               static_cast<float>(ctx.input().windowH),
-              m_sidebarIcons, m_sidebarCallback);
+              m_sidebarIcons, m_sidebarCallback,
+              activeIcons, m_skillQueuePct);
 
     // 2. Locked target cards (top-center row)
     drawTargetCards(ctx, targets);
@@ -73,7 +106,16 @@ void AtlasHUD::update(AtlasContext& ctx,
     // 10. Info panel (if open)
     drawInfoPanel(ctx);
 
-    // 11. Damage flashes (on top of everything)
+    // 11. Dockable panels (opened via Neocom sidebar)
+    drawDockablePanel(ctx, "Inventory", m_inventoryState);
+    drawDockablePanel(ctx, "Ship Fitting", m_fittingState);
+    drawDockablePanel(ctx, "Market", m_marketState);
+    drawDockablePanel(ctx, "Missions", m_missionState);
+    drawDockablePanel(ctx, "D-Scan", m_dscanState);
+    drawDockablePanel(ctx, "Chat", m_chatState);
+    drawDockablePanel(ctx, "Drones", m_dronePanelState);
+
+    // 12. Damage flashes (on top of everything)
     float winW = static_cast<float>(ctx.input().windowW);
     float winH = static_cast<float>(ctx.input().windowH);
     Vec2 hudCentre = {winW * 0.5f, winH - 110.0f};
@@ -423,6 +465,41 @@ void AtlasHUD::drawFleetBroadcasts(AtlasContext& ctx) {
     Rect bannerRect = {(winW - bannerW) * 0.5f, 92.0f, bannerW, bannerH};
 
     fleetBroadcastBanner(ctx, bannerRect, m_broadcasts);
+}
+
+// ── Dockable Panel (generic Atlas panel with stub content) ──────────
+
+void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
+                                  PanelState& state) {
+    if (!state.open) return;
+
+    PanelFlags flags;
+    flags.showHeader = true;
+    flags.showClose = true;
+    flags.showMinimize = true;
+    flags.drawBorder = true;
+
+    if (!panelBeginStateful(ctx, title, state, flags)) {
+        panelEnd(ctx);
+        return;
+    }
+
+    const Theme& t = ctx.theme();
+    float hh = t.headerHeight;
+    float x = state.bounds.x + t.padding;
+    float y = state.bounds.y + hh + t.padding;
+    float contentW = state.bounds.w - t.padding * 2.0f;
+
+    // Panel title label
+    label(ctx, Vec2(x, y), title, t.textPrimary);
+    y += 20.0f;
+    separator(ctx, Vec2(x, y), contentW);
+    y += t.itemSpacing + 4.0f;
+
+    // Stub content placeholder
+    label(ctx, Vec2(x, y), "Panel content (Atlas)", t.textSecondary);
+
+    panelEnd(ctx);
 }
 
 } // namespace atlas

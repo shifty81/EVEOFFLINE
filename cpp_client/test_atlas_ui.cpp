@@ -1400,13 +1400,16 @@ void testSidebarCallback() {
     assertTrue(lastClickedIcon == -1, "Sidebar callback not called before click");
 
     // Simulate a sidebar icon click by rendering a frame with mouse position
-    // over the first icon and mouse clicked state
+    // over the first icon and mouse clicked state.
+    // Sidebar layout: "A" button (~34px), portrait (~34px), skill bar (~9px),
+    // separator (~6px), then first icon starts at approximately y=90.
     {
         atlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
-        // Position mouse over first sidebar icon (x=2..38, y=8..44)
-        input.mousePos = {20.0f, 26.0f};
+        // Position mouse over first sidebar icon (Inventory):
+        // x: pad(3) + slotSz/2 = ~20,  y: ~90 + slotSz/2 = ~107
+        input.mousePos = {20.0f, 107.0f};
         input.mouseDown[0] = true;
         input.mouseClicked[0] = true;
         ctx.beginFrame(input);
@@ -1423,7 +1426,7 @@ void testSidebarCallback() {
         atlas::InputState input;
         input.windowW = 1920;
         input.windowH = 1080;
-        input.mousePos = {20.0f, 26.0f};
+        input.mousePos = {20.0f, 107.0f};
         input.mouseDown[0] = false;
         input.mouseReleased[0] = true;
         ctx.beginFrame(input);
@@ -1444,6 +1447,52 @@ void testSidebarCallback() {
     assertTrue(!hud.isOverviewOpen(), "Overview closed after toggle");
     hud.toggleOverview();
     assertTrue(hud.isOverviewOpen(), "Overview reopened after second toggle");
+
+    // Verify dockable panel toggles (new panels opened via sidebar)
+    assertTrue(!hud.isInventoryOpen(), "Inventory starts closed");
+    hud.toggleInventory();
+    assertTrue(hud.isInventoryOpen(), "Inventory open after toggle");
+    hud.toggleInventory();
+    assertTrue(!hud.isInventoryOpen(), "Inventory closed after second toggle");
+
+    assertTrue(!hud.isFittingOpen(), "Fitting starts closed");
+    hud.toggleFitting();
+    assertTrue(hud.isFittingOpen(), "Fitting open after toggle");
+
+    assertTrue(!hud.isMarketOpen(), "Market starts closed");
+    hud.toggleMarket();
+    assertTrue(hud.isMarketOpen(), "Market open after toggle");
+
+    assertTrue(!hud.isMissionOpen(), "Mission starts closed");
+    hud.toggleMission();
+    assertTrue(hud.isMissionOpen(), "Mission open after toggle");
+
+    assertTrue(!hud.isDScanOpen(), "DScan starts closed");
+    hud.toggleDScan();
+    assertTrue(hud.isDScanOpen(), "DScan open after toggle");
+
+    assertTrue(!hud.isChatOpen(), "Chat starts closed");
+    hud.toggleChat();
+    assertTrue(hud.isChatOpen(), "Chat open after toggle");
+
+    assertTrue(!hud.isDronePanelOpen(), "Drone panel starts closed");
+    hud.toggleDronePanel();
+    assertTrue(hud.isDronePanelOpen(), "Drone panel open after toggle");
+
+    // Verify HUD renders without crash with all panels open
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        ctx.beginFrame(input);
+        atlas::ShipHUDData ship;
+        std::vector<atlas::TargetCardInfo> targets;
+        std::vector<atlas::OverviewEntry> overview;
+        atlas::SelectedItemInfo selected;
+        hud.update(ctx, ship, targets, overview, selected);
+        ctx.endFrame();
+    }
+    assertTrue(true, "HUD renders with all dockable panels open");
 }
 
 // ─── Mouse Delta (getDragDelta) ────────────────────────────────────────
