@@ -4,6 +4,7 @@
 #include "rendering/procedural_ship_generator.h"
 #include "rendering/ship_part_library.h"
 #include "rendering/ship_generation_rules.h"
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include <algorithm>
 #include <cmath>
@@ -12,6 +13,9 @@
 #include <functional>
 
 #ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <windows.h>
 #elif defined(__APPLE__)
 #include <mach-o/dyld.h>
