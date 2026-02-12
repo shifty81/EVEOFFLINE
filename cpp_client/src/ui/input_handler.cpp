@@ -90,15 +90,13 @@ void InputHandler::handleMouse(double xpos, double ypos) {
         return;
     }
     
-    // Calculate delta
-    double deltaX = xpos - m_prevMouseX;
-    double deltaY = ypos - m_prevMouseY;
+    // Calculate delta from last known position to new position
+    double deltaX = xpos - m_lastMouseX;
+    double deltaY = ypos - m_lastMouseY;
     
-    // Update previous
+    // Update previous and current
     m_prevMouseX = m_lastMouseX;
     m_prevMouseY = m_lastMouseY;
-    
-    // Update current
     m_lastMouseX = xpos;
     m_lastMouseY = ypos;
     

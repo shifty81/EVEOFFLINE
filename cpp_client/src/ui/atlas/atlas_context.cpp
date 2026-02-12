@@ -14,8 +14,10 @@ void AtlasContext::shutdown() {
 }
 
 void AtlasContext::beginFrame(const InputState& input) {
+    m_prevMousePos = m_input.mousePos;  // save previous frame's position
     m_input = input;
     m_hotID = 0;  // reset hot each frame; widgets re-claim it
+    m_mouseConsumed = false;  // reset consumed flag each frame
     m_renderer.begin(input.windowW, input.windowH);
 }
 
@@ -46,6 +48,11 @@ void AtlasContext::clearActive()           { m_activeID = 0; }
 bool AtlasContext::buttonBehavior(const Rect& r, WidgetID id) {
     bool hovered = isHovered(r);
     bool clicked = false;
+
+    // If mouse is already consumed by a higher-priority widget, skip interaction
+    if (m_mouseConsumed) {
+        return false;
+    }
 
     if (hovered) {
         setHot(id);
@@ -84,9 +91,7 @@ WidgetID AtlasContext::currentID(const char* label) const {
 }
 
 Vec2 AtlasContext::getDragDelta() const {
-    // Drag position tracking is handled externally via PanelState.
-    // This method is reserved for future per-frame delta computation.
-    return {0.0f, 0.0f};
+    return m_input.mousePos - m_prevMousePos;
 }
 
 } // namespace atlas

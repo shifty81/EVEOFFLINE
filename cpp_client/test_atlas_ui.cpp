@@ -1446,6 +1446,156 @@ void testSidebarCallback() {
     assertTrue(hud.isOverviewOpen(), "Overview reopened after second toggle");
 }
 
+// ─── Mouse Delta (getDragDelta) ────────────────────────────────────────
+
+void testGetDragDelta() {
+    std::cout << "\n=== getDragDelta ===" << std::endl;
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    // Frame 1: initial position
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {100.0f, 200.0f};
+        ctx.beginFrame(input);
+        // First frame delta may be zero (no previous frame)
+        ctx.endFrame();
+    }
+
+    // Frame 2: mouse moves
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {120.0f, 210.0f};
+        ctx.beginFrame(input);
+        atlas::Vec2 delta = ctx.getDragDelta();
+        assertClose(delta.x, 20.0f, "getDragDelta X = 20");
+        assertClose(delta.y, 10.0f, "getDragDelta Y = 10");
+        ctx.endFrame();
+    }
+
+    // Frame 3: no movement
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {120.0f, 210.0f};
+        ctx.beginFrame(input);
+        atlas::Vec2 delta = ctx.getDragDelta();
+        assertClose(delta.x, 0.0f, "getDragDelta X = 0 when stationary");
+        assertClose(delta.y, 0.0f, "getDragDelta Y = 0 when stationary");
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── Mouse Consumed ────────────────────────────────────────────────────
+
+void testMouseConsumed() {
+    std::cout << "\n=== Mouse Consumed ===" << std::endl;
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::Rect btn(100, 100, 80, 30);
+    atlas::WidgetID btnID = atlas::hashID("consumeTestBtn");
+
+    // Mouse consumed prevents buttonBehavior from registering clicks
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {140.0f, 115.0f};
+        input.mouseClicked[0] = true;
+        input.mouseDown[0] = true;
+        ctx.beginFrame(input);
+        assertTrue(!ctx.isMouseConsumed(), "Mouse not consumed at frame start");
+        ctx.consumeMouse();
+        assertTrue(ctx.isMouseConsumed(), "Mouse consumed after consumeMouse()");
+        bool clicked = ctx.buttonBehavior(btn, btnID);
+        assertTrue(!clicked, "Button does not register click when mouse consumed");
+        assertTrue(!ctx.isHot(btnID), "Button is not hot when mouse consumed");
+        ctx.endFrame();
+    }
+
+    // Next frame: consumed flag resets
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {140.0f, 115.0f};
+        ctx.beginFrame(input);
+        assertTrue(!ctx.isMouseConsumed(), "Mouse consumed resets each frame");
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── Sidebar does not fire when panel overlaps ─────────────────────────
+
+void testSidebarBlockedByPanel() {
+    std::cout << "\n=== Sidebar Blocked by Overlapping Panel ===" << std::endl;
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    int lastClickedIcon = -1;
+
+    // Create a panel that overlaps the sidebar area
+    atlas::PanelState panelState;
+    panelState.bounds = atlas::Rect(0.0f, 0.0f, 200.0f, 300.0f);
+    panelState.open = true;
+    atlas::PanelFlags flags;
+    flags.locked = true;
+
+    // Click on an area that's both inside the panel and the sidebar icon area
+    // Sidebar icon 0 is at approx (2, 8, 36, 36)
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {20.0f, 26.0f};
+        input.mouseDown[0] = true;
+        input.mouseClicked[0] = true;
+        ctx.beginFrame(input);
+
+        // Panel renders first and consumes mouse
+        atlas::panelBeginStateful(ctx, "Overlap Test", panelState, flags);
+        atlas::panelEnd(ctx);
+
+        // Sidebar renders after - should be blocked
+        atlas::sidebarBar(ctx, 0.0f, 40.0f, 1080.0f, 8,
+            [&](int icon) { lastClickedIcon = icon; });
+
+        ctx.endFrame();
+    }
+    // Release frame
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {20.0f, 26.0f};
+        input.mouseReleased[0] = true;
+        ctx.beginFrame(input);
+
+        atlas::panelBeginStateful(ctx, "Overlap Test", panelState, flags);
+        atlas::panelEnd(ctx);
+
+        atlas::sidebarBar(ctx, 0.0f, 40.0f, 1080.0f, 8,
+            [&](int icon) { lastClickedIcon = icon; });
+
+        ctx.endFrame();
+    }
+
+    assertTrue(lastClickedIcon == -1,
+               "Sidebar icon not triggered when panel overlaps and consumes click");
+
+    ctx.shutdown();
+}
+
 // ─── Main ──────────────────────────────────────────────────────────────
 
 int main() {
@@ -1500,6 +1650,11 @@ int main() {
     testAtlasHUDOverviewTab();
     testSelectedItemCallbacks();
     testSidebarCallback();
+
+    // Mouse and sidebar interaction fixes
+    testGetDragDelta();
+    testMouseConsumed();
+    testSidebarBlockedByPanel();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

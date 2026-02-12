@@ -107,8 +107,7 @@ public:
 
     // ── Drag helpers ────────────────────────────────────────────────
 
-    /** Reserved for future per-frame mouse delta tracking.
-     *  Currently returns zero; drag state is tracked via PanelState. */
+    /** Per-frame mouse delta (current position minus previous frame position). */
     Vec2 getDragDelta() const;
 
     /** Check if the left mouse is currently held down. */
@@ -117,13 +116,26 @@ public:
     /** Check if left mouse was just clicked this frame. */
     bool isMouseClicked() const { return m_input.mouseClicked[0]; }
 
+    // ── Mouse consumption (prevents click-through) ──────────────────
+
+    /** Mark the mouse as consumed — subsequent widgets should ignore clicks. */
+    void consumeMouse() { m_mouseConsumed = true; }
+
+    /** Check if another widget already consumed the mouse this frame. */
+    bool isMouseConsumed() const { return m_mouseConsumed; }
+
 private:
     AtlasRenderer m_renderer;
     Theme          m_theme;
     InputState     m_input;
+    Vec2           m_prevMousePos;  // previous frame mouse position for drag delta
 
     WidgetID m_hotID    = 0;
     WidgetID m_activeID = 0;
+
+    // Mouse consumed flag — set when a widget claims the mouse event
+    // to prevent other widgets from also responding
+    bool m_mouseConsumed = false;
 
     // ID stack for scoped widget naming
     std::vector<WidgetID> m_idStack;
