@@ -95,6 +95,14 @@ void Window::update() {
     glfwPollEvents();
 }
 
+void Window::pollEvents() {
+    glfwPollEvents();
+}
+
+void Window::swapBuffers() {
+    glfwSwapBuffers(m_window);
+}
+
 void Window::keyCallbackStatic(GLFWwindow* window, int key, int scancode, int action, int mods) {
     Window* instance = static_cast<Window*>(glfwGetWindowUserPointer(window));
     if (instance && instance->m_keyCallback) {

@@ -6,7 +6,7 @@
  *
  * Atlas UI is a custom EVE-style UI framework for EVEOFFLINE.
  * It renders translucent dark panels with teal accent highlights using
- * raw OpenGL, replacing ImGui for in-game HUD and panel rendering.
+ * raw OpenGL for in-game HUD and panel rendering.
  */
 
 #include <string>

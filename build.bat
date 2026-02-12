@@ -35,7 +35,7 @@ if errorlevel 1 (
     echo.
     echo Install dependencies via vcpkg:
     echo   vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
-    echo   vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows
+
     pause
     exit /b 1
 )

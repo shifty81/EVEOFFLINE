@@ -13,8 +13,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # Options
 option(BUILD_TESTS "Build test suite" ON)
 option(USE_SYSTEM_LIBS "Use system libraries instead of bundled" ON)  # Default to ON since they're available
-option(USE_RMLUI "Enable RmlUi for advanced Photon UI (replaces ImGui for game panels)" ON)
-option(USE_IMGUI "Enable legacy ImGui UI panels" OFF)
+option(USE_RMLUI "Enable RmlUi for advanced Photon UI game panels" ON)
+
 
 # Platform-specific settings
 if(WIN32)
@@ -168,59 +168,8 @@ else()
     message(WARNING "tinygltf not found at external/tinygltf - .gltf/.glb loading disabled")
 endif()
 
-# ImGui (legacy UI library)
-# Try to use vcpkg ImGui first, fall back to bundled
-set(USE_VCPKG_IMGUI OFF)
-set(IMGUI_AVAILABLE OFF)
-set(IMGUI_SOURCES "")
-if(USE_IMGUI)
-    if(USE_SYSTEM_LIBS)
-        find_package(imgui CONFIG QUIET)
-        if(imgui_FOUND)
-            message(STATUS "Using system ImGui from vcpkg")
-            set(USE_VCPKG_IMGUI ON)
-            set(IMGUI_AVAILABLE ON)
-            set(IMGUI_SOURCES "")
-        endif()
-    endif()
 
-    if(NOT USE_VCPKG_IMGUI)
-        # Check if bundled ImGui exists
-        if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/external/imgui/imgui.cpp")
-            message(STATUS "Using bundled ImGui")
-            set(IMGUI_AVAILABLE ON)
-            set(IMGUI_SOURCES
-                external/imgui/imgui.cpp
-                external/imgui/imgui_draw.cpp
-                external/imgui/imgui_widgets.cpp
-                external/imgui/imgui_tables.cpp
-                external/imgui/imgui_impl_glfw.cpp
-                external/imgui/imgui_impl_opengl3.cpp
-            )
-        else()
-            message(FATAL_ERROR 
-                "ImGui not found!\n"
-                "\n"
-                "ImGui is required only when USE_IMGUI=ON.\n"
-                "\n"
-                "Solution: Install ImGui via vcpkg:\n"
-                "  vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows\n"
-                "\n"
-                "Then run CMake with the vcpkg toolchain:\n"
-                "  cmake .. -DCMAKE_TOOLCHAIN_FILE=C:/vcpkg/scripts/buildsystems/vcpkg.cmake\n"
-                "\n"
-                "Full dependency install (recommended):\n"
-                "  vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows\n"
-                "  vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows\n"
-                "\n"
-                "Or place ImGui source files in: ${CMAKE_CURRENT_SOURCE_DIR}/external/imgui/")
-        endif()
-    endif()
-else()
-    message(STATUS "ImGui disabled (legacy UI not built)")
-endif()
-
-# RmlUi (advanced UI framework — optional, replaces ImGui for game panels)
+# RmlUi (advanced UI framework — optional, used for game panels)
 # See docs/design/UI_FRAMEWORK_EVALUATION.md for rationale.
 # Uses RmlUi's official GLFW platform and OpenGL 3 renderer backends.
 set(RMLUI_AVAILABLE OFF)
@@ -254,7 +203,7 @@ if(USE_RMLUI)
                 "RmlUi not found and FetchContent failed.\n"
                 "  Install via vcpkg:  vcpkg install rmlui:x64-windows\n"
                 "  Or on Linux:        sudo apt install librmlui-dev\n"
-                "  Falling back to stub UI (enable USE_IMGUI for legacy panels).")
+                "  Falling back to stub UI.")
         endif()
     endif()
 
@@ -279,9 +228,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/external
     ${OPENGL_INCLUDE_DIR}
 )
-if(USE_IMGUI)
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/external/imgui)
-endif()
+
 
 # Only include GLAD headers if not using GLEW
 if(NOT USE_GLEW)
@@ -291,27 +238,6 @@ if(NOT USE_GLEW)
 endif()
 
 # Source files
-set(IMGUI_UI_SOURCES
-    src/ui/hud.cpp
-    src/ui/ui_manager.cpp
-    src/ui/hud_panels.cpp
-    src/ui/target_list.cpp
-    src/ui/tactical_overlay.cpp
-    src/ui/inventory_panel.cpp
-    src/ui/fitting_panel.cpp
-    src/ui/mission_panel.cpp
-    src/ui/module_browser_panel.cpp
-    src/ui/market_panel.cpp
-    src/ui/overview_panel.cpp
-    src/ui/docking_manager.cpp
-    src/ui/dscan_panel.cpp
-    src/ui/sidebar_panel.cpp
-    src/ui/chat_panel.cpp
-    src/ui/drone_control_panel.cpp
-    src/ui/notification_manager.cpp
-    src/ui/probe_scanner_panel.cpp
-    src/ui/layout_manager.cpp
-)
 
 set(CLIENT_SOURCES
     src/main.cpp
@@ -363,14 +289,11 @@ set(CLIENT_SOURCES
     src/core/solar_system_scene.cpp
     src/core/ship_physics.cpp
     ${GLAD_SOURCES}
-    ${IMGUI_SOURCES}
     ${AUDIO_SOURCES}
     ${RMLUI_BACKEND_SOURCES}
 )
 
-if(USE_IMGUI)
-    list(APPEND CLIENT_SOURCES ${IMGUI_UI_SOURCES})
-endif()
+
 
 set(CLIENT_HEADERS
     include/core/application.h
@@ -404,26 +327,9 @@ set(CLIENT_HEADERS
     include/network/tcp_client.h
     include/network/protocol_handler.h
     include/network/network_manager.h
-    include/ui/hud.h
     include/ui/input_handler.h
-    include/ui/ui_manager.h
-    include/ui/hud_panels.h
-    include/ui/target_list.h
     include/ui/entity_picker.h
     include/ui/context_menu.h
-    include/ui/inventory_panel.h
-    include/ui/fitting_panel.h
-    include/ui/mission_panel.h
-    include/ui/module_browser_panel.h
-    include/ui/market_panel.h
-    include/ui/overview_panel.h
-    include/ui/docking_manager.h
-    include/ui/dscan_panel.h
-    include/ui/sidebar_panel.h
-    include/ui/chat_panel.h
-    include/ui/drone_control_panel.h
-    include/ui/notification_manager.h
-    include/ui/probe_scanner_panel.h
     include/ui/rml_ui_manager.h
     include/ui/radial_menu.h
     include/ui/layout_manager.h
@@ -458,10 +364,7 @@ if(USE_GLEW)
     target_link_libraries(atlas_client GLEW::GLEW)
 endif()
 
-# Link ImGui if using vcpkg
-if(USE_VCPKG_IMGUI)
-    target_link_libraries(atlas_client imgui::imgui)
-endif()
+
 
 # Link RmlUi if available
 if(RMLUI_AVAILABLE)
@@ -678,70 +581,6 @@ if(BUILD_TESTS)
         target_link_libraries(test_asteroid_field "-framework Cocoa -framework IOKit -framework CoreVideo")
     endif()
     
-    if(USE_IMGUI)
-        # Test: Dynamic Lighting System
-        add_executable(test_lighting
-            test_lighting.cpp
-            src/rendering/window.cpp
-            src/rendering/shader.cpp
-            src/rendering/camera.cpp
-            src/rendering/mesh.cpp
-            src/rendering/model.cpp
-            src/rendering/texture.cpp
-            src/rendering/lighting.cpp
-            src/rendering/procedural_mesh_ops.cpp
-            src/rendering/procedural_ship_generator.cpp
-            src/rendering/ship_part_library.cpp
-            src/rendering/ship_generation_rules.cpp
-            src/rendering/reference_model_analyzer.cpp
-            src/ui/input_handler.cpp
-            src/ui/ui_manager.cpp
-            src/ui/hud_panels.cpp
-            src/ui/target_list.cpp
-            src/ui/inventory_panel.cpp
-            src/ui/fitting_panel.cpp
-            src/ui/mission_panel.cpp
-            src/ui/overview_panel.cpp
-            src/ui/docking_manager.cpp
-            src/ui/market_panel.cpp
-            src/ui/dscan_panel.cpp
-            src/ui/sidebar_panel.cpp
-            src/ui/chat_panel.cpp
-            src/ui/drone_control_panel.cpp
-            src/ui/notification_manager.cpp
-            src/ui/probe_scanner_panel.cpp
-            src/ui/atlas/atlas_renderer.cpp
-            src/ui/atlas/atlas_context.cpp
-            src/ui/atlas/atlas_widgets.cpp
-            src/core/entity.cpp
-            ${GLAD_SOURCES}
-            ${IMGUI_SOURCES}
-        )
-        
-        target_link_libraries(test_lighting
-            Threads::Threads
-            OpenGL::GL
-            glfw
-            glm::glm
-        )
-        
-        if(USE_GLEW)
-            target_link_libraries(test_lighting GLEW::GLEW)
-        endif()
-        
-        if(USE_VCPKG_IMGUI)
-            target_link_libraries(test_lighting imgui::imgui)
-        endif()
-        
-        if(WIN32)
-            target_link_libraries(test_lighting ws2_32)
-        elseif(UNIX AND NOT APPLE)
-            target_link_libraries(test_lighting dl X11)
-        elseif(APPLE)
-            target_link_libraries(test_lighting dl)
-            target_link_libraries(test_lighting "-framework Cocoa -framework IOKit -framework CoreVideo")
-        endif()
-    endif()
     
     # Test: Shadow Mapping
     add_executable(test_shadow_mapping
@@ -809,53 +648,6 @@ if(BUILD_TESTS)
         target_link_libraries(test_deferred_rendering "-framework Cocoa -framework IOKit -framework CoreVideo")
     endif()
     
-    if(USE_IMGUI)
-        # Test: UI System
-        add_executable(test_ui_system
-            test_ui_system.cpp
-            src/rendering/window.cpp
-            src/ui/ui_manager.cpp
-            src/ui/hud_panels.cpp
-            src/ui/target_list.cpp
-            src/ui/inventory_panel.cpp
-            src/ui/fitting_panel.cpp
-            src/ui/mission_panel.cpp
-            src/ui/overview_panel.cpp
-            src/ui/docking_manager.cpp
-            src/ui/market_panel.cpp
-            src/ui/dscan_panel.cpp
-            src/ui/sidebar_panel.cpp
-            src/ui/chat_panel.cpp
-            src/ui/drone_control_panel.cpp
-            src/ui/notification_manager.cpp
-            src/ui/probe_scanner_panel.cpp
-            src/ui/atlas/atlas_renderer.cpp
-            src/ui/atlas/atlas_context.cpp
-            src/ui/atlas/atlas_widgets.cpp
-            src/core/entity.cpp
-            ${IMGUI_SOURCES}
-        )
-        target_link_libraries(test_ui_system
-            Threads::Threads
-            OpenGL::GL
-            glfw
-            glm::glm
-        )
-        if(USE_GLEW)
-            target_link_libraries(test_ui_system GLEW::GLEW)
-        endif()
-        if(USE_VCPKG_IMGUI)
-            target_link_libraries(test_ui_system imgui::imgui)
-        endif()
-        if(WIN32)
-            target_link_libraries(test_ui_system ws2_32)
-        elseif(UNIX AND NOT APPLE)
-            target_link_libraries(test_ui_system dl X11)
-        elseif(APPLE)
-            target_link_libraries(test_ui_system dl)
-            target_link_libraries(test_ui_system "-framework Cocoa -framework IOKit -framework CoreVideo")
-        endif()
-    endif()
     
     # Test: Post-Processing Effects
     add_executable(test_post_processing
@@ -947,113 +739,6 @@ if(BUILD_TESTS)
         target_link_libraries(test_entity_sync)
     endif()
     
-    if(USE_IMGUI)
-        # Test: Enhanced UI (Phase 4.5)
-        # Create source list without src/main.cpp to avoid duplicate main symbol
-        set(CLIENT_SOURCES_NO_MAIN ${CLIENT_SOURCES})
-        list(REMOVE_ITEM CLIENT_SOURCES_NO_MAIN ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp src/main.cpp)
-        
-        add_executable(test_enhanced_ui
-            test_enhanced_ui.cpp
-            ${CLIENT_SOURCES_NO_MAIN}
-            ${CLIENT_HEADERS}
-        )
-        target_link_libraries(test_enhanced_ui
-            Threads::Threads
-            OpenGL::GL
-            glfw
-            glm::glm
-        )
-        if(USE_GLEW)
-            target_link_libraries(test_enhanced_ui GLEW::GLEW)
-        endif()
-        if(USE_VCPKG_IMGUI)
-            target_link_libraries(test_enhanced_ui imgui::imgui)
-        endif()
-        if(OpenAL_FOUND)
-            target_link_libraries(test_enhanced_ui ${OPENAL_LIBRARY})
-            target_include_directories(test_enhanced_ui PRIVATE ${OPENAL_INCLUDE_DIR})
-        endif()
-        if(nlohmann_json_FOUND)
-            target_link_libraries(test_enhanced_ui nlohmann_json::nlohmann_json)
-        endif()
-        if(WIN32)
-            target_link_libraries(test_enhanced_ui ws2_32)
-        elseif(UNIX AND NOT APPLE)
-            target_link_libraries(test_enhanced_ui dl X11)
-        elseif(APPLE)
-            target_link_libraries(test_enhanced_ui dl)
-            target_link_libraries(test_enhanced_ui "-framework Cocoa -framework IOKit -framework CoreVideo")
-        endif()
-        
-        # Test: Phase 4.6 Advanced Features
-        add_executable(test_phase46_advanced
-            test_phase46_advanced.cpp
-            ${CLIENT_SOURCES_NO_MAIN}
-            ${CLIENT_HEADERS}
-        )
-        target_link_libraries(test_phase46_advanced
-            Threads::Threads
-            OpenGL::GL
-            glfw
-            glm::glm
-        )
-        if(USE_GLEW)
-            target_link_libraries(test_phase46_advanced GLEW::GLEW)
-        endif()
-        if(USE_VCPKG_IMGUI)
-            target_link_libraries(test_phase46_advanced imgui::imgui)
-        endif()
-        if(OpenAL_FOUND)
-            target_link_libraries(test_phase46_advanced ${OPENAL_LIBRARY})
-            target_include_directories(test_phase46_advanced PRIVATE ${OPENAL_INCLUDE_DIR})
-        endif()
-        if(nlohmann_json_FOUND)
-            target_link_libraries(test_phase46_advanced nlohmann_json::nlohmann_json)
-        endif()
-        if(WIN32)
-            target_link_libraries(test_phase46_advanced ws2_32)
-        elseif(UNIX AND NOT APPLE)
-            target_link_libraries(test_phase46_advanced dl X11)
-        elseif(APPLE)
-            target_link_libraries(test_phase46_advanced dl)
-            target_link_libraries(test_phase46_advanced "-framework Cocoa -framework IOKit -framework CoreVideo")
-        endif()
-        
-        # Test: Phase 4.8 D-Scan, Neocom, Module Rack panels
-        add_executable(test_phase48_panels
-            test_phase48_panels.cpp
-            ${CLIENT_SOURCES_NO_MAIN}
-            ${CLIENT_HEADERS}
-        )
-        target_link_libraries(test_phase48_panels
-            Threads::Threads
-            OpenGL::GL
-            glfw
-            glm::glm
-        )
-        if(USE_GLEW)
-            target_link_libraries(test_phase48_panels GLEW::GLEW)
-        endif()
-        if(USE_VCPKG_IMGUI)
-            target_link_libraries(test_phase48_panels imgui::imgui)
-        endif()
-        if(OpenAL_FOUND)
-            target_link_libraries(test_phase48_panels ${OPENAL_LIBRARY})
-            target_include_directories(test_phase48_panels PRIVATE ${OPENAL_INCLUDE_DIR})
-        endif()
-        if(nlohmann_json_FOUND)
-            target_link_libraries(test_phase48_panels nlohmann_json::nlohmann_json)
-        endif()
-        if(WIN32)
-            target_link_libraries(test_phase48_panels ws2_32)
-        elseif(UNIX AND NOT APPLE)
-            target_link_libraries(test_phase48_panels dl X11)
-        elseif(APPLE)
-            target_link_libraries(test_phase48_panels dl)
-            target_link_libraries(test_phase48_panels "-framework Cocoa -framework IOKit -framework CoreVideo")
-        endif()
-    endif()
     
     # Test: Phase 4.8 Server Response Handling
     add_executable(test_server_responses

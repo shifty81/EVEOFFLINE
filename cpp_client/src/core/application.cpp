@@ -79,6 +79,10 @@ void Application::run() {
 
         // Reset per-frame input state before polling events
         m_inputHandler->beginFrame();
+
+        // Poll events so transient input flags (clicked, released) are
+        // available during update and render within the same frame
+        m_window->pollEvents();
         
         // Update
         update(deltaTime);
@@ -86,8 +90,8 @@ void Application::run() {
         // Render
         render();
         
-        // Swap buffers and poll events
-        m_window->update();
+        // Present the frame
+        m_window->swapBuffers();
     }
     
     std::cout << "Main loop ended" << std::endl;
@@ -683,6 +687,10 @@ void Application::render() {
         }
 
         m_atlasCtx->endFrame();
+
+        // Record whether Atlas UI consumed the mouse this frame so that
+        // game-world interaction handlers can avoid click-through
+        m_atlasConsumedMouse = m_atlasCtx->isMouseConsumed();
     }
     
     // Legacy context/radial menu render stubs (retained for RmlUi fallback)
@@ -891,7 +899,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             // Skip if UI already captured the mouse (e.g. overview panel handled it)
             // to prevent two context menus appearing simultaneously
             if (m_rightMouseDown) {
-                if (!m_uiManager || !m_uiManager->WantsMouseInput()) {
+                if ((!m_uiManager || !m_uiManager->WantsMouseInput()) && !m_atlasConsumedMouse) {
                     double dx = x - m_lastMouseDragX;
                     double dy = y - m_lastMouseDragY;
                     double dist = std::sqrt(dx * dx + dy * dy);
@@ -966,6 +974,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         // Don't process clicks that UI captured
         if (m_uiManager && m_uiManager->WantsMouseInput()) return;
+        if (m_atlasConsumedMouse) return;
         
         // Pick entity at mouse position
         auto entities = m_gameClient->getEntityManager().getAllEntities();
@@ -1084,7 +1093,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
     
     // EVE-style camera: Right-click drag to orbit camera around ship
     if (m_rightMouseDown) {
-        if (!m_uiManager || !m_uiManager->WantsMouseInput()) {
+        if ((!m_uiManager || !m_uiManager->WantsMouseInput()) && !m_atlasConsumedMouse) {
             float sensitivity = 0.3f;
             m_camera->rotate(static_cast<float>(deltaX) * sensitivity,
                            static_cast<float>(-deltaY) * sensitivity);
@@ -1094,7 +1103,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
 
 void Application::handleScroll(double xoffset, double yoffset) {
     // EVE-style: mousewheel zooms camera
-    if (!m_uiManager || !m_uiManager->WantsMouseInput()) {
+    if ((!m_uiManager || !m_uiManager->WantsMouseInput()) && !m_atlasConsumedMouse) {
         m_camera->zoom(static_cast<float>(yoffset));
     }
 }

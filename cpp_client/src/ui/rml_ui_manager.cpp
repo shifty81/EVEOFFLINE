@@ -506,15 +506,15 @@ bool RmlUiManager::LoadDocuments() {
     };
 
     std::vector<DocInfo> docs = {
-        {"ship_hud",     resourcePath_ + "/rml/ship_hud.rml",     true},
-        {"overview",     resourcePath_ + "/rml/overview.rml",      true},
+        {"ship_hud",     resourcePath_ + "/rml/ship_hud.rml",     false},
+        {"overview",     resourcePath_ + "/rml/overview.rml",      false},
         {"fitting",      resourcePath_ + "/rml/fitting.rml",       false},
-        {"target_list",  resourcePath_ + "/rml/target_list.rml",   true},
+        {"target_list",  resourcePath_ + "/rml/target_list.rml",   false},
         {"inventory",    resourcePath_ + "/rml/inventory.rml",     false},
         {"market",       resourcePath_ + "/rml/market.rml",        false},
         {"mission",      resourcePath_ + "/rml/mission.rml",       false},
         {"dscan",        resourcePath_ + "/rml/dscan.rml",         false},
-        {"sidebar",      resourcePath_ + "/rml/sidebar.rml",        true},
+        {"sidebar",      resourcePath_ + "/rml/sidebar.rml",        false},
         {"chat",         resourcePath_ + "/rml/chat.rml",          false},
         {"context_menu", resourcePath_ + "/rml/context_menu.rml",  false},
         {"radial_menu",  resourcePath_ + "/rml/radial_menu.rml",   false},

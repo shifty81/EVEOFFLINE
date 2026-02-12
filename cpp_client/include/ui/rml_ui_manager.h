@@ -7,9 +7,6 @@
  * stylesheets. It uses RmlUi's official GLFW platform and OpenGL 3 renderer
  * backends for a production-quality render pipeline.
  *
- * ImGui is treated as a legacy optional UI path. The primary game UI now
- * routes through RmlUi with ImGui disabled by default.
- *
  * Build with -DUSE_RMLUI=ON to enable RmlUi support.
  */
 

@@ -9,8 +9,7 @@ namespace UI {
  * Space-themed UI color palette.
  *
  * Legacy compatibility header — prefer atlas::Theme (atlas_types.h) for
- * new Atlas-based code.  Kept so existing ImGui-based panels continue to
- * compile while they are incrementally migrated to Atlas widgets.
+ * new Atlas-based code.
  */
 struct SpaceColors {
     // Background colors — deep dark blue-black

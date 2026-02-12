@@ -139,7 +139,7 @@ if %ERRORLEVEL% NEQ 0 (
     echo.
     echo   Step 2 - Install required dependencies:
     echo      .\vcpkg install glfw3:x64-windows glm:x64-windows glew:x64-windows nlohmann-json:x64-windows
-    echo      .\vcpkg install imgui[glfw-binding,opengl3-binding]:x64-windows
+
     echo.
     echo   Step 3 - Optional audio support:
     echo      .\vcpkg install openal-soft:x64-windows

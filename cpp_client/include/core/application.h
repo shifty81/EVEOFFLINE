@@ -252,6 +252,10 @@ private:
     bool m_leftMouseDown = false;
     double m_lastMouseDragX = 0.0;
     double m_lastMouseDragY = 0.0;
+
+    // Atlas UI mouse consumption — set after each Atlas frame, checked by
+    // game-world interaction handlers to prevent click-through
+    bool m_atlasConsumedMouse = false;
     
     // EVE-style movement state
     enum class MoveCommand { None, Approach, Orbit, KeepAtRange, AlignTo, WarpTo };
