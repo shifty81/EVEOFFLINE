@@ -728,7 +728,12 @@ std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string&
         
         for (int i = 0; i < turretCount; ++i) {
             // Distribute turrets along the dorsal spine of the ship
-            float xPos = -0.2f + (i / float(turretCount)) * 0.6f;
+            float xPos;
+            if (turretCount == 1) {
+                xPos = 0.2f;  // Center single turret at midpoint of range
+            } else {
+                xPos = -0.2f + (i / float(turretCount - 1)) * 0.6f;  // Distribute across range
+            }
             float yPos = config.overallScale * 0.15f;  // Above the hull
             float zPos = 0.0f;
             
