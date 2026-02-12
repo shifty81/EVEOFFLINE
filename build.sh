@@ -1,9 +1,9 @@
 #!/bin/bash
-# EVE OFFLINE - Unix Build Script
+# Atlas - Unix Build Script
 # Builds the C++ client and server using CMake
 
 echo "================================================"
-echo "EVE OFFLINE - Build"
+echo "Atlas - Build"
 echo "================================================"
 echo ""
 

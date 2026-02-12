@@ -1,9 +1,9 @@
 @echo off
-REM EVE OFFLINE - Windows Build Script
+REM Atlas - Windows Build Script
 REM Builds the C++ client and server using CMake
 
 echo ================================================
-echo EVE OFFLINE - Build
+echo Atlas - Build
 echo ================================================
 echo.
 

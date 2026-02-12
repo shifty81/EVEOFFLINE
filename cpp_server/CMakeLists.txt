@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(EVEOfflineDedicatedServer VERSION 1.0.0 LANGUAGES CXX)
+project(AtlasDedicatedServer VERSION 1.0.0 LANGUAGES CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -197,7 +197,7 @@ file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/config/
      DESTINATION ${CMAKE_BINARY_DIR}/bin/config)
 
 message(STATUS "")
-message(STATUS "EVE OFFLINE Dedicated Server Configuration:")
+message(STATUS "Atlas Dedicated Server Configuration:")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  Steam Integration: ${USE_STEAM_SDK}")
 message(STATUS "  Build Tests: ${BUILD_TESTS}")

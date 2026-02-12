@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(EVEOfflineClient VERSION 1.0.0 LANGUAGES C CXX)
+project(AtlasClient VERSION 1.0.0 LANGUAGES C CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -1167,7 +1167,7 @@ if(BUILD_TESTS AND RMLUI_AVAILABLE)
 endif()
 
 message(STATUS "")
-message(STATUS "EVE OFFLINE Client Configuration:")
+message(STATUS "Atlas Client Configuration:")
 message(STATUS "  C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  OpenGL: ${OPENGL_VERSION}")
 message(STATUS "  Use System Libraries: ${USE_SYSTEM_LIBS}")
