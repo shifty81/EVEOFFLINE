@@ -899,7 +899,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             // Skip if UI already captured the mouse (e.g. overview panel handled it)
             // to prevent two context menus appearing simultaneously
             if (m_rightMouseDown) {
-                if ((!m_uiManager || !m_uiManager->WantsMouseInput()) && !m_atlasConsumedMouse) {
+                if (!m_atlasConsumedMouse) {
                     double dx = x - m_lastMouseDragX;
                     double dy = y - m_lastMouseDragY;
                     double dist = std::sqrt(dx * dx + dy * dy);
@@ -973,8 +973,10 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
     // Left-click: select entity / apply movement command
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         // Don't process clicks that UI captured
-        if (m_uiManager && m_uiManager->WantsMouseInput()) return;
+        // Atlas UI consumption is the primary gate; also respect RmlUI
+        // only when it has a focused interactive element (not just hover)
         if (m_atlasConsumedMouse) return;
+        if (m_uiManager && m_uiManager->WantsKeyboardInput()) return;
         
         // Pick entity at mouse position
         auto entities = m_gameClient->getEntityManager().getAllEntities();
@@ -1093,7 +1095,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
     
     // EVE-style camera: Right-click drag to orbit camera around ship
     if (m_rightMouseDown) {
-        if ((!m_uiManager || !m_uiManager->WantsMouseInput()) && !m_atlasConsumedMouse) {
+        if (!m_atlasConsumedMouse) {
             float sensitivity = 0.3f;
             m_camera->rotate(static_cast<float>(deltaX) * sensitivity,
                            static_cast<float>(-deltaY) * sensitivity);
@@ -1103,7 +1105,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
 
 void Application::handleScroll(double xoffset, double yoffset) {
     // EVE-style: mousewheel zooms camera
-    if ((!m_uiManager || !m_uiManager->WantsMouseInput()) && !m_atlasConsumedMouse) {
+    if (!m_atlasConsumedMouse) {
         m_camera->zoom(static_cast<float>(yoffset));
     }
 }

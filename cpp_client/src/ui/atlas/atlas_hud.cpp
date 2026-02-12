@@ -241,8 +241,8 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
                         m_overviewState.bounds.w,
                         m_overviewState.bounds.h - hh};
 
-    // Tab header (interactive — clickable tabs)
-    std::vector<std::string> tabs = {"All", "Combat", "Mining", "Custom"};
+    // Tab header (interactive — single Default tab to start)
+    std::vector<std::string> tabs = {"Default"};
     Rect tabRect = {contentArea.x, contentArea.y, contentArea.w, 24.0f};
     int clickedTab = overviewHeaderInteractive(ctx, tabRect, tabs, m_overviewActiveTab);
     if (clickedTab >= 0) {
