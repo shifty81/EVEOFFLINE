@@ -98,7 +98,7 @@ bool ServerConsole::init(Server& server, const ServerConfig& config) {
     
     if (m_interactive) {
         setNonBlockingStdin(true);
-        std::cout << "\n=== EVE OFFLINE Server Console ===\n";
+        std::cout << "\n=== Atlas Server Console ===\n";
         std::cout << "Type 'help' for available commands\n";
         std::cout << "> " << std::flush;
     }

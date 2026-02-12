@@ -4,7 +4,7 @@
 #include <cstdlib>
 
 int main(int argc, char** argv) {
-    // Initialize file logging so all output is captured to logs/eve_client.log.
+    // Initialize file logging so all output is captured to logs/atlas_client.log.
     // This ensures error messages are preserved even if the console window
     // closes immediately on crash or exit.
     atlas::FileLogger::init();
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
     }
     catch (const std::exception& e) {
         std::cerr << "Fatal error: " << e.what() << std::endl;
-        std::cerr << "See logs/eve_client.log for details." << std::endl;
+        std::cerr << "See logs/atlas_client.log for details." << std::endl;
         atlas::FileLogger::shutdown();
         return EXIT_FAILURE;
     }
