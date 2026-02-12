@@ -252,15 +252,494 @@ void UIManager::RenderDockablePanel(const std::string& id) {
         float x = b.x + theme.padding;
         float contentW = b.w - theme.padding * 2.0f;
 
-        // Stub content — label + separator indicating panel name
-        atlas::label(m_ctx, atlas::Vec2(x, y), cfg.title, theme.textPrimary);
-        y += 20.0f;
-        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
-        y += theme.itemSpacing + 4.0f;
-        atlas::label(m_ctx, atlas::Vec2(x, y),
-                      "Panel content (Atlas stub)", theme.textSecondary);
+        // Dispatch to panel-specific rendering based on panel ID
+        if (id == "inventory") {
+            RenderInventoryContent(x, y, contentW, b.bottom() - theme.padding);
+        } else if (id == "fitting") {
+            RenderFittingContent(x, y, contentW, b.bottom() - theme.padding);
+        } else if (id == "mission") {
+            RenderMissionContent(x, y, contentW, b.bottom() - theme.padding);
+        } else if (id == "dscan") {
+            RenderDScanContent(x, y, contentW, b.bottom() - theme.padding);
+        } else if (id == "chat") {
+            RenderChatContent(x, y, contentW, b.bottom() - theme.padding);
+        } else if (id == "drones") {
+            RenderDroneContent(x, y, contentW, b.bottom() - theme.padding);
+        } else if (id == "market") {
+            RenderMarketContent(x, y, contentW, b.bottom() - theme.padding);
+        } else if (id == "probe_scanner") {
+            RenderProbeScannerContent(x, y, contentW, b.bottom() - theme.padding);
+        } else {
+            atlas::label(m_ctx, atlas::Vec2(x, y), cfg.title, theme.textPrimary);
+            y += 20.0f;
+            atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+        }
     }
     atlas::panelEnd(m_ctx);
+}
+
+// ============================================================================
+// Panel-Specific Content Rendering (Atlas native)
+// ============================================================================
+
+void UIManager::RenderInventoryContent(float x, float y, float contentW, float maxY) {
+    const auto& theme = m_ctx.theme();
+    auto& r = m_ctx.renderer();
+
+    if (!m_inventoryPanel) return;
+    const auto& data = m_inventoryPanel->GetData();
+
+    // Cargo capacity bar
+    atlas::label(m_ctx, atlas::Vec2(x, y), "Cargo Hold", theme.textPrimary);
+    y += 18.0f;
+    float capFrac = data.cargo_capacity > 0 ? data.cargo_used / data.cargo_capacity : 0.0f;
+    atlas::Rect capBar(x, y, contentW, 14.0f);
+    r.drawProgressBar(capBar, capFrac, theme.accentPrimary, theme.bgHeader);
+    char capBuf[64];
+    std::snprintf(capBuf, sizeof(capBuf), "%.0f / %.0f m3", data.cargo_used, data.cargo_capacity);
+    r.drawText(capBuf, atlas::Vec2(x + 4, y + 1), theme.textPrimary, 1.0f);
+    y += 22.0f;
+
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // Item list
+    const auto& items = data.cargo_items;
+    if (items.empty()) {
+        atlas::label(m_ctx, atlas::Vec2(x, y), "Cargo hold is empty", theme.textSecondary);
+    } else {
+        // Column headers
+        r.drawText("Item", atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+        r.drawText("Qty", atlas::Vec2(x + contentW * 0.6f, y), theme.textSecondary, 1.0f);
+        r.drawText("Vol", atlas::Vec2(x + contentW * 0.8f, y), theme.textSecondary, 1.0f);
+        y += 16.0f;
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+        y += 4.0f;
+
+        for (size_t i = 0; i < items.size() && y < maxY - 16.0f; ++i) {
+            const auto& item = items[i];
+            if (i % 2 == 1) {
+                r.drawRect(atlas::Rect(x, y, contentW, 16.0f), theme.bgHeader.withAlpha(0.3f));
+            }
+            r.drawText(item.name, atlas::Vec2(x + 2, y + 1), theme.textPrimary, 1.0f);
+            char qtyBuf[16];
+            std::snprintf(qtyBuf, sizeof(qtyBuf), "%d", item.quantity);
+            r.drawText(qtyBuf, atlas::Vec2(x + contentW * 0.6f, y + 1), theme.textPrimary, 1.0f);
+            char volBuf[16];
+            std::snprintf(volBuf, sizeof(volBuf), "%.1f", item.volume * item.quantity);
+            r.drawText(volBuf, atlas::Vec2(x + contentW * 0.8f, y + 1), theme.textSecondary, 1.0f);
+            y += 16.0f;
+        }
+    }
+}
+
+void UIManager::RenderFittingContent(float x, float y, float contentW, float maxY) {
+    const auto& theme = m_ctx.theme();
+    auto& r = m_ctx.renderer();
+
+    if (!m_fittingPanel) return;
+    const auto& data = m_fittingPanel->GetData();
+
+    // Ship name and type
+    r.drawText(data.ship_name, atlas::Vec2(x, y), theme.accentPrimary, 1.0f);
+    y += 16.0f;
+    r.drawText(data.ship_type, atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+    y += 22.0f;
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // CPU bar
+    float cpuFrac = data.cpu_max > 0 ? data.cpu_used / data.cpu_max : 0.0f;
+    r.drawText("CPU", atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+    atlas::Rect cpuBar(x + 40.0f, y, contentW - 40.0f, 12.0f);
+    atlas::Color cpuColor = cpuFrac > 0.9f ? theme.danger : theme.accentPrimary;
+    r.drawProgressBar(cpuBar, cpuFrac, cpuColor, theme.bgHeader);
+    char cpuBuf[64];
+    std::snprintf(cpuBuf, sizeof(cpuBuf), "%.0f / %.0f tf", data.cpu_used, data.cpu_max);
+    r.drawText(cpuBuf, atlas::Vec2(x + 44.0f, y), theme.textPrimary, 1.0f);
+    y += 20.0f;
+
+    // Powergrid bar
+    float pgFrac = data.powergrid_max > 0 ? data.powergrid_used / data.powergrid_max : 0.0f;
+    r.drawText("PG", atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+    atlas::Rect pgBar(x + 40.0f, y, contentW - 40.0f, 12.0f);
+    atlas::Color pgColor = pgFrac > 0.9f ? theme.danger : theme.success;
+    r.drawProgressBar(pgBar, pgFrac, pgColor, theme.bgHeader);
+    char pgBuf[64];
+    std::snprintf(pgBuf, sizeof(pgBuf), "%.0f / %.0f MW", data.powergrid_used, data.powergrid_max);
+    r.drawText(pgBuf, atlas::Vec2(x + 44.0f, y), theme.textPrimary, 1.0f);
+    y += 24.0f;
+
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // Slot sections
+    auto renderSlots = [&](const char* title, const auto& slots, int maxSlots) {
+        if (y > maxY - 20.0f) return;
+        r.drawText(title, atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+        y += 16.0f;
+        for (int i = 0; i < maxSlots && y < maxY - 16.0f; ++i) {
+            if (slots[i].has_value()) {
+                const auto& mod = slots[i].value();
+                atlas::Color modColor = mod.is_online ? theme.accentPrimary : theme.textSecondary;
+                r.drawText(mod.name, atlas::Vec2(x + 10.0f, y), modColor, 1.0f);
+            } else {
+                r.drawText("[empty]", atlas::Vec2(x + 10.0f, y), theme.bgHeader, 1.0f);
+            }
+            y += 14.0f;
+        }
+        y += 4.0f;
+    };
+
+    renderSlots("High Slots", data.high_slots, 8);
+    renderSlots("Mid Slots", data.mid_slots, 8);
+    renderSlots("Low Slots", data.low_slots, 8);
+}
+
+void UIManager::RenderMissionContent(float x, float y, float contentW, float maxY) {
+    const auto& theme = m_ctx.theme();
+    auto& r = m_ctx.renderer();
+
+    if (!m_missionPanel) return;
+    const auto& data = m_missionPanel->GetData();
+
+    if (!data.is_active) {
+        atlas::label(m_ctx, atlas::Vec2(x, y), "No Active Mission", theme.textSecondary);
+        y += 20.0f;
+        atlas::label(m_ctx, atlas::Vec2(x, y), "Visit an agent to accept a mission", theme.textSecondary);
+        return;
+    }
+
+    // Mission title
+    r.drawText(data.mission_name, atlas::Vec2(x, y), theme.accentPrimary, 1.0f);
+    y += 18.0f;
+
+    // Mission type and level
+    char infoBuf[128];
+    std::snprintf(infoBuf, sizeof(infoBuf), "Level %d %s", data.level, data.mission_type.c_str());
+    r.drawText(infoBuf, atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+    y += 16.0f;
+
+    if (!data.agent_name.empty()) {
+        char agentBuf[128];
+        std::snprintf(agentBuf, sizeof(agentBuf), "Agent: %s", data.agent_name.c_str());
+        r.drawText(agentBuf, atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+        y += 16.0f;
+    }
+
+    y += 4.0f;
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // Objectives
+    r.drawText("Objectives:", atlas::Vec2(x, y), theme.textPrimary, 1.0f);
+    y += 16.0f;
+    for (const auto& obj : data.objectives) {
+        if (y > maxY - 20.0f) break;
+        atlas::Color objColor = obj.completed ? theme.success : theme.textSecondary;
+        const char* marker = obj.completed ? "[x] " : "[ ] ";
+        char objBuf[256];
+        std::snprintf(objBuf, sizeof(objBuf), "%s%s", marker, obj.description.c_str());
+        r.drawText(objBuf, atlas::Vec2(x + 8.0f, y), objColor, 1.0f);
+        y += 14.0f;
+    }
+
+    y += 8.0f;
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // Rewards
+    if (y < maxY - 40.0f) {
+        r.drawText("Rewards:", atlas::Vec2(x, y), theme.textPrimary, 1.0f);
+        y += 16.0f;
+        if (data.isk_reward > 0) {
+            char iskBuf[64];
+            std::snprintf(iskBuf, sizeof(iskBuf), "ISK: %.0f", data.isk_reward);
+            r.drawText(iskBuf, atlas::Vec2(x + 8.0f, y), theme.warning, 1.0f);
+            y += 14.0f;
+        }
+        if (data.lp_reward > 0) {
+            char lpBuf[64];
+            std::snprintf(lpBuf, sizeof(lpBuf), "LP: %.0f", data.lp_reward);
+            r.drawText(lpBuf, atlas::Vec2(x + 8.0f, y), theme.accentSecondary, 1.0f);
+            y += 14.0f;
+        }
+    }
+}
+
+void UIManager::RenderDScanContent(float x, float y, float contentW, float maxY) {
+    const auto& theme = m_ctx.theme();
+    auto& r = m_ctx.renderer();
+
+    if (!m_dscanPanel) return;
+    const auto& results = m_dscanPanel->GetResults();
+
+    // Scan controls
+    char angleBuf[32];
+    std::snprintf(angleBuf, sizeof(angleBuf), "Angle: %.0f deg", m_dscanPanel->GetScanAngle());
+    r.drawText(angleBuf, atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+    y += 16.0f;
+
+    char rangeBuf[32];
+    std::snprintf(rangeBuf, sizeof(rangeBuf), "Range: %.1f AU", m_dscanPanel->GetScanRange());
+    r.drawText(rangeBuf, atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+    y += 20.0f;
+
+    // Scan button
+    atlas::Rect scanBtn(x, y, 80.0f, 22.0f);
+    if (atlas::button(m_ctx, "SCAN", scanBtn)) {
+        // Scan button pressed
+    }
+    y += 30.0f;
+
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // Results header
+    char countBuf[32];
+    std::snprintf(countBuf, sizeof(countBuf), "Results: %d", static_cast<int>(results.size()));
+    r.drawText(countBuf, atlas::Vec2(x, y), theme.textPrimary, 1.0f);
+    y += 18.0f;
+
+    if (results.empty()) {
+        atlas::label(m_ctx, atlas::Vec2(x, y), "No scan results", theme.textSecondary);
+    } else {
+        // Column headers
+        r.drawText("Name", atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+        r.drawText("Type", atlas::Vec2(x + contentW * 0.5f, y), theme.textSecondary, 1.0f);
+        r.drawText("Dist", atlas::Vec2(x + contentW * 0.8f, y), theme.textSecondary, 1.0f);
+        y += 16.0f;
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+        y += 4.0f;
+
+        for (size_t i = 0; i < results.size() && y < maxY - 16.0f; ++i) {
+            const auto& res = results[i];
+            if (i % 2 == 1) {
+                r.drawRect(atlas::Rect(x, y, contentW, 16.0f), theme.bgHeader.withAlpha(0.3f));
+            }
+            r.drawText(res.name, atlas::Vec2(x + 2, y + 1), theme.textPrimary, 1.0f);
+            r.drawText(res.type, atlas::Vec2(x + contentW * 0.5f, y + 1), theme.textSecondary, 1.0f);
+            char distBuf[32];
+            std::snprintf(distBuf, sizeof(distBuf), "%.1f AU", res.distance);
+            r.drawText(distBuf, atlas::Vec2(x + contentW * 0.8f, y + 1), theme.textSecondary, 1.0f);
+            y += 16.0f;
+        }
+    }
+}
+
+void UIManager::RenderChatContent(float x, float y, float contentW, float maxY) {
+    const auto& theme = m_ctx.theme();
+    auto& r = m_ctx.renderer();
+
+    if (!m_chatPanel) return;
+    const auto& channels = m_chatPanel->GetChannels();
+    const auto& activeId = m_chatPanel->GetActiveChannel();
+    const auto& allMsgs = m_chatPanel->GetAllMessages();
+
+    // Channel tabs
+    if (!channels.empty()) {
+        float tabX = x;
+        for (const auto& ch : channels) {
+            bool isActive = (ch.channel_id == activeId);
+            atlas::Color tabColor = isActive ? theme.accentPrimary : theme.textSecondary;
+            float textW = r.measureText(ch.channel_name);
+            if (isActive) {
+                r.drawRect(atlas::Rect(tabX, y, textW + 8, 18.0f), theme.bgHeader);
+            }
+            r.drawText(ch.channel_name, atlas::Vec2(tabX + 4, y + 2), tabColor, 1.0f);
+            tabX += textW + 16.0f;
+        }
+        y += 22.0f;
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+        y += 4.0f;
+    }
+
+    // Messages for active channel
+    auto msgIt = allMsgs.find(activeId);
+    if (msgIt != allMsgs.end() && !msgIt->second.empty()) {
+        const auto& messages = msgIt->second;
+        // Show last N messages that fit
+        int startIdx = static_cast<int>(messages.size()) - 1;
+        float msgY = maxY - 30.0f;  // reserve space for input area
+        std::vector<int> visibleIdxs;
+        for (int i = startIdx; i >= 0 && msgY > y; --i) {
+            visibleIdxs.push_back(i);
+            msgY -= 14.0f;
+        }
+
+        // Render in forward order
+        float drawY = y;
+        for (auto rit = visibleIdxs.rbegin(); rit != visibleIdxs.rend(); ++rit) {
+            const auto& msg = messages[*rit];
+            atlas::Color nameColor;
+            switch (msg.sender_type) {
+                case ChatMessage::SenderType::Self:     nameColor = theme.accentPrimary; break;
+                case ChatMessage::SenderType::Hostile:  nameColor = theme.danger; break;
+                case ChatMessage::SenderType::Friendly: nameColor = theme.success; break;
+                case ChatMessage::SenderType::System:   nameColor = theme.warning; break;
+                default:                                nameColor = theme.textSecondary; break;
+            }
+            char lineBuf[256];
+            std::snprintf(lineBuf, sizeof(lineBuf), "[%s] %s: %s",
+                          msg.timestamp.c_str(), msg.sender_name.c_str(), msg.content.c_str());
+            r.drawText(lineBuf, atlas::Vec2(x + 2, drawY), nameColor, 1.0f);
+            drawY += 14.0f;
+        }
+    } else {
+        atlas::label(m_ctx, atlas::Vec2(x, y), "No messages", theme.textSecondary);
+    }
+}
+
+void UIManager::RenderDroneContent(float x, float y, float contentW, float maxY) {
+    const auto& theme = m_ctx.theme();
+    auto& r = m_ctx.renderer();
+
+    if (!m_droneControlPanel) return;
+    const auto& data = m_droneControlPanel->GetData();
+
+    // Bandwidth
+    float bwFrac = data.max_bandwidth > 0 ? static_cast<float>(data.used_bandwidth) / data.max_bandwidth : 0.0f;
+    r.drawText("Bandwidth", atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+    y += 16.0f;
+    atlas::Rect bwBar(x, y, contentW, 12.0f);
+    r.drawProgressBar(bwBar, bwFrac, theme.accentPrimary, theme.bgHeader);
+    char bwBuf[32];
+    std::snprintf(bwBuf, sizeof(bwBuf), "%d / %d Mbit/s", data.used_bandwidth, data.max_bandwidth);
+    r.drawText(bwBuf, atlas::Vec2(x + 4, y), theme.textPrimary, 1.0f);
+    y += 20.0f;
+
+    // Bay capacity
+    float bayFrac = data.bay_capacity > 0 ? data.bay_used / data.bay_capacity : 0.0f;
+    r.drawText("Drone Bay", atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+    y += 16.0f;
+    atlas::Rect bayBar(x, y, contentW, 12.0f);
+    r.drawProgressBar(bayBar, bayFrac, theme.accentSecondary, theme.bgHeader);
+    char bayBuf[32];
+    std::snprintf(bayBuf, sizeof(bayBuf), "%.0f / %.0f m3", data.bay_used, data.bay_capacity);
+    r.drawText(bayBuf, atlas::Vec2(x + 4, y), theme.textPrimary, 1.0f);
+    y += 24.0f;
+
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // Drones in space
+    char spaceBuf[32];
+    std::snprintf(spaceBuf, sizeof(spaceBuf), "In Space (%d)", static_cast<int>(data.space_drones.size()));
+    r.drawText(spaceBuf, atlas::Vec2(x, y), theme.textPrimary, 1.0f);
+    y += 16.0f;
+    for (const auto& drone : data.space_drones) {
+        if (y > maxY - 16.0f) break;
+        float hpFrac = drone.max_hitpoints > 0 ? drone.hitpoints / drone.max_hitpoints : 0.0f;
+        atlas::Color droneColor = drone.is_engaging ? theme.danger : theme.accentPrimary;
+        r.drawText(drone.name, atlas::Vec2(x + 8.0f, y), droneColor, 1.0f);
+        // Mini HP bar
+        atlas::Rect hpBar(x + contentW - 60.0f, y + 2, 50.0f, 8.0f);
+        r.drawProgressBar(hpBar, hpFrac, theme.success, theme.bgHeader);
+        y += 14.0f;
+    }
+
+    y += 8.0f;
+
+    // Drones in bay
+    if (y < maxY - 30.0f) {
+        char bayLabel[32];
+        std::snprintf(bayLabel, sizeof(bayLabel), "In Bay (%d)", static_cast<int>(data.bay_drones.size()));
+        r.drawText(bayLabel, atlas::Vec2(x, y), theme.textPrimary, 1.0f);
+        y += 16.0f;
+        for (const auto& drone : data.bay_drones) {
+            if (y > maxY - 16.0f) break;
+            r.drawText(drone.name, atlas::Vec2(x + 8.0f, y), theme.textSecondary, 1.0f);
+            y += 14.0f;
+        }
+    }
+}
+
+void UIManager::RenderMarketContent(float x, float y, float contentW, float maxY) {
+    const auto& theme = m_ctx.theme();
+    auto& r = m_ctx.renderer();
+
+    if (!m_marketPanel) return;
+    const auto& buyOrders = m_marketPanel->GetBuyOrders();
+    const auto& sellOrders = m_marketPanel->GetSellOrders();
+
+    // Sell orders section
+    r.drawText("Sell Orders", atlas::Vec2(x, y), theme.danger, 1.0f);
+    y += 18.0f;
+
+    if (sellOrders.empty()) {
+        atlas::label(m_ctx, atlas::Vec2(x + 8, y), "No sell orders", theme.textSecondary);
+        y += 16.0f;
+    } else {
+        // Headers
+        r.drawText("Item", atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+        r.drawText("Price", atlas::Vec2(x + contentW * 0.5f, y), theme.textSecondary, 1.0f);
+        r.drawText("Qty", atlas::Vec2(x + contentW * 0.8f, y), theme.textSecondary, 1.0f);
+        y += 16.0f;
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+        y += 4.0f;
+
+        for (size_t i = 0; i < sellOrders.size() && y < maxY * 0.5f; ++i) {
+            const auto& order = sellOrders[i];
+            r.drawText(order.item_name, atlas::Vec2(x + 2, y), theme.textPrimary, 1.0f);
+            char priceBuf[32];
+            std::snprintf(priceBuf, sizeof(priceBuf), "%.2f", order.price);
+            r.drawText(priceBuf, atlas::Vec2(x + contentW * 0.5f, y), theme.danger, 1.0f);
+            char qtyBuf[16];
+            std::snprintf(qtyBuf, sizeof(qtyBuf), "%d", order.quantity);
+            r.drawText(qtyBuf, atlas::Vec2(x + contentW * 0.8f, y), theme.textSecondary, 1.0f);
+            y += 14.0f;
+        }
+    }
+
+    y += 8.0f;
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // Buy orders section
+    r.drawText("Buy Orders", atlas::Vec2(x, y), theme.success, 1.0f);
+    y += 18.0f;
+
+    if (buyOrders.empty()) {
+        atlas::label(m_ctx, atlas::Vec2(x + 8, y), "No buy orders", theme.textSecondary);
+    } else {
+        r.drawText("Item", atlas::Vec2(x, y), theme.textSecondary, 1.0f);
+        r.drawText("Price", atlas::Vec2(x + contentW * 0.5f, y), theme.textSecondary, 1.0f);
+        r.drawText("Qty", atlas::Vec2(x + contentW * 0.8f, y), theme.textSecondary, 1.0f);
+        y += 16.0f;
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+        y += 4.0f;
+
+        for (size_t i = 0; i < buyOrders.size() && y < maxY - 16.0f; ++i) {
+            const auto& order = buyOrders[i];
+            r.drawText(order.item_name, atlas::Vec2(x + 2, y), theme.textPrimary, 1.0f);
+            char priceBuf[32];
+            std::snprintf(priceBuf, sizeof(priceBuf), "%.2f", order.price);
+            r.drawText(priceBuf, atlas::Vec2(x + contentW * 0.5f, y), theme.success, 1.0f);
+            char qtyBuf[16];
+            std::snprintf(qtyBuf, sizeof(qtyBuf), "%d", order.quantity);
+            r.drawText(qtyBuf, atlas::Vec2(x + contentW * 0.8f, y), theme.textSecondary, 1.0f);
+            y += 14.0f;
+        }
+    }
+}
+
+void UIManager::RenderProbeScannerContent(float x, float y, float contentW, float maxY) {
+    const auto& theme = m_ctx.theme();
+    auto& r = m_ctx.renderer();
+
+    atlas::label(m_ctx, atlas::Vec2(x, y), "Probe Scanner", theme.textPrimary);
+    y += 20.0f;
+    atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
+    y += 8.0f;
+
+    // Scan button
+    atlas::Rect scanBtn(x, y, 100.0f, 22.0f);
+    if (atlas::button(m_ctx, "Analyze", scanBtn)) {
+        // Trigger scan
+    }
+    y += 30.0f;
+
+    atlas::label(m_ctx, atlas::Vec2(x, y), "Deploy probes and scan to find signatures", theme.textSecondary);
 }
 
 void UIManager::RenderCombatLogPanel() {

@@ -66,6 +66,7 @@ public:
     // Visibility
     void SetVisible(bool visible) { m_visible = visible; }
     bool IsVisible() const { return m_visible; }
+    const FittingData& GetData() const { return m_data; }
     
     // Callbacks
     void SetFitModuleCallback(FitModuleCallback callback) { m_onFitModule = callback; }

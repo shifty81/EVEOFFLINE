@@ -467,7 +467,7 @@ void AtlasHUD::drawFleetBroadcasts(AtlasContext& ctx) {
     fleetBroadcastBanner(ctx, bannerRect, m_broadcasts);
 }
 
-// ── Dockable Panel (generic Atlas panel with stub content) ──────────
+// ── Dockable Panel (Atlas panel with panel-type-aware content) ───────
 
 void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
                                   PanelState& state) {
@@ -489,16 +489,164 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
     float x = state.bounds.x + t.padding;
     float y = state.bounds.y + hh + t.padding;
     float contentW = state.bounds.w - t.padding * 2.0f;
+    float maxY = state.bounds.bottom() - t.padding;
+    auto& r = ctx.renderer();
 
-    // Panel title label
-    label(ctx, Vec2(x, y), title, t.textPrimary);
-    y += 20.0f;
-    separator(ctx, Vec2(x, y), contentW);
-    y += t.itemSpacing + 4.0f;
+    std::string titleStr(title);
 
-    // Stub content placeholder (shows which panel this is)
-    std::string placeholder = std::string(title) + " — content placeholder";
-    label(ctx, Vec2(x, y), placeholder, t.textSecondary);
+    if (titleStr == "Inventory") {
+        // Cargo capacity bar
+        label(ctx, Vec2(x, y), "Cargo Hold", t.textPrimary);
+        y += 18.0f;
+        Rect capBar(x, y, contentW, 14.0f);
+        r.drawProgressBar(capBar, 0.0f, t.accentPrimary, t.bgHeader);
+        r.drawText("0 / 100 m3", Vec2(x + 4, y + 1), t.textPrimary, 1.0f);
+        y += 22.0f;
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+        // Column headers
+        r.drawText("Item", Vec2(x, y), t.textSecondary, 1.0f);
+        r.drawText("Qty", Vec2(x + contentW * 0.6f, y), t.textSecondary, 1.0f);
+        r.drawText("Vol", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+        label(ctx, Vec2(x, y), "Cargo hold is empty", t.textSecondary);
+
+    } else if (titleStr == "Ship Fitting") {
+        // Ship name and resource bars
+        r.drawText("Current Ship", Vec2(x, y), t.accentPrimary, 1.0f);
+        y += 18.0f;
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // CPU bar
+        r.drawText("CPU", Vec2(x, y), t.textSecondary, 1.0f);
+        Rect cpuBar(x + 40.0f, y, contentW - 40.0f, 12.0f);
+        r.drawProgressBar(cpuBar, 0.0f, t.accentPrimary, t.bgHeader);
+        r.drawText("0 / 0 tf", Vec2(x + 44.0f, y), t.textPrimary, 1.0f);
+        y += 20.0f;
+
+        // PG bar
+        r.drawText("PG", Vec2(x, y), t.textSecondary, 1.0f);
+        Rect pgBar(x + 40.0f, y, contentW - 40.0f, 12.0f);
+        r.drawProgressBar(pgBar, 0.0f, t.success, t.bgHeader);
+        r.drawText("0 / 0 MW", Vec2(x + 44.0f, y), t.textPrimary, 1.0f);
+        y += 24.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Slot sections
+        const char* sections[] = {"High Slots", "Mid Slots", "Low Slots"};
+        for (int s = 0; s < 3 && y < maxY - 30.0f; ++s) {
+            r.drawText(sections[s], Vec2(x, y), t.textSecondary, 1.0f);
+            y += 16.0f;
+            for (int i = 0; i < 3 && y < maxY - 14.0f; ++i) {
+                r.drawText("[empty]", Vec2(x + 10.0f, y), t.bgHeader, 1.0f);
+                y += 14.0f;
+            }
+            y += 4.0f;
+        }
+
+    } else if (titleStr == "Market") {
+        // Sell orders section
+        r.drawText("Sell Orders", Vec2(x, y), t.danger, 1.0f);
+        y += 18.0f;
+        r.drawText("Item", Vec2(x, y), t.textSecondary, 1.0f);
+        r.drawText("Price", Vec2(x + contentW * 0.5f, y), t.textSecondary, 1.0f);
+        r.drawText("Qty", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+        label(ctx, Vec2(x + 8, y), "No sell orders", t.textSecondary);
+        y += 24.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Buy orders section
+        r.drawText("Buy Orders", Vec2(x, y), t.success, 1.0f);
+        y += 18.0f;
+        r.drawText("Item", Vec2(x, y), t.textSecondary, 1.0f);
+        r.drawText("Price", Vec2(x + contentW * 0.5f, y), t.textSecondary, 1.0f);
+        r.drawText("Qty", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+        label(ctx, Vec2(x + 8, y), "No buy orders", t.textSecondary);
+
+    } else if (titleStr == "Missions") {
+        label(ctx, Vec2(x, y), "No Active Mission", t.textSecondary);
+        y += 20.0f;
+        label(ctx, Vec2(x, y), "Visit an agent to accept a mission", t.textSecondary);
+
+    } else if (titleStr == "D-Scan") {
+        // Scan controls
+        r.drawText("Angle: 360 deg", Vec2(x, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+        r.drawText("Range: 14.3 AU", Vec2(x, y), t.textSecondary, 1.0f);
+        y += 20.0f;
+        // Scan button
+        Rect scanBtn(x, y, 80.0f, 22.0f);
+        if (button(ctx, "SCAN", scanBtn)) {
+            // Scan button pressed
+        }
+        y += 30.0f;
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Results header
+        r.drawText("Results: 0", Vec2(x, y), t.textPrimary, 1.0f);
+        y += 18.0f;
+        r.drawText("Name", Vec2(x, y), t.textSecondary, 1.0f);
+        r.drawText("Type", Vec2(x + contentW * 0.5f, y), t.textSecondary, 1.0f);
+        r.drawText("Dist", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+        label(ctx, Vec2(x, y), "No scan results", t.textSecondary);
+
+    } else if (titleStr == "Chat") {
+        // Channel tab
+        Rect tabRect(x, y, 60.0f, 18.0f);
+        r.drawRect(tabRect, t.bgHeader);
+        r.drawText("Local", Vec2(x + 4, y + 2), t.accentPrimary, 1.0f);
+        y += 22.0f;
+        separator(ctx, Vec2(x, y), contentW);
+        y += 4.0f;
+        label(ctx, Vec2(x, y), "No messages", t.textSecondary);
+
+    } else if (titleStr == "Drones") {
+        // Bandwidth
+        r.drawText("Bandwidth", Vec2(x, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+        Rect bwBar(x, y, contentW, 12.0f);
+        r.drawProgressBar(bwBar, 0.0f, t.accentPrimary, t.bgHeader);
+        r.drawText("0 / 0 Mbit/s", Vec2(x + 4, y), t.textPrimary, 1.0f);
+        y += 20.0f;
+
+        // Bay capacity
+        r.drawText("Drone Bay", Vec2(x, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+        Rect bayBar(x, y, contentW, 12.0f);
+        r.drawProgressBar(bayBar, 0.0f, t.accentSecondary, t.bgHeader);
+        r.drawText("0 / 0 m3", Vec2(x + 4, y), t.textPrimary, 1.0f);
+        y += 24.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        r.drawText("In Space (0)", Vec2(x, y), t.textPrimary, 1.0f);
+        y += 18.0f;
+        r.drawText("In Bay (0)", Vec2(x, y), t.textPrimary, 1.0f);
+
+    } else {
+        // Generic fallback
+        label(ctx, Vec2(x, y), title, t.textPrimary);
+        y += 20.0f;
+        separator(ctx, Vec2(x, y), contentW);
+    }
 
     panelEnd(ctx);
 }
