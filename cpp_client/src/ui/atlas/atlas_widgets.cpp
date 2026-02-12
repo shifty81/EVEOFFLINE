@@ -12,6 +12,17 @@ static constexpr float METERS_PER_AU = 149597870700.0f;
 
 namespace atlas {
 
+// Helper: truncate a string with "..." suffix if it exceeds maxWidth pixels
+static std::string truncateText(AtlasRenderer& rr, const std::string& text, float maxWidth) {
+    if (text.empty() || rr.measureText(text) <= maxWidth) return text;
+    std::string result = text;
+    while (result.size() > 1 && rr.measureText(result + "...") > maxWidth) {
+        result.pop_back();
+    }
+    result += "...";
+    return result;
+}
+
 // ── Panel ───────────────────────────────────────────────────────────
 
 bool panelBegin(AtlasContext& ctx, const char* title,
@@ -457,11 +468,20 @@ bool overviewRow(AtlasContext& ctx, const Rect& r,
     }
 
     // Standing/threat icon indicator (small square — color the icon, not the row)
+    float iconEnd = r.x + 16.0f;
     rr.drawRect({r.x + 4.0f, r.y + (r.h - 8.0f) * 0.5f, 8.0f, 8.0f},
                 entry.standingColor);
 
-    // Columns: Distance | Name | Type (monospace numeric, right-aligned distance)
+    // Columns: Distance | Name | Type — proportional to row width
     float textY = r.y + (r.h - 13.0f) * 0.5f;
+    float usableW = r.w - 16.0f;  // subtract icon area
+    float distColW = usableW * 0.28f;
+    float nameColW = usableW * 0.40f;
+    float typeColW = usableW * 0.32f;
+
+    float distColStart = iconEnd;
+    float nameColStart = distColStart + distColW;
+    float typeColStart = nameColStart + nameColW;
 
     // Distance (right-aligned in its column for readability)
     char distBuf[32];
@@ -473,16 +493,18 @@ bool overviewRow(AtlasContext& ctx, const Rect& r,
         std::snprintf(distBuf, sizeof(distBuf), "%.0f m", entry.distance);
     }
     float distW = rr.measureText(distBuf);
-    float distColEnd = r.x + 90.0f;
-    rr.drawText(distBuf, {distColEnd - distW, textY}, t.textSecondary);
+    float distEnd = nameColStart - 4.0f;
+    rr.drawText(distBuf, {distEnd - distW, textY}, t.textSecondary);
 
-    // Name
-    float nameX = r.x + 96.0f;
-    rr.drawText(entry.name, {nameX, textY}, t.textPrimary);
+    // Name — truncate with "..." if it exceeds column width
+    float nameMaxW = nameColW - 6.0f;
+    std::string displayName = truncateText(rr, entry.name, nameMaxW);
+    rr.drawText(displayName, {nameColStart + 2.0f, textY}, t.textPrimary);
 
-    // Type
-    float typeX = r.x + 216.0f;
-    rr.drawText(entry.type, {typeX, textY}, t.textSecondary);
+    // Type — truncate with "..." if it exceeds column width
+    float typeMaxW = typeColW - 4.0f;
+    std::string displayType = truncateText(rr, entry.type, typeMaxW);
+    rr.drawText(displayType, {typeColStart + 2.0f, textY}, t.textSecondary);
 
     return clicked;
 }
@@ -1091,6 +1113,13 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
 
         iconY += slotSz + iconGap;
     }
+
+    // Consume mouse clicks within the sidebar AFTER icon processing,
+    // to prevent click-through to the 3D world while still allowing
+    // icon buttons to receive their clicks first
+    if (ctx.isHovered(bar) && ctx.isMouseClicked() && !ctx.isMouseConsumed()) {
+        ctx.consumeMouse();
+    }
 }
 
 // ── Tooltip ─────────────────────────────────────────────────────────
@@ -1239,18 +1268,55 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
 
     ctx.pushID(title);
 
-    // Handle dragging (header-bar drag to move)
-    if (!flags.locked && flags.showHeader) {
-        float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
+    // Pre-compute header button rects so the drag handler can exclude them
+    float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
+    float btnSz = 14.0f;
+    Rect closeRect = {state.bounds.right() - btnSz - 4.0f,
+                      state.bounds.y + (hh - btnSz) * 0.5f,
+                      btnSz, btnSz};
+    float minOffset = flags.showClose ? 22.0f : 4.0f;
+    Rect minRect = {state.bounds.right() - btnSz - minOffset,
+                    state.bounds.y + (hh - btnSz) * 0.5f,
+                    btnSz, btnSz};
+
+    // Process close/minimize buttons BEFORE drag, so they get priority
+    bool closeBtnClicked = false;
+    bool minBtnClicked = false;
+    if (flags.showHeader && !ctx.isMouseConsumed()) {
+        if (flags.showClose) {
+            WidgetID closeID = ctx.currentID("_close");
+            closeBtnClicked = ctx.buttonBehavior(closeRect, closeID);
+            if (closeBtnClicked) {
+                state.open = false;
+                ctx.consumeMouse();
+            }
+        }
+        if (flags.showMinimize && !ctx.isMouseConsumed()) {
+            WidgetID minID = ctx.currentID("_min");
+            minBtnClicked = ctx.buttonBehavior(minRect, minID);
+            if (minBtnClicked) {
+                state.minimized = !state.minimized;
+                ctx.consumeMouse();
+            }
+        }
+    }
+
+    // Handle dragging (header-bar drag to move) — skip if a button was clicked
+    if (!flags.locked && flags.showHeader && !closeBtnClicked && !minBtnClicked) {
         Rect headerHit = {state.bounds.x, state.bounds.y, state.bounds.w, hh};
         WidgetID dragID = ctx.currentID("_drag");
 
         if (!ctx.isMouseConsumed() && ctx.isHovered(headerHit) && ctx.isMouseClicked()) {
-            state.dragging = true;
-            state.dragOffset = {ctx.input().mousePos.x - state.bounds.x,
-                                ctx.input().mousePos.y - state.bounds.y};
-            ctx.setActive(dragID);
-            ctx.consumeMouse();
+            // Don't start drag if mouse is over a header button
+            bool overButton = (flags.showClose && closeRect.contains(ctx.input().mousePos)) ||
+                              (flags.showMinimize && minRect.contains(ctx.input().mousePos));
+            if (!overButton) {
+                state.dragging = true;
+                state.dragOffset = {ctx.input().mousePos.x - state.bounds.x,
+                                    ctx.input().mousePos.y - state.bounds.y};
+                ctx.setActive(dragID);
+                ctx.consumeMouse();
+            }
         }
 
         if (state.dragging) {
@@ -1279,7 +1345,6 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
     // Draw panel background
     Rect drawBounds = state.bounds;
     if (state.minimized) {
-        float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
         drawBounds.h = hh;
     }
 
@@ -1292,19 +1357,14 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
 
     // Header bar
     if (flags.showHeader) {
-        float hh = flags.compactMode ? t.headerHeight * 0.75f : t.headerHeight;
         Rect headerRect = {drawBounds.x, drawBounds.y, drawBounds.w, hh};
         rr.drawRect(headerRect, t.bgHeader);
 
         float textY = drawBounds.y + (hh - 13.0f) * 0.5f;
         rr.drawText(title, {drawBounds.x + t.padding, textY}, t.textPrimary);
 
-        // Close button (×) — minimal chrome, feedback on hover
+        // Close button (×) — visual only, behavior handled above
         if (flags.showClose) {
-            float btnSz = 14.0f;
-            Rect closeRect = {drawBounds.right() - btnSz - 4.0f,
-                              drawBounds.y + (hh - btnSz) * 0.5f,
-                              btnSz, btnSz};
             WidgetID closeID = ctx.currentID("_close");
             bool hovered = ctx.isHovered(closeRect);
             if (hovered) ctx.setHot(closeID);
@@ -1312,18 +1372,10 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
             rr.drawRect(closeRect, closeBg);
             rr.drawText("x", {closeRect.x + 3.0f, closeRect.y + 1.0f},
                         hovered ? t.textPrimary : t.textSecondary);
-            if (ctx.buttonBehavior(closeRect, closeID)) {
-                state.open = false;
-            }
         }
 
-        // Minimize button (—)
+        // Minimize button (—) — visual only, behavior handled above
         if (flags.showMinimize) {
-            float btnSz = 14.0f;
-            float offset = flags.showClose ? 22.0f : 4.0f;
-            Rect minRect = {drawBounds.right() - btnSz - offset,
-                            drawBounds.y + (hh - btnSz) * 0.5f,
-                            btnSz, btnSz};
             WidgetID minID = ctx.currentID("_min");
             bool hovered = ctx.isHovered(minRect);
             if (hovered) ctx.setHot(minID);
@@ -1331,9 +1383,6 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
             rr.drawRect(minRect, minBg);
             rr.drawText("-", {minRect.x + 3.0f, minRect.y + 1.0f},
                         hovered ? t.textPrimary : t.textSecondary);
-            if (ctx.buttonBehavior(minRect, minID)) {
-                state.minimized = !state.minimized;
-            }
         }
 
         // Photon accent line under header
