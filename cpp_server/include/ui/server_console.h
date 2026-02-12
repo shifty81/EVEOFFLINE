@@ -55,6 +55,34 @@ public:
     bool init(Server& server, const ServerConfig& config);
 
     /**
+     * Lightweight init for testing without a live Server.
+     * Registers basic built-in commands.
+     * @return true on success.
+     */
+    bool init() {
+        m_initialized = true;
+        registerCommand("help", "List available commands",
+            [this](const std::vector<std::string>&) -> std::string {
+                std::ostringstream out;
+                out << "Available commands:\n";
+                for (const auto& kv : m_commands) {
+                    out << "  " << kv.first << " - " << kv.second.description << "\n";
+                }
+                return out.str();
+            });
+        registerCommand("status", "Show server status summary",
+            [this](const std::vector<std::string>&) -> std::string {
+                std::ostringstream out;
+                out << "Server Status\n";
+                out << "  Commands registered: " << m_commands.size() << "\n";
+                out << "  Log buffer entries:  " << m_log_buffer.size() << "\n";
+                out << "  Interactive mode:    " << (m_interactive ? "yes" : "no") << "\n";
+                return out.str();
+            });
+        return true;
+    }
+
+    /**
      * Process one frame of console I/O.
      * Call from the server's main loop each tick.
      */
@@ -78,6 +106,17 @@ public:
      * @return Command output string.
      */
     std::string executeCommand(const std::string& command);
+
+    /**
+     * Register a custom command handler.
+     * @param name         Command name (lowercase).
+     * @param description  Short description for help text.
+     * @param handler      Callback invoked when the command is executed.
+     */
+    void registerCommand(const std::string& name, const std::string& description,
+                         CommandHandler handler) {
+        m_commands[name] = {description, std::move(handler)};
+    }
 
     /**
      * Set whether the console operates in interactive mode.
@@ -112,42 +151,22 @@ private:
     std::map<std::string, CommandEntry> m_commands;
     std::vector<std::string> m_log_buffer;
 
-    /** Build the help text from registered commands. */
-    std::string helpText() const {
-        std::ostringstream out;
-        out << "Available commands:\n";
-        for (const auto& kv : m_commands) {
-            out << "  " << kv.first << " - " << kv.second.description << "\n";
-        }
-        return out.str();
-    }
+    // Server references (set during init)
+    Server* server_ = nullptr;
+    const ServerConfig* config_ = nullptr;
 
-    /** Shared initialization logic for both init overloads. */
-    bool initInternal() {
-        m_initialized = true;
+    // Input buffer for interactive console
+    std::string command_buffer_;
 
-        registerCommand("help", "List available commands",
-            [this](const std::vector<std::string>& /*args*/) -> std::string {
-                return helpText();
-            });
-
-        registerCommand("status", "Show server status summary",
-            [this](const std::vector<std::string>& /*args*/) -> std::string {
-                return statusText();
-            });
-
-        return true;
-    }
-
-    /** Build a short status summary. */
-    std::string statusText() const {
-        std::ostringstream out;
-        out << "Server Status\n";
-        out << "  Commands registered: " << m_commands.size() << "\n";
-        out << "  Log buffer entries:  " << m_log_buffer.size() << "\n";
-        out << "  Interactive mode:    " << (m_interactive ? "yes" : "no") << "\n";
-        return out.str();
-    }
+    // Command handlers
+    std::string handleHelpCommand();
+    std::string handleStatusCommand();
+    std::string handlePlayersCommand();
+    std::string handleKickCommand(const std::string& player_name);
+    std::string handleStopCommand();
+    std::string handleMetricsCommand();
+    std::string handleSaveCommand();
+    std::string handleLoadCommand();
 
     /** Tokenize a command string on whitespace. */
     static std::vector<std::string> tokenize(const std::string& input) {

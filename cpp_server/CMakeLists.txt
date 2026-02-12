@@ -244,6 +244,16 @@ if(BUILD_TESTS)
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp
+        src/ui/server_console.cpp
+        src/server.cpp
+        src/game_session.cpp
+        src/network/tcp_server.cpp
+        src/network/protocol_handler.cpp
+        src/config/server_config.cpp
+        src/auth/steam_auth.cpp
+        src/auth/whitelist.cpp
+        src/utils/name_generator.cpp
+        src/data/ship_database.cpp
     )
 
     add_executable(test_systems

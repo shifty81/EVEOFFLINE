@@ -146,24 +146,28 @@ void ServerConsole::shutdown() {
         std::cout << "\nServer console shutdown.\n";
     }
     
+    m_commands.clear();
+    m_log_buffer.clear();
+    m_initialized = false;
     server_ = nullptr;
     config_ = nullptr;
 }
 
 void ServerConsole::addLogMessage(utils::LogLevel level, const std::string& message) {
-    if (!m_interactive) {
-        return;
-    }
-    
-    // Store log messages for potential future display
-    // For Phase 1, we just let them go to stdout via Logger
     (void)level;
-    (void)message;
+    m_log_buffer.push_back(message);
+    if (m_log_buffer.size() > MAX_LOG_LINES) {
+        m_log_buffer.erase(m_log_buffer.begin());
+    }
 }
 
 std::string ServerConsole::executeCommand(const std::string& command) {
-    if (!server_ || command.empty()) {
+    if (command.empty()) {
         return "";
+    }
+
+    if (!m_initialized) {
+        return "Console not initialized. Call init() first.";
     }
     
     // Trim whitespace
@@ -179,18 +183,27 @@ std::string ServerConsole::executeCommand(const std::string& command) {
     // Convert to lowercase for case-insensitive comparison
     std::transform(base_cmd.begin(), base_cmd.end(), base_cmd.begin(),
                    [](unsigned char c) -> char { return static_cast<char>(std::tolower(c)); });
+
+    // Check registered command map first
+    auto it = m_commands.find(base_cmd);
+    if (it != m_commands.end()) {
+        std::vector<std::string> args;
+        std::string arg;
+        while (iss >> arg) args.push_back(arg);
+        return it->second.handler(args);
+    }
+
+    // Fall back to server-based handlers (requires live server)
+    if (!server_) {
+        return "Unknown command: '" + base_cmd + "'. Type 'help' for available commands.";
+    }
     
-    // Dispatch to command handlers
-    if (base_cmd == "help") {
-        return handleHelpCommand();
-    } else if (base_cmd == "status") {
-        return handleStatusCommand();
-    } else if (base_cmd == "players") {
+    // Dispatch to server-aware command handlers
+    if (base_cmd == "players") {
         return handlePlayersCommand();
     } else if (base_cmd == "kick") {
         std::string player_name;
         std::getline(iss, player_name);
-        // Trim leading whitespace
         player_name.erase(0, player_name.find_first_not_of(" \t"));
         return handleKickCommand(player_name);
     } else if (base_cmd == "stop" || base_cmd == "shutdown" || base_cmd == "quit") {
