@@ -7,12 +7,12 @@
 static constexpr float PI = 3.14159265358979323846f;
 static constexpr float METERS_PER_AU = 149597870700.0f;
 
-static aatlas::Color toColor(const float c[4]) {
-    return aatlas::Color(c[0], c[1], c[2], c[3]);
+static atlas::Color toColor(const float c[4]) {
+    return atlas::Color(c[0], c[1], c[2], c[3]);
 }
 
-static aatlas::Color rgba(int r, int g, int b, int a = 255) {
-    return aatlas::Color::fromRGBA(r, g, b, a);
+static atlas::Color rgba(int r, int g, int b, int a = 255) {
+    return atlas::Color::fromRGBA(r, g, b, a);
 }
 
 namespace UI {
@@ -35,7 +35,7 @@ void GetHealthColorForPercent(float percent, float out_color[4], const float bas
     }
 }
 
-void RenderHealthBar(aatlas::AtlasContext& ctx, const char* label, float current, float max,
+void RenderHealthBar(atlas::AtlasContext& ctx, const char* label, float current, float max,
                      const float color[4], float width) {
     if (max <= 0.0f) max = 1.0f;
 
@@ -49,18 +49,18 @@ void RenderHealthBar(aatlas::AtlasContext& ctx, const char* label, float current
 
     auto& r = ctx.renderer();
     r.drawText(value_text, {0, 0}, toColor(SpaceColors::TEXT_PRIMARY));
-    r.drawProgressBar(aatlas::Rect(0, 16, width, 14), percent,
+    r.drawProgressBar(atlas::Rect(0, 16, width, 14), percent,
                       toColor(adjusted_color), rgba(30, 40, 55, 180));
 }
 
-void RenderPanelHeader(aatlas::AtlasContext& ctx, const char* title,
+void RenderPanelHeader(atlas::AtlasContext& ctx, const char* title,
                        const float accent_color[4]) {
     auto& r = ctx.renderer();
     r.drawText(title, {0, 0}, toColor(accent_color));
     r.drawLine({0, 18}, {200, 18}, toColor(SpaceColors::BORDER_SUBTLE));
 }
 
-void RenderShipStatus(aatlas::AtlasContext& ctx, const ShipStatus& status) {
+void RenderShipStatus(atlas::AtlasContext& ctx, const ShipStatus& status) {
     auto& r = ctx.renderer();
     float y = 0.0f;
 
@@ -76,7 +76,7 @@ void RenderShipStatus(aatlas::AtlasContext& ctx, const ShipStatus& status) {
                                status.shields, status.shields_max, pct * 100.0f);
         r.drawText(buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(aatlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
+        r.drawProgressBar(atlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
         y += 18.0f;
     }
 
@@ -89,7 +89,7 @@ void RenderShipStatus(aatlas::AtlasContext& ctx, const ShipStatus& status) {
                                status.armor, status.armor_max, pct * 100.0f);
         r.drawText(buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(aatlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
+        r.drawProgressBar(atlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
         y += 18.0f;
     }
 
@@ -102,7 +102,7 @@ void RenderShipStatus(aatlas::AtlasContext& ctx, const ShipStatus& status) {
                                status.hull, status.hull_max, pct * 100.0f);
         r.drawText(buf, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(aatlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
+        r.drawProgressBar(atlas::Rect(0, y, 200, 12), pct, toColor(adj), rgba(30, 40, 55, 180));
         y += 18.0f;
     }
 
@@ -112,11 +112,11 @@ void RenderShipStatus(aatlas::AtlasContext& ctx, const ShipStatus& status) {
     // Capacitor
     float cap_percent = (status.capacitor_max > 0.0f) ?
         (status.capacitor / status.capacitor_max) : 0.0f;
-    aatlas::Color cap_color(1.0f, 0.9f, 0.3f, 1.0f);
+    atlas::Color cap_color(1.0f, 0.9f, 0.3f, 1.0f);
     if (cap_percent < 0.25f) {
-        cap_color = aatlas::Color(1.0f, 0.3f, 0.0f, 1.0f);
+        cap_color = atlas::Color(1.0f, 0.3f, 0.0f, 1.0f);
     } else if (cap_percent < 0.5f) {
-        cap_color = aatlas::Color(1.0f, 0.6f, 0.0f, 1.0f);
+        cap_color = atlas::Color(1.0f, 0.6f, 0.0f, 1.0f);
     }
 
     char cap_text[64];
@@ -124,11 +124,11 @@ void RenderShipStatus(aatlas::AtlasContext& ctx, const ShipStatus& status) {
              status.capacitor, status.capacitor_max, cap_percent * 100.0f);
     r.drawText(cap_text, {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
     y += 16.0f;
-    r.drawProgressBar(aatlas::Rect(0, y, 200, 12), cap_percent,
+    r.drawProgressBar(atlas::Rect(0, y, 200, 12), cap_percent,
                       cap_color, rgba(30, 40, 55, 180));
 }
 
-void RenderTargetInfo(aatlas::AtlasContext& ctx, const TargetInfo& target) {
+void RenderTargetInfo(atlas::AtlasContext& ctx, const TargetInfo& target) {
     auto& r = ctx.renderer();
     float y = 0.0f;
 
@@ -155,13 +155,13 @@ void RenderTargetInfo(aatlas::AtlasContext& ctx, const TargetInfo& target) {
     r.drawLine({0, y}, {250, y}, toColor(SpaceColors::BORDER_SUBTLE));
     y += 8.0f;
 
-    aatlas::Color bgBar = rgba(30, 40, 55, 180);
+    atlas::Color bgBar = rgba(30, 40, 55, 180);
     if (target.shields_max > 0.0f) {
         float pct = std::clamp(target.shields / target.shields_max, 0.0f, 1.0f);
         float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::SHIELD_COLOR);
         r.drawText("Shields", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(aatlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
+        r.drawProgressBar(atlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
         y += 18.0f;
     }
     if (target.armor_max > 0.0f) {
@@ -169,7 +169,7 @@ void RenderTargetInfo(aatlas::AtlasContext& ctx, const TargetInfo& target) {
         float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::ARMOR_COLOR);
         r.drawText("Armor", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(aatlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
+        r.drawProgressBar(atlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
         y += 18.0f;
     }
     if (target.hull_max > 0.0f) {
@@ -177,11 +177,11 @@ void RenderTargetInfo(aatlas::AtlasContext& ctx, const TargetInfo& target) {
         float adj[4]; GetHealthColorForPercent(pct, adj, SpaceColors::HULL_COLOR);
         r.drawText("Hull", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
         y += 14.0f;
-        r.drawProgressBar(aatlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
+        r.drawProgressBar(atlas::Rect(0, y, 250, 12), pct, toColor(adj), bgBar);
     }
 }
 
-void RenderSpeedDisplay(aatlas::AtlasContext& ctx, float current_speed, float max_speed) {
+void RenderSpeedDisplay(atlas::AtlasContext& ctx, float current_speed, float max_speed) {
     auto& r = ctx.renderer();
     float y = 0.0f;
 
@@ -200,7 +200,7 @@ void RenderSpeedDisplay(aatlas::AtlasContext& ctx, float current_speed, float ma
 
     float speed_percent = (max_speed > 0.0f) ?
         std::min(1.0f, current_speed / max_speed) : 0.0f;
-    r.drawProgressBar(aatlas::Rect(0, y, 200, 12), speed_percent,
+    r.drawProgressBar(atlas::Rect(0, y, 200, 12), speed_percent,
                       toColor(SpaceColors::ACCENT_PRIMARY), rgba(30, 40, 55, 180));
 }
 
@@ -208,10 +208,10 @@ void RenderSpeedDisplay(aatlas::AtlasContext& ctx, float current_speed, float ma
 // HUD-style circular gauges using Atlas renderer arcs
 // ============================================================================
 
-static void DrawBlockRingGauge(aatlas::AtlasRenderer& renderer,
-                               aatlas::Vec2 center, float radius,
-                               float pct, aatlas::Color filledColor,
-                               aatlas::Color emptyColor, float thickness,
+static void DrawBlockRingGauge(atlas::AtlasRenderer& renderer,
+                               atlas::Vec2 center, float radius,
+                               float pct, atlas::Color filledColor,
+                               atlas::Color emptyColor, float thickness,
                                int segments = 32, float gapFraction = 0.08f) {
     float fullCircle = 2.0f * PI;
     float angle_step = fullCircle / static_cast<float>(segments);
@@ -223,15 +223,15 @@ static void DrawBlockRingGauge(aatlas::AtlasRenderer& renderer,
     for (int i = 0; i < segments; i++) {
         float a1 = -PI / 2.0f + angle_step * i + gap;
         float a2 = -PI / 2.0f + angle_step * (i + 1) - gap;
-        const aatlas::Color& color = (i < filledCount) ? filledColor : emptyColor;
+        const atlas::Color& color = (i < filledCount) ? filledColor : emptyColor;
         renderer.drawArc(center, innerR, outerR, a1, a2, color);
     }
 }
 
-static void DrawHalfCircleBlockGauge(aatlas::AtlasRenderer& renderer,
-                                     aatlas::Vec2 center, float radius,
-                                     float pct, aatlas::Color filledColor,
-                                     aatlas::Color emptyColor, float thickness,
+static void DrawHalfCircleBlockGauge(atlas::AtlasRenderer& renderer,
+                                     atlas::Vec2 center, float radius,
+                                     float pct, atlas::Color filledColor,
+                                     atlas::Color emptyColor, float thickness,
                                      int segments = 20, float gapFraction = 0.06f) {
     float angle_min = PI;
     float angle_max = 2.0f * PI;
@@ -244,13 +244,13 @@ static void DrawHalfCircleBlockGauge(aatlas::AtlasRenderer& renderer,
     for (int i = 0; i < segments; i++) {
         float a1 = angle_min + angle_step * i + gap;
         float a2 = angle_min + angle_step * (i + 1) - gap;
-        const aatlas::Color& color =
+        const atlas::Color& color =
             (static_cast<float>(i) < fillCount) ? filledColor : emptyColor;
         renderer.drawArc(center, innerR, outerR, a1, a2, color);
     }
 }
 
-void RenderShipStatusCircular(aatlas::AtlasContext& ctx, const ShipStatus& status) {
+void RenderShipStatusCircular(atlas::AtlasContext& ctx, const ShipStatus& status) {
     auto& r = ctx.renderer();
 
     float outerRadius = 100.0f;
@@ -258,7 +258,7 @@ void RenderShipStatusCircular(aatlas::AtlasContext& ctx, const ShipStatus& statu
     float ringGap = 4.0f;
     float capThickness = 7.0f;
 
-    aatlas::Vec2 center(outerRadius + 15, outerRadius + 10);
+    atlas::Vec2 center(outerRadius + 15, outerRadius + 10);
 
     // Dark background circle
     r.drawCircle(center, outerRadius + 8, rgba(8, 12, 18, 230));
@@ -323,7 +323,7 @@ void RenderShipStatusCircular(aatlas::AtlasContext& ctx, const ShipStatus& statu
     float rackWidth = totalSlots * slotSpacing;
     float rackStartX = center.x - rackWidth / 2.0f + slotSpacing / 2.0f;
 
-    aatlas::Rect rackBg(rackStartX - slotRadius - 4, rackY - slotRadius - 6,
+    atlas::Rect rackBg(rackStartX - slotRadius - 4, rackY - slotRadius - 6,
                         (totalSlots - 1) * slotSpacing + slotRadius * 2 + 8,
                         slotRadius * 2 + 12);
     r.drawRoundedRect(rackBg, rgba(12, 16, 22, 200), 3.0f);
@@ -334,9 +334,9 @@ void RenderShipStatusCircular(aatlas::AtlasContext& ctx, const ShipStatus& statu
                rgba(120, 150, 180, 140));
 
     for (int i = 0; i < totalSlots; i++) {
-        aatlas::Vec2 slotPos(rackStartX + i * slotSpacing, rackY);
+        atlas::Vec2 slotPos(rackStartX + i * slotSpacing, rackY);
 
-        aatlas::Color inactiveCol;
+        atlas::Color inactiveCol;
         if (i < 3) {
             inactiveCol = rgba(22, 38, 28, 190);
         } else if (i < 6) {
@@ -356,13 +356,13 @@ void RenderShipStatusCircular(aatlas::AtlasContext& ctx, const ShipStatus& statu
     }
 }
 
-void RenderSpeedGauge(aatlas::AtlasContext& ctx, float current_speed, float max_speed,
+void RenderSpeedGauge(atlas::AtlasContext& ctx, float current_speed, float max_speed,
                       bool* approach_active, bool* orbit_active,
                       bool* keep_range_active) {
     auto& r = ctx.renderer();
 
     float gaugeRadius = 50.0f;
-    aatlas::Vec2 center(gaugeRadius + 10, gaugeRadius + 10);
+    atlas::Vec2 center(gaugeRadius + 10, gaugeRadius + 10);
 
     r.drawCircle(center, gaugeRadius, rgba(13, 17, 23, 200));
     r.drawCircleOutline(center, gaugeRadius, rgba(40, 56, 72, 150));
@@ -381,7 +381,7 @@ void RenderSpeedGauge(aatlas::AtlasContext& ctx, float current_speed, float max_
     for (int i = 0; i < segments; i++) {
         float a1 = arcStart + stepAngle * i + gap;
         float a2 = arcStart + stepAngle * (i + 1) - gap;
-        aatlas::Color color = (static_cast<float>(i) < pctFill) ?
+        atlas::Color color = (static_cast<float>(i) < pctFill) ?
             rgba(69, 208, 232, 220) : rgba(30, 50, 70, 100);
         r.drawArc(center, innerR, outerR, a1, a2, color);
     }
@@ -405,9 +405,9 @@ void RenderSpeedGauge(aatlas::AtlasContext& ctx, float current_speed, float max_
 
     auto drawButton = [&](const char* label, float bx, float by,
                           float bw, float bh, bool highlight) -> bool {
-        aatlas::Rect br(bx, by, bw, bh);
-        aatlas::Color bg = highlight ?
-            aatlas::Color(0.15f, 0.4f, 0.5f, 0.9f) :
+        atlas::Rect br(bx, by, bw, bh);
+        atlas::Color bg = highlight ?
+            atlas::Color(0.15f, 0.4f, 0.5f, 0.9f) :
             rgba(30, 42, 58, 200);
         r.drawRoundedRect(br, bg, 3.0f);
         r.drawRoundedRectOutline(br, rgba(55, 75, 95, 160), 3.0f);
@@ -447,7 +447,7 @@ void RenderSpeedGauge(aatlas::AtlasContext& ctx, float current_speed, float max_
     r.drawText(maxBuf, {0, btnY}, rgba(140, 148, 158, 255));
 }
 
-void RenderCombatLog(aatlas::AtlasContext& ctx,
+void RenderCombatLog(atlas::AtlasContext& ctx,
                      const std::vector<std::string>& messages) {
     auto& r = ctx.renderer();
     float y = 0.0f;
@@ -468,7 +468,7 @@ void RenderCombatLog(aatlas::AtlasContext& ctx,
 // ============================================================================
 // RenderModuleRack
 // ============================================================================
-void RenderModuleRack(aatlas::AtlasContext& ctx,
+void RenderModuleRack(atlas::AtlasContext& ctx,
                       const ModuleSlotState slots[], int count) {
     if (count <= 0) return;
 
@@ -479,7 +479,7 @@ void RenderModuleRack(aatlas::AtlasContext& ctx,
     float startX = 10.0f;
     float centerY = slotRadius + 8.0f;
 
-    aatlas::Rect rackBg(startX - slotRadius - 4, centerY - slotRadius - 8,
+    atlas::Rect rackBg(startX - slotRadius - 4, centerY - slotRadius - 8,
                         (count - 1) * slotSpacing + slotRadius * 2 + 8,
                         slotRadius * 2 + 16);
     r.drawRoundedRect(rackBg, rgba(12, 16, 22, 210), 3.0f);
@@ -487,9 +487,9 @@ void RenderModuleRack(aatlas::AtlasContext& ctx,
 
     for (int i = 0; i < count; i++) {
         const auto& s = slots[i];
-        aatlas::Vec2 slotPos(startX + i * slotSpacing, centerY);
+        atlas::Vec2 slotPos(startX + i * slotSpacing, centerY);
 
-        aatlas::Color activeCol, inactiveCol, emptyCol;
+        atlas::Color activeCol, inactiveCol, emptyCol;
         switch (s.slotType) {
             case ModuleSlotState::HIGH:
                 activeCol   = rgba(50, 180, 50, 230);
@@ -508,7 +508,7 @@ void RenderModuleRack(aatlas::AtlasContext& ctx,
                 break;
         }
 
-        aatlas::Color bgColor;
+        atlas::Color bgColor;
         if (!s.fitted) {
             bgColor = emptyCol;
         } else if (s.active) {
@@ -519,7 +519,7 @@ void RenderModuleRack(aatlas::AtlasContext& ctx,
 
         r.drawCircle(slotPos, slotRadius, bgColor);
 
-        aatlas::Color borderColor = rgba(55, 75, 95, 160);
+        atlas::Color borderColor = rgba(55, 75, 95, 160);
         if (s.overheated) {
             borderColor = rgba(255, 100, 30, 220);
         } else if (s.active) {
@@ -545,7 +545,7 @@ void RenderModuleRack(aatlas::AtlasContext& ctx,
 // ============================================================================
 // RenderAlertStack
 // ============================================================================
-void RenderAlertStack(aatlas::AtlasContext& ctx,
+void RenderAlertStack(atlas::AtlasContext& ctx,
                       const std::vector<HUDAlert>& alerts,
                       float centerX, float baseY) {
     if (alerts.empty()) return;
@@ -567,7 +567,7 @@ void RenderAlertStack(aatlas::AtlasContext& ctx,
         float y = startY - (i + 1) * (alertHeight + alertGap);
         float x = centerX - alertWidth / 2.0f;
 
-        aatlas::Color bgColor, borderColor, textColor;
+        atlas::Color bgColor, borderColor, textColor;
         switch (alert.priority) {
             case HUDAlertPriority::CRITICAL:
                 bgColor     = rgba(120, 20, 20, static_cast<int>(200 * alpha));
@@ -586,7 +586,7 @@ void RenderAlertStack(aatlas::AtlasContext& ctx,
                 break;
         }
 
-        aatlas::Rect box(x, y, alertWidth, alertHeight);
+        atlas::Rect box(x, y, alertWidth, alertHeight);
         r.drawRoundedRect(box, bgColor, 2.0f);
         r.drawRoundedRectOutline(box, borderColor, 2.0f);
 
@@ -600,7 +600,7 @@ void RenderAlertStack(aatlas::AtlasContext& ctx,
 // ============================================================================
 // RenderSelectedItem
 // ============================================================================
-void RenderSelectedItem(aatlas::AtlasContext& ctx, const SelectedItemData& item,
+void RenderSelectedItem(atlas::AtlasContext& ctx, const SelectedItemData& item,
                         bool* approach_clicked, bool* orbit_clicked,
                         bool* lock_clicked, bool* warp_clicked) {
     auto& r = ctx.renderer();
@@ -611,7 +611,7 @@ void RenderSelectedItem(aatlas::AtlasContext& ctx, const SelectedItemData& item,
         return;
     }
 
-    aatlas::Color nameColor = item.is_hostile ?
+    atlas::Color nameColor = item.is_hostile ?
         toColor(SpaceColors::TARGET_HOSTILE) : toColor(SpaceColors::ACCENT_PRIMARY);
     r.drawText(item.name, {0, y}, nameColor);
     y += 16.0f;
@@ -646,21 +646,21 @@ void RenderSelectedItem(aatlas::AtlasContext& ctx, const SelectedItemData& item,
     if (item.has_health) {
         r.drawLine({0, y}, {180, y}, toColor(SpaceColors::BORDER_SUBTLE));
         y += 6.0f;
-        aatlas::Color bgBar = rgba(30, 40, 55, 180);
+        atlas::Color bgBar = rgba(30, 40, 55, 180);
 
         float sAdj[4]; GetHealthColorForPercent(item.shields_pct, sAdj, SpaceColors::SHIELD_COLOR);
         r.drawText("S", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
-        r.drawProgressBar(aatlas::Rect(14, y, 180, 12), item.shields_pct, toColor(sAdj), bgBar);
+        r.drawProgressBar(atlas::Rect(14, y, 180, 12), item.shields_pct, toColor(sAdj), bgBar);
         y += 16.0f;
 
         float aAdj[4]; GetHealthColorForPercent(item.armor_pct, aAdj, SpaceColors::ARMOR_COLOR);
         r.drawText("A", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
-        r.drawProgressBar(aatlas::Rect(14, y, 180, 12), item.armor_pct, toColor(aAdj), bgBar);
+        r.drawProgressBar(atlas::Rect(14, y, 180, 12), item.armor_pct, toColor(aAdj), bgBar);
         y += 16.0f;
 
         float hAdj[4]; GetHealthColorForPercent(item.hull_pct, hAdj, SpaceColors::HULL_COLOR);
         r.drawText("H", {0, y}, toColor(SpaceColors::TEXT_PRIMARY));
-        r.drawProgressBar(aatlas::Rect(14, y, 180, 12), item.hull_pct, toColor(hAdj), bgBar);
+        r.drawProgressBar(atlas::Rect(14, y, 180, 12), item.hull_pct, toColor(hAdj), bgBar);
         y += 16.0f;
     }
 
@@ -672,7 +672,7 @@ void RenderSelectedItem(aatlas::AtlasContext& ctx, const SelectedItemData& item,
     float btnX = 0.0f;
 
     auto drawBtn = [&](const char* label, bool* clicked) {
-        aatlas::Rect br(btnX, y, buttonWidth, buttonHeight);
+        atlas::Rect br(btnX, y, buttonWidth, buttonHeight);
         r.drawRoundedRect(br, rgba(30, 42, 58, 200), 3.0f);
         r.drawRoundedRectOutline(br, rgba(55, 75, 95, 160), 3.0f);
         float lw = r.measureText(label);

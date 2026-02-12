@@ -37,10 +37,10 @@ void ContextMenu::Render() {
     // Legacy stub — rendering now goes through RenderAtlas()
 }
 
-void ContextMenu::RenderAtlas(aatlas::AtlasContext& ctx) {
+void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
     if (m_menuType == ContextMenuType::NONE) return;
 
-    const aatlas::Theme& t = ctx.theme();
+    const atlas::Theme& t = ctx.theme();
     auto& r = ctx.renderer();
 
     // ── EVE-style dark translucent context menu ─────────────────────
@@ -83,7 +83,7 @@ void ContextMenu::RenderAtlas(aatlas::AtlasContext& ctx) {
     float menuY = std::min(m_screenY, winH - menuH - 4.0f);
 
     // Background
-    aatlas::Rect bg(menuX, menuY, menuW, menuH);
+    atlas::Rect bg(menuX, menuY, menuW, menuH);
     r.drawRect(bg, t.bgPanel);
     r.drawRectOutline(bg, t.borderNormal);
 
@@ -98,8 +98,8 @@ void ContextMenu::RenderAtlas(aatlas::AtlasContext& ctx) {
     // Draw items
     float curY = menuY + 2.0f;
     for (int i = 0; i < static_cast<int>(items.size()); ++i) {
-        aatlas::Rect itemRect(menuX, curY, menuW, itemH);
-        aatlas::WidgetID id = ctx.currentID(items[i].label);
+        atlas::Rect itemRect(menuX, curY, menuW, itemH);
+        atlas::WidgetID id = ctx.currentID(items[i].label);
 
         bool hovered = ctx.isHovered(itemRect);
         if (hovered) {
@@ -181,14 +181,14 @@ void ContextMenu::RenderAtlas(aatlas::AtlasContext& ctx) {
         if (subX + subW > winW) subX = menuX - subW - 2.0f;
         if (subY + subH > winH) subY = winH - subH - 4.0f;
 
-        aatlas::Rect subBg(subX, subY, subW, subH);
+        atlas::Rect subBg(subX, subY, subW, subH);
         r.drawRect(subBg, t.bgPanel);
         r.drawRectOutline(subBg, t.borderNormal);
 
         float sy = subY + 2.0f;
         for (int j = 0; j < static_cast<int>(subItems.size()); ++j) {
-            aatlas::Rect sr(subX, sy, subW, itemH);
-            aatlas::WidgetID sid = ctx.currentID(subItems[j].label);
+            atlas::Rect sr(subX, sy, subW, itemH);
+            atlas::WidgetID sid = ctx.currentID(subItems[j].label);
             bool sh = ctx.isHovered(sr);
             if (sh) {
                 r.drawRect(sr, t.hover);

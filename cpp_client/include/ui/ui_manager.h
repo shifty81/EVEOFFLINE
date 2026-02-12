@@ -148,7 +148,7 @@ public:
     void Shutdown();
 
     // Frame management — caller must fill InputState from GLFW each frame
-    void BeginFrame(const aatlas::InputState& input);
+    void BeginFrame(const atlas::InputState& input);
     void EndFrame();
 
     // Render all UI panels via Atlas
@@ -226,7 +226,7 @@ public:
     void ToggleCompactMode();
 
     // Access Atlas context for advanced / external usage
-    aatlas::AtlasContext& GetAtlasContext() { return m_ctx; }
+    atlas::AtlasContext& GetAtlasContext() { return m_ctx; }
 
     // ── Layout management (Phase 4.10) ──────────────────────────────
 
@@ -273,8 +273,8 @@ public:
 
 private:
     // Atlas UI core
-    aatlas::AtlasContext m_ctx;
-    aatlas::AtlasHUD     m_hud;
+    atlas::AtlasContext m_ctx;
+    atlas::AtlasHUD     m_hud;
 
     // UI state
     ShipStatus ship_status_;
@@ -299,7 +299,7 @@ private:
 
     // Atlas panel states (replaces DockingManager)
     struct PanelConfig {
-        aatlas::PanelState state;
+        atlas::PanelState state;
         std::string title;
         float opacity = 0.92f;  // Per-panel opacity (0.0–1.0)
     };

@@ -234,8 +234,8 @@ private:
     std::unique_ptr<UI::RmlUiManager> m_uiManager;
     std::unique_ptr<UI::EntityPicker> m_entityPicker;
     std::unique_ptr<SolarSystemScene> m_solarSystem;
-    std::unique_ptr<aatlas::AtlasContext> m_atlasCtx;
-    std::unique_ptr<aatlas::AtlasHUD> m_atlasHUD;
+    std::unique_ptr<atlas::AtlasContext> m_atlasCtx;
+    std::unique_ptr<atlas::AtlasHUD> m_atlasHUD;
     std::unique_ptr<UI::ContextMenu> m_contextMenu;
     std::unique_ptr<UI::RadialMenu> m_radialMenu;
 

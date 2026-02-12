@@ -58,58 +58,90 @@ struct Color {
     Color withAlpha(float a_) const { return {r, g, b, a_}; }
 };
 
-// ── Atlas Theme (Atlas UI palette) ────────────────────────────
+// ── Photon Motion Timing Constants ───────────────────────────────
+//
+// EVE Photon UI principle: nothing snaps instantly. All transitions
+// use these locked timings so the UI feels calm and predictable.
+// Widgets MUST use these values — never invent custom durations.
+
+namespace MotionTiming {
+    constexpr float Instant        = 0.0f;
+    constexpr float HoverDelay     = 0.06f;   // seconds before hover effect
+    constexpr float HoverFade      = 0.10f;   // hover highlight fade duration
+    constexpr float PanelOpen      = 0.16f;   // panel slide+fade in
+    constexpr float PanelClose     = 0.12f;   // panel slide+fade out
+    constexpr float FocusGain      = 0.14f;   // accent glow on focus
+    constexpr float FocusLoss      = 0.10f;   // accent dim on unfocus
+    constexpr float SelectionMove  = 0.12f;   // selection bar slide
+    constexpr float TooltipDelay   = 0.25f;   // tooltip appear delay
+    constexpr float TooltipFade    = 0.10f;   // tooltip fade in/out
+    constexpr float TabSwitch      = 0.14f;   // tab content slide
+    constexpr float RowHover       = 0.10f;   // list row hover highlight
+    constexpr float RowSelect      = 0.12f;   // list row selection
+}
+
+// ── Atlas Theme (Photon Dark — EVE Online palette) ──────────────
+//
+// Based on the Photon UI design principles:
+//   - Dark sci-fi panels with translucent overlays
+//   - Sparse, meaningful accent colors (blue=navigation, orange=combat)
+//   - Sharp edges, skeletal frames, no rounded blobs
+//   - Clean typography with consistent hierarchy
 
 struct Theme {
-    // Backgrounds
-    Color bgPrimary   {0.051f, 0.067f, 0.090f, 0.92f};   // #0D1117
-    Color bgSecondary {0.086f, 0.106f, 0.133f, 0.90f};    // #161B22
-    Color bgPanel     {0.031f, 0.047f, 0.071f, 0.95f};    // #080C12
-    Color bgHeader    {0.039f, 0.055f, 0.078f, 1.0f};     // #0A0E14
-    Color bgTooltip   {0.110f, 0.129f, 0.157f, 0.95f};    // #1C2128
+    // Backgrounds (near-black blues / gunmetal)
+    Color bgPrimary   {0.05f,  0.06f,  0.08f,  0.96f};   // root background
+    Color bgSecondary {0.08f,  0.10f,  0.13f,  0.94f};    // panel alt
+    Color bgPanel     {0.06f,  0.08f,  0.11f,  0.96f};    // panel fill
+    Color bgHeader    {0.039f, 0.055f, 0.078f, 1.0f};     // header bar
+    Color bgTooltip   {0.110f, 0.129f, 0.157f, 0.95f};    // tooltip fill
 
-    // Accents
-    Color accentPrimary  {0.271f, 0.816f, 0.910f, 1.0f};  // #45D0E8
-    Color accentSecondary{0.471f, 0.882f, 0.941f, 1.0f};   // #78E1F0
-    Color accentDim      {0.165f, 0.353f, 0.416f, 1.0f};   // #2A5A6A
+    // Accents (semantic — navigation=blue/teal, combat=orange, danger=red)
+    Color accentPrimary  {0.40f, 0.58f, 0.86f, 1.0f};    // navigation blue
+    Color accentSecondary{0.28f, 0.72f, 0.82f, 1.0f};     // info/scanning cyan
+    Color accentDim      {0.15f, 0.18f, 0.22f, 1.0f};     // subdued frame
+    Color accentCombat   {0.88f, 0.46f, 0.24f, 1.0f};     // combat orange
 
     // Selection / hover
-    Color selection {0.102f, 0.227f, 0.290f, 0.80f};       // #1A3A4A
+    Color selection {0.102f, 0.227f, 0.290f, 0.80f};
     Color hover     {0.102f, 0.227f, 0.290f, 0.50f};
 
-    // Borders
-    Color borderNormal   {0.157f, 0.220f, 0.282f, 0.6f};  // #283848
-    Color borderHighlight{0.271f, 0.816f, 0.910f, 0.8f};   // #45D0E8
-    Color borderSubtle   {0.118f, 0.165f, 0.212f, 0.5f};   // #1E2A36
+    // Borders (thin, skeletal)
+    Color borderNormal   {0.22f, 0.26f, 0.31f, 0.6f};    // frame edge
+    Color borderHighlight{0.40f, 0.58f, 0.86f, 0.8f};     // focused frame
+    Color borderSubtle   {0.15f, 0.18f, 0.22f, 0.5f};     // subdued edge
 
-    // Text
-    Color textPrimary  {0.902f, 0.929f, 0.953f, 1.0f};    // #E6EDF3
-    Color textSecondary{0.545f, 0.580f, 0.620f, 1.0f};     // #8B949E
-    Color textDisabled {0.282f, 0.310f, 0.345f, 0.6f};     // #484F58
+    // Text (off-white, never pure white; hierarchy via weight not size)
+    Color textPrimary  {0.92f, 0.94f, 0.96f, 1.0f};
+    Color textSecondary{0.70f, 0.74f, 0.79f, 1.0f};
+    Color textMuted    {0.46f, 0.49f, 0.53f, 1.0f};
+    Color textDisabled {0.282f, 0.310f, 0.345f, 0.6f};
 
     // Health
-    Color shield {0.2f,  0.6f,  1.0f,  1.0f};
-    Color armor  {1.0f,  0.816f,0.251f,1.0f};
-    Color hull   {0.902f,0.271f,0.271f,1.0f};
-    Color capacitor{0.271f, 0.816f, 0.910f, 1.0f};
+    Color shield    {0.2f,  0.6f,  1.0f,  1.0f};
+    Color armor     {1.0f,  0.816f,0.251f,1.0f};
+    Color hull      {0.902f,0.271f,0.271f,1.0f};
+    Color capacitor {0.271f, 0.816f, 0.910f, 1.0f};
 
     // Standings
-    Color hostile  {0.8f, 0.2f, 0.2f, 1.0f};
-    Color friendly {0.2f, 0.6f, 1.0f, 1.0f};
+    Color hostile  {0.86f, 0.26f, 0.26f, 1.0f};
+    Color friendly {0.40f, 0.58f, 0.86f, 1.0f};
     Color neutral  {0.667f,0.667f,0.667f,1.0f};
 
     // Feedback
     Color success {0.2f, 0.8f, 0.4f, 1.0f};
-    Color warning {1.0f, 0.722f,0.2f,1.0f};
-    Color danger  {1.0f, 0.2f, 0.2f, 1.0f};
+    Color warning {0.92f, 0.68f, 0.22f, 1.0f};
+    Color danger  {0.86f, 0.26f, 0.26f, 1.0f};
 
-    // Panel metrics
-    float panelCornerRadius  = 4.0f;
-    float borderWidth        = 1.0f;
-    float headerHeight       = 28.0f;
+    // Panel metrics (Photon: sharp edges, tight spacing, thin frames)
+    float panelCornerRadius  = 0.0f;     // sharp corners (EVE-style)
+    float borderWidth        = 1.0f;     // thin frame edges
+    float headerHeight       = 22.0f;    // compact Photon headers
     float scrollbarWidth     = 6.0f;
     float itemSpacing        = 4.0f;
     float padding            = 8.0f;
+    float rowHeight          = 18.0f;    // data list row height
+    float selectionBarWidth  = 2.0f;     // thin left selection indicator
 };
 
 /** Global default theme. */

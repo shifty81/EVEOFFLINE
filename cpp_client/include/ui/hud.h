@@ -56,7 +56,7 @@ public:
      * Renders the circular ship status display (via HUDPanels::RenderShipStatusCircular)
      * and the combat log.
      */
-    void render(aatlas::AtlasContext& ctx);
+    void render(atlas::AtlasContext& ctx);
 
     /**
      * Update HUD with game state

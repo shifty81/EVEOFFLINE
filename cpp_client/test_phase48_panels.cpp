@@ -65,7 +65,7 @@ int main() {
     std::cout << "[Test] UIManager initialized" << std::endl;
 
     // ---- Setup Atlas context for module rack rendering ----
-    aatlas::AtlasContext atlasCtx;
+    atlas::AtlasContext atlasCtx;
 
     // ---- Setup demo ship status ----
     UI::ShipStatus shipStatus;

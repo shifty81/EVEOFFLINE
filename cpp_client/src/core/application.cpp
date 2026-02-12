@@ -50,8 +50,8 @@ Application::Application(const std::string& title, int width, int height)
     m_uiManager = std::make_unique<UI::RmlUiManager>();
     m_entityPicker = std::make_unique<UI::EntityPicker>();
     m_solarSystem = std::make_unique<SolarSystemScene>();
-    m_atlasCtx = std::make_unique<aatlas::AtlasContext>();
-    m_atlasHUD = std::make_unique<aatlas::AtlasHUD>();
+    m_atlasCtx = std::make_unique<atlas::AtlasContext>();
+    m_atlasHUD = std::make_unique<atlas::AtlasHUD>();
     m_contextMenu = std::make_unique<UI::ContextMenu>();
     m_radialMenu = std::make_unique<UI::RadialMenu>();
     
@@ -562,7 +562,7 @@ void Application::render() {
     
     // Render Atlas HUD overlay
     {
-        aatlas::InputState atlasInput;
+        atlas::InputState atlasInput;
         atlasInput.windowW = m_window->getWidth();
         atlasInput.windowH = m_window->getHeight();
         // Forward mouse state from InputHandler to Atlas for interactive widgets
@@ -581,7 +581,7 @@ void Application::render() {
         
         m_atlasCtx->beginFrame(atlasInput);
         
-        aatlas::ShipHUDData shipData;
+        atlas::ShipHUDData shipData;
         // Connect to actual ship state from game client
         auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
         if (playerEntity) {
@@ -596,13 +596,13 @@ void Application::render() {
         shipData.maxSpeed = m_playerMaxSpeed;
         
         // Build Atlas target cards from target list
-        std::vector<aatlas::TargetCardInfo> atlasTargets;
+        std::vector<atlas::TargetCardInfo> atlasTargets;
         if (playerEntity) {
             const auto playerPos = playerEntity->getPosition();
             for (const auto& targetId : m_targetList) {
                 auto targetEntity = m_gameClient->getEntityManager().getEntity(targetId);
                 if (!targetEntity) continue;
-                aatlas::TargetCardInfo card;
+                atlas::TargetCardInfo card;
                 card.name = targetEntity->getShipName().empty() ? targetEntity->getId() : targetEntity->getShipName();
                 const auto& th = targetEntity->getHealth();
                 card.shieldPct = th.maxShield > 0 ? th.currentShield / static_cast<float>(th.maxShield) : 0.0f;
@@ -615,12 +615,12 @@ void Application::render() {
         }
         
         // Build Atlas overview entries from entity manager
-        std::vector<aatlas::OverviewEntry> atlasOverview;
+        std::vector<atlas::OverviewEntry> atlasOverview;
         if (playerEntity) {
             const auto playerPos = playerEntity->getPosition();
             for (const auto& pair : m_gameClient->getEntityManager().getAllEntities()) {
                 if (pair.first == m_localPlayerId) continue;
-                aatlas::OverviewEntry entry;
+                atlas::OverviewEntry entry;
                 entry.name = pair.second->getShipName().empty() ? pair.first : pair.second->getShipName();
                 entry.type = pair.second->getShipType();
                 entry.distance = glm::distance(playerPos, pair.second->getPosition());
@@ -632,7 +632,7 @@ void Application::render() {
             if (m_solarSystem) {
                 for (const auto& c : m_solarSystem->getCelestials()) {
                     if (c.type == atlas::Celestial::Type::SUN) continue;
-                    aatlas::OverviewEntry entry;
+                    atlas::OverviewEntry entry;
                     entry.name = c.name;
                     entry.distance = glm::distance(playerPos, c.position);
                     entry.selected = false;
@@ -651,7 +651,7 @@ void Application::render() {
         }
         
         // Build selected item info
-        aatlas::SelectedItemInfo atlasSelected;
+        atlas::SelectedItemInfo atlasSelected;
         if (!m_currentTargetId.empty() && playerEntity) {
             auto targetEntity = m_gameClient->getEntityManager().getEntity(m_currentTargetId);
             if (targetEntity) {
@@ -1205,7 +1205,7 @@ void Application::openInfoPanelForEntity(const std::string& entityId) {
     if (!entity || !m_atlasHUD) return;
 
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-    aatlas::InfoPanelData info;
+    atlas::InfoPanelData info;
     info.name = entity->getShipName().empty() ? entityId : entity->getShipName();
     info.type = entity->getShipType();
     info.faction = entity->getFaction();

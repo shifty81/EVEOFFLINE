@@ -75,7 +75,7 @@ public:
     /**
      * Render the radial menu via Atlas (call between beginFrame/endFrame).
      */
-    void RenderAtlas(aatlas::AtlasContext& ctx);
+    void RenderAtlas(atlas::AtlasContext& ctx);
 
     /**
      * Check if menu is currently open.

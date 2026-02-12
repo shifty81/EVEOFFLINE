@@ -120,7 +120,7 @@ void UIManager::InitPanelConfigs(int windowW, int windowH) {
                         float x, float y, float w, float h, bool visible) {
         PanelConfig cfg;
         cfg.title = title;
-        cfg.state.bounds = aatlas::Rect(x, y, w, h);
+        cfg.state.bounds = atlas::Rect(x, y, w, h);
         cfg.state.open = visible;
         m_panelConfigs[id] = cfg;
     };
@@ -144,7 +144,7 @@ void UIManager::Shutdown() {
 // Frame Management
 // ============================================================================
 
-void UIManager::BeginFrame(const aatlas::InputState& input) {
+void UIManager::BeginFrame(const atlas::InputState& input) {
     m_ctx.beginFrame(input);
 }
 
@@ -160,7 +160,7 @@ void UIManager::Render() {
     const auto& theme = m_ctx.theme();
 
     // --- Build ShipHUDData from current ship status ---
-    aatlas::ShipHUDData shipData;
+    atlas::ShipHUDData shipData;
     shipData.shieldPct    = safePct(ship_status_.shields, ship_status_.shields_max);
     shipData.armorPct     = safePct(ship_status_.armor, ship_status_.armor_max);
     shipData.hullPct      = safePct(ship_status_.hull, ship_status_.hull_max);
@@ -170,19 +170,19 @@ void UIManager::Render() {
 
     // Populate module slots
     for (int i = 0; i < m_moduleSlotCount && i < MAX_MODULE_SLOTS; ++i) {
-        aatlas::ShipHUDData::ModuleInfo mi;
+        atlas::ShipHUDData::ModuleInfo mi;
         mi.fitted   = m_moduleSlots[i].fitted;
         mi.active   = m_moduleSlots[i].active;
         mi.cooldown = m_moduleSlots[i].cooldown_pct;
         mi.overheat = m_moduleSlots[i].overheated ? 1.0f : 0.0f;
-        mi.color    = mi.active ? theme.accentPrimary : aatlas::Color(0.5f, 0.5f, 0.5f, 1.0f);
+        mi.color    = mi.active ? theme.accentPrimary : atlas::Color(0.5f, 0.5f, 0.5f, 1.0f);
         shipData.highSlots.push_back(mi);
     }
 
     // --- Build target cards from locked target info ---
-    std::vector<aatlas::TargetCardInfo> targets;
+    std::vector<atlas::TargetCardInfo> targets;
     if (target_info_.is_locked) {
-        aatlas::TargetCardInfo tc;
+        atlas::TargetCardInfo tc;
         tc.name      = target_info_.name;
         tc.shieldPct = safePct(target_info_.shields, target_info_.shields_max);
         tc.armorPct  = safePct(target_info_.armor, target_info_.armor_max);
@@ -194,10 +194,10 @@ void UIManager::Render() {
     }
 
     // --- Build overview entries (empty for now — filled by OverviewPanel data) ---
-    std::vector<aatlas::OverviewEntry> overview;
+    std::vector<atlas::OverviewEntry> overview;
 
     // --- Build selected item info ---
-    aatlas::SelectedItemInfo selectedInfo;
+    atlas::SelectedItemInfo selectedInfo;
     if (!m_selectedItem.isEmpty()) {
         selectedInfo.name     = m_selectedItem.name;
         if (m_selectedItem.distance >= 1000.0f) {
@@ -241,26 +241,26 @@ void UIManager::RenderDockablePanel(const std::string& id) {
     if (it == m_panelConfigs.end()) return;
 
     PanelConfig& cfg = it->second;
-    aatlas::PanelFlags flags;
+    atlas::PanelFlags flags;
     flags.locked = m_interfaceLocked;
     flags.compactMode = m_compactMode;
 
-    if (aatlas::panelBeginStateful(m_ctx, cfg.title.c_str(), cfg.state, flags)) {
+    if (atlas::panelBeginStateful(m_ctx, cfg.title.c_str(), cfg.state, flags)) {
         const auto& theme = m_ctx.theme();
-        const aatlas::Rect& b = cfg.state.bounds;
+        const atlas::Rect& b = cfg.state.bounds;
         float y = b.y + theme.headerHeight + theme.padding;
         float x = b.x + theme.padding;
         float contentW = b.w - theme.padding * 2.0f;
 
         // Stub content — label + separator indicating panel name
-        aatlas::label(m_ctx, aatlas::Vec2(x, y), cfg.title, theme.textPrimary);
+        atlas::label(m_ctx, atlas::Vec2(x, y), cfg.title, theme.textPrimary);
         y += 20.0f;
-        aatlas::separator(m_ctx, aatlas::Vec2(x, y), contentW);
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
         y += theme.itemSpacing + 4.0f;
-        aatlas::label(m_ctx, aatlas::Vec2(x, y),
+        atlas::label(m_ctx, atlas::Vec2(x, y),
                       "Panel content (Atlas stub)", theme.textSecondary);
     }
-    aatlas::panelEnd(m_ctx);
+    atlas::panelEnd(m_ctx);
 }
 
 void UIManager::RenderCombatLogPanel() {
@@ -272,22 +272,22 @@ void UIManager::RenderCombatLogPanel() {
     float posX = 320.0f;
     float posY = static_cast<float>(input.windowH) - panelH - 60.0f;
 
-    aatlas::Rect bounds(posX, posY, panelW, panelH);
-    aatlas::PanelFlags flags;
+    atlas::Rect bounds(posX, posY, panelW, panelH);
+    atlas::PanelFlags flags;
     flags.locked = m_interfaceLocked;
 
     bool* openPtr = &show_combat_log_;
-    if (aatlas::panelBegin(m_ctx, "Combat Log", bounds, flags, openPtr)) {
+    if (atlas::panelBegin(m_ctx, "Combat Log", bounds, flags, openPtr)) {
         float y = bounds.y + theme.headerHeight + theme.padding;
         float x = bounds.x + theme.padding;
 
         for (const auto& msg : combat_log_) {
-            aatlas::label(m_ctx, aatlas::Vec2(x, y), msg, theme.textSecondary);
+            atlas::label(m_ctx, atlas::Vec2(x, y), msg, theme.textSecondary);
             y += 16.0f;
             if (y > bounds.bottom() - theme.padding) break;
         }
     }
-    aatlas::panelEnd(m_ctx);
+    atlas::panelEnd(m_ctx);
 }
 
 void UIManager::RenderStarMapPanel() {
@@ -301,37 +301,37 @@ void UIManager::RenderStarMapPanel() {
     float posX = (static_cast<float>(input.windowW) - mapW) * 0.5f;
     float posY = (static_cast<float>(input.windowH) - mapH) * 0.5f;
 
-    aatlas::Rect bounds(posX, posY, mapW, mapH);
-    aatlas::PanelFlags flags;
+    atlas::Rect bounds(posX, posY, mapW, mapH);
+    atlas::PanelFlags flags;
     flags.showClose = true;
 
-    if (aatlas::panelBegin(m_ctx, "Star Map (F10)", bounds, flags, &m_showStarMap)) {
+    if (atlas::panelBegin(m_ctx, "Star Map (F10)", bounds, flags, &m_showStarMap)) {
         auto& r = m_ctx.renderer();
         float y = bounds.y + theme.headerHeight + theme.padding;
         float x = bounds.x + theme.padding;
         float contentW = bounds.w - theme.padding * 2.0f;
 
-        aatlas::label(m_ctx, aatlas::Vec2(x, y),
+        atlas::label(m_ctx, atlas::Vec2(x, y),
                       "STAR MAP - Astralis", theme.accentPrimary);
         y += 22.0f;
-        aatlas::separator(m_ctx, aatlas::Vec2(x, y), contentW);
+        atlas::separator(m_ctx, atlas::Vec2(x, y), contentW);
         y += 10.0f;
 
         // Draw dark map background
-        aatlas::Rect mapArea(x, y, contentW, bounds.bottom() - y - theme.padding - 20.0f);
-        r.drawRect(mapArea, aatlas::Color(0.02f, 0.03f, 0.06f, 0.95f));
+        atlas::Rect mapArea(x, y, contentW, bounds.bottom() - y - theme.padding - 20.0f);
+        r.drawRect(mapArea, atlas::Color(0.02f, 0.03f, 0.06f, 0.95f));
 
         // Grid lines
         float gridStep = 60.0f;
-        aatlas::Color gridColor(0.078f, 0.118f, 0.196f, 0.24f);
+        atlas::Color gridColor(0.078f, 0.118f, 0.196f, 0.24f);
         for (float gx = 0; gx < mapArea.w; gx += gridStep) {
-            r.drawLine(aatlas::Vec2(mapArea.x + gx, mapArea.y),
-                       aatlas::Vec2(mapArea.x + gx, mapArea.bottom()),
+            r.drawLine(atlas::Vec2(mapArea.x + gx, mapArea.y),
+                       atlas::Vec2(mapArea.x + gx, mapArea.bottom()),
                        gridColor);
         }
         for (float gy = 0; gy < mapArea.h; gy += gridStep) {
-            r.drawLine(aatlas::Vec2(mapArea.x, mapArea.y + gy),
-                       aatlas::Vec2(mapArea.right(), mapArea.y + gy),
+            r.drawLine(atlas::Vec2(mapArea.x, mapArea.y + gy),
+                       atlas::Vec2(mapArea.right(), mapArea.y + gy),
                        gridColor);
         }
 
@@ -350,38 +350,38 @@ void UIManager::RenderStarMapPanel() {
 
         // Connections
         for (auto& conn : connections) {
-            aatlas::Vec2 p1(mapArea.x + nodes[conn[0]].rx * mapArea.w,
+            atlas::Vec2 p1(mapArea.x + nodes[conn[0]].rx * mapArea.w,
                             mapArea.y + nodes[conn[0]].ry * mapArea.h);
-            aatlas::Vec2 p2(mapArea.x + nodes[conn[1]].rx * mapArea.w,
+            atlas::Vec2 p2(mapArea.x + nodes[conn[1]].rx * mapArea.w,
                             mapArea.y + nodes[conn[1]].ry * mapArea.h);
             r.drawLine(p1, p2, theme.accentDim.withAlpha(0.6f), 1.5f);
         }
 
         // Nodes
         for (int i = 0; i < nodeCount; ++i) {
-            aatlas::Vec2 pos(mapArea.x + nodes[i].rx * mapArea.w,
+            atlas::Vec2 pos(mapArea.x + nodes[i].rx * mapArea.w,
                              mapArea.y + nodes[i].ry * mapArea.h);
-            aatlas::Color nodeColor = nodes[i].security >= 0.5f
+            atlas::Color nodeColor = nodes[i].security >= 0.5f
                 ? theme.accentPrimary : theme.warning;
             r.drawCircle(pos, 6.0f, nodeColor);
             r.drawCircleOutline(pos, 8.0f, nodeColor.withAlpha(0.3f));
-            r.drawText(nodes[i].name, aatlas::Vec2(pos.x + 10, pos.y - 6),
+            r.drawText(nodes[i].name, atlas::Vec2(pos.x + 10, pos.y - 6),
                        theme.textPrimary);
 
             char secBuf[16];
             std::snprintf(secBuf, sizeof(secBuf), "%.1f", nodes[i].security);
-            aatlas::Color secColor = nodes[i].security >= 0.5f
+            atlas::Color secColor = nodes[i].security >= 0.5f
                 ? theme.success.withAlpha(0.7f) : theme.danger.withAlpha(0.7f);
-            r.drawText(secBuf, aatlas::Vec2(pos.x + 10, pos.y + 8), secColor);
+            r.drawText(secBuf, atlas::Vec2(pos.x + 10, pos.y + 8), secColor);
         }
 
         // Legend
         float legendY = mapArea.bottom() + 5.0f;
-        aatlas::label(m_ctx, aatlas::Vec2(x, legendY),
+        atlas::label(m_ctx, atlas::Vec2(x, legendY),
                       "Click system to set destination | Scroll to zoom",
                       theme.textSecondary);
     }
-    aatlas::panelEnd(m_ctx);
+    atlas::panelEnd(m_ctx);
 }
 
 void UIManager::RenderAlertStack() {
@@ -397,7 +397,7 @@ void UIManager::RenderAlertStack() {
         const HUDAlert& alert = m_alerts[i];
 
         // Choose color by priority
-        aatlas::Color color;
+        atlas::Color color;
         switch (alert.priority) {
             case HUDAlertPriority::CRITICAL: color = theme.danger;  break;
             case HUDAlertPriority::WARNING:  color = theme.warning; break;
@@ -414,13 +414,13 @@ void UIManager::RenderAlertStack() {
             alpha = alert.duration - alert.elapsed;
         }
 
-        aatlas::Rect alertRect(x, y, alertW, 24.0f);
+        atlas::Rect alertRect(x, y, alertW, 24.0f);
         m_ctx.renderer().drawRoundedRect(alertRect,
             theme.bgPanel.withAlpha(0.85f * alpha), 3.0f);
         m_ctx.renderer().drawRoundedRectOutline(alertRect,
             color.withAlpha(0.6f * alpha), 3.0f);
         m_ctx.renderer().drawText(alert.message,
-            aatlas::Vec2(x + 12.0f, y + 5.0f), color.withAlpha(alpha));
+            atlas::Vec2(x + 12.0f, y + 5.0f), color.withAlpha(alpha));
     }
 }
 
@@ -695,7 +695,7 @@ void UIManager::ImportPanelLayouts(const std::unordered_map<std::string, PanelLa
     for (const auto& [id, pl] : layouts) {
         auto it = m_panelConfigs.find(id);
         if (it != m_panelConfigs.end()) {
-            it->second.state.bounds = aatlas::Rect(pl.x, pl.y, pl.w, pl.h);
+            it->second.state.bounds = atlas::Rect(pl.x, pl.y, pl.w, pl.h);
             it->second.state.open = pl.visible;
             it->second.state.minimized = pl.minimized;
             it->second.opacity = pl.opacity;
@@ -747,35 +747,35 @@ void UIManager::SetUIScale(float scale) {
 void UIManager::SetColorScheme(ColorScheme scheme) {
     m_colorScheme = scheme;
 
-    aatlas::Theme theme = m_ctx.theme();
+    atlas::Theme theme = m_ctx.theme();
     switch (scheme) {
         case ColorScheme::CLASSIC:
             // Warmer, amber-tinted classic theme
-            theme.accentPrimary   = aatlas::Color(0.90f, 0.75f, 0.30f, 1.0f);
-            theme.accentSecondary = aatlas::Color(0.95f, 0.85f, 0.45f, 1.0f);
-            theme.accentDim       = aatlas::Color(0.40f, 0.35f, 0.15f, 1.0f);
-            theme.bgPanel         = aatlas::Color(0.06f, 0.05f, 0.04f, 0.95f);
-            theme.bgHeader        = aatlas::Color(0.10f, 0.08f, 0.06f, 1.0f);
-            theme.textPrimary     = aatlas::Color(0.93f, 0.90f, 0.82f, 1.0f);
-            theme.textSecondary   = aatlas::Color(0.65f, 0.60f, 0.50f, 1.0f);
+            theme.accentPrimary   = atlas::Color(0.90f, 0.75f, 0.30f, 1.0f);
+            theme.accentSecondary = atlas::Color(0.95f, 0.85f, 0.45f, 1.0f);
+            theme.accentDim       = atlas::Color(0.40f, 0.35f, 0.15f, 1.0f);
+            theme.bgPanel         = atlas::Color(0.06f, 0.05f, 0.04f, 0.95f);
+            theme.bgHeader        = atlas::Color(0.10f, 0.08f, 0.06f, 1.0f);
+            theme.textPrimary     = atlas::Color(0.93f, 0.90f, 0.82f, 1.0f);
+            theme.textSecondary   = atlas::Color(0.65f, 0.60f, 0.50f, 1.0f);
             std::cout << "[UIManager] Color scheme set to Classic" << std::endl;
             break;
 
         case ColorScheme::COLORBLIND:
             // Deuteranopia-safe: blue/orange instead of green/red
-            theme.accentPrimary   = aatlas::Color(0.20f, 0.60f, 1.00f, 1.0f);
-            theme.accentSecondary = aatlas::Color(0.40f, 0.75f, 1.00f, 1.0f);
-            theme.accentDim       = aatlas::Color(0.10f, 0.30f, 0.50f, 1.0f);
-            theme.success         = aatlas::Color(0.20f, 0.60f, 1.00f, 1.0f);
-            theme.warning         = aatlas::Color(1.00f, 0.70f, 0.20f, 1.0f);
-            theme.danger          = aatlas::Color(1.00f, 0.50f, 0.00f, 1.0f);
+            theme.accentPrimary   = atlas::Color(0.20f, 0.60f, 1.00f, 1.0f);
+            theme.accentSecondary = atlas::Color(0.40f, 0.75f, 1.00f, 1.0f);
+            theme.accentDim       = atlas::Color(0.10f, 0.30f, 0.50f, 1.0f);
+            theme.success         = atlas::Color(0.20f, 0.60f, 1.00f, 1.0f);
+            theme.warning         = atlas::Color(1.00f, 0.70f, 0.20f, 1.0f);
+            theme.danger          = atlas::Color(1.00f, 0.50f, 0.00f, 1.0f);
             std::cout << "[UIManager] Color scheme set to Colorblind" << std::endl;
             break;
 
         case ColorScheme::DEFAULT:
         default:
             // Reset to default Atlas theme (teal/cyan)
-            theme = aatlas::Theme{};
+            theme = atlas::Theme{};
             std::cout << "[UIManager] Color scheme set to Default" << std::endl;
             break;
     }

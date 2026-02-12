@@ -105,7 +105,7 @@ public:
     /**
      * Render using the Atlas context (called from application render loop)
      */
-    void RenderAtlas(aatlas::AtlasContext& ctx);
+    void RenderAtlas(atlas::AtlasContext& ctx);
     
     /**
      * Close the context menu
