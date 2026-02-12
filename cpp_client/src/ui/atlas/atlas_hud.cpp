@@ -53,14 +53,31 @@ void AtlasHUD::update(AtlasContext& ctx,
         drawOverviewPanel(ctx, overview);
     }
 
-    // 5. Ship HUD (bottom-center)
+    // 5. Fleet broadcasts (above target cards)
+    drawFleetBroadcasts(ctx);
+
+    // 6. Ship HUD (bottom-center)
     drawShipHUD(ctx, ship);
 
-    // 6. Mode indicator (above HUD)
+    // 7. Mode indicator (above HUD)
     drawModeIndicator(ctx);
 
-    // 7. Info panel (if open)
+    // 8. Combat log (bottom-left)
+    drawCombatLog(ctx);
+
+    // 9. Drone status (above module rack)
+    if (m_showDroneStatus) {
+        drawDroneStatus(ctx);
+    }
+
+    // 10. Info panel (if open)
     drawInfoPanel(ctx);
+
+    // 11. Damage flashes (on top of everything)
+    float winW = static_cast<float>(ctx.input().windowW);
+    float winH = static_cast<float>(ctx.input().windowH);
+    Vec2 hudCentre = {winW * 0.5f, winH - 110.0f};
+    drawDamageFlashes(ctx, hudCentre, 80.0f);
 }
 
 // ── Ship HUD ────────────────────────────────────────────────────────
@@ -282,6 +299,130 @@ void AtlasHUD::drawInfoPanel(AtlasContext& ctx) {
     if (!m_infoPanelState.open || m_infoPanelData.isEmpty()) return;
 
     infoPanelDraw(ctx, m_infoPanelState, m_infoPanelData);
+}
+
+
+// ── Combat Log ──────────────────────────────────────────────────────
+
+void AtlasHUD::addCombatLogMessage(const std::string& msg) {
+    m_combatLog.push_back(msg);
+    if (static_cast<int>(m_combatLog.size()) > MAX_COMBAT_LOG) {
+        m_combatLog.erase(m_combatLog.begin());
+    }
+    // Auto-scroll to bottom
+    float rowH = 16.0f;
+    int visRows = 8;
+    float maxScroll = std::max(0.0f,
+        (static_cast<int>(m_combatLog.size()) - visRows) * rowH);
+    m_combatLogScroll = maxScroll;
+}
+
+void AtlasHUD::drawCombatLog(AtlasContext& ctx) {
+    if (m_combatLog.empty()) return;
+
+    float winH = static_cast<float>(ctx.input().windowH);
+    float logW = 280.0f;
+    float logH = 160.0f;
+    Rect logRect = {m_sidebarWidth + 8.0f, winH - logH - 8.0f, logW, logH};
+
+    combatLogWidget(ctx, logRect, m_combatLog, m_combatLogScroll);
+}
+
+// ── Damage Flashes ──────────────────────────────────────────────────
+
+void AtlasHUD::triggerDamageFlash(int layer, float duration) {
+    // Limit concurrent flashes
+    if (static_cast<int>(m_damageFlashes.size()) >= 3) {
+        m_damageFlashes.erase(m_damageFlashes.begin());
+    }
+    DamageFlashState f;
+    f.layer = layer;
+    f.intensity = 1.0f;
+    f.elapsed = 0.0f;
+    f.duration = duration;
+    m_damageFlashes.push_back(f);
+}
+
+bool AtlasHUD::hasDamageFlash() const {
+    return !m_damageFlashes.empty();
+}
+
+void AtlasHUD::drawDamageFlashes(AtlasContext& ctx, Vec2 hudCentre,
+                                  float hudRadius) {
+    float dt = 1.0f / 60.0f;
+
+    for (auto it = m_damageFlashes.begin(); it != m_damageFlashes.end(); ) {
+        it->elapsed += dt;
+        it->intensity = 1.0f - (it->elapsed / std::max(it->duration, 0.01f));
+        if (it->intensity <= 0.0f) {
+            it = m_damageFlashes.erase(it);
+        } else {
+            damageFlashOverlay(ctx, hudCentre, hudRadius,
+                               it->layer, it->intensity);
+            ++it;
+        }
+    }
+}
+
+// ── Drone Status ────────────────────────────────────────────────────
+
+void AtlasHUD::drawDroneStatus(AtlasContext& ctx) {
+    float winW = static_cast<float>(ctx.input().windowW);
+    float winH = static_cast<float>(ctx.input().windowH);
+    float barW = 260.0f;
+    float barH = 22.0f;
+    Rect barRect = {(winW - barW) * 0.5f, winH - 55.0f, barW, barH};
+
+    droneStatusBar(ctx, barRect,
+                   m_droneStatus.inSpace, m_droneStatus.inBay,
+                   m_droneStatus.bandwidthUsed, m_droneStatus.bandwidthMax);
+}
+
+// ── Fleet Broadcasts ────────────────────────────────────────────────
+
+void AtlasHUD::addFleetBroadcast(const std::string& sender,
+                                  const std::string& message,
+                                  const Color& color) {
+    // Detect default (white) color and substitute a themed accent
+    auto isDefaultColor = [](const Color& c) {
+        return c.r == 1.0f && c.g == 1.0f && c.b == 1.0f;
+    };
+
+    FleetBroadcast bc;
+    bc.sender = sender;
+    bc.message = message;
+    bc.color = isDefaultColor(color) ? atlas::defaultTheme().accentCombat : color;
+    bc.age = 0.0f;
+    bc.maxAge = 8.0f;
+    m_broadcasts.push_back(bc);
+    if (static_cast<int>(m_broadcasts.size()) > MAX_BROADCASTS) {
+        m_broadcasts.erase(m_broadcasts.begin());
+    }
+}
+
+void AtlasHUD::drawFleetBroadcasts(AtlasContext& ctx) {
+    if (m_broadcasts.empty()) return;
+
+    float dt = 1.0f / 60.0f;
+
+    // Age broadcasts and remove expired
+    for (auto it = m_broadcasts.begin(); it != m_broadcasts.end(); ) {
+        it->age += dt;
+        if (it->age >= it->maxAge) {
+            it = m_broadcasts.erase(it);
+        } else {
+            ++it;
+        }
+    }
+
+    if (m_broadcasts.empty()) return;
+
+    float winW = static_cast<float>(ctx.input().windowW);
+    float bannerW = 300.0f;
+    float bannerH = static_cast<float>(m_broadcasts.size()) * 20.0f;
+    Rect bannerRect = {(winW - bannerW) * 0.5f, 92.0f, bannerW, bannerH};
+
+    fleetBroadcastBanner(ctx, bannerRect, m_broadcasts);
 }
 
 } // namespace atlas

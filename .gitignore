@@ -124,3 +124,4 @@ cpp_client/external/imgui/
 
 # UI layout presets (user-generated, not tracked)
 ui_layouts/
+cpp_client/build_atlas_test/

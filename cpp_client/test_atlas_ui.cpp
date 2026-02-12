@@ -1596,6 +1596,447 @@ void testSidebarBlockedByPanel() {
     ctx.shutdown();
 }
 
+
+// ─── Tab Bar tests ─────────────────────────────────────────────────────
+
+void testTabBar() {
+    std::cout << "\n=== Tab Bar ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    // No click → returns -1
+    {
+        atlas::InputState input;
+        input.windowW = 1280;
+        input.windowH = 720;
+        input.mousePos = {500.0f, 500.0f}; // away from tabs
+        ctx.beginFrame(input);
+        std::vector<std::string> tabs = {"Alpha", "Beta", "Gamma"};
+        int clicked = atlas::tabBar(ctx, {10.0f, 10.0f, 300.0f, 24.0f}, tabs, 0);
+        assertTrue(clicked == -1, "tabBar: no click returns -1");
+        ctx.endFrame();
+    }
+
+    // Click on first tab (simulate press + release)
+    {
+        atlas::InputState input;
+        input.windowW = 1280;
+        input.windowH = 720;
+        input.mousePos = {30.0f, 18.0f};
+        input.mouseDown[0] = true;
+        input.mouseClicked[0] = true;
+        ctx.beginFrame(input);
+        std::vector<std::string> tabs = {"Alpha", "Beta", "Gamma"};
+        atlas::tabBar(ctx, {10.0f, 10.0f, 300.0f, 24.0f}, tabs, 1);
+        ctx.endFrame();
+    }
+    {
+        atlas::InputState input;
+        input.windowW = 1280;
+        input.windowH = 720;
+        input.mousePos = {30.0f, 18.0f};
+        input.mouseReleased[0] = true;
+        ctx.beginFrame(input);
+        std::vector<std::string> tabs = {"Alpha", "Beta", "Gamma"};
+        int clicked = atlas::tabBar(ctx, {10.0f, 10.0f, 300.0f, 24.0f}, tabs, 1);
+        assertTrue(clicked == 0, "tabBar: click on first tab returns 0");
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── Combat Log Widget tests ───────────────────────────────────────────
+
+void testCombatLogWidget() {
+    std::cout << "\n=== Combat Log Widget ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    // Empty messages list
+    {
+        atlas::InputState input;
+        input.windowW = 1280;
+        input.windowH = 720;
+        ctx.beginFrame(input);
+        std::vector<std::string> msgs;
+        float scroll = 0.0f;
+        atlas::combatLogWidget(ctx, {50.0f, 400.0f, 280.0f, 160.0f}, msgs, scroll);
+        assertTrue(true, "combatLogWidget: empty messages renders without crash");
+        ctx.endFrame();
+    }
+
+    // With messages
+    {
+        atlas::InputState input;
+        input.windowW = 1280;
+        input.windowH = 720;
+        ctx.beginFrame(input);
+        std::vector<std::string> msgs = {
+            "You hit Drone for 120 damage",
+            "Shield boosted by 50",
+            "Warp disrupted!",
+        };
+        float scroll = 0.0f;
+        atlas::combatLogWidget(ctx, {50.0f, 400.0f, 280.0f, 160.0f}, msgs, scroll);
+        assertTrue(true, "combatLogWidget: with messages renders without crash");
+        ctx.endFrame();
+    }
+
+    // Scroll offset clamps to valid range
+    {
+        atlas::InputState input;
+        input.windowW = 1280;
+        input.windowH = 720;
+        ctx.beginFrame(input);
+        std::vector<std::string> msgs = {"msg1", "msg2"};
+        float scroll = -100.0f;
+        atlas::combatLogWidget(ctx, {50.0f, 400.0f, 280.0f, 160.0f}, msgs, scroll);
+        assertTrue(scroll >= 0.0f, "combatLogWidget: negative scroll clamped to 0");
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── Damage Flash Overlay tests ────────────────────────────────────────
+
+void testDamageFlashOverlay() {
+    std::cout << "\n=== Damage Flash Overlay ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+
+    // Shield flash
+    ctx.beginFrame(input);
+    atlas::damageFlashOverlay(ctx, {640.0f, 610.0f}, 80.0f, 0, 1.0f);
+    assertTrue(true, "damageFlashOverlay: shield layer renders");
+    ctx.endFrame();
+
+    // Armor flash
+    ctx.beginFrame(input);
+    atlas::damageFlashOverlay(ctx, {640.0f, 610.0f}, 80.0f, 1, 0.5f);
+    assertTrue(true, "damageFlashOverlay: armor layer renders");
+    ctx.endFrame();
+
+    // Hull flash
+    ctx.beginFrame(input);
+    atlas::damageFlashOverlay(ctx, {640.0f, 610.0f}, 80.0f, 2, 0.8f);
+    assertTrue(true, "damageFlashOverlay: hull layer renders");
+    ctx.endFrame();
+
+    // Zero intensity — should be no-op
+    ctx.beginFrame(input);
+    atlas::damageFlashOverlay(ctx, {640.0f, 610.0f}, 80.0f, 0, 0.0f);
+    assertTrue(true, "damageFlashOverlay: zero intensity is no-op");
+    ctx.endFrame();
+
+    ctx.shutdown();
+}
+
+// ─── Drone Status Bar tests ────────────────────────────────────────────
+
+void testDroneStatusBar() {
+    std::cout << "\n=== Drone Status Bar ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+
+    // Normal drone status
+    ctx.beginFrame(input);
+    atlas::droneStatusBar(ctx, {100.0f, 650.0f, 260.0f, 22.0f}, 3, 2, 15, 25);
+    assertTrue(true, "droneStatusBar: normal state renders");
+    ctx.endFrame();
+
+    // Max bandwidth (danger state)
+    ctx.beginFrame(input);
+    atlas::droneStatusBar(ctx, {100.0f, 650.0f, 260.0f, 22.0f}, 5, 0, 25, 25);
+    assertTrue(true, "droneStatusBar: max bandwidth renders");
+    ctx.endFrame();
+
+    // Zero bandwidth max (edge case)
+    ctx.beginFrame(input);
+    atlas::droneStatusBar(ctx, {100.0f, 650.0f, 260.0f, 22.0f}, 0, 5, 0, 0);
+    assertTrue(true, "droneStatusBar: zero max bandwidth renders");
+    ctx.endFrame();
+
+    ctx.shutdown();
+}
+
+// ─── Fleet Broadcast Banner tests ──────────────────────────────────────
+
+void testFleetBroadcastBanner() {
+    std::cout << "\n=== Fleet Broadcast Banner ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+
+    // Empty broadcasts
+    ctx.beginFrame(input);
+    std::vector<atlas::FleetBroadcast> empty;
+    atlas::fleetBroadcastBanner(ctx, {400.0f, 92.0f, 300.0f, 60.0f}, empty);
+    assertTrue(true, "fleetBroadcastBanner: empty list is no-op");
+    ctx.endFrame();
+
+    // With broadcasts
+    ctx.beginFrame(input);
+    std::vector<atlas::FleetBroadcast> bcs;
+    atlas::FleetBroadcast bc1;
+    bc1.sender = "FC";
+    bc1.message = "Align to gate";
+    bc1.color = {0.4f, 0.58f, 0.86f, 1.0f};
+    bc1.age = 0.0f;
+    bc1.maxAge = 8.0f;
+    bcs.push_back(bc1);
+    atlas::FleetBroadcast bc2;
+    bc2.sender = "Logi";
+    bc2.message = "Need Armor";
+    bc2.color = {0.88f, 0.46f, 0.24f, 1.0f};
+    bc2.age = 3.0f;
+    bc2.maxAge = 8.0f;
+    bcs.push_back(bc2);
+    atlas::fleetBroadcastBanner(ctx, {400.0f, 92.0f, 300.0f, 60.0f}, bcs);
+    assertTrue(true, "fleetBroadcastBanner: with broadcasts renders");
+    ctx.endFrame();
+
+    // Expired broadcast (age >= maxAge) should not render
+    ctx.beginFrame(input);
+    std::vector<atlas::FleetBroadcast> expired;
+    atlas::FleetBroadcast bc3;
+    bc3.sender = "Old";
+    bc3.message = "Expired";
+    bc3.color = {1.0f, 0.0f, 0.0f, 1.0f};
+    bc3.age = 10.0f;
+    bc3.maxAge = 8.0f;
+    expired.push_back(bc3);
+    atlas::fleetBroadcastBanner(ctx, {400.0f, 92.0f, 300.0f, 60.0f}, expired);
+    assertTrue(true, "fleetBroadcastBanner: expired broadcast renders without crash");
+    ctx.endFrame();
+
+    ctx.shutdown();
+}
+
+// ─── FleetBroadcast struct tests ───────────────────────────────────────
+
+void testFleetBroadcastStruct() {
+    std::cout << "\n=== FleetBroadcast Struct ===" << std::endl;
+
+    atlas::FleetBroadcast bc;
+    assertTrue(bc.sender.empty(), "FleetBroadcast sender defaults to empty");
+    assertTrue(bc.message.empty(), "FleetBroadcast message defaults to empty");
+    assertClose(bc.age, 0.0f, "FleetBroadcast age defaults to 0");
+    assertClose(bc.maxAge, 8.0f, "FleetBroadcast maxAge defaults to 8");
+
+    bc.sender = "FC Lead";
+    bc.message = "Warp to me";
+    bc.color = {0.2f, 0.8f, 0.4f, 1.0f};
+    bc.age = 2.5f;
+    assertTrue(bc.sender == "FC Lead", "FleetBroadcast sender set correctly");
+    assertTrue(bc.message == "Warp to me", "FleetBroadcast message set correctly");
+    assertClose(bc.age, 2.5f, "FleetBroadcast age set correctly");
+    assertClose(bc.color.g, 0.8f, "FleetBroadcast color green set correctly");
+}
+
+// ─── AtlasHUD Combat Log tests ─────────────────────────────────────────
+
+void testAtlasHUDCombatLog() {
+    std::cout << "\n=== AtlasHUD Combat Log ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    // Initially empty
+    assertTrue(hud.getCombatLog().empty(), "Combat log starts empty");
+
+    // Add messages
+    hud.addCombatLogMessage("Shield hit for 50 damage");
+    assertTrue(hud.getCombatLog().size() == 1, "Combat log has 1 message after add");
+    assertTrue(hud.getCombatLog()[0] == "Shield hit for 50 damage",
+               "Combat log message content correct");
+
+    hud.addCombatLogMessage("Armor hit for 30 damage");
+    assertTrue(hud.getCombatLog().size() == 2, "Combat log has 2 messages after second add");
+
+    // Renders without crash
+    atlas::AtlasContext ctx;
+    ctx.init();
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+    ctx.beginFrame(input);
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo sel;
+    hud.update(ctx, ship, targets, overview, sel);
+
+    assertTrue(true, "HUD with combat log renders without crash");
+    ctx.endFrame();
+    ctx.shutdown();
+}
+
+// ─── AtlasHUD Damage Flash tests ───────────────────────────────────────
+
+void testAtlasHUDDamageFlash() {
+    std::cout << "\n=== AtlasHUD Damage Flash ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    // No flash initially
+    assertTrue(!hud.hasDamageFlash(), "No damage flash initially");
+
+    // Trigger shield flash
+    hud.triggerDamageFlash(0);
+    assertTrue(hud.hasDamageFlash(), "Damage flash active after trigger");
+
+    // Renders without crash
+    atlas::AtlasContext ctx;
+    ctx.init();
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+    ctx.beginFrame(input);
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo sel;
+    hud.update(ctx, ship, targets, overview, sel);
+
+    assertTrue(true, "HUD with damage flash renders without crash");
+    ctx.endFrame();
+
+    // Multiple flashes
+    hud.triggerDamageFlash(1, 0.5f);
+    hud.triggerDamageFlash(2, 0.3f);
+    assertTrue(hud.hasDamageFlash(), "Multiple damage flashes active");
+
+    ctx.beginFrame(input);
+    hud.update(ctx, ship, targets, overview, sel);
+    assertTrue(true, "HUD with multiple damage flashes renders without crash");
+    ctx.endFrame();
+
+    ctx.shutdown();
+}
+
+// ─── AtlasHUD Drone Status tests ───────────────────────────────────────
+
+void testAtlasHUDDroneStatus() {
+    std::cout << "\n=== AtlasHUD Drone Status ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    // Initially hidden
+    assertTrue(!hud.isDroneStatusVisible(), "Drone status hidden by default");
+
+    // Toggle on
+    hud.toggleDroneStatus();
+    assertTrue(hud.isDroneStatusVisible(), "Drone status visible after toggle");
+
+    // Set data
+    atlas::AtlasHUD::DroneStatusData drones;
+    drones.inSpace = 3;
+    drones.inBay = 2;
+    drones.bandwidthUsed = 15;
+    drones.bandwidthMax = 25;
+    hud.setDroneStatus(drones);
+
+    // Renders without crash
+    atlas::AtlasContext ctx;
+    ctx.init();
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+    ctx.beginFrame(input);
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo sel;
+    hud.update(ctx, ship, targets, overview, sel);
+
+    assertTrue(true, "HUD with drone status renders without crash");
+    ctx.endFrame();
+
+    // Toggle off
+    hud.toggleDroneStatus();
+    assertTrue(!hud.isDroneStatusVisible(), "Drone status hidden after second toggle");
+
+    ctx.shutdown();
+}
+
+// ─── AtlasHUD Fleet Broadcast tests ────────────────────────────────────
+
+void testAtlasHUDFleetBroadcast() {
+    std::cout << "\n=== AtlasHUD Fleet Broadcast ===" << std::endl;
+
+    atlas::AtlasHUD hud;
+    hud.init(1280, 720);
+
+    // Initially empty
+    assertTrue(hud.getFleetBroadcasts().empty(), "Fleet broadcasts start empty");
+
+    // Add broadcast
+    hud.addFleetBroadcast("FC", "Align to gate");
+    assertTrue(hud.getFleetBroadcasts().size() == 1, "One broadcast after add");
+    assertTrue(hud.getFleetBroadcasts()[0].sender == "FC",
+               "Broadcast sender correct");
+    assertTrue(hud.getFleetBroadcasts()[0].message == "Align to gate",
+               "Broadcast message correct");
+
+    // Add with custom color
+    hud.addFleetBroadcast("Logi", "Need Armor", {0.2f, 0.8f, 0.4f, 1.0f});
+    assertTrue(hud.getFleetBroadcasts().size() == 2, "Two broadcasts after second add");
+
+    // Renders without crash
+    atlas::AtlasContext ctx;
+    ctx.init();
+    atlas::InputState input;
+    input.windowW = 1280;
+    input.windowH = 720;
+    ctx.beginFrame(input);
+
+    atlas::ShipHUDData ship;
+    std::vector<atlas::TargetCardInfo> targets;
+    std::vector<atlas::OverviewEntry> overview;
+    atlas::SelectedItemInfo sel;
+    hud.update(ctx, ship, targets, overview, sel);
+
+    assertTrue(true, "HUD with fleet broadcasts renders without crash");
+    ctx.endFrame();
+    ctx.shutdown();
+}
+
+// ─── DroneStatusData struct tests ──────────────────────────────────────
+
+void testDroneStatusDataDefaults() {
+    std::cout << "\n=== DroneStatusData Defaults ===" << std::endl;
+
+    atlas::AtlasHUD::DroneStatusData data;
+    assertTrue(data.inSpace == 0, "DroneStatusData inSpace defaults to 0");
+    assertTrue(data.inBay == 0, "DroneStatusData inBay defaults to 0");
+    assertTrue(data.bandwidthUsed == 0, "DroneStatusData bandwidthUsed defaults to 0");
+    assertTrue(data.bandwidthMax == 0, "DroneStatusData bandwidthMax defaults to 0");
+}
+
+
 // ─── Main ──────────────────────────────────────────────────────────────
 
 int main() {
@@ -1655,6 +2096,19 @@ int main() {
     testGetDragDelta();
     testMouseConsumed();
     testSidebarBlockedByPanel();
+
+    // New widget and HUD feature tests
+    testTabBar();
+    testCombatLogWidget();
+    testDamageFlashOverlay();
+    testDroneStatusBar();
+    testFleetBroadcastBanner();
+    testFleetBroadcastStruct();
+    testAtlasHUDCombatLog();
+    testAtlasHUDDamageFlash();
+    testAtlasHUDDroneStatus();
+    testAtlasHUDFleetBroadcast();
+    testDroneStatusDataDefaults();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun
