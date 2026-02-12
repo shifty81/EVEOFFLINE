@@ -1350,7 +1350,7 @@ void testSelectedItemCallbacks() {
 void testProbeScannerPanel() {
     std::cout << "\n=== Probe Scanner Panel ===" << std::endl;
 
-    // Test ProbeScanResult struct (header-only, no ImGui needed)
+    // Test ProbeScanResult struct (header-only)
     UI::ProbeScanResult result("XYZ-001", "Serpentis Hideaway", "Cosmic Anomaly",
                                 "Combat Site", 100.0f, 5.3f);
     assertTrue(result.id == "XYZ-001", "Result ID correct");
