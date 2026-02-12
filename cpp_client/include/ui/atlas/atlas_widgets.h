@@ -258,7 +258,7 @@ void scrollbar(AtlasContext& ctx, const Rect& track,
  *
  * Modelled after EVE Online's Neocom bar — a dark, minimalist,
  * semi-transparent vertical bar with:
- *   - "E" menu icon at the top
+ *   - "A" (Atlas) menu icon at the top
  *   - Character portrait area
  *   - Skill queue progress bar
  *   - Service icon slots with active-state highlighting

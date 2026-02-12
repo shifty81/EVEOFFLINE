@@ -496,8 +496,9 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
     separator(ctx, Vec2(x, y), contentW);
     y += t.itemSpacing + 4.0f;
 
-    // Stub content placeholder
-    label(ctx, Vec2(x, y), "Panel content (Atlas)", t.textSecondary);
+    // Stub content placeholder (shows which panel this is)
+    std::string placeholder = std::string(title) + " — content placeholder";
+    label(ctx, Vec2(x, y), placeholder, t.textSecondary);
 
     panelEnd(ctx);
 }

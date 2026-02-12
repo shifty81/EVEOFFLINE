@@ -668,8 +668,8 @@ void scrollbar(AtlasContext& ctx, const Rect& track,
 
 // ── Sidebar Icon Shape Helpers ──────────────────────────────────────
 // Draw shape-based icons modelled after EVE Online's Neocom Photon UI.
-// Each icon uses simple geometric primitives (rect, circle, line, arc,
-// triangle) to create a distinctive silhouette recognizable at a glance.
+// Each icon uses simple geometric primitives (rect, circle, line, arc)
+// to create a distinctive silhouette recognizable at a glance.
 
 static void drawIconInventory(AtlasRenderer& rr, Vec2 c, float sz, const Color& col) {
     // Open box: rectangle body with angled lid
