@@ -8,6 +8,51 @@ namespace atlas {
 AtlasHUD::AtlasHUD() = default;
 AtlasHUD::~AtlasHUD() = default;
 
+// ── Overview tab → entity-type filter (PvE-focused) ──────────────────
+//
+// Travel:   Stations, Stargates, Planets, Moons, Wormholes, Celestials —
+//           anything you can warp/travel to.
+// Combat:   Frigates, Cruisers, Battleships, and other NPC ship types —
+//           hostile or neutral ships on grid.
+// Industry: Asteroids, Asteroid Belts, and mining-related objects.
+
+bool AtlasHUD::matchesOverviewTab(const std::string& tab, const std::string& entityType) {
+    if (tab == "Travel") {
+        return entityType == "Station"
+            || entityType == "Stargate"
+            || entityType == "Planet"
+            || entityType == "Moon"
+            || entityType == "Wormhole"
+            || entityType == "Celestial"
+            || entityType == "Beacon"
+            || entityType == "Citadel";
+    }
+    if (tab == "Combat") {
+        return entityType == "Frigate"
+            || entityType == "Cruiser"
+            || entityType == "Battleship"
+            || entityType == "Destroyer"
+            || entityType == "Battlecruiser"
+            || entityType == "Carrier"
+            || entityType == "Dreadnought"
+            || entityType == "npc"
+            || entityType == "hostile"
+            || entityType == "friendly"
+            || entityType == "fleet";
+    }
+    if (tab == "Industry") {
+        return entityType == "Asteroid"
+            || entityType == "Asteroid Belt"
+            || entityType == "Ice"
+            || entityType == "Gas Cloud"
+            || entityType == "Mining Barge"
+            || entityType == "Wreck"
+            || entityType == "Container";
+    }
+    // Unknown tab: show everything (fallback)
+    return true;
+}
+
 void AtlasHUD::init(int windowW, int windowH) {
     float w = static_cast<float>(windowW);
     float h = static_cast<float>(windowH);
@@ -301,9 +346,18 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
         colX += cw;
     }
 
-    // Sort entries by index (avoids copying the entire entries vector)
-    std::vector<int> sortedIdx(entries.size());
-    for (int i = 0; i < static_cast<int>(entries.size()); ++i) sortedIdx[i] = i;
+    // Filter + sort entries by index (avoids copying the entire entries vector)
+    // Apply per-tab entity-type filtering based on active tab label
+    std::string activeTabName;
+    if (m_overviewActiveTab >= 0 && m_overviewActiveTab < static_cast<int>(m_overviewTabs.size()))
+        activeTabName = m_overviewTabs[m_overviewActiveTab];
+
+    std::vector<int> sortedIdx;
+    sortedIdx.reserve(entries.size());
+    for (int i = 0; i < static_cast<int>(entries.size()); ++i) {
+        if (matchesOverviewTab(activeTabName, entries[i].type))
+            sortedIdx.push_back(i);
+    }
     auto sortCol = m_overviewSortCol;
     bool sortAsc = m_overviewSortAsc;
     std::sort(sortedIdx.begin(), sortedIdx.end(),

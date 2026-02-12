@@ -2649,13 +2649,12 @@ void testOverviewMultipleTabs() {
     atlas::AtlasHUD hud;
     hud.init(1280, 720);
 
-    // Default tabs should include PvP, Mining, Travel
+    // Default tabs: Travel, Combat, Industry (PvE-focused, EVE-style)
     const auto& tabs = hud.getOverviewTabs();
-    assertTrue(tabs.size() == 4, "Default 4 overview tabs");
-    assertTrue(tabs[0] == "Default", "First tab is Default");
-    assertTrue(tabs[1] == "PvP", "Second tab is PvP");
-    assertTrue(tabs[2] == "Mining", "Third tab is Mining");
-    assertTrue(tabs[3] == "Travel", "Fourth tab is Travel");
+    assertTrue(tabs.size() == 3, "Default 3 overview tabs");
+    assertTrue(tabs[0] == "Travel", "First tab is Travel");
+    assertTrue(tabs[1] == "Combat", "Second tab is Combat");
+    assertTrue(tabs[2] == "Industry", "Third tab is Industry");
 
     // Set custom tabs
     hud.setOverviewTabs({"All", "Players", "Wrecks"});
@@ -2664,6 +2663,44 @@ void testOverviewMultipleTabs() {
     // Tab switching
     hud.setActiveOverviewTab(2);
     assertTrue(hud.getActiveOverviewTab() == 2, "Active tab set to 2");
+}
+
+// ─── Overview Tab Filtering tests ─────────────────────────────────
+
+void testOverviewTabFiltering() {
+    std::cout << "\n=== Overview Tab Filtering ===" << std::endl;
+
+    // Travel tab: stations, planets, stargates, moons, wormholes, celestials
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Station"),    "Travel: Station matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Stargate"),   "Travel: Stargate matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Planet"),     "Travel: Planet matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Moon"),       "Travel: Moon matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Wormhole"),   "Travel: Wormhole matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Travel", "Celestial"),  "Travel: Celestial matches");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Travel", "Frigate"),   "Travel: Frigate excluded");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Travel", "Asteroid"),  "Travel: Asteroid excluded");
+
+    // Combat tab: NPC ships (frigates, cruisers, battleships, etc.)
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "Frigate"),      "Combat: Frigate matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "Cruiser"),      "Combat: Cruiser matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "Battleship"),   "Combat: Battleship matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "Destroyer"),    "Combat: Destroyer matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "npc"),          "Combat: npc matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Combat", "hostile"),      "Combat: hostile matches");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Combat", "Station"),     "Combat: Station excluded");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Combat", "Asteroid"),    "Combat: Asteroid excluded");
+
+    // Industry tab: asteroids, asteroid belts, mining-related
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Industry", "Asteroid"),       "Industry: Asteroid matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Industry", "Asteroid Belt"),  "Industry: Asteroid Belt matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Industry", "Wreck"),          "Industry: Wreck matches");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Industry", "Container"),      "Industry: Container matches");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Industry", "Station"),       "Industry: Station excluded");
+    assertTrue(!atlas::AtlasHUD::matchesOverviewTab("Industry", "Frigate"),       "Industry: Frigate excluded");
+
+    // Unknown tab: shows everything (fallback)
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Custom", "Frigate"),    "Custom tab: shows all");
+    assertTrue(atlas::AtlasHUD::matchesOverviewTab("Custom", "Station"),    "Custom tab: shows all (2)");
 }
 
 // ─── Overview Column Sorting tests ────────────────────────────────
@@ -2861,6 +2898,7 @@ int main() {
     // EVE UI reproduction tests
     testWindowSnappingMagnetism();
     testOverviewMultipleTabs();
+    testOverviewTabFiltering();
     testOverviewColumnSorting();
     testOverviewCtrlClickCallback();
     testRadialMenuDragToRange();

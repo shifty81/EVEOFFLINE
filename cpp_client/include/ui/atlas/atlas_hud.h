@@ -187,6 +187,17 @@ public:
     const std::vector<std::string>& getOverviewTabs() const { return m_overviewTabs; }
     void setOverviewTabs(const std::vector<std::string>& tabs) { m_overviewTabs = tabs; }
 
+    /**
+     * Check if an entity type should appear under a given overview tab.
+     *
+     * Tab filter rules (PvE-focused, EVE-style):
+     *   Travel   — Stations, Stargates, Planets, Moons, Wormholes, Celestials
+     *   Combat   — Frigates, Cruisers, Battleships, Destroyers, NPCs, hostiles
+     *   Industry — Asteroids, Asteroid Belts, Wrecks, Containers, mining objects
+     *   Unknown  — shows everything (fallback for custom tabs)
+     */
+    static bool matchesOverviewTab(const std::string& tab, const std::string& entityType);
+
     /** Set callback for overview Ctrl+Click (lock target). */
     void setOverviewCtrlClickCb(const std::function<void(const std::string&)>& cb) { m_overviewCtrlClickCb = cb; }
 
@@ -354,7 +365,7 @@ private:
 
     // Overview tab state
     int m_overviewActiveTab = 0;
-    std::vector<std::string> m_overviewTabs = {"Default", "PvP", "Mining", "Travel"};
+    std::vector<std::string> m_overviewTabs = {"Travel", "Combat", "Industry"};
 
     // Overview column sorting
     OverviewSortColumn m_overviewSortCol = OverviewSortColumn::DISTANCE;
