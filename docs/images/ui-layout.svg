@@ -1,0 +1,234 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450" width="900" height="450">
+  <defs>
+    <linearGradient id="bgGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e17"/>
+      <stop offset="100%" style="stop-color:#0d1a2d"/>
+    </linearGradient>
+    <linearGradient id="panelGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a2a3a"/>
+      <stop offset="100%" style="stop-color:#0f1a26"/>
+    </linearGradient>
+    <linearGradient id="shieldBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4ecdc4"/>
+      <stop offset="100%" style="stop-color:#2da89f"/>
+    </linearGradient>
+    <linearGradient id="armorBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e8a838"/>
+      <stop offset="100%" style="stop-color:#c48820"/>
+    </linearGradient>
+    <linearGradient id="hullBar" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e05555"/>
+      <stop offset="100%" style="stop-color:#c03030"/>
+    </linearGradient>
+    <filter id="panelGlow">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="450" fill="url(#bgGrad2)"/>
+
+  <!-- Star field -->
+  <circle cx="300" cy="80" r="0.8" fill="#fff" opacity="0.4"/>
+  <circle cx="420" cy="120" r="0.6" fill="#88d8d0" opacity="0.3"/>
+  <circle cx="550" cy="60" r="1" fill="#fff" opacity="0.5"/>
+  <circle cx="350" cy="180" r="0.5" fill="#fff" opacity="0.3"/>
+  <circle cx="500" cy="200" r="0.7" fill="#fff" opacity="0.4"/>
+  <circle cx="620" cy="100" r="0.6" fill="#fff" opacity="0.3"/>
+  <circle cx="480" cy="150" r="0.8" fill="#88d8d0" opacity="0.2"/>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="13" letter-spacing="4" fill="#4ecdc4" opacity="0.7">ATLAS UI — COCKPIT INTERFACE</text>
+
+  <!-- === NEOCOM SIDEBAR (left) === -->
+  <rect x="20" y="45" width="90" height="360" rx="3" fill="url(#panelGrad)" stroke="#4ecdc4" stroke-width="0.8" opacity="0.9"/>
+  <text x="65" y="65" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="9" letter-spacing="1" fill="#4ecdc4" font-weight="600">NEOCOM</text>
+  <line x1="30" y1="72" x2="100" y2="72" stroke="#4ecdc4" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Neocom icons -->
+  <rect x="32" y="82" width="66" height="20" rx="2" fill="#4ecdc4" opacity="0.15"/>
+  <text x="65" y="95" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#4ecdc4" opacity="0.9">▣ Inventory</text>
+
+  <rect x="32" y="108" width="66" height="20" rx="2" fill="#4ecdc4" opacity="0.08"/>
+  <text x="65" y="121" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">▣ Fitting</text>
+
+  <rect x="32" y="134" width="66" height="20" rx="2" fill="#4ecdc4" opacity="0.08"/>
+  <text x="65" y="147" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">▣ Market</text>
+
+  <rect x="32" y="160" width="66" height="20" rx="2" fill="#4ecdc4" opacity="0.08"/>
+  <text x="65" y="173" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">▣ Missions</text>
+
+  <rect x="32" y="186" width="66" height="20" rx="2" fill="#4ecdc4" opacity="0.08"/>
+  <text x="65" y="199" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">▣ D-Scan</text>
+
+  <rect x="32" y="212" width="66" height="20" rx="2" fill="#4ecdc4" opacity="0.08"/>
+  <text x="65" y="225" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">▣ Overview</text>
+
+  <rect x="32" y="238" width="66" height="20" rx="2" fill="#4ecdc4" opacity="0.08"/>
+  <text x="65" y="251" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">▣ Fleet</text>
+
+  <rect x="32" y="264" width="66" height="20" rx="2" fill="#4ecdc4" opacity="0.08"/>
+  <text x="65" y="277" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" fill="#88d8d0" opacity="0.7">▣ Drones</text>
+
+  <!-- Clock -->
+  <text x="65" y="390" text-anchor="middle" font-family="'Courier New', monospace" font-size="9" fill="#4ecdc4" opacity="0.5">⏱ 23:14</text>
+
+  <!-- === MAIN 3D VIEW (center) === -->
+  <rect x="120" y="45" width="530" height="360" rx="3" fill="#080d15" stroke="#1a3a4a" stroke-width="0.5" opacity="0.9"/>
+
+  <!-- Locked target cards (top center) -->
+  <rect x="230" y="52" width="80" height="32" rx="2" fill="#0f1a26" stroke="#e05555" stroke-width="0.8"/>
+  <circle cx="248" cy="68" r="6" fill="none" stroke="#e05555" stroke-width="0.5"/>
+  <text x="248" y="71" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="6" fill="#e05555">✦</text>
+  <text x="280" y="64" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e05555">Pirate Frig</text>
+  <rect x="262" y="69" width="40" height="3" rx="1" fill="#1a1a1a"/>
+  <rect x="262" y="69" width="28" height="3" rx="1" fill="#e05555" opacity="0.8"/>
+  <text x="280" y="80" font-family="'Segoe UI', Arial, sans-serif" font-size="6" fill="#888">12.4 km</text>
+
+  <rect x="320" y="52" width="80" height="32" rx="2" fill="#0f1a26" stroke="#4ecdc4" stroke-width="0.5" opacity="0.5"/>
+  <circle cx="338" cy="68" r="6" fill="none" stroke="#4ecdc4" stroke-width="0.5" opacity="0.5"/>
+  <text x="338" y="71" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="6" fill="#4ecdc4" opacity="0.5">◆</text>
+  <text x="370" y="64" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4" opacity="0.5">Asteroid</text>
+  <text x="370" y="80" font-family="'Segoe UI', Arial, sans-serif" font-size="6" fill="#888" opacity="0.5">5.2 km</text>
+
+  <!-- Grid lines in space view (subtle) -->
+  <line x1="120" y1="225" x2="650" y2="225" stroke="#1a3a4a" stroke-width="0.3" opacity="0.2"/>
+  <line x1="385" y1="45" x2="385" y2="405" stroke="#1a3a4a" stroke-width="0.3" opacity="0.2"/>
+
+  <!-- Simple ship silhouette (center) -->
+  <g transform="translate(370, 190)" opacity="0.8">
+    <polygon points="0,-25 -15,15 0,8 15,15" fill="#2a4a5a" stroke="#4ecdc4" stroke-width="0.8"/>
+    <!-- Engine glow -->
+    <ellipse cx="0" cy="16" rx="5" ry="3" fill="#4ecdc4" opacity="0.4"/>
+    <ellipse cx="0" cy="18" rx="3" ry="6" fill="#4ecdc4" opacity="0.2"/>
+  </g>
+
+  <!-- Distant objects -->
+  <circle cx="220" cy="150" r="2" fill="#e05555" opacity="0.6"/>
+  <text x="220" y="142" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="6" fill="#e05555" opacity="0.5">▾</text>
+
+  <circle cx="520" cy="180" r="1.5" fill="#e8a838" opacity="0.4"/>
+  <circle cx="280" cy="280" r="3" fill="#666" opacity="0.3"/>
+
+  <!-- === SHIP HUD (bottom center) === -->
+  <rect x="260" y="290" width="250" height="100" rx="4" fill="#0a1520" stroke="#4ecdc4" stroke-width="0.8" opacity="0.85"/>
+  <text x="385" y="308" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="8" letter-spacing="2" fill="#4ecdc4" opacity="0.6">SHIP STATUS</text>
+
+  <!-- Shield bar -->
+  <text x="275" y="323" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4" opacity="0.7">Shield</text>
+  <rect x="315" y="316" width="130" height="8" rx="2" fill="#1a1a2a"/>
+  <rect x="315" y="316" width="91" height="8" rx="2" fill="url(#shieldBar)" opacity="0.9"/>
+  <text x="455" y="323" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4">70%</text>
+
+  <!-- Armor bar -->
+  <text x="275" y="337" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e8a838" opacity="0.7">Armor</text>
+  <rect x="315" y="330" width="130" height="8" rx="2" fill="#1a1a2a"/>
+  <rect x="315" y="330" width="117" height="8" rx="2" fill="url(#armorBar)" opacity="0.9"/>
+  <text x="455" y="337" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e8a838">90%</text>
+
+  <!-- Hull bar -->
+  <text x="275" y="351" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e05555" opacity="0.7">Hull</text>
+  <rect x="315" y="344" width="130" height="8" rx="2" fill="#1a1a2a"/>
+  <rect x="315" y="344" width="130" height="8" rx="2" fill="url(#hullBar)" opacity="0.9"/>
+  <text x="455" y="351" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e05555">100%</text>
+
+  <!-- Capacitor ring -->
+  <circle cx="305" cy="374" r="10" fill="none" stroke="#1a2a3a" stroke-width="3"/>
+  <circle cx="305" cy="374" r="10" fill="none" stroke="#4ecdc4" stroke-width="3" stroke-dasharray="47 16" opacity="0.8"/>
+  <text x="305" y="377" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="6" fill="#4ecdc4">CAP</text>
+
+  <!-- Module slots -->
+  <rect x="330" y="362" width="24" height="18" rx="2" fill="#1a2a3a" stroke="#4ecdc4" stroke-width="0.5"/>
+  <text x="342" y="374" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4">F1</text>
+  <rect x="360" y="362" width="24" height="18" rx="2" fill="#1a2a3a" stroke="#4ecdc4" stroke-width="0.5"/>
+  <text x="372" y="374" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4">F2</text>
+  <rect x="390" y="362" width="24" height="18" rx="2" fill="#1a2a3a" stroke="#4ecdc4" stroke-width="0.5"/>
+  <text x="402" y="374" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4">F3</text>
+  <rect x="420" y="362" width="24" height="18" rx="2" fill="#1a2a3a" stroke="#e8a838" stroke-width="0.8"/>
+  <text x="432" y="374" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e8a838">F4</text>
+
+  <!-- Speed -->
+  <text x="470" y="378" font-family="'Courier New', monospace" font-size="8" fill="#4ecdc4" opacity="0.6">142 m/s</text>
+
+  <!-- === OVERVIEW PANEL (right) === -->
+  <rect x="660" y="45" width="220" height="170" rx="3" fill="url(#panelGrad)" stroke="#4ecdc4" stroke-width="0.8" opacity="0.9"/>
+  <text x="770" y="65" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="9" letter-spacing="1" fill="#4ecdc4" font-weight="600">OVERVIEW</text>
+  <line x1="670" y1="72" x2="870" y2="72" stroke="#4ecdc4" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Overview header -->
+  <text x="672" y="86" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a">Name</text>
+  <text x="780" y="86" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a">Type</text>
+  <text x="840" y="86" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a">Dist</text>
+  <line x1="670" y1="90" x2="870" y2="90" stroke="#4ecdc4" stroke-width="0.3" opacity="0.2"/>
+
+  <!-- Overview rows -->
+  <rect x="668" y="93" width="204" height="16" rx="1" fill="#e05555" opacity="0.08"/>
+  <text x="672" y="104" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e05555">● Pirate Frigate</text>
+  <text x="780" y="104" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">Frigate</text>
+  <text x="840" y="104" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">12.4km</text>
+
+  <text x="672" y="120" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e8a838">● Veldspar Roid</text>
+  <text x="780" y="120" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">Asteroid</text>
+  <text x="840" y="120" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">5.2km</text>
+
+  <text x="672" y="136" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4">● Jita IV Gate</text>
+  <text x="780" y="136" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">Stargate</text>
+  <text x="840" y="136" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">42.1km</text>
+
+  <text x="672" y="152" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4a8a4a">● Trade Hub Stn</text>
+  <text x="780" y="152" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">Station</text>
+  <text x="840" y="152" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">108km</text>
+
+  <text x="672" y="168" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4">● Fleet: Kira</text>
+  <text x="780" y="168" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">Cruiser</text>
+  <text x="840" y="168" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">3.8km</text>
+
+  <text x="672" y="184" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">● Cargo Container</text>
+  <text x="780" y="184" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">Cargo</text>
+  <text x="840" y="184" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888">0.5km</text>
+
+  <text x="672" y="200" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a" opacity="0.5">● Wreck</text>
+  <text x="780" y="200" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888" opacity="0.5">Wreck</text>
+  <text x="840" y="200" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#888" opacity="0.5">14.1km</text>
+
+  <!-- === SELECTED ITEM PANEL (right bottom) === -->
+  <rect x="660" y="225" width="220" height="180" rx="3" fill="url(#panelGrad)" stroke="#4ecdc4" stroke-width="0.8" opacity="0.9"/>
+  <text x="770" y="245" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="9" letter-spacing="1" fill="#4ecdc4" font-weight="600">SELECTED ITEM</text>
+  <line x1="670" y1="252" x2="870" y2="252" stroke="#4ecdc4" stroke-width="0.5" opacity="0.3"/>
+
+  <!-- Selected item details -->
+  <text x="770" y="270" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" fill="#e05555">Pirate Frigate</text>
+  <text x="770" y="284" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a">Keldari Corax-class · Frigate</text>
+
+  <text x="672" y="302" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a">Distance:</text>
+  <text x="740" y="302" font-family="'Courier New', monospace" font-size="7" fill="#4ecdc4">12.4 km</text>
+
+  <text x="672" y="316" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a">Velocity:</text>
+  <text x="740" y="316" font-family="'Courier New', monospace" font-size="7" fill="#4ecdc4">312 m/s</text>
+
+  <text x="672" y="330" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a">Radial:</text>
+  <text x="740" y="330" font-family="'Courier New', monospace" font-size="7" fill="#e8a838">-85 m/s</text>
+
+  <text x="672" y="344" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#5a7a8a">Angular:</text>
+  <text x="740" y="344" font-family="'Courier New', monospace" font-size="7" fill="#4ecdc4">0.42 rad/s</text>
+
+  <!-- Action buttons -->
+  <rect x="672" y="358" width="55" height="18" rx="2" fill="#4ecdc4" opacity="0.15" stroke="#4ecdc4" stroke-width="0.5"/>
+  <text x="700" y="370" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4">Approach</text>
+
+  <rect x="733" y="358" width="45" height="18" rx="2" fill="#4ecdc4" opacity="0.15" stroke="#4ecdc4" stroke-width="0.5"/>
+  <text x="756" y="370" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#4ecdc4">Orbit</text>
+
+  <rect x="784" y="358" width="45" height="18" rx="2" fill="#e05555" opacity="0.15" stroke="#e05555" stroke-width="0.5"/>
+  <text x="807" y="370" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e05555">Lock</text>
+
+  <rect x="835" y="358" width="38" height="18" rx="2" fill="#e05555" opacity="0.15" stroke="#e05555" stroke-width="0.5"/>
+  <text x="854" y="370" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="7" fill="#e05555">Warp</text>
+
+  <!-- Label annotations (outside the UI) -->
+  <text x="450" y="445" text-anchor="middle" font-family="'Segoe UI', Arial, sans-serif" font-size="10" letter-spacing="2" fill="#4ecdc4" opacity="0.4">ATLAS UI — IMMEDIATE-MODE GPU-ACCELERATED INTERFACE</text>
+</svg>

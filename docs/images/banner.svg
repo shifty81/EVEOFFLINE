@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0e17"/>
+      <stop offset="50%" style="stop-color:#0d1a2d"/>
+      <stop offset="100%" style="stop-color:#0a0e17"/>
+    </linearGradient>
+    <linearGradient id="titleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4ecdc4"/>
+      <stop offset="50%" style="stop-color:#88d8d0"/>
+      <stop offset="100%" style="stop-color:#4ecdc4"/>
+    </linearGradient>
+    <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#4ecdc400"/>
+      <stop offset="20%" style="stop-color:#4ecdc4"/>
+      <stop offset="80%" style="stop-color:#4ecdc4"/>
+      <stop offset="100%" style="stop-color:#4ecdc400"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#4ecdc420"/>
+      <stop offset="100%" style="stop-color:#4ecdc400"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="300" fill="url(#bgGrad)"/>
+
+  <!-- Star field -->
+  <circle cx="45" cy="23" r="1" fill="#ffffff" opacity="0.8"/>
+  <circle cx="120" cy="67" r="0.7" fill="#ffffff" opacity="0.5"/>
+  <circle cx="200" cy="15" r="1.2" fill="#88d8d0" opacity="0.6"/>
+  <circle cx="310" cy="45" r="0.8" fill="#ffffff" opacity="0.7"/>
+  <circle cx="380" cy="80" r="0.5" fill="#ffffff" opacity="0.4"/>
+  <circle cx="450" cy="20" r="1" fill="#ffffff" opacity="0.6"/>
+  <circle cx="520" cy="55" r="0.6" fill="#88d8d0" opacity="0.5"/>
+  <circle cx="600" cy="30" r="1.1" fill="#ffffff" opacity="0.7"/>
+  <circle cx="680" cy="65" r="0.7" fill="#ffffff" opacity="0.5"/>
+  <circle cx="750" cy="18" r="0.9" fill="#ffffff" opacity="0.8"/>
+  <circle cx="830" cy="42" r="0.6" fill="#88d8d0" opacity="0.4"/>
+  <circle cx="870" cy="75" r="1" fill="#ffffff" opacity="0.6"/>
+  <circle cx="70" cy="250" r="0.8" fill="#ffffff" opacity="0.5"/>
+  <circle cx="155" cy="270" r="0.6" fill="#ffffff" opacity="0.4"/>
+  <circle cx="260" cy="245" r="1" fill="#88d8d0" opacity="0.5"/>
+  <circle cx="350" cy="280" r="0.7" fill="#ffffff" opacity="0.6"/>
+  <circle cx="480" cy="260" r="0.9" fill="#ffffff" opacity="0.5"/>
+  <circle cx="570" cy="275" r="0.5" fill="#ffffff" opacity="0.4"/>
+  <circle cx="660" cy="250" r="1.1" fill="#ffffff" opacity="0.7"/>
+  <circle cx="740" cy="270" r="0.6" fill="#88d8d0" opacity="0.5"/>
+  <circle cx="820" cy="255" r="0.8" fill="#ffffff" opacity="0.6"/>
+  <circle cx="95" cy="140" r="0.5" fill="#ffffff" opacity="0.3"/>
+  <circle cx="805" cy="150" r="0.7" fill="#ffffff" opacity="0.4"/>
+  <circle cx="30" cy="180" r="0.6" fill="#88d8d0" opacity="0.3"/>
+  <circle cx="870" cy="190" r="0.5" fill="#ffffff" opacity="0.3"/>
+
+  <!-- Subtle nebula glow behind title -->
+  <ellipse cx="450" cy="120" rx="250" ry="80" fill="#4ecdc4" opacity="0.03"/>
+  <ellipse cx="450" cy="120" rx="180" ry="50" fill="#4ecdc4" opacity="0.04"/>
+
+  <!-- Horizontal decorative lines -->
+  <rect x="100" y="88" width="700" height="1" fill="url(#lineGrad)" opacity="0.3"/>
+  <rect x="150" y="168" width="600" height="1" fill="url(#lineGrad)" opacity="0.3"/>
+
+  <!-- Corner brackets (top-left) -->
+  <path d="M 60,60 L 60,45 L 75,45" fill="none" stroke="#4ecdc4" stroke-width="1.5" opacity="0.5"/>
+  <!-- Corner brackets (top-right) -->
+  <path d="M 840,60 L 840,45 L 825,45" fill="none" stroke="#4ecdc4" stroke-width="1.5" opacity="0.5"/>
+  <!-- Corner brackets (bottom-left) -->
+  <path d="M 60,240 L 60,255 L 75,255" fill="none" stroke="#4ecdc4" stroke-width="1.5" opacity="0.5"/>
+  <!-- Corner brackets (bottom-right) -->
+  <path d="M 840,240 L 840,255 L 825,255" fill="none" stroke="#4ecdc4" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Main title: ATLAS -->
+  <text x="450" y="140" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="72" font-weight="700" letter-spacing="24" fill="url(#titleGrad)" filter="url(#glow)">ATLAS</text>
+
+  <!-- Subtitle -->
+  <text x="450" y="190" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="14" letter-spacing="6" fill="#88d8d0" opacity="0.8">PVE SPACE SIMULATOR</text>
+
+  <!-- Bottom tagline -->
+  <text x="450" y="225" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="11" letter-spacing="2" fill="#5a7a8a" opacity="0.7">C++ / OpenGL · Atlas UI Engine · 2–20 Players · AI Wingmates</text>
+
+  <!-- Status badge area -->
+  <rect x="355" y="242" width="190" height="22" rx="11" fill="#4ecdc4" fill-opacity="0.1" stroke="#4ecdc4" stroke-width="0.5" opacity="0.3"/>
+  <text x="450" y="257" text-anchor="middle" font-family="'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="10" letter-spacing="3" fill="#4ecdc4" opacity="0.6">ACTIVE R&amp;D</text>
+
+  <!-- Thin border -->
+  <rect x="1" y="1" width="898" height="298" rx="4" fill="none" stroke="#4ecdc4" stroke-width="0.5" opacity="0.15"/>
+</svg>

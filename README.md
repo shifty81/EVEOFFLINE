@@ -1,18 +1,6 @@
-# Atlas
-
-```
-      ___   _______ __       ___       _______.
-     /   \ |       |  |     /   \     /       |
-    /  ^  \|___|   |  |    /  ^  \   |   (----`
-   /  /_\  \   /  /|  |   /  /_\  \   \   \    
-  /  _____  \ /  /_|  |  /  _____  \----)   |   
- /__/     \__\_____|__| /__/     \__\_______/    
-
-    ╔═══════════════════════════════════════════╗
-    ║  A  S P A C E  S I M U L A T O R  B U I L T
-    ║  W I T H  T H E  A T L A S  U I  E N G I N E
-    ╚═══════════════════════════════════════════╝
-```
+<p align="center">
+  <img src="docs/images/banner.svg" alt="Atlas — PVE Space Simulator" width="900"/>
+</p>
 
 A PVE-focused space simulator for small groups (2–20 players) or solo play with AI wingmates.
 Built with **C++ / OpenGL** and the custom **Atlas UI** framework — an immediate-mode, GPU-accelerated UI system designed for sci-fi cockpit interfaces.
@@ -23,34 +11,13 @@ Built with **C++ / OpenGL** and the custom **Atlas UI** framework — an immedia
 
 ## ✨ At a Glance
 
-```
- ┌─────────┬───────────────────────────────────────┬──────────────┐
- │ NEOCOM  │                                       │  SELECTED    │
- │ SIDEBAR │    Locked Target Cards (top-center)    │  ITEM PANEL  │
- │         │                                       ├──────────────┤
- │  ▓ Inv  │                                       │  OVERVIEW    │
- │  ▓ Fit  │          ★  3D Space View  ★          │  ──────────  │
- │  ▓ Mkt  │                                       │  ● Frigate   │
- │  ▓ Mis  │                                       │  ● Station   │
- │  ▓ DSc  │        ┌──── Ship HUD ────┐           │  ● Stargate  │
- │  ▓ Ovw  │        │ Shield ████░░░   │           │  ● Asteroid  │
- │  ▓ Cht  │        │ Armor  ██████░   │           │              │
- │  ▓ Drn  │        │ Hull   ████████  │           │              │
- │         │        │ ◎ Capacitor ring │           │              │
- │         │        │ [F1][F2][F3][F4] │           │              │
- │  ⏱ 23:14│        │ Speed: 142 m/s   │           │              │
- └─────────┴────────┴──────────────────┴───────────┴──────────────┘
-```
+<p align="center">
+  <img src="docs/images/ui-layout.svg" alt="Atlas UI — Cockpit Interface Layout" width="900"/>
+</p>
 
-| Feature | Details |
-|---------|---------|
-| **Rendering** | OpenGL 3.3+ · Deferred shading · Shadow mapping · Post-processing |
-| **UI** | Atlas UI — custom immediate-mode framework (panels, HUD, context menus) |
-| **Audio** | OpenAL spatial sound for weapons, engines, and ambience |
-| **Networking** | TCP client/server · Embedded or dedicated server modes |
-| **AI** | NPC combat, mining, hauling — AI pilots can fill fleet roles |
-| **Content** | 102+ ships · 159+ modules · 137 skills · 4 factions · Full mission system |
-| **Modding** | All game data in JSON — ships, modules, missions, universe |
+<p align="center">
+  <img src="docs/images/features.svg" alt="Atlas Features" width="900"/>
+</p>
 
 ---
 
