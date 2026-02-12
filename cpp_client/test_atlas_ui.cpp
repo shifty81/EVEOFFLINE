@@ -1386,6 +1386,9 @@ void testProbeScannerPanel() {
 void testSidebarCallback() {
     std::cout << "\n=== Sidebar Callback ===" << std::endl;
 
+    atlas::AtlasContext ctx;
+    ctx.init();
+
     atlas::AtlasHUD hud;
     hud.init(1920, 1080);
 
@@ -1396,14 +1399,51 @@ void testSidebarCallback() {
 
     assertTrue(lastClickedIcon == -1, "Sidebar callback not called before click");
 
+    // Simulate a sidebar icon click by rendering a frame with mouse position
+    // over the first icon and mouse clicked state
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        // Position mouse over first sidebar icon (x=2..38, y=8..44)
+        input.mousePos = {20.0f, 26.0f};
+        input.mouseDown[0] = true;
+        input.mouseClicked[0] = true;
+        ctx.beginFrame(input);
+
+        atlas::ShipHUDData ship;
+        std::vector<atlas::TargetCardInfo> targets;
+        std::vector<atlas::OverviewEntry> overview;
+        atlas::SelectedItemInfo selected;
+        hud.update(ctx, ship, targets, overview, selected);
+        ctx.endFrame();
+    }
+    // Release mouse to complete click cycle
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {20.0f, 26.0f};
+        input.mouseDown[0] = false;
+        input.mouseReleased[0] = true;
+        ctx.beginFrame(input);
+
+        atlas::ShipHUDData ship;
+        std::vector<atlas::TargetCardInfo> targets;
+        std::vector<atlas::OverviewEntry> overview;
+        atlas::SelectedItemInfo selected;
+        hud.update(ctx, ship, targets, overview, selected);
+        ctx.endFrame();
+    }
+
+    assertTrue(lastClickedIcon == 0, "Sidebar callback invoked with icon 0 after click");
+
     // Verify overview toggle via sidebar (icon 5 in application wiring)
     assertTrue(hud.isOverviewOpen(), "Overview starts open");
     hud.toggleOverview();
     assertTrue(!hud.isOverviewOpen(), "Overview closed after toggle");
     hud.toggleOverview();
     assertTrue(hud.isOverviewOpen(), "Overview reopened after second toggle");
-
-    assertTrue(true, "Sidebar callback set without crash");
 }
 
 // ─── Main ──────────────────────────────────────────────────────────────

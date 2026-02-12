@@ -108,7 +108,8 @@ void Application::initialize() {
     
     // Initialize UI manager (non-fatal — Atlas HUD provides fallback UI)
     if (!m_uiManager->Initialize(m_window->getHandle(), "ui_resources")) {
-        std::cerr << "Warning: RmlUi UI manager failed to initialize, using Atlas HUD only" << std::endl;
+        std::cerr << "Warning: RmlUi UI manager initialization failed. "
+                  << "Falling back to Atlas HUD-only mode. Some UI panels may be unavailable." << std::endl;
     }
     
     // Initialize Atlas UI context
