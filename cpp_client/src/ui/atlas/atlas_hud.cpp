@@ -257,6 +257,7 @@ void AtlasHUD::drawOverviewPanel(AtlasContext& ctx,
 
     for (int i = 0; i < count; ++i) {
         Rect rowRect = {contentArea.x, rowY + i * rowH, contentArea.w, rowH};
+        // overviewRow returns true when the row receives a left-click (press+release)
         bool clicked = overviewRow(ctx, rowRect, entries[i], (i % 2 == 1));
 
         // Left-click: select the entity

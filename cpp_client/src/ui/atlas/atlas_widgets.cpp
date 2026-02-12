@@ -1549,13 +1549,14 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
 
         float py = popY + 4.0f;
 
-        // Opacity slider
+        // Opacity slider — use 20–100 range for display; convert back to 0.0–1.0
         rr.drawText("Opacity", {popX + 6.0f, py + 1.0f}, t.textSecondary);
         py += 16.0f;
         Rect opacitySlider(popX + 6.0f, py, popW - 12.0f, 14.0f);
-        slider(ctx, "_opacity", opacitySlider, &state.opacity, 0.2f, 1.0f, "%.0f%%");
-        // Display as percentage (slider value is 0.0–1.0, format shows fraction;
-        // we pass a scaled copy for display)
+        float opacityPct = state.opacity * 100.0f;
+        if (slider(ctx, "_opacity", opacitySlider, &opacityPct, 20.0f, 100.0f, "%.0f%%")) {
+            state.opacity = opacityPct / 100.0f;
+        }
         py += 22.0f;
 
         // Compact rows toggle
