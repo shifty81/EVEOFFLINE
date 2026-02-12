@@ -256,15 +256,29 @@ void scrollbar(AtlasContext& ctx, const Rect& track,
 /**
  * Draw the sidebar (left edge, full height).
  *
- * @param ctx       Context.
- * @param x         Left edge X position (usually 0).
- * @param width     Bar width (15px collapsed, ~56px normal).
- * @param height    Window height.
- * @param icons     Number of icon slots.
- * @param callback  Called with icon index when an icon is clicked.
+ * Modelled after EVE Online's Neocom bar — a dark, minimalist,
+ * semi-transparent vertical bar with:
+ *   - "A" (Atlas) menu icon at the top
+ *   - Character portrait area
+ *   - Skill queue progress bar
+ *   - Service icon slots with active-state highlighting
+ *
+ * @param ctx           Context.
+ * @param x             Left edge X position (usually 0).
+ * @param width         Bar width (~40-56px).
+ * @param height        Window height.
+ * @param icons         Number of icon slots.
+ * @param callback      Called with icon index when an icon is clicked.
+ * @param activeIcons   Optional array of bools (size >= icons) indicating
+ *                      which icons have their panel currently open.
+ *                      Active icons show a persistent highlight.
+ * @param skillQueuePct Skill queue progress (0.0–1.0). Shown as a thin
+ *                      bar below the character portrait area.
  */
 void sidebarBar(AtlasContext& ctx, float x, float width, float height,
-                int icons, const std::function<void(int)>& callback);
+                int icons, const std::function<void(int)>& callback,
+                const bool* activeIcons = nullptr,
+                float skillQueuePct = 0.0f);
 
 // ── Tooltip ─────────────────────────────────────────────────────────
 

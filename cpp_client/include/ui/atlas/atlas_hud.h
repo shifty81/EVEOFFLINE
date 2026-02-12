@@ -94,9 +94,23 @@ public:
 
     void toggleOverview()      { m_overviewState.open = !m_overviewState.open; }
     void toggleSelectedItem()  { m_selectedItemState.open = !m_selectedItemState.open; }
+    void toggleInventory()     { m_inventoryState.open = !m_inventoryState.open; }
+    void toggleFitting()       { m_fittingState.open = !m_fittingState.open; }
+    void toggleMarket()        { m_marketState.open = !m_marketState.open; }
+    void toggleMission()       { m_missionState.open = !m_missionState.open; }
+    void toggleDScan()         { m_dscanState.open = !m_dscanState.open; }
+    void toggleChat()          { m_chatState.open = !m_chatState.open; }
+    void toggleDronePanel()    { m_dronePanelState.open = !m_dronePanelState.open; }
 
     bool isOverviewOpen()      const { return m_overviewState.open; }
     bool isSelectedItemOpen()  const { return m_selectedItemState.open; }
+    bool isInventoryOpen()     const { return m_inventoryState.open; }
+    bool isFittingOpen()       const { return m_fittingState.open; }
+    bool isMarketOpen()        const { return m_marketState.open; }
+    bool isMissionOpen()       const { return m_missionState.open; }
+    bool isDScanOpen()         const { return m_dscanState.open; }
+    bool isChatOpen()          const { return m_chatState.open; }
+    bool isDronePanelOpen()    const { return m_dronePanelState.open; }
 
     // ── Sidebar callback ──────────────────────────────────────────────
 
@@ -120,6 +134,11 @@ public:
 
     /** Set the currently active movement mode text (empty to hide). */
     void setModeIndicator(const std::string& text) { m_modeText = text; }
+
+    // ── Skill queue (sidebar progress bar) ──────────────────────────
+
+    /** Set the skill queue progress (0.0–1.0). */
+    void setSkillQueuePct(float pct) { m_skillQueuePct = pct; }
 
     // ── Info panel ──────────────────────────────────────────────────
 
@@ -187,6 +206,13 @@ private:
     PanelState m_overviewState;
     PanelState m_selectedItemState;
     PanelState m_infoPanelState;
+    PanelState m_inventoryState;
+    PanelState m_fittingState;
+    PanelState m_marketState;
+    PanelState m_missionState;
+    PanelState m_dscanState;
+    PanelState m_chatState;
+    PanelState m_dronePanelState;
 
     // Sidebar config
     float m_sidebarWidth = 40.0f;
@@ -210,6 +236,8 @@ private:
                               const SelectedItemInfo& info);
     void drawModeIndicator(AtlasContext& ctx);
     void drawInfoPanel(AtlasContext& ctx);
+    void drawDockablePanel(AtlasContext& ctx, const char* title,
+                           PanelState& state);
 
     // Animation state
     float m_displayCapFrac = 1.0f;   // smoothed capacitor display value
@@ -217,6 +245,9 @@ private:
 
     // Mode indicator
     std::string m_modeText;
+
+    // Skill queue progress for sidebar display
+    float m_skillQueuePct = 0.35f;  // default: ~35% through current skill
 
     // Overview tab state
     int m_overviewActiveTab = 0;

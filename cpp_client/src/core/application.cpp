@@ -122,23 +122,23 @@ void Application::initialize() {
         switch (icon) {
             case 0:
                 std::cout << "[Neocom] Toggle Inventory" << std::endl;
-                if (m_uiManager) m_uiManager->ToggleDocument("inventory");
+                m_atlasHUD->toggleInventory();
                 break;
             case 1:
                 std::cout << "[Neocom] Toggle Fitting" << std::endl;
-                if (m_uiManager) m_uiManager->ToggleDocument("fitting");
+                m_atlasHUD->toggleFitting();
                 break;
             case 2:
                 std::cout << "[Neocom] Toggle Market" << std::endl;
-                if (m_uiManager) m_uiManager->ToggleDocument("market");
+                m_atlasHUD->toggleMarket();
                 break;
             case 3:
                 std::cout << "[Neocom] Toggle Missions" << std::endl;
-                if (m_uiManager) m_uiManager->ToggleDocument("mission");
+                m_atlasHUD->toggleMission();
                 break;
             case 4:
                 std::cout << "[Neocom] Toggle D-Scan" << std::endl;
-                if (m_uiManager) m_uiManager->ToggleDocument("dscan");
+                m_atlasHUD->toggleDScan();
                 break;
             case 5:
                 std::cout << "[Neocom] Toggle Overview" << std::endl;
@@ -146,11 +146,11 @@ void Application::initialize() {
                 break;
             case 6:
                 std::cout << "[Neocom] Toggle Chat" << std::endl;
-                if (m_uiManager) m_uiManager->ToggleDocument("chat");
+                m_atlasHUD->toggleChat();
                 break;
             case 7:
                 std::cout << "[Neocom] Toggle Drones" << std::endl;
-                if (m_uiManager) m_uiManager->ToggleDocument("drones");
+                m_atlasHUD->toggleDronePanel();
                 break;
         }
     });
