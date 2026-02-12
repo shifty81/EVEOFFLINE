@@ -13,9 +13,12 @@
 #endif
 
 // When building inside the full client the real GL headers are
-// available via GLAD.  For the server-side test build we provide
+// available via GLAD or GLEW.  For the server-side test build we provide
 // stub types so the translation unit compiles without GPU access.
-#if __has_include(<glad/glad.h>)
+#if __has_include(<GL/glew.h>)
+#include <GL/glew.h>
+#define ATLAS_HAS_GL 1
+#elif __has_include(<glad/glad.h>)
 #include <glad/glad.h>
 #define ATLAS_HAS_GL 1
 #else
