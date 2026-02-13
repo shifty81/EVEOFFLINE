@@ -7,6 +7,7 @@
 #include "systems/capacitor_system.h"
 #include "systems/shield_recharge_system.h"
 #include "systems/weapon_system.h"
+#include "systems/station_system.h"
 #include "utils/logger.h"
 #include <iostream>
 #include <thread>
@@ -42,6 +43,10 @@ void Server::initializeGameWorld() {
     targeting_system_ = targeting.get();
     game_world_->addSystem(std::move(targeting));
 
+    auto station = std::make_unique<systems::StationSystem>(game_world_.get());
+    station_system_ = station.get();
+    game_world_->addSystem(std::move(station));
+
     game_world_->addSystem(std::make_unique<systems::MovementSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::WeaponSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::CombatSystem>(game_world_.get()));
@@ -49,7 +54,7 @@ void Server::initializeGameWorld() {
     auto& log = utils::Logger::instance();
     log.info("Game world initialized with " +
              std::to_string(game_world_->getEntityCount()) + " entities");
-    log.info("Systems: Capacitor, ShieldRecharge, AI, Targeting, Movement, Weapon, Combat");
+    log.info("Systems: Capacitor, ShieldRecharge, AI, Targeting, Station, Movement, Weapon, Combat");
 }
 
 bool Server::initialize() {
@@ -126,6 +131,7 @@ bool Server::initialize() {
     game_session_ = std::make_unique<GameSession>(
         game_world_.get(), tcp_server_.get(), config_->data_path);
     game_session_->setTargetingSystem(targeting_system_);
+    game_session_->setStationSystem(station_system_);
     game_session_->initialize();
     
     // Initialize server console
