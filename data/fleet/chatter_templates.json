@@ -1,0 +1,133 @@
+{
+  "version": "1.0",
+  "description": "Fleet captain chatter templates organized by activity context",
+  "activities": {
+    "warp": {
+      "general": [
+        "Quiet today, boss.",
+        "Tunnel's smooth this run.",
+        "Ever wonder what's between lanes?",
+        "Long haul... I like it.",
+        "Still can't believe we made it out of that last one.",
+        "Warp field's stable. Nothing to do but wait.",
+        "I always liked this part. Just the hum.",
+        "Didn't think we'd make it out of that pocket.",
+        "That interceptor you clipped back there... clean shot.",
+        "Hull's still rattling from that last one."
+      ],
+      "high_morale": [
+        "We'll get through this. We always do.",
+        "Best crew in the sector.",
+        "Looking forward to whatever's next."
+      ],
+      "low_morale": [
+        "We'll... uh... see how this one goes.",
+        "I've been thinking... maybe this run isn't for me.",
+        "How much longer?"
+      ]
+    },
+    "mining": {
+      "general": [
+        "Rock's clean. Good vein in this one.",
+        "Lasers are holding steady. Should get a full haul.",
+        "You ever count how many rocks you've cracked? I stopped at four hundred.",
+        "Ore bay's half full already. Not bad for this belt.",
+        "Scanner's picking up something dense. Could be worth a closer look.",
+        "I swear these asteroids are smaller than they used to be.",
+        "Somebody left drill marks on this one. We're not the first here.",
+        "Dust keeps clogging the intake. Third time today.",
+        "Quiet belt. I don't mind it.",
+        "If this vein holds, we're looking at a good payout."
+      ],
+      "high_morale": [
+        "This is the kind of haul that makes the trip worth it.",
+        "Crew's in good spirits. Steady work does that.",
+        "We keep pulling like this, drinks are on me at port."
+      ],
+      "low_morale": [
+        "Another rock. Another hour. Another day.",
+        "Pay better be worth this dust in my lungs.",
+        "I didn't sign up for double shifts in a dead belt."
+      ]
+    },
+    "combat": {
+      "general": [
+        "Contact! Bearing two-seven-zero, closing fast.",
+        "Shields holding. Keep firing.",
+        "Got one! Scratch another off the list.",
+        "They're flanking us. Watch the port side.",
+        "Missile away. Tracking... tracking... hit!",
+        "Hostile down. Scanning for more.",
+        "They're running. Should we chase?",
+        "Armor's taking hits. Rerouting power to hardeners.",
+        "That was close. Too close.",
+        "Fleet, focus fire on the lead ship. Bring it down."
+      ],
+      "high_morale": [
+        "We've got this. Nobody flies like us.",
+        "They picked the wrong fleet to jump.",
+        "Keep it up! They're breaking formation."
+      ],
+      "low_morale": [
+        "We're outgunned. Just... keep shooting.",
+        "I don't like these odds.",
+        "If we make it out of this, I need a drink. A strong one."
+      ]
+    },
+    "idle": {
+      "general": [
+        "So... we just waiting, or...?",
+        "I reorganized the cargo hold. Twice.",
+        "Anyone else hearing that hum from the reactor?",
+        "Ran diagnostics. Everything checks out. Again.",
+        "You'd think space would be more exciting.",
+        "I've been reading the maintenance logs. Riveting stuff.",
+        "Docking clamps are getting sticky. Should probably look at that.",
+        "How long have we been sitting here?",
+        "I made coffee. It's terrible. Want some?",
+        "Station comms are playing the same broadcast on loop."
+      ],
+      "high_morale": [
+        "Good to have some downtime. We earned it.",
+        "Enjoy the quiet. Won't last long with this crew.",
+        "Rest up. I've got a feeling the next run's a good one."
+      ],
+      "low_morale": [
+        "Sitting here doing nothing doesn't pay the bills.",
+        "How long are we grounded? I'm going stir-crazy.",
+        "If I have to run diagnostics one more time..."
+      ]
+    },
+    "travel": {
+      "general": [
+        "Next gate's two jumps out. Smooth so far.",
+        "Traffic's light on this route. Good sign.",
+        "Passing through low-sec. Keep your eyes open.",
+        "Gate fire. Someone just jumped in behind us.",
+        "I've run this lane a hundred times. Still don't trust it.",
+        "Local count just spiked. Could be a fleet passing through.",
+        "Autopilot's fine, but I'd rather fly manual through here.",
+        "Fuel's good. We can make it without stopping.",
+        "This system always gives me a bad feeling.",
+        "Route's clear. Should be an easy run."
+      ],
+      "high_morale": [
+        "Good route, good crew. What more do you need?",
+        "Almost there. One more jump and we're golden.",
+        "This is the life. Open space, full tanks, good company."
+      ],
+      "low_morale": [
+        "Every gate could be a camp. Just saying.",
+        "Long way from home. Long way from anywhere.",
+        "I keep checking the scanner. Can't help it."
+      ]
+    }
+  },
+  "timing": {
+    "min_cooldown_seconds": 20,
+    "max_cooldown_seconds": 45,
+    "no_chatter_during_warp_entry": true,
+    "no_chatter_during_warp_exit": true,
+    "combat_chatter_cooldown_seconds": 8
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "version": "1.0",
+  "description": "Faction-specific behavioral modifiers for fleet captains",
+  "factions": {
+    "Solari": {
+      "description": "Pragmatic industrialists who value order and output",
+      "chatter_frequency_multiplier": 0.8,
+      "activity_chatter_weights": {
+        "warp": 1.2,
+        "mining": 1.3,
+        "combat": 0.6,
+        "idle": 0.9,
+        "travel": 1.0
+      },
+      "morale_modifiers": {
+        "efficiency_bonus": 0.15,
+        "efficiency_penalty": -0.2,
+        "combat_loss_penalty": -0.05,
+        "successful_haul_bonus": 0.1,
+        "idle_penalty_per_minute": -0.005
+      },
+      "formation_preferences": {
+        "default": "echelon",
+        "combat": "wall",
+        "mining": "spread",
+        "travel": "column"
+      },
+      "grudge_formation_chance": 0.05,
+      "rumor_belief_multiplier": 0.6,
+      "cultural_traits": [
+        "reports_cargo_status_frequently",
+        "dislikes_idle_time",
+        "praises_clean_operations"
+      ]
+    },
+    "Veyren": {
+      "description": "Competitive pilots who track performance and thrive on rivalry",
+      "chatter_frequency_multiplier": 1.2,
+      "activity_chatter_weights": {
+        "warp": 1.0,
+        "mining": 1.1,
+        "combat": 1.3,
+        "idle": 1.2,
+        "travel": 1.0
+      },
+      "morale_modifiers": {
+        "kill_count_bonus": 0.1,
+        "outperformed_penalty": -0.1,
+        "fleet_victory_bonus": 0.15,
+        "solo_kill_bonus": 0.05,
+        "idle_penalty_per_minute": -0.002
+      },
+      "formation_preferences": {
+        "default": "wedge",
+        "combat": "pincer",
+        "mining": "cluster",
+        "travel": "staggered"
+      },
+      "grudge_formation_chance": 0.15,
+      "rumor_belief_multiplier": 0.9,
+      "cultural_traits": [
+        "tracks_kill_counts",
+        "compares_performance_to_fleetmates",
+        "celebrates_kills_vocally"
+      ]
+    },
+    "Aurelian": {
+      "description": "Nomadic wanderers with deep superstitions and emotional bonds to space",
+      "chatter_frequency_multiplier": 1.3,
+      "activity_chatter_weights": {
+        "warp": 1.5,
+        "mining": 0.9,
+        "combat": 0.8,
+        "idle": 1.4,
+        "travel": 1.3
+      },
+      "morale_modifiers": {
+        "anomaly_discovery_bonus": 0.2,
+        "rumor_confirmed_bonus": 0.15,
+        "warp_anomaly_fear_penalty": -0.1,
+        "long_travel_bonus": 0.05,
+        "idle_penalty_per_minute": -0.001
+      },
+      "formation_preferences": {
+        "default": "loose",
+        "combat": "scatter",
+        "mining": "orbit",
+        "travel": "freeform"
+      },
+      "grudge_formation_chance": 0.08,
+      "rumor_belief_multiplier": 1.5,
+      "cultural_traits": [
+        "reacts_emotionally_to_anomalies",
+        "shares_rumors_frequently",
+        "references_ancestors_and_omens",
+        "treats_space_as_living_entity"
+      ]
+    },
+    "Keldari": {
+      "description": "Militaristic fleet doctrine with rigid command hierarchy and honor codes",
+      "chatter_frequency_multiplier": 0.9,
+      "activity_chatter_weights": {
+        "warp": 0.7,
+        "mining": 0.6,
+        "combat": 1.8,
+        "idle": 0.5,
+        "travel": 0.8
+      },
+      "morale_modifiers": {
+        "fleet_victory_bonus": 0.2,
+        "retreat_penalty": -0.25,
+        "comrade_lost_penalty": -0.15,
+        "enemy_flagship_kill_bonus": 0.3,
+        "idle_penalty_per_minute": -0.008
+      },
+      "formation_preferences": {
+        "default": "line",
+        "combat": "spearhead",
+        "mining": "perimeter_guard",
+        "travel": "convoy"
+      },
+      "grudge_formation_chance": 0.3,
+      "rumor_belief_multiplier": 0.4,
+      "cultural_traits": [
+        "uses_military_callsigns",
+        "forms_grudges_against_enemies",
+        "formal_speech_patterns",
+        "honors_fallen_comrades"
+      ]
+    }
+  }
+}

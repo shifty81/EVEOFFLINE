@@ -63,6 +63,7 @@ temp/
 
 # C++ build artifacts
 build/
+build_cpp/
 build_test/
 build_server/
 cpp_server/build/

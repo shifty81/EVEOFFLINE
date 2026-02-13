@@ -62,6 +62,7 @@ set(SERVER_SOURCES
     src/systems/inventory_system.cpp
     src/systems/loot_system.cpp
     src/systems/insurance_system.cpp
+    src/systems/captain_personality_system.cpp
     src/systems/corporation_system.cpp
     src/systems/bounty_system.cpp
     src/systems/market_system.cpp
@@ -76,6 +77,13 @@ set(SERVER_SOURCES
     src/systems/leaderboard_system.cpp
     src/systems/station_system.cpp
     src/systems/wreck_salvage_system.cpp
+    src/systems/fleet_morale_system.cpp
+    src/systems/fleet_chatter_system.cpp
+    src/systems/warp_anomaly_system.cpp
+    src/systems/captain_relationship_system.cpp
+    src/systems/emotional_arc_system.cpp
+    src/systems/fleet_cargo_system.cpp
+    src/systems/tactical_overlay_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -114,6 +122,7 @@ set(SERVER_HEADERS
     include/systems/inventory_system.h
     include/systems/loot_system.h
     include/systems/insurance_system.h
+    include/systems/captain_personality_system.h
     include/systems/corporation_system.h
     include/systems/bounty_system.h
     include/systems/market_system.h
@@ -128,6 +137,13 @@ set(SERVER_HEADERS
     include/systems/leaderboard_system.h
     include/systems/station_system.h
     include/systems/wreck_salvage_system.h
+    include/systems/fleet_morale_system.h
+    include/systems/fleet_chatter_system.h
+    include/systems/warp_anomaly_system.h
+    include/systems/captain_relationship_system.h
+    include/systems/emotional_arc_system.h
+    include/systems/fleet_cargo_system.h
+    include/systems/tactical_overlay_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -227,6 +243,7 @@ if(BUILD_TESTS)
         src/systems/inventory_system.cpp
         src/systems/loot_system.cpp
         src/systems/insurance_system.cpp
+        src/systems/captain_personality_system.cpp
         src/systems/corporation_system.cpp
         src/systems/bounty_system.cpp
         src/systems/market_system.cpp
@@ -241,6 +258,13 @@ if(BUILD_TESTS)
         src/systems/leaderboard_system.cpp
         src/systems/station_system.cpp
         src/systems/wreck_salvage_system.cpp
+        src/systems/fleet_morale_system.cpp
+        src/systems/fleet_chatter_system.cpp
+        src/systems/warp_anomaly_system.cpp
+        src/systems/captain_relationship_system.cpp
+        src/systems/emotional_arc_system.cpp
+        src/systems/fleet_cargo_system.cpp
+        src/systems/tactical_overlay_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "description": "Faction-specific captain personality base profiles",
+  "factions": {
+    "Solari": {
+      "description": "Armor-tanking faction - pragmatic, professional, efficiency-focused",
+      "base_traits": {
+        "aggression": 0.45,
+        "sociability": 0.4,
+        "optimism": 0.5,
+        "professionalism": 0.75
+      },
+      "trait_variance": 0.15,
+      "chatter_style": "formal",
+      "morale_driver": "efficiency",
+      "sample_lines": [
+        "Cargo's clean. That's what matters.",
+        "Systems nominal.",
+        "Proceeding as planned."
+      ]
+    },
+    "Veyren": {
+      "description": "Shield/hybrid faction - competitive, social, balanced combat doctrine",
+      "base_traits": {
+        "aggression": 0.55,
+        "sociability": 0.7,
+        "optimism": 0.55,
+        "professionalism": 0.5
+      },
+      "trait_variance": 0.2,
+      "chatter_style": "casual",
+      "morale_driver": "competition",
+      "sample_lines": [
+        "Bet I crack more rocks than you this shift.",
+        "That's three for me. You keeping count?",
+        "Not bad, not bad. But I've seen better."
+      ]
+    },
+    "Aurelian": {
+      "description": "Speed/drone faction - optimistic, casual, nomadic with superstitious tendencies",
+      "base_traits": {
+        "aggression": 0.3,
+        "sociability": 0.65,
+        "optimism": 0.75,
+        "professionalism": 0.35
+      },
+      "trait_variance": 0.25,
+      "chatter_style": "storytelling",
+      "morale_driver": "discovery",
+      "sample_lines": [
+        "Stars are singing today. Good omen.",
+        "My grandmother flew this route. Said it was lucky.",
+        "The void provides, friend. Trust the drift."
+      ]
+    },
+    "Keldari": {
+      "description": "Missile/ECM faction - aggressive, bold, militaristic command structure",
+      "base_traits": {
+        "aggression": 0.8,
+        "sociability": 0.45,
+        "optimism": 0.4,
+        "professionalism": 0.7
+      },
+      "trait_variance": 0.1,
+      "chatter_style": "military",
+      "morale_driver": "victory",
+      "sample_lines": [
+        "Weapons hot. Standing by.",
+        "Contact neutralized. Next target.",
+        "Discipline wins battles. Remember that."
+      ]
+    }
+  },
+  "personality_axes": {
+    "aggression": {
+      "min": 0.0,
+      "max": 1.0,
+      "description": "0 = cautious, 1 = bold"
+    },
+    "sociability": {
+      "min": 0.0,
+      "max": 1.0,
+      "description": "0 = quiet, 1 = talkative"
+    },
+    "optimism": {
+      "min": 0.0,
+      "max": 1.0,
+      "description": "0 = grim, 1 = hopeful"
+    },
+    "professionalism": {
+      "min": 0.0,
+      "max": 1.0,
+      "description": "0 = casual, 1 = formal"
+    }
+  }
+}

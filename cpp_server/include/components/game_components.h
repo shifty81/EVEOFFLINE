@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <algorithm>
+#include <cstdint>
 
 namespace atlas {
 namespace components {
@@ -1056,6 +1058,206 @@ public:
     bool salvaged = false;               // true once a player has salvaged it
 
     COMPONENT_TYPE(Wreck)
+};
+
+/**
+ * @brief Personality axes for AI fleet captains
+ */
+class CaptainPersonality : public ecs::Component {
+public:
+    float aggression = 0.5f;        // 0=cautious, 1=bold
+    float sociability = 0.5f;       // 0=quiet, 1=talkative
+    float optimism = 0.5f;          // 0=grim, 1=hopeful
+    float professionalism = 0.5f;   // 0=casual, 1=formal
+    std::string captain_name;
+    std::string faction;            // Solari, Veyren, Aurelian, Keldari
+
+    COMPONENT_TYPE(CaptainPersonality)
+};
+
+/**
+ * @brief Tracks fleet morale for an entity
+ */
+class FleetMorale : public ecs::Component {
+public:
+    float morale_score = 0.0f;              // clamped -100 to +100
+    int wins = 0;
+    int losses = 0;
+    int ships_lost = 0;
+    int times_saved_by_player = 0;
+    int times_player_saved = 0;
+    int missions_together = 0;
+    std::string morale_state = "Steady";    // Inspired/Steady/Doubtful/Disengaged
+
+    void updateMoraleScore() {
+        morale_score = static_cast<float>(wins) * 1.0f
+                     - static_cast<float>(losses) * 1.5f
+                     - static_cast<float>(ships_lost) * 2.0f
+                     + static_cast<float>(times_saved_by_player) * 1.2f;
+        morale_score = std::clamp(morale_score, -100.0f, 100.0f);
+        if (morale_score >= 50.0f) {
+            morale_state = "Inspired";
+        } else if (morale_score >= 0.0f) {
+            morale_state = "Steady";
+        } else if (morale_score >= -50.0f) {
+            morale_state = "Doubtful";
+        } else {
+            morale_state = "Disengaged";
+        }
+    }
+
+    COMPONENT_TYPE(FleetMorale)
+};
+
+/**
+ * @brief Social graph for fleet captains
+ */
+class CaptainRelationship : public ecs::Component {
+public:
+    struct Relationship {
+        std::string other_captain_id;
+        float affinity = 0.0f;  // -100 to +100
+    };
+
+    std::vector<Relationship> relationships;
+
+    float getAffinityWith(const std::string& id) const {
+        for (const auto& r : relationships) {
+            if (r.other_captain_id == id) {
+                return r.affinity;
+            }
+        }
+        return 0.0f;
+    }
+
+    void modifyAffinity(const std::string& id, float change) {
+        for (auto& r : relationships) {
+            if (r.other_captain_id == id) {
+                r.affinity = std::clamp(r.affinity + change, -100.0f, 100.0f);
+                return;
+            }
+        }
+        Relationship rel;
+        rel.other_captain_id = id;
+        rel.affinity = std::clamp(change, -100.0f, 100.0f);
+        relationships.push_back(rel);
+    }
+
+    COMPONENT_TYPE(CaptainRelationship)
+};
+
+/**
+ * @brief Long-term emotional arcs
+ */
+class EmotionalState : public ecs::Component {
+public:
+    float confidence = 50.0f;       // 0-100
+    float trust_in_player = 50.0f;  // 0-100
+    float fatigue = 0.0f;           // 0-100
+    float hope = 50.0f;             // 0-100
+
+    COMPONENT_TYPE(EmotionalState)
+};
+
+/**
+ * @brief Warp phase tracking (for warp anomaly system)
+ */
+class WarpState : public ecs::Component {
+public:
+    enum class WarpPhase { None, Align, Entry, Cruise, Event, Exit };
+
+    WarpPhase phase = WarpPhase::None;
+    float warp_time = 0.0f;
+    float distance_remaining = 0.0f;
+    float warp_speed = 3.0f;    // AU/s
+    float mass_norm = 0.0f;     // 0=frigate, 1=capital
+    float intensity = 0.0f;     // computed from time + mass
+
+    COMPONENT_TYPE(WarpState)
+};
+
+/**
+ * @brief Chatter state for an entity
+ */
+class FleetChatterState : public ecs::Component {
+public:
+    float chatter_cooldown = 0.0f;
+    bool is_speaking = false;
+    float priority = 0.0f;
+    std::string current_activity = "Idle";  // Warp/Mining/Combat/Travel/Idle
+    std::string last_line_spoken;
+    int lines_spoken_total = 0;
+
+    COMPONENT_TYPE(FleetChatterState)
+};
+
+/**
+ * @brief Rumors heard/witnessed by a captain
+ */
+class RumorLog : public ecs::Component {
+public:
+    struct Rumor {
+        std::string rumor_id;
+        std::string text;
+        float belief_strength = 0.5f;
+        bool personally_witnessed = false;
+        int times_heard = 0;
+    };
+
+    std::vector<Rumor> rumors;
+
+    bool hasRumor(const std::string& id) const {
+        for (const auto& r : rumors) {
+            if (r.rumor_id == id) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void addRumor(const std::string& id, const std::string& text, bool witnessed) {
+        for (auto& r : rumors) {
+            if (r.rumor_id == id) {
+                r.times_heard++;
+                return;
+            }
+        }
+        Rumor rumor;
+        rumor.rumor_id = id;
+        rumor.text = text;
+        rumor.belief_strength = 0.5f;
+        rumor.personally_witnessed = witnessed;
+        rumor.times_heard = 1;
+        rumors.push_back(rumor);
+    }
+
+    COMPONENT_TYPE(RumorLog)
+};
+
+/**
+ * @brief Aggregated fleet cargo
+ */
+class FleetCargoPool : public ecs::Component {
+public:
+    uint64_t total_capacity = 0;
+    uint64_t used_capacity = 0;
+    std::map<std::string, uint64_t> pooled_items;   // item_type -> quantity
+    std::vector<std::string> contributor_ship_ids;
+
+    COMPONENT_TYPE(FleetCargoPool)
+};
+
+/**
+ * @brief Tactical overlay state
+ */
+class TacticalOverlayState : public ecs::Component {
+public:
+    bool enabled = false;
+    std::vector<float> ring_distances = {5.0f, 10.0f, 20.0f, 30.0f, 50.0f, 100.0f};
+    float tool_range = 0.0f;
+    std::string tool_type;
+
+    COMPONENT_TYPE(TacticalOverlayState)
 };
 
 } // namespace components
