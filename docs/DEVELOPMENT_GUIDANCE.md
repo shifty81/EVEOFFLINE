@@ -221,16 +221,26 @@ This is the most important next step for the project. All foundational systems a
 
 ### Vertical Slice Phase 2 (Weeks 4-6): Wrecks, Salvage & Economy
 
-**Status**: NOT STARTED
+**Status**: 🚧 IN PROGRESS
 
-**Tasks**:
-- Ship destruction → wreck spawning (uses existing LootSystem)
-- Salvage gameplay mechanics
-- Basic mineral economy
-- Mining AI ships active
-- Resource tracking per system
+**Completed (February 13, 2026)**:
+- ✅ Ship destruction → wreck spawning: CombatSystem death callback auto-creates wreck + loot when hull reaches zero
+- ✅ Salvage gameplay mechanics: WreckSalvageSystem + salvage drones transfer items from wrecks to player inventory
+- ✅ Mining system: MiningSystem with MiningLaser cycle-based ore extraction from MineralDeposit entities
+- ✅ Mining drones: mining_drone type in DroneSystem extracts ore from deposits into owner inventory
+- ✅ Salvage drones: salvage_drone type in DroneSystem recovers items from wrecks with configurable success chance
+- ✅ Resource tracking per system: SystemResources component tracks mineral types and remaining quantities
+- ✅ Protocol messages: SALVAGE_REQUEST/RESULT, LOOT_ALL/RESULT, MINING_START/STOP/RESULT
+- ✅ AI Mining state added to AI component
+- ✅ 80 new test assertions (1115/1115 total passing)
 
-**Dependencies**: Phase 1 complete
+**Remaining**:
+- Basic mineral economy (market pricing for ores/minerals)
+- Mining AI NPC behavior implementation (using Mining state)
+- Mineral refining system (ore → refined minerals)
+- Full economy loop testing
+
+**Dependencies**: Phase 1 ✅ complete
 
 ---
 
