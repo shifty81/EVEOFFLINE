@@ -153,6 +153,23 @@ std::string ProtocolHandler::createMarketQueryMessage(const std::string& itemId)
     return createMessage("market_query", data.dump());
 }
 
+// Station docking and repair messages
+std::string ProtocolHandler::createDockRequestMessage(const std::string& stationId) {
+    json data;
+    data["station_id"] = stationId;
+    return createMessage("dock_request", data.dump());
+}
+
+std::string ProtocolHandler::createUndockRequestMessage() {
+    json data;
+    return createMessage("undock_request", data.dump());
+}
+
+std::string ProtocolHandler::createRepairRequestMessage() {
+    json data;
+    return createMessage("repair_request", data.dump());
+}
+
 // Response message type helpers
 bool ProtocolHandler::isSuccessResponse(const std::string& type) {
     return type.find("_success") != std::string::npos ||
@@ -179,6 +196,14 @@ bool ProtocolHandler::isFittingResponse(const std::string& type) {
 bool ProtocolHandler::isMarketResponse(const std::string& type) {
     return type.find("market_") == 0 &&
            (isSuccessResponse(type) || isErrorResponse(type));
+}
+
+bool ProtocolHandler::isStationResponse(const std::string& type) {
+    return (type == "dock_success" || type == "dock_failed" ||
+            type == "undock_success" || type == "repair_result" ||
+            type.find("dock_") == 0 || type.find("repair_") == 0 || type.find("undock_") == 0) &&
+           (isSuccessResponse(type) || isErrorResponse(type) || type == "dock_success" || 
+            type == "dock_failed" || type == "undock_success" || type == "repair_result");
 }
 
 } // namespace atlas

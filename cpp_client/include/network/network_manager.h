@@ -34,6 +34,16 @@ struct MarketResponse {
     double totalCost;
 };
 
+struct StationResponse {
+    bool success;
+    std::string message;
+    std::string stationId;
+    float repairCost;
+    float shieldHp;
+    float armorHp;
+    float hullHp;
+};
+
 /**
  * High-level network manager
  * Combines TCP client and protocol handler for easy game integration
@@ -47,6 +57,7 @@ public:
     using InventoryCallback = std::function<void(const InventoryResponse&)>;
     using FittingCallback = std::function<void(const FittingResponse&)>;
     using MarketCallback = std::function<void(const MarketResponse&)>;
+    using StationCallback = std::function<void(const StationResponse&)>;
     using ErrorCallback = std::function<void(const std::string& message)>;
 
     NetworkManager();
@@ -117,12 +128,20 @@ public:
     void sendMarketQuery(const std::string& itemId);
     
     /**
+     * Station operations
+     */
+    void sendDockRequest(const std::string& stationId);
+    void sendUndockRequest();
+    void sendRepairRequest();
+    
+    /**
      * Set response callbacks for gameplay operations
      * These callbacks are invoked when the server responds to requests
      */
     void setInventoryCallback(InventoryCallback callback) { m_inventoryCallback = callback; }
     void setFittingCallback(FittingCallback callback) { m_fittingCallback = callback; }
     void setMarketCallback(MarketCallback callback) { m_marketCallback = callback; }
+    void setStationCallback(StationCallback callback) { m_stationCallback = callback; }
     void setErrorCallback(ErrorCallback callback) { m_errorCallback = callback; }
 
     /**
@@ -138,6 +157,7 @@ private:
     void handleInventoryResponse(const std::string& type, const std::string& dataJson);
     void handleFittingResponse(const std::string& type, const std::string& dataJson);
     void handleMarketResponse(const std::string& type, const std::string& dataJson);
+    void handleStationResponse(const std::string& type, const std::string& dataJson);
     void handleErrorResponse(const std::string& dataJson);
 
     std::unique_ptr<TCPClient> m_tcpClient;
@@ -150,6 +170,7 @@ private:
     InventoryCallback m_inventoryCallback;
     FittingCallback m_fittingCallback;
     MarketCallback m_marketCallback;
+    StationCallback m_stationCallback;
     ErrorCallback m_errorCallback;
     
     // Connection info
