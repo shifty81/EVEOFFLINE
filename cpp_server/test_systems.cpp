@@ -40,6 +40,14 @@
 #include "systems/movement_system.h"
 #include "systems/station_system.h"
 #include "systems/wreck_salvage_system.h"
+#include "systems/fleet_morale_system.h"
+#include "systems/captain_personality_system.h"
+#include "systems/fleet_chatter_system.h"
+#include "systems/warp_anomaly_system.h"
+#include "systems/captain_relationship_system.h"
+#include "systems/emotional_arc_system.h"
+#include "systems/fleet_cargo_system.h"
+#include "systems/tactical_overlay_system.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
 #include "utils/server_metrics.h"
@@ -5637,6 +5645,552 @@ void testConsoleInteractiveMode() {
     assertTrue(console.isInteractive(), "Interactive mode set");
 }
 
+// ==================== FleetMoraleSystem Tests ====================
+
+void testFleetMoraleRecordWin() {
+    std::cout << "\n=== Fleet Morale Record Win ===" << std::endl;
+    ecs::World world;
+    systems::FleetMoraleSystem sys(&world);
+    world.createEntity("cap1");
+    sys.recordWin("cap1");
+    assertTrue(sys.getMoraleScore("cap1") > 0.0f, "Morale score positive after win");
+    assertTrue(sys.getMoraleState("cap1") == "Steady", "Morale state is Steady after one win");
+}
+
+void testFleetMoraleRecordLoss() {
+    std::cout << "\n=== Fleet Morale Record Loss ===" << std::endl;
+    ecs::World world;
+    systems::FleetMoraleSystem sys(&world);
+    world.createEntity("cap1");
+    sys.recordLoss("cap1");
+    assertTrue(sys.getMoraleScore("cap1") < 0.0f, "Morale score negative after loss");
+}
+
+void testFleetMoraleMultipleEvents() {
+    std::cout << "\n=== Fleet Morale Multiple Events ===" << std::endl;
+    ecs::World world;
+    systems::FleetMoraleSystem sys(&world);
+    world.createEntity("cap1");
+    for (int i = 0; i < 10; i++) {
+        sys.recordWin("cap1");
+    }
+    // 10 wins * 1.0 = 10, but let's accumulate: each recordWin increments wins
+    // After 10 wins: score = 10 * 1.0 = 10 ... need >= 50
+    // Actually wins accumulate: after 10 calls, wins=10, score=10. Need 50 wins for 50.
+    for (int i = 0; i < 40; i++) {
+        sys.recordWin("cap1");
+    }
+    assertTrue(sys.getMoraleScore("cap1") >= 50.0f, "Morale >= 50 after 50 wins");
+    assertTrue(sys.getMoraleState("cap1") == "Inspired", "Morale state Inspired at high morale");
+}
+
+void testFleetMoraleLossStreak() {
+    std::cout << "\n=== Fleet Morale Loss Streak ===" << std::endl;
+    ecs::World world;
+    systems::FleetMoraleSystem sys(&world);
+    world.createEntity("cap1");
+    for (int i = 0; i < 5; i++) {
+        sys.recordLoss("cap1");
+    }
+    sys.recordShipLost("cap1");
+    sys.recordShipLost("cap1");
+    // score = 0*1 - 5*1.5 - 2*2.0 + 0 = -11.5 => Doubtful
+    std::string state = sys.getMoraleState("cap1");
+    assertTrue(state == "Doubtful" || state == "Disengaged",
+               "Morale state Doubtful or Disengaged after losses");
+}
+
+void testFleetMoraleSavedByPlayer() {
+    std::cout << "\n=== Fleet Morale Saved By Player ===" << std::endl;
+    ecs::World world;
+    systems::FleetMoraleSystem sys(&world);
+    world.createEntity("cap1");
+    sys.recordSavedByPlayer("cap1");
+    assertTrue(sys.getMoraleScore("cap1") > 0.0f, "Saved by player increases morale");
+}
+
+void testFleetMoraleMissionTogether() {
+    std::cout << "\n=== Fleet Morale Mission Together ===" << std::endl;
+    ecs::World world;
+    systems::FleetMoraleSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    sys.recordMissionTogether("cap1");
+    auto* morale = entity->getComponent<components::FleetMorale>();
+    assertTrue(morale != nullptr, "FleetMorale component created");
+    assertTrue(morale->missions_together == 1, "Missions together counter incremented");
+}
+
+// ==================== CaptainPersonalitySystem Tests ====================
+
+void testCaptainPersonalityAssign() {
+    std::cout << "\n=== Captain Personality Assign ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "TestCaptain", "Solari");
+    float agg = sys.getPersonalityTrait("cap1", "aggression");
+    float soc = sys.getPersonalityTrait("cap1", "sociability");
+    float opt = sys.getPersonalityTrait("cap1", "optimism");
+    float pro = sys.getPersonalityTrait("cap1", "professionalism");
+    assertTrue(agg >= 0.0f && agg <= 1.0f, "Aggression in valid range");
+    assertTrue(soc >= 0.0f && soc <= 1.0f, "Sociability in valid range");
+    assertTrue(opt >= 0.0f && opt <= 1.0f, "Optimism in valid range");
+    assertTrue(pro >= 0.0f && pro <= 1.0f, "Professionalism in valid range");
+}
+
+void testCaptainPersonalityFactionTraits() {
+    std::cout << "\n=== Captain Personality Faction Traits ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "Keldari_Captain", "Keldari");
+    float agg = sys.getPersonalityTrait("cap1", "aggression");
+    assertTrue(agg > 0.5f, "Keldari captain has high aggression");
+}
+
+void testCaptainPersonalitySetTrait() {
+    std::cout << "\n=== Captain Personality Set Trait ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "TestCaptain", "Solari");
+    sys.setPersonalityTrait("cap1", "aggression", 0.9f);
+    assertTrue(approxEqual(sys.getPersonalityTrait("cap1", "aggression"), 0.9f),
+               "Set trait reads back correctly");
+}
+
+void testCaptainPersonalityGetFaction() {
+    std::cout << "\n=== Captain Personality Get Faction ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "TestCaptain", "Veyren");
+    assertTrue(sys.getCaptainFaction("cap1") == "Veyren", "Faction returned correctly");
+}
+
+void testCaptainPersonalityDeterministic() {
+    std::cout << "\n=== Captain Personality Deterministic ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "TestCaptain", "Aurelian");
+    float agg1 = sys.getPersonalityTrait("cap1", "aggression");
+    float soc1 = sys.getPersonalityTrait("cap1", "sociability");
+    // Assign again - should get same result (deterministic)
+    sys.assignPersonality("cap1", "TestCaptain", "Aurelian");
+    float agg2 = sys.getPersonalityTrait("cap1", "aggression");
+    float soc2 = sys.getPersonalityTrait("cap1", "sociability");
+    assertTrue(approxEqual(agg1, agg2), "Aggression is deterministic");
+    assertTrue(approxEqual(soc1, soc2), "Sociability is deterministic");
+}
+
+// ==================== FleetChatterSystem Tests ====================
+
+void testFleetChatterSetActivity() {
+    std::cout << "\n=== Fleet Chatter Set Activity ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    sys.setActivity("cap1", "Mining");
+    auto* chatter = entity->getComponent<components::FleetChatterState>();
+    assertTrue(chatter != nullptr, "FleetChatterState component created");
+    assertTrue(chatter->current_activity == "Mining", "Activity set to Mining");
+}
+
+void testFleetChatterGetLine() {
+    std::cout << "\n=== Fleet Chatter Get Line ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(entity);
+    addComp<components::FleetChatterState>(entity);
+    addComp<components::FleetMorale>(entity);
+    sys.setActivity("cap1", "Mining");
+    std::string line = sys.getNextChatterLine("cap1");
+    assertTrue(!line.empty(), "Chatter line is non-empty");
+}
+
+void testFleetChatterCooldown() {
+    std::cout << "\n=== Fleet Chatter Cooldown ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(entity);
+    addComp<components::FleetChatterState>(entity);
+    sys.setActivity("cap1", "Idle");
+    sys.getNextChatterLine("cap1");
+    std::string line2 = sys.getNextChatterLine("cap1");
+    assertTrue(line2.empty(), "Second line empty due to cooldown");
+}
+
+void testFleetChatterLinesSpoken() {
+    std::cout << "\n=== Fleet Chatter Lines Spoken ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(entity);
+    addComp<components::FleetChatterState>(entity);
+    sys.setActivity("cap1", "Combat");
+    sys.getNextChatterLine("cap1");
+    assertTrue(sys.getTotalLinesSpoken("cap1") == 1, "Total lines spoken is 1");
+}
+
+void testFleetChatterCooldownExpires() {
+    std::cout << "\n=== Fleet Chatter Cooldown Expires ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(entity);
+    addComp<components::FleetChatterState>(entity);
+    sys.setActivity("cap1", "Warp");
+    sys.getNextChatterLine("cap1");
+    assertTrue(sys.isOnCooldown("cap1"), "On cooldown after speaking");
+    sys.update(60.0f);
+    assertTrue(!sys.isOnCooldown("cap1"), "Cooldown expired after 60s");
+    std::string line = sys.getNextChatterLine("cap1");
+    assertTrue(!line.empty(), "Can speak again after cooldown expires");
+}
+
+// ==================== WarpAnomalySystem Tests ====================
+
+void testWarpAnomalyNoneIfNotCruising() {
+    std::cout << "\n=== Warp Anomaly None If Not Cruising ===" << std::endl;
+    ecs::World world;
+    systems::WarpAnomalySystem sys(&world);
+    auto* entity = world.createEntity("ship1");
+    auto* warp = addComp<components::WarpState>(entity);
+    warp->phase = components::WarpState::WarpPhase::Align;
+    warp->warp_time = 5.0f;
+    // tryTriggerAnomaly checks warp_time < 20, not phase; update() checks phase
+    // With short warp_time and non-cruise phase, no anomaly via update
+    sys.update(1.0f);
+    assertTrue(sys.getAnomalyCount("ship1") == 0, "No anomaly when not in Cruise phase");
+}
+
+void testWarpAnomalyNoneIfShortWarp() {
+    std::cout << "\n=== Warp Anomaly None If Short Warp ===" << std::endl;
+    ecs::World world;
+    systems::WarpAnomalySystem sys(&world);
+    auto* entity = world.createEntity("ship1");
+    auto* warp = addComp<components::WarpState>(entity);
+    warp->phase = components::WarpState::WarpPhase::Cruise;
+    warp->warp_time = 5.0f;
+    bool triggered = sys.tryTriggerAnomaly("ship1");
+    assertTrue(!triggered, "No anomaly when warp_time < 20");
+}
+
+void testWarpAnomalyTriggersOnLongWarp() {
+    std::cout << "\n=== Warp Anomaly Triggers On Long Warp ===" << std::endl;
+    ecs::World world;
+    systems::WarpAnomalySystem sys(&world);
+    auto* entity = world.createEntity("ship1");
+    auto* warp = addComp<components::WarpState>(entity);
+    warp->phase = components::WarpState::WarpPhase::Cruise;
+    // Try many different warp_time values to find one that triggers
+    bool any_triggered = false;
+    for (int i = 20; i < 300; i++) {
+        warp->warp_time = static_cast<float>(i);
+        if (sys.tryTriggerAnomaly("ship1")) {
+            any_triggered = true;
+            break;
+        }
+    }
+    assertTrue(any_triggered, "At least one anomaly triggered on long warp");
+}
+
+void testWarpAnomalyCount() {
+    std::cout << "\n=== Warp Anomaly Count ===" << std::endl;
+    ecs::World world;
+    systems::WarpAnomalySystem sys(&world);
+    auto* entity = world.createEntity("ship1");
+    auto* warp = addComp<components::WarpState>(entity);
+    warp->phase = components::WarpState::WarpPhase::Cruise;
+    int triggered_count = 0;
+    for (int i = 20; i < 500; i++) {
+        warp->warp_time = static_cast<float>(i);
+        if (sys.tryTriggerAnomaly("ship1")) {
+            triggered_count++;
+        }
+    }
+    assertTrue(sys.getAnomalyCount("ship1") == triggered_count,
+               "getAnomalyCount matches triggered count");
+}
+
+void testWarpAnomalyClear() {
+    std::cout << "\n=== Warp Anomaly Clear ===" << std::endl;
+    ecs::World world;
+    systems::WarpAnomalySystem sys(&world);
+    auto* entity = world.createEntity("ship1");
+    auto* warp = addComp<components::WarpState>(entity);
+    warp->phase = components::WarpState::WarpPhase::Cruise;
+    for (int i = 20; i < 300; i++) {
+        warp->warp_time = static_cast<float>(i);
+        if (sys.tryTriggerAnomaly("ship1")) break;
+    }
+    sys.clearAnomaly("ship1");
+    auto cleared = sys.getLastAnomaly("ship1");
+    assertTrue(cleared.name.empty(), "Anomaly cleared successfully");
+}
+
+// ==================== CaptainRelationshipSystem Tests ====================
+
+void testCaptainRelationshipRecordEvent() {
+    std::cout << "\n=== Captain Relationship Record Event ===" << std::endl;
+    ecs::World world;
+    systems::CaptainRelationshipSystem sys(&world);
+    world.createEntity("cap1");
+    world.createEntity("cap2");
+    sys.recordEvent("cap1", "cap2", "saved_in_combat");
+    assertTrue(sys.getAffinity("cap1", "cap2") > 0.0f,
+               "Affinity positive after saved_in_combat");
+}
+
+void testCaptainRelationshipAbandoned() {
+    std::cout << "\n=== Captain Relationship Abandoned ===" << std::endl;
+    ecs::World world;
+    systems::CaptainRelationshipSystem sys(&world);
+    world.createEntity("cap1");
+    world.createEntity("cap2");
+    sys.recordEvent("cap1", "cap2", "abandoned");
+    assertTrue(sys.getAffinity("cap1", "cap2") < 0.0f,
+               "Affinity negative after abandoned");
+}
+
+void testCaptainRelationshipStatus() {
+    std::cout << "\n=== Captain Relationship Status Friend ===" << std::endl;
+    ecs::World world;
+    systems::CaptainRelationshipSystem sys(&world);
+    world.createEntity("cap1");
+    world.createEntity("cap2");
+    // saved_in_combat gives +10 each, need >50
+    for (int i = 0; i < 6; i++) {
+        sys.recordEvent("cap1", "cap2", "saved_in_combat");
+    }
+    assertTrue(sys.getRelationshipStatus("cap1", "cap2") == "Friend",
+               "Status is Friend with high affinity");
+}
+
+void testCaptainRelationshipGrudge() {
+    std::cout << "\n=== Captain Relationship Grudge ===" << std::endl;
+    ecs::World world;
+    systems::CaptainRelationshipSystem sys(&world);
+    world.createEntity("cap1");
+    world.createEntity("cap2");
+    // abandoned gives -20 each, need < -50
+    for (int i = 0; i < 3; i++) {
+        sys.recordEvent("cap1", "cap2", "abandoned");
+    }
+    assertTrue(sys.getRelationshipStatus("cap1", "cap2") == "Grudge",
+               "Status is Grudge with very negative affinity");
+}
+
+void testCaptainRelationshipMultipleEvents() {
+    std::cout << "\n=== Captain Relationship Multiple Events ===" << std::endl;
+    ecs::World world;
+    systems::CaptainRelationshipSystem sys(&world);
+    world.createEntity("cap1");
+    world.createEntity("cap2");
+    sys.recordEvent("cap1", "cap2", "saved_in_combat");  // +10
+    sys.recordEvent("cap1", "cap2", "abandoned");         // -20
+    sys.recordEvent("cap1", "cap2", "shared_victory");    // +5
+    // Net: -5
+    float affinity = sys.getAffinity("cap1", "cap2");
+    assertTrue(approxEqual(affinity, -5.0f), "Net affinity reflects mixed events");
+}
+
+// ==================== EmotionalArcSystem Tests ====================
+
+void testEmotionalArcVictory() {
+    std::cout << "\n=== Emotional Arc Victory ===" << std::endl;
+    ecs::World world;
+    systems::EmotionalArcSystem sys(&world);
+    world.createEntity("cap1");
+    float baseline = sys.getConfidence("cap1");
+    sys.onCombatVictory("cap1");
+    assertTrue(sys.getConfidence("cap1") > baseline, "Confidence increased after victory");
+}
+
+void testEmotionalArcDefeat() {
+    std::cout << "\n=== Emotional Arc Defeat ===" << std::endl;
+    ecs::World world;
+    systems::EmotionalArcSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::EmotionalState>(entity);
+    float baseline_conf = sys.getConfidence("cap1");
+    float baseline_fat = sys.getFatigue("cap1");
+    sys.onCombatDefeat("cap1");
+    assertTrue(sys.getConfidence("cap1") < baseline_conf, "Confidence decreased after defeat");
+    assertTrue(sys.getFatigue("cap1") > baseline_fat, "Fatigue increased after defeat");
+}
+
+void testEmotionalArcRest() {
+    std::cout << "\n=== Emotional Arc Rest ===" << std::endl;
+    ecs::World world;
+    systems::EmotionalArcSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    auto* state = addComp<components::EmotionalState>(entity);
+    state->fatigue = 50.0f;
+    sys.onRest("cap1");
+    assertTrue(state->fatigue < 50.0f, "Fatigue decreased after rest");
+}
+
+void testEmotionalArcTrust() {
+    std::cout << "\n=== Emotional Arc Trust ===" << std::endl;
+    ecs::World world;
+    systems::EmotionalArcSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::EmotionalState>(entity);
+    float baseline = sys.getTrust("cap1");
+    sys.onPlayerTrust("cap1");
+    assertTrue(sys.getTrust("cap1") > baseline, "Trust increased after player trust");
+}
+
+void testEmotionalArcBetray() {
+    std::cout << "\n=== Emotional Arc Betray ===" << std::endl;
+    ecs::World world;
+    systems::EmotionalArcSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::EmotionalState>(entity);
+    float baseline = sys.getTrust("cap1");
+    sys.onPlayerBetray("cap1");
+    assertTrue(sys.getTrust("cap1") < baseline, "Trust decreased after betrayal");
+}
+
+// ==================== FleetCargoSystem Tests ====================
+
+void testFleetCargoAddContributor() {
+    std::cout << "\n=== Fleet Cargo Add Contributor ===" << std::endl;
+    ecs::World world;
+    systems::FleetCargoSystem sys(&world);
+    world.createEntity("pool1");
+    auto* ship = world.createEntity("ship1");
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 400.0f;
+    sys.addContributor("pool1", "ship1");
+    sys.recalculate("pool1");
+    assertTrue(sys.getTotalCapacity("pool1") == 400, "Total capacity is 400 after adding ship");
+}
+
+void testFleetCargoRemoveContributor() {
+    std::cout << "\n=== Fleet Cargo Remove Contributor ===" << std::endl;
+    ecs::World world;
+    systems::FleetCargoSystem sys(&world);
+    world.createEntity("pool1");
+    auto* ship = world.createEntity("ship1");
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 400.0f;
+    sys.addContributor("pool1", "ship1");
+    sys.removeContributor("pool1", "ship1");
+    assertTrue(sys.getTotalCapacity("pool1") == 0, "Total capacity 0 after removing ship");
+}
+
+void testFleetCargoMultipleShips() {
+    std::cout << "\n=== Fleet Cargo Multiple Ships ===" << std::endl;
+    ecs::World world;
+    systems::FleetCargoSystem sys(&world);
+    world.createEntity("pool1");
+    for (int i = 0; i < 3; i++) {
+        std::string sid = "ship" + std::to_string(i);
+        auto* ship = world.createEntity(sid);
+        auto* inv = addComp<components::Inventory>(ship);
+        inv->max_capacity = 200.0f;
+        sys.addContributor("pool1", sid);
+    }
+    sys.recalculate("pool1");
+    assertTrue(sys.getTotalCapacity("pool1") == 600, "Aggregate capacity of 3 ships is 600");
+}
+
+void testFleetCargoUsedCapacity() {
+    std::cout << "\n=== Fleet Cargo Used Capacity ===" << std::endl;
+    ecs::World world;
+    systems::FleetCargoSystem sys(&world);
+    world.createEntity("pool1");
+    auto* ship = world.createEntity("ship1");
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 400.0f;
+    components::Inventory::Item item;
+    item.item_id = "ore1";
+    item.name = "Veldspar";
+    item.type = "ore";
+    item.quantity = 10;
+    item.volume = 5.0f;
+    inv->items.push_back(item);
+    sys.addContributor("pool1", "ship1");
+    sys.recalculate("pool1");
+    assertTrue(sys.getUsedCapacity("pool1") == 50, "Used capacity reflects items (10*5=50)");
+}
+
+void testFleetCargoGetCapacity() {
+    std::cout << "\n=== Fleet Cargo Get Capacity ===" << std::endl;
+    ecs::World world;
+    systems::FleetCargoSystem sys(&world);
+    world.createEntity("pool1");
+    auto* ship = world.createEntity("ship1");
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 300.0f;
+    sys.addContributor("pool1", "ship1");
+    assertTrue(sys.getTotalCapacity("pool1") == 300, "getTotalCapacity query returns 300");
+}
+
+// ==================== TacticalOverlaySystem Tests ====================
+
+void testTacticalOverlayToggle() {
+    std::cout << "\n=== Tactical Overlay Toggle ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* entity = world.createEntity("player1");
+    addComp<components::TacticalOverlayState>(entity);
+    sys.toggleOverlay("player1");
+    assertTrue(sys.isEnabled("player1"), "Overlay enabled after toggle");
+}
+
+void testTacticalOverlayToggleTwice() {
+    std::cout << "\n=== Tactical Overlay Toggle Twice ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* entity = world.createEntity("player1");
+    addComp<components::TacticalOverlayState>(entity);
+    sys.toggleOverlay("player1");
+    sys.toggleOverlay("player1");
+    assertTrue(!sys.isEnabled("player1"), "Overlay disabled after double toggle");
+}
+
+void testTacticalOverlaySetToolRange() {
+    std::cout << "\n=== Tactical Overlay Set Tool Range ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* entity = world.createEntity("player1");
+    auto* overlay = addComp<components::TacticalOverlayState>(entity);
+    sys.setToolRange("player1", 5000.0f, "weapon");
+    assertTrue(approxEqual(overlay->tool_range, 5000.0f), "Tool range set to 5000");
+}
+
+void testTacticalOverlayRingDistances() {
+    std::cout << "\n=== Tactical Overlay Ring Distances ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* entity = world.createEntity("player1");
+    addComp<components::TacticalOverlayState>(entity);
+    std::vector<float> custom = {10.0f, 25.0f, 50.0f};
+    sys.setRingDistances("player1", custom);
+    auto result = sys.getRingDistances("player1");
+    assertTrue(result.size() == 3, "Ring distances has 3 entries");
+    assertTrue(approxEqual(result[0], 10.0f), "First ring distance is 10");
+    assertTrue(approxEqual(result[2], 50.0f), "Third ring distance is 50");
+}
+
+void testTacticalOverlayDefaultRings() {
+    std::cout << "\n=== Tactical Overlay Default Rings ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* entity = world.createEntity("player1");
+    addComp<components::TacticalOverlayState>(entity);
+    auto rings = sys.getRingDistances("player1");
+    assertTrue(rings.size() == 6, "Default ring distances has 6 entries");
+    assertTrue(approxEqual(rings[0], 5.0f), "Default first ring is 5.0");
+    assertTrue(approxEqual(rings[5], 100.0f), "Default last ring is 100.0");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -5650,7 +6204,10 @@ int main() {
     std::cout << "PI, Manufacturing, Research," << std::endl;
     std::cout << "Chat, CharacterCreation, Tournament, Leaderboard," << std::endl;
     std::cout << "Station, WreckSalvage, ServerConsole," << std::endl;
-    std::cout << "Logger, ServerMetrics" << std::endl;
+    std::cout << "Logger, ServerMetrics," << std::endl;
+    std::cout << "FleetMorale, CaptainPersonality, FleetChatter," << std::endl;
+    std::cout << "WarpAnomaly, CaptainRelationship, EmotionalArc," << std::endl;
+    std::cout << "FleetCargo, TacticalOverlay" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -5948,6 +6505,63 @@ int main() {
     testConsoleNotInitialized();
     testConsoleShutdown();
     testConsoleInteractiveMode();
+
+    // Fleet morale system tests
+    testFleetMoraleRecordWin();
+    testFleetMoraleRecordLoss();
+    testFleetMoraleMultipleEvents();
+    testFleetMoraleLossStreak();
+    testFleetMoraleSavedByPlayer();
+    testFleetMoraleMissionTogether();
+
+    // Captain personality system tests
+    testCaptainPersonalityAssign();
+    testCaptainPersonalityFactionTraits();
+    testCaptainPersonalitySetTrait();
+    testCaptainPersonalityGetFaction();
+    testCaptainPersonalityDeterministic();
+
+    // Fleet chatter system tests
+    testFleetChatterSetActivity();
+    testFleetChatterGetLine();
+    testFleetChatterCooldown();
+    testFleetChatterLinesSpoken();
+    testFleetChatterCooldownExpires();
+
+    // Warp anomaly system tests
+    testWarpAnomalyNoneIfNotCruising();
+    testWarpAnomalyNoneIfShortWarp();
+    testWarpAnomalyTriggersOnLongWarp();
+    testWarpAnomalyCount();
+    testWarpAnomalyClear();
+
+    // Captain relationship system tests
+    testCaptainRelationshipRecordEvent();
+    testCaptainRelationshipAbandoned();
+    testCaptainRelationshipStatus();
+    testCaptainRelationshipGrudge();
+    testCaptainRelationshipMultipleEvents();
+
+    // Emotional arc system tests
+    testEmotionalArcVictory();
+    testEmotionalArcDefeat();
+    testEmotionalArcRest();
+    testEmotionalArcTrust();
+    testEmotionalArcBetray();
+
+    // Fleet cargo system tests
+    testFleetCargoAddContributor();
+    testFleetCargoRemoveContributor();
+    testFleetCargoMultipleShips();
+    testFleetCargoUsedCapacity();
+    testFleetCargoGetCapacity();
+
+    // Tactical overlay system tests
+    testTacticalOverlayToggle();
+    testTacticalOverlayToggleTwice();
+    testTacticalOverlaySetToolRange();
+    testTacticalOverlayRingDistances();
+    testTacticalOverlayDefaultRings();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
