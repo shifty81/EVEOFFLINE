@@ -57,7 +57,7 @@ void RadialMenu::SetupSegments() {
     }
 }
 
-void RadialMenu::Open(float screenX, float screenY, const std::string& entityId) {
+void RadialMenu::Open(float screenX, float screenY, const std::string& entityId, float distanceToTarget) {
     m_open = true;
     m_centerX = screenX;
     m_centerY = screenY;
@@ -66,6 +66,7 @@ void RadialMenu::Open(float screenX, float screenY, const std::string& entityId)
     m_entityId = entityId;
     m_highlightedAction = Action::NONE;
     m_rangeDistance = 0;
+    m_distanceToTarget = distanceToTarget;
 }
 
 void RadialMenu::Close() {
@@ -95,7 +96,13 @@ void RadialMenu::UpdateMousePosition(float mouseX, float mouseY) {
     float angle = std::atan2(dy, dx);
     int segIdx = GetSegmentAtAngle(angle);
     if (segIdx >= 0 && segIdx < static_cast<int>(m_segments.size())) {
-        m_highlightedAction = m_segments[segIdx].action;
+        Action candidate = m_segments[segIdx].action;
+        // Disable "Warp To" for on-grid entities (within 150km, same as ShipPhysics::MIN_WARP_DISTANCE)
+        if (candidate == Action::WARP_TO && m_distanceToTarget > 0.0f && m_distanceToTarget < 150000.0f) {
+            m_highlightedAction = Action::NONE;
+        } else {
+            m_highlightedAction = candidate;
+        }
     } else {
         m_highlightedAction = Action::NONE;
     }
@@ -203,8 +210,11 @@ void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
         const auto& seg = m_segments[i];
         bool highlighted = (seg.action == m_highlightedAction && m_highlightedAction != Action::NONE);
 
+        // Check if this action is disabled (e.g. Warp To when target is on-grid)
+        bool disabled = (seg.action == Action::WARP_TO && m_distanceToTarget > 0.0f && m_distanceToTarget < 150000.0f);
+
         // Highlight the selected segment
-        if (highlighted) {
+        if (highlighted && !disabled) {
             r.drawArc(center, INNER_RADIUS + 1.0f, OUTER_RADIUS - 1.0f,
                       seg.startAngle, seg.endAngle, bgHighlight, 8);
             // Teal accent border on highlighted segment
@@ -228,7 +238,9 @@ void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
 
         // Center the text approximately
         float textW = r.measureText(seg.label);
-        atlas::Color labelColor = highlighted ? accentTeal : t.textPrimary;
+        atlas::Color labelColor = disabled ? t.textDisabled
+                                 : highlighted ? accentTeal
+                                 : t.textPrimary;
         r.drawText(seg.label,
                    {labelX - textW * 0.5f, labelY - 6.0f},
                    labelColor);

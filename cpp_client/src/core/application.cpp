@@ -1151,11 +1151,20 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
                     *m_camera, entityList);
                 
                 if (!pickedId.empty()) {
+                    // Compute distance to target for warp eligibility check
+                    float distToTarget = 0.0f;
+                    if (m_shipPhysics) {
+                        auto targetEntity = m_gameClient->getEntityManager().getEntity(pickedId);
+                        if (targetEntity) {
+                            distToTarget = glm::distance(m_shipPhysics->getPosition(), targetEntity->getPosition());
+                        }
+                    }
                     m_radialMenu->Open(static_cast<float>(m_radialMenuStartX), 
                                       static_cast<float>(m_radialMenuStartY), 
-                                      pickedId);
+                                      pickedId, distToTarget);
                     m_radialMenuOpen = true;
-                    std::cout << "[Radial Menu] Opened for entity: " << pickedId << std::endl;
+                    std::cout << "[Radial Menu] Opened for entity: " << pickedId
+                              << " (distance: " << distToTarget << "m)" << std::endl;
                 }
             }
         }

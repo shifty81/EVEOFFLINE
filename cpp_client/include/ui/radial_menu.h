@@ -48,8 +48,9 @@ public:
     /**
      * Open the radial menu at screen position, targeting an entity.
      * Call when the user holds left-click on an entity.
+     * @param distanceToTarget Distance in metres to the target entity (used to disable warp for nearby entities)
      */
-    void Open(float screenX, float screenY, const std::string& entityId);
+    void Open(float screenX, float screenY, const std::string& entityId, float distanceToTarget = 0.0f);
 
     /**
      * Close/cancel the radial menu.
@@ -130,6 +131,7 @@ private:
     std::string m_entityId;            // Target entity
     Action m_highlightedAction;        // Currently highlighted segment
     int m_rangeDistance = 0;            // Drag-to-range distance (metres)
+    float m_distanceToTarget = 0.0f;   // Distance in metres to target entity
 
     std::vector<Segment> m_segments;
 
