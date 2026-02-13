@@ -27,6 +27,14 @@ enum class MessageType {
     MODULE_DEACTIVATE,
     WORMHOLE_SCAN,
     WORMHOLE_JUMP,
+    DOCK_REQUEST,
+    DOCK_SUCCESS,
+    DOCK_FAILED,
+    UNDOCK_REQUEST,
+    UNDOCK_SUCCESS,
+    REPAIR_REQUEST,
+    REPAIR_RESULT,
+    DAMAGE_EVENT,
     ERROR
 };
 
@@ -47,6 +55,17 @@ public:
     std::string createStateUpdate(const std::string& game_state);
     std::string createChatMessage(const std::string& sender, const std::string& message);
     std::string createError(const std::string& error_message);
+    
+    // Station docking messages
+    std::string createDockSuccess(const std::string& station_id);
+    std::string createDockFailed(const std::string& reason);
+    std::string createUndockSuccess();
+    std::string createRepairResult(float cost, float shield_hp, float armor_hp, float hull_hp);
+    
+    // Damage event messages
+    std::string createDamageEvent(const std::string& target_id, float damage,
+                                  const std::string& damage_type, const std::string& layer_hit,
+                                  bool shield_depleted, bool armor_depleted, bool hull_critical);
     
     // Message validation
     bool validateMessage(const std::string& json);

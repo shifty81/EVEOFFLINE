@@ -23,6 +23,7 @@ enum class ContextMenuAction {
     SHOW_INFO,
     NAVIGATE_TO,
     BOOKMARK,
+    JUMP,
     CANCEL
 };
 
@@ -64,6 +65,7 @@ using LookAtCallback = std::function<void(const std::string& entity_id)>;
 using ShowInfoCallback = std::function<void(const std::string& entity_id)>;
 using NavigateToCallback = std::function<void(float x, float y, float z)>;
 using BookmarkCallback = std::function<void(float x, float y, float z)>;
+using JumpCallback = std::function<void(const std::string& entity_id)>;
 
 // Context menu type
 enum class ContextMenuType {
@@ -86,8 +88,9 @@ public:
      * Show context menu for an entity
      * @param entity_id ID of the clicked entity
      * @param is_locked Whether the entity is currently locked as a target
+     * @param is_stargate Whether the entity is a stargate (adds Jump option)
      */
-    void ShowEntityMenu(const std::string& entity_id, bool is_locked = false);
+    void ShowEntityMenu(const std::string& entity_id, bool is_locked = false, bool is_stargate = false);
     
     /**
      * Show context menu for empty space
@@ -106,6 +109,12 @@ public:
      * Render using the Atlas context (called from application render loop)
      */
     void RenderAtlas(atlas::AtlasContext& ctx);
+
+    /**
+     * Pre-consume the context menu area so panels don't steal clicks.
+     * Call BEFORE rendering HUD panels; call RenderAtlas() AFTER panels.
+     */
+    void ReserveInputArea(atlas::AtlasContext& ctx);
     
     /**
      * Close the context menu
@@ -133,6 +142,7 @@ public:
     void SetShowInfoCallback(ShowInfoCallback callback) { m_onShowInfo = callback; }
     void SetNavigateToCallback(NavigateToCallback callback) { m_onNavigateTo = callback; }
     void SetBookmarkCallback(BookmarkCallback callback) { m_onBookmark = callback; }
+    void SetJumpCallback(JumpCallback callback) { m_onJump = callback; }
 
 private:
     // Render submenu for orbit distances
@@ -148,6 +158,7 @@ private:
     ContextMenuType m_menuType;
     std::string m_targetEntityId;
     bool m_targetIsLocked;
+    bool m_targetIsStargate = false;
     float m_worldX, m_worldY, m_worldZ;
     float m_screenX = 0.0f, m_screenY = 0.0f;
     
@@ -165,6 +176,7 @@ private:
     ShowInfoCallback m_onShowInfo;
     NavigateToCallback m_onNavigateTo;
     BookmarkCallback m_onBookmark;
+    JumpCallback m_onJump;
 };
 
 } // namespace UI

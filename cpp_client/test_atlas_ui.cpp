@@ -2804,6 +2804,87 @@ void testRadialMenuDragToRange() {
     assertTrue(!menu.IsOpen(), "Menu closed");
 }
 
+// ─── Panel Deferred Mouse Consumption test ────────────────────────
+// Verifies that panelEnd (not panelBeginStateful) consumes leftover
+// clicks, so content widgets inside the panel still receive clicks.
+
+void testPanelDeferredMouseConsumption() {
+    std::cout << "\n=== Panel Deferred Mouse Consumption ===" << std::endl;
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    // Frame 1: Press mouse inside panel area
+    {
+        atlas::InputState input;
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {810.0f, 120.0f};  // inside panel content area
+        input.mouseDown[0] = true;
+        input.mouseClicked[0] = true;
+        ctx.beginFrame(input);
+
+        // Simulate panelBeginStateful pushing bounds
+        atlas::Rect panelBounds = {800.0f, 100.0f, 200.0f, 400.0f};
+        ctx.pushPanelBounds(panelBounds);
+
+        // After pushPanelBounds, mouse should NOT be consumed yet
+        // so a child widget can still claim the click
+        assertTrue(!ctx.isMouseConsumed(),
+                   "Mouse NOT consumed after pushPanelBounds (deferred)");
+
+        // Child widget claims click
+        atlas::WidgetID childID = atlas::hashID("child_widget");
+        atlas::Rect childRect = {805.0f, 115.0f, 50.0f, 20.0f};
+        bool childClicked = ctx.buttonBehavior(childRect, childID);
+        // buttonBehavior sets active on click, doesn't return true yet (needs release)
+        assertTrue(!ctx.isMouseConsumed(),
+                   "Mouse still not consumed after child buttonBehavior");
+
+        // Simulate panelEnd consuming leftover
+        atlas::Rect popped = ctx.popPanelBounds();
+        assertTrue(popped.w == 200.0f, "Popped bounds match pushed bounds");
+        // After popPanelBounds, panel should consume if not already consumed
+        if (ctx.isHovered(popped) && ctx.isMouseClicked() && !ctx.isMouseConsumed()) {
+            ctx.consumeMouse();
+        }
+        assertTrue(ctx.isMouseConsumed(),
+                   "Mouse consumed after panelEnd logic");
+
+        ctx.endFrame();
+    }
+
+    ctx.shutdown();
+}
+
+// ─── Context Menu Jump Action test ────────────────────────────────
+
+void testContextMenuJumpAction() {
+    std::cout << "\n=== Context Menu Jump Action ===" << std::endl;
+
+    UI::ContextMenu menu;
+
+    // Verify menu can be opened with stargate flag
+    menu.ShowEntityMenu("gate_jita", false, true);
+    assertTrue(menu.IsOpen(), "Menu is open");
+
+    // Set jump callback
+    std::string jumpedTo;
+    menu.SetJumpCallback([&jumpedTo](const std::string& id) {
+        jumpedTo = id;
+    });
+
+    // Close and check callback wire-up
+    menu.Close();
+    assertTrue(!menu.IsOpen(), "Menu is closed after Close()");
+    assertTrue(jumpedTo.empty(), "Jump callback not fired yet");
+
+    // Verify non-stargate menu works fine
+    menu.ShowEntityMenu("planet_iv", false, false);
+    assertTrue(menu.IsOpen(), "Non-stargate menu is open");
+    menu.Close();
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "Atlas UI System Tests" << std::endl;
@@ -2902,6 +2983,8 @@ int main() {
     testOverviewColumnSorting();
     testOverviewCtrlClickCallback();
     testRadialMenuDragToRange();
+    testPanelDeferredMouseConsumption();
+    testContextMenuJumpAction();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

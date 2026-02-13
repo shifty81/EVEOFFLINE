@@ -100,6 +100,14 @@ bool panelBegin(AtlasContext& ctx, const char* title,
 }
 
 void panelEnd(AtlasContext& ctx) {
+    // Consume any leftover mouse clicks within the panel body so they
+    // don't fall through to the 3D world or widgets behind the panel.
+    Rect bounds = ctx.popPanelBounds();
+    if (bounds.w > 0.0f && bounds.h > 0.0f) {
+        if (ctx.isHovered(bounds) && ctx.isMouseClicked() && !ctx.isMouseConsumed()) {
+            ctx.consumeMouse();
+        }
+    }
     ctx.popID();
 }
 
@@ -1544,10 +1552,9 @@ bool panelBeginStateful(AtlasContext& ctx, const char* title,
         }
     }
 
-    // Consume mouse if clicking within the panel body to prevent click-through
-    if (ctx.isHovered(state.bounds) && ctx.isMouseClicked() && !ctx.isMouseConsumed()) {
-        ctx.consumeMouse();
-    }
+    // Push panel bounds so panelEnd can consume leftover clicks
+    // (deferred to let content widgets process clicks first)
+    ctx.pushPanelBounds(state.bounds);
 
     // Draw panel background (apply opacity)
     Rect drawBounds = state.bounds;

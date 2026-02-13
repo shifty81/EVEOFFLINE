@@ -13,10 +13,11 @@ ContextMenu::ContextMenu()
 {
 }
 
-void ContextMenu::ShowEntityMenu(const std::string& entity_id, bool is_locked) {
+void ContextMenu::ShowEntityMenu(const std::string& entity_id, bool is_locked, bool is_stargate) {
     m_menuType = ContextMenuType::ENTITY;
     m_targetEntityId = entity_id;
     m_targetIsLocked = is_locked;
+    m_targetIsStargate = is_stargate;
     m_activeSubmenu = -1;
 }
 
@@ -58,6 +59,9 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
         items.push_back({"Keep at Range",  ContextMenuAction::KEEP_AT_RANGE,   1});
         items.push_back({"Warp To",        ContextMenuAction::WARP_TO,         2});
         items.push_back({"Align To",       ContextMenuAction::NAVIGATE_TO,    -1});
+        if (m_targetIsStargate) {
+            items.push_back({"Jump",       ContextMenuAction::JUMP,           -1});
+        }
         if (m_targetIsLocked) {
             items.push_back({"Unlock Target", ContextMenuAction::UNLOCK_TARGET, -1});
         } else {
@@ -159,6 +163,9 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
                     case ContextMenuAction::BOOKMARK:
                         if (m_onBookmark) m_onBookmark(m_worldX, m_worldY, m_worldZ);
                         break;
+                    case ContextMenuAction::JUMP:
+                        if (m_onJump) m_onJump(m_targetEntityId);
+                        break;
                     default:
                         break;
                 }
@@ -227,6 +234,40 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
                 Close();
             }
             sy += itemH;
+        }
+    }
+}
+
+void ContextMenu::ReserveInputArea(atlas::AtlasContext& ctx) {
+    if (m_menuType == ContextMenuType::NONE) return;
+
+    // Replicate menu bounds calculation (same as RenderAtlas)
+    int itemCount = 0;
+    if (m_menuType == ContextMenuType::ENTITY) {
+        itemCount = 8;  // base entity items
+        if (m_targetIsStargate) itemCount++;
+    } else {
+        itemCount = 2;  // empty space items
+    }
+
+    float itemH   = 24.0f;
+    float menuW   = 180.0f;
+    float menuH   = itemCount * itemH + 4.0f;
+    // Account for entity name header
+    if (m_menuType == ContextMenuType::ENTITY && !m_targetEntityId.empty())
+        menuH += itemH;
+
+    float winW = static_cast<float>(ctx.input().windowW);
+    float winH = static_cast<float>(ctx.input().windowH);
+    float menuX = std::min(m_screenX, winW - menuW - 4.0f);
+    float menuY = std::min(m_screenY, winH - menuH - 4.0f);
+
+    atlas::Rect bg(menuX, menuY, menuW, menuH);
+
+    // Pre-consume the area so panels don't steal clicks from the menu
+    if (ctx.isHovered(bg)) {
+        if (ctx.isMouseClicked() || ctx.isRightMouseClicked()) {
+            ctx.consumeMouse();
         }
     }
 }

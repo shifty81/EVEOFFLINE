@@ -6,8 +6,8 @@
 - **102 ships** across all classes (Frigates to Titans)
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
-- **27 C++ server systems** fully implemented
-- **985 test assertions** all passing
+- **29 C++ server systems** fully implemented
+- **1011 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 
@@ -88,11 +88,11 @@ This is the most important next step for the project. All foundational systems a
 
 ---
 
-#### Task 1.2: Shield/Armor/Hull Damage with Visual Feedback 🔧 SERVER FOUNDATION COMPLETE
+#### Task 1.2: Shield/Armor/Hull Damage with Visual Feedback ✅ CLIENT INTEGRATION COMPLETE
 
 **Priority**: High  
 **Complexity**: Medium  
-**Estimated Time**: 1 week (remaining: client-side visual effects)
+**Estimated Time**: 1 week — **COMPLETED**
 
 **Objective**: Implement visible damage feedback when ships take damage
 
@@ -103,60 +103,77 @@ This is the most important next step for the project. All foundational systems a
 4. ✅ Hit record includes damage amount, type, layer, and timestamp
 5. ✅ `clearOldHits()` method for garbage collection of stale events
 6. ✅ 5 new test functions verifying all damage event scenarios
-
-**Remaining (Client-side)**:
-1. Add shield ripple effect (blue glow on hit) — read `DamageEvent.layer_hit == "shield"`
-2. Add armor flash effect (yellow/orange flash) — read `DamageEvent.layer_hit == "armor"`
-3. Add hull damage effect (red pulse, screen shake) — read `DamageEvent.hull_critical`
-4. Integrate with existing HealthBar system
-5. Add particle effects for explosions
+7. ✅ Client-side `DamageEffectHelper` class:
+   - Shield hits: blue ripple + SHIELD_HIT particles
+   - Armor hits: orange sparks (DEBRIS emitter)
+   - Hull hits: red debris + small explosion
+   - Shield depleted: burst of 20 shield particles
+   - Armor depleted: explosion (fire/smoke effect)
+   - Hull critical: screen shake + 3-second alarm overlay
+   - Proportional screen shake for high-damage hits (>100 damage)
+8. ✅ `DAMAGE_EVENT` protocol message for server→client communication
+9. ✅ `DamageEffectHelper::layerColor()` for damage overlay coloring
 
 **Dependencies**: Task 1.1 ✅ COMPLETE
 
 ---
 
-#### Task 1.3: Basic AI Combat (Engage, Orbit, Retreat) 🔧 RETREAT LOGIC COMPLETE
+#### Task 1.3: Basic AI Combat (Engage, Orbit, Retreat) ✅ EXPANDED
 
 **Priority**: High  
 **Complexity**: Medium-High  
-**Estimated Time**: 1-2 weeks (remaining: expanded behaviors)
+**Estimated Time**: 1-2 weeks — **CORE BEHAVIORS COMPLETE**
 
 **Objective**: NPCs can engage players, orbit targets, and retreat when damaged
 
-**Current State**:
+**Completed**:
 - ✅ C++ server has WeaponSystem implemented
 - ✅ C++ server has target locking protocol
 - ✅ NPC database with 32 NPC templates
 - ✅ AI health-based retreat logic (flee when total HP below configurable threshold)
 - ✅ Configurable `flee_threshold` per-NPC (default 25%)
-- ✅ 3 new test functions verifying retreat behavior
-- ⚠️ AI orbit behavior needs dynamic distance by ship class
-- ⚠️ Target selection is basic (closest only)
+- ✅ Dynamic orbit distances by ship class:
+  - Frigate/Destroyer: 5,000m (close brawlers)
+  - Cruiser/Battlecruiser: 15,000m (medium range)
+  - Battleship: 30,000m (long range)
+  - Capital/Carrier/Dreadnought/Titan: 50,000m
+  - `use_dynamic_orbit` flag on AI component
+- ✅ Engagement range logic from weapon optimal + falloff
+- ✅ Target selection strategies:
+  - `Closest`: nearest player (default)
+  - `LowestHP`: player with lowest HP fraction
+  - `HighestThreat`: player dealing most damage to NPC
+- ✅ 13 test functions verifying all AI behaviors (3 retreat + 10 new)
 
-**Implementation Plan**:
-1. ~~Add retreat logic (flee when shields drop below 25%)~~ ✅ DONE
-2. Add dynamic orbit distances by ship class (frigates close, battleships far)
-3. Add engagement range logic (optimal + falloff)
-4. Add target selection (closest, lowest HP, highest threat)
-5. Test AI vs AI combat
-6. Test AI vs player combat
+**Remaining**:
+- AI vs AI combat testing
+- AI vs player combat testing
+- Coordinated fleet AI (focus fire, squad tactics)
 
 ---
 
-#### Task 1.4: Station Docking and Repair Service
+#### Task 1.4: Station Docking and Repair Service 🔧 PROTOCOL COMPLETE
 
 **Priority**: High  
 **Complexity**: Medium  
-**Estimated Time**: 1 week
+**Estimated Time**: 1 week (remaining: station UI integration)
 
 **Objective**: Players can dock at stations and repair their ships
 
-**Implementation Plan**:
-1. Add station docking protocol (CLIENT_REQUEST_DOCK, SERVER_DOCK_SUCCESS)
-2. Add repair service in station UI
-3. Add repair cost calculation (ISK deduction)
-4. Add undock mechanism
-5. Test full dock → repair → undock flow
+**Completed (February 13, 2026)**:
+1. ✅ Station docking protocol messages:
+   - `DOCK_REQUEST`, `DOCK_SUCCESS`, `DOCK_FAILED`
+   - `UNDOCK_REQUEST`, `UNDOCK_SUCCESS`
+   - `REPAIR_REQUEST`, `REPAIR_RESULT`
+2. ✅ Protocol message creation methods:
+   - `createDockSuccess(station_id)`, `createDockFailed(reason)`
+   - `createUndockSuccess()`, `createRepairResult(cost, shield, armor, hull)`
+3. ✅ 5 protocol tests verifying message format and parsing
+
+**Remaining**:
+1. Wire protocol messages to StationSystem (server-side handler)
+2. Add station UI panel (repair button, undock button)
+3. Test full dock → repair → undock flow
 
 ---
 
