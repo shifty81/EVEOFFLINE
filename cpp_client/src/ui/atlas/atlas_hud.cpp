@@ -235,6 +235,14 @@ void AtlasHUD::drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship) {
     speedIndicator(ctx, {hudCentre.x, winH - 12.0f},
                    ship.currentSpeed, ship.maxSpeed);
 
+    // Warp progress indicator (above the HUD circle when warping)
+    if (ship.warpActive && ship.warpPhase > 0) {
+        float warpY = hudCentre.y - hudRadius - 50.0f;
+        warpProgressIndicator(ctx, {hudCentre.x, warpY},
+                              ship.warpPhase, ship.warpProgress,
+                              ship.warpSpeedAU);
+    }
+
     // Keyboard shortcuts: F1–F8 activate high-slot modules
     if (m_moduleCallback) {
         const auto& input = ctx.input();

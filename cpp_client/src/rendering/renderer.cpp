@@ -3,6 +3,7 @@
 #include "rendering/camera.h"
 #include "rendering/model.h"
 #include "rendering/healthbar_renderer.h"
+#include "rendering/warp_effect_renderer.h"
 #include "core/entity.h"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -110,6 +111,13 @@ bool Renderer::initialize() {
     if (!m_healthBarRenderer->initialize()) {
         std::cerr << "Failed to initialize health bar renderer" << std::endl;
         return false;
+    }
+    
+    // Initialize warp effect renderer
+    m_warpEffectRenderer = std::make_unique<WarpEffectRenderer>();
+    if (!m_warpEffectRenderer->initialize()) {
+        std::cerr << "Warning: Warp effect renderer failed — warp tunnel disabled" << std::endl;
+        // Non-fatal: game continues without warp tunnel visuals
     }
     
     // Setup nebula background
@@ -525,6 +533,19 @@ void Renderer::renderSun(Camera& camera, const glm::vec3& sunPosition,
     
     // Restore normal blending
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void Renderer::updateWarpEffect(int phase, float progress, float intensity,
+                                 const glm::vec3& direction, float deltaTime) {
+    if (m_warpEffectRenderer) {
+        m_warpEffectRenderer->update(deltaTime, phase, progress, intensity, direction);
+    }
+}
+
+void Renderer::renderWarpEffect() {
+    if (m_warpEffectRenderer) {
+        m_warpEffectRenderer->render();
+    }
 }
 
 } // namespace atlas

@@ -7,6 +7,7 @@
 #include "core/embedded_server.h"
 #include "core/session_manager.h"
 #include "core/solar_system_scene.h"
+#include "core/ship_physics.h"
 #include "ui/input_handler.h"
 #include "ui/rml_ui_manager.h"
 #include "ui/entity_picker.h"
@@ -50,6 +51,7 @@ Application::Application(const std::string& title, int width, int height)
     m_uiManager = std::make_unique<UI::RmlUiManager>();
     m_entityPicker = std::make_unique<UI::EntityPicker>();
     m_solarSystem = std::make_unique<SolarSystemScene>();
+    m_shipPhysics = std::make_unique<ShipPhysics>();
     m_atlasCtx = std::make_unique<atlas::AtlasContext>();
     m_atlasHUD = std::make_unique<atlas::AtlasHUD>();
     m_contextMenu = std::make_unique<UI::ContextMenu>();
@@ -514,6 +516,11 @@ void Application::update(float deltaTime) {
     // Update local movement (PVE mode — EVE-style movement commands)
     updateLocalMovement(deltaTime);
     
+    // Update solar system scene (engine trail, warp visual state)
+    if (m_solarSystem && m_shipPhysics) {
+        m_solarSystem->update(deltaTime, m_shipPhysics.get());
+    }
+    
     // Update ship status in the HUD
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
     if (playerEntity) {
@@ -585,6 +592,16 @@ void Application::render() {
     // Render scene
     m_renderer->renderScene(*m_camera);
     
+    // Render warp tunnel overlay (after 3D scene, before UI)
+    if (m_solarSystem) {
+        const auto& ws = m_solarSystem->getWarpVisualState();
+        float intensity = ws.active ? 1.0f : 0.0f;
+        m_renderer->updateWarpEffect(ws.phase, ws.progress, intensity,
+                                      ws.direction,
+                                      0.016f);  // approximate dt
+        m_renderer->renderWarpEffect();
+    }
+    
     // Render UI
     m_uiManager->Update();
     m_uiManager->BeginFrame();
@@ -625,6 +642,15 @@ void Application::render() {
         }
         shipData.currentSpeed = m_playerSpeed;
         shipData.maxSpeed = m_playerMaxSpeed;
+        
+        // Feed warp state into HUD
+        if (m_solarSystem) {
+            const auto& ws = m_solarSystem->getWarpVisualState();
+            shipData.warpActive   = ws.active;
+            shipData.warpPhase    = ws.phase;
+            shipData.warpProgress = ws.progress;
+            shipData.warpSpeedAU  = ws.speedAU;
+        }
         
         // Build Atlas target cards from target list
         std::vector<atlas::TargetCardInfo> atlasTargets;
@@ -1307,6 +1333,21 @@ void Application::commandWarpTo(const std::string& entityId) {
     m_moveTargetId = entityId;
     m_activeModeText = "WARPING";
     std::cout << "[Movement] Warping to " << entityId << std::endl;
+
+    // Use ShipPhysics + SolarSystemScene for proper 4-phase warp
+    if (m_solarSystem && m_shipPhysics) {
+        // Try to warp via celestial lookup first
+        const Celestial* celestial = m_solarSystem->findCelestial(entityId);
+        if (celestial) {
+            m_solarSystem->warpTo(entityId, m_shipPhysics.get());
+            return;
+        }
+        // Fallback: warp to an entity position
+        auto targetEntity = m_gameClient->getEntityManager().getEntity(entityId);
+        if (targetEntity) {
+            m_shipPhysics->warpTo(targetEntity->getPosition());
+        }
+    }
 }
 
 void Application::commandStopShip() {
@@ -1494,7 +1535,59 @@ void Application::updateLocalMovement(float deltaTime) {
                 break;
             }
             case MoveCommand::WarpTo: {
-                // Warp = very fast movement, simulated
+                // Use ShipPhysics 4-phase warp when available
+                if (m_shipPhysics && m_shipPhysics->isWarping()) {
+                    m_shipPhysics->update(deltaTime);
+                    playerPos = m_shipPhysics->getPosition();
+                    m_playerVelocity = m_shipPhysics->getVelocity();
+                    m_playerSpeed = m_shipPhysics->getCurrentSpeed();
+
+                    // Update mode text with warp phase info
+                    auto phase = m_shipPhysics->getWarpPhase();
+                    float speedAU = m_shipPhysics->getWarpSpeedAU();
+                    switch (phase) {
+                        case ShipPhysics::WarpPhase::ALIGNING:
+                            m_activeModeText = "ALIGNING";
+                            break;
+                        case ShipPhysics::WarpPhase::ACCELERATING: {
+                            char buf[64];
+                            std::snprintf(buf, sizeof(buf), "WARP  %.1f AU/s", speedAU);
+                            m_activeModeText = buf;
+                            break;
+                        }
+                        case ShipPhysics::WarpPhase::CRUISING: {
+                            char buf[64];
+                            std::snprintf(buf, sizeof(buf), "WARP  %.1f AU/s", speedAU);
+                            m_activeModeText = buf;
+                            break;
+                        }
+                        case ShipPhysics::WarpPhase::DECELERATING:
+                            m_activeModeText = "DECELERATING";
+                            break;
+                        default:
+                            break;
+                    }
+
+                    // Warp completed?
+                    if (!m_shipPhysics->isWarping()) {
+                        m_currentMoveCommand = MoveCommand::None;
+                        m_playerSpeed = m_shipPhysics->getCurrentSpeed();
+                        m_playerVelocity = m_shipPhysics->getVelocity();
+                        m_activeModeText.clear();
+                        std::cout << "[Movement] Warp complete" << std::endl;
+                    }
+                    // Skip the normal position update below — ShipPhysics owns it
+                    playerEntity->setPosition(playerPos);
+                    float rotation = 0.0f;
+                    if (glm::length(m_playerVelocity) > 0.1f) {
+                        rotation = std::atan2(m_playerVelocity.x, m_playerVelocity.z);
+                    }
+                    Health currentHealth = playerEntity->getHealth();
+                    m_gameClient->getEntityManager().updateEntityState(
+                        m_localPlayerId, playerPos, m_playerVelocity, rotation, currentHealth);
+                    return;
+                }
+                // Fallback: simple linear warp (legacy path)
                 m_playerSpeed = std::min(WARP_SPEED,
                                          m_playerSpeed + WARP_SPEED * deltaTime);
                 m_playerVelocity = dir * m_playerSpeed;
@@ -1502,6 +1595,7 @@ void Application::updateLocalMovement(float deltaTime) {
                     m_currentMoveCommand = MoveCommand::None;
                     m_playerSpeed = 0.0f;
                     m_playerVelocity = glm::vec3(0.0f);
+                    m_activeModeText.clear();
                     std::cout << "[Movement] Warp complete" << std::endl;
                 }
                 break;

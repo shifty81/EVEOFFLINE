@@ -48,6 +48,12 @@ struct ShipHUDData {
     float maxSpeed     = 250.0f;
     int   capSegments  = 16;
 
+    // Warp state (fed from WarpVisualState each frame)
+    bool  warpActive   = false;
+    int   warpPhase    = 0;     // 0=none, 1=align, 2=accel, 3=cruise, 4=decel
+    float warpProgress = 0.0f;  // 0.0 – 1.0
+    float warpSpeedAU  = 0.0f;  // Current warp speed in AU/s
+
     // Module rack (up to 8 high, 8 mid, 8 low slots)
     struct ModuleInfo {
         bool   fitted    = false;
