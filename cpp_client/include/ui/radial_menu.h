@@ -48,8 +48,9 @@ public:
     /**
      * Open the radial menu at screen position, targeting an entity.
      * Call when the user holds left-click on an entity.
+     * @param distanceToTarget Distance in metres to the target entity (used to disable warp for nearby entities)
      */
-    void Open(float screenX, float screenY, const std::string& entityId);
+    void Open(float screenX, float screenY, const std::string& entityId, float distanceToTarget = 0.0f);
 
     /**
      * Close/cancel the radial menu.
@@ -124,12 +125,21 @@ private:
     int GetSegmentAtAngle(float angle) const;
     void UpdateRangeDistance(float dist);
 
+    // Minimum warp distance in metres (matches ShipPhysics::MIN_WARP_DISTANCE)
+    static constexpr float MIN_WARP_DISTANCE = 150000.0f;
+
     bool m_open;
     float m_centerX, m_centerY;        // Screen center of the menu
     float m_mouseX, m_mouseY;          // Current mouse position
     std::string m_entityId;            // Target entity
     Action m_highlightedAction;        // Currently highlighted segment
     int m_rangeDistance = 0;            // Drag-to-range distance (metres)
+    float m_distanceToTarget = 0.0f;   // Distance in metres to target entity
+
+    /** Check if warp is disabled for the current target (too close). */
+    bool isWarpDisabled() const {
+        return m_distanceToTarget > 0.0f && m_distanceToTarget < MIN_WARP_DISTANCE;
+    }
 
     std::vector<Segment> m_segments;
 

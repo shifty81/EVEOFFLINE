@@ -1,0 +1,9 @@
+# wing_s.obj
+o wing_s
+v -1 0 -0.2
+v  1 0 -0.2
+v  1 0  0.2
+v -1 0  0.2
+f 1 2 3 4
+o hp_root
+v 0 0 0

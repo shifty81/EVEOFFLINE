@@ -17,6 +17,11 @@
   - Engines, turrets, and launchers placed based on class rules
   - Faction-specific details (Solari spires, Keldari framework)
   - Fallback to procedural generation if parts unavailable
+- **Ship generation quality improvements** (February 13, 2026)
+  - Polygon side counts increased: Veyren 4→8, Keldari 6→10, Solari 8→12, Aurelian 12→16
+  - Hull segment counts raised for smoother profiles across all ship classes
+  - All factions now have turret and launcher weapon parts
+  - Fallback hull parameters improved (more segments, higher side counts)
 
 ⏳ **IN PROGRESS**:
 - Ship JSON data updates

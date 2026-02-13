@@ -432,6 +432,71 @@ std::string Model::findOBJModelPath(const std::string& shipType, const std::stri
     return "";
 }
 
+/**
+ * Get ProceduralShipParams tuned for a specific ship class.
+ * Centralizes the per-class detail configuration used by both
+ * createShipModel() and createShipModelWithRacialDesign().
+ */
+static ProceduralShipParams getProceduralParamsForClass(const std::string& shipClass) {
+    ProceduralShipParams params;
+    params.enforceSymmetry = true;
+
+    if (shipClass == "frigate") {
+        params.extrusionCount = 2;
+        params.extrusionDepth = 0.08f;
+        params.noiseAmplitude = 0.0f;
+        params.engineCount = 2;
+        params.weaponCount = 1;
+        params.antennaCount = 0;
+    } else if (shipClass == "destroyer") {
+        params.extrusionCount = 3;
+        params.extrusionDepth = 0.10f;
+        params.noiseAmplitude = 0.0f;
+        params.engineCount = 2;
+        params.weaponCount = 2;
+        params.antennaCount = 0;
+    } else if (shipClass == "cruiser") {
+        params.extrusionCount = 4;
+        params.extrusionDepth = 0.12f;
+        params.noiseAmplitude = 0.0f;
+        params.engineCount = 2;
+        params.weaponCount = 3;
+        params.antennaCount = 1;
+    } else if (shipClass == "battlecruiser") {
+        params.extrusionCount = 5;
+        params.extrusionDepth = 0.12f;
+        params.engineCount = 3;
+        params.weaponCount = 4;
+        params.antennaCount = 1;
+    } else if (shipClass == "battleship") {
+        params.extrusionCount = 6;
+        params.extrusionDepth = 0.15f;
+        params.engineCount = 4;
+        params.weaponCount = 4;
+        params.antennaCount = 1;
+    } else if (shipClass == "carrier" || shipClass == "dreadnought") {
+        params.extrusionCount = 8;
+        params.extrusionDepth = 0.12f;
+        params.engineCount = 4;
+        params.weaponCount = 6;
+        params.antennaCount = 2;
+    } else if (shipClass == "titan") {
+        params.extrusionCount = 10;
+        params.extrusionDepth = 0.10f;
+        params.engineCount = 6;
+        params.weaponCount = 8;
+        params.antennaCount = 3;
+    } else {
+        params.extrusionCount = 3;
+        params.extrusionDepth = 0.10f;
+        params.engineCount = 2;
+        params.weaponCount = 2;
+        params.antennaCount = 0;
+    }
+
+    return params;
+}
+
 std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const std::string& faction) {
     // Try to load from OBJ file first
     std::string objPath = findOBJModelPath(shipType, faction);
@@ -447,11 +512,13 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
     // Try procedural generation from a seed OBJ (reference assets)
     {
         ProceduralShipGenerator generator;
-        // Configure reference assets (99-intergalactic_spaceship-obj & 24-textures)
+        // Configure reference assets — extracted OBJ models from testing/ archives.
+        // The extraction script (extract_reference_models.sh) places the large OBJ
+        // files into cpp_client/assets/reference_models/.
         ReferenceAssetConfig assetCfg;
         assetCfg.objArchivePath      = "testing/99-intergalactic_spaceship-obj.rar";
         assetCfg.textureArchivePath  = "testing/24-textures.zip";
-        assetCfg.extractedObjDir     = "models/ships";
+        assetCfg.extractedObjDir     = "cpp_client/assets/reference_models";
         assetCfg.extractedTextureDir = "textures";
         generator.setReferenceAssets(assetCfg);
 
@@ -459,8 +526,8 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
         std::string shipClass = "generic";
         if (isFrigate(shipType))         shipClass = "frigate";
         else if (isDestroyer(shipType))  shipClass = "destroyer";
-        else if (isCruiser(shipType))    shipClass = "cruiser";
-        else if (isBattlecruiser(shipType)) shipClass = "battlecruiser";
+        else if (isCruiser(shipType) || isTech2Cruiser(shipType)) shipClass = "cruiser";
+        else if (isCommandShip(shipType) || isBattlecruiser(shipType)) shipClass = "battlecruiser";
         else if (isBattleship(shipType)) shipClass = "battleship";
         else if (isCarrier(shipType))    shipClass = "carrier";
         else if (isDreadnought(shipType)) shipClass = "dreadnought";
@@ -468,35 +535,10 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
 
         std::string seedPath = generator.findSeedOBJ(faction, shipClass);
         if (!seedPath.empty()) {
-            ProceduralShipParams params;
+            ProceduralShipParams params = getProceduralParamsForClass(shipClass);
             // Generate a deterministic seed from ship type + faction
             params.seed = static_cast<unsigned int>(
                 std::hash<std::string>{}(shipType + "_" + faction));
-            params.enforceSymmetry = true;
-
-            // Scale procedural detail by ship class — small ships get less
-            // noise and fewer extrusions for cleaner silhouettes
-            if (shipClass == "frigate") {
-                params.extrusionCount = 2;          // Minimal greebles
-                params.extrusionDepth = 0.08f;      // Shallow extrusions
-                params.noiseAmplitude = 0.0f;       // No noise for clean look
-                params.engineCount = 2;
-                params.weaponCount = 1;
-                params.antennaCount = 0;
-            } else if (shipClass == "destroyer") {
-                params.extrusionCount = 3;
-                params.extrusionDepth = 0.10f;
-                params.noiseAmplitude = 0.0f;
-                params.engineCount = 2;
-                params.weaponCount = 2;
-                params.antennaCount = 0;
-            } else {
-                params.extrusionCount = 5;
-                params.extrusionDepth = 0.15f;
-                params.engineCount = 2;
-                params.weaponCount = 2;
-                params.antennaCount = 0;
-            }
 
             // Faction-specific colour
             FactionColors fc = getFactionColors(faction);
@@ -572,17 +614,17 @@ struct HullParams {
  * More sides = smoother silhouette.
  */
 static int getFactionSides(const std::string& faction) {
-    // Original EVE factions
-    if (faction.find("Veyren") != std::string::npos) return 6;   // Blocky/angular
-    if (faction.find("Keldari") != std::string::npos) return 8;  // Industrial/angular
-    if (faction.find("Solari") != std::string::npos) return 12;    // Refined/ornate
-    if (faction.find("Aurelian") != std::string::npos) return 16; // Smooth/organic
+    // Original EVE factions — higher side counts for better visual quality
+    if (faction.find("Veyren") != std::string::npos) return 8;    // Blocky/angular but not too jagged
+    if (faction.find("Keldari") != std::string::npos) return 10;   // Industrial/angular
+    if (faction.find("Solari") != std::string::npos) return 14;    // Refined/ornate
+    if (faction.find("Aurelian") != std::string::npos) return 20;  // Smooth/organic
     // New PVE factions (matching their analog's design language)
-    if (faction.find("Core Nexus") != std::string::npos) return 6;           // Veyren analog — blocky
-    if (faction.find("Rust-Scrap") != std::string::npos) return 8;           // Keldari analog — industrial
-    if (faction.find("Sanctum Hegemony") != std::string::npos) return 12;    // Solari analog — ornate
-    if (faction.find("Vanguard Republic") != std::string::npos) return 16;   // Aurelian analog — smooth
-    return 8; // Default
+    if (faction.find("Core Nexus") != std::string::npos) return 8;           // Veyren analog — blocky
+    if (faction.find("Rust-Scrap") != std::string::npos) return 10;          // Keldari analog — industrial
+    if (faction.find("Sanctum Hegemony") != std::string::npos) return 14;    // Solari analog — ornate
+    if (faction.find("Vanguard Republic") != std::string::npos) return 20;   // Aurelian analog — smooth
+    return 10; // Default
 }
 
 // Forward declaration for buildShipFromParams (defined later in this file)
@@ -624,7 +666,7 @@ void Model::addPartToMesh(const ShipPart* part, const glm::mat4& transform,
 }
 
 std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string& shipType, const std::string& faction) {
-    // Try OBJ model first
+    // Try OBJ model first (exact match in models/ships directory)
     std::string objPath = findOBJModelPath(shipType, faction);
     if (!objPath.empty()) {
         auto model = std::make_unique<Model>();
@@ -633,6 +675,47 @@ std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string&
         }
     }
 
+    // Try procedural generation from a reference seed OBJ.
+    // This uses high-quality reference models (Intergalactic Spaceship for small
+    // ships, Vulcan Dkyr Class for capitals) as base meshes, then applies
+    // faction-colored procedural modifications for unique variants.
+    {
+        ProceduralShipGenerator generator;
+        ReferenceAssetConfig assetCfg;
+        assetCfg.extractedObjDir = "cpp_client/assets/reference_models";
+        generator.setReferenceAssets(assetCfg);
+
+        // Determine lowercase ship class for seed lookup
+        std::string seedClass = "frigate";
+        if (isFrigate(shipType))                                    seedClass = "frigate";
+        else if (isDestroyer(shipType))                             seedClass = "destroyer";
+        else if (isTech2Cruiser(shipType) || isCruiser(shipType))   seedClass = "cruiser";
+        else if (isCommandShip(shipType) || isBattlecruiser(shipType)) seedClass = "battlecruiser";
+        else if (isBattleship(shipType))                            seedClass = "battleship";
+        else if (isCarrier(shipType))                               seedClass = "carrier";
+        else if (isDreadnought(shipType))                           seedClass = "dreadnought";
+        else if (isTitan(shipType))                                 seedClass = "titan";
+
+        std::string seedPath = generator.findSeedOBJ(faction, seedClass);
+        if (!seedPath.empty()) {
+            ProceduralShipParams params = getProceduralParamsForClass(seedClass);
+            params.seed = static_cast<unsigned int>(
+                std::hash<std::string>{}(shipType + "|" + faction));
+
+            // Faction-specific colour
+            FactionColors fc = getFactionColors(faction);
+            params.primaryColor = glm::vec3(fc.primary);
+
+            auto seedModel = generator.generateFromFile(seedPath, params);
+            if (seedModel) {
+                std::cout << "Using seed OBJ for " << shipType
+                          << " (" << faction << ", class=" << seedClass << ")" << std::endl;
+                return seedModel;
+            }
+        }
+    }
+
+    // Fall back to modular part assembly (ShipPartLibrary)
     FactionColors colors = getFactionColors(faction);
 
     // Determine ship class for hull parameters
@@ -805,42 +888,42 @@ std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string&
         p.scaleX = config.proportions.y / config.proportions.x;
         p.scaleZ = config.proportions.z / config.proportions.x;
 
-        // Map ship class to segment count and dimensions
+        // Map ship class to segment count and dimensions — higher counts for smoother hulls
         if (shipClass == "Frigate") {
-            p.segments = 5;
-            p.segmentLength = config.overallScale / 5.5f;
+            p.segments = 7;
+            p.segmentLength = config.overallScale / 7.5f;
             p.baseRadius = config.overallScale * 0.09f;
         } else if (shipClass == "Destroyer") {
-            p.segments = 6;
-            p.segmentLength = config.overallScale / 6.0f;
+            p.segments = 8;
+            p.segmentLength = config.overallScale / 8.5f;
             p.baseRadius = config.overallScale * 0.065f;
         } else if (shipClass == "Cruiser") {
-            p.segments = 6;
-            p.segmentLength = config.overallScale / 6.0f;
+            p.segments = 9;
+            p.segmentLength = config.overallScale / 9.0f;
             p.baseRadius = config.overallScale * 0.12f;
         } else if (shipClass == "Battlecruiser") {
-            p.segments = 7;
-            p.segmentLength = config.overallScale / 7.0f;
-            p.baseRadius = config.overallScale * 0.10f;
-        } else if (shipClass == "Battleship") {
-            p.segments = 8;
-            p.segmentLength = config.overallScale / 8.0f;
-            p.baseRadius = config.overallScale * 0.09f;
-        } else if (shipClass == "Carrier") {
             p.segments = 10;
             p.segmentLength = config.overallScale / 10.0f;
-            p.baseRadius = config.overallScale * 0.08f;
-        } else if (shipClass == "Dreadnought") {
-            p.segments = 8;
-            p.segmentLength = config.overallScale / 8.0f;
-            p.baseRadius = config.overallScale * 0.11f;
-        } else if (shipClass == "Titan") {
+            p.baseRadius = config.overallScale * 0.10f;
+        } else if (shipClass == "Battleship") {
             p.segments = 12;
             p.segmentLength = config.overallScale / 12.0f;
+            p.baseRadius = config.overallScale * 0.09f;
+        } else if (shipClass == "Carrier") {
+            p.segments = 14;
+            p.segmentLength = config.overallScale / 14.0f;
+            p.baseRadius = config.overallScale * 0.08f;
+        } else if (shipClass == "Dreadnought") {
+            p.segments = 12;
+            p.segmentLength = config.overallScale / 12.0f;
+            p.baseRadius = config.overallScale * 0.11f;
+        } else if (shipClass == "Titan") {
+            p.segments = 16;
+            p.segmentLength = config.overallScale / 16.0f;
             p.baseRadius = config.overallScale * 0.07f;
         } else {
-            p.segments = 4;
-            p.segmentLength = config.overallScale / 4.0f;
+            p.segments = 6;
+            p.segmentLength = config.overallScale / 6.0f;
             p.baseRadius = config.overallScale * 0.13f;
         }
 
@@ -1320,36 +1403,36 @@ void Model::addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsig
 
 // ==================== Ship Model Creation Functions ====================
 
-// Ship model creation functions — small class ships tuned for clean, tight silhouettes
+// Ship model creation functions — tuned for cleaner, higher-quality silhouettes
 std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 5;           // One more segment for better shape definition
-    p.segmentLength = 0.7f;   // Shorter segments for tighter proportions
-    p.baseRadius = 0.3f;      // Smaller radius for sleeker frigate silhouette
-    p.scaleX = 1.1f;          // Slightly wider than tall
-    p.scaleZ = 0.65f;         // Flatter profile — more spaceship-like
+    p.sides = 10;
+    p.segments = 7;            // More segments for smoother length profile
+    p.segmentLength = 0.5f;    // Shorter segments for tighter proportions
+    p.baseRadius = 0.3f;       // Smaller radius for sleeker frigate silhouette
+    p.scaleX = 1.1f;           // Slightly wider than tall
+    p.scaleZ = 0.65f;          // Flatter profile — more spaceship-like
     p.seed = 100u;
     return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createDestroyerModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 6;           // More segments for elongated destroyer look
-    p.segmentLength = 0.8f;   // Slightly longer segments
-    p.baseRadius = 0.25f;     // Thinner than frigate — more elongated
-    p.scaleX = 0.9f;          // Slightly narrower
-    p.scaleZ = 0.6f;          // Flat profile
+    p.sides = 10;
+    p.segments = 8;            // More segments for elongated destroyer look
+    p.segmentLength = 0.6f;    // Slightly longer segments
+    p.baseRadius = 0.25f;      // Thinner than frigate — more elongated
+    p.scaleX = 0.9f;           // Slightly narrower
+    p.scaleZ = 0.6f;           // Flat profile
     p.seed = 200u;
     return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createCruiserModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 6;
-    p.segmentLength = 1.0f;
+    p.sides = 12;
+    p.segments = 9;
+    p.segmentLength = 0.7f;
     p.baseRadius = 0.65f;
     p.scaleX = 1.2f;
     p.scaleZ = 0.8f;
@@ -1373,9 +1456,9 @@ std::unique_ptr<Model> Model::createTech2CruiserModel(const FactionColors& color
 
 std::unique_ptr<Model> Model::createBattlecruiserModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 7;
-    p.segmentLength = 1.2f;
+    p.sides = 12;
+    p.segments = 10;
+    p.segmentLength = 0.85f;
     p.baseRadius = 0.8f;
     p.scaleX = 1.1f;
     p.scaleZ = 0.9f;
@@ -1385,9 +1468,9 @@ std::unique_ptr<Model> Model::createBattlecruiserModel(const FactionColors& colo
 
 std::unique_ptr<Model> Model::createBattleshipModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 10;
-    p.segments = 8;
-    p.segmentLength = 1.5f;
+    p.sides = 14;
+    p.segments = 12;
+    p.segmentLength = 1.0f;
     p.baseRadius = 1.0f;
     p.scaleX = 1.2f;
     p.scaleZ = 0.85f;
@@ -1397,9 +1480,9 @@ std::unique_ptr<Model> Model::createBattleshipModel(const FactionColors& colors)
 
 std::unique_ptr<Model> Model::createMiningBargeModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 4;
-    p.segments = 5;
-    p.segmentLength = 1.2f;
+    p.sides = 8;
+    p.segments = 7;
+    p.segmentLength = 0.9f;
     p.baseRadius = 0.9f;
     p.scaleX = 1.5f;
     p.scaleZ = 0.7f;
@@ -1414,9 +1497,9 @@ std::unique_ptr<Model> Model::createGenericModel(const FactionColors& colors) {
 
 std::unique_ptr<Model> Model::createCarrierModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 10;
-    p.segments = 10;
-    p.segmentLength = 1.5f;
+    p.sides = 14;
+    p.segments = 14;
+    p.segmentLength = 1.1f;
     p.baseRadius = 1.2f;
     p.scaleX = 1.6f;
     p.scaleZ = 0.6f;
@@ -1426,9 +1509,9 @@ std::unique_ptr<Model> Model::createCarrierModel(const FactionColors& colors) {
 
 std::unique_ptr<Model> Model::createDreadnoughtModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 8;
-    p.segmentLength = 1.5f;
+    p.sides = 12;
+    p.segments = 12;
+    p.segmentLength = 1.0f;
     p.baseRadius = 1.3f;
     p.scaleX = 1.0f;
     p.scaleZ = 1.1f;
@@ -1438,9 +1521,9 @@ std::unique_ptr<Model> Model::createDreadnoughtModel(const FactionColors& colors
 
 std::unique_ptr<Model> Model::createTitanModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 12;
-    p.segments = 12;
-    p.segmentLength = 2.0f;
+    p.sides = 16;
+    p.segments = 16;
+    p.segmentLength = 1.5f;
     p.baseRadius = 1.8f;
     p.scaleX = 1.1f;
     p.scaleZ = 0.9f;
@@ -1451,9 +1534,9 @@ std::unique_ptr<Model> Model::createTitanModel(const FactionColors& colors) {
 std::unique_ptr<Model> Model::createStationModel(const FactionColors& colors, const std::string& stationType) {
     // Stations use a high-sided cylindrical hull for a ring/hub shape
     HullParams p;
-    p.sides = 12;
-    p.segments = 6;
-    p.segmentLength = 3.0f;
+    p.sides = 16;
+    p.segments = 8;
+    p.segmentLength = 2.5f;
     p.baseRadius = 3.0f;
     p.scaleX = 1.0f;
     p.scaleZ = 1.0f;

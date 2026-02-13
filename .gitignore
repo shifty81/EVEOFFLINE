@@ -83,6 +83,8 @@ build_vs/
 *.o
 *.obj
 *.out
+# Allow OBJ ship module parts (small tracked assets, < 1KB each)
+!cpp_client/assets/reference_models/modules/*.obj
 *.dll
 *.a
 *.lib
@@ -116,8 +118,13 @@ _codeql_build_dir/
 # Extracted OBJ ship models (large files, extract locally from data/ships/obj_models/obj_models.7z)
 cpp_client/models/ships/*.obj
 
-# Extracted reference models and textures (extract from testing/ archives at build time)
-cpp_client/assets/reference_models/
+# Extracted reference models — large OBJ/texture files from testing/ archives
+# These are extracted at build time by extract_reference_models.sh
+cpp_client/assets/reference_models/*.obj
+cpp_client/assets/reference_models/*.mtl
+cpp_client/assets/reference_models/Vulcan Dkyr Class/
+# Keep the small modular OBJ ship parts (< 1KB each) tracked in git
+!cpp_client/assets/reference_models/modules/
 
 # External downloaded dependencies
 

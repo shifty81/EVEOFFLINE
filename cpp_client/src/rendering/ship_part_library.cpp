@@ -194,10 +194,10 @@ void ShipPartLibrary::createKeldariParts(const glm::vec4& primary, const glm::ve
     // Keldari: Asymmetric, rustic, exposed framework
     // Uses extrusion-based hull generation matching the reference project
     
-    // Forward hull - angular extruded nose (6-sided, 3 segments, narrow)
-    auto fwdMults = generateRadiusMultipliers(3, 0.6f, 101u);
-    ShipPart forward = createExtrudedHullPart(6, 3, 0.35f, 0.6f, fwdMults,
-                                               0.8f, 1.0f, primary,
+    // Forward hull - angular extruded nose (10-sided, 6 segments for smoother taper)
+    auto fwdMults = generateRadiusMultipliers(6, 0.6f, 101u);
+    ShipPart forward = createExtrudedHullPart(10, 6, 0.3f, 0.6f, fwdMults,
+                                               0.9f, 0.7f, primary,
                                                ShipPartType::HULL_FORWARD);
     forward.name = "Keldari Angular Nose";
     forward.faction = "Keldari";
@@ -205,9 +205,9 @@ void ShipPartLibrary::createKeldariParts(const glm::vec4& primary, const glm::ve
     forward.attachmentPoint = glm::vec3(-1.0f, 0.0f, 0.0f);
     addPart("keldari_forward_1", forward);
     
-    // Main hull - wider industrial body (6-sided, 5 segments)
-    auto mainMults = generateRadiusMultipliers(5, 1.0f, 102u);
-    ShipPart main = createExtrudedHullPart(6, 5, 0.4f, 1.0f, mainMults,
+    // Main hull - wider industrial body (10-sided, 8 segments for continuous profile)
+    auto mainMults = generateRadiusMultipliers(8, 1.0f, 102u);
+    ShipPart main = createExtrudedHullPart(10, 8, 0.35f, 1.0f, mainMults,
                                             1.2f, 0.7f, primary,
                                             ShipPartType::HULL_MAIN);
     main.name = "Keldari Industrial Hull";
@@ -216,10 +216,10 @@ void ShipPartLibrary::createKeldariParts(const glm::vec4& primary, const glm::ve
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
     addPart("keldari_main_1", main);
     
-    // Rear hull - engine mount (6-sided, 2 segments)
-    auto rearMults = generateRadiusMultipliers(2, 0.8f, 103u);
-    ShipPart rear = createExtrudedHullPart(6, 2, 0.3f, 0.8f, rearMults,
-                                            0.9f, 0.7f, secondary,
+    // Rear hull - engine mount (10-sided, 4 segments)
+    auto rearMults = generateRadiusMultipliers(4, 0.8f, 103u);
+    ShipPart rear = createExtrudedHullPart(10, 4, 0.3f, 0.8f, rearMults,
+                                            1.0f, 0.7f, secondary,
                                             ShipPartType::HULL_REAR);
     rear.name = "Keldari Engine Mount";
     rear.faction = "Keldari";
@@ -227,30 +227,44 @@ void ShipPartLibrary::createKeldariParts(const glm::vec4& primary, const glm::ve
     rear.attachmentPoint = glm::vec3(1.0f, 0.0f, 0.0f);
     addPart("keldari_rear_1", rear);
     
-    // Engine - cylindrical exhausts (keep simple primitive for accent)
-    ShipPart engine = createCylinderPart(0.2f, 0.5f, 8, accent, ShipPartType::ENGINE_MAIN);
+    // Engine - cylindrical exhausts (higher detail)
+    ShipPart engine = createCylinderPart(0.25f, 0.6f, 12, accent, ShipPartType::ENGINE_MAIN);
     engine.name = "Keldari Engine Exhaust";
     engine.faction = "Keldari";
     engine.isSymmetric = true;
     addPart("keldari_engine_1", engine);
     
     // Exposed framework panel (beveled detail)
-    ShipPart framework = createBeveledPanelPart(4, 0.4f, 0.3f, -0.15f,
+    ShipPart framework = createBeveledPanelPart(6, 0.4f, 0.3f, -0.15f,
                                                  accent, ShipPartType::FRAMEWORK_EXPOSED);
     framework.name = "Keldari Exposed Framework";
     framework.faction = "Keldari";
     framework.isSymmetric = false;
     addPart("keldari_framework_1", framework);
+    
+    // Turret hardpoint (industrial style)
+    ShipPart turret = createCylinderPart(0.12f, 0.3f, 8, accent, ShipPartType::WEAPON_TURRET);
+    turret.name = "Keldari Turret Mount";
+    turret.faction = "Keldari";
+    turret.isSymmetric = true;
+    addPart("keldari_turret_1", turret);
+    
+    // Missile launcher (rack style)
+    ShipPart launcher = createBoxPart(glm::vec3(0.35f, 0.15f, 0.15f), accent, ShipPartType::WEAPON_LAUNCHER);
+    launcher.name = "Keldari Missile Rack";
+    launcher.faction = "Keldari";
+    launcher.isSymmetric = false;
+    addPart("keldari_launcher_1", launcher);
 }
 
 void ShipPartLibrary::createVeyrenParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
     // Veyren: Blocky, angular, industrial
-    // Uses 4-sided extrusion for angular silhouettes
+    // Uses 8-sided extrusion for angular but smoother silhouettes
     
-    // Forward hull - blocky extruded nose (4-sided, 3 segments)
-    auto fwdMults = generateRadiusMultipliers(3, 0.7f, 201u);
-    ShipPart forward = createExtrudedHullPart(4, 3, 0.4f, 0.7f, fwdMults,
-                                               1.0f, 0.8f, primary,
+    // Forward hull - blocky extruded nose (8-sided, 5 segments)
+    auto fwdMults = generateRadiusMultipliers(5, 0.7f, 201u);
+    ShipPart forward = createExtrudedHullPart(8, 5, 0.35f, 0.7f, fwdMults,
+                                               1.1f, 0.8f, primary,
                                                ShipPartType::HULL_FORWARD);
     forward.name = "Veyren Blocky Nose";
     forward.faction = "Veyren";
@@ -258,9 +272,9 @@ void ShipPartLibrary::createVeyrenParts(const glm::vec4& primary, const glm::vec
     forward.attachmentPoint = glm::vec3(-1.2f, 0.0f, 0.0f);
     addPart("veyren_forward_1", forward);
     
-    // Main hull - rectangular body (4-sided, 6 segments)
-    auto mainMults = generateRadiusMultipliers(6, 1.0f, 202u);
-    ShipPart main = createExtrudedHullPart(4, 6, 0.45f, 1.0f, mainMults,
+    // Main hull - rectangular body (8-sided, 8 segments)
+    auto mainMults = generateRadiusMultipliers(8, 1.0f, 202u);
+    ShipPart main = createExtrudedHullPart(8, 8, 0.4f, 1.0f, mainMults,
                                             1.3f, 0.9f, primary,
                                             ShipPartType::HULL_MAIN);
     main.name = "Veyren Industrial Hull";
@@ -269,9 +283,9 @@ void ShipPartLibrary::createVeyrenParts(const glm::vec4& primary, const glm::vec
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
     addPart("veyren_main_1", main);
     
-    // Rear hull - squared engine section (4-sided, 2 segments)
-    auto rearMults = generateRadiusMultipliers(2, 0.9f, 203u);
-    ShipPart rear = createExtrudedHullPart(4, 2, 0.35f, 0.9f, rearMults,
+    // Rear hull - squared engine section (8-sided, 4 segments)
+    auto rearMults = generateRadiusMultipliers(4, 0.9f, 203u);
+    ShipPart rear = createExtrudedHullPart(8, 4, 0.3f, 0.9f, rearMults,
                                             1.1f, 0.8f, secondary,
                                             ShipPartType::HULL_REAR);
     rear.name = "Veyren Engine Section";
@@ -280,12 +294,26 @@ void ShipPartLibrary::createVeyrenParts(const glm::vec4& primary, const glm::vec
     rear.attachmentPoint = glm::vec3(1.25f, 0.0f, 0.0f);
     addPart("veyren_rear_1", rear);
     
-    // Engine - square exhausts (keep primitive for accent)
-    ShipPart engine = createBoxPart(glm::vec3(0.4f, 0.25f, 0.25f), accent, ShipPartType::ENGINE_MAIN);
+    // Engine - square exhausts (higher detail)
+    ShipPart engine = createBoxPart(glm::vec3(0.5f, 0.3f, 0.3f), accent, ShipPartType::ENGINE_MAIN);
     engine.name = "Veyren Square Engine";
     engine.faction = "Veyren";
     engine.isSymmetric = true;
     addPart("veyren_engine_1", engine);
+    
+    // Turret hardpoint
+    ShipPart turret = createCylinderPart(0.12f, 0.3f, 8, accent, ShipPartType::WEAPON_TURRET);
+    turret.name = "Veyren Turret Mount";
+    turret.faction = "Veyren";
+    turret.isSymmetric = true;
+    addPart("veyren_turret_1", turret);
+    
+    // Missile launcher
+    ShipPart launcher = createBoxPart(glm::vec3(0.35f, 0.15f, 0.15f), accent, ShipPartType::WEAPON_LAUNCHER);
+    launcher.name = "Veyren Missile Rack";
+    launcher.faction = "Veyren";
+    launcher.isSymmetric = true;
+    addPart("veyren_launcher_1", launcher);
     
     // Panel detail (beveled angular panel)
     ShipPart panel = createBeveledPanelPart(4, 0.3f, 0.25f, -0.1f,
@@ -298,11 +326,11 @@ void ShipPartLibrary::createVeyrenParts(const glm::vec4& primary, const glm::vec
 
 void ShipPartLibrary::createAurelianParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
     // Aurelian: Organic, smooth curves
-    // Uses high-sided extrusion (12-sided) for smooth organic shapes
+    // Uses high-sided extrusion (16-sided) for smooth organic shapes
     
-    // Forward hull - smooth extruded nose (12-sided, 3 segments)
-    auto fwdMults = generateRadiusMultipliers(3, 0.6f, 301u);
-    ShipPart forward = createExtrudedHullPart(12, 3, 0.4f, 0.6f, fwdMults,
+    // Forward hull - smooth extruded nose (16-sided, 6 segments)
+    auto fwdMults = generateRadiusMultipliers(6, 0.6f, 301u);
+    ShipPart forward = createExtrudedHullPart(16, 6, 0.35f, 0.6f, fwdMults,
                                                1.0f, 1.0f, primary,
                                                ShipPartType::HULL_FORWARD);
     forward.name = "Aurelian Smooth Nose";
@@ -311,9 +339,9 @@ void ShipPartLibrary::createAurelianParts(const glm::vec4& primary, const glm::v
     forward.attachmentPoint = glm::vec3(-1.2f, 0.0f, 0.0f);
     addPart("aurelian_forward_1", forward);
     
-    // Main hull - organic ellipsoidal body (12-sided, 6 segments)
-    auto mainMults = generateRadiusMultipliers(6, 1.0f, 302u);
-    ShipPart main = createExtrudedHullPart(12, 6, 0.45f, 1.0f, mainMults,
+    // Main hull - organic ellipsoidal body (16-sided, 10 segments for flowing shape)
+    auto mainMults = generateRadiusMultipliers(10, 1.0f, 302u);
+    ShipPart main = createExtrudedHullPart(16, 10, 0.35f, 1.0f, mainMults,
                                             1.1f, 0.9f, primary,
                                             ShipPartType::HULL_MAIN);
     main.name = "Aurelian Organic Hull";
@@ -322,9 +350,9 @@ void ShipPartLibrary::createAurelianParts(const glm::vec4& primary, const glm::v
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
     addPart("aurelian_main_1", main);
     
-    // Rear hull - curved engine housing (12-sided, 2 segments)
-    auto rearMults = generateRadiusMultipliers(2, 0.8f, 303u);
-    ShipPart rear = createExtrudedHullPart(12, 2, 0.35f, 0.8f, rearMults,
+    // Rear hull - curved engine housing (16-sided, 4 segments)
+    auto rearMults = generateRadiusMultipliers(4, 0.8f, 303u);
+    ShipPart rear = createExtrudedHullPart(16, 4, 0.3f, 0.8f, rearMults,
                                             1.0f, 0.9f, secondary,
                                             ShipPartType::HULL_REAR);
     rear.name = "Aurelian Engine Housing";
@@ -333,21 +361,35 @@ void ShipPartLibrary::createAurelianParts(const glm::vec4& primary, const glm::v
     rear.attachmentPoint = glm::vec3(1.25f, 0.0f, 0.0f);
     addPart("aurelian_rear_1", rear);
     
-    // Engine - rounded exhausts (keep primitive for accent)
-    ShipPart engine = createCylinderPart(0.15f, 0.4f, 12, accent, ShipPartType::ENGINE_MAIN);
+    // Engine - rounded exhausts (higher detail)
+    ShipPart engine = createCylinderPart(0.2f, 0.5f, 16, accent, ShipPartType::ENGINE_MAIN);
     engine.name = "Aurelian Rounded Engine";
     engine.faction = "Aurelian";
     engine.isSymmetric = true;
     addPart("aurelian_engine_1", engine);
+    
+    // Turret hardpoint (dome style for organic ships)
+    ShipPart turret = createCylinderPart(0.1f, 0.2f, 12, accent, ShipPartType::WEAPON_TURRET);
+    turret.name = "Aurelian Dome Turret";
+    turret.faction = "Aurelian";
+    turret.isSymmetric = true;
+    addPart("aurelian_turret_1", turret);
+    
+    // Missile launcher (sleek pod)
+    ShipPart launcher = createCylinderPart(0.08f, 0.35f, 10, accent, ShipPartType::WEAPON_LAUNCHER);
+    launcher.name = "Aurelian Launch Pod";
+    launcher.faction = "Aurelian";
+    launcher.isSymmetric = true;
+    addPart("aurelian_launcher_1", launcher);
 }
 
 void ShipPartLibrary::createSolariParts(const glm::vec4& primary, const glm::vec4& secondary, const glm::vec4& accent) {
     // Solari: Golden, ornate, with spires
-    // Uses 8-sided extrusion for balanced angular-but-refined shapes
+    // Uses 12-sided extrusion for refined, ornate shapes
     
-    // Forward hull - cathedral extruded nose (8-sided, 4 segments)
-    auto fwdMults = generateRadiusMultipliers(4, 0.5f, 401u);
-    ShipPart forward = createExtrudedHullPart(8, 4, 0.4f, 0.5f, fwdMults,
+    // Forward hull - cathedral extruded nose (12-sided, 6 segments)
+    auto fwdMults = generateRadiusMultipliers(6, 0.5f, 401u);
+    ShipPart forward = createExtrudedHullPart(12, 6, 0.35f, 0.5f, fwdMults,
                                                0.9f, 1.0f, primary,
                                                ShipPartType::HULL_FORWARD);
     forward.name = "Solari Cathedral Nose";
@@ -356,9 +398,9 @@ void ShipPartLibrary::createSolariParts(const glm::vec4& primary, const glm::vec
     forward.attachmentPoint = glm::vec3(-1.5f, 0.0f, 0.0f);
     addPart("solari_forward_1", forward);
     
-    // Main hull - ornate plated body (8-sided, 5 segments)
-    auto mainMults = generateRadiusMultipliers(5, 1.0f, 402u);
-    ShipPart main = createExtrudedHullPart(8, 5, 0.45f, 1.0f, mainMults,
+    // Main hull - ornate plated body (12-sided, 8 segments)
+    auto mainMults = generateRadiusMultipliers(8, 1.0f, 402u);
+    ShipPart main = createExtrudedHullPart(12, 8, 0.38f, 1.0f, mainMults,
                                             1.1f, 0.8f, primary,
                                             ShipPartType::HULL_MAIN);
     main.name = "Solari Ornate Hull";
@@ -367,9 +409,9 @@ void ShipPartLibrary::createSolariParts(const glm::vec4& primary, const glm::vec
     main.attachmentPoint = glm::vec3(0.0f, 0.0f, 0.0f);
     addPart("solari_main_1", main);
     
-    // Rear hull - golden engine section (8-sided, 2 segments)
-    auto rearMults = generateRadiusMultipliers(2, 0.8f, 403u);
-    ShipPart rear = createExtrudedHullPart(8, 2, 0.35f, 0.8f, rearMults,
+    // Rear hull - golden engine section (12-sided, 4 segments)
+    auto rearMults = generateRadiusMultipliers(4, 0.8f, 403u);
+    ShipPart rear = createExtrudedHullPart(12, 4, 0.3f, 0.8f, rearMults,
                                             1.0f, 0.85f, secondary,
                                             ShipPartType::HULL_REAR);
     rear.name = "Solari Engine Section";
@@ -378,15 +420,29 @@ void ShipPartLibrary::createSolariParts(const glm::vec4& primary, const glm::vec
     rear.attachmentPoint = glm::vec3(1.1f, 0.0f, 0.0f);
     addPart("solari_rear_1", rear);
     
-    // Engine - golden exhausts (keep primitive for accent)
-    ShipPart engine = createCylinderPart(0.18f, 0.45f, 8, accent, ShipPartType::ENGINE_MAIN);
+    // Engine - golden exhausts (higher detail)
+    ShipPart engine = createCylinderPart(0.22f, 0.5f, 12, accent, ShipPartType::ENGINE_MAIN);
     engine.name = "Solari Golden Engine";
     engine.faction = "Solari";
     engine.isSymmetric = true;
     addPart("solari_engine_1", engine);
     
+    // Turret hardpoint (ornate dome)
+    ShipPart turret = createCylinderPart(0.1f, 0.25f, 10, accent, ShipPartType::WEAPON_TURRET);
+    turret.name = "Solari Ornate Turret";
+    turret.faction = "Solari";
+    turret.isSymmetric = true;
+    addPart("solari_turret_1", turret);
+    
+    // Missile launcher (golden pod)
+    ShipPart launcher = createBoxPart(glm::vec3(0.3f, 0.12f, 0.12f), accent, ShipPartType::WEAPON_LAUNCHER);
+    launcher.name = "Solari Missile Bay";
+    launcher.faction = "Solari";
+    launcher.isSymmetric = true;
+    addPart("solari_launcher_1", launcher);
+    
     // Spire ornament - vertical pyramid emphasis
-    ShipPart spire = createPyramidDetailPart(6, 0.15f, 0.8f, accent,
+    ShipPart spire = createPyramidDetailPart(8, 0.18f, 0.9f, accent,
                                               ShipPartType::SPIRE_ORNAMENT);
     spire.name = "Solari Decorative Spire";
     spire.faction = "Solari";
