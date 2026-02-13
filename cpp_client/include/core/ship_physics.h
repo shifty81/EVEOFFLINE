@@ -134,6 +134,22 @@ public:
     glm::vec3 getHeading() const { return m_heading; }
 
     /**
+     * Get current angular velocity (radians/sec the ship is rotating)
+     */
+    float getAngularVelocity() const { return m_angularVelocity; }
+
+    /**
+     * Get visual roll angle (radians, ship banks into turns)
+     */
+    float getRollAngle() const { return m_rollAngle; }
+
+    /**
+     * Get maximum turn rate for current ship class (degrees/sec).
+     * Lighter/more agile ships turn faster.
+     */
+    float getMaxTurnRate() const;
+
+    /**
      * Celestial collision zone info for warp path checking.
      * Represents a sphere that the ship cannot warp through or into.
      */
@@ -163,6 +179,7 @@ public:
     glm::vec3 resolveCollision(const std::vector<CelestialCollisionZone>& zones);
 
 private:
+    void updateHeading(float deltaTime);
     void updateAcceleration(float deltaTime);
     void updateOrbit(float deltaTime);
     void applySpaceFriction(float deltaTime);
@@ -176,6 +193,8 @@ private:
     glm::vec3 m_velocity;
     glm::vec3 m_desiredDirection;
     glm::vec3 m_heading;  // Ship facing direction (visual)
+    float m_angularVelocity;  // Current angular velocity (radians/sec)
+    float m_rollAngle;        // Visual roll angle during turns (radians)
     
     // Navigation state
     enum class NavigationMode {
@@ -216,6 +235,13 @@ private:
     static constexpr float WARP_EXIT_DISTANCE = 2500.0f;   // Land within 2500m of target
     static constexpr float WARP_EXIT_SPEED_FRACTION = 0.25f;  // Exit warp at 25% max subwarp speed
     static constexpr float COLLISION_PUSH_MARGIN = 100.0f;     // Extra meters to push ship outside collision zone
+    
+    // Turn rate and roll constants — make each ship class feel different
+    static constexpr float TURN_RATE_CONSTANT = 150000000.0f;  // Scaling: turnRate = constant / agility
+    static constexpr float MIN_TURN_RATE_DEG = 3.0f;   // Slowest turn rate (capitals)
+    static constexpr float MAX_TURN_RATE_DEG = 60.0f;   // Fastest turn rate (frigates)
+    static constexpr float MAX_ROLL_ANGLE = 0.35f;       // ~20 degrees max bank into turns
+    static constexpr float ROLL_RESPONSE_RATE = 3.0f;    // How fast roll responds to turns
 };
 
 } // namespace atlas

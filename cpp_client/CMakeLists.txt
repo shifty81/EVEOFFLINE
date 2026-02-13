@@ -812,6 +812,20 @@ if(BUILD_TESTS)
     if(WIN32)
         target_link_libraries(test_layout_manager ws2_32)
     endif()
+
+    # Ship Physics Test
+    add_executable(test_ship_physics
+        test_ship_physics.cpp
+        src/core/ship_physics.cpp
+    )
+    target_include_directories(test_ship_physics PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    target_link_libraries(test_ship_physics
+        Threads::Threads
+        glm::glm
+    )
+    if(WIN32)
+        target_link_libraries(test_ship_physics ws2_32)
+    endif()
 endif()
 
 # RmlUi Test (only when RmlUi is enabled)
