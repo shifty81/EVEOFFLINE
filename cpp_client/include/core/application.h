@@ -212,6 +212,7 @@ private:
     void commandKeepAtRange(const std::string& entityId, float distance = 2500.0f);
     void commandAlignTo(const std::string& entityId);
     void commandWarpTo(const std::string& entityId);
+    void commandJump(const std::string& entityId);
     void commandStopShip();
     
     // Spawn local player entity for offline/demo mode

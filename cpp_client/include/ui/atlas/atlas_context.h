@@ -127,6 +127,19 @@ public:
     /** Check if another widget already consumed the mouse this frame. */
     bool isMouseConsumed() const { return m_mouseConsumed; }
 
+    // ── Panel bounds stack (for deferred click-through prevention) ───
+
+    /** Push a panel's bounding rect so panelEnd can consume leftover clicks. */
+    void pushPanelBounds(const Rect& bounds) { m_panelBoundsStack.push_back(bounds); }
+
+    /** Pop and return the most recent panel bounds. */
+    Rect popPanelBounds() {
+        if (m_panelBoundsStack.empty()) return {};
+        Rect r = m_panelBoundsStack.back();
+        m_panelBoundsStack.pop_back();
+        return r;
+    }
+
     // ── Layout margins (sidebar boundary) ───────────────────────────
 
     /** Set the sidebar width so panels clamp to it as a left boundary. */
@@ -153,6 +166,9 @@ private:
 
     // ID stack for scoped widget naming
     std::vector<WidgetID> m_idStack;
+
+    // Panel bounds stack — panelBeginStateful pushes, panelEnd pops
+    std::vector<Rect> m_panelBoundsStack;
 };
 
 } // namespace atlas

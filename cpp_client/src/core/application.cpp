@@ -360,6 +360,10 @@ void Application::setupUICallbacks() {
         std::cout << "[Info] Show info for: " << entityId << std::endl;
         openInfoPanelForEntity(entityId);
     });
+
+    m_contextMenu->SetJumpCallback([this](const std::string& entityId) {
+        commandJump(entityId);
+    });
     
     std::cout << "  - Context menu callbacks wired" << std::endl;
     
@@ -478,7 +482,13 @@ void Application::setupUICallbacks() {
 
     m_atlasHUD->setOverviewRightClickCb([this](const std::string& entityId, float screenX, float screenY) {
         bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), entityId) != m_targetList.end();
-        m_contextMenu->ShowEntityMenu(entityId, isLocked);
+        bool isStargate = false;
+        if (m_solarSystem) {
+            const auto* cel = m_solarSystem->findCelestial(entityId);
+            if (cel && cel->type == atlas::Celestial::Type::STARGATE)
+                isStargate = true;
+        }
+        m_contextMenu->ShowEntityMenu(entityId, isLocked, isStargate);
         m_contextMenu->SetScreenPosition(screenX, screenY);
         std::cout << "[Overview] Right-click context menu for: " << entityId << std::endl;
     });
@@ -729,17 +739,24 @@ void Application::render() {
         // Update mode indicator text on the HUD
         m_atlasHUD->setModeIndicator(m_activeModeText);
         
-        // Render Context Menu FIRST — it must get input priority over panels
+        // Reserve context menu / radial menu input areas BEFORE panels
+        // so their clicks aren't stolen by panel body consumption.
+        if (m_contextMenu && m_contextMenu->IsOpen()) {
+            m_contextMenu->ReserveInputArea(*m_atlasCtx);
+        }
+
+        // Render HUD panels (overview, selected item, ship HUD, etc.)
+        m_atlasHUD->update(*m_atlasCtx, shipData, atlasTargets, atlasOverview, atlasSelected);
+
+        // Render Context Menu AFTER panels so it draws on top visually
         if (m_contextMenu && m_contextMenu->IsOpen()) {
             m_contextMenu->RenderAtlas(*m_atlasCtx);
         }
 
-        // Render Radial Menu (also higher priority than panels)
+        // Render Radial Menu on top of everything
         if (m_radialMenu && m_radialMenuOpen) {
             m_radialMenu->RenderAtlas(*m_atlasCtx);
         }
-
-        m_atlasHUD->update(*m_atlasCtx, shipData, atlasTargets, atlasOverview, atlasSelected);
         
         m_atlasCtx->endFrame();
 
@@ -994,7 +1011,13 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                         if (!pickedId.empty()) {
                             // Show entity context menu (Atlas only — no RmlUi duplicate)
                             bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), pickedId) != m_targetList.end();
-                            m_contextMenu->ShowEntityMenu(pickedId, isLocked);
+                            bool isStargate = false;
+                            if (m_solarSystem) {
+                                const auto* cel = m_solarSystem->findCelestial(pickedId);
+                                if (cel && cel->type == atlas::Celestial::Type::STARGATE)
+                                    isStargate = true;
+                            }
+                            m_contextMenu->ShowEntityMenu(pickedId, isLocked, isStargate);
                             m_contextMenu->SetScreenPosition(static_cast<float>(x), static_cast<float>(y));
                         } else {
                             // Show empty space context menu
@@ -1362,6 +1385,51 @@ void Application::commandStopShip() {
     m_dockingModeActive = false;
     m_activeModeText.clear();
     std::cout << "[Movement] Ship stopped" << std::endl;
+}
+
+void Application::commandJump(const std::string& entityId) {
+    if (!m_solarSystem) return;
+
+    const auto* gate = m_solarSystem->findCelestial(entityId);
+    if (!gate || gate->type != atlas::Celestial::Type::STARGATE) {
+        std::cout << "[Jump] " << entityId << " is not a stargate" << std::endl;
+        return;
+    }
+
+    std::string destination = gate->linkedSystem;
+    if (destination.empty()) {
+        std::cout << "[Jump] Stargate " << entityId << " has no linked system" << std::endl;
+        return;
+    }
+
+    std::cout << "[Jump] Jumping through stargate " << entityId
+              << " to system: " << destination << std::endl;
+
+    // Generate the destination system from its name hash
+    uint32_t destSeed = 0;
+    for (char c : destination) {
+        destSeed = destSeed * 31 + static_cast<uint32_t>(c);
+    }
+    m_solarSystem->generateSystem(destSeed, destination);
+
+    // Reset player position to the arrival gate location
+    const auto& celestials = m_solarSystem->getCelestials();
+    glm::vec3 arrivalPos(0.0f);
+    for (const auto& c : celestials) {
+        if (c.type == atlas::Celestial::Type::STARGATE) {
+            arrivalPos = c.position;
+            break;  // arrive at the first gate in the new system
+        }
+    }
+
+    m_playerPosition = arrivalPos + glm::vec3(2000.0f, 0.0f, 0.0f);  // offset from gate
+    m_playerVelocity = glm::vec3(0.0f);
+    m_playerSpeed = 0.0f;
+    m_currentMoveCommand = MoveCommand::None;
+    m_activeModeText.clear();
+    std::cout << "[Jump] Arrived in " << destination << " at position ("
+              << m_playerPosition.x << ", " << m_playerPosition.y << ", "
+              << m_playerPosition.z << ")" << std::endl;
 }
 
 void Application::spawnLocalPlayerEntity() {

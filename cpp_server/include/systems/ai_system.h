@@ -22,6 +22,40 @@ public:
     void update(float delta_time) override;
     std::string getName() const override { return "AISystem"; }
     
+    /**
+     * Select a target using the configured TargetSelection strategy.
+     * 
+     * - Closest: picks the nearest player within awareness range
+     * - LowestHP: picks the player with the lowest HP fraction
+     * - HighestThreat: picks the player dealing the most damage (via DamageEvent)
+     * 
+     * @param entity The NPC entity selecting a target
+     * @return The selected target entity, or nullptr if none found
+     */
+    ecs::Entity* selectTarget(ecs::Entity* entity);
+    
+    /**
+     * Compute orbit distance dynamically from the ship class.
+     * 
+     * Ship class → orbit distance mapping:
+     * - Frigate/Destroyer → 5,000 m
+     * - Cruiser/Battlecruiser → 15,000 m
+     * - Battleship → 30,000 m
+     * - Capital+ → 50,000 m
+     * 
+     * @param ship_class The ship_class string from the Ship component
+     * @return Orbit distance in meters
+     */
+    static float orbitDistanceForClass(const std::string& ship_class);
+    
+    /**
+     * Derive engagement range from weapon optimal + falloff.
+     * 
+     * @param entity The NPC entity
+     * @return Engagement range in meters (optimal + falloff), or 0 if no weapon
+     */
+    static float engagementRangeFromWeapon(ecs::Entity* entity);
+    
 private:
     /**
      * Idle behavior state
@@ -90,40 +124,6 @@ private:
      * @param entity The NPC entity to update
      */
     void fleeBehavior(ecs::Entity* entity);
-    
-    /**
-     * Select a target using the configured TargetSelection strategy.
-     * 
-     * - Closest: picks the nearest player within awareness range
-     * - LowestHP: picks the player with the lowest HP fraction
-     * - HighestThreat: picks the player dealing the most damage (via DamageEvent)
-     * 
-     * @param entity The NPC entity selecting a target
-     * @return The selected target entity, or nullptr if none found
-     */
-    ecs::Entity* selectTarget(ecs::Entity* entity);
-    
-    /**
-     * Compute orbit distance dynamically from the ship class.
-     * 
-     * Ship class → orbit distance mapping:
-     * - Frigate/Destroyer → 5,000 m
-     * - Cruiser/Battlecruiser → 15,000 m
-     * - Battleship → 30,000 m
-     * - Capital+ → 50,000 m
-     * 
-     * @param ship_class The ship_class string from the Ship component
-     * @return Orbit distance in meters
-     */
-    static float orbitDistanceForClass(const std::string& ship_class);
-    
-    /**
-     * Derive engagement range from weapon optimal + falloff.
-     * 
-     * @param entity The NPC entity
-     * @return Engagement range in meters (optimal + falloff), or 0 if no weapon
-     */
-    static float engagementRangeFromWeapon(ecs::Entity* entity);
 };
 
 } // namespace systems

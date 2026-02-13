@@ -50,6 +50,7 @@
 #include "systems/tactical_overlay_system.h"
 #include "systems/combat_system.h"
 #include "systems/ai_system.h"
+#include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
 #include "utils/server_metrics.h"
@@ -6538,6 +6539,251 @@ void testWarpStateIntensity() {
     assertTrue(warpState->intensity <= 1.0f, "Intensity clamped to max 1.0");
 }
 
+// ── AI Dynamic Orbit Tests ──────────────────────────────────────────
+
+void testAIDynamicOrbitFrigate() {
+    std::cout << "\n=== AI Dynamic Orbit Frigate ===" << std::endl;
+
+    float dist = systems::AISystem::orbitDistanceForClass("Frigate");
+    assertTrue(dist == 5000.0f, "Frigate orbit distance is 5000m");
+
+    float dist2 = systems::AISystem::orbitDistanceForClass("Destroyer");
+    assertTrue(dist2 == 5000.0f, "Destroyer orbit distance is 5000m");
+}
+
+void testAIDynamicOrbitCruiser() {
+    std::cout << "\n=== AI Dynamic Orbit Cruiser ===" << std::endl;
+
+    float dist = systems::AISystem::orbitDistanceForClass("Cruiser");
+    assertTrue(dist == 15000.0f, "Cruiser orbit distance is 15000m");
+
+    float dist2 = systems::AISystem::orbitDistanceForClass("Battlecruiser");
+    assertTrue(dist2 == 15000.0f, "Battlecruiser orbit distance is 15000m");
+}
+
+void testAIDynamicOrbitBattleship() {
+    std::cout << "\n=== AI Dynamic Orbit Battleship ===" << std::endl;
+
+    float dist = systems::AISystem::orbitDistanceForClass("Battleship");
+    assertTrue(dist == 30000.0f, "Battleship orbit distance is 30000m");
+}
+
+void testAIDynamicOrbitCapital() {
+    std::cout << "\n=== AI Dynamic Orbit Capital ===" << std::endl;
+
+    float distCarrier = systems::AISystem::orbitDistanceForClass("Carrier");
+    assertTrue(distCarrier == 50000.0f, "Carrier orbit distance is 50000m");
+
+    float distTitan = systems::AISystem::orbitDistanceForClass("Titan");
+    assertTrue(distTitan == 50000.0f, "Titan orbit distance is 50000m");
+}
+
+void testAIDynamicOrbitUnknown() {
+    std::cout << "\n=== AI Dynamic Orbit Unknown ===" << std::endl;
+
+    float dist = systems::AISystem::orbitDistanceForClass("SomeUnknownClass");
+    assertTrue(dist == 10000.0f, "Unknown class orbit distance is 10000m default");
+}
+
+void testAIEngagementRangeFromWeapon() {
+    std::cout << "\n=== AI Engagement Range From Weapon ===" << std::endl;
+
+    ecs::World world;
+    auto* npc = world.createEntity("npc_test");
+    auto* weapon = addComp<components::Weapon>(npc);
+    weapon->optimal_range = 5000.0f;
+    weapon->falloff_range = 2500.0f;
+
+    float range = systems::AISystem::engagementRangeFromWeapon(npc);
+    assertTrue(range == 7500.0f, "Engagement range is optimal + falloff");
+}
+
+void testAIEngagementRangeNoWeapon() {
+    std::cout << "\n=== AI Engagement Range No Weapon ===" << std::endl;
+
+    ecs::World world;
+    auto* npc = world.createEntity("npc_no_weapon");
+
+    float range = systems::AISystem::engagementRangeFromWeapon(npc);
+    assertTrue(range == 0.0f, "No weapon returns 0 engagement range");
+}
+
+void testAITargetSelectionClosest() {
+    std::cout << "\n=== AI Target Selection Closest ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    // Create NPC
+    auto* npc = world.createEntity("npc_selector");
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Aggressive;
+    ai->target_selection = components::AI::TargetSelection::Closest;
+    ai->awareness_range = 50000.0f;
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(npc);
+
+    // Create two players at different distances
+    auto* far_player = world.createEntity("player_far");
+    auto* far_pos = addComp<components::Position>(far_player);
+    far_pos->x = 10000.0f;
+    addComp<components::Player>(far_player);
+
+    auto* near_player = world.createEntity("player_near");
+    auto* near_pos = addComp<components::Position>(near_player);
+    near_pos->x = 3000.0f;
+    addComp<components::Player>(near_player);
+
+    // Run AI - should pick nearest
+    aiSys.update(1.0f);
+    assertTrue(ai->target_entity_id == "player_near",
+               "Closest selection picks nearest player");
+}
+
+void testAITargetSelectionLowestHP() {
+    std::cout << "\n=== AI Target Selection Lowest HP ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    auto* npc = world.createEntity("npc_hp_select");
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Aggressive;
+    ai->target_selection = components::AI::TargetSelection::LowestHP;
+    ai->awareness_range = 50000.0f;
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 0.0f;
+    addComp<components::Velocity>(npc);
+
+    // Player at 5000m with full HP
+    auto* full_hp = world.createEntity("player_full");
+    auto* fpos = addComp<components::Position>(full_hp);
+    fpos->x = 5000.0f;
+    addComp<components::Player>(full_hp);
+    auto* fh = addComp<components::Health>(full_hp);
+    fh->shield_hp = 100.0f; fh->shield_max = 100.0f;
+    fh->armor_hp = 100.0f; fh->armor_max = 100.0f;
+    fh->hull_hp = 100.0f; fh->hull_max = 100.0f;
+
+    // Player at 3000m with low HP
+    auto* low_hp = world.createEntity("player_low");
+    auto* lpos = addComp<components::Position>(low_hp);
+    lpos->x = 3000.0f;
+    addComp<components::Player>(low_hp);
+    auto* lh = addComp<components::Health>(low_hp);
+    lh->shield_hp = 0.0f; lh->shield_max = 100.0f;
+    lh->armor_hp = 10.0f; lh->armor_max = 100.0f;
+    lh->hull_hp = 50.0f; lh->hull_max = 100.0f;
+
+    aiSys.update(1.0f);
+    assertTrue(ai->target_entity_id == "player_low",
+               "LowestHP selection picks damaged player");
+}
+
+void testAIDynamicOrbitApplied() {
+    std::cout << "\n=== AI Dynamic Orbit Applied ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    auto* npc = world.createEntity("npc_orbit_test");
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Aggressive;
+    ai->use_dynamic_orbit = true;
+    ai->orbit_distance = 1000.0f;  // default, should be overridden
+    ai->awareness_range = 50000.0f;
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 0.0f;
+    addComp<components::Velocity>(npc);
+    auto* ship = addComp<components::Ship>(npc);
+    ship->ship_class = "Battleship";
+
+    // Create a player in range
+    auto* player = world.createEntity("player_orb");
+    auto* ppos = addComp<components::Position>(player);
+    ppos->x = 40000.0f;
+    addComp<components::Player>(player);
+
+    aiSys.update(1.0f);
+    assertTrue(ai->orbit_distance == 30000.0f,
+               "Dynamic orbit updates to battleship distance (30000m)");
+}
+
+// ── Protocol Message Tests ──────────────────────────────────────────
+
+void testProtocolDockMessages() {
+    std::cout << "\n=== Protocol Dock Messages ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    // Dock success
+    std::string dockSuccess = proto.createDockSuccess("station_01");
+    assertTrue(dockSuccess.find("dock_success") != std::string::npos,
+               "Dock success contains message type");
+    assertTrue(dockSuccess.find("station_01") != std::string::npos,
+               "Dock success contains station ID");
+
+    // Dock failed
+    std::string dockFailed = proto.createDockFailed("out of range");
+    assertTrue(dockFailed.find("dock_failed") != std::string::npos,
+               "Dock failed contains message type");
+    assertTrue(dockFailed.find("out of range") != std::string::npos,
+               "Dock failed contains reason");
+}
+
+void testProtocolUndockMessage() {
+    std::cout << "\n=== Protocol Undock Message ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    std::string undock = proto.createUndockSuccess();
+    assertTrue(undock.find("undock_success") != std::string::npos,
+               "Undock success contains message type");
+}
+
+void testProtocolRepairMessage() {
+    std::cout << "\n=== Protocol Repair Message ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    std::string repair = proto.createRepairResult(5000.0f, 100.0f, 100.0f, 100.0f);
+    assertTrue(repair.find("repair_result") != std::string::npos,
+               "Repair result contains message type");
+    assertTrue(repair.find("5000") != std::string::npos,
+               "Repair result contains cost");
+}
+
+void testProtocolDamageEventMessage() {
+    std::cout << "\n=== Protocol Damage Event Message ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    std::string dmg = proto.createDamageEvent("target_01", 150.0f, "kinetic",
+                                               "shield", true, false, false);
+    assertTrue(dmg.find("damage_event") != std::string::npos,
+               "Damage event contains message type");
+    assertTrue(dmg.find("target_01") != std::string::npos,
+               "Damage event contains target ID");
+    assertTrue(dmg.find("shield") != std::string::npos,
+               "Damage event contains layer_hit");
+    assertTrue(dmg.find("\"shield_depleted\":true") != std::string::npos,
+               "Damage event has shield_depleted flag");
+}
+
+void testProtocolDockRequestParse() {
+    std::cout << "\n=== Protocol Dock Request Parse ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    std::string msg = "{\"message_type\":\"dock_request\",\"data\":{\"station_id\":\"s1\"}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Dock request parses successfully");
+    assertTrue(type == atlas::network::MessageType::DOCK_REQUEST, "Parsed type is DOCK_REQUEST");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -6555,7 +6801,8 @@ int main() {
     std::cout << "FleetMorale, CaptainPersonality, FleetChatter," << std::endl;
     std::cout << "WarpAnomaly, CaptainRelationship, EmotionalArc," << std::endl;
     std::cout << "FleetCargo, TacticalOverlay," << std::endl;
-    std::cout << "DamageEvent, AIRetreat, WarpState" << std::endl;
+    std::cout << "DamageEvent, AIRetreat, WarpState," << std::endl;
+    std::cout << "AIDynamicOrbit, AITargetSelection, Protocol" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -6929,6 +7176,25 @@ int main() {
     testWarpStatePhaseExit();
     testWarpStateResetOnArrival();
     testWarpStateIntensity();
+
+    // AI dynamic orbit tests
+    testAIDynamicOrbitFrigate();
+    testAIDynamicOrbitCruiser();
+    testAIDynamicOrbitBattleship();
+    testAIDynamicOrbitCapital();
+    testAIDynamicOrbitUnknown();
+    testAIEngagementRangeFromWeapon();
+    testAIEngagementRangeNoWeapon();
+    testAITargetSelectionClosest();
+    testAITargetSelectionLowestHP();
+    testAIDynamicOrbitApplied();
+
+    // Protocol message tests
+    testProtocolDockMessages();
+    testProtocolUndockMessage();
+    testProtocolRepairMessage();
+    testProtocolDamageEventMessage();
+    testProtocolDockRequestParse();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
