@@ -170,7 +170,7 @@ public:
     std::string target_entity_id;
     float orbit_distance = 1000.0f;  // preferred orbit distance
     float awareness_range = 50000.0f;  // meters
-    float flee_threshold = 0.25f;  // flee when shield+armor below this fraction of total
+    float flee_threshold = 0.25f;  // flee when total HP (shield+armor+hull) below this fraction of max
     
     COMPONENT_TYPE(AI)
 };
