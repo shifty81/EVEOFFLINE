@@ -48,6 +48,8 @@
 #include "systems/emotional_arc_system.h"
 #include "systems/fleet_cargo_system.h"
 #include "systems/tactical_overlay_system.h"
+#include "systems/combat_system.h"
+#include "systems/ai_system.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
 #include "utils/server_metrics.h"
@@ -6191,6 +6193,351 @@ void testTacticalOverlayDefaultRings() {
     assertTrue(approxEqual(rings[5], 100.0f), "Default last ring is 100.0");
 }
 
+// ==================== Damage Event Tests ====================
+
+void testDamageEventOnShieldHit() {
+    std::cout << "\n=== Damage Event On Shield Hit ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    auto* target = world.createEntity("target1");
+    auto* health = addComp<components::Health>(target);
+    health->shield_hp = 500.0f;
+    health->shield_max = 500.0f;
+    health->armor_hp = 300.0f;
+    health->armor_max = 300.0f;
+    health->hull_hp = 200.0f;
+    health->hull_max = 200.0f;
+
+    combatSys.applyDamage("target1", 50.0f, "kinetic");
+
+    auto* dmgEvent = target->getComponent<components::DamageEvent>();
+    assertTrue(dmgEvent != nullptr, "DamageEvent created on damage");
+    assertTrue(dmgEvent->recent_hits.size() == 1, "One hit recorded");
+    assertTrue(dmgEvent->recent_hits[0].layer_hit == "shield", "Hit registered on shield layer");
+    assertTrue(approxEqual(dmgEvent->recent_hits[0].damage_amount, 50.0f), "Damage amount recorded");
+    assertTrue(dmgEvent->recent_hits[0].damage_type == "kinetic", "Damage type recorded");
+    assertTrue(!dmgEvent->recent_hits[0].shield_depleted, "Shield not depleted");
+}
+
+void testDamageEventShieldDepleted() {
+    std::cout << "\n=== Damage Event Shield Depleted ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    auto* target = world.createEntity("target1");
+    auto* health = addComp<components::Health>(target);
+    health->shield_hp = 20.0f;
+    health->shield_max = 500.0f;
+    health->armor_hp = 300.0f;
+    health->armor_max = 300.0f;
+    health->hull_hp = 200.0f;
+    health->hull_max = 200.0f;
+
+    // Apply 50 damage; 20 to shield (depletes) + 30 overflows to armor
+    combatSys.applyDamage("target1", 50.0f, "kinetic");
+
+    auto* dmgEvent = target->getComponent<components::DamageEvent>();
+    assertTrue(dmgEvent != nullptr, "DamageEvent created");
+    assertTrue(dmgEvent->recent_hits.size() == 1, "One hit recorded");
+    assertTrue(dmgEvent->recent_hits[0].shield_depleted, "Shield depleted flag set");
+    assertTrue(approxEqual(health->shield_hp, 0.0f), "Shield HP is 0");
+}
+
+void testDamageEventHullCritical() {
+    std::cout << "\n=== Damage Event Hull Critical ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    auto* target = world.createEntity("target1");
+    auto* health = addComp<components::Health>(target);
+    health->shield_hp = 0.0f;
+    health->shield_max = 100.0f;
+    health->armor_hp = 0.0f;
+    health->armor_max = 100.0f;
+    health->hull_hp = 100.0f;
+    health->hull_max = 100.0f;
+
+    // Hit hull for 80 damage, leaving 20 HP (20% < 25% threshold)
+    combatSys.applyDamage("target1", 80.0f, "explosive");
+
+    auto* dmgEvent = target->getComponent<components::DamageEvent>();
+    assertTrue(dmgEvent != nullptr, "DamageEvent created");
+    assertTrue(dmgEvent->recent_hits[0].hull_critical, "Hull critical flag set (below 25%)");
+    assertTrue(dmgEvent->recent_hits[0].layer_hit == "hull", "Hit on hull layer");
+}
+
+void testDamageEventMultipleHits() {
+    std::cout << "\n=== Damage Event Multiple Hits ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    auto* target = world.createEntity("target1");
+    auto* health = addComp<components::Health>(target);
+    health->shield_hp = 500.0f;
+    health->shield_max = 500.0f;
+    health->armor_hp = 300.0f;
+    health->armor_max = 300.0f;
+
+    combatSys.applyDamage("target1", 10.0f, "em");
+    combatSys.applyDamage("target1", 20.0f, "thermal");
+    combatSys.applyDamage("target1", 30.0f, "kinetic");
+
+    auto* dmgEvent = target->getComponent<components::DamageEvent>();
+    assertTrue(dmgEvent != nullptr, "DamageEvent exists");
+    assertTrue(dmgEvent->recent_hits.size() == 3, "Three hits recorded");
+    assertTrue(approxEqual(dmgEvent->total_damage_taken, 60.0f), "Total damage tracked");
+}
+
+void testDamageEventClearOldHits() {
+    std::cout << "\n=== Damage Event Clear Old Hits ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    auto* target = world.createEntity("target1");
+    auto* health = addComp<components::Health>(target);
+    health->shield_hp = 500.0f;
+    health->shield_max = 500.0f;
+
+    combatSys.applyDamage("target1", 10.0f, "em");
+
+    auto* dmgEvent = target->getComponent<components::DamageEvent>();
+    assertTrue(dmgEvent != nullptr, "DamageEvent exists");
+    assertTrue(dmgEvent->recent_hits.size() == 1, "One hit before clear");
+
+    // Clear with a future timestamp beyond max_age
+    dmgEvent->clearOldHits(100.0f, 5.0f);
+    assertTrue(dmgEvent->recent_hits.size() == 0, "Old hits cleared");
+}
+
+// ==================== AI Retreat Tests ====================
+
+void testAIFleeOnLowHealth() {
+    std::cout << "\n=== AI Flee On Low Health ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    auto* npc = world.createEntity("npc1");
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Aggressive;
+    ai->state = components::AI::State::Attacking;
+    ai->target_entity_id = "player1";
+    ai->flee_threshold = 0.25f;
+
+    auto* health = addComp<components::Health>(npc);
+    health->shield_hp = 0.0f;
+    health->shield_max = 100.0f;
+    health->armor_hp = 0.0f;
+    health->armor_max = 100.0f;
+    health->hull_hp = 50.0f;   // 50 out of 300 total = 16.7% < 25%
+    health->hull_max = 100.0f;
+
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+
+    auto* player = world.createEntity("player1");
+    auto* playerPos = addComp<components::Position>(player);
+    playerPos->x = 1000.0f; playerPos->y = 0.0f; playerPos->z = 0.0f;
+    addComp<components::Player>(player);
+
+    aiSys.update(0.1f);
+
+    assertTrue(ai->state == components::AI::State::Fleeing, "NPC flees when health below threshold");
+}
+
+void testAINoFleeAboveThreshold() {
+    std::cout << "\n=== AI No Flee Above Threshold ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    auto* npc = world.createEntity("npc1");
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Aggressive;
+    ai->state = components::AI::State::Attacking;
+    ai->target_entity_id = "player1";
+    ai->flee_threshold = 0.25f;
+
+    auto* health = addComp<components::Health>(npc);
+    health->shield_hp = 50.0f;
+    health->shield_max = 100.0f;
+    health->armor_hp = 50.0f;
+    health->armor_max = 100.0f;
+    health->hull_hp = 100.0f;   // 200 out of 300 total = 66.7% > 25%
+    health->hull_max = 100.0f;
+
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+
+    auto* player = world.createEntity("player1");
+    auto* playerPos = addComp<components::Position>(player);
+    playerPos->x = 1000.0f; playerPos->y = 0.0f; playerPos->z = 0.0f;
+    addComp<components::Player>(player);
+
+    // NPC needs a weapon to stay in attacking state (orbitBehavior checks for weapon)
+    addComp<components::Weapon>(npc);
+
+    aiSys.update(0.1f);
+
+    assertTrue(ai->state != components::AI::State::Fleeing, "NPC does not flee when health above threshold");
+}
+
+void testAIFleeThresholdCustom() {
+    std::cout << "\n=== AI Flee Threshold Custom ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    auto* npc = world.createEntity("npc1");
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Aggressive;
+    ai->state = components::AI::State::Attacking;
+    ai->target_entity_id = "player1";
+    ai->flee_threshold = 0.50f;  // Custom high threshold
+
+    auto* health = addComp<components::Health>(npc);
+    health->shield_hp = 30.0f;
+    health->shield_max = 100.0f;
+    health->armor_hp = 30.0f;
+    health->armor_max = 100.0f;
+    health->hull_hp = 80.0f;   // 140 out of 300 = 46.7% < 50%
+    health->hull_max = 100.0f;
+
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+
+    auto* player = world.createEntity("player1");
+    auto* playerPos = addComp<components::Position>(player);
+    playerPos->x = 1000.0f; playerPos->y = 0.0f; playerPos->z = 0.0f;
+    addComp<components::Player>(player);
+
+    aiSys.update(0.1f);
+
+    assertTrue(ai->state == components::AI::State::Fleeing, "NPC flees with custom high threshold");
+}
+
+// ==================== Warp State Phase Tests ====================
+
+void testWarpStatePhaseAlign() {
+    std::cout << "\n=== Warp State Phase Align ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+
+    bool warped = moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+    assertTrue(warped, "Warp initiated");
+    assertTrue(warpState->phase == components::WarpState::WarpPhase::Align, "Initial phase is Align");
+}
+
+void testWarpStatePhaseCruise() {
+    std::cout << "\n=== Warp State Phase Cruise ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+
+    moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+
+    // Advance to cruise phase (progress 0.2-0.85 = 2-8.5 seconds at 0.1/s)
+    for (int i = 0; i < 30; i++) {
+        moveSys.update(0.1f);  // 3.0 seconds total
+    }
+
+    assertTrue(warpState->phase == components::WarpState::WarpPhase::Cruise, "Phase is Cruise at 30% progress");
+    assertTrue(warpState->warp_time > 0.0f, "Warp time is tracking");
+}
+
+void testWarpStatePhaseExit() {
+    std::cout << "\n=== Warp State Phase Exit ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+
+    moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+
+    // Advance to exit phase (progress > 0.85 = 8.5 seconds)
+    for (int i = 0; i < 90; i++) {
+        moveSys.update(0.1f);  // 9.0 seconds total
+    }
+
+    assertTrue(warpState->phase == components::WarpState::WarpPhase::Exit, "Phase is Exit near completion");
+}
+
+void testWarpStateResetOnArrival() {
+    std::cout << "\n=== Warp State Reset On Arrival ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+
+    moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+
+    // Complete the warp (10+ seconds at 0.1 progress/s)
+    for (int i = 0; i < 110; i++) {
+        moveSys.update(0.1f);  // 11.0 seconds total
+    }
+
+    assertTrue(warpState->phase == components::WarpState::WarpPhase::None, "Phase reset to None after arrival");
+    assertTrue(approxEqual(warpState->warp_time, 0.0f), "Warp time reset");
+    assertTrue(approxEqual(pos->x, 200000.0f), "Ship arrived at destination X");
+}
+
+void testWarpStateIntensity() {
+    std::cout << "\n=== Warp State Intensity ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+    warpState->mass_norm = 0.5f;  // medium-mass ship
+
+    moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+
+    // Advance a few ticks
+    moveSys.update(1.0f);
+
+    assertTrue(warpState->intensity > 0.0f, "Intensity increases during warp");
+    assertTrue(warpState->intensity <= 1.0f, "Intensity clamped to max 1.0");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -6207,7 +6554,8 @@ int main() {
     std::cout << "Logger, ServerMetrics," << std::endl;
     std::cout << "FleetMorale, CaptainPersonality, FleetChatter," << std::endl;
     std::cout << "WarpAnomaly, CaptainRelationship, EmotionalArc," << std::endl;
-    std::cout << "FleetCargo, TacticalOverlay" << std::endl;
+    std::cout << "FleetCargo, TacticalOverlay," << std::endl;
+    std::cout << "DamageEvent, AIRetreat, WarpState" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -6562,6 +6910,25 @@ int main() {
     testTacticalOverlaySetToolRange();
     testTacticalOverlayRingDistances();
     testTacticalOverlayDefaultRings();
+
+    // Damage event tests
+    testDamageEventOnShieldHit();
+    testDamageEventShieldDepleted();
+    testDamageEventHullCritical();
+    testDamageEventMultipleHits();
+    testDamageEventClearOldHits();
+
+    // AI retreat tests
+    testAIFleeOnLowHealth();
+    testAINoFleeAboveThreshold();
+    testAIFleeThresholdCustom();
+
+    // Warp state phase tests
+    testWarpStatePhaseAlign();
+    testWarpStatePhaseCruise();
+    testWarpStatePhaseExit();
+    testWarpStateResetOnArrival();
+    testWarpStateIntensity();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

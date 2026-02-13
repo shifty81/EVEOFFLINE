@@ -3,6 +3,7 @@
 #include "components/game_components.h"
 #include <cmath>
 #include <algorithm>
+#include <memory>
 
 namespace atlas {
 namespace systems {
@@ -25,6 +26,13 @@ bool CombatSystem::applyDamage(const std::string& target_id, float damage, const
     auto* health = target->getComponent<components::Health>();
     if (!health) return false;
     
+    // Track which layer absorbs the initial hit for damage events
+    std::string layer_hit = "shield";
+    bool shield_depleted = false;
+    bool armor_depleted = false;
+    bool hull_critical = false;
+    float original_damage = damage;
+    
     // Apply damage to shields first
     if (health->shield_hp > 0.0f) {
         float resist = getResistance(
@@ -41,14 +49,28 @@ bool CombatSystem::applyDamage(const std::string& target_id, float damage, const
             // Overflow damage goes to armor
             float overflow_damage = -health->shield_hp;
             health->shield_hp = 0.0f;
+            shield_depleted = true;
             damage = overflow_damage;
         } else {
+            // Record damage event - shield absorbed all damage
+            auto* dmgEvent = target->getComponent<components::DamageEvent>();
+            if (!dmgEvent) {
+                target->addComponent(std::make_unique<components::DamageEvent>());
+                dmgEvent = target->getComponent<components::DamageEvent>();
+            }
+            if (dmgEvent) {
+                dmgEvent->addHit(original_damage, damage_type, "shield",
+                                 dmgEvent->last_hit_time + 1.0f);
+            }
             return true;  // All damage absorbed by shields
         }
+    } else {
+        layer_hit = "armor";
     }
     
     // Apply remaining damage to armor
     if (health->armor_hp > 0.0f) {
+        if (layer_hit == "shield") layer_hit = "armor";
         float resist = getResistance(
             health->armor_em_resist,
             health->armor_thermal_resist,
@@ -63,14 +85,29 @@ bool CombatSystem::applyDamage(const std::string& target_id, float damage, const
             // Overflow damage goes to hull
             float overflow_damage = -health->armor_hp;
             health->armor_hp = 0.0f;
+            armor_depleted = true;
             damage = overflow_damage;
         } else {
+            // Record damage event - armor absorbed remaining damage
+            auto* dmgEvent = target->getComponent<components::DamageEvent>();
+            if (!dmgEvent) {
+                target->addComponent(std::make_unique<components::DamageEvent>());
+                dmgEvent = target->getComponent<components::DamageEvent>();
+            }
+            if (dmgEvent) {
+                dmgEvent->addHit(original_damage, damage_type, layer_hit,
+                                 dmgEvent->last_hit_time + 1.0f,
+                                 shield_depleted, false, false);
+            }
             return true;  // All damage absorbed by armor
         }
+    } else {
+        if (layer_hit != "hull") layer_hit = "hull";
     }
     
     // Apply remaining damage to hull
     if (health->hull_hp > 0.0f) {
+        layer_hit = "hull";
         float resist = getResistance(
             health->hull_em_resist,
             health->hull_thermal_resist,
@@ -84,6 +121,20 @@ bool CombatSystem::applyDamage(const std::string& target_id, float damage, const
         if (health->hull_hp < 0.0f) {
             health->hull_hp = 0.0f;
         }
+        
+        hull_critical = (health->hull_hp < health->hull_max * 0.25f);
+    }
+    
+    // Record damage event
+    auto* dmgEvent = target->getComponent<components::DamageEvent>();
+    if (!dmgEvent) {
+        target->addComponent(std::make_unique<components::DamageEvent>());
+        dmgEvent = target->getComponent<components::DamageEvent>();
+    }
+    if (dmgEvent) {
+        dmgEvent->addHit(original_damage, damage_type, layer_hit,
+                         dmgEvent->last_hit_time + 1.0f,
+                         shield_depleted, armor_depleted, hull_critical);
     }
     
     return true;

@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 13, 2026)**: Tasks 1.2 and 1.3 foundations **IN PROGRESS**. DamageEvent component added for visual damage feedback. AI health-based retreat logic implemented. WarpState phase tracking integrated into MovementSystem. All 985 test assertions passing. Next priority: Client-side visual effects (shader integration) and further AI combat behaviors.
+
 > **Update (February 12, 2026)**: Task 1.1 (Procedural Ship Hull + Weapons Generation) **COMPLETE**. Ships now assembled from modular parts with visible weapons and engines. Next priority: Task 1.2 (Shield/Armor/Hull Damage with Visual Feedback).
 
 > **Update (February 11, 2026)**: Test infrastructure improved with dedicated test runner script. All 832 test assertions passing across 170+ test functions. Documentation updated with comprehensive testing guide. Project status: Excellent - all baseline systems complete, well-tested, and documented.
@@ -17,7 +19,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: ~~Task 1.1 (Procedural Ship Hull + Weapons Generation)~~ ✅ **COMPLETE** (Feb 12, 2026). The highest priority task is now **Task 1.2: Shield/Armor/Hull Damage with Visual Feedback** (1 week, medium complexity). This is the next step in the critical Vertical Slice milestone.
+**TL;DR**: ~~Task 1.1 (Procedural Ship Hull + Weapons Generation)~~ ✅ **COMPLETE** (Feb 12, 2026). Task 1.2 (Damage Feedback) server-side foundation is **COMPLETE** (Feb 13, 2026) — DamageEvent component emitted by CombatSystem. Task 1.3 (AI Combat) foundation **COMPLETE** — health-based retreat logic added. WarpState phase tracking integrated into MovementSystem. Next: client-side visual effects and expanded AI behaviors.
 
 ## Current Status (February 2026)
 
@@ -44,7 +46,7 @@
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **29 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **170+ test functions** all passing (897 assertions)
+- **170+ test functions** all passing (985 assertions)
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture

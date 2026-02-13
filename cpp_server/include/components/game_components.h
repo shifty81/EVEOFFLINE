@@ -170,6 +170,7 @@ public:
     std::string target_entity_id;
     float orbit_distance = 1000.0f;  // preferred orbit distance
     float awareness_range = 50000.0f;  // meters
+    float flee_threshold = 0.25f;  // flee when total HP (shield+armor+hull) below this fraction of max
     
     COMPONENT_TYPE(AI)
 };
@@ -1258,6 +1259,57 @@ public:
     std::string tool_type;
 
     COMPONENT_TYPE(TacticalOverlayState)
+};
+
+/**
+ * @brief Damage event tracking for visual feedback
+ * 
+ * Records recent damage hits so the client can render appropriate
+ * visual effects: shield ripple (blue), armor flash (yellow/orange),
+ * hull pulse (red + screen shake).
+ */
+class DamageEvent : public ecs::Component {
+public:
+    struct HitRecord {
+        float damage_amount = 0.0f;
+        std::string damage_type;      // em, thermal, kinetic, explosive
+        std::string layer_hit;        // shield, armor, hull
+        float timestamp = 0.0f;
+        bool shield_depleted = false;  // shield reached 0 on this hit
+        bool armor_depleted = false;   // armor reached 0 on this hit
+        bool hull_critical = false;    // hull below 25% after this hit
+    };
+
+    std::vector<HitRecord> recent_hits;
+    float last_hit_time = 0.0f;
+    float total_damage_taken = 0.0f;
+
+    void addHit(float damage, const std::string& type, const std::string& layer,
+                float time, bool shield_dep = false, bool armor_dep = false,
+                bool hull_crit = false) {
+        HitRecord hit;
+        hit.damage_amount = damage;
+        hit.damage_type = type;
+        hit.layer_hit = layer;
+        hit.timestamp = time;
+        hit.shield_depleted = shield_dep;
+        hit.armor_depleted = armor_dep;
+        hit.hull_critical = hull_crit;
+        recent_hits.push_back(hit);
+        last_hit_time = time;
+        total_damage_taken += damage;
+    }
+
+    void clearOldHits(float current_time, float max_age = 5.0f) {
+        recent_hits.erase(
+            std::remove_if(recent_hits.begin(), recent_hits.end(),
+                [current_time, max_age](const HitRecord& h) {
+                    return (current_time - h.timestamp) > max_age;
+                }),
+            recent_hits.end());
+    }
+
+    COMPONENT_TYPE(DamageEvent)
 };
 
 } // namespace components

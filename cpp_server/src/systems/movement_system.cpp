@@ -93,6 +93,29 @@ void MovementSystem::update(float delta_time) {
             }
         } else if (cmd.type == MovementCommand::Type::Warp) {
             cmd.warp_progress += delta_time * WARP_PROGRESS_RATE;
+            
+            // Update WarpState component for phase tracking
+            auto* warpState = entity->getComponent<components::WarpState>();
+            if (warpState) {
+                warpState->warp_time += delta_time;
+                warpState->distance_remaining = (1.0f - cmd.warp_progress) * 
+                    std::sqrt((cmd.warp_dest_x - pos->x) * (cmd.warp_dest_x - pos->x) +
+                              (cmd.warp_dest_y - pos->y) * (cmd.warp_dest_y - pos->y) +
+                              (cmd.warp_dest_z - pos->z) * (cmd.warp_dest_z - pos->z));
+                warpState->intensity = std::min(1.0f, warpState->warp_time * 0.5f + warpState->mass_norm * 0.3f);
+                
+                // Phase transitions based on progress
+                if (cmd.warp_progress < 0.1f) {
+                    warpState->phase = components::WarpState::WarpPhase::Align;
+                } else if (cmd.warp_progress < 0.2f) {
+                    warpState->phase = components::WarpState::WarpPhase::Entry;
+                } else if (cmd.warp_progress < 0.85f) {
+                    warpState->phase = components::WarpState::WarpPhase::Cruise;
+                } else {
+                    warpState->phase = components::WarpState::WarpPhase::Exit;
+                }
+            }
+            
             if (cmd.warp_progress >= 1.0f) {
                 pos->x = cmd.warp_dest_x;
                 pos->y = cmd.warp_dest_y;
@@ -100,6 +123,13 @@ void MovementSystem::update(float delta_time) {
                 vel->vx = 0.0f;
                 vel->vy = 0.0f;
                 vel->vz = 0.0f;
+                // Reset WarpState on arrival
+                if (warpState) {
+                    warpState->phase = components::WarpState::WarpPhase::None;
+                    warpState->warp_time = 0.0f;
+                    warpState->distance_remaining = 0.0f;
+                    warpState->intensity = 0.0f;
+                }
                 it = movement_commands_.erase(it);
                 continue;
             }
@@ -208,6 +238,15 @@ bool MovementSystem::commandWarp(const std::string& entity_id,
     float dz = dest_z - pos->z;
     float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
     if (dist < MIN_WARP_DISTANCE) return false;  // too close to warp
+
+    // Initialize WarpState if present
+    auto* warpState = entity->getComponent<components::WarpState>();
+    if (warpState) {
+        warpState->phase = components::WarpState::WarpPhase::Align;
+        warpState->warp_time = 0.0f;
+        warpState->distance_remaining = dist;
+        warpState->intensity = 0.0f;
+    }
 
     MovementCommand cmd;
     cmd.type = MovementCommand::Type::Warp;
