@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 13, 2026)**: **Vertical Slice Phase 2 IN PROGRESS**. Mining system implemented — MiningSystem with MiningLaser cycle-based ore extraction, MineralDeposit components for asteroid belts. Mining drones and salvage drones added to DroneSystem. CombatSystem death callback auto-creates wrecks with loot when ships are destroyed. SystemResources component tracks per-system mineral availability. Protocol messages: SALVAGE_REQUEST/RESULT, LOOT_ALL/RESULT, MINING_START/STOP/RESULT. 1115 test assertions passing.
+
 > **Update (February 13, 2026)**: **Solar system wiring COMPLETE**. Movement commands (warp/approach/orbit/stop) now routed from client → GameSession → MovementSystem. New protocol messages: WARP_REQUEST, WARP_RESULT, APPROACH, ORBIT, STOP. Sun visibility fixed — minimum apparent size enforced so the star is always visible from anywhere in system (like EVE Online). Ship hulls improved with smooth normals + higher polygon counts. Speed +/- buttons functional. 1035 test assertions passing.
 
 > **Update (February 13, 2026)**: Ship hull visual quality **IMPROVED**. Smooth normals added to procedural mesh generation — ships no longer look like jagged missiles. Cross-section polygon counts increased across all factions (Veyren 4→6, Keldari 6→8, Solari 8→12, Aurelian 12→16) and all ship classes. Speed indicator +/- buttons now functional (return click direction to HUD callback). Speed gauge repositioned higher on screen (winH-12 → winH-42). All 1021 test assertions passing.
@@ -25,7 +27,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: ~~Task 1.1 (Procedural Ship Hull + Weapons Generation)~~ ✅ **COMPLETE** (Feb 12, 2026). Task 1.2 (Damage Feedback) server-side foundation **COMPLETE** + client-side DamageEffectHelper **COMPLETE** (Feb 13, 2026). Task 1.3 (AI Combat) **EXPANDED** — dynamic orbit by ship class, engagement range from weapons, target selection strategies (Closest/LowestHP/HighestThreat). Task 1.4 (Station Docking Protocol) **PROTOCOL MESSAGES COMPLETE**. **Solar System Wiring**: movement commands (warp/approach/orbit/stop) routed to MovementSystem; sun always visible with minimum apparent size. **Ship Quality**: smooth normals + higher polygon counts eliminate jagged hull look. **HUD Fixes**: speed +/- buttons working, gauge repositioned. 1035 test assertions passing.
+**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 IN PROGRESS**: MiningSystem + MiningLaser + MineralDeposit components (cycle-based ore extraction). Mining drones and salvage drones added. CombatSystem death→wreck auto-spawn. SystemResources per-system tracking. Protocol: SALVAGE, LOOT, MINING messages. **1115 test assertions passing**.
 
 ## Current Status (February 2026)
 
@@ -50,9 +52,10 @@
 - **10 mining missions** across levels 1-4
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
-- **29 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage)
+- **30 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage, Mining)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **170+ test functions** all passing (1011 assertions)
+- **200+ test functions** all passing (1115 assertions)
+- **Mining drones** and **salvage drones** with full cycle-based behavior
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering
 - **C++ dedicated server** with ECS architecture

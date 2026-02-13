@@ -167,7 +167,8 @@ public:
         Approaching,
         Orbiting,
         Fleeing,
-        Attacking
+        Attacking,
+        Mining
     };
     
     /**
@@ -534,7 +535,7 @@ public:
     struct DroneInfo {
         std::string drone_id;
         std::string name;
-        std::string type;          // "light_combat_drone", "medium_combat_drone", etc.
+        std::string type;          // "light_combat_drone", "medium_combat_drone", "mining_drone", "salvage_drone", etc.
         std::string damage_type;   // "em", "thermal", "kinetic", "explosive"
         float damage = 0.0f;
         float rate_of_fire = 3.0f; // seconds between shots
@@ -544,6 +545,8 @@ public:
         float current_hp = 45.0f;
         int bandwidth_use = 5;
         float volume = 5.0f;       // m3 per drone
+        float mining_yield = 0.0f;  // units of ore per cycle (mining drones)
+        float salvage_chance = 0.0f; // probability of successful salvage per cycle (salvage drones)
     };
 
     std::vector<DroneInfo> stored_drones;    // drones in bay (not deployed)
@@ -551,6 +554,9 @@ public:
 
     float bay_capacity = 25.0f;     // m3 total bay capacity
     int max_bandwidth = 25;         // Mbit/s bandwidth limit
+
+    std::string mining_target_id;   // entity id of deposit for mining drones
+    std::string salvage_target_id;  // entity id of wreck for salvage drones
 
     int usedBandwidth() const {
         int total = 0;
@@ -1328,6 +1334,69 @@ public:
     }
 
     COMPONENT_TYPE(DamageEvent)
+};
+
+/**
+ * @brief Mineral deposit — an asteroid or ore site containing minable resources
+ *
+ * Attached to asteroid belt entities.  Each deposit has a mineral type,
+ * a remaining quantity (units), and a yield rate that controls how much
+ * ore is extracted per mining cycle.
+ */
+class MineralDeposit : public ecs::Component {
+public:
+    std::string mineral_type = "Veldspar";   // ore name
+    float quantity_remaining = 10000.0f;     // units of ore left
+    float max_quantity = 10000.0f;           // original total
+    float yield_rate = 1.0f;                 // multiplier on mining yield
+    float volume_per_unit = 0.1f;            // m3 per unit of ore
+
+    bool isDepleted() const { return quantity_remaining <= 0.0f; }
+
+    COMPONENT_TYPE(MineralDeposit)
+};
+
+/**
+ * @brief Mining laser module — attached to ships that can mine
+ *
+ * Tracks the mining cycle timer and yield per cycle.  When the cycle
+ * completes the MiningSystem transfers ore from the targeted deposit
+ * into the ship's Inventory.
+ */
+class MiningLaser : public ecs::Component {
+public:
+    float yield_per_cycle = 100.0f;          // base units mined per cycle
+    float cycle_time = 60.0f;                // seconds per mining cycle
+    float cycle_progress = 0.0f;             // seconds elapsed in current cycle
+    bool active = false;                     // currently mining?
+    std::string target_deposit_id;           // entity id of the deposit being mined
+
+    COMPONENT_TYPE(MiningLaser)
+};
+
+/**
+ * @brief Per–solar-system resource tracking
+ *
+ * Attached to the solar system entity to record total and remaining
+ * resources so the server can balance spawn rates and depletion.
+ */
+class SystemResources : public ecs::Component {
+public:
+    struct ResourceEntry {
+        std::string mineral_type;
+        float total_quantity = 0.0f;
+        float remaining_quantity = 0.0f;
+    };
+
+    std::vector<ResourceEntry> resources;
+
+    float totalRemaining() const {
+        float sum = 0.0f;
+        for (const auto& r : resources) sum += r.remaining_quantity;
+        return sum;
+    }
+
+    COMPONENT_TYPE(SystemResources)
 };
 
 } // namespace components

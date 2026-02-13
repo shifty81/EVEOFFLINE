@@ -25,6 +25,18 @@ void DroneSystem::update(float delta_time) {
             target_entity = world_->getEntity(target_comp->locked_targets[0]);
         }
 
+        // Get mining deposit target
+        ecs::Entity* mining_deposit = nullptr;
+        if (!bay->mining_target_id.empty()) {
+            mining_deposit = world_->getEntity(bay->mining_target_id);
+        }
+
+        // Get salvage wreck target
+        ecs::Entity* salvage_wreck = nullptr;
+        if (!bay->salvage_target_id.empty()) {
+            salvage_wreck = world_->getEntity(bay->salvage_target_id);
+        }
+
         // Remove destroyed drones (hp <= 0)
         bay->deployed_drones.erase(
             std::remove_if(bay->deployed_drones.begin(),
@@ -43,6 +55,63 @@ void DroneSystem::update(float delta_time) {
                 continue;
             }
 
+            // --- Mining drone behavior ---
+            if (drone.type == "mining_drone" && mining_deposit) {
+                auto* deposit = mining_deposit->getComponent<components::MineralDeposit>();
+                auto* owner_inv = entity->getComponent<components::Inventory>();
+                if (deposit && owner_inv && !deposit->isDepleted()) {
+                    float yield = drone.mining_yield * deposit->yield_rate;
+                    yield = std::min(yield, deposit->quantity_remaining);
+                    float vol_needed = yield * deposit->volume_per_unit;
+                    if (vol_needed > owner_inv->freeCapacity() && deposit->volume_per_unit > 0.0f) {
+                        yield = owner_inv->freeCapacity() / deposit->volume_per_unit;
+                    }
+                    if (yield > 0.0f) {
+                        deposit->quantity_remaining -= yield;
+                        if (deposit->quantity_remaining < 0.0f) deposit->quantity_remaining = 0.0f;
+                        bool stacked = false;
+                        for (auto& item : owner_inv->items) {
+                            if (item.item_id == deposit->mineral_type) {
+                                item.quantity += static_cast<int>(yield);
+                                stacked = true;
+                                break;
+                            }
+                        }
+                        if (!stacked) {
+                            components::Inventory::Item ore;
+                            ore.item_id  = deposit->mineral_type;
+                            ore.name     = deposit->mineral_type;
+                            ore.type     = "ore";
+                            ore.quantity = static_cast<int>(yield);
+                            ore.volume   = deposit->volume_per_unit;
+                            owner_inv->items.push_back(ore);
+                        }
+                    }
+                    drone.cooldown = drone.rate_of_fire;
+                }
+                continue;
+            }
+
+            // --- Salvage drone behavior ---
+            if (drone.type == "salvage_drone" && salvage_wreck) {
+                auto* wreck = salvage_wreck->getComponent<components::Wreck>();
+                auto* wreck_inv = salvage_wreck->getComponent<components::Inventory>();
+                auto* owner_inv = entity->getComponent<components::Inventory>();
+                if (wreck && !wreck->salvaged && wreck_inv && owner_inv) {
+                    float roll = nextSalvageRandom();
+                    if (roll < drone.salvage_chance) {
+                        for (const auto& item : wreck_inv->items) {
+                            owner_inv->items.push_back(item);
+                        }
+                        wreck_inv->items.clear();
+                        wreck->salvaged = true;
+                    }
+                    drone.cooldown = drone.rate_of_fire;
+                }
+                continue;
+            }
+
+            // --- Combat drone behavior (existing) ---
             // Fire at target if available and in range
             if (target_entity) {
                 auto* target_hp = target_entity->getComponent<components::Health>();
@@ -169,6 +238,47 @@ int DroneSystem::getDeployedCount(const std::string& entity_id) {
     if (!bay) return 0;
 
     return static_cast<int>(bay->deployed_drones.size());
+}
+
+bool DroneSystem::setMiningTarget(const std::string& entity_id,
+                                   const std::string& deposit_id) {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return false;
+
+    auto* bay = entity->getComponent<components::DroneBay>();
+    if (!bay) return false;
+
+    auto* deposit_entity = world_->getEntity(deposit_id);
+    if (!deposit_entity) return false;
+
+    auto* deposit = deposit_entity->getComponent<components::MineralDeposit>();
+    if (!deposit || deposit->isDepleted()) return false;
+
+    bay->mining_target_id = deposit_id;
+    return true;
+}
+
+bool DroneSystem::setSalvageTarget(const std::string& entity_id,
+                                    const std::string& wreck_id) {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return false;
+
+    auto* bay = entity->getComponent<components::DroneBay>();
+    if (!bay) return false;
+
+    auto* wreck_entity = world_->getEntity(wreck_id);
+    if (!wreck_entity) return false;
+
+    auto* wreck = wreck_entity->getComponent<components::Wreck>();
+    if (!wreck || wreck->salvaged) return false;
+
+    bay->salvage_target_id = wreck_id;
+    return true;
+}
+
+float DroneSystem::nextSalvageRandom() {
+    salvage_seed_ = salvage_seed_ * 1103515245u + 12345u;
+    return static_cast<float>((salvage_seed_ >> 16) & 0x7FFF) / 32767.0f;
 }
 
 } // namespace systems

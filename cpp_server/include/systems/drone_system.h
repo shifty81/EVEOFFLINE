@@ -3,6 +3,7 @@
 
 #include "ecs/system.h"
 #include <string>
+#include <cstdint>
 
 namespace atlas {
 namespace systems {
@@ -48,6 +49,26 @@ public:
      * @brief Get the number of currently deployed drones for an entity
      */
     int getDeployedCount(const std::string& entity_id);
+
+    /**
+     * @brief Set the mining target for mining drones
+     * @param entity_id  Owner entity (ship)
+     * @param deposit_id Entity id of the MineralDeposit
+     */
+    bool setMiningTarget(const std::string& entity_id,
+                         const std::string& deposit_id);
+
+    /**
+     * @brief Set the salvage target for salvage drones
+     * @param entity_id  Owner entity (ship)
+     * @param wreck_id   Entity id of the Wreck
+     */
+    bool setSalvageTarget(const std::string& entity_id,
+                          const std::string& wreck_id);
+
+private:
+    uint32_t salvage_seed_ = 42;
+    float nextSalvageRandom();
 };
 
 } // namespace systems
