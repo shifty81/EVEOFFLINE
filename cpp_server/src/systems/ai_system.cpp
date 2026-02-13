@@ -4,6 +4,7 @@
 #include "components/game_components.h"
 #include <cmath>
 #include <limits>
+#include <algorithm>
 
 namespace atlas {
 namespace systems {
@@ -51,33 +52,25 @@ void AISystem::idleBehavior(ecs::Entity* entity) {
         return;
     }
     
-    // Find nearest player within awareness range
-    auto all_entities = world_->getEntities<components::Position, components::Player>();
-    
-    ecs::Entity* nearest_target = nullptr;
-    float nearest_distance = ai->awareness_range;
-    
-    for (auto* potential_target : all_entities) {
-        if (potential_target == entity) continue;
-        
-        auto* target_pos = potential_target->getComponent<components::Position>();
-        if (!target_pos) continue;
-        
-        // Calculate distance
-        float dx = target_pos->x - pos->x;
-        float dy = target_pos->y - pos->y;
-        float dz = target_pos->z - pos->z;
-        float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
-        
-        if (distance < nearest_distance) {
-            nearest_distance = distance;
-            nearest_target = potential_target;
+    // Apply dynamic orbit distance from ship class if enabled
+    if (ai->use_dynamic_orbit) {
+        auto* ship = entity->getComponent<components::Ship>();
+        if (ship) {
+            ai->orbit_distance = orbitDistanceForClass(ship->ship_class);
         }
     }
     
+    // Derive engagement range from weapon if not set
+    if (ai->engagement_range <= 0.0f) {
+        ai->engagement_range = engagementRangeFromWeapon(entity);
+    }
+    
+    // Use target selection strategy
+    ecs::Entity* target = selectTarget(entity);
+    
     // If found a target, switch to approaching
-    if (nearest_target) {
-        ai->target_entity_id = nearest_target->getId();
+    if (target) {
+        ai->target_entity_id = target->getId();
         ai->state = components::AI::State::Approaching;
     }
 }
@@ -115,8 +108,12 @@ void AISystem::approachBehavior(ecs::Entity* entity) {
     float dz = target_pos->z - pos->z;
     float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
     
-    // If close enough, switch to orbiting
-    if (distance < ai->orbit_distance) {
+    // Use engagement range to decide when to transition.
+    // If engagement_range is set and we're within it, start orbiting.
+    // Otherwise fall back to orbit_distance.
+    float engage = (ai->engagement_range > 0.0f) ? ai->engagement_range : ai->orbit_distance;
+    
+    if (distance < std::min(engage, ai->orbit_distance)) {
         ai->state = components::AI::State::Orbiting;
         return;
     }
@@ -238,6 +235,93 @@ void AISystem::fleeBehavior(ecs::Entity* entity) {
         ai->state = components::AI::State::Idle;
         ai->target_entity_id.clear();
     }
+}
+
+ecs::Entity* AISystem::selectTarget(ecs::Entity* entity) {
+    auto* ai = entity->getComponent<components::AI>();
+    auto* pos = entity->getComponent<components::Position>();
+    if (!ai || !pos) return nullptr;
+    
+    auto all_entities = world_->getEntities<components::Position, components::Player>();
+    
+    ecs::Entity* best_target = nullptr;
+    float best_score = std::numeric_limits<float>::max();
+    
+    for (auto* candidate : all_entities) {
+        if (candidate == entity) continue;
+        
+        auto* target_pos = candidate->getComponent<components::Position>();
+        if (!target_pos) continue;
+        
+        float dx = target_pos->x - pos->x;
+        float dy = target_pos->y - pos->y;
+        float dz = target_pos->z - pos->z;
+        float distance = std::sqrt(dx * dx + dy * dy + dz * dz);
+        
+        if (distance > ai->awareness_range) continue;
+        
+        float score = 0.0f;
+        
+        switch (ai->target_selection) {
+            case components::AI::TargetSelection::Closest:
+                score = distance;
+                break;
+                
+            case components::AI::TargetSelection::LowestHP: {
+                auto* health = candidate->getComponent<components::Health>();
+                if (health) {
+                    float total_max = health->shield_max + health->armor_max + health->hull_max;
+                    float total_current = health->shield_hp + health->armor_hp + health->hull_hp;
+                    score = (total_max > 0.0f) ? (total_current / total_max) : 1.0f;
+                } else {
+                    score = 1.0f;
+                }
+                break;
+            }
+            
+            case components::AI::TargetSelection::HighestThreat: {
+                auto* dmg = entity->getComponent<components::DamageEvent>();
+                // Lower score = higher priority; invert damage to make most-damaging a lower score
+                float threat = 0.0f;
+                if (dmg) {
+                    for (const auto& hit : dmg->recent_hits) {
+                        threat += hit.damage_amount;
+                    }
+                }
+                // Use negative threat as score so higher threat = lower score = higher priority
+                // Add distance as tiebreaker
+                score = -threat + distance * 0.001f;
+                break;
+            }
+        }
+        
+        if (score < best_score) {
+            best_score = score;
+            best_target = candidate;
+        }
+    }
+    
+    return best_target;
+}
+
+float AISystem::orbitDistanceForClass(const std::string& ship_class) {
+    if (ship_class == "Frigate" || ship_class == "Destroyer") {
+        return 5000.0f;
+    } else if (ship_class == "Cruiser" || ship_class == "Battlecruiser") {
+        return 15000.0f;
+    } else if (ship_class == "Battleship") {
+        return 30000.0f;
+    } else if (ship_class == "Capital" || ship_class == "Carrier" || 
+               ship_class == "Dreadnought" || ship_class == "Titan") {
+        return 50000.0f;
+    }
+    return 10000.0f;  // default for unknown classes
+}
+
+float AISystem::engagementRangeFromWeapon(ecs::Entity* entity) {
+    auto* weapon = entity->getComponent<components::Weapon>();
+    if (!weapon) return 0.0f;
+    return weapon->optimal_range + weapon->falloff_range;
 }
 
 } // namespace systems

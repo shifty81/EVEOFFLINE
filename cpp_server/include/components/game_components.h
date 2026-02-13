@@ -165,12 +165,24 @@ public:
         Attacking
     };
     
+    /**
+     * @brief Target selection strategy for AI combat
+     */
+    enum class TargetSelection {
+        Closest,     // Target nearest entity (default)
+        LowestHP,    // Target entity with lowest total HP fraction
+        HighestThreat // Target entity dealing the most damage to us
+    };
+    
     Behavior behavior = Behavior::Aggressive;
     State state = State::Idle;
     std::string target_entity_id;
-    float orbit_distance = 1000.0f;  // preferred orbit distance
+    float orbit_distance = 1000.0f;  // preferred orbit distance (0 = auto from ship class)
     float awareness_range = 50000.0f;  // meters
     float flee_threshold = 0.25f;  // flee when total HP (shield+armor+hull) below this fraction of max
+    TargetSelection target_selection = TargetSelection::Closest;  // how to pick targets
+    bool use_dynamic_orbit = false;  // if true, orbit_distance set from ship class
+    float engagement_range = 0.0f;  // 0 = derive from weapon optimal+falloff
     
     COMPONENT_TYPE(AI)
 };

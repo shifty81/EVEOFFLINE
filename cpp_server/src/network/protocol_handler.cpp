@@ -24,6 +24,14 @@ void ProtocolHandler::initializeMessageTypes() {
     message_type_map_["module_deactivate"] = MessageType::MODULE_DEACTIVATE;
     message_type_map_["wormhole_scan"] = MessageType::WORMHOLE_SCAN;
     message_type_map_["wormhole_jump"] = MessageType::WORMHOLE_JUMP;
+    message_type_map_["dock_request"] = MessageType::DOCK_REQUEST;
+    message_type_map_["dock_success"] = MessageType::DOCK_SUCCESS;
+    message_type_map_["dock_failed"] = MessageType::DOCK_FAILED;
+    message_type_map_["undock_request"] = MessageType::UNDOCK_REQUEST;
+    message_type_map_["undock_success"] = MessageType::UNDOCK_SUCCESS;
+    message_type_map_["repair_request"] = MessageType::REPAIR_REQUEST;
+    message_type_map_["repair_result"] = MessageType::REPAIR_RESULT;
+    message_type_map_["damage_event"] = MessageType::DAMAGE_EVENT;
     message_type_map_["error"] = MessageType::ERROR;
 }
 
@@ -44,6 +52,14 @@ std::string ProtocolHandler::messageTypeToString(MessageType type) {
         case MessageType::MODULE_DEACTIVATE: return "module_deactivate";
         case MessageType::WORMHOLE_SCAN: return "wormhole_scan";
         case MessageType::WORMHOLE_JUMP: return "wormhole_jump";
+        case MessageType::DOCK_REQUEST: return "dock_request";
+        case MessageType::DOCK_SUCCESS: return "dock_success";
+        case MessageType::DOCK_FAILED: return "dock_failed";
+        case MessageType::UNDOCK_REQUEST: return "undock_request";
+        case MessageType::UNDOCK_SUCCESS: return "undock_success";
+        case MessageType::REPAIR_REQUEST: return "repair_request";
+        case MessageType::REPAIR_RESULT: return "repair_result";
+        case MessageType::DAMAGE_EVENT: return "damage_event";
         case MessageType::ERROR: return "error";
         default: return "unknown";
     }
@@ -136,9 +152,74 @@ std::string ProtocolHandler::createError(const std::string& error_message) {
     return json.str();
 }
 
+std::string ProtocolHandler::createDockSuccess(const std::string& station_id) {
+    std::ostringstream json;
+    json << "{";
+    json << "\"message_type\":\"" << messageTypeToString(MessageType::DOCK_SUCCESS) << "\",";
+    json << "\"data\":{";
+    json << "\"station_id\":\"" << station_id << "\"";
+    json << "}";
+    json << "}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createDockFailed(const std::string& reason) {
+    std::ostringstream json;
+    json << "{";
+    json << "\"message_type\":\"" << messageTypeToString(MessageType::DOCK_FAILED) << "\",";
+    json << "\"data\":{";
+    json << "\"reason\":\"" << reason << "\"";
+    json << "}";
+    json << "}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createUndockSuccess() {
+    std::ostringstream json;
+    json << "{";
+    json << "\"message_type\":\"" << messageTypeToString(MessageType::UNDOCK_SUCCESS) << "\",";
+    json << "\"data\":{}";
+    json << "}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createRepairResult(float cost, float shield_hp, float armor_hp, float hull_hp) {
+    std::ostringstream json;
+    json << "{";
+    json << "\"message_type\":\"" << messageTypeToString(MessageType::REPAIR_RESULT) << "\",";
+    json << "\"data\":{";
+    json << "\"cost\":" << cost << ",";
+    json << "\"shield_hp\":" << shield_hp << ",";
+    json << "\"armor_hp\":" << armor_hp << ",";
+    json << "\"hull_hp\":" << hull_hp;
+    json << "}";
+    json << "}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createDamageEvent(const std::string& target_id, float damage,
+                                                const std::string& damage_type, const std::string& layer_hit,
+                                                bool shield_depleted, bool armor_depleted, bool hull_critical) {
+    std::ostringstream json;
+    json << "{";
+    json << "\"message_type\":\"" << messageTypeToString(MessageType::DAMAGE_EVENT) << "\",";
+    json << "\"data\":{";
+    json << "\"target_id\":\"" << target_id << "\",";
+    json << "\"damage\":" << damage << ",";
+    json << "\"damage_type\":\"" << damage_type << "\",";
+    json << "\"layer_hit\":\"" << layer_hit << "\",";
+    json << "\"shield_depleted\":" << (shield_depleted ? "true" : "false") << ",";
+    json << "\"armor_depleted\":" << (armor_depleted ? "true" : "false") << ",";
+    json << "\"hull_critical\":" << (hull_critical ? "true" : "false");
+    json << "}";
+    json << "}";
+    return json.str();
+}
+
 bool ProtocolHandler::validateMessage(const std::string& json) {
     // Basic validation - check for required fields
-    return json.find("\"message_type\":") != std::string::npos;
+    return json.find("\"message_type\":") != std::string::npos ||
+           json.find("\"type\":") != std::string::npos;
 }
 
 } // namespace network
