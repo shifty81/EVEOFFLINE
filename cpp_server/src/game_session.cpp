@@ -2,6 +2,7 @@
 #include "components/game_components.h"
 #include "systems/targeting_system.h"
 #include "systems/station_system.h"
+#include "systems/movement_system.h"
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -135,6 +136,18 @@ void GameSession::onClientMessage(const network::ClientConnection& client,
             break;
         case network::MessageType::REPAIR_REQUEST:
             handleRepairRequest(client, data);
+            break;
+        case network::MessageType::WARP_REQUEST:
+            handleWarpRequest(client, data);
+            break;
+        case network::MessageType::APPROACH:
+            handleApproach(client, data);
+            break;
+        case network::MessageType::ORBIT:
+            handleOrbit(client, data);
+            break;
+        case network::MessageType::STOP:
+            handleStop(client, data);
             break;
         default:
             break;
@@ -914,6 +927,125 @@ void GameSession::handleRepairRequest(const network::ClientConnection& client,
         protocol_.createRepairResult(static_cast<float>(cost), shield_hp, armor_hp, hull_hp));
     
     std::cout << "[GameSession] Player " << entity_id << " repaired for " << cost << " ISK" << std::endl;
+}
+
+// ---------------------------------------------------------------------------
+// WARP_REQUEST handler
+// ---------------------------------------------------------------------------
+
+void GameSession::handleWarpRequest(const network::ClientConnection& client,
+                                    const std::string& data) {
+    std::string entity_id;
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        auto it = players_.find(static_cast<int>(client.socket));
+        if (it == players_.end()) return;
+        entity_id = it->second.entity_id;
+    }
+
+    if (!movement_system_) {
+        tcp_server_->sendToClient(client,
+            protocol_.createWarpResult(false, "Movement system not available"));
+        return;
+    }
+
+    float dest_x = extractJsonFloat(data, "\"dest_x\":");
+    float dest_y = extractJsonFloat(data, "\"dest_y\":");
+    float dest_z = extractJsonFloat(data, "\"dest_z\":");
+
+    bool success = movement_system_->commandWarp(entity_id, dest_x, dest_y, dest_z);
+    if (success) {
+        tcp_server_->sendToClient(client, protocol_.createWarpResult(true));
+        std::cout << "[GameSession] Player " << entity_id << " warping to ("
+                  << dest_x << ", " << dest_y << ", " << dest_z << ")" << std::endl;
+    } else {
+        std::string reason = movement_system_->isWarpDisrupted(entity_id)
+                                 ? "Warp drive disrupted"
+                                 : "Destination too close (min 150km)";
+        tcp_server_->sendToClient(client, protocol_.createWarpResult(false, reason));
+    }
+}
+
+// ---------------------------------------------------------------------------
+// APPROACH handler
+// ---------------------------------------------------------------------------
+
+void GameSession::handleApproach(const network::ClientConnection& client,
+                                 const std::string& data) {
+    std::string entity_id;
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        auto it = players_.find(static_cast<int>(client.socket));
+        if (it == players_.end()) return;
+        entity_id = it->second.entity_id;
+    }
+
+    if (!movement_system_) {
+        tcp_server_->sendToClient(client, protocol_.createMovementAck("approach", false));
+        return;
+    }
+
+    std::string target_id = extractJsonString(data, "target_id");
+    if (target_id.empty()) {
+        tcp_server_->sendToClient(client, protocol_.createMovementAck("approach", false));
+        return;
+    }
+
+    movement_system_->commandApproach(entity_id, target_id);
+    tcp_server_->sendToClient(client, protocol_.createMovementAck("approach", true));
+}
+
+// ---------------------------------------------------------------------------
+// ORBIT handler
+// ---------------------------------------------------------------------------
+
+void GameSession::handleOrbit(const network::ClientConnection& client,
+                              const std::string& data) {
+    std::string entity_id;
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        auto it = players_.find(static_cast<int>(client.socket));
+        if (it == players_.end()) return;
+        entity_id = it->second.entity_id;
+    }
+
+    if (!movement_system_) {
+        tcp_server_->sendToClient(client, protocol_.createMovementAck("orbit", false));
+        return;
+    }
+
+    std::string target_id = extractJsonString(data, "target_id");
+    float distance = extractJsonFloat(data, "\"distance\":", 5000.0f);
+    if (target_id.empty()) {
+        tcp_server_->sendToClient(client, protocol_.createMovementAck("orbit", false));
+        return;
+    }
+
+    movement_system_->commandOrbit(entity_id, target_id, distance);
+    tcp_server_->sendToClient(client, protocol_.createMovementAck("orbit", true));
+}
+
+// ---------------------------------------------------------------------------
+// STOP handler
+// ---------------------------------------------------------------------------
+
+void GameSession::handleStop(const network::ClientConnection& client,
+                             const std::string& /*data*/) {
+    std::string entity_id;
+    {
+        std::lock_guard<std::mutex> lock(players_mutex_);
+        auto it = players_.find(static_cast<int>(client.socket));
+        if (it == players_.end()) return;
+        entity_id = it->second.entity_id;
+    }
+
+    if (!movement_system_) {
+        tcp_server_->sendToClient(client, protocol_.createMovementAck("stop", false));
+        return;
+    }
+
+    movement_system_->commandStop(entity_id);
+    tcp_server_->sendToClient(client, protocol_.createMovementAck("stop", true));
 }
 
 } // namespace atlas

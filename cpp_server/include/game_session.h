@@ -16,6 +16,7 @@ namespace atlas {
 namespace systems { 
     class TargetingSystem;
     class StationSystem;
+    class MovementSystem;
 }
 
 /**
@@ -48,6 +49,9 @@ public:
 
     /// Set pointer to the StationSystem for docking/repair handling
     void setStationSystem(systems::StationSystem* ss) { station_system_ = ss; }
+
+    /// Set pointer to the MovementSystem for warp/approach/orbit/stop handling
+    void setMovementSystem(systems::MovementSystem* ms) { movement_system_ = ms; }
 
     /// Get the ship database (read-only)
     const data::ShipDatabase& getShipDatabase() const { return ship_db_; }
@@ -180,6 +184,38 @@ private:
      */
     void handleRepairRequest(const network::ClientConnection& client, const std::string& data);
 
+    /**
+     * Handle warp request
+     *
+     * Initiates warp to a destination position.
+     * Expected format: {"type":"warp_request","dest_x":1000,"dest_y":0,"dest_z":5000}
+     */
+    void handleWarpRequest(const network::ClientConnection& client, const std::string& data);
+
+    /**
+     * Handle approach command
+     *
+     * Commands the player's ship to approach a target entity.
+     * Expected format: {"type":"approach","target_id":"entity_123"}
+     */
+    void handleApproach(const network::ClientConnection& client, const std::string& data);
+
+    /**
+     * Handle orbit command
+     *
+     * Commands the player's ship to orbit a target entity at a given distance.
+     * Expected format: {"type":"orbit","target_id":"entity_123","distance":5000}
+     */
+    void handleOrbit(const network::ClientConnection& client, const std::string& data);
+
+    /**
+     * Handle stop command
+     *
+     * Commands the player's ship to stop all movement.
+     * Expected format: {"type":"stop"}
+     */
+    void handleStop(const network::ClientConnection& client, const std::string& data);
+
     // --- State broadcast ---
     /**
      * Build full state update message
@@ -248,6 +284,7 @@ private:
     data::ShipDatabase ship_db_;
     systems::TargetingSystem* targeting_system_ = nullptr;
     systems::StationSystem* station_system_ = nullptr;
+    systems::MovementSystem* movement_system_ = nullptr;
 
     // Map socket → entity_id for connected players
     struct PlayerInfo {

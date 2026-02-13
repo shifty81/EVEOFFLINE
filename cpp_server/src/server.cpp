@@ -47,7 +47,9 @@ void Server::initializeGameWorld() {
     station_system_ = station.get();
     game_world_->addSystem(std::move(station));
 
-    game_world_->addSystem(std::make_unique<systems::MovementSystem>(game_world_.get()));
+    auto movement = std::make_unique<systems::MovementSystem>(game_world_.get());
+    movement_system_ = movement.get();
+    game_world_->addSystem(std::move(movement));
     game_world_->addSystem(std::make_unique<systems::WeaponSystem>(game_world_.get()));
     game_world_->addSystem(std::make_unique<systems::CombatSystem>(game_world_.get()));
     
@@ -132,6 +134,7 @@ bool Server::initialize() {
         game_world_.get(), tcp_server_.get(), config_->data_path);
     game_session_->setTargetingSystem(targeting_system_);
     game_session_->setStationSystem(station_system_);
+    game_session_->setMovementSystem(movement_system_);
     game_session_->initialize();
     
     // Initialize server console

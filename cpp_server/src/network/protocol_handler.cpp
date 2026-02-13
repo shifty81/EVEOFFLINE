@@ -32,6 +32,11 @@ void ProtocolHandler::initializeMessageTypes() {
     message_type_map_["repair_request"] = MessageType::REPAIR_REQUEST;
     message_type_map_["repair_result"] = MessageType::REPAIR_RESULT;
     message_type_map_["damage_event"] = MessageType::DAMAGE_EVENT;
+    message_type_map_["warp_request"] = MessageType::WARP_REQUEST;
+    message_type_map_["warp_result"] = MessageType::WARP_RESULT;
+    message_type_map_["approach"] = MessageType::APPROACH;
+    message_type_map_["orbit"] = MessageType::ORBIT;
+    message_type_map_["stop"] = MessageType::STOP;
     message_type_map_["error"] = MessageType::ERROR;
 }
 
@@ -60,6 +65,11 @@ std::string ProtocolHandler::messageTypeToString(MessageType type) {
         case MessageType::REPAIR_REQUEST: return "repair_request";
         case MessageType::REPAIR_RESULT: return "repair_result";
         case MessageType::DAMAGE_EVENT: return "damage_event";
+        case MessageType::WARP_REQUEST: return "warp_request";
+        case MessageType::WARP_RESULT: return "warp_result";
+        case MessageType::APPROACH: return "approach";
+        case MessageType::ORBIT: return "orbit";
+        case MessageType::STOP: return "stop";
         case MessageType::ERROR: return "error";
         default: return "unknown";
     }
@@ -220,6 +230,27 @@ bool ProtocolHandler::validateMessage(const std::string& json) {
     // Basic validation - check for required fields
     return json.find("\"message_type\":") != std::string::npos ||
            json.find("\"type\":") != std::string::npos;
+}
+
+std::string ProtocolHandler::createWarpResult(bool success, const std::string& reason) {
+    std::ostringstream json;
+    json << "{\"type\":\"warp_result\",\"data\":{";
+    json << "\"message_type\":\"" << messageTypeToString(MessageType::WARP_RESULT) << "\",";
+    json << "\"success\":" << (success ? "true" : "false");
+    if (!reason.empty()) {
+        json << ",\"reason\":\"" << reason << "\"";
+    }
+    json << "}}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createMovementAck(const std::string& command, bool success) {
+    std::ostringstream json;
+    json << "{\"type\":\"movement_ack\",\"data\":{";
+    json << "\"command\":\"" << command << "\",";
+    json << "\"success\":" << (success ? "true" : "false");
+    json << "}}";
+    return json.str();
 }
 
 } // namespace network
