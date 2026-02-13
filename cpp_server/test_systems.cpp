@@ -50,6 +50,7 @@
 #include "systems/tactical_overlay_system.h"
 #include "systems/combat_system.h"
 #include "systems/ai_system.h"
+#include "systems/mining_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -6991,6 +6992,573 @@ void testProtocolMovementMessages() {
     assertTrue(ack.find("true") != std::string::npos, "Movement ack contains success");
 }
 
+// ==================== Mining System Tests ====================
+
+void testMiningCreateDeposit() {
+    std::cout << "\n=== Mining: Create Deposit ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    std::string id = mineSys.createDeposit("Veldspar", 5000.0f, 100.0f, 0.0f, 0.0f);
+    assertTrue(!id.empty(), "Deposit entity created");
+
+    auto* entity = world.getEntity(id);
+    assertTrue(entity != nullptr, "Deposit entity exists in world");
+
+    auto* dep = entity->getComponent<components::MineralDeposit>();
+    assertTrue(dep != nullptr, "Deposit has MineralDeposit component");
+    assertTrue(dep->mineral_type == "Veldspar", "Mineral type is Veldspar");
+    assertTrue(approxEqual(dep->quantity_remaining, 5000.0f), "Quantity remaining is 5000");
+    assertTrue(!dep->isDepleted(), "Deposit is not depleted");
+
+    auto* pos = entity->getComponent<components::Position>();
+    assertTrue(pos != nullptr, "Deposit has Position component");
+    assertTrue(approxEqual(pos->x, 100.0f), "Deposit x position correct");
+}
+
+void testMiningStartStop() {
+    std::cout << "\n=== Mining: Start and Stop ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    std::string dep_id = mineSys.createDeposit("Scordite", 1000.0f, 0.0f, 0.0f, 0.0f);
+
+    auto* miner = world.createEntity("miner_1");
+    auto* pos = addComp<components::Position>(miner);
+    pos->x = 5000.0f; // within default 10000m range
+    auto* laser = addComp<components::MiningLaser>(miner);
+    laser->yield_per_cycle = 50.0f;
+    laser->cycle_time = 10.0f;
+    addComp<components::Inventory>(miner);
+
+    bool started = mineSys.startMining("miner_1", dep_id);
+    assertTrue(started, "Mining started successfully");
+    assertTrue(laser->active, "Laser is active");
+    assertTrue(mineSys.getActiveMinerCount() == 1, "One active miner");
+
+    bool stopped = mineSys.stopMining("miner_1");
+    assertTrue(stopped, "Mining stopped successfully");
+    assertTrue(!laser->active, "Laser is inactive after stop");
+    assertTrue(mineSys.getActiveMinerCount() == 0, "No active miners");
+}
+
+void testMiningRangeCheck() {
+    std::cout << "\n=== Mining: Range Check ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    std::string dep_id = mineSys.createDeposit("Veldspar", 1000.0f, 0.0f, 0.0f, 0.0f);
+
+    auto* miner = world.createEntity("miner_far");
+    auto* pos = addComp<components::Position>(miner);
+    pos->x = 20000.0f; // too far (default range 10000m)
+    addComp<components::MiningLaser>(miner);
+    addComp<components::Inventory>(miner);
+
+    bool started = mineSys.startMining("miner_far", dep_id);
+    assertTrue(!started, "Mining fails when out of range");
+}
+
+void testMiningCycleCompletion() {
+    std::cout << "\n=== Mining: Cycle Completion ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    std::string dep_id = mineSys.createDeposit("Veldspar", 1000.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+
+    auto* miner = world.createEntity("miner_1");
+    auto* pos = addComp<components::Position>(miner);
+    pos->x = 100.0f;
+    auto* laser = addComp<components::MiningLaser>(miner);
+    laser->yield_per_cycle = 50.0f;
+    laser->cycle_time = 10.0f;
+    auto* inv = addComp<components::Inventory>(miner);
+    inv->max_capacity = 500.0f;
+
+    mineSys.startMining("miner_1", dep_id);
+
+    // Advance 10 seconds — one full cycle
+    mineSys.update(10.0f);
+
+    assertTrue(inv->items.size() == 1, "Ore item added to inventory");
+    assertTrue(inv->items[0].item_id == "Veldspar", "Mined Veldspar");
+    assertTrue(inv->items[0].quantity == 50, "Mined 50 units");
+
+    auto* dep = world.getEntity(dep_id)->getComponent<components::MineralDeposit>();
+    assertTrue(approxEqual(dep->quantity_remaining, 950.0f), "Deposit reduced by 50");
+}
+
+void testMiningDepletedDeposit() {
+    std::cout << "\n=== Mining: Depleted Deposit ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    // Small deposit — only 20 units
+    std::string dep_id = mineSys.createDeposit("Kernite", 20.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+
+    auto* miner = world.createEntity("miner_1");
+    addComp<components::Position>(miner);
+    auto* laser = addComp<components::MiningLaser>(miner);
+    laser->yield_per_cycle = 50.0f;
+    laser->cycle_time = 5.0f;
+    auto* inv = addComp<components::Inventory>(miner);
+    inv->max_capacity = 500.0f;
+
+    mineSys.startMining("miner_1", dep_id);
+    mineSys.update(5.0f);
+
+    // Should only get 20 units (deposit was 20, yield was 50)
+    assertTrue(inv->items.size() == 1, "Ore item added");
+    assertTrue(inv->items[0].quantity == 20, "Only mined available 20 units");
+
+    auto* dep = world.getEntity(dep_id)->getComponent<components::MineralDeposit>();
+    assertTrue(dep->isDepleted(), "Deposit is depleted");
+    assertTrue(!laser->active, "Laser stops when deposit depleted");
+}
+
+void testMiningCargoFull() {
+    std::cout << "\n=== Mining: Cargo Full ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    std::string dep_id = mineSys.createDeposit("Veldspar", 10000.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+    auto* miner = world.createEntity("miner_1");
+    addComp<components::Position>(miner);
+    auto* laser = addComp<components::MiningLaser>(miner);
+    laser->yield_per_cycle = 100.0f;
+    laser->cycle_time = 5.0f;
+    auto* inv = addComp<components::Inventory>(miner);
+    inv->max_capacity = 50.0f; // only 50 m3 free, vol_per_unit=1.0
+
+    mineSys.startMining("miner_1", dep_id);
+    mineSys.update(5.0f);
+
+    // Should only mine 50 units (cargo limit)
+    assertTrue(inv->items.size() == 1, "Ore item added");
+    assertTrue(inv->items[0].quantity == 50, "Capped by cargo capacity");
+}
+
+void testMiningOreStacking() {
+    std::cout << "\n=== Mining: Ore Stacking ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    std::string dep_id = mineSys.createDeposit("Veldspar", 10000.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+
+    auto* miner = world.createEntity("miner_1");
+    addComp<components::Position>(miner);
+    auto* laser = addComp<components::MiningLaser>(miner);
+    laser->yield_per_cycle = 30.0f;
+    laser->cycle_time = 5.0f;
+    auto* inv = addComp<components::Inventory>(miner);
+    inv->max_capacity = 5000.0f;
+
+    mineSys.startMining("miner_1", dep_id);
+
+    // Complete two full cycles
+    mineSys.update(5.0f);
+    mineSys.update(5.0f);
+
+    assertTrue(inv->items.size() == 1, "Ore stacked into single item");
+    assertTrue(inv->items[0].quantity == 60, "Two cycles stacked: 30+30=60");
+}
+
+// ==================== Mining Drone Tests ====================
+
+void testMiningDroneLaunchAndMine() {
+    std::cout << "\n=== Mining Drone: Launch and Mine ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+    systems::MiningSystem mineSys(&world);
+
+    // Create a mineral deposit
+    std::string dep_id = mineSys.createDeposit("Veldspar", 5000.0f, 0.0f, 0.0f, 0.0f, 0.1f);
+
+    // Create a ship with mining drones
+    auto* ship = world.createEntity("ship_1");
+    auto* bay = addComp<components::DroneBay>(ship);
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 5000.0f;
+    addComp<components::Position>(ship);
+
+    components::DroneBay::DroneInfo mDrone;
+    mDrone.drone_id = "mining_drone_1";
+    mDrone.name = "Mining Drone I";
+    mDrone.type = "mining_drone";
+    mDrone.mining_yield = 25.0f;
+    mDrone.rate_of_fire = 60.0f; // 60s cycle
+    mDrone.hitpoints = 50.0f;
+    mDrone.current_hp = 50.0f;
+    mDrone.bandwidth_use = 5;
+    mDrone.volume = 5.0f;
+    bay->stored_drones.push_back(mDrone);
+
+    // Launch drone and set mining target
+    bool launched = droneSys.launchDrone("ship_1", "mining_drone_1");
+    assertTrue(launched, "Mining drone launched");
+    assertTrue(droneSys.getDeployedCount("ship_1") == 1, "One drone deployed");
+
+    bool targeted = droneSys.setMiningTarget("ship_1", dep_id);
+    assertTrue(targeted, "Mining target set");
+
+    // Complete one cycle (drone rate_of_fire = 60s, but cooldown starts at 0)
+    droneSys.update(0.0f); // first tick: mines immediately (cooldown=0)
+
+    assertTrue(inv->items.size() == 1, "Ore mined by drone");
+    assertTrue(inv->items[0].item_id == "Veldspar", "Mined correct mineral");
+    assertTrue(inv->items[0].quantity == 25, "Mined correct amount");
+
+    auto* dep = world.getEntity(dep_id)->getComponent<components::MineralDeposit>();
+    assertTrue(approxEqual(dep->quantity_remaining, 4975.0f), "Deposit reduced by mining drone");
+}
+
+void testSalvageDroneLaunchAndSalvage() {
+    std::cout << "\n=== Salvage Drone: Launch and Salvage ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    // Create a wreck with loot
+    std::string wreck_id = wreckSys.createWreck("dead_npc", 100.0f, 0.0f, 0.0f);
+    auto* wreck_entity = world.getEntity(wreck_id);
+    auto* wreck_inv = wreck_entity->getComponent<components::Inventory>();
+    components::Inventory::Item salvage;
+    salvage.item_id = "salvage_metal";
+    salvage.name = "Salvaged Metal";
+    salvage.type = "salvage";
+    salvage.quantity = 5;
+    salvage.volume = 0.5f;
+    wreck_inv->items.push_back(salvage);
+
+    // Create ship with salvage drone
+    auto* ship = world.createEntity("ship_1");
+    auto* bay = addComp<components::DroneBay>(ship);
+    auto* inv = addComp<components::Inventory>(ship);
+    inv->max_capacity = 500.0f;
+    addComp<components::Position>(ship);
+
+    components::DroneBay::DroneInfo sDrone;
+    sDrone.drone_id = "salvage_drone_1";
+    sDrone.name = "Salvage Drone I";
+    sDrone.type = "salvage_drone";
+    sDrone.salvage_chance = 1.0f; // 100% for testing
+    sDrone.rate_of_fire = 10.0f;
+    sDrone.hitpoints = 30.0f;
+    sDrone.current_hp = 30.0f;
+    sDrone.bandwidth_use = 5;
+    sDrone.volume = 5.0f;
+    bay->stored_drones.push_back(sDrone);
+
+    bool launched = droneSys.launchDrone("ship_1", "salvage_drone_1");
+    assertTrue(launched, "Salvage drone launched");
+
+    bool targeted = droneSys.setSalvageTarget("ship_1", wreck_id);
+    assertTrue(targeted, "Salvage target set");
+
+    // First tick: salvage immediately (cooldown=0), chance=1.0 guaranteed
+    droneSys.update(0.0f);
+
+    // Wreck should now be salvaged
+    auto* wreck = wreck_entity->getComponent<components::Wreck>();
+    assertTrue(wreck->salvaged, "Wreck marked as salvaged");
+
+    // Items transferred to ship
+    assertTrue(inv->items.size() == 1, "Salvage transferred to ship");
+    assertTrue(inv->items[0].item_id == "salvage_metal", "Correct salvage item");
+    assertTrue(inv->items[0].quantity == 5, "Correct salvage quantity");
+}
+
+void testSalvageDroneAlreadySalvaged() {
+    std::cout << "\n=== Salvage Drone: Already Salvaged ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    std::string wreck_id = wreckSys.createWreck("dead_npc2", 0.0f, 0.0f, 0.0f);
+    auto* wreck_entity = world.getEntity(wreck_id);
+    auto* wreck = wreck_entity->getComponent<components::Wreck>();
+    wreck->salvaged = true; // already salvaged
+
+    auto* ship = world.createEntity("ship_2");
+    auto* bay = addComp<components::DroneBay>(ship);
+    addComp<components::Inventory>(ship);
+    addComp<components::Position>(ship);
+
+    // Cannot set salvage target on already-salvaged wreck
+    bool targeted = droneSys.setSalvageTarget("ship_2", wreck_id);
+    assertTrue(!targeted, "Cannot target already-salvaged wreck");
+}
+
+void testMiningDroneTargetDepletedDeposit() {
+    std::cout << "\n=== Mining Drone: Depleted Deposit ===" << std::endl;
+
+    ecs::World world;
+    systems::DroneSystem droneSys(&world);
+    systems::MiningSystem mineSys(&world);
+
+    std::string dep_id = mineSys.createDeposit("Veldspar", 0.0f, 0.0f, 0.0f, 0.0f);
+
+    auto* ship = world.createEntity("ship_3");
+    auto* bay = addComp<components::DroneBay>(ship);
+    addComp<components::Inventory>(ship);
+    addComp<components::Position>(ship);
+
+    bool targeted = droneSys.setMiningTarget("ship_3", dep_id);
+    assertTrue(!targeted, "Cannot target depleted deposit");
+}
+
+// ==================== Combat Death → Wreck Integration Tests ====================
+
+void testCombatDeathCallbackFires() {
+    std::cout << "\n=== Combat: Death Callback Fires ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+    systems::WreckSalvageSystem wreckSys(&world);
+
+    std::string wreck_created;
+    combatSys.setDeathCallback([&](const std::string& entity_id, float x, float y, float z) {
+        wreck_created = wreckSys.createWreck(entity_id, x, y, z);
+    });
+
+    auto* npc = world.createEntity("npc_1");
+    auto* hp = addComp<components::Health>(npc);
+    hp->shield_hp = 0.0f;
+    hp->armor_hp = 0.0f;
+    hp->hull_hp = 10.0f;
+    hp->hull_max = 100.0f;
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 500.0f;
+    pos->y = 200.0f;
+    pos->z = 100.0f;
+
+    // Apply lethal damage
+    combatSys.applyDamage("npc_1", 50.0f, "kinetic");
+
+    assertTrue(!wreck_created.empty(), "Wreck created on death");
+    assertTrue(wreckSys.getActiveWreckCount() == 1, "One active wreck");
+
+    auto* wreck_entity = world.getEntity(wreck_created);
+    assertTrue(wreck_entity != nullptr, "Wreck entity exists");
+    auto* wreck_pos = wreck_entity->getComponent<components::Position>();
+    assertTrue(wreck_pos != nullptr, "Wreck has position");
+    assertTrue(approxEqual(wreck_pos->x, 500.0f), "Wreck at correct x");
+    assertTrue(approxEqual(wreck_pos->y, 200.0f), "Wreck at correct y");
+}
+
+void testCombatDeathCallbackWithLoot() {
+    std::cout << "\n=== Combat: Death Callback with Loot ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+    systems::LootSystem lootSys(&world);
+    lootSys.setRandomSeed(999);
+
+    std::string wreck_id;
+    combatSys.setDeathCallback([&](const std::string& entity_id, float, float, float) {
+        wreck_id = lootSys.generateLoot(entity_id);
+    });
+
+    auto* npc = world.createEntity("npc_loot");
+    auto* hp = addComp<components::Health>(npc);
+    hp->shield_hp = 0.0f;
+    hp->armor_hp = 0.0f;
+    hp->hull_hp = 5.0f;
+    hp->hull_max = 100.0f;
+    addComp<components::Position>(npc);
+
+    auto* lt = addComp<components::LootTable>(npc);
+    components::LootTable::LootEntry entry;
+    entry.item_id = "module_afterburner";
+    entry.name = "Afterburner I";
+    entry.type = "module";
+    entry.drop_chance = 1.0f; // always drops
+    entry.min_quantity = 1;
+    entry.max_quantity = 1;
+    entry.volume = 5.0f;
+    lt->entries.push_back(entry);
+    lt->isk_drop = 5000.0;
+
+    combatSys.applyDamage("npc_loot", 100.0f, "em");
+
+    assertTrue(!wreck_id.empty(), "Loot wreck created on death");
+    auto* wreck = world.getEntity(wreck_id);
+    assertTrue(wreck != nullptr, "Wreck entity exists");
+    auto* wreck_inv = wreck->getComponent<components::Inventory>();
+    assertTrue(wreck_inv != nullptr, "Wreck has inventory");
+    assertTrue(wreck_inv->items.size() >= 1, "Wreck contains loot");
+}
+
+void testCombatNoCallbackOnSurvival() {
+    std::cout << "\n=== Combat: No Callback On Survival ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    bool callback_fired = false;
+    combatSys.setDeathCallback([&](const std::string&, float, float, float) {
+        callback_fired = true;
+    });
+
+    auto* npc = world.createEntity("npc_alive");
+    auto* hp = addComp<components::Health>(npc);
+    hp->shield_hp = 100.0f;
+    hp->armor_hp = 100.0f;
+    hp->hull_hp = 100.0f;
+    hp->hull_max = 100.0f;
+
+    combatSys.applyDamage("npc_alive", 10.0f, "kinetic");
+    assertTrue(!callback_fired, "Death callback does NOT fire when entity survives");
+}
+
+// ==================== System Resources Component Tests ====================
+
+void testSystemResourcesTracking() {
+    std::cout << "\n=== System Resources: Tracking ===" << std::endl;
+
+    ecs::World world;
+    auto* system = world.createEntity("system_jita");
+    auto* res = addComp<components::SystemResources>(system);
+
+    components::SystemResources::ResourceEntry veldspar;
+    veldspar.mineral_type = "Veldspar";
+    veldspar.total_quantity = 100000.0f;
+    veldspar.remaining_quantity = 100000.0f;
+    res->resources.push_back(veldspar);
+
+    components::SystemResources::ResourceEntry scordite;
+    scordite.mineral_type = "Scordite";
+    scordite.total_quantity = 50000.0f;
+    scordite.remaining_quantity = 30000.0f;
+    res->resources.push_back(scordite);
+
+    assertTrue(res->resources.size() == 2, "Two resource types tracked");
+    assertTrue(approxEqual(res->totalRemaining(), 130000.0f), "Total remaining correct");
+
+    // Simulate depletion
+    res->resources[0].remaining_quantity -= 10000.0f;
+    assertTrue(approxEqual(res->totalRemaining(), 120000.0f), "Total after depletion");
+}
+
+// ==================== New Protocol Message Tests ====================
+
+void testProtocolSalvageMessages() {
+    std::cout << "\n=== Protocol: Salvage Messages ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    // Parse salvage request
+    std::string msg = "{\"message_type\":\"salvage_request\",\"data\":{\"wreck_id\":\"wreck_1\"}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Salvage request parses successfully");
+    assertTrue(type == atlas::network::MessageType::SALVAGE_REQUEST, "Type is SALVAGE_REQUEST");
+
+    // Create salvage result
+    std::string result = proto.createSalvageResult(true, "wreck_1", 3);
+    assertTrue(result.find("salvage_result") != std::string::npos, "Result has correct type");
+    assertTrue(result.find("wreck_1") != std::string::npos, "Result contains wreck_id");
+    assertTrue(result.find("3") != std::string::npos, "Result contains items_recovered");
+}
+
+void testProtocolLootMessages() {
+    std::cout << "\n=== Protocol: Loot Messages ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    std::string msg = "{\"message_type\":\"loot_all\",\"data\":{\"wreck_id\":\"wreck_2\"}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Loot all parses successfully");
+    assertTrue(type == atlas::network::MessageType::LOOT_ALL, "Type is LOOT_ALL");
+
+    std::string result = proto.createLootResult(true, "wreck_2", 5, 10000.0);
+    assertTrue(result.find("loot_result") != std::string::npos, "Result has correct type");
+    assertTrue(result.find("wreck_2") != std::string::npos, "Result contains wreck_id");
+    assertTrue(result.find("10000") != std::string::npos, "Result contains isk_gained");
+}
+
+void testProtocolMiningMessages() {
+    std::cout << "\n=== Protocol: Mining Messages ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    // Parse mining start
+    std::string msg = "{\"message_type\":\"mining_start\",\"data\":{\"deposit_id\":\"deposit_0\"}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Mining start parses successfully");
+    assertTrue(type == atlas::network::MessageType::MINING_START, "Type is MINING_START");
+
+    // Parse mining stop
+    msg = "{\"message_type\":\"mining_stop\",\"data\":{}}";
+    ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Mining stop parses successfully");
+    assertTrue(type == atlas::network::MessageType::MINING_STOP, "Type is MINING_STOP");
+
+    // Create mining result
+    std::string result = proto.createMiningResult(true, "deposit_0", "Veldspar", 100);
+    assertTrue(result.find("mining_result") != std::string::npos, "Result has correct type");
+    assertTrue(result.find("Veldspar") != std::string::npos, "Result contains mineral_type");
+    assertTrue(result.find("100") != std::string::npos, "Result contains quantity_mined");
+}
+
+void testProtocolLootResultParse() {
+    std::cout << "\n=== Protocol: Loot Result Parse ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    std::string msg = "{\"message_type\":\"loot_result\",\"data\":{\"success\":true,\"wreck_id\":\"wreck_3\",\"items_collected\":2,\"isk_gained\":5000}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Loot result parses successfully");
+    assertTrue(type == atlas::network::MessageType::LOOT_RESULT, "Type is LOOT_RESULT");
+}
+
+void testProtocolMiningResultParse() {
+    std::cout << "\n=== Protocol: Mining Result Parse ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    std::string msg = "{\"message_type\":\"mining_result\",\"data\":{\"success\":true,\"deposit_id\":\"deposit_1\",\"mineral_type\":\"Scordite\",\"quantity_mined\":50}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Mining result parses successfully");
+    assertTrue(type == atlas::network::MessageType::MINING_RESULT, "Type is MINING_RESULT");
+}
+
+// ==================== AI Mining State Test ====================
+
+void testAIMiningState() {
+    std::cout << "\n=== AI: Mining State ===" << std::endl;
+
+    ecs::World world;
+    auto* npc = world.createEntity("miner_npc");
+    auto* ai = addComp<components::AI>(npc);
+    ai->state = components::AI::State::Mining;
+
+    assertTrue(ai->state == components::AI::State::Mining, "AI state set to Mining");
+    // Mining state is distinct from other states
+    assertTrue(ai->state != components::AI::State::Idle, "Mining != Idle");
+    assertTrue(ai->state != components::AI::State::Attacking, "Mining != Attacking");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -7009,7 +7577,9 @@ int main() {
     std::cout << "WarpAnomaly, CaptainRelationship, EmotionalArc," << std::endl;
     std::cout << "FleetCargo, TacticalOverlay," << std::endl;
     std::cout << "DamageEvent, AIRetreat, WarpState," << std::endl;
-    std::cout << "AIDynamicOrbit, AITargetSelection, Protocol" << std::endl;
+    std::cout << "AIDynamicOrbit, AITargetSelection, Protocol," << std::endl;
+    std::cout << "Mining, MiningDrones, SalvageDrones," << std::endl;
+    std::cout << "CombatDeathWreck, SystemResources" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -7414,6 +7984,39 @@ int main() {
     testProtocolDockRequestParse();
     testProtocolWarpMessages();
     testProtocolMovementMessages();
+
+    // Mining system tests
+    testMiningCreateDeposit();
+    testMiningStartStop();
+    testMiningRangeCheck();
+    testMiningCycleCompletion();
+    testMiningDepletedDeposit();
+    testMiningCargoFull();
+    testMiningOreStacking();
+
+    // Mining drone tests
+    testMiningDroneLaunchAndMine();
+    testSalvageDroneLaunchAndSalvage();
+    testSalvageDroneAlreadySalvaged();
+    testMiningDroneTargetDepletedDeposit();
+
+    // Combat death → wreck integration tests
+    testCombatDeathCallbackFires();
+    testCombatDeathCallbackWithLoot();
+    testCombatNoCallbackOnSurvival();
+
+    // System resources tests
+    testSystemResourcesTracking();
+
+    // New protocol message tests
+    testProtocolSalvageMessages();
+    testProtocolLootMessages();
+    testProtocolMiningMessages();
+    testProtocolLootResultParse();
+    testProtocolMiningResultParse();
+
+    // AI mining state test
+    testAIMiningState();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

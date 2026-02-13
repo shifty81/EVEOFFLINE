@@ -535,7 +535,7 @@ public:
     struct DroneInfo {
         std::string drone_id;
         std::string name;
-        std::string type;          // "light_combat_drone", "medium_combat_drone", etc.
+        std::string type;          // "light_combat_drone", "medium_combat_drone", "mining_drone", "salvage_drone", etc.
         std::string damage_type;   // "em", "thermal", "kinetic", "explosive"
         float damage = 0.0f;
         float rate_of_fire = 3.0f; // seconds between shots
@@ -545,6 +545,8 @@ public:
         float current_hp = 45.0f;
         int bandwidth_use = 5;
         float volume = 5.0f;       // m3 per drone
+        float mining_yield = 0.0f;  // units of ore per cycle (mining drones)
+        float salvage_chance = 0.0f; // probability of successful salvage per cycle (salvage drones)
     };
 
     std::vector<DroneInfo> stored_drones;    // drones in bay (not deployed)
@@ -552,6 +554,9 @@ public:
 
     float bay_capacity = 25.0f;     // m3 total bay capacity
     int max_bandwidth = 25;         // Mbit/s bandwidth limit
+
+    std::string mining_target_id;   // entity id of deposit for mining drones
+    std::string salvage_target_id;  // entity id of wreck for salvage drones
 
     int usedBandwidth() const {
         int total = 0;

@@ -2,6 +2,7 @@
 #define EVE_SYSTEMS_MINING_SYSTEM_H
 
 #include "ecs/system.h"
+#include "ecs/entity.h"
 #include <string>
 
 namespace atlas {
