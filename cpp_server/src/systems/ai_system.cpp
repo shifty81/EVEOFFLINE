@@ -311,7 +311,7 @@ float AISystem::orbitDistanceForClass(const std::string& ship_class) {
         return 15000.0f;
     } else if (ship_class == "Battleship") {
         return 30000.0f;
-    } else if (ship_class == "Capital" || ship_class == "Carrier" || 
+    } else if (ship_class == "Capital" || ship_class == "Carrier" ||
                ship_class == "Dreadnought" || ship_class == "Titan") {
         return 50000.0f;
     }
