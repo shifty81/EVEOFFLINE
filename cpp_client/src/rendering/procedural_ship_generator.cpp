@@ -852,12 +852,15 @@ std::unique_ptr<Model> ProceduralShipGenerator::generateFromFile(
 
 std::string ProceduralShipGenerator::findSeedOBJ(const std::string& faction,
                                                  const std::string& shipClass) const {
-    // Search directories for OBJ files from reference assets
+    // Search directories for OBJ files from reference assets.
+    // Try multiple paths to handle different working directory contexts
+    // (running from repo root, build dir, or IDE).
     std::vector<std::string> searchDirs = {
         m_assetConfig.extractedObjDir,
         "assets/reference_models",
         "../assets/reference_models",
         "cpp_client/assets/reference_models",
+        "../../cpp_client/assets/reference_models",
         "models/ships",
         "../models/ships",
         "data/ships/obj_models"
@@ -886,12 +889,18 @@ std::string ProceduralShipGenerator::findSeedOBJ(const std::string& faction,
         m_assetConfig.extractedObjDir,
         "assets/reference_models",
         "../assets/reference_models",
-        "cpp_client/assets/reference_models"
+        "cpp_client/assets/reference_models",
+        "../../cpp_client/assets/reference_models"
     };
 
-    bool isCapital = (shipClass == "Battleship" || shipClass == "Carrier" ||
-                      shipClass == "Dreadnought" || shipClass == "Titan" ||
-                      shipClass == "Marauder");
+    // Determine which reference model to use based on ship class.
+    // Capital and large ships use the high-detail Vulcan Dkyr Class mesh;
+    // smaller ships use the Intergalactic Spaceship.
+    bool isCapital = (shipClass == "battleship" || shipClass == "Battleship" ||
+                      shipClass == "carrier" || shipClass == "Carrier" ||
+                      shipClass == "dreadnought" || shipClass == "Dreadnought" ||
+                      shipClass == "titan" || shipClass == "Titan" ||
+                      shipClass == "Marauder" || shipClass == "marauder");
 
     for (const auto& prefix : prefixes) {
         std::string path;
@@ -899,6 +908,22 @@ std::string ProceduralShipGenerator::findSeedOBJ(const std::string& faction,
             path = prefix + "/Vulcan Dkyr Class/VulcanDKyrClass.obj";
         } else {
             path = prefix + "/Intergalactic_Spaceship-(Wavefront).obj";
+        }
+        std::ifstream test(path);
+        if (test.good()) {
+            return path;
+        }
+    }
+
+    // Last resort: try the other reference model if the preferred one isn't found
+    for (const auto& prefix : prefixes) {
+        std::string path;
+        if (isCapital) {
+            // Capitals: fall back to Intergalactic Spaceship if no Vulcan
+            path = prefix + "/Intergalactic_Spaceship-(Wavefront).obj";
+        } else {
+            // Small ships: fall back to Vulcan if no Intergalactic
+            path = prefix + "/Vulcan Dkyr Class/VulcanDKyrClass.obj";
         }
         std::ifstream test(path);
         if (test.good()) {

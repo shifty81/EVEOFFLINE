@@ -447,11 +447,13 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
     // Try procedural generation from a seed OBJ (reference assets)
     {
         ProceduralShipGenerator generator;
-        // Configure reference assets (99-intergalactic_spaceship-obj & 24-textures)
+        // Configure reference assets — extracted OBJ models from testing/ archives.
+        // The extraction script (extract_reference_models.sh) places the large OBJ
+        // files into cpp_client/assets/reference_models/.
         ReferenceAssetConfig assetCfg;
         assetCfg.objArchivePath      = "testing/99-intergalactic_spaceship-obj.rar";
         assetCfg.textureArchivePath  = "testing/24-textures.zip";
-        assetCfg.extractedObjDir     = "models/ships";
+        assetCfg.extractedObjDir     = "cpp_client/assets/reference_models";
         assetCfg.extractedTextureDir = "textures";
         generator.setReferenceAssets(assetCfg);
 
@@ -459,8 +461,8 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
         std::string shipClass = "generic";
         if (isFrigate(shipType))         shipClass = "frigate";
         else if (isDestroyer(shipType))  shipClass = "destroyer";
-        else if (isCruiser(shipType))    shipClass = "cruiser";
-        else if (isBattlecruiser(shipType)) shipClass = "battlecruiser";
+        else if (isCruiser(shipType) || isTech2Cruiser(shipType)) shipClass = "cruiser";
+        else if (isCommandShip(shipType) || isBattlecruiser(shipType)) shipClass = "battlecruiser";
         else if (isBattleship(shipType)) shipClass = "battleship";
         else if (isCarrier(shipType))    shipClass = "carrier";
         else if (isDreadnought(shipType)) shipClass = "dreadnought";
@@ -490,6 +492,38 @@ std::unique_ptr<Model> Model::createShipModel(const std::string& shipType, const
                 params.engineCount = 2;
                 params.weaponCount = 2;
                 params.antennaCount = 0;
+            } else if (shipClass == "cruiser") {
+                params.extrusionCount = 4;
+                params.extrusionDepth = 0.12f;
+                params.noiseAmplitude = 0.0f;
+                params.engineCount = 2;
+                params.weaponCount = 3;
+                params.antennaCount = 1;
+            } else if (shipClass == "battlecruiser") {
+                params.extrusionCount = 5;
+                params.extrusionDepth = 0.12f;
+                params.noiseAmplitude = 0.0f;
+                params.engineCount = 3;
+                params.weaponCount = 4;
+                params.antennaCount = 1;
+            } else if (shipClass == "battleship") {
+                params.extrusionCount = 6;
+                params.extrusionDepth = 0.15f;
+                params.engineCount = 4;
+                params.weaponCount = 4;
+                params.antennaCount = 1;
+            } else if (shipClass == "carrier" || shipClass == "dreadnought") {
+                params.extrusionCount = 8;
+                params.extrusionDepth = 0.12f;
+                params.engineCount = 4;
+                params.weaponCount = 6;
+                params.antennaCount = 2;
+            } else if (shipClass == "titan") {
+                params.extrusionCount = 10;
+                params.extrusionDepth = 0.10f;
+                params.engineCount = 6;
+                params.weaponCount = 8;
+                params.antennaCount = 3;
             } else {
                 params.extrusionCount = 5;
                 params.extrusionDepth = 0.15f;
@@ -624,7 +658,7 @@ void Model::addPartToMesh(const ShipPart* part, const glm::mat4& transform,
 }
 
 std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string& shipType, const std::string& faction) {
-    // Try OBJ model first
+    // Try OBJ model first (exact match in models/ships directory)
     std::string objPath = findOBJModelPath(shipType, faction);
     if (!objPath.empty()) {
         auto model = std::make_unique<Model>();
@@ -633,6 +667,101 @@ std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string&
         }
     }
 
+    // Try procedural generation from a reference seed OBJ.
+    // This uses high-quality reference models (Intergalactic Spaceship for small
+    // ships, Vulcan Dkyr Class for capitals) as base meshes, then applies
+    // faction-colored procedural modifications for unique variants.
+    {
+        ProceduralShipGenerator generator;
+        ReferenceAssetConfig assetCfg;
+        assetCfg.extractedObjDir = "cpp_client/assets/reference_models";
+        generator.setReferenceAssets(assetCfg);
+
+        // Determine lowercase ship class for seed lookup
+        std::string seedClass = "frigate";
+        if (isFrigate(shipType))                                    seedClass = "frigate";
+        else if (isDestroyer(shipType))                             seedClass = "destroyer";
+        else if (isTech2Cruiser(shipType) || isCruiser(shipType))   seedClass = "cruiser";
+        else if (isCommandShip(shipType) || isBattlecruiser(shipType)) seedClass = "battlecruiser";
+        else if (isBattleship(shipType))                            seedClass = "battleship";
+        else if (isCarrier(shipType))                               seedClass = "carrier";
+        else if (isDreadnought(shipType))                           seedClass = "dreadnought";
+        else if (isTitan(shipType))                                 seedClass = "titan";
+
+        std::string seedPath = generator.findSeedOBJ(faction, seedClass);
+        if (!seedPath.empty()) {
+            ProceduralShipParams params;
+            params.seed = static_cast<unsigned int>(
+                std::hash<std::string>{}(shipType + "|" + faction));
+            params.enforceSymmetry = true;
+
+            // Faction-specific colour
+            FactionColors fc = getFactionColors(faction);
+            params.primaryColor = glm::vec3(fc.primary);
+
+            // Class-appropriate procedural detail
+            if (seedClass == "frigate") {
+                params.extrusionCount = 2;
+                params.extrusionDepth = 0.08f;
+                params.noiseAmplitude = 0.0f;
+                params.engineCount = 2;
+                params.weaponCount = 1;
+                params.antennaCount = 0;
+            } else if (seedClass == "destroyer") {
+                params.extrusionCount = 3;
+                params.extrusionDepth = 0.10f;
+                params.noiseAmplitude = 0.0f;
+                params.engineCount = 2;
+                params.weaponCount = 2;
+                params.antennaCount = 0;
+            } else if (seedClass == "cruiser") {
+                params.extrusionCount = 4;
+                params.extrusionDepth = 0.12f;
+                params.engineCount = 2;
+                params.weaponCount = 3;
+                params.antennaCount = 1;
+            } else if (seedClass == "battlecruiser") {
+                params.extrusionCount = 5;
+                params.extrusionDepth = 0.12f;
+                params.engineCount = 3;
+                params.weaponCount = 4;
+                params.antennaCount = 1;
+            } else if (seedClass == "battleship") {
+                params.extrusionCount = 6;
+                params.extrusionDepth = 0.15f;
+                params.engineCount = 4;
+                params.weaponCount = 4;
+                params.antennaCount = 1;
+            } else if (seedClass == "carrier" || seedClass == "dreadnought") {
+                params.extrusionCount = 8;
+                params.extrusionDepth = 0.12f;
+                params.engineCount = 4;
+                params.weaponCount = 6;
+                params.antennaCount = 2;
+            } else if (seedClass == "titan") {
+                params.extrusionCount = 10;
+                params.extrusionDepth = 0.10f;
+                params.engineCount = 6;
+                params.weaponCount = 8;
+                params.antennaCount = 3;
+            } else {
+                params.extrusionCount = 3;
+                params.extrusionDepth = 0.10f;
+                params.engineCount = 2;
+                params.weaponCount = 2;
+                params.antennaCount = 0;
+            }
+
+            auto seedModel = generator.generateFromFile(seedPath, params);
+            if (seedModel) {
+                std::cout << "Using seed OBJ for " << shipType
+                          << " (" << faction << ", class=" << seedClass << ")" << std::endl;
+                return seedModel;
+            }
+        }
+    }
+
+    // Fall back to modular part assembly (ShipPartLibrary)
     FactionColors colors = getFactionColors(faction);
 
     // Determine ship class for hull parameters
