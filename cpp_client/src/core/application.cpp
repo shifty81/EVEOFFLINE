@@ -1164,7 +1164,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
                                       pickedId, distToTarget);
                     m_radialMenuOpen = true;
                     std::cout << "[Radial Menu] Opened for entity: " << pickedId
-                              << " (distance: " << distToTarget << "m)" << std::endl;
+                              << " (distance: " << (distToTarget / 1000.0f) << " km)" << std::endl;
                 }
             }
         }

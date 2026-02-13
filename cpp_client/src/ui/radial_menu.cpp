@@ -98,7 +98,7 @@ void RadialMenu::UpdateMousePosition(float mouseX, float mouseY) {
     if (segIdx >= 0 && segIdx < static_cast<int>(m_segments.size())) {
         Action candidate = m_segments[segIdx].action;
         // Disable "Warp To" for on-grid entities (within 150km, same as ShipPhysics::MIN_WARP_DISTANCE)
-        if (candidate == Action::WARP_TO && m_distanceToTarget > 0.0f && m_distanceToTarget < 150000.0f) {
+        if (candidate == Action::WARP_TO && isWarpDisabled()) {
             m_highlightedAction = Action::NONE;
         } else {
             m_highlightedAction = candidate;
@@ -211,7 +211,7 @@ void RadialMenu::RenderAtlas(atlas::AtlasContext& ctx) {
         bool highlighted = (seg.action == m_highlightedAction && m_highlightedAction != Action::NONE);
 
         // Check if this action is disabled (e.g. Warp To when target is on-grid)
-        bool disabled = (seg.action == Action::WARP_TO && m_distanceToTarget > 0.0f && m_distanceToTarget < 150000.0f);
+        bool disabled = (seg.action == Action::WARP_TO && isWarpDisabled());
 
         // Highlight the selected segment
         if (highlighted && !disabled) {

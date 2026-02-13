@@ -125,6 +125,9 @@ private:
     int GetSegmentAtAngle(float angle) const;
     void UpdateRangeDistance(float dist);
 
+    // Minimum warp distance in metres (matches ShipPhysics::MIN_WARP_DISTANCE)
+    static constexpr float MIN_WARP_DISTANCE = 150000.0f;
+
     bool m_open;
     float m_centerX, m_centerY;        // Screen center of the menu
     float m_mouseX, m_mouseY;          // Current mouse position
@@ -132,6 +135,11 @@ private:
     Action m_highlightedAction;        // Currently highlighted segment
     int m_rangeDistance = 0;            // Drag-to-range distance (metres)
     float m_distanceToTarget = 0.0f;   // Distance in metres to target entity
+
+    /** Check if warp is disabled for the current target (too close). */
+    bool isWarpDisabled() const {
+        return m_distanceToTarget > 0.0f && m_distanceToTarget < MIN_WARP_DISTANCE;
+    }
 
     std::vector<Segment> m_segments;
 

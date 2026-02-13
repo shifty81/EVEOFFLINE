@@ -896,11 +896,12 @@ std::string ProceduralShipGenerator::findSeedOBJ(const std::string& faction,
     // Determine which reference model to use based on ship class.
     // Capital and large ships use the high-detail Vulcan Dkyr Class mesh;
     // smaller ships use the Intergalactic Spaceship.
-    bool isCapital = (shipClass == "battleship" || shipClass == "Battleship" ||
-                      shipClass == "carrier" || shipClass == "Carrier" ||
-                      shipClass == "dreadnought" || shipClass == "Dreadnought" ||
-                      shipClass == "titan" || shipClass == "Titan" ||
-                      shipClass == "Marauder" || shipClass == "marauder");
+    // Use case-insensitive comparison via lowercase conversion.
+    std::string lowerClass = shipClass;
+    std::transform(lowerClass.begin(), lowerClass.end(), lowerClass.begin(), ::tolower);
+    bool isCapital = (lowerClass == "battleship" || lowerClass == "carrier" ||
+                      lowerClass == "dreadnought" || lowerClass == "titan" ||
+                      lowerClass == "marauder");
 
     for (const auto& prefix : prefixes) {
         std::string path;
