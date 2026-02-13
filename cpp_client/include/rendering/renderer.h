@@ -14,6 +14,7 @@ class Camera;
 class Mesh;
 class Model;
 class HealthBarRenderer;
+class WarpEffectRenderer;
 class Entity;
 
 /**
@@ -114,6 +115,24 @@ public:
      * Disable sun rendering (e.g. when no solar system is loaded)
      */
     void disableSun();
+
+    /**
+     * Update and render the warp tunnel overlay effect.
+     * Call after renderScene() each frame.
+     *
+     * @param phase     Warp phase (0=none, 1=align, 2=accel, 3=cruise, 4=decel)
+     * @param progress  Overall warp progress 0–1
+     * @param intensity Effect intensity 0–1
+     * @param direction Warp heading (world-space normalised vector)
+     * @param deltaTime Frame time in seconds
+     */
+    void updateWarpEffect(int phase, float progress, float intensity,
+                          const glm::vec3& direction, float deltaTime);
+
+    /**
+     * Render the warp tunnel overlay (called from renderScene or externally).
+     */
+    void renderWarpEffect();
 
     /**
      * Create visual representation for an entity
@@ -224,6 +243,7 @@ private:
     std::unique_ptr<Shader> m_nebulaShader;
     std::unique_ptr<Shader> m_entityShader;
     std::unique_ptr<HealthBarRenderer> m_healthBarRenderer;
+    std::unique_ptr<WarpEffectRenderer> m_warpEffectRenderer;
     
     // Nebula background data
     unsigned int m_nebulaVAO;

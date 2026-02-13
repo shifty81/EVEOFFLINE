@@ -222,27 +222,37 @@ void ParticleSystem::createWeaponBeam(const glm::vec3& start, const glm::vec3& e
 }
 
 void ParticleSystem::createWarpTunnel(const glm::vec3& position, const glm::vec3& direction) {
-    int particleCount = 100;
     glm::vec3 normalized = glm::normalize(direction);
+    
+    // Spawn fewer particles per call (designed to be called every frame during warp)
+    int particleCount = 8;
+    
+    // Build a perpendicular frame from the warp direction
+    glm::vec3 perpendicular1 = glm::cross(normalized, glm::vec3(0.0f, 1.0f, 0.0f));
+    if (glm::length(perpendicular1) < 0.001f) {
+        perpendicular1 = glm::cross(normalized, glm::vec3(1.0f, 0.0f, 0.0f));
+    }
+    perpendicular1 = glm::normalize(perpendicular1);
+    glm::vec3 perpendicular2 = glm::normalize(glm::cross(normalized, perpendicular1));
     
     for (int i = 0; i < particleCount; ++i) {
         Particle p;
-        // Create particles in a tunnel shape
+        // Tunnel ring: particles spawn in a cylinder around the warp line
         float angle = randomFloat(0.0f, 2.0f * 3.14159f);
-        float radius = randomFloat(1.0f, 3.0f);
-        float distance = randomFloat(0.0f, 20.0f);
-        
-        glm::vec3 perpendicular1 = glm::cross(normalized, glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::vec3 perpendicular2 = glm::cross(normalized, perpendicular1);
+        float radius = randomFloat(2.0f, 6.0f);
+        float distance = randomFloat(-5.0f, 30.0f);
         
         p.position = position + normalized * distance + 
                      perpendicular1 * (radius * std::cos(angle)) +
                      perpendicular2 * (radius * std::sin(angle));
-        p.velocity = normalized * randomFloat(5.0f, 15.0f);
-        p.color = glm::vec4(0.5f, 0.5f, 1.0f, 0.8f); // Blue warp color
-        p.life = randomFloat(1.0f, 2.0f);
+        // Streaking velocity — particles rush past the ship
+        p.velocity = -normalized * randomFloat(20.0f, 60.0f);
+        // Blue-white warp colour with slight variation
+        float colVar = randomFloat(0.0f, 0.3f);
+        p.color = glm::vec4(0.4f + colVar, 0.5f + colVar, 1.0f, 0.7f);
+        p.life = randomFloat(0.3f, 0.8f);
         p.maxLife = p.life;
-        p.size = randomFloat(0.5f, 2.0f);
+        p.size = randomFloat(0.8f, 2.5f);
         
         addParticle(p);
     }

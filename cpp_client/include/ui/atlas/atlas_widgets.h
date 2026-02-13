@@ -170,6 +170,22 @@ void capacitorRingAnimated(AtlasContext& ctx, Vec2 centre,
 void speedIndicator(AtlasContext& ctx, Vec2 pos,
                     float currentSpeed, float maxSpeed);
 
+/**
+ * Warp progress indicator widget — shown above the ship HUD during warp.
+ *
+ * Displays a progress bar with phase label and warp speed readout.
+ * Colour transitions from teal (align) → blue (accel) → bright blue
+ * (cruise) → fading (decel).
+ *
+ * @param ctx       Context.
+ * @param pos       Centre-bottom position (horizontally centred on HUD).
+ * @param phase     Warp phase (1=align, 2=accel, 3=cruise, 4=decel).
+ * @param progress  Overall warp progress 0–1.
+ * @param speedAU   Current warp speed in AU/s.
+ */
+void warpProgressIndicator(AtlasContext& ctx, Vec2 pos,
+                           int phase, float progress, float speedAU);
+
 // ── Overview Widgets ────────────────────────────────────────────────
 
 struct OverviewEntry {

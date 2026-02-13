@@ -264,6 +264,7 @@ set(CLIENT_SOURCES
     src/rendering/particle_system.cpp
     src/rendering/healthbar_renderer.cpp
     src/rendering/visual_effects.cpp
+    src/rendering/warp_effect_renderer.cpp
     src/rendering/pbr_materials.cpp
     src/rendering/lod_manager.cpp
     src/rendering/frustum_culler.cpp

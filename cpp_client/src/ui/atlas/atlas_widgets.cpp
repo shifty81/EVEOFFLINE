@@ -417,6 +417,82 @@ void speedIndicator(AtlasContext& ctx, Vec2 pos,
     button(ctx, "+", plus);
 }
 
+// ── Warp Progress Indicator ────────────────────────────────────────
+
+void warpProgressIndicator(AtlasContext& ctx, Vec2 pos,
+                           int phase, float progress, float speedAU) {
+    if (phase <= 0) return;
+
+    const Theme& t = ctx.theme();
+    auto& rr = ctx.renderer();
+
+    float barW = 200.0f, barH = 22.0f;
+    float totalH = barH + 18.0f;  // bar + text row
+    Rect bar = {pos.x - barW * 0.5f, pos.y, barW, barH};
+
+    // Phase-dependent accent colour
+    Color phaseColor;
+    const char* phaseLabel = "";
+    switch (phase) {
+        case 1:
+            phaseColor = {0.3f, 0.8f, 0.8f, 0.9f};  // teal
+            phaseLabel = "ALIGNING";
+            break;
+        case 2:
+            phaseColor = {0.3f, 0.5f, 1.0f, 0.9f};  // blue
+            phaseLabel = "ACCELERATING";
+            break;
+        case 3:
+            phaseColor = {0.4f, 0.6f, 1.0f, 0.95f};  // bright blue
+            phaseLabel = "WARP";
+            break;
+        case 4:
+            phaseColor = {0.5f, 0.5f, 0.8f, 0.8f};  // fading purple-blue
+            phaseLabel = "DECELERATING";
+            break;
+        default:
+            phaseColor = t.accentPrimary;
+            phaseLabel = "WARP";
+            break;
+    }
+
+    // Background
+    rr.drawRoundedRect(bar, t.bgPanel.withAlpha(0.85f), 3.0f);
+    rr.drawRoundedRectOutline(bar, phaseColor.withAlpha(0.6f), 3.0f);
+
+    // Fill bar based on progress
+    float frac = std::max(0.0f, std::min(1.0f, progress));
+    if (frac > 0.0f) {
+        Rect fill = {bar.x + 2.0f, bar.y + 2.0f,
+                     (bar.w - 4.0f) * frac, bar.h - 4.0f};
+        rr.drawRoundedRect(fill, phaseColor.withAlpha(0.45f), 2.0f);
+    }
+
+    // Phase label (left-aligned inside bar)
+    rr.drawText(phaseLabel,
+        {bar.x + 8.0f, bar.y + (barH - 13.0f) * 0.5f}, phaseColor);
+
+    // Warp speed readout (right-aligned inside bar)
+    if (speedAU > 0.01f) {
+        char buf[32];
+        std::snprintf(buf, sizeof(buf), "%.1f AU/s", speedAU);
+        float tw = rr.measureText(buf);
+        rr.drawText(buf,
+            {bar.right() - tw - 8.0f, bar.y + (barH - 13.0f) * 0.5f},
+            t.textPrimary);
+    }
+
+    // Progress percentage below bar
+    {
+        char buf[16];
+        std::snprintf(buf, sizeof(buf), "%.0f%%", progress * 100.0f);
+        float tw = rr.measureText(buf);
+        rr.drawText(buf,
+            {pos.x - tw * 0.5f, bar.bottom() + 2.0f},
+            t.textSecondary);
+    }
+}
+
 // ── Overview ────────────────────────────────────────────────────────
 
 void overviewHeader(AtlasContext& ctx, const Rect& r,

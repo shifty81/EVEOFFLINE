@@ -16,6 +16,7 @@ class Camera;
 class EmbeddedServer;
 class SessionManager;
 class SolarSystemScene;
+class ShipPhysics;
 
 } // namespace atlas
 
@@ -234,6 +235,7 @@ private:
     std::unique_ptr<UI::RmlUiManager> m_uiManager;
     std::unique_ptr<UI::EntityPicker> m_entityPicker;
     std::unique_ptr<SolarSystemScene> m_solarSystem;
+    std::unique_ptr<ShipPhysics> m_shipPhysics;
     std::unique_ptr<atlas::AtlasContext> m_atlasCtx;
     std::unique_ptr<atlas::AtlasHUD> m_atlasHUD;
     std::unique_ptr<UI::ContextMenu> m_contextMenu;
@@ -241,6 +243,7 @@ private:
 
     bool m_running;
     float m_lastFrameTime;
+    float m_deltaTime = 0.016f;
     
     // Targeting state
     std::string m_currentTargetId;
