@@ -572,17 +572,17 @@ struct HullParams {
  * More sides = smoother silhouette.
  */
 static int getFactionSides(const std::string& faction) {
-    // Original EVE factions
-    if (faction.find("Veyren") != std::string::npos) return 6;   // Blocky/angular
-    if (faction.find("Keldari") != std::string::npos) return 8;  // Industrial/angular
-    if (faction.find("Solari") != std::string::npos) return 12;    // Refined/ornate
-    if (faction.find("Aurelian") != std::string::npos) return 16; // Smooth/organic
+    // Original EVE factions — higher side counts for better visual quality
+    if (faction.find("Veyren") != std::string::npos) return 8;    // Blocky/angular but not too jagged
+    if (faction.find("Keldari") != std::string::npos) return 10;   // Industrial/angular
+    if (faction.find("Solari") != std::string::npos) return 14;    // Refined/ornate
+    if (faction.find("Aurelian") != std::string::npos) return 20;  // Smooth/organic
     // New PVE factions (matching their analog's design language)
-    if (faction.find("Core Nexus") != std::string::npos) return 6;           // Veyren analog — blocky
-    if (faction.find("Rust-Scrap") != std::string::npos) return 8;           // Keldari analog — industrial
-    if (faction.find("Sanctum Hegemony") != std::string::npos) return 12;    // Solari analog — ornate
-    if (faction.find("Vanguard Republic") != std::string::npos) return 16;   // Aurelian analog — smooth
-    return 8; // Default
+    if (faction.find("Core Nexus") != std::string::npos) return 8;           // Veyren analog — blocky
+    if (faction.find("Rust-Scrap") != std::string::npos) return 10;          // Keldari analog — industrial
+    if (faction.find("Sanctum Hegemony") != std::string::npos) return 14;    // Solari analog — ornate
+    if (faction.find("Vanguard Republic") != std::string::npos) return 20;   // Aurelian analog — smooth
+    return 10; // Default
 }
 
 // Forward declaration for buildShipFromParams (defined later in this file)
@@ -805,42 +805,42 @@ std::unique_ptr<Model> Model::createShipModelWithRacialDesign(const std::string&
         p.scaleX = config.proportions.y / config.proportions.x;
         p.scaleZ = config.proportions.z / config.proportions.x;
 
-        // Map ship class to segment count and dimensions
+        // Map ship class to segment count and dimensions — higher counts for smoother hulls
         if (shipClass == "Frigate") {
-            p.segments = 5;
-            p.segmentLength = config.overallScale / 5.5f;
+            p.segments = 7;
+            p.segmentLength = config.overallScale / 7.5f;
             p.baseRadius = config.overallScale * 0.09f;
         } else if (shipClass == "Destroyer") {
-            p.segments = 6;
-            p.segmentLength = config.overallScale / 6.0f;
+            p.segments = 8;
+            p.segmentLength = config.overallScale / 8.5f;
             p.baseRadius = config.overallScale * 0.065f;
         } else if (shipClass == "Cruiser") {
-            p.segments = 6;
-            p.segmentLength = config.overallScale / 6.0f;
+            p.segments = 9;
+            p.segmentLength = config.overallScale / 9.0f;
             p.baseRadius = config.overallScale * 0.12f;
         } else if (shipClass == "Battlecruiser") {
-            p.segments = 7;
-            p.segmentLength = config.overallScale / 7.0f;
-            p.baseRadius = config.overallScale * 0.10f;
-        } else if (shipClass == "Battleship") {
-            p.segments = 8;
-            p.segmentLength = config.overallScale / 8.0f;
-            p.baseRadius = config.overallScale * 0.09f;
-        } else if (shipClass == "Carrier") {
             p.segments = 10;
             p.segmentLength = config.overallScale / 10.0f;
-            p.baseRadius = config.overallScale * 0.08f;
-        } else if (shipClass == "Dreadnought") {
-            p.segments = 8;
-            p.segmentLength = config.overallScale / 8.0f;
-            p.baseRadius = config.overallScale * 0.11f;
-        } else if (shipClass == "Titan") {
+            p.baseRadius = config.overallScale * 0.10f;
+        } else if (shipClass == "Battleship") {
             p.segments = 12;
             p.segmentLength = config.overallScale / 12.0f;
+            p.baseRadius = config.overallScale * 0.09f;
+        } else if (shipClass == "Carrier") {
+            p.segments = 14;
+            p.segmentLength = config.overallScale / 14.0f;
+            p.baseRadius = config.overallScale * 0.08f;
+        } else if (shipClass == "Dreadnought") {
+            p.segments = 12;
+            p.segmentLength = config.overallScale / 12.0f;
+            p.baseRadius = config.overallScale * 0.11f;
+        } else if (shipClass == "Titan") {
+            p.segments = 16;
+            p.segmentLength = config.overallScale / 16.0f;
             p.baseRadius = config.overallScale * 0.07f;
         } else {
-            p.segments = 4;
-            p.segmentLength = config.overallScale / 4.0f;
+            p.segments = 6;
+            p.segmentLength = config.overallScale / 6.0f;
             p.baseRadius = config.overallScale * 0.13f;
         }
 
@@ -1320,36 +1320,36 @@ void Model::addAsymmetricDetail(std::vector<Vertex>& vertices, std::vector<unsig
 
 // ==================== Ship Model Creation Functions ====================
 
-// Ship model creation functions — small class ships tuned for clean, tight silhouettes
+// Ship model creation functions — tuned for cleaner, higher-quality silhouettes
 std::unique_ptr<Model> Model::createFrigateModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 5;           // One more segment for better shape definition
-    p.segmentLength = 0.7f;   // Shorter segments for tighter proportions
-    p.baseRadius = 0.3f;      // Smaller radius for sleeker frigate silhouette
-    p.scaleX = 1.1f;          // Slightly wider than tall
-    p.scaleZ = 0.65f;         // Flatter profile — more spaceship-like
+    p.sides = 10;
+    p.segments = 7;            // More segments for smoother length profile
+    p.segmentLength = 0.5f;    // Shorter segments for tighter proportions
+    p.baseRadius = 0.3f;       // Smaller radius for sleeker frigate silhouette
+    p.scaleX = 1.1f;           // Slightly wider than tall
+    p.scaleZ = 0.65f;          // Flatter profile — more spaceship-like
     p.seed = 100u;
     return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createDestroyerModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 6;           // More segments for elongated destroyer look
-    p.segmentLength = 0.8f;   // Slightly longer segments
-    p.baseRadius = 0.25f;     // Thinner than frigate — more elongated
-    p.scaleX = 0.9f;          // Slightly narrower
-    p.scaleZ = 0.6f;          // Flat profile
+    p.sides = 10;
+    p.segments = 8;            // More segments for elongated destroyer look
+    p.segmentLength = 0.6f;    // Slightly longer segments
+    p.baseRadius = 0.25f;      // Thinner than frigate — more elongated
+    p.scaleX = 0.9f;           // Slightly narrower
+    p.scaleZ = 0.6f;           // Flat profile
     p.seed = 200u;
     return buildShipFromParams(p, colors);
 }
 
 std::unique_ptr<Model> Model::createCruiserModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 6;
-    p.segmentLength = 1.0f;
+    p.sides = 12;
+    p.segments = 9;
+    p.segmentLength = 0.7f;
     p.baseRadius = 0.65f;
     p.scaleX = 1.2f;
     p.scaleZ = 0.8f;
@@ -1373,9 +1373,9 @@ std::unique_ptr<Model> Model::createTech2CruiserModel(const FactionColors& color
 
 std::unique_ptr<Model> Model::createBattlecruiserModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 7;
-    p.segmentLength = 1.2f;
+    p.sides = 12;
+    p.segments = 10;
+    p.segmentLength = 0.85f;
     p.baseRadius = 0.8f;
     p.scaleX = 1.1f;
     p.scaleZ = 0.9f;
@@ -1385,9 +1385,9 @@ std::unique_ptr<Model> Model::createBattlecruiserModel(const FactionColors& colo
 
 std::unique_ptr<Model> Model::createBattleshipModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 10;
-    p.segments = 8;
-    p.segmentLength = 1.5f;
+    p.sides = 14;
+    p.segments = 12;
+    p.segmentLength = 1.0f;
     p.baseRadius = 1.0f;
     p.scaleX = 1.2f;
     p.scaleZ = 0.85f;
@@ -1397,9 +1397,9 @@ std::unique_ptr<Model> Model::createBattleshipModel(const FactionColors& colors)
 
 std::unique_ptr<Model> Model::createMiningBargeModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 4;
-    p.segments = 5;
-    p.segmentLength = 1.2f;
+    p.sides = 8;
+    p.segments = 7;
+    p.segmentLength = 0.9f;
     p.baseRadius = 0.9f;
     p.scaleX = 1.5f;
     p.scaleZ = 0.7f;
@@ -1414,9 +1414,9 @@ std::unique_ptr<Model> Model::createGenericModel(const FactionColors& colors) {
 
 std::unique_ptr<Model> Model::createCarrierModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 10;
-    p.segments = 10;
-    p.segmentLength = 1.5f;
+    p.sides = 14;
+    p.segments = 14;
+    p.segmentLength = 1.1f;
     p.baseRadius = 1.2f;
     p.scaleX = 1.6f;
     p.scaleZ = 0.6f;
@@ -1426,9 +1426,9 @@ std::unique_ptr<Model> Model::createCarrierModel(const FactionColors& colors) {
 
 std::unique_ptr<Model> Model::createDreadnoughtModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 8;
-    p.segments = 8;
-    p.segmentLength = 1.5f;
+    p.sides = 12;
+    p.segments = 12;
+    p.segmentLength = 1.0f;
     p.baseRadius = 1.3f;
     p.scaleX = 1.0f;
     p.scaleZ = 1.1f;
@@ -1438,9 +1438,9 @@ std::unique_ptr<Model> Model::createDreadnoughtModel(const FactionColors& colors
 
 std::unique_ptr<Model> Model::createTitanModel(const FactionColors& colors) {
     HullParams p;
-    p.sides = 12;
-    p.segments = 12;
-    p.segmentLength = 2.0f;
+    p.sides = 16;
+    p.segments = 16;
+    p.segmentLength = 1.5f;
     p.baseRadius = 1.8f;
     p.scaleX = 1.1f;
     p.scaleZ = 0.9f;
@@ -1451,9 +1451,9 @@ std::unique_ptr<Model> Model::createTitanModel(const FactionColors& colors) {
 std::unique_ptr<Model> Model::createStationModel(const FactionColors& colors, const std::string& stationType) {
     // Stations use a high-sided cylindrical hull for a ring/hub shape
     HullParams p;
-    p.sides = 12;
-    p.segments = 6;
-    p.segmentLength = 3.0f;
+    p.sides = 16;
+    p.segments = 8;
+    p.segmentLength = 2.5f;
     p.baseRadius = 3.0f;
     p.scaleX = 1.0f;
     p.scaleZ = 1.0f;

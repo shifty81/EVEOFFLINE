@@ -1123,23 +1123,6 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
     // Update radial menu if open
     if (m_radialMenuOpen && m_radialMenu) {
         m_radialMenu->UpdateMousePosition(static_cast<float>(x), static_cast<float>(y));
-        // Update RmlUi highlight based on current action
-        if (m_uiManager) {
-            auto action = m_radialMenu->GetHighlightedAction();
-            std::string segId;
-            switch (action) {
-                case UI::RadialMenu::Action::APPROACH:      segId = "rad-approach"; break;
-                case UI::RadialMenu::Action::ORBIT:         segId = "rad-orbit"; break;
-                case UI::RadialMenu::Action::WARP_TO:       segId = "rad-warp"; break;
-                case UI::RadialMenu::Action::LOCK_TARGET:   segId = "rad-lock"; break;
-                case UI::RadialMenu::Action::KEEP_AT_RANGE: segId = "rad-range"; break;
-                case UI::RadialMenu::Action::ALIGN_TO:      segId = "rad-align"; break;
-                case UI::RadialMenu::Action::SHOW_INFO:     segId = "rad-info"; break;
-                case UI::RadialMenu::Action::LOOK_AT:       segId = "rad-look"; break;
-                default: break;
-            }
-            m_uiManager->UpdateRadialHighlight(segId);
-        }
     }
     
     // Check if we should open radial menu (left mouse held for RADIAL_MENU_HOLD_TIME)
@@ -1172,12 +1155,6 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
                                       static_cast<float>(m_radialMenuStartY), 
                                       pickedId);
                     m_radialMenuOpen = true;
-                    if (m_uiManager) {
-                        m_uiManager->ShowRadialMenu(
-                            static_cast<float>(m_radialMenuStartX),
-                            static_cast<float>(m_radialMenuStartY),
-                            pickedId);
-                    }
                     std::cout << "[Radial Menu] Opened for entity: " << pickedId << std::endl;
                 }
             }
