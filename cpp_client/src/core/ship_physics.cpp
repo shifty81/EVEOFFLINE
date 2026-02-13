@@ -9,6 +9,8 @@ ShipPhysics::ShipPhysics()
     , m_velocity(0.0f)
     , m_desiredDirection(0.0f, 0.0f, 1.0f)
     , m_heading(0.0f, 0.0f, 1.0f)
+    , m_angularVelocity(0.0f)
+    , m_rollAngle(0.0f)
     , m_navMode(NavigationMode::MANUAL)
     , m_navTarget(0.0f)
     , m_navRange(0.0f)
@@ -101,6 +103,81 @@ void ShipPhysics::stop() {
     m_desiredDirection = glm::vec3(0.0f);
 }
 
+float ShipPhysics::getMaxTurnRate() const {
+    float agility = m_stats.getAgility();
+    if (agility < 1.0f) agility = 1.0f;
+    float turnRateDeg = TURN_RATE_CONSTANT / agility;
+    return std::max(MIN_TURN_RATE_DEG, std::min(turnRateDeg, MAX_TURN_RATE_DEG));
+}
+
+void ShipPhysics::updateHeading(float deltaTime) {
+    // Determine what direction the ship wants to face
+    glm::vec3 targetHeading = m_desiredDirection;
+    if (glm::length(targetHeading) < 0.001f) {
+        // No desired direction — if moving, face velocity direction; otherwise hold heading
+        float speed = glm::length(m_velocity);
+        if (speed > 1.0f) {
+            targetHeading = m_velocity / speed;
+        } else {
+            // Decay angular velocity and roll when stationary
+            m_angularVelocity *= std::max(0.0f, 1.0f - 5.0f * deltaTime);
+            m_rollAngle *= std::max(0.0f, 1.0f - ROLL_RESPONSE_RATE * deltaTime);
+            return;
+        }
+    }
+
+    // Calculate angle between current heading and target heading
+    float dotProduct = glm::dot(m_heading, targetHeading);
+    dotProduct = std::max(-1.0f, std::min(dotProduct, 1.0f));
+    float angleDiff = std::acos(dotProduct);
+
+    if (angleDiff < 0.001f) {
+        // Already facing the right direction
+        m_angularVelocity *= std::max(0.0f, 1.0f - 5.0f * deltaTime);
+        m_rollAngle *= std::max(0.0f, 1.0f - ROLL_RESPONSE_RATE * deltaTime);
+        return;
+    }
+
+    // Max turn rate is based on ship class agility
+    float maxTurnRateRad = glm::radians(getMaxTurnRate());
+
+    // Compute the rotation axis (perpendicular to both heading and target)
+    glm::vec3 rotAxis = glm::cross(m_heading, targetHeading);
+    float rotAxisLen = glm::length(rotAxis);
+
+    if (rotAxisLen < 0.0001f) {
+        // Vectors are nearly parallel or anti-parallel — pick an arbitrary perpendicular axis
+        glm::vec3 up(0.0f, 1.0f, 0.0f);
+        rotAxis = glm::cross(m_heading, up);
+        rotAxisLen = glm::length(rotAxis);
+        if (rotAxisLen < 0.0001f) {
+            rotAxis = glm::cross(m_heading, glm::vec3(1.0f, 0.0f, 0.0f));
+            rotAxisLen = glm::length(rotAxis);
+        }
+    }
+    rotAxis /= rotAxisLen;
+
+    // Rotate heading by the clamped turn angle using Rodrigues' rotation formula
+    float turnAngle = std::min(maxTurnRateRad * deltaTime, angleDiff);
+    float cosA = std::cos(turnAngle);
+    float sinA = std::sin(turnAngle);
+    m_heading = m_heading * cosA
+              + glm::cross(rotAxis, m_heading) * sinA
+              + rotAxis * glm::dot(rotAxis, m_heading) * (1.0f - cosA);
+    m_heading = glm::normalize(m_heading);
+
+    // Track angular velocity for visual feedback
+    m_angularVelocity = turnAngle;
+
+    // Calculate roll angle — ship banks into the turn direction
+    glm::vec3 crossVec = glm::cross(m_heading, targetHeading);
+    float rollSign = (crossVec.y >= 0.0f) ? 1.0f : -1.0f;
+    float turnIntensity = std::min(angleDiff / glm::radians(30.0f), 1.0f);
+    float targetRoll = rollSign * turnIntensity * MAX_ROLL_ANGLE;
+    float rollBlend = std::min(ROLL_RESPONSE_RATE * deltaTime, 1.0f);
+    m_rollAngle += (targetRoll - m_rollAngle) * rollBlend;
+}
+
 void ShipPhysics::update(float deltaTime) {
     // Update navigation behavior
     switch (m_navMode) {
@@ -173,7 +250,11 @@ void ShipPhysics::update(float deltaTime) {
             break;
     }
     
-    // Update acceleration and velocity
+    // Update heading — ship gradually turns toward desired direction
+    // Turn rate depends on ship class (agility)
+    updateHeading(deltaTime);
+    
+    // Update acceleration and velocity (thrust in heading direction)
     updateAcceleration(deltaTime);
     
     // Apply space friction (ships slow down without thrust)
@@ -182,12 +263,9 @@ void ShipPhysics::update(float deltaTime) {
     // Update position
     m_position += m_velocity * deltaTime;
     
-    // Update heading direction (ship gradually turns toward velocity)
-    float speed = glm::length(m_velocity);
-    if (speed > 1.0f) {
-        glm::vec3 velDir = m_velocity / speed;
-        float turnRate = 1.0f * deltaTime;  // Slower turn for visible alignment phase
-        m_heading = glm::normalize(glm::mix(m_heading, velDir, std::min(turnRate, 1.0f)));
+    // Decay roll angle when not actively turning
+    if (glm::length(m_desiredDirection) < 0.001f) {
+        m_rollAngle *= std::max(0.0f, 1.0f - ROLL_RESPONSE_RATE * deltaTime);
     }
 }
 
@@ -206,11 +284,11 @@ void ShipPhysics::updateAcceleration(float deltaTime) {
         effectiveMaxVel *= m_propulsionMultiplier;
     }
     
-    // Current speed in desired direction
-    float currentSpeedInDirection = glm::dot(m_velocity, m_desiredDirection);
-    
-    // Target velocity
-    glm::vec3 targetVelocity = m_desiredDirection * effectiveMaxVel;
+    // Ships thrust in the direction they're FACING (heading), not the desired direction.
+    // The ship must physically turn toward the target before it can accelerate there,
+    // creating realistic arcing flight paths that differ by ship class.
+    glm::vec3 thrustDirection = m_heading;
+    glm::vec3 targetVelocity = thrustDirection * effectiveMaxVel;
     
     // Calculate acceleration factor based on agility
     float agility = m_stats.getAgility();

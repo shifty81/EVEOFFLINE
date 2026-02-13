@@ -52,9 +52,16 @@ void MovementSystem::update(float delta_time) {
                     float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
                     if (dist > 0.001f) {
                         float invDist = 1.0f / dist;
-                        vel->vx = dx * invDist * vel->max_speed;
-                        vel->vy = dy * invDist * vel->max_speed;
-                        vel->vz = dz * invDist * vel->max_speed;
+                        float desired_vx = dx * invDist * vel->max_speed;
+                        float desired_vy = dy * invDist * vel->max_speed;
+                        float desired_vz = dz * invDist * vel->max_speed;
+                        // Gradual velocity change — ships turn toward target,
+                        // heavier ships turn more slowly (uses align_time)
+                        float turnRate = 2.0f / std::max(cmd.align_time, 0.5f);
+                        float blend = 1.0f - std::exp(-turnRate * delta_time);
+                        vel->vx += (desired_vx - vel->vx) * blend;
+                        vel->vy += (desired_vy - vel->vy) * blend;
+                        vel->vz += (desired_vz - vel->vz) * blend;
                     }
                 }
             }
@@ -89,9 +96,15 @@ void MovementSystem::update(float delta_time) {
                         radial_factor = std::max(-1.0f, std::min(1.0f, radial_factor));
 
                         float tangent_weight = 1.0f - std::fabs(radial_factor);
-                        vel->vx = (tx * tangent_weight - nx * radial_factor) * vel->max_speed;
-                        vel->vy = (ty * tangent_weight - ny * radial_factor) * vel->max_speed;
-                        vel->vz = (tz * tangent_weight - nz * radial_factor) * vel->max_speed;
+                        float desired_vx = (tx * tangent_weight - nx * radial_factor) * vel->max_speed;
+                        float desired_vy = (ty * tangent_weight - ny * radial_factor) * vel->max_speed;
+                        float desired_vz = (tz * tangent_weight - nz * radial_factor) * vel->max_speed;
+                        // Gradual velocity change for orbiting too
+                        float turnRate = 2.0f / std::max(cmd.align_time, 0.5f);
+                        float blend = 1.0f - std::exp(-turnRate * delta_time);
+                        vel->vx += (desired_vx - vel->vx) * blend;
+                        vel->vy += (desired_vy - vel->vy) * blend;
+                        vel->vz += (desired_vz - vel->vz) * blend;
                     }
                 }
             }
@@ -207,6 +220,14 @@ void MovementSystem::commandOrbit(const std::string& entity_id,
     cmd.type = MovementCommand::Type::Orbit;
     cmd.target_id = target_id;
     cmd.orbit_distance = distance;
+    // Read align time from Ship component for inertia-based turning
+    auto* entity = world_->getEntity(entity_id);
+    if (entity) {
+        auto* ship = entity->getComponent<components::Ship>();
+        if (ship) {
+            cmd.align_time = ship->align_time;
+        }
+    }
     movement_commands_[entity_id] = cmd;
 }
 
@@ -215,6 +236,14 @@ void MovementSystem::commandApproach(const std::string& entity_id,
     MovementCommand cmd;
     cmd.type = MovementCommand::Type::Approach;
     cmd.target_id = target_id;
+    // Read align time from Ship component for inertia-based turning
+    auto* entity = world_->getEntity(entity_id);
+    if (entity) {
+        auto* ship = entity->getComponent<components::Ship>();
+        if (ship) {
+            cmd.align_time = ship->align_time;
+        }
+    }
     movement_commands_[entity_id] = cmd;
 }
 
