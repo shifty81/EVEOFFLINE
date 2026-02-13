@@ -239,4 +239,20 @@ TriangulatedMesh triangulateFace(const PolyFace& face, const glm::vec3& color);
 TriangulatedMesh triangulateFaces(const std::vector<PolyFace>& faces,
                                   const glm::vec3& color);
 
+// ─────────────────────────────────────────────────────────────────────
+// Smooth normal computation
+// ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Recompute vertex normals by averaging face normals at coincident
+ * positions.  Vertices closer than @p epsilon are treated as the same
+ * point.  This replaces the flat per-face normals with smooth
+ * (Phong-style) normals, eliminating the hard angular look on
+ * procedurally generated hulls.
+ *
+ * @param mesh     Triangulated mesh to modify in place.
+ * @param epsilon  Distance threshold for vertex welding (default 1e-5).
+ */
+void computeSmoothNormals(TriangulatedMesh& mesh, float epsilon = 1e-5f);
+
 } // namespace atlas

@@ -130,6 +130,11 @@ public:
     /** Set callback for module slot clicks (slot index passed). */
     void setModuleCallback(const std::function<void(int)>& cb) { m_moduleCallback = cb; }
 
+    // ── Speed change callback ───────────────────────────────────────
+
+    /** Set callback for speed +/- button clicks (direction: +1 or -1). */
+    void setSpeedChangeCallback(const std::function<void(int)>& cb) { m_speedChangeCallback = cb; }
+
     // ── Overview interaction callbacks ──────────────────────────────
 
     /** Set callback for overview row left-click (entity selection). */
@@ -335,6 +340,7 @@ private:
     // Callbacks
     std::function<void(int)> m_sidebarCallback;
     std::function<void(int)> m_moduleCallback;
+    std::function<void(int)> m_speedChangeCallback;
     std::function<void(const std::string&)> m_overviewSelectCb;
     std::function<void(const std::string&, float, float)> m_overviewRightClickCb;
     std::function<void(float, float)> m_overviewBgRightClickCb;

@@ -231,9 +231,12 @@ void AtlasHUD::drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship) {
     drawModuleRow(ship.lowSlots,  startX + (highCount + midCount) * (moduleR * 2 + moduleGap),
                   highCount + midCount);
 
-    // Speed indicator (below module rack)
-    speedIndicator(ctx, {hudCentre.x, winH - 12.0f},
+    // Speed indicator (below module rack, moved up for better visibility)
+    int speedDir = speedIndicator(ctx, {hudCentre.x, winH - 42.0f},
                    ship.currentSpeed, ship.maxSpeed);
+    if (speedDir != 0 && m_speedChangeCallback) {
+        m_speedChangeCallback(speedDir);
+    }
 
     // Warp progress indicator (above the HUD circle when warping)
     if (ship.warpActive && ship.warpPhase > 0) {
@@ -600,7 +603,7 @@ void AtlasHUD::drawDroneStatus(AtlasContext& ctx) {
     float winH = static_cast<float>(ctx.input().windowH);
     float barW = 260.0f;
     float barH = 22.0f;
-    Rect barRect = {(winW - barW) * 0.5f, winH - 55.0f, barW, barH};
+    Rect barRect = {(winW - barW) * 0.5f, winH - 70.0f, barW, barH};
 
     droneStatusBar(ctx, barRect,
                    m_droneStatus.inSpace, m_droneStatus.inBay,

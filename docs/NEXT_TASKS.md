@@ -1,5 +1,9 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 13, 2026)**: **Solar system wiring COMPLETE**. Movement commands (warp/approach/orbit/stop) now routed from client → GameSession → MovementSystem. New protocol messages: WARP_REQUEST, WARP_RESULT, APPROACH, ORBIT, STOP. Sun visibility fixed — minimum apparent size enforced so the star is always visible from anywhere in system (like EVE Online). Ship hulls improved with smooth normals + higher polygon counts. Speed +/- buttons functional. 1035 test assertions passing.
+
+> **Update (February 13, 2026)**: Ship hull visual quality **IMPROVED**. Smooth normals added to procedural mesh generation — ships no longer look like jagged missiles. Cross-section polygon counts increased across all factions (Veyren 4→6, Keldari 6→8, Solari 8→12, Aurelian 12→16) and all ship classes. Speed indicator +/- buttons now functional (return click direction to HUD callback). Speed gauge repositioned higher on screen (winH-12 → winH-42). All 1021 test assertions passing.
+
 > **Update (February 13, 2026)**: Tasks 1.2, 1.3, and 1.4 **MAJOR PROGRESS**. AI combat expanded with dynamic orbit by ship class, engagement range from weapons, and target selection strategies (Closest, LowestHP, HighestThreat). Station docking protocol messages added (DOCK_REQUEST/SUCCESS/FAILED, UNDOCK, REPAIR, DAMAGE_EVENT). Client-side DamageEffectHelper created for shield/armor/hull visual feedback. UI fixes: overview tab clicks working, context menu z-order fixed, stargate Jump action added. All 1011 test assertions passing. Next priority: Vertical Slice integration.
 
 > **Update (February 13, 2026)**: Tasks 1.2 and 1.3 foundations **IN PROGRESS**. DamageEvent component added for visual damage feedback. AI health-based retreat logic implemented. WarpState phase tracking integrated into MovementSystem. All 985 test assertions passing. Next priority: Client-side visual effects (shader integration) and further AI combat behaviors.
@@ -21,7 +25,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: ~~Task 1.1 (Procedural Ship Hull + Weapons Generation)~~ ✅ **COMPLETE** (Feb 12, 2026). Task 1.2 (Damage Feedback) server-side foundation **COMPLETE** + client-side DamageEffectHelper **COMPLETE** (Feb 13, 2026). Task 1.3 (AI Combat) **EXPANDED** — dynamic orbit by ship class, engagement range from weapons, target selection strategies (Closest/LowestHP/HighestThreat). Task 1.4 (Station Docking Protocol) **PROTOCOL MESSAGES COMPLETE**. **UI Fixes**: overview tab clicks fixed, context menu z-order fixed, stargate Jump action added. 1011 test assertions passing.
+**TL;DR**: ~~Task 1.1 (Procedural Ship Hull + Weapons Generation)~~ ✅ **COMPLETE** (Feb 12, 2026). Task 1.2 (Damage Feedback) server-side foundation **COMPLETE** + client-side DamageEffectHelper **COMPLETE** (Feb 13, 2026). Task 1.3 (AI Combat) **EXPANDED** — dynamic orbit by ship class, engagement range from weapons, target selection strategies (Closest/LowestHP/HighestThreat). Task 1.4 (Station Docking Protocol) **PROTOCOL MESSAGES COMPLETE**. **Solar System Wiring**: movement commands (warp/approach/orbit/stop) routed to MovementSystem; sun always visible with minimum apparent size. **Ship Quality**: smooth normals + higher polygon counts eliminate jagged hull look. **HUD Fixes**: speed +/- buttons working, gauge repositioned. 1035 test assertions passing.
 
 ## Current Status (February 2026)
 

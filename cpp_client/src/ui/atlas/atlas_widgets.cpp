@@ -392,10 +392,12 @@ void capacitorRingAnimated(AtlasContext& ctx, Vec2 centre,
 
 // ── Speed Indicator ─────────────────────────────────────────────────
 
-void speedIndicator(AtlasContext& ctx, Vec2 pos,
+int speedIndicator(AtlasContext& ctx, Vec2 pos,
                     float currentSpeed, float maxSpeed) {
     const Theme& t = ctx.theme();
     auto& rr = ctx.renderer();
+
+    int result = 0;
 
     // Background bar
     float barW = 120.0f, barH = 20.0f;
@@ -421,8 +423,10 @@ void speedIndicator(AtlasContext& ctx, Vec2 pos,
     float btnSz = 16.0f;
     Rect minus = {bar.x - btnSz - 4.0f, pos.y + 2.0f, btnSz, btnSz};
     Rect plus  = {bar.right() + 4.0f,   pos.y + 2.0f, btnSz, btnSz};
-    button(ctx, "-", minus);
-    button(ctx, "+", plus);
+    if (button(ctx, "-", minus)) result = -1;
+    if (button(ctx, "+", plus))  result =  1;
+
+    return result;
 }
 
 // ── Warp Progress Indicator ────────────────────────────────────────

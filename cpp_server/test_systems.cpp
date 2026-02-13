@@ -6936,6 +6936,61 @@ void testProtocolDockRequestParse() {
     assertTrue(type == atlas::network::MessageType::DOCK_REQUEST, "Parsed type is DOCK_REQUEST");
 }
 
+void testProtocolWarpMessages() {
+    std::cout << "\n=== Protocol Warp Messages ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    // Parse warp_request message
+    std::string msg = "{\"message_type\":\"warp_request\",\"data\":{\"dest_x\":1000,\"dest_y\":0,\"dest_z\":5000}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Warp request parses successfully");
+    assertTrue(type == atlas::network::MessageType::WARP_REQUEST, "Parsed type is WARP_REQUEST");
+
+    // Warp result creation
+    std::string result = proto.createWarpResult(true);
+    assertTrue(result.find("warp_result") != std::string::npos, "Warp result contains message type");
+    assertTrue(result.find("true") != std::string::npos, "Warp result contains success");
+
+    // Warp result with failure reason
+    std::string fail = proto.createWarpResult(false, "Warp drive disrupted");
+    assertTrue(fail.find("false") != std::string::npos, "Warp fail contains false");
+    assertTrue(fail.find("Warp drive disrupted") != std::string::npos, "Warp fail contains reason");
+}
+
+void testProtocolMovementMessages() {
+    std::cout << "\n=== Protocol Movement Messages ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    // Parse approach message
+    std::string msg = "{\"message_type\":\"approach\",\"data\":{\"target_id\":\"npc_1\"}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Approach message parses successfully");
+    assertTrue(type == atlas::network::MessageType::APPROACH, "Parsed type is APPROACH");
+
+    // Parse orbit message
+    msg = "{\"message_type\":\"orbit\",\"data\":{\"target_id\":\"npc_1\",\"distance\":5000}}";
+    ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Orbit message parses successfully");
+    assertTrue(type == atlas::network::MessageType::ORBIT, "Parsed type is ORBIT");
+
+    // Parse stop message
+    msg = "{\"message_type\":\"stop\",\"data\":{}}";
+    ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Stop message parses successfully");
+    assertTrue(type == atlas::network::MessageType::STOP, "Parsed type is STOP");
+
+    // Movement acknowledgement creation
+    std::string ack = proto.createMovementAck("approach", true);
+    assertTrue(ack.find("approach") != std::string::npos, "Movement ack contains command");
+    assertTrue(ack.find("true") != std::string::npos, "Movement ack contains success");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -7357,6 +7412,8 @@ int main() {
     testProtocolRepairMessage();
     testProtocolDamageEventMessage();
     testProtocolDockRequestParse();
+    testProtocolWarpMessages();
+    testProtocolMovementMessages();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

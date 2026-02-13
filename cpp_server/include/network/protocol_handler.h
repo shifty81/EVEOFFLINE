@@ -35,6 +35,11 @@ enum class MessageType {
     REPAIR_REQUEST,
     REPAIR_RESULT,
     DAMAGE_EVENT,
+    WARP_REQUEST,
+    WARP_RESULT,
+    APPROACH,
+    ORBIT,
+    STOP,
     ERROR
 };
 
@@ -66,6 +71,10 @@ public:
     std::string createDamageEvent(const std::string& target_id, float damage,
                                   const std::string& damage_type, const std::string& layer_hit,
                                   bool shield_depleted, bool armor_depleted, bool hull_critical);
+    
+    // Movement command responses
+    std::string createWarpResult(bool success, const std::string& reason = "");
+    std::string createMovementAck(const std::string& command, bool success);
     
     // Message validation
     bool validateMessage(const std::string& json);
