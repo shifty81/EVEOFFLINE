@@ -1,0 +1,336 @@
+<!-- EVE OFFLINE — Station Services Panel (RML)
+     Provides docking, undocking, and repair services at stations. -->
+<rml>
+<head>
+    <title>Station Services</title>
+    <link type="text/rcss" href="../rcss/atlas_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #station {
+            position: fixed;
+            top: 80dp;
+            right: 60dp;
+            width: 320dp;
+            height: 420dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* Station info section */
+        .station-info {
+            padding: 12dp;
+            background-color: #0A0E1480;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .station-name {
+            font-size: 13dp;
+            font-weight: bold;
+            color: #45D0E8;
+            margin-bottom: 6dp;
+        }
+
+        .station-detail {
+            font-size: 10dp;
+            color: #8B949E;
+            margin-bottom: 3dp;
+        }
+
+        .station-detail .value {
+            color: #E6EDF3;
+            float: right;
+        }
+
+        /* Docking status */
+        .docking-status {
+            padding: 12dp;
+            background-color: #0A0E14;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .status-label {
+            font-size: 11dp;
+            color: #8B949E;
+        }
+
+        .status-value {
+            font-size: 11dp;
+            font-weight: bold;
+            color: #45D0E8;
+            float: right;
+        }
+
+        .status-value.docked {
+            color: #3FB950;
+        }
+
+        .status-value.undocked {
+            color: #8B949E;
+        }
+
+        /* Ship status section */
+        .ship-status {
+            padding: 12dp;
+            background-color: #0A0E1480;
+        }
+
+        .ship-status-title {
+            font-size: 11dp;
+            font-weight: bold;
+            color: #8B949E;
+            margin-bottom: 8dp;
+        }
+
+        .hp-row {
+            margin-bottom: 8dp;
+        }
+
+        .hp-label {
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .hp-value {
+            font-size: 10dp;
+            color: #E6EDF3;
+            float: right;
+        }
+
+        .hp-bar-track {
+            height: 4dp;
+            background-color: #161B22;
+            border-radius: 2dp;
+            margin-top: 3dp;
+        }
+
+        .hp-bar-fill {
+            height: 100%;
+            border-radius: 2dp;
+        }
+
+        .hp-bar-fill.shield {
+            background-color: #2F81F7;
+        }
+
+        .hp-bar-fill.armor {
+            background-color: #FFB833;
+        }
+
+        .hp-bar-fill.hull {
+            background-color: #FF3333;
+        }
+
+        .hp-bar-fill.damaged {
+            opacity: 0.6;
+        }
+
+        /* Repair info section */
+        .repair-info {
+            padding: 12dp;
+            background-color: #0A0E14;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .repair-cost {
+            font-size: 11dp;
+            color: #8B949E;
+        }
+
+        .repair-cost .value {
+            color: #FFB833;
+            font-weight: bold;
+            float: right;
+        }
+
+        .repair-message {
+            font-size: 10dp;
+            color: #3FB950;
+            margin-top: 6dp;
+            text-align: center;
+        }
+
+        .repair-message.error {
+            color: #FF3333;
+        }
+
+        /* Action buttons */
+        .action-bar {
+            padding: 12dp;
+            background-color: #0A0E14;
+            text-align: center;
+        }
+
+        .action-bar button {
+            font-size: 11dp;
+            padding: 6dp 16dp;
+            margin: 0dp 4dp;
+            width: 120dp;
+        }
+
+        .btn-primary {
+            background-color: #1A7F3770;
+            border-color: #3FB95099;
+        }
+
+        .btn-primary:hover {
+            background-color: #3FB950CC;
+        }
+
+        .btn-primary:disabled {
+            background-color: #1A3A4A40;
+            border-color: #28384899;
+            color: #8B949E;
+        }
+
+        .btn-secondary {
+            background-color: #1A3A4A70;
+            border-color: #45D0E899;
+        }
+
+        .btn-secondary:hover {
+            background-color: #45D0E8CC;
+        }
+
+        .btn-secondary:disabled {
+            background-color: #1A3A4A40;
+            border-color: #28384899;
+            color: #8B949E;
+        }
+
+        .btn-warning {
+            background-color: #6E491A70;
+            border-color: #FFB83399;
+        }
+
+        .btn-warning:hover {
+            background-color: #FFB833CC;
+        }
+
+        .btn-warning:disabled {
+            background-color: #1A3A4A40;
+            border-color: #28384899;
+            color: #8B949E;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40dp;
+            color: #8B949E;
+            font-size: 11dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="station">
+        <div class="panel-header">
+            <span class="title">STATION SERVICES</span>
+            <span class="window-btn" id="btn-close">x</span>
+            <span class="window-btn" id="btn-minimize">-</span>
+        </div>
+
+        <!-- Station info -->
+        <div class="station-info" id="station-info">
+            <div class="station-name" id="station-name">No Station in Range</div>
+            <div class="station-detail">
+                <span>Distance</span>
+                <span class="value" id="station-distance">N/A</span>
+            </div>
+            <div class="station-detail">
+                <span>Docking Range</span>
+                <span class="value" id="docking-range">2,500 m</span>
+            </div>
+            <div class="station-detail">
+                <span>Repair Cost</span>
+                <span class="value" id="repair-rate">1.0 ISK/HP</span>
+            </div>
+        </div>
+
+        <!-- Docking status -->
+        <div class="docking-status">
+            <span class="status-label">Status</span>
+            <span class="status-value undocked" id="docking-status">Undocked</span>
+        </div>
+
+        <!-- Ship status (HP bars) -->
+        <div class="ship-status">
+            <div class="ship-status-title">SHIP STATUS</div>
+            
+            <div class="hp-row">
+                <span class="hp-label">Shield</span>
+                <span class="hp-value" id="shield-hp">0 / 0 HP</span>
+                <div class="hp-bar-track">
+                    <div class="hp-bar-fill shield" id="shield-bar" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="hp-row">
+                <span class="hp-label">Armor</span>
+                <span class="hp-value" id="armor-hp">0 / 0 HP</span>
+                <div class="hp-bar-track">
+                    <div class="hp-bar-fill armor" id="armor-bar" style="width: 100%;"></div>
+                </div>
+            </div>
+
+            <div class="hp-row">
+                <span class="hp-label">Hull</span>
+                <span class="hp-value" id="hull-hp">0 / 0 HP</span>
+                <div class="hp-bar-track">
+                    <div class="hp-bar-fill hull" id="hull-bar" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Repair info -->
+        <div class="repair-info">
+            <div class="repair-cost">
+                <span>Estimated Cost</span>
+                <span class="value" id="repair-cost">0 ISK</span>
+            </div>
+            <div class="repair-message" id="repair-message"></div>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="action-bar">
+            <button class="btn-primary" id="btn-dock">DOCK</button>
+            <button class="btn-secondary" id="btn-undock" disabled>UNDOCK</button>
+            <button class="btn-warning" id="btn-repair" disabled>REPAIR</button>
+        </div>
+    </div>
+</body>
+</rml>

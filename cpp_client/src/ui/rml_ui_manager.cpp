@@ -519,6 +519,7 @@ bool RmlUiManager::LoadDocuments() {
         {"context_menu", resourcePath_ + "/rml/context_menu.rml",  false},
         {"radial_menu",  resourcePath_ + "/rml/radial_menu.rml",   false},
         {"drone_bay",    resourcePath_ + "/rml/drone_bay.rml",     false},
+        {"station",      resourcePath_ + "/rml/station.rml",       false},
     };
 
     bool allOk = true;
@@ -538,6 +539,7 @@ bool RmlUiManager::LoadDocuments() {
     }
 
     InstallContextMenuEvents();
+    InstallStationEvents();
 
     return allOk;
 }
@@ -1278,6 +1280,149 @@ void RmlUiManager::UpdateRadialHighlight(const std::string& segmentId) {
     }
 }
 
+void RmlUiManager::InstallStationEvents() {
+    auto it = documents_.find("station");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+    stationEvents_.Clear();
+
+    // Dock button
+    stationEvents_.Install(doc, "btn-dock", "click",
+        [this](Rml::Event&) {
+            if (onDockRequest_ && !currentStationId_.empty()) {
+                onDockRequest_(currentStationId_);
+            }
+        });
+
+    // Undock button
+    stationEvents_.Install(doc, "btn-undock", "click",
+        [this](Rml::Event&) {
+            if (onUndockRequest_) {
+                onUndockRequest_();
+            }
+        });
+
+    // Repair button
+    stationEvents_.Install(doc, "btn-repair", "click",
+        [this](Rml::Event&) {
+            if (onRepairRequest_) {
+                onRepairRequest_();
+            }
+        });
+
+    // Close button
+    stationEvents_.Install(doc, "btn-close", "click",
+        [this](Rml::Event&) {
+            SetDocumentVisible("station", false);
+        });
+
+    // Minimize button
+    stationEvents_.Install(doc, "btn-minimize", "click",
+        [this](Rml::Event&) {
+            SetDocumentVisible("station", false);
+        });
+}
+
+void RmlUiManager::UpdateStationServices(const StationServiceInfo& info) {
+    if (!initialized_ || !context_) return;
+
+    auto it = documents_.find("station");
+    if (it == documents_.end() || !it->second) return;
+
+    auto* doc = it->second;
+    currentStationId_ = info.stationId;
+
+    // Update station info
+    auto* stationName = doc->GetElementById("station-name");
+    if (stationName) {
+        stationName->SetInnerRML(info.stationName.empty() ? "No Station in Range" : info.stationName);
+    }
+
+    auto* stationDist = doc->GetElementById("station-distance");
+    if (stationDist) {
+        char buf[32];
+        snprintf(buf, sizeof(buf), "%.0f m", info.distance);
+        stationDist->SetInnerRML(buf);
+    }
+
+    auto* dockingRange = doc->GetElementById("docking-range");
+    if (dockingRange) {
+        char buf[32];
+        snprintf(buf, sizeof(buf), "%.0f m", info.dockingRange);
+        dockingRange->SetInnerRML(buf);
+    }
+
+    auto* repairRate = doc->GetElementById("repair-rate");
+    if (repairRate) {
+        char buf[32];
+        snprintf(buf, sizeof(buf), "%.1f ISK/HP", info.repairCostPerHp);
+        repairRate->SetInnerRML(buf);
+    }
+
+    // Update docking status
+    auto* dockingStatus = doc->GetElementById("docking-status");
+    if (dockingStatus) {
+        dockingStatus->SetInnerRML(info.isDocked ? "Docked" : "Undocked");
+        dockingStatus->SetClass("docked", info.isDocked);
+        dockingStatus->SetClass("undocked", !info.isDocked);
+    }
+
+    // Update ship HP bars
+    auto updateHpBar = [&](const char* hpId, const char* barId, float current, float max) {
+        auto* hpText = doc->GetElementById(hpId);
+        if (hpText) {
+            char buf[64];
+            snprintf(buf, sizeof(buf), "%.0f / %.0f HP", current, max);
+            hpText->SetInnerRML(buf);
+        }
+
+        auto* bar = doc->GetElementById(barId);
+        if (bar && max > 0.0f) {
+            float pct = (current / max) * 100.0f;
+            char style[64];
+            snprintf(style, sizeof(style), "width: %.1f%%;", pct);
+            bar->SetAttribute("style", style);
+            bar->SetClass("damaged", pct < 100.0f);
+        }
+    };
+
+    updateHpBar("shield-hp", "shield-bar", info.shieldHp, info.shieldMax);
+    updateHpBar("armor-hp", "armor-bar", info.armorHp, info.armorMax);
+    updateHpBar("hull-hp", "hull-bar", info.hullHp, info.hullMax);
+
+    // Calculate repair cost
+    float totalDamage = (info.shieldMax - info.shieldHp) +
+                        (info.armorMax - info.armorHp) +
+                        (info.hullMax - info.hullHp);
+    float repairCost = totalDamage * info.repairCostPerHp;
+
+    auto* costText = doc->GetElementById("repair-cost");
+    if (costText) {
+        char buf[64];
+        snprintf(buf, sizeof(buf), "%.0f ISK", repairCost);
+        costText->SetInnerRML(buf);
+    }
+
+    // Update button states
+    auto* btnDock = doc->GetElementById("btn-dock");
+    if (btnDock) {
+        bool canDock = !info.isDocked && info.distance <= info.dockingRange && !info.stationId.empty();
+        btnDock->SetAttribute("disabled", canDock ? nullptr : "");
+    }
+
+    auto* btnUndock = doc->GetElementById("btn-undock");
+    if (btnUndock) {
+        btnUndock->SetAttribute("disabled", info.isDocked ? nullptr : "");
+    }
+
+    auto* btnRepair = doc->GetElementById("btn-repair");
+    if (btnRepair) {
+        bool canRepair = info.isDocked && repairCost > 0.0f;
+        btnRepair->SetAttribute("disabled", canRepair ? nullptr : "");
+    }
+}
+
 bool RmlUiManager::WantsMouseInput() const {
     if (!initialized_ || !context_) return false;
     return context_->GetHoverElement() != nullptr;
@@ -1360,6 +1505,7 @@ void RmlUiManager::UpdateMarketData(const std::string&, const std::string&,
     const std::vector<MarketOrderInfo>&, const std::vector<MarketOrderInfo>&) {}
 void RmlUiManager::UpdateMissionList(const std::vector<MissionRmlInfo>&) {}
 void RmlUiManager::UpdateMissionDetail(const MissionRmlInfo&) {}
+void RmlUiManager::UpdateStationServices(const StationServiceInfo&) {}
 void RmlUiManager::AddChatMessage(const ChatMessageInfo&) {}
 void RmlUiManager::SetChatChannel(const std::string&, int) {}
 void RmlUiManager::ShowContextMenu(const std::string&, const std::string&, float, float) {}
