@@ -78,6 +78,7 @@ void Application::run() {
         float currentTime = static_cast<float>(glfwGetTime());
         float deltaTime = currentTime - m_lastFrameTime;
         m_lastFrameTime = currentTime;
+        m_deltaTime = deltaTime;
 
         // Reset per-frame input state before polling events
         m_inputHandler->beginFrame();
@@ -598,7 +599,7 @@ void Application::render() {
         float intensity = ws.active ? 1.0f : 0.0f;
         m_renderer->updateWarpEffect(ws.phase, ws.progress, intensity,
                                       ws.direction,
-                                      0.016f);  // approximate dt
+                                      m_deltaTime);
         m_renderer->renderWarpEffect();
     }
     

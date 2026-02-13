@@ -243,6 +243,7 @@ private:
 
     bool m_running;
     float m_lastFrameTime;
+    float m_deltaTime = 0.016f;
     
     // Targeting state
     std::string m_currentTargetId;

@@ -9,6 +9,11 @@ uniform float uPhase;       // 1=align, 2=accel, 3=cruise, 4=decel
 uniform float uProgress;    // 0.0 - 1.0 overall warp progress
 uniform vec2  uDirection;   // screen-space warp direction (normalized)
 
+// Warp phase timing constants (matching ShipPhysics phase boundaries)
+const float ACCEL_PHASE_FRACTION = 0.33;
+const float DECEL_PHASE_START    = 0.67;
+const float DECEL_PHASE_DURATION = 0.33;
+
 // Pseudo-random hash
 float hash(vec2 p) {
     return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -69,13 +74,13 @@ void main() {
         effectIntensity *= 0.15;
     } else if (uPhase == 2.0) {
         // Acceleration: ramp up effect
-        effectIntensity *= 0.3 + 0.7 * smoothstep(0.0, 1.0, uProgress / 0.33);
+        effectIntensity *= 0.3 + 0.7 * smoothstep(0.0, 1.0, uProgress / ACCEL_PHASE_FRACTION);
     } else if (uPhase == 3.0) {
         // Cruise: full tunnel effect
         effectIntensity *= 1.0;
     } else if (uPhase == 4.0) {
         // Deceleration: fade out
-        float decelProgress = (uProgress - 0.67) / 0.33;
+        float decelProgress = (uProgress - DECEL_PHASE_START) / DECEL_PHASE_DURATION;
         effectIntensity *= 1.0 - smoothstep(0.0, 1.0, decelProgress);
     }
 
