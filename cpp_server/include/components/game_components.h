@@ -111,6 +111,11 @@ public:
     int max_locked_targets = 3;
     float max_targeting_range = 20000.0f;  // meters
     
+    // Warp parameters (per ship class, from warp_mechanics.json)
+    float warp_speed_au = 5.0f;      // AU/s (frigate default)
+    float align_time = 2.5f;          // seconds to align for warp (frigate default)
+    int warp_strength = 1;             // warp core strength (points needed to disrupt)
+    
     COMPONENT_TYPE(Ship)
 };
 
@@ -1182,9 +1187,10 @@ public:
     WarpPhase phase = WarpPhase::None;
     float warp_time = 0.0f;
     float distance_remaining = 0.0f;
-    float warp_speed = 3.0f;    // AU/s
+    float warp_speed = 3.0f;    // AU/s (initialized from Ship component)
     float mass_norm = 0.0f;     // 0=frigate, 1=capital
     float intensity = 0.0f;     // computed from time + mass
+    int warp_disrupt_strength = 0;  // total disruption applied to this entity
 
     COMPONENT_TYPE(WarpState)
 };

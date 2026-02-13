@@ -67,10 +67,17 @@ public:
      * @param dest_x Destination X
      * @param dest_y Destination Y
      * @param dest_z Destination Z
-     * @return true if warp initiated (not disrupted)
+     * @return true if warp initiated (not disrupted, meets minimum distance)
      */
     bool commandWarp(const std::string& entity_id,
                      float dest_x, float dest_y, float dest_z);
+
+    /**
+     * @brief Check if an entity is currently warp disrupted
+     * @param entity_id The entity to check
+     * @return true if warp disruption strength >= warp core strength
+     */
+    bool isWarpDisrupted(const std::string& entity_id) const;
 
 private:
     struct MovementCommand {
@@ -82,6 +89,8 @@ private:
         float warp_dest_y = 0.0f;
         float warp_dest_z = 0.0f;
         float warp_progress = 0.0f;  // 0-1
+        float warp_duration = 10.0f; // seconds (computed from distance / warp_speed)
+        float align_time = 2.5f;     // seconds for align phase (from Ship component)
         bool warping = false;
     };
     std::map<std::string, MovementCommand> movement_commands_;
