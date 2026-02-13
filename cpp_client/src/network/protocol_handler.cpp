@@ -199,11 +199,11 @@ bool ProtocolHandler::isMarketResponse(const std::string& type) {
 }
 
 bool ProtocolHandler::isStationResponse(const std::string& type) {
-    return (type == "dock_success" || type == "dock_failed" ||
-            type == "undock_success" || type == "repair_result" ||
-            type.find("dock_") == 0 || type.find("repair_") == 0 || type.find("undock_") == 0) &&
-           (isSuccessResponse(type) || isErrorResponse(type) || type == "dock_success" || 
-            type == "dock_failed" || type == "undock_success" || type == "repair_result");
+    return type == "dock_success" || type == "dock_failed" ||
+           type == "undock_success" || type == "repair_result" ||
+           (type.find("dock_") == 0 && (isSuccessResponse(type) || isErrorResponse(type))) ||
+           (type.find("repair_") == 0 && (isSuccessResponse(type) || isErrorResponse(type))) ||
+           (type.find("undock_") == 0 && (isSuccessResponse(type) || isErrorResponse(type)));
 }
 
 } // namespace atlas
