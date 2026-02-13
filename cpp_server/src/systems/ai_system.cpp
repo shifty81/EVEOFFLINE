@@ -175,6 +175,18 @@ void AISystem::orbitBehavior(ecs::Entity* entity) {
 }
 
 void AISystem::attackBehavior(ecs::Entity* entity) {
+    // Check health for flee decision
+    auto* ai = entity->getComponent<components::AI>();
+    auto* health = entity->getComponent<components::Health>();
+    if (ai && health) {
+        float total_max = health->shield_max + health->armor_max + health->hull_max;
+        float total_current = health->shield_hp + health->armor_hp + health->hull_hp;
+        if (total_max > 0.0f && (total_current / total_max) < ai->flee_threshold) {
+            ai->state = components::AI::State::Fleeing;
+            return;
+        }
+    }
+    
     // Continue orbiting while attacking
     orbitBehavior(entity);
     
