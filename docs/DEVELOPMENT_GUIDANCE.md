@@ -7,7 +7,7 @@
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
 - **27 C++ server systems** fully implemented
-- **832 test assertions** all passing
+- **985 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 
@@ -88,18 +88,26 @@ This is the most important next step for the project. All foundational systems a
 
 ---
 
-#### Task 1.2: Shield/Armor/Hull Damage with Visual Feedback ⚡ NEXT
+#### Task 1.2: Shield/Armor/Hull Damage with Visual Feedback 🔧 SERVER FOUNDATION COMPLETE
 
 **Priority**: High  
 **Complexity**: Medium  
-**Estimated Time**: 1 week
+**Estimated Time**: 1 week (remaining: client-side visual effects)
 
 **Objective**: Implement visible damage feedback when ships take damage
 
-**Implementation Plan**:
-1. Add shield ripple effect (blue glow on hit)
-2. Add armor flash effect (yellow/orange flash)
-3. Add hull damage effect (red pulse, screen shake)
+**Completed (February 13, 2026)**:
+1. ✅ Added `DamageEvent` component tracking hit records (layer, type, flags)
+2. ✅ CombatSystem emits DamageEvent on every damage application
+3. ✅ Shield depleted / armor depleted / hull critical flags for visual escalation
+4. ✅ Hit record includes damage amount, type, layer, and timestamp
+5. ✅ `clearOldHits()` method for garbage collection of stale events
+6. ✅ 5 new test functions verifying all damage event scenarios
+
+**Remaining (Client-side)**:
+1. Add shield ripple effect (blue glow on hit) — read `DamageEvent.layer_hit == "shield"`
+2. Add armor flash effect (yellow/orange flash) — read `DamageEvent.layer_hit == "armor"`
+3. Add hull damage effect (red pulse, screen shake) — read `DamageEvent.hull_critical`
 4. Integrate with existing HealthBar system
 5. Add particle effects for explosions
 
@@ -107,11 +115,11 @@ This is the most important next step for the project. All foundational systems a
 
 ---
 
-#### Task 1.3: Basic AI Combat (Engage, Orbit, Retreat)
+#### Task 1.3: Basic AI Combat (Engage, Orbit, Retreat) 🔧 RETREAT LOGIC COMPLETE
 
 **Priority**: High  
 **Complexity**: Medium-High  
-**Estimated Time**: 1-2 weeks
+**Estimated Time**: 1-2 weeks (remaining: expanded behaviors)
 
 **Objective**: NPCs can engage players, orbit targets, and retreat when damaged
 
@@ -119,13 +127,17 @@ This is the most important next step for the project. All foundational systems a
 - ✅ C++ server has WeaponSystem implemented
 - ✅ C++ server has target locking protocol
 - ✅ NPC database with 32 NPC templates
-- ⚠️ AI behavior is basic (needs orbit and retreat logic)
+- ✅ AI health-based retreat logic (flee when total HP below configurable threshold)
+- ✅ Configurable `flee_threshold` per-NPC (default 25%)
+- ✅ 3 new test functions verifying retreat behavior
+- ⚠️ AI orbit behavior needs dynamic distance by ship class
+- ⚠️ Target selection is basic (closest only)
 
 **Implementation Plan**:
-1. Add orbit behavior to AI movement system
-2. Add retreat logic (flee when shields drop below 25%)
+1. ~~Add retreat logic (flee when shields drop below 25%)~~ ✅ DONE
+2. Add dynamic orbit distances by ship class (frigates close, battleships far)
 3. Add engagement range logic (optimal + falloff)
-4. Add target selection (closest, lowest HP, etc.)
+4. Add target selection (closest, lowest HP, highest threat)
 5. Test AI vs AI combat
 6. Test AI vs player combat
 
