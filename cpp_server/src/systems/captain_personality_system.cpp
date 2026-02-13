@@ -55,16 +55,25 @@ void CaptainPersonalitySystem::assignPersonality(const std::string& entity_id,
     float base_professionalism = 0.5f;
 
     if (faction == "Solari") {
+        base_aggression      = 0.45f;
+        base_sociability     = 0.4f;
+        base_optimism        = 0.5f;
         base_professionalism = 0.75f;
-        base_aggression      = 0.55f;
     } else if (faction == "Veyren") {
-        base_sociability = 0.7f;
+        base_aggression      = 0.55f;
+        base_sociability     = 0.7f;
+        base_optimism        = 0.55f;
+        base_professionalism = 0.5f;
     } else if (faction == "Aurelian") {
+        base_aggression      = 0.3f;
+        base_sociability     = 0.65f;
         base_optimism        = 0.75f;
         base_professionalism = 0.35f;
     } else if (faction == "Keldari") {
-        base_aggression  = 0.7f;
-        base_sociability = 0.35f;
+        base_aggression      = 0.8f;
+        base_sociability     = 0.45f;
+        base_optimism        = 0.4f;
+        base_professionalism = 0.7f;
     }
 
     // Apply deterministic random variation of +/- 0.15
