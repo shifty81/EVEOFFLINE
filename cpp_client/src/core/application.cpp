@@ -1576,8 +1576,7 @@ void Application::updateLocalMovement(float deltaTime) {
                         m_activeModeText.clear();
                         std::cout << "[Movement] Warp complete" << std::endl;
                     }
-                    // Skip the normal position update below — ShipPhysics owns it
-                    playerEntity->setPosition(playerPos);
+                    // Update entity via EntityManager (ShipPhysics owns position)
                     float rotation = 0.0f;
                     if (glm::length(m_playerVelocity) > 0.1f) {
                         rotation = std::atan2(m_playerVelocity.x, m_playerVelocity.z);
