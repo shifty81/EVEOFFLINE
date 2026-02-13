@@ -8,8 +8,12 @@ namespace systems {
 
 // Minimum distance required to initiate warp (150 km)
 static constexpr float MIN_WARP_DISTANCE = 150000.0f;
-// Warp completes in approximately 10 seconds (progress rate per second)
-static constexpr float WARP_PROGRESS_RATE = 0.1f;
+// 1 AU in meters
+static constexpr float AU_IN_METERS = 149597870700.0f;
+// Default warp duration if no Ship component (fallback: 10 seconds)
+static constexpr float DEFAULT_WARP_DURATION = 10.0f;
+// Default align time if no Ship component (fallback: 2.5 seconds)
+static constexpr float DEFAULT_ALIGN_TIME = 2.5f;
 
 MovementSystem::MovementSystem(ecs::World* world)
     : System(world) {
@@ -92,7 +96,9 @@ void MovementSystem::update(float delta_time) {
                 }
             }
         } else if (cmd.type == MovementCommand::Type::Warp) {
-            cmd.warp_progress += delta_time * WARP_PROGRESS_RATE;
+            // Progress rate derived from computed warp duration
+            float progress_rate = (cmd.warp_duration > 0.0f) ? (1.0f / cmd.warp_duration) : 0.1f;
+            cmd.warp_progress += delta_time * progress_rate;
             
             // Update WarpState component for phase tracking
             auto* warpState = entity->getComponent<components::WarpState>();
@@ -239,12 +245,31 @@ bool MovementSystem::commandWarp(const std::string& entity_id,
     float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
     if (dist < MIN_WARP_DISTANCE) return false;  // too close to warp
 
+    // Check warp disruption: if disrupted, cannot warp
+    if (isWarpDisrupted(entity_id)) return false;
+
+    // Read ship-class warp parameters if Ship component present
+    float warp_speed_au = 3.0f;
+    float align_time = DEFAULT_ALIGN_TIME;
+    auto* ship = entity->getComponent<components::Ship>();
+    if (ship) {
+        warp_speed_au = ship->warp_speed_au;
+        align_time = ship->align_time;
+    }
+
+    // Compute warp duration: align_time + (distance_AU / warp_speed_AU)
+    float distance_au = dist / AU_IN_METERS;
+    float travel_time = (warp_speed_au > 0.0f) ? (distance_au / warp_speed_au) : 0.0f;
+    float warp_duration = align_time + travel_time;
+    if (warp_duration < 1.0f) warp_duration = 1.0f;  // minimum 1 second
+
     // Initialize WarpState if present
     auto* warpState = entity->getComponent<components::WarpState>();
     if (warpState) {
         warpState->phase = components::WarpState::WarpPhase::Align;
         warpState->warp_time = 0.0f;
         warpState->distance_remaining = dist;
+        warpState->warp_speed = warp_speed_au;
         warpState->intensity = 0.0f;
     }
 
@@ -254,9 +279,27 @@ bool MovementSystem::commandWarp(const std::string& entity_id,
     cmd.warp_dest_y = dest_y;
     cmd.warp_dest_z = dest_z;
     cmd.warp_progress = 0.0f;
+    cmd.warp_duration = warp_duration;
+    cmd.align_time = align_time;
     cmd.warping = true;
     movement_commands_[entity_id] = cmd;
     return true;
+}
+
+bool MovementSystem::isWarpDisrupted(const std::string& entity_id) const {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return false;
+
+    auto* warpState = entity->getComponent<components::WarpState>();
+    if (!warpState) return false;
+
+    int warp_strength = 1;  // default warp core strength
+    auto* ship = entity->getComponent<components::Ship>();
+    if (ship) {
+        warp_strength = ship->warp_strength;
+    }
+
+    return warpState->warp_disrupt_strength >= warp_strength;
 }
 
 } // namespace systems

@@ -6462,9 +6462,11 @@ void testWarpStatePhaseCruise() {
 
     moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
 
-    // Advance to cruise phase (progress 0.2-0.85 = 2-8.5 seconds at 0.1/s)
-    for (int i = 0; i < 30; i++) {
-        moveSys.update(0.1f);  // 3.0 seconds total
+    // Warp duration ~2.5s at 200km with no Ship component (align_time=2.5 + ~0 travel)
+    // Progress rate = 1/2.5 = 0.4/s; Cruise phase at progress 0.2-0.85
+    // Need 0.5s+ elapsed for progress >= 0.2 (entry to cruise)
+    for (int i = 0; i < 8; i++) {
+        moveSys.update(0.1f);  // 0.8 seconds total, progress ~0.32
     }
 
     assertTrue(warpState->phase == components::WarpState::WarpPhase::Cruise, "Phase is Cruise at 30% progress");
@@ -6485,9 +6487,10 @@ void testWarpStatePhaseExit() {
 
     moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
 
-    // Advance to exit phase (progress > 0.85 = 8.5 seconds)
-    for (int i = 0; i < 90; i++) {
-        moveSys.update(0.1f);  // 9.0 seconds total
+    // Warp duration ~2.5s; Exit phase at progress > 0.85 = 2.125s elapsed
+    // 22 updates of 0.1s = 2.2s, progress ~0.88 (in exit phase)
+    for (int i = 0; i < 22; i++) {
+        moveSys.update(0.1f);  // 2.2 seconds total
     }
 
     assertTrue(warpState->phase == components::WarpState::WarpPhase::Exit, "Phase is Exit near completion");
@@ -6537,6 +6540,155 @@ void testWarpStateIntensity() {
 
     assertTrue(warpState->intensity > 0.0f, "Intensity increases during warp");
     assertTrue(warpState->intensity <= 1.0f, "Intensity clamped to max 1.0");
+}
+
+// ── Warp Disruption Tests ──────────────────────────────────────────
+
+void testWarpDisruptionPreventsWarp() {
+    std::cout << "\n=== Warp Disruption Prevents Warp ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+    auto* shipComp = addComp<components::Ship>(ship);
+    shipComp->warp_strength = 1;  // default warp core strength
+
+    // Apply disruption equal to warp strength
+    warpState->warp_disrupt_strength = 1;
+
+    bool warped = moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+    assertTrue(!warped, "Warp rejected when disrupted (strength 1 >= warp core 1)");
+}
+
+void testWarpDisruptionInsufficientStrength() {
+    std::cout << "\n=== Warp Disruption Insufficient Strength ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+    auto* shipComp = addComp<components::Ship>(ship);
+    shipComp->warp_strength = 3;  // high warp core strength (e.g., warp core stabilizer fitted)
+
+    // Apply disruption less than warp strength
+    warpState->warp_disrupt_strength = 2;
+
+    bool warped = moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+    assertTrue(warped, "Warp succeeds when disruption (2) < warp core strength (3)");
+}
+
+void testIsWarpDisruptedQuery() {
+    std::cout << "\n=== Is Warp Disrupted Query ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    addComp<components::Position>(ship);
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+    auto* shipComp = addComp<components::Ship>(ship);
+    shipComp->warp_strength = 1;
+
+    warpState->warp_disrupt_strength = 0;
+    assertTrue(!moveSys.isWarpDisrupted("ship1"), "Not disrupted with 0 disrupt strength");
+
+    warpState->warp_disrupt_strength = 1;
+    assertTrue(moveSys.isWarpDisrupted("ship1"), "Disrupted when disrupt strength >= warp core");
+
+    warpState->warp_disrupt_strength = 3;
+    assertTrue(moveSys.isWarpDisrupted("ship1"), "Disrupted when disrupt strength exceeds warp core");
+}
+
+// ── Ship-Class Warp Speed Tests ────────────────────────────────────
+
+void testWarpSpeedFromShipComponent() {
+    std::cout << "\n=== Warp Speed From Ship Component ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    auto* warpState = addComp<components::WarpState>(ship);
+    auto* shipComp = addComp<components::Ship>(ship);
+    shipComp->warp_speed_au = 5.0f;   // frigate
+    shipComp->align_time = 2.5f;
+
+    bool warped = moveSys.commandWarp("ship1", 200000.0f, 0.0f, 0.0f);
+    assertTrue(warped, "Warp initiated with frigate speed");
+    assertTrue(warpState->warp_speed == 5.0f, "WarpState.warp_speed set from Ship component");
+}
+
+void testBattleshipSlowerWarp() {
+    std::cout << "\n=== Battleship Slower Warp ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    // Frigate ship
+    auto* frig = world.createEntity("frigate1");
+    auto* fpos = addComp<components::Position>(frig);
+    fpos->x = 0.0f; fpos->y = 0.0f; fpos->z = 0.0f;
+    addComp<components::Velocity>(frig);
+    auto* fws = addComp<components::WarpState>(frig);
+    auto* fs = addComp<components::Ship>(frig);
+    fs->ship_class = "Frigate";
+    fs->warp_speed_au = 5.0f;
+    fs->align_time = 2.5f;
+
+    // Battleship
+    auto* bs = world.createEntity("bs1");
+    auto* bpos = addComp<components::Position>(bs);
+    bpos->x = 0.0f; bpos->y = 0.0f; bpos->z = 0.0f;
+    addComp<components::Velocity>(bs);
+    auto* bws = addComp<components::WarpState>(bs);
+    auto* bsc = addComp<components::Ship>(bs);
+    bsc->ship_class = "Battleship";
+    bsc->warp_speed_au = 2.0f;
+    bsc->align_time = 10.0f;
+
+    moveSys.commandWarp("frigate1", 200000.0f, 0.0f, 0.0f);
+    moveSys.commandWarp("bs1", 200000.0f, 0.0f, 0.0f);
+
+    // Advance enough for frigate to complete warp (align_time=2.5s + ~0 travel ≈ 2.5s)
+    for (int i = 0; i < 30; i++) {
+        moveSys.update(0.1f);  // 3.0 seconds total
+    }
+
+    // Frigate should have arrived (warp_duration ≈ 2.5s, 3.0s > 2.5s)
+    assertTrue(fws->phase == components::WarpState::WarpPhase::None,
+               "Frigate arrived (faster warp)");
+
+    // Battleship should still be in warp (warp_duration ≈ 10.0s, 3.0s < 10.0s)
+    assertTrue(bws->phase != components::WarpState::WarpPhase::None,
+               "Battleship still warping (slower warp)");
+}
+
+void testWarpNoDisruptionWithoutWarpState() {
+    std::cout << "\n=== Warp No Disruption Without WarpState ===" << std::endl;
+
+    ecs::World world;
+    systems::MovementSystem moveSys(&world);
+
+    auto* ship = world.createEntity("ship1");
+    auto* pos = addComp<components::Position>(ship);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    addComp<components::Velocity>(ship);
+    // No WarpState component - disruption check should return false
+
+    assertTrue(!moveSys.isWarpDisrupted("ship1"), "No disruption without WarpState component");
 }
 
 // ── AI Dynamic Orbit Tests ──────────────────────────────────────────
@@ -7176,6 +7328,16 @@ int main() {
     testWarpStatePhaseExit();
     testWarpStateResetOnArrival();
     testWarpStateIntensity();
+
+    // Warp disruption tests
+    testWarpDisruptionPreventsWarp();
+    testWarpDisruptionInsufficientStrength();
+    testIsWarpDisruptedQuery();
+
+    // Ship-class warp speed tests
+    testWarpSpeedFromShipComponent();
+    testBattleshipSlowerWarp();
+    testWarpNoDisruptionWithoutWarpState();
 
     // AI dynamic orbit tests
     testAIDynamicOrbitFrigate();
