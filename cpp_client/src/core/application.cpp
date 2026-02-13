@@ -1422,14 +1422,24 @@ void Application::commandJump(const std::string& entityId) {
         }
     }
 
-    m_playerPosition = arrivalPos + glm::vec3(2000.0f, 0.0f, 0.0f);  // offset from gate
+    glm::vec3 playerPos = arrivalPos + glm::vec3(2000.0f, 0.0f, 0.0f);  // offset from gate
     m_playerVelocity = glm::vec3(0.0f);
     m_playerSpeed = 0.0f;
     m_currentMoveCommand = MoveCommand::None;
     m_activeModeText.clear();
+
+    // Update the player entity position through the entity manager
+    auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+    if (playerEntity) {
+        float rotation = playerEntity->getRotation();
+        Health currentHealth = playerEntity->getHealth();
+        m_gameClient->getEntityManager().updateEntityState(
+            m_localPlayerId, playerPos, m_playerVelocity, rotation, currentHealth);
+    }
+
     std::cout << "[Jump] Arrived in " << destination << " at position ("
-              << m_playerPosition.x << ", " << m_playerPosition.y << ", "
-              << m_playerPosition.z << ")" << std::endl;
+              << playerPos.x << ", " << playerPos.y << ", "
+              << playerPos.z << ")" << std::endl;
 }
 
 void Application::spawnLocalPlayerEntity() {
