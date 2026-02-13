@@ -4,6 +4,7 @@
 #include "ecs/system.h"
 #include "ecs/entity.h"
 #include <string>
+#include <functional>
 
 namespace atlas {
 namespace systems {
@@ -16,6 +17,13 @@ namespace systems {
  */
 class CombatSystem : public ecs::System {
 public:
+    /**
+     * @brief Callback invoked when an entity's hull reaches zero.
+     *
+     * Parameters: entity_id, x, y, z of the destroyed entity.
+     */
+    using DeathCallback = std::function<void(const std::string&, float, float, float)>;
+
     explicit CombatSystem(ecs::World* world);
     ~CombatSystem() override = default;
     
@@ -38,8 +46,14 @@ public:
      * @return true if weapon fired successfully, false otherwise
      */
     bool fireWeapon(const std::string& shooter_id, const std::string& target_id);
+
+    /**
+     * @brief Register a callback for entity death (hull reaches zero)
+     */
+    void setDeathCallback(DeathCallback cb) { death_callback_ = std::move(cb); }
     
 private:
+    DeathCallback death_callback_;
     /**
      * @brief Calculate effective damage after resistances
      */

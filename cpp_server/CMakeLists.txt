@@ -84,6 +84,7 @@ set(SERVER_SOURCES
     src/systems/emotional_arc_system.cpp
     src/systems/fleet_cargo_system.cpp
     src/systems/tactical_overlay_system.cpp
+    src/systems/mining_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -144,6 +145,7 @@ set(SERVER_HEADERS
     include/systems/emotional_arc_system.h
     include/systems/fleet_cargo_system.h
     include/systems/tactical_overlay_system.h
+    include/systems/mining_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -265,6 +267,7 @@ if(BUILD_TESTS)
         src/systems/emotional_arc_system.cpp
         src/systems/fleet_cargo_system.cpp
         src/systems/tactical_overlay_system.cpp
+        src/systems/mining_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

@@ -167,7 +167,8 @@ public:
         Approaching,
         Orbiting,
         Fleeing,
-        Attacking
+        Attacking,
+        Mining
     };
     
     /**
@@ -1328,6 +1329,69 @@ public:
     }
 
     COMPONENT_TYPE(DamageEvent)
+};
+
+/**
+ * @brief Mineral deposit — an asteroid or ore site containing minable resources
+ *
+ * Attached to asteroid belt entities.  Each deposit has a mineral type,
+ * a remaining quantity (units), and a yield rate that controls how much
+ * ore is extracted per mining cycle.
+ */
+class MineralDeposit : public ecs::Component {
+public:
+    std::string mineral_type = "Veldspar";   // ore name
+    float quantity_remaining = 10000.0f;     // units of ore left
+    float max_quantity = 10000.0f;           // original total
+    float yield_rate = 1.0f;                 // multiplier on mining yield
+    float volume_per_unit = 0.1f;            // m3 per unit of ore
+
+    bool isDepleted() const { return quantity_remaining <= 0.0f; }
+
+    COMPONENT_TYPE(MineralDeposit)
+};
+
+/**
+ * @brief Mining laser module — attached to ships that can mine
+ *
+ * Tracks the mining cycle timer and yield per cycle.  When the cycle
+ * completes the MiningSystem transfers ore from the targeted deposit
+ * into the ship's Inventory.
+ */
+class MiningLaser : public ecs::Component {
+public:
+    float yield_per_cycle = 100.0f;          // base units mined per cycle
+    float cycle_time = 60.0f;                // seconds per mining cycle
+    float cycle_progress = 0.0f;             // seconds elapsed in current cycle
+    bool active = false;                     // currently mining?
+    std::string target_deposit_id;           // entity id of the deposit being mined
+
+    COMPONENT_TYPE(MiningLaser)
+};
+
+/**
+ * @brief Per–solar-system resource tracking
+ *
+ * Attached to the solar system entity to record total and remaining
+ * resources so the server can balance spawn rates and depletion.
+ */
+class SystemResources : public ecs::Component {
+public:
+    struct ResourceEntry {
+        std::string mineral_type;
+        float total_quantity = 0.0f;
+        float remaining_quantity = 0.0f;
+    };
+
+    std::vector<ResourceEntry> resources;
+
+    float totalRemaining() const {
+        float sum = 0.0f;
+        for (const auto& r : resources) sum += r.remaining_quantity;
+        return sum;
+    }
+
+    COMPONENT_TYPE(SystemResources)
 };
 
 } // namespace components

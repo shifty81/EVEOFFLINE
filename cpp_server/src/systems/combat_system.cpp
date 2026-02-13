@@ -137,6 +137,15 @@ bool CombatSystem::applyDamage(const std::string& target_id, float damage, const
                          shield_depleted, armor_depleted, hull_critical);
     }
     
+    // Fire death callback when hull reaches zero
+    if (health->hull_hp <= 0.0f && death_callback_) {
+        auto* pos = target->getComponent<components::Position>();
+        float px = pos ? pos->x : 0.0f;
+        float py = pos ? pos->y : 0.0f;
+        float pz = pos ? pos->z : 0.0f;
+        death_callback_(target_id, px, py, pz);
+    }
+    
     return true;
 }
 

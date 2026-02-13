@@ -37,6 +37,13 @@ void ProtocolHandler::initializeMessageTypes() {
     message_type_map_["approach"] = MessageType::APPROACH;
     message_type_map_["orbit"] = MessageType::ORBIT;
     message_type_map_["stop"] = MessageType::STOP;
+    message_type_map_["salvage_request"] = MessageType::SALVAGE_REQUEST;
+    message_type_map_["salvage_result"] = MessageType::SALVAGE_RESULT;
+    message_type_map_["loot_all"] = MessageType::LOOT_ALL;
+    message_type_map_["loot_result"] = MessageType::LOOT_RESULT;
+    message_type_map_["mining_start"] = MessageType::MINING_START;
+    message_type_map_["mining_stop"] = MessageType::MINING_STOP;
+    message_type_map_["mining_result"] = MessageType::MINING_RESULT;
     message_type_map_["error"] = MessageType::ERROR;
 }
 
@@ -70,6 +77,13 @@ std::string ProtocolHandler::messageTypeToString(MessageType type) {
         case MessageType::APPROACH: return "approach";
         case MessageType::ORBIT: return "orbit";
         case MessageType::STOP: return "stop";
+        case MessageType::SALVAGE_REQUEST: return "salvage_request";
+        case MessageType::SALVAGE_RESULT: return "salvage_result";
+        case MessageType::LOOT_ALL: return "loot_all";
+        case MessageType::LOOT_RESULT: return "loot_result";
+        case MessageType::MINING_START: return "mining_start";
+        case MessageType::MINING_STOP: return "mining_stop";
+        case MessageType::MINING_RESULT: return "mining_result";
         case MessageType::ERROR: return "error";
         default: return "unknown";
     }
@@ -249,6 +263,41 @@ std::string ProtocolHandler::createMovementAck(const std::string& command, bool 
     json << "{\"type\":\"movement_ack\",\"data\":{";
     json << "\"command\":\"" << command << "\",";
     json << "\"success\":" << (success ? "true" : "false");
+    json << "}}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createSalvageResult(bool success, const std::string& wreck_id,
+                                                  int items_recovered) {
+    std::ostringstream json;
+    json << "{\"message_type\":\"salvage_result\",\"data\":{";
+    json << "\"success\":" << (success ? "true" : "false") << ",";
+    json << "\"wreck_id\":\"" << wreck_id << "\",";
+    json << "\"items_recovered\":" << items_recovered;
+    json << "}}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createLootResult(bool success, const std::string& wreck_id,
+                                               int items_collected, double isk_gained) {
+    std::ostringstream json;
+    json << "{\"message_type\":\"loot_result\",\"data\":{";
+    json << "\"success\":" << (success ? "true" : "false") << ",";
+    json << "\"wreck_id\":\"" << wreck_id << "\",";
+    json << "\"items_collected\":" << items_collected << ",";
+    json << "\"isk_gained\":" << isk_gained;
+    json << "}}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createMiningResult(bool success, const std::string& deposit_id,
+                                                 const std::string& mineral_type, int quantity_mined) {
+    std::ostringstream json;
+    json << "{\"message_type\":\"mining_result\",\"data\":{";
+    json << "\"success\":" << (success ? "true" : "false") << ",";
+    json << "\"deposit_id\":\"" << deposit_id << "\",";
+    json << "\"mineral_type\":\"" << mineral_type << "\",";
+    json << "\"quantity_mined\":" << quantity_mined;
     json << "}}";
     return json.str();
 }

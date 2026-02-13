@@ -40,6 +40,13 @@ enum class MessageType {
     APPROACH,
     ORBIT,
     STOP,
+    SALVAGE_REQUEST,
+    SALVAGE_RESULT,
+    LOOT_ALL,
+    LOOT_RESULT,
+    MINING_START,
+    MINING_STOP,
+    MINING_RESULT,
     ERROR
 };
 
@@ -75,6 +82,16 @@ public:
     // Movement command responses
     std::string createWarpResult(bool success, const std::string& reason = "");
     std::string createMovementAck(const std::string& command, bool success);
+    
+    // Salvage / Loot messages
+    std::string createSalvageResult(bool success, const std::string& wreck_id,
+                                    int items_recovered);
+    std::string createLootResult(bool success, const std::string& wreck_id,
+                                 int items_collected, double isk_gained);
+
+    // Mining messages
+    std::string createMiningResult(bool success, const std::string& deposit_id,
+                                   const std::string& mineral_type, int quantity_mined);
     
     // Message validation
     bool validateMessage(const std::string& json);
