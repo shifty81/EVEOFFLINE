@@ -26,6 +26,9 @@ bool WarpEffectRenderer::initialize() {
                                   "shaders/warp_tunnel.frag")) {
         std::cerr << "Warning: Failed to load warp tunnel shaders — warp visuals disabled" << std::endl;
         m_shader.reset();
+        // Clean up GPU resources allocated by createFullscreenQuad()
+        if (m_quadVAO != 0) { glDeleteVertexArrays(1, &m_quadVAO); m_quadVAO = 0; }
+        if (m_quadVBO != 0) { glDeleteBuffers(1, &m_quadVBO);      m_quadVBO = 0; }
         return false;
     }
 
