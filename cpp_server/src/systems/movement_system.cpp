@@ -57,8 +57,8 @@ void MovementSystem::update(float delta_time) {
                         float desired_vz = dz * invDist * vel->max_speed;
                         // Gradual velocity change — ships turn toward target,
                         // heavier ships turn more slowly (uses align_time)
-                        float turnRate = 2.0f / std::max(cmd.align_time, 0.5f);
-                        float blend = 1.0f - std::exp(-turnRate * delta_time);
+                        float blendRate = 2.0f / std::max(cmd.align_time, 0.5f);
+                        float blend = 1.0f - std::exp(-blendRate * delta_time);
                         vel->vx += (desired_vx - vel->vx) * blend;
                         vel->vy += (desired_vy - vel->vy) * blend;
                         vel->vz += (desired_vz - vel->vz) * blend;
@@ -100,8 +100,8 @@ void MovementSystem::update(float delta_time) {
                         float desired_vy = (ty * tangent_weight - ny * radial_factor) * vel->max_speed;
                         float desired_vz = (tz * tangent_weight - nz * radial_factor) * vel->max_speed;
                         // Gradual velocity change for orbiting too
-                        float turnRate = 2.0f / std::max(cmd.align_time, 0.5f);
-                        float blend = 1.0f - std::exp(-turnRate * delta_time);
+                        float blendRate = 2.0f / std::max(cmd.align_time, 0.5f);
+                        float blend = 1.0f - std::exp(-blendRate * delta_time);
                         vel->vx += (desired_vx - vel->vx) * blend;
                         vel->vy += (desired_vy - vel->vy) * blend;
                         vel->vz += (desired_vz - vel->vz) * blend;

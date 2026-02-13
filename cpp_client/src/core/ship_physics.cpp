@@ -166,8 +166,8 @@ void ShipPhysics::updateHeading(float deltaTime) {
               + rotAxis * glm::dot(rotAxis, m_heading) * (1.0f - cosA);
     m_heading = glm::normalize(m_heading);
 
-    // Track angular velocity for visual feedback
-    m_angularVelocity = turnAngle;
+    // Track angular velocity (radians/sec) for visual feedback
+    m_angularVelocity = (deltaTime > 0.0f) ? (turnAngle / deltaTime) : 0.0f;
 
     // Calculate roll angle — ship banks into the turn direction
     glm::vec3 crossVec = glm::cross(m_heading, targetHeading);
