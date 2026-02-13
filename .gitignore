@@ -83,6 +83,8 @@ build_vs/
 *.o
 *.obj
 *.out
+# Allow OBJ ship module parts (small tracked assets, < 1KB each)
+!cpp_client/assets/reference_models/modules/*.obj
 *.dll
 *.a
 *.lib
