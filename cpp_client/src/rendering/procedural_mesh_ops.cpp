@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <random>
 #include <stdexcept>
+#include <unordered_map>
 
 namespace atlas {
 
@@ -568,7 +569,66 @@ TriangulatedMesh buildSegmentedHull(int sides, int segments,
     // 3. Generate thrusters on the last (rear) face
     generateThrusters(rings.back(), segmentLength, allFaces);
 
-    return triangulateFaces(allFaces, color);
+    TriangulatedMesh result = triangulateFaces(allFaces, color);
+    computeSmoothNormals(result);
+    return result;
+}
+
+// ────────────────────────────────────────────────────────────────────────
+// Smooth normal computation
+// ────────────────────────────────────────────────────────────────────────
+
+void computeSmoothNormals(TriangulatedMesh& mesh, float epsilon) {
+    if (mesh.vertices.empty() || mesh.indices.empty()) return;
+
+    // Spatial hash: bucket vertices by quantised position so that
+    // coincident vertices (within epsilon) share averaged normals.
+    // This turns flat-shaded meshes into smooth-shaded ones.
+
+    auto quantise = [epsilon](const glm::vec3& p) -> uint64_t {
+        float inv = 1.0f / std::max(epsilon, 1e-7f);
+        int32_t ix = static_cast<int32_t>(std::floor(p.x * inv));
+        int32_t iy = static_cast<int32_t>(std::floor(p.y * inv));
+        int32_t iz = static_cast<int32_t>(std::floor(p.z * inv));
+        // Simple spatial hash combining the three quantised coords
+        uint64_t h = static_cast<uint64_t>(ix * 73856093u);
+        h ^= static_cast<uint64_t>(iy * 19349663u);
+        h ^= static_cast<uint64_t>(iz * 83492791u);
+        return h;
+    };
+
+    // Phase 1: accumulate face normals per spatial bucket
+    std::unordered_map<uint64_t, glm::vec3> accum;
+    accum.reserve(mesh.vertices.size());
+
+    // Walk triangles and accumulate face normals at each vertex bucket
+    size_t triCount = mesh.indices.size() / 3;
+    for (size_t t = 0; t < triCount; ++t) {
+        unsigned int i0 = mesh.indices[t * 3 + 0];
+        unsigned int i1 = mesh.indices[t * 3 + 1];
+        unsigned int i2 = mesh.indices[t * 3 + 2];
+        const glm::vec3& p0 = mesh.vertices[i0].position;
+        const glm::vec3& p1 = mesh.vertices[i1].position;
+        const glm::vec3& p2 = mesh.vertices[i2].position;
+
+        glm::vec3 faceNormal = glm::cross(p1 - p0, p2 - p0);
+        float len = glm::length(faceNormal);
+        if (len > 1e-7f) faceNormal /= len;
+
+        accum[quantise(p0)] += faceNormal;
+        accum[quantise(p1)] += faceNormal;
+        accum[quantise(p2)] += faceNormal;
+    }
+
+    // Phase 2: normalise accumulated normals and write back to vertices
+    for (auto& v : mesh.vertices) {
+        auto it = accum.find(quantise(v.position));
+        if (it != accum.end()) {
+            float len = glm::length(it->second);
+            v.normal = (len > 1e-7f) ? it->second / len
+                                      : glm::vec3(0.0f, 1.0f, 0.0f);
+        }
+    }
 }
 
 } // namespace atlas

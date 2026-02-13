@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 13, 2026)**: Ship hull visual quality **IMPROVED**. Smooth normals added to procedural mesh generation — ships no longer look like jagged missiles. Cross-section polygon counts increased across all factions (Veyren 4→6, Keldari 6→8, Solari 8→12, Aurelian 12→16) and all ship classes. Speed indicator +/- buttons now functional (return click direction to HUD callback). Speed gauge repositioned higher on screen (winH-12 → winH-42). All 1021 test assertions passing.
+
 > **Update (February 13, 2026)**: Tasks 1.2, 1.3, and 1.4 **MAJOR PROGRESS**. AI combat expanded with dynamic orbit by ship class, engagement range from weapons, and target selection strategies (Closest, LowestHP, HighestThreat). Station docking protocol messages added (DOCK_REQUEST/SUCCESS/FAILED, UNDOCK, REPAIR, DAMAGE_EVENT). Client-side DamageEffectHelper created for shield/armor/hull visual feedback. UI fixes: overview tab clicks working, context menu z-order fixed, stargate Jump action added. All 1011 test assertions passing. Next priority: Vertical Slice integration.
 
 > **Update (February 13, 2026)**: Tasks 1.2 and 1.3 foundations **IN PROGRESS**. DamageEvent component added for visual damage feedback. AI health-based retreat logic implemented. WarpState phase tracking integrated into MovementSystem. All 985 test assertions passing. Next priority: Client-side visual effects (shader integration) and further AI combat behaviors.

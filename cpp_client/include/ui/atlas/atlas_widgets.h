@@ -166,8 +166,9 @@ void capacitorRingAnimated(AtlasContext& ctx, Vec2 centre,
 
 /**
  * Speed indicator (bottom of HUD): shows current speed with +/- buttons.
+ * Returns +1 if "+" was clicked, -1 if "-" was clicked, 0 otherwise.
  */
-void speedIndicator(AtlasContext& ctx, Vec2 pos,
+int speedIndicator(AtlasContext& ctx, Vec2 pos,
                     float currentSpeed, float maxSpeed);
 
 /**
