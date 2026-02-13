@@ -78,6 +78,12 @@ set(SERVER_SOURCES
     src/systems/station_system.cpp
     src/systems/wreck_salvage_system.cpp
     src/systems/fleet_morale_system.cpp
+    src/systems/fleet_chatter_system.cpp
+    src/systems/warp_anomaly_system.cpp
+    src/systems/captain_relationship_system.cpp
+    src/systems/emotional_arc_system.cpp
+    src/systems/fleet_cargo_system.cpp
+    src/systems/tactical_overlay_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -132,6 +138,12 @@ set(SERVER_HEADERS
     include/systems/station_system.h
     include/systems/wreck_salvage_system.h
     include/systems/fleet_morale_system.h
+    include/systems/fleet_chatter_system.h
+    include/systems/warp_anomaly_system.h
+    include/systems/captain_relationship_system.h
+    include/systems/emotional_arc_system.h
+    include/systems/fleet_cargo_system.h
+    include/systems/tactical_overlay_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -247,6 +259,12 @@ if(BUILD_TESTS)
         src/systems/station_system.cpp
         src/systems/wreck_salvage_system.cpp
         src/systems/fleet_morale_system.cpp
+        src/systems/fleet_chatter_system.cpp
+        src/systems/warp_anomaly_system.cpp
+        src/systems/captain_relationship_system.cpp
+        src/systems/emotional_arc_system.cpp
+        src/systems/fleet_cargo_system.cpp
+        src/systems/tactical_overlay_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp
