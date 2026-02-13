@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_inverse.hpp>
 #include <iostream>
 #include <random>
+#include <algorithm>
 #define _USE_MATH_DEFINES
 #include <cmath>
 
@@ -517,10 +518,17 @@ void Renderer::renderSun(Camera& camera, const glm::vec3& sunPosition,
     m_entityShader->setVec3("lightColor", sunColor * 1.5f);
     m_entityShader->setVec3("viewPos", camera.getPosition());
     
+    // Enforce a minimum apparent size so the sun is always visible as a
+    // bright point from anywhere in the solar system, matching EVE Online's
+    // behaviour where the star is always a visible glow in the skybox.
+    float dist = glm::length(camera.getPosition() - sunPosition);
+    float minApparentRadius = dist * 0.004f;  // ~0.4% of distance = always visible
+    float renderRadius = std::max(sunRadius, minApparentRadius);
+    
     // Create model matrix: translate to sun position, scale by radius
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::translate(model, sunPosition);
-    model = glm::scale(model, glm::vec3(sunRadius));
+    model = glm::scale(model, glm::vec3(renderRadius));
     m_entityShader->setMat4("model", model);
     
     // Draw the sun sphere with additive blending for glow
