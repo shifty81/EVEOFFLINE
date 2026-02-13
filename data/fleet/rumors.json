@@ -1,0 +1,142 @@
+{
+  "version": "1.0",
+  "description": "Rumor templates that captains share during fleet activities",
+  "rumors": [
+    {
+      "id": "warp_ghost_lane",
+      "text": "They say there's a dead warp lane out past Theta-9. Ships go in, comms go silent, but the hulls drift back... empty.",
+      "category": "warp_phenomena",
+      "belief_decay_rate": 0.02,
+      "can_become_quest": true
+    },
+    {
+      "id": "warp_time_slip",
+      "text": "A hauler jumped from Kess to Voral. Took ten seconds on their clock. Station logs said they'd been gone three days.",
+      "category": "warp_phenomena",
+      "belief_decay_rate": 0.03,
+      "can_become_quest": false
+    },
+    {
+      "id": "warp_echo_signal",
+      "text": "Some pilots pick up comms in the tunnel that haven't been sent yet. Echoes from the future, they call them.",
+      "category": "warp_phenomena",
+      "belief_decay_rate": 0.04,
+      "can_become_quest": false
+    },
+    {
+      "id": "ancient_gate_network",
+      "text": "There's a gate out in the Drift that doesn't match any known design. Pre-collapse, maybe older. Nobody's tried to activate it.",
+      "category": "ancient_structures",
+      "belief_decay_rate": 0.01,
+      "can_become_quest": true
+    },
+    {
+      "id": "station_zero",
+      "text": "Station Zero. First structure ever built out here. They say it's still running on its original reactor, buried inside an asteroid.",
+      "category": "ancient_structures",
+      "belief_decay_rate": 0.015,
+      "can_become_quest": true
+    },
+    {
+      "id": "mirror_spire",
+      "text": "Deep scanners found a spire made of something that reflects every frequency. Mirrors everything back. Can't get a read on it.",
+      "category": "ancient_structures",
+      "belief_decay_rate": 0.02,
+      "can_become_quest": true
+    },
+    {
+      "id": "signal_4717",
+      "text": "Signal 47-17. Repeating pulse from an empty grid square. No ship, no structure, no debris. Just the signal, every 90 seconds.",
+      "category": "mysterious_signals",
+      "belief_decay_rate": 0.025,
+      "can_become_quest": true
+    },
+    {
+      "id": "singing_belt",
+      "text": "Miners in the Korvan belt swear the rocks hum before they crack. Not vibration — actual harmonic tones.",
+      "category": "mysterious_signals",
+      "belief_decay_rate": 0.03,
+      "can_become_quest": false
+    },
+    {
+      "id": "dead_frequency",
+      "text": "There's a frequency nobody uses. 1142.7. Supposedly if you listen long enough, you hear voices. Old ones.",
+      "category": "mysterious_signals",
+      "belief_decay_rate": 0.035,
+      "can_become_quest": false
+    },
+    {
+      "id": "ghost_fleet_captain",
+      "text": "Captain Maren's fleet vanished during the Solari Expansion. Pilots still report seeing her ship on long-range scans. Always just out of reach.",
+      "category": "fleet_legends",
+      "belief_decay_rate": 0.015,
+      "can_become_quest": true
+    },
+    {
+      "id": "the_last_hauler",
+      "text": "There's a hauler that runs the Deadlight Corridor solo. No escort, no weapons. Never been touched. Nobody knows why.",
+      "category": "fleet_legends",
+      "belief_decay_rate": 0.02,
+      "can_become_quest": false
+    },
+    {
+      "id": "keldari_oath",
+      "text": "Keldari veterans say if you salute a wreck, the pilot's ghost won't follow your ship. Superstition, sure. But I still do it.",
+      "category": "fleet_legends",
+      "belief_decay_rate": 0.025,
+      "can_become_quest": false
+    },
+    {
+      "id": "lucky_thirteen",
+      "text": "Thirteen jumps without docking. That's the limit. After that, the void starts watching back. Every old pilot knows this.",
+      "category": "fleet_legends",
+      "belief_decay_rate": 0.03,
+      "can_become_quest": false
+    },
+    {
+      "id": "ion_bloom",
+      "text": "Ion blooms have been flaring up near the Aurelian border. Wrecks sensors, scrambles nav. Some say it's getting worse.",
+      "category": "space_weather",
+      "belief_decay_rate": 0.04,
+      "can_become_quest": false
+    },
+    {
+      "id": "dust_tide",
+      "text": "The Dust Tide rolls through every few cycles. Fills whole systems with particulate. Good for hiding. Bad for everything else.",
+      "category": "space_weather",
+      "belief_decay_rate": 0.02,
+      "can_become_quest": false
+    },
+    {
+      "id": "black_aurora",
+      "text": "Black auroras near the Rift. Not just dark sky — instruments read negative luminosity. Shouldn't be possible.",
+      "category": "space_weather",
+      "belief_decay_rate": 0.015,
+      "can_become_quest": true
+    },
+    {
+      "id": "solar_whisper",
+      "text": "When a star goes quiet before a flare, old Aurelian pilots call it a whisper. They say the star's deciding what to burn.",
+      "category": "space_weather",
+      "belief_decay_rate": 0.03,
+      "can_become_quest": false
+    }
+  ],
+  "categories": {
+    "warp_phenomena": {
+      "description": "Strange occurrences within warp tunnels and lanes"
+    },
+    "ancient_structures": {
+      "description": "Ruins and artifacts from before recorded history"
+    },
+    "mysterious_signals": {
+      "description": "Unexplained transmissions and frequencies"
+    },
+    "fleet_legends": {
+      "description": "Stories passed between pilots about famous or infamous figures"
+    },
+    "space_weather": {
+      "description": "Unusual environmental phenomena in open space"
+    }
+  }
+}

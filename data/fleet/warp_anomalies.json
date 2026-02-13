@@ -1,0 +1,170 @@
+{
+  "version": "1.0",
+  "description": "Warp anomaly definitions encountered during warp travel",
+  "anomalies": {
+    "visual": {
+      "description": "Common visual distortions within the warp tunnel",
+      "rarity": "common",
+      "types": [
+        {
+          "id": "color_shift",
+          "name": "Chromatic Drift",
+          "description": "The warp tunnel shifts through unexpected color bands, cycling from deep blue to amber before stabilizing.",
+          "category": "visual",
+          "duration_seconds": 4.0,
+          "visual_effect_hint": "tunnel_hue_cycle_blue_amber",
+          "audio_effect_hint": "low_harmonic_sweep",
+          "chance_per_warp": 0.15
+        },
+        {
+          "id": "light_streaks",
+          "name": "Particle Bloom",
+          "description": "Bright streaks of condensed particles race past the viewport, trailing luminous tails.",
+          "category": "visual",
+          "duration_seconds": 3.0,
+          "visual_effect_hint": "streak_particles_forward",
+          "audio_effect_hint": "soft_crackling",
+          "chance_per_warp": 0.12
+        },
+        {
+          "id": "tunnel_flicker",
+          "name": "Field Stutter",
+          "description": "The warp field flickers briefly, causing the tunnel walls to jitter before restabilizing.",
+          "category": "visual",
+          "duration_seconds": 1.5,
+          "visual_effect_hint": "tunnel_geometry_jitter",
+          "audio_effect_hint": "static_burst_short",
+          "chance_per_warp": 0.1
+        },
+        {
+          "id": "false_stars",
+          "name": "Phantom Constellation",
+          "description": "Points of light appear within the tunnel that resemble stars, but don't match any known chart.",
+          "category": "visual",
+          "duration_seconds": 5.0,
+          "visual_effect_hint": "dot_lights_scattered_in_tunnel",
+          "audio_effect_hint": "faint_chime_cluster",
+          "chance_per_warp": 0.08
+        },
+        {
+          "id": "depth_pulse",
+          "name": "Spatial Ripple",
+          "description": "A visible ripple passes through the tunnel, distorting depth perception for a moment.",
+          "category": "visual",
+          "duration_seconds": 2.0,
+          "visual_effect_hint": "radial_distortion_wave",
+          "audio_effect_hint": "deep_thrum",
+          "chance_per_warp": 0.1
+        }
+      ]
+    },
+    "sensory": {
+      "description": "Uncommon anomalies that affect ship instruments or pilot perception",
+      "rarity": "uncommon",
+      "types": [
+        {
+          "id": "compass_spin",
+          "name": "Navigational Drift",
+          "description": "The ship's heading indicator spins erratically for several seconds before snapping back to true.",
+          "category": "sensory",
+          "duration_seconds": 6.0,
+          "visual_effect_hint": "hud_compass_spin",
+          "audio_effect_hint": "instrument_warble",
+          "chance_per_warp": 0.04
+        },
+        {
+          "id": "echo_signal",
+          "name": "Comm Echo",
+          "description": "A garbled fragment of a previous transmission replays on the comms channel, origin unknown.",
+          "category": "sensory",
+          "duration_seconds": 3.5,
+          "visual_effect_hint": "comms_panel_flicker",
+          "audio_effect_hint": "distorted_voice_fragment",
+          "chance_per_warp": 0.035
+        },
+        {
+          "id": "thermal_ghost",
+          "name": "Thermal Shadow",
+          "description": "Heat sensors register a large object nearby, but visual and radar show nothing.",
+          "category": "sensory",
+          "duration_seconds": 8.0,
+          "visual_effect_hint": "heat_overlay_blob_fading",
+          "audio_effect_hint": "low_rumble_distant",
+          "chance_per_warp": 0.03
+        },
+        {
+          "id": "time_stutter",
+          "name": "Chronometric Blip",
+          "description": "The ship clock skips forward by a fraction of a second, then corrects. Logs show a gap.",
+          "category": "sensory",
+          "duration_seconds": 0.5,
+          "visual_effect_hint": "hud_clock_skip",
+          "audio_effect_hint": "digital_glitch_tick",
+          "chance_per_warp": 0.025
+        }
+      ]
+    },
+    "shear": {
+      "description": "Rare disruptions to the warp field itself with tangible effects",
+      "rarity": "rare",
+      "types": [
+        {
+          "id": "field_tear",
+          "name": "Warp Shear",
+          "description": "The tunnel briefly splits, revealing a sliver of realspace before the field seals. The ship shudders.",
+          "category": "shear",
+          "duration_seconds": 2.5,
+          "visual_effect_hint": "tunnel_crack_realspace_glimpse",
+          "audio_effect_hint": "tearing_fabric_bass_hit",
+          "chance_per_warp": 0.008
+        },
+        {
+          "id": "gravity_lensing",
+          "name": "Mass Shadow",
+          "description": "An invisible gravitational source warps the tunnel geometry, bending light around an unseen mass.",
+          "category": "shear",
+          "duration_seconds": 10.0,
+          "visual_effect_hint": "gravitational_lens_distortion",
+          "audio_effect_hint": "deep_drone_crescendo",
+          "chance_per_warp": 0.006
+        },
+        {
+          "id": "lane_branch",
+          "name": "Phantom Lane",
+          "description": "A second tunnel briefly appears alongside the current one, angling away into the unknown before fading.",
+          "category": "shear",
+          "duration_seconds": 7.0,
+          "visual_effect_hint": "branching_tunnel_ghost",
+          "audio_effect_hint": "harmonic_divergence_tone",
+          "chance_per_warp": 0.005
+        }
+      ]
+    },
+    "legendary": {
+      "description": "Ultra-rare anomalies spoken of in pilot folklore, witnessed by very few",
+      "rarity": "ultra_rare",
+      "types": [
+        {
+          "id": "void_eye",
+          "name": "The Iris",
+          "description": "A massive circular void opens ahead in the tunnel — a perfect dark circle ringed by distorted light. It passes over the ship harmlessly, but instruments spike across the board.",
+          "category": "legendary",
+          "duration_seconds": 12.0,
+          "visual_effect_hint": "dark_circle_ring_light_passover",
+          "audio_effect_hint": "all_instruments_spike_then_silence",
+          "chance_per_warp": 0.001
+        },
+        {
+          "id": "mirror_ship",
+          "name": "The Reflection",
+          "description": "For a few seconds, an exact duplicate of your ship appears in the tunnel, flying in the opposite direction. Same hull. Same markings. Then it's gone.",
+          "category": "legendary",
+          "duration_seconds": 5.0,
+          "visual_effect_hint": "mirrored_player_ship_oncoming",
+          "audio_effect_hint": "reversed_engine_hum_doppler",
+          "chance_per_warp": 0.0005
+        }
+      ]
+    }
+  }
+}
