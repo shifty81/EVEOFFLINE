@@ -56,6 +56,13 @@ public:
     std::string createMarketQueryMessage(const std::string& itemId);
     
     /**
+     * Station docking and repair messages
+     */
+    std::string createDockRequestMessage(const std::string& stationId);
+    std::string createUndockRequestMessage();
+    std::string createRepairRequestMessage();
+    
+    /**
      * Response message type helpers
      * These methods check if a message is a specific type of response
      */
@@ -64,6 +71,7 @@ public:
     static bool isInventoryResponse(const std::string& type);
     static bool isFittingResponse(const std::string& type);
     static bool isMarketResponse(const std::string& type);
+    static bool isStationResponse(const std::string& type);
 
     /**
      * Set message handler

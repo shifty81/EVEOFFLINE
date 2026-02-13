@@ -11,6 +11,7 @@
 #include "ecs/world.h"
 #include "game_session.h"
 #include "systems/targeting_system.h"
+#include "systems/station_system.h"
 #include "data/world_persistence.h"
 #include "utils/server_metrics.h"
 #include "ui/server_console.h"
@@ -62,6 +63,7 @@ private:
     utils::ServerMetrics metrics_;
     ServerConsole console_;
     systems::TargetingSystem* targeting_system_ = nullptr;
+    systems::StationSystem* station_system_ = nullptr;
     
     std::atomic<bool> running_;
     

@@ -202,6 +202,31 @@ public:
     void UpdateMissionList(const std::vector<MissionRmlInfo>& missions);
     void UpdateMissionDetail(const MissionRmlInfo& mission);
 
+    // ---- Station Services ----
+    struct StationServiceInfo {
+        std::string stationId;
+        std::string stationName;
+        float distance = 0.0f;
+        float dockingRange = 2500.0f;
+        float repairCostPerHp = 1.0f;
+        bool isDocked = false;
+        float shieldHp = 0.0f;
+        float shieldMax = 0.0f;
+        float armorHp = 0.0f;
+        float armorMax = 0.0f;
+        float hullHp = 0.0f;
+        float hullMax = 0.0f;
+    };
+    void UpdateStationServices(const StationServiceInfo& info);
+
+    // ---- Station Service Callbacks ----
+    using StationCallback = std::function<void(const std::string& stationId)>;
+    using RepairCallback = std::function<void()>;
+
+    void SetOnDockRequest(StationCallback cb)    { onDockRequest_ = std::move(cb); }
+    void SetOnUndockRequest(RepairCallback cb)   { onUndockRequest_ = std::move(cb); }
+    void SetOnRepairRequest(RepairCallback cb)   { onRepairRequest_ = std::move(cb); }
+
     // ---- Chat ----
     struct ChatMessageInfo {
         std::string time;
@@ -260,6 +285,11 @@ private:
     ContextMenuCallback onShowInfo_;
     ContextMenuCallback onLookAt_;
 
+    // Station service callbacks
+    StationCallback onDockRequest_;
+    RepairCallback onUndockRequest_;
+    RepairCallback onRepairRequest_;
+
 #ifdef USE_RMLUI
     Rml::Context* context_ = nullptr;
     std::unique_ptr<RenderInterface_GL3> renderInterface_;
@@ -287,11 +317,16 @@ private:
     // Overview filter state
     std::string overviewFilter_ = "all";
 
+    // Station service state
+    std::string currentStationId_;
+
     RmlEventInstaller contextMenuEvents_;
+    RmlEventInstaller stationEvents_;
 
     // Internal helpers
     bool LoadDocuments();
     void InstallContextMenuEvents();
+    void InstallStationEvents();
     void UpdateHudElements();
     void UpdateTargetListElements();
 #endif

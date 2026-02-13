@@ -12,8 +12,11 @@
 
 namespace atlas {
 
-// Forward declaration
-namespace systems { class TargetingSystem; }
+// Forward declarations
+namespace systems { 
+    class TargetingSystem;
+    class StationSystem;
+}
 
 /**
  * @brief Manages game sessions: connects networking to the ECS world
@@ -42,6 +45,9 @@ public:
 
     /// Set pointer to the TargetingSystem for lock/unlock handling
     void setTargetingSystem(systems::TargetingSystem* ts) { targeting_system_ = ts; }
+
+    /// Set pointer to the StationSystem for docking/repair handling
+    void setStationSystem(systems::StationSystem* ss) { station_system_ = ss; }
 
     /// Get the ship database (read-only)
     const data::ShipDatabase& getShipDatabase() const { return ship_db_; }
@@ -140,6 +146,39 @@ private:
      * @param data JSON message data with slot number
      */
     void handleModuleDeactivate(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle dock request
+     * 
+     * Attempts to dock player at specified station.
+     * Expected format: {"type":"dock_request","station_id":"station_jita4"}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data with station_id
+     */
+    void handleDockRequest(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle undock request
+     * 
+     * Undocks player from current station.
+     * Expected format: {"type":"undock_request"}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data
+     */
+    void handleUndockRequest(const network::ClientConnection& client, const std::string& data);
+    
+    /**
+     * Handle repair request
+     * 
+     * Repairs player ship at current station.
+     * Expected format: {"type":"repair_request"}
+     * 
+     * @param client Client connection info
+     * @param data JSON message data
+     */
+    void handleRepairRequest(const network::ClientConnection& client, const std::string& data);
 
     // --- State broadcast ---
     /**
@@ -208,6 +247,7 @@ private:
     network::ProtocolHandler protocol_;
     data::ShipDatabase ship_db_;
     systems::TargetingSystem* targeting_system_ = nullptr;
+    systems::StationSystem* station_system_ = nullptr;
 
     // Map socket → entity_id for connected players
     struct PlayerInfo {

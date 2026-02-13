@@ -166,6 +166,31 @@ void NetworkManager::sendMarketQuery(const std::string& itemId) {
     m_tcpClient->send(msg);
 }
 
+// Station operations
+void NetworkManager::sendDockRequest(const std::string& stationId) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createDockRequestMessage(stationId);
+    m_tcpClient->send(msg);
+    std::cout << "Sent dock request to station: " << stationId << std::endl;
+}
+
+void NetworkManager::sendUndockRequest() {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createUndockRequestMessage();
+    m_tcpClient->send(msg);
+    std::cout << "Sent undock request" << std::endl;
+}
+
+void NetworkManager::sendRepairRequest() {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createRepairRequestMessage();
+    m_tcpClient->send(msg);
+    std::cout << "Sent repair request" << std::endl;
+}
+
 std::string NetworkManager::getConnectionState() const {
     switch (m_state) {
         case State::DISCONNECTED: return "Disconnected";
@@ -197,6 +222,8 @@ void NetworkManager::onProtocolMessage(const std::string& type, const std::strin
         handleFittingResponse(type, dataJson);
     } else if (ProtocolHandler::isMarketResponse(type)) {
         handleMarketResponse(type, dataJson);
+    } else if (ProtocolHandler::isStationResponse(type)) {
+        handleStationResponse(type, dataJson);
     }
 
     // Dispatch to registered handlers
@@ -271,6 +298,34 @@ void NetworkManager::handleMarketResponse(const std::string& type, const std::st
         
     } catch (const nlohmann::json::exception& e) {
         std::cerr << "Failed to parse market response: " << e.what() << std::endl;
+    }
+}
+
+void NetworkManager::handleStationResponse(const std::string& type, const std::string& dataJson) {
+    if (!m_stationCallback) return;
+    
+    try {
+        auto j = nlohmann::json::parse(dataJson);
+        
+        StationResponse response;
+        response.success = (type == "dock_success" || type == "undock_success" || type == "repair_result");
+        response.message = j.value("message", response.success ? "Operation completed" : "Operation failed");
+        response.stationId = j.value("station_id", "");
+        response.repairCost = j.value("cost", 0.0f);
+        response.shieldHp = j.value("shield_hp", 0.0f);
+        response.armorHp = j.value("armor_hp", 0.0f);
+        response.hullHp = j.value("hull_hp", 0.0f);
+        
+        // Handle specific response types
+        if (type == "dock_failed") {
+            response.success = false;
+            response.message = j.value("reason", "Dock failed");
+        }
+        
+        m_stationCallback(response);
+        
+    } catch (const nlohmann::json::exception& e) {
+        std::cerr << "Failed to parse station response: " << e.what() << std::endl;
     }
 }
 
