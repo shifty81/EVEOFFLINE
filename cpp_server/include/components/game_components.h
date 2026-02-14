@@ -1584,6 +1584,34 @@ public:
     COMPONENT_TYPE(Anomaly)
 };
 
+/**
+ * @brief Probe scanner — attached to ships that can scan for anomalies
+ *
+ * Players deploy probes to discover hidden anomalies in a solar system.
+ * Scan strength and deviation improve with skill and probe count.
+ */
+class Scanner : public ecs::Component {
+public:
+    float scan_strength = 50.0f;         // base scan strength (affected by skills/modules)
+    float scan_deviation = 4.0f;         // positional error in AU (decreases with better scans)
+    int probe_count = 8;                 // number of probes deployed
+    float scan_duration = 10.0f;         // seconds per scan cycle
+    float scan_progress = 0.0f;          // current scan cycle progress
+    bool scanning = false;               // currently scanning?
+    std::string target_system_id;        // system being scanned
+    
+    struct ScanResult {
+        std::string anomaly_id;
+        float signal_strength = 0.0f;    // 0.0–1.0 (1.0 = fully scanned)
+        float deviation = 0.0f;          // positional error remaining
+        bool warpable = false;           // true when signal >= 1.0
+    };
+    
+    std::vector<ScanResult> results;
+
+    COMPONENT_TYPE(Scanner)
+};
+
 } // namespace components
 } // namespace atlas
 
