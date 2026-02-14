@@ -525,33 +525,6 @@ void Application::setupUICallbacks() {
     });
 
     std::cout << "  - Overview interaction callbacks wired" << std::endl;
-
-    // === Celestial bracket callbacks ===
-    m_atlasHUD->setBracketClickCb([this](const std::string& celestialId) {
-        std::cout << "[Bracket] Selected celestial: " << celestialId << std::endl;
-        // Select the celestial as current target for warp/approach
-        m_currentTargetId = celestialId;
-    });
-
-    m_atlasHUD->setBracketRightClickCb([this](const std::string& celestialId, float screenX, float screenY) {
-        bool isStargate = false;
-        float distToTarget = 0.0f;
-        if (m_solarSystem) {
-            const auto* cel = m_solarSystem->findCelestial(celestialId);
-            if (cel) {
-                if (cel->type == atlas::Celestial::Type::STARGATE)
-                    isStargate = true;
-                auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-                if (playerEntity)
-                    distToTarget = glm::distance(playerEntity->getPosition(), cel->position);
-            }
-        }
-        m_contextMenu->ShowEntityMenu(celestialId, false, isStargate, distToTarget);
-        m_contextMenu->SetScreenPosition(screenX, screenY);
-        std::cout << "[Bracket] Right-click context menu for: " << celestialId << std::endl;
-    });
-
-    std::cout << "  - Celestial bracket callbacks wired" << std::endl;
     
     std::cout << "UI callbacks setup complete" << std::endl;
 }
@@ -789,58 +762,6 @@ void Application::render() {
         
         // Update mode indicator text on the HUD
         m_atlasHUD->setModeIndicator(m_activeModeText);
-        
-        // Project celestial positions to screen coordinates for bracket icons
-        if (m_solarSystem && m_camera && playerEntity) {
-            const auto playerPos = playerEntity->getPosition();
-            glm::mat4 viewMat = m_camera->getViewMatrix();
-            glm::mat4 projMat = m_camera->getProjectionMatrix();
-            glm::mat4 vp = projMat * viewMat;
-            float scrW = static_cast<float>(atlasInput.windowW);
-            float scrH = static_cast<float>(atlasInput.windowH);
-
-            std::vector<atlas::CelestialBracket> brackets;
-            for (const auto& c : m_solarSystem->getCelestials()) {
-                if (c.type == atlas::Celestial::Type::SUN) continue;
-
-                atlas::CelestialBracket br;
-                br.id   = c.id;
-                br.name = c.name;
-                br.distance = glm::distance(playerPos, c.position);
-
-                switch (c.type) {
-                    case atlas::Celestial::Type::PLANET:        br.type = "Planet";        break;
-                    case atlas::Celestial::Type::MOON:          br.type = "Moon";          break;
-                    case atlas::Celestial::Type::STATION:       br.type = "Station";       break;
-                    case atlas::Celestial::Type::STARGATE:      br.type = "Stargate";      break;
-                    case atlas::Celestial::Type::ASTEROID_BELT: br.type = "Asteroid Belt"; break;
-                    case atlas::Celestial::Type::WORMHOLE:      br.type = "Wormhole";      break;
-                    case atlas::Celestial::Type::DYSON_RING:    br.type = "Dyson Ring";    break;
-                    default:                                    br.type = "Celestial";     break;
-                }
-
-                // Project world position → screen
-                glm::vec4 clip = vp * glm::vec4(c.position, 1.0f);
-                if (clip.w > 0.0f) {
-                    glm::vec3 ndc = glm::vec3(clip) / clip.w;
-                    br.screenX = (ndc.x * 0.5f + 0.5f) * scrW;
-                    br.screenY = (1.0f - (ndc.y * 0.5f + 0.5f)) * scrH;
-                    br.onScreen = (ndc.x >= -1.0f && ndc.x <= 1.0f &&
-                                   ndc.y >= -1.0f && ndc.y <= 1.0f &&
-                                   ndc.z >= 0.0f  && ndc.z <= 1.0f);
-                } else {
-                    // Behind camera — mirror to opposite edge
-                    glm::vec3 ndc = glm::vec3(clip) / clip.w;
-                    br.screenX = (0.5f - ndc.x * 0.5f) * scrW;
-                    br.screenY = (0.5f + ndc.y * 0.5f) * scrH;
-                    br.onScreen = false;
-                }
-
-                br.selected = (c.id == m_currentTargetId);
-                brackets.push_back(br);
-            }
-            m_atlasHUD->setCelestialBrackets(brackets);
-        }
         
         // Reserve context menu / radial menu input areas BEFORE panels
         // so their clicks aren't stolen by panel body consumption.
@@ -1258,40 +1179,10 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
                     m_window->getWidth(), m_window->getHeight(),
                     *m_camera, entityList);
                 
-                // If no 3D entity found, check celestial brackets (UI icons)
-                float distToTarget = 0.0f;
-                if (pickedId.empty() && m_solarSystem) {
-                    auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-                    if (playerEntity) {
-                        const auto playerPos = playerEntity->getPosition();
-                        float hx = static_cast<float>(m_radialMenuStartX);
-                        float hy = static_cast<float>(m_radialMenuStartY);
-                        float hitRadius = 16.0f;
-                        float hitRadiusSq = hitRadius * hitRadius;
-                        glm::mat4 vp = m_camera->getProjectionMatrix() * m_camera->getViewMatrix();
-                        float scrW = static_cast<float>(m_window->getWidth());
-                        float scrH = static_cast<float>(m_window->getHeight());
-                        float bestDistSq = hitRadiusSq;
-                        for (const auto& c : m_solarSystem->getCelestials()) {
-                            if (c.type == atlas::Celestial::Type::SUN) continue;
-                            glm::vec4 clip = vp * glm::vec4(c.position, 1.0f);
-                            if (clip.w <= 0.0f) continue;
-                            glm::vec3 ndc = glm::vec3(clip) / clip.w;
-                            float sx = (ndc.x * 0.5f + 0.5f) * scrW;
-                            float sy = (1.0f - (ndc.y * 0.5f + 0.5f)) * scrH;
-                            float dSq = (sx - hx) * (sx - hx) + (sy - hy) * (sy - hy);
-                            if (dSq < bestDistSq) {
-                                bestDistSq = dSq;
-                                pickedId = c.id;
-                                distToTarget = glm::distance(playerPos, c.position);
-                            }
-                        }
-                    }
-                }
-
                 if (!pickedId.empty()) {
                     // Compute distance to target for warp eligibility check
-                    if (distToTarget == 0.0f && m_shipPhysics) {
+                    float distToTarget = 0.0f;
+                    if (m_shipPhysics) {
                         auto targetEntity = m_gameClient->getEntityManager().getEntity(pickedId);
                         if (targetEntity) {
                             distToTarget = glm::distance(m_shipPhysics->getPosition(), targetEntity->getPosition());
