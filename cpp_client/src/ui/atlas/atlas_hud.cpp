@@ -5,10 +5,6 @@
 
 namespace atlas {
 
-// Ship HUD layout constants
-static constexpr float HUD_BOTTOM_OFFSET = 80.0f;  // Distance from bottom of screen to HUD centre
-static constexpr float HUD_ARC_RADIUS    = 70.0f;  // Radius of shield/armor/hull arcs
-
 AtlasHUD::AtlasHUD() = default;
 AtlasHUD::~AtlasHUD() = default;
 
@@ -29,8 +25,7 @@ bool AtlasHUD::matchesOverviewTab(const std::string& tab, const std::string& ent
             || entityType == "Wormhole"
             || entityType == "Celestial"
             || entityType == "Beacon"
-            || entityType == "Citadel"
-            || entityType == "Dyson Ring";
+            || entityType == "Citadel";
     }
     if (tab == "Combat") {
         return entityType == "Frigate"
@@ -63,10 +58,8 @@ void AtlasHUD::init(int windowW, int windowH) {
     float h = static_cast<float>(windowH);
 
     // Overview panel: right side, ~300px wide, below selected-item panel
-    // Hidden by default — the player navigates via on-screen celestial brackets
-    // and the radial menu instead.  Can still be toggled from the sidebar.
     m_overviewState.bounds = {w - 310.0f, 180.0f, 300.0f, h - 280.0f};
-    m_overviewState.open = false;
+    m_overviewState.open = true;
     m_overviewState.minimized = false;
 
     // Selected item panel: top-right, ~300×120
@@ -103,9 +96,6 @@ void AtlasHUD::init(int windowW, int windowH) {
 
     m_probeScannerState.bounds = {420.0f, 300.0f, 380.0f, 420.0f};
     m_probeScannerState.open = false;
-
-    m_characterState.bounds = {50.0f, 50.0f, 340.0f, 480.0f};
-    m_characterState.open = false;
 }
 
 void AtlasHUD::update(AtlasContext& ctx,
@@ -176,13 +166,12 @@ void AtlasHUD::update(AtlasContext& ctx,
     drawDockablePanel(ctx, "Chat", m_chatState);
     drawDockablePanel(ctx, "Drones", m_dronePanelState);
     drawDockablePanel(ctx, "Probe Scanner", m_probeScannerState);
-    drawDockablePanel(ctx, "Character Sheet", m_characterState);
 
     // 12. Damage flashes (on top of everything)
     float winW = static_cast<float>(ctx.input().windowW);
     float winH = static_cast<float>(ctx.input().windowH);
-    Vec2 hudCentre = {winW * 0.5f, winH - HUD_BOTTOM_OFFSET};
-    drawDamageFlashes(ctx, hudCentre, HUD_ARC_RADIUS + 10.0f);
+    Vec2 hudCentre = {winW * 0.5f, winH - 110.0f};
+    drawDamageFlashes(ctx, hudCentre, 80.0f);
 }
 
 // ── Ship HUD ────────────────────────────────────────────────────────
@@ -196,18 +185,75 @@ void AtlasHUD::drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship) {
     m_time += dt;
 
     // Centre of HUD circle (bottom-center of screen)
-    Vec2 hudCentre = {winW * 0.5f, winH - HUD_BOTTOM_OFFSET};
-    float hudRadius = HUD_ARC_RADIUS;
+    Vec2 hudCentre = {winW * 0.5f, winH - 110.0f};
+    float hudRadius = 70.0f;
 
-    // Status arcs (shield/armor/hull) — primary combat readout
+    // Status arcs (shield/armor/hull)
     shipStatusArcs(ctx, hudCentre, hudRadius,
                    ship.shieldPct, ship.armorPct, ship.hullPct);
 
-    // Speed indicator (below the status arcs)
-    int speedDir = speedIndicator(ctx, {hudCentre.x, winH - 20.0f},
+    // Capacitor ring with smooth easing
+    float capInner = hudRadius - 30.0f;
+    float capOuter = hudRadius - 22.0f;
+    capacitorRingAnimated(ctx, hudCentre, capInner, capOuter,
+                          ship.capacitorPct, m_displayCapFrac,
+                          dt, ship.capSegments);
+
+    // Module rack (row of circles below the HUD circle)
+    float moduleY = winH - 30.0f;
+    float moduleR = 14.0f;
+    float moduleGap = 4.0f;
+
+    auto drawModuleRow = [&](const std::vector<ShipHUDData::ModuleInfo>& slots,
+                             float startX, int slotOffset) {
+        for (int i = 0; i < static_cast<int>(slots.size()); ++i) {
+            const auto& mod = slots[i];
+            if (!mod.fitted) continue;
+            float cx = startX + i * (moduleR * 2 + moduleGap);
+            bool clicked = moduleSlotEx(ctx, {cx, moduleY}, moduleR,
+                                        mod.active, mod.cooldown, mod.color,
+                                        mod.overheat, m_time);
+            if (clicked && m_moduleCallback) {
+                m_moduleCallback(slotOffset + i);
+            }
+        }
+    };
+
+    // Layout: high slots left of centre, mid centre, low right
+    int highCount = static_cast<int>(ship.highSlots.size());
+    int midCount  = static_cast<int>(ship.midSlots.size());
+    int totalModules = highCount + midCount + static_cast<int>(ship.lowSlots.size());
+    float totalWidth = totalModules * (moduleR * 2 + moduleGap) - moduleGap;
+    float startX = hudCentre.x - totalWidth * 0.5f + moduleR;
+
+    drawModuleRow(ship.highSlots, startX, 0);
+    drawModuleRow(ship.midSlots,  startX + highCount * (moduleR * 2 + moduleGap), highCount);
+    drawModuleRow(ship.lowSlots,  startX + (highCount + midCount) * (moduleR * 2 + moduleGap),
+                  highCount + midCount);
+
+    // Speed indicator (below module rack, moved up for better visibility)
+    int speedDir = speedIndicator(ctx, {hudCentre.x, winH - 42.0f},
                    ship.currentSpeed, ship.maxSpeed);
     if (speedDir != 0 && m_speedChangeCallback) {
         m_speedChangeCallback(speedDir);
+    }
+
+    // Warp progress indicator (above the HUD circle when warping)
+    if (ship.warpActive && ship.warpPhase > 0) {
+        float warpY = hudCentre.y - hudRadius - 50.0f;
+        warpProgressIndicator(ctx, {hudCentre.x, warpY},
+                              ship.warpPhase, ship.warpProgress,
+                              ship.warpSpeedAU);
+    }
+
+    // Keyboard shortcuts: F1–F8 activate high-slot modules
+    if (m_moduleCallback) {
+        const auto& input = ctx.input();
+        for (int k = 0; k < 8; ++k) {
+            if (input.keyPressed[Key::F1 + k]) {
+                m_moduleCallback(k);
+            }
+        }
     }
 }
 
@@ -979,87 +1025,6 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
 
                 y += 16.0f;
             }
-        }
-
-    } else if (titleStr == "Character Sheet") {
-        // Character name header
-        r.drawText(m_characterData.characterName, Vec2(x, y), t.accentPrimary, 1.0f);
-        y += 18.0f;
-
-        // Race / Bloodline
-        char raceBuf[128];
-        if (!m_characterData.bloodline.empty()) {
-            std::snprintf(raceBuf, sizeof(raceBuf), "%s - %s",
-                          m_characterData.race.c_str(), m_characterData.bloodline.c_str());
-        } else {
-            std::snprintf(raceBuf, sizeof(raceBuf), "%s", m_characterData.race.c_str());
-        }
-        r.drawText(raceBuf, Vec2(x, y), t.textSecondary, 1.0f);
-        y += 16.0f;
-
-        // Corporation
-        char corpBuf[128];
-        std::snprintf(corpBuf, sizeof(corpBuf), "Corp: %s", m_characterData.corporation.c_str());
-        r.drawText(corpBuf, Vec2(x, y), t.textSecondary, 1.0f);
-        y += 20.0f;
-
-        separator(ctx, Vec2(x, y), contentW);
-        y += 8.0f;
-
-        // Wallet
-        char iskBuf[64];
-        std::snprintf(iskBuf, sizeof(iskBuf), "Wallet: %.2f ISK", m_characterData.walletISK);
-        r.drawText(iskBuf, Vec2(x, y), t.warning, 1.0f);
-        y += 18.0f;
-
-        // Total SP
-        char spBuf[64];
-        std::snprintf(spBuf, sizeof(spBuf), "Skill Points: %.0f", m_characterData.totalSP);
-        r.drawText(spBuf, Vec2(x, y), t.accentSecondary, 1.0f);
-        y += 18.0f;
-
-        // Security status
-        char secBuf[64];
-        std::snprintf(secBuf, sizeof(secBuf), "Security Status: %.2f", m_characterData.securityStatus);
-        Color secColor = m_characterData.securityStatus >= 0.0f ? t.success : t.danger;
-        r.drawText(secBuf, Vec2(x, y), secColor, 1.0f);
-        y += 18.0f;
-
-        // Clone grade
-        char cloneBuf[64];
-        std::snprintf(cloneBuf, sizeof(cloneBuf), "Clone: %s", m_characterData.cloneGrade.c_str());
-        r.drawText(cloneBuf, Vec2(x, y), t.textSecondary, 1.0f);
-        y += 20.0f;
-
-        separator(ctx, Vec2(x, y), contentW);
-        y += 8.0f;
-
-        // Attributes section
-        r.drawText("Attributes", Vec2(x, y), t.textPrimary, 1.0f);
-        y += 18.0f;
-
-        struct AttrDef { const char* name; int value; };
-        AttrDef attrs[] = {
-            {"Intelligence", m_characterData.intelligence},
-            {"Perception",   m_characterData.perception},
-            {"Charisma",     m_characterData.charisma},
-            {"Willpower",    m_characterData.willpower},
-            {"Memory",       m_characterData.memory},
-        };
-
-        for (const auto& attr : attrs) {
-            if (y > maxY - 16.0f) break;
-            char attrBuf[64];
-            std::snprintf(attrBuf, sizeof(attrBuf), "%-14s %d", attr.name, attr.value);
-            r.drawText(attrBuf, Vec2(x + 8.0f, y), t.textSecondary, 1.0f);
-
-            // Attribute bar
-            float barX2 = x + contentW * 0.65f;
-            float barW2 = contentW * 0.3f;
-            float attrFrac = static_cast<float>(attr.value) / 30.0f;
-            Rect attrBar(barX2, y + 2.0f, barW2, 10.0f);
-            r.drawProgressBar(attrBar, attrFrac, t.accentPrimary, t.bgHeader);
-            y += 16.0f;
         }
 
     } else {

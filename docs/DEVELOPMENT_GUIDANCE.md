@@ -246,25 +246,15 @@ This is the most important next step for the project. All foundational systems a
 
 ### Vertical Slice Phase 3 (Weeks 7-9): Exploration & Anomalies
 
-**Status**: 🚧 IN PROGRESS
+**Status**: NOT STARTED
 
-**Completed (February 14, 2026)**:
-- ✅ Scanner component with scan_strength, scan_deviation, probe tracking
-- ✅ AnomalySignature component with signal_strength, difficulty, loot/NPC data
-- ✅ SolarSystemSignatures component for per-system anomaly tracking
-- ✅ ScannerSystem: start/stop scans, signal resolution via scan cycles, difficulty-based gain
-- ✅ AnomalySpawnerSystem: seed-based deterministic anomaly generation, difficulty scaling by security level
-- ✅ Anomaly count scales with security: high-sec 30% → null-sec 100% of max
-- ✅ Difficulty scales inversely with security level
-- ✅ 13 test functions, 41 new assertions (1226 total passing)
+**Tasks**:
+- Scanner UI implementation
+- Anomaly generation from system seed
+- Combat & mining anomalies
+- Difficulty scaling by location
 
-**Remaining**:
-- Scanner UI implementation (client-side)
-- Load exploration site data from JSON into spawned anomalies
-- Combat & mining anomaly NPC spawning on warp-in
-- Deadspace complex room progression
-
-**Dependencies**: Phase 2 ✅ complete
+**Dependencies**: Phase 2 complete
 
 ---
 

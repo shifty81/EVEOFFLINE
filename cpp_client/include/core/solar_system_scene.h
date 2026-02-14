@@ -25,8 +25,7 @@ struct Celestial {
         STATION,
         STARGATE,
         ASTEROID_BELT,
-        WORMHOLE,
-        DYSON_RING
+        WORMHOLE
     };
 
     std::string id;
