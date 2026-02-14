@@ -144,7 +144,7 @@ public:
     float rate_of_fire = 3.0f;  // seconds between shots
     float cooldown = 0.0f;  // current cooldown timer
     float capacitor_cost = 5.0f;  // GJ per shot
-    std::string ammo_type = "EMP";
+    std::string ammo_type = "Pulse";
     int ammo_count = 100;
     
     COMPONENT_TYPE(Weapon)
@@ -905,7 +905,7 @@ class CharacterSheet : public ecs::Component {
 public:
     std::string character_id;
     std::string character_name;
-    std::string race = "Caldari";           // "Caldari", "Amarr", "Gallente", "Minmatar"
+    std::string race = "Veyren";           // "Veyren", "Solari", "Aurelian", "Keldari"
     std::string bloodline;                   // race-specific bloodline
     std::string ancestry;                    // background/origin
     std::string gender = "male";             // "male", "female"
@@ -1345,7 +1345,7 @@ public:
  */
 class MineralDeposit : public ecs::Component {
 public:
-    std::string mineral_type = "Veldspar";   // ore name
+    std::string mineral_type = "Dustite";   // ore name
     float quantity_remaining = 10000.0f;     // units of ore left
     float max_quantity = 10000.0f;           // original total
     float yield_rate = 1.0f;                 // multiplier on mining yield
@@ -1454,8 +1454,8 @@ public:
 class RefiningFacility : public ecs::Component {
 public:
     struct OreRecipe {
-        std::string ore_type;        // e.g. "Veldspar"
-        std::string output_mineral;  // e.g. "Tritanium"
+        std::string ore_type;        // e.g. "Dustite"
+        std::string output_mineral;  // e.g. "Ferrium"
         float yield_per_unit = 1.0f; // mineral units per ore unit at 100% efficiency
     };
 

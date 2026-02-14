@@ -144,13 +144,13 @@ void RefiningSystem::seedStandardRecipes(const std::string& station_id) {
     if (!facility) return;
 
     facility->recipes.clear();
-    facility->recipes.push_back({"Veldspar",    "Tritanium",  415.0f});
-    facility->recipes.push_back({"Scordite",    "Pyerite",    346.0f});
-    facility->recipes.push_back({"Pyroxeres",   "Mexallon",   333.0f});
-    facility->recipes.push_back({"Plagioclase", "Isogen",     256.0f});
-    facility->recipes.push_back({"Omber",       "Nocxium",     85.0f});
-    facility->recipes.push_back({"Kernite",     "Zydrine",     65.0f});
-    facility->recipes.push_back({"Arkonor",     "Megacyte",    40.0f});
+    facility->recipes.push_back({"Dustite",    "Ferrium",  415.0f});
+    facility->recipes.push_back({"Ferrite",    "Ignium",    346.0f});
+    facility->recipes.push_back({"Ignaite",   "Allonium",   333.0f});
+    facility->recipes.push_back({"Crystite", "Isodium",     256.0f});
+    facility->recipes.push_back({"Shadite",       "Noctium",     85.0f});
+    facility->recipes.push_back({"Corite",     "Zyrium",     65.0f});
+    facility->recipes.push_back({"Cosmite",     "Megrium",    40.0f});
 }
 
 } // namespace systems

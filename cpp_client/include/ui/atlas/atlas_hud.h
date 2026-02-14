@@ -353,7 +353,7 @@ public:
 
     struct CharacterSheetData {
         std::string characterName = "Capsuleer";
-        std::string race          = "Caldari";
+        std::string race          = "Veyren";
         std::string bloodline;
         std::string corporation   = "NPC Corp";
         std::string cloneGrade    = "Alpha";

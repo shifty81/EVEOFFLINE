@@ -48,9 +48,9 @@ public:
     /**
      * @brief Seed a station with standard ore recipes
      *
-     * Adds recipes for Veldspar→Tritanium, Scordite→Pyerite,
-     * Pyroxeres→Mexallon, Plagioclase→Isogen, Omber→Nocxium,
-     * Kernite→Zydrine, Arkonor→Megacyte.
+     * Adds recipes for Dustite→Ferrium, Ferrite→Ignium,
+     * Ignaite→Allonium, Crystite→Isodium, Shadite→Noctium,
+     * Corite→Zyrium, Cosmite→Megrium.
      */
     void seedStandardRecipes(const std::string& station_id);
 
