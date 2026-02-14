@@ -50,17 +50,17 @@ void main()
     float n1 = fbm(nebulaCoord1);
     float n2 = fbm(nebulaCoord2);
 
-    // Deep purple/blue nebula
-    vec3 nebulaColor1 = vec3(0.15, 0.05, 0.25) * smoothstep(0.35, 0.75, n1);
-    // Warm reddish secondary nebula
-    vec3 nebulaColor2 = vec3(0.2, 0.05, 0.08) * smoothstep(0.4, 0.8, n2);
+    // Deep space blue-black nebula (subtle, not purple)
+    vec3 nebulaColor1 = vec3(0.03, 0.04, 0.10) * smoothstep(0.35, 0.75, n1);
+    // Warm reddish secondary nebula (very faint)
+    vec3 nebulaColor2 = vec3(0.06, 0.02, 0.03) * smoothstep(0.4, 0.8, n2);
     // Subtle teal accent
-    vec3 nebulaColor3 = vec3(0.02, 0.1, 0.12) * smoothstep(0.45, 0.85, n1 * n2 * 2.0);
+    vec3 nebulaColor3 = vec3(0.01, 0.05, 0.06) * smoothstep(0.45, 0.85, n1 * n2 * 2.0);
 
     vec3 color = nebulaColor1 + nebulaColor2 + nebulaColor3;
 
-    // Keep it subtle so stars remain visible
-    float alpha = clamp(length(color) * 1.5, 0.0, 0.4);
+    // Keep it very subtle so space feels dark and stars remain visible
+    float alpha = clamp(length(color) * 1.2, 0.0, 0.25);
 
     FragColor = vec4(color, alpha);
 }
