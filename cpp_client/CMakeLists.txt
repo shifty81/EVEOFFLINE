@@ -13,7 +13,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 # Options
 option(BUILD_TESTS "Build test suite" ON)
 option(USE_SYSTEM_LIBS "Use system libraries instead of bundled" ON)  # Default to ON since they're available
-option(USE_RMLUI "Enable RmlUi for advanced Photon UI game panels" ON)
+option(USE_RMLUI "Enable RmlUi for advanced Photon UI game panels" OFF)
 
 
 # Platform-specific settings
@@ -282,7 +282,6 @@ set(CLIENT_SOURCES
     src/ui/entity_picker.cpp
     src/ui/context_menu.cpp
     src/ui/radial_menu.cpp
-    src/ui/rml_ui_manager.cpp
     src/ui/atlas/atlas_renderer.cpp
     src/ui/atlas/atlas_context.cpp
     src/ui/atlas/atlas_widgets.cpp
@@ -291,7 +290,6 @@ set(CLIENT_SOURCES
     src/core/ship_physics.cpp
     ${GLAD_SOURCES}
     ${AUDIO_SOURCES}
-    ${RMLUI_BACKEND_SOURCES}
 )
 
 
@@ -331,7 +329,6 @@ set(CLIENT_HEADERS
     include/ui/input_handler.h
     include/ui/entity_picker.h
     include/ui/context_menu.h
-    include/ui/rml_ui_manager.h
     include/ui/radial_menu.h
     include/ui/layout_manager.h
     include/ui/atlas/atlas_types.h
@@ -786,7 +783,6 @@ if(BUILD_TESTS)
         src/ui/atlas/atlas_context.cpp
         src/ui/atlas/atlas_widgets.cpp
         src/ui/atlas/atlas_hud.cpp
-        src/ui/rml_ui_manager.cpp
         src/ui/context_menu.cpp
         src/ui/radial_menu.cpp
     )

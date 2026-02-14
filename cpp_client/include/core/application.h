@@ -21,7 +21,6 @@ class ShipPhysics;
 } // namespace atlas
 
 namespace UI {
-    class RmlUiManager;
     class EntityPicker;
     class ContextMenu;
     class RadialMenu;
@@ -233,7 +232,6 @@ private:
     std::unique_ptr<Camera> m_camera;
     std::unique_ptr<EmbeddedServer> m_embeddedServer;
     std::unique_ptr<SessionManager> m_sessionManager;
-    std::unique_ptr<UI::RmlUiManager> m_uiManager;
     std::unique_ptr<UI::EntityPicker> m_entityPicker;
     std::unique_ptr<SolarSystemScene> m_solarSystem;
     std::unique_ptr<ShipPhysics> m_shipPhysics;
