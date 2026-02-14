@@ -234,11 +234,18 @@ This is the most important next step for the project. All foundational systems a
 - ✅ AI Mining state added to AI component
 - ✅ 80 new test assertions (1115/1115 total passing)
 
+**Completed (February 14, 2026)**:
+- ✅ AI Mining NPC behavior: AISystem handles Mining state — miners find deposits, approach, mine, and stop on depletion or cargo full
+- ✅ Idle passive miners with MiningLaser auto-discover nearby MineralDeposit entities via findNearestDeposit()
+- ✅ Approach behavior transitions to Mining state when NPC reaches a mineral deposit
+- ✅ Mineral refining system: RefiningFacility component + RefiningSystem converts ore batches to refined minerals
+- ✅ Refining supports efficiency multiplier and tax rate
+- ✅ Default recipes: Veldspar→Tritanium, Scordite→Tritanium+Pyerite, Pyroxeres→Pyerite+Nocxidium, Plagioclase→Tritanium+Pyerite+Mexallon
+- ✅ Market ore pricing validated: NPC sell orders for ores, buy orders for minerals
+- ✅ 35 new test assertions (1287/1287 total passing)
+
 **Remaining**:
-- Basic mineral economy (market pricing for ores/minerals)
-- Mining AI NPC behavior implementation (using Mining state)
-- Mineral refining system (ore → refined minerals)
-- Full economy loop testing
+- Full economy loop testing (mine → refine → sell integration test)
 
 **Dependencies**: Phase 1 ✅ complete
 

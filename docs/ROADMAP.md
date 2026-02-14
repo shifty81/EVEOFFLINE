@@ -162,8 +162,8 @@ Data-driven modding without code injection:
 5. 🔄 Snapshot replication & client interpolation
 6. 🔄 Custom UI windows (floating, then docking) — Chat, Drone, Notification panels added
 7. 🔄 Ship HUD (control ring, module rack, brackets)
-8. ⬜ AI economic actors (miners, haulers, traders)
-9. ⬜ Full economy simulation
+8. 🔄 AI economic actors (miners, haulers, traders) — AI mining behavior complete
+9. 🔄 Full economy simulation — Refining system complete, market pricing validated
 10. ⬜ Advanced mission generation
 11. ⬜ Universe map & travel
 12. ⬜ Polish & modding tools
@@ -201,7 +201,9 @@ Data-driven modding without code injection:
 | LeaderboardSystem | ✅ Complete | 23 assertions |
 | StationSystem | ✅ Complete | 29 assertions |
 | WreckSalvageSystem | ✅ Complete | 22 assertions |
-| **Total** | **29 systems** | **897 assertions** |
+| MiningSystem | ✅ Complete | 7 assertions |
+| RefiningSystem | ✅ Complete | 9 assertions |
+| **Total** | **31 systems** | **935 assertions** |
 
 ### Data Loaders Status
 
