@@ -30,11 +30,7 @@ void AtlasTitleScreen::render(AtlasContext& ctx) {
     r.drawText("A", Vec2(SIDEBAR_WIDTH * 0.5f - 4.0f, logoY),
                theme.accentSecondary);
 
-    // Consume mouse
-    if (ctx.isHovered(bg)) {
-        ctx.consumeMouse();
-    }
-
+    // Render menu page BEFORE consuming mouse so buttons can process clicks
     switch (m_currentPage) {
         case Page::MAIN:
             renderMainMenu(ctx);
@@ -42,6 +38,12 @@ void AtlasTitleScreen::render(AtlasContext& ctx) {
         case Page::SETTINGS:
             renderSettings(ctx);
             break;
+    }
+
+    // Consume mouse AFTER widgets have processed input to prevent
+    // click-through to the 3D scene behind the title screen
+    if (ctx.isHovered(bg)) {
+        ctx.consumeMouse();
     }
 }
 
