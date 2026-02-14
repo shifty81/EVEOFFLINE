@@ -1555,6 +1555,82 @@ public:
     COMPONENT_TYPE(RefiningFacility)
 };
 
+/**
+ * @brief An in-space anomaly (combat site, mining site, data site, etc.)
+ *
+ * Generated procedurally from a solar system seed.  Players discover
+ * anomalies via the ScannerSystem and warp to them for content.
+ */
+class Anomaly : public ecs::Component {
+public:
+    enum class Type { Combat, Mining, Data, Relic, Gas, Wormhole };
+    enum class Difficulty { Trivial, Easy, Medium, Hard, Deadly };
+
+    std::string anomaly_id;
+    std::string anomaly_name;
+    std::string system_id;                  // owning solar system entity
+    Type type = Type::Combat;
+    Difficulty difficulty = Difficulty::Medium;
+    float signature_strength = 0.5f;        // 0.0–1.0, affects scan difficulty
+    float x = 0.0f;                         // position in system
+    float y = 0.0f;
+    float z = 0.0f;
+    bool discovered = false;                // has anyone scanned this down?
+    bool completed = false;                 // has content been cleared?
+    float despawn_timer = 3600.0f;          // seconds until natural despawn
+    int npc_count = 0;                      // NPCs to spawn on warp-in
+    float loot_multiplier = 1.0f;           // scales drop quality
+
+    COMPONENT_TYPE(Anomaly)
+};
+
+/**
+ * @brief Probe scanner — attached to ships that can scan for anomalies
+ *
+ * Players deploy probes to discover hidden anomalies in a solar system.
+ * Scan strength and deviation improve with skill and probe count.
+ */
+class Scanner : public ecs::Component {
+public:
+    float scan_strength = 50.0f;         // base scan strength (affected by skills/modules)
+    float scan_deviation = 4.0f;         // positional error in AU (decreases with better scans)
+    int probe_count = 8;                 // number of probes deployed
+    float scan_duration = 10.0f;         // seconds per scan cycle
+    float scan_progress = 0.0f;          // current scan cycle progress
+    bool scanning = false;               // currently scanning?
+    std::string target_system_id;        // system being scanned
+    
+    struct ScanResult {
+        std::string anomaly_id;
+        float signal_strength = 0.0f;    // 0.0–1.0 (1.0 = fully scanned)
+        float deviation = 0.0f;          // positional error remaining
+        bool warpable = false;           // true when signal >= 1.0
+    };
+    
+    std::vector<ScanResult> results;
+
+    COMPONENT_TYPE(Scanner)
+};
+
+/**
+ * @brief Per-system difficulty modifier based on security status
+ *
+ * Attached to solar system entities.  Scales NPC stats, spawn rates,
+ * and loot quality based on the zone's security level.
+ */
+class DifficultyZone : public ecs::Component {
+public:
+    float security_status = 0.5f;        // 1.0 highsec → 0.0 nullsec
+    float npc_hp_multiplier = 1.0f;      // applied to NPC health pools
+    float npc_damage_multiplier = 1.0f;  // applied to NPC weapon damage
+    float spawn_rate_multiplier = 1.0f;  // controls how often NPCs respawn
+    float loot_quality_multiplier = 1.0f; // scales loot drop quality
+    float ore_richness_multiplier = 1.0f; // scales mining yield
+    int max_npc_tier = 1;                // highest NPC tier that can spawn (1-5)
+
+    COMPONENT_TYPE(DifficultyZone)
+};
+
 } // namespace components
 } // namespace atlas
 

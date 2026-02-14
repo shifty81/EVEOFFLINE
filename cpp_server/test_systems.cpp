@@ -56,6 +56,9 @@
 #include "systems/ship_fitting_system.h"
 #include "systems/warp_cinematic_system.h"
 #include "systems/refining_system.h"
+#include "systems/anomaly_system.h"
+#include "systems/scanner_system.h"
+#include "systems/difficulty_scaling_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -9074,6 +9077,348 @@ void testWarpCinematicExitPhaseFades() {
                "Exit phase intensity < cruise intensity");
 }
 
+// ==================== Anomaly System Tests ====================
+
+void testAnomalyGenerateCreatesEntities() {
+    ecs::World world;
+    systems::AnomalySystem sys(&world);
+
+    int count = sys.generateAnomalies("sys1", 42, 0.5f);
+    assertTrue(count > 0, "generateAnomalies returns positive count");
+
+    auto anomalies = sys.getAnomaliesInSystem("sys1");
+    assertTrue(static_cast<int>(anomalies.size()) == count,
+               "getAnomaliesInSystem matches generated count");
+}
+
+void testAnomalyHighsecFewerThanNullsec() {
+    ecs::World world;
+    systems::AnomalySystem sys(&world);
+
+    int highsec = sys.generateAnomalies("high", 42, 1.0f);
+    int nullsec = sys.generateAnomalies("null", 42, 0.0f);
+    assertTrue(nullsec > highsec,
+               "Nullsec generates more anomalies than highsec");
+}
+
+void testAnomalyDeterministicSeed() {
+    ecs::World world1;
+    systems::AnomalySystem sys1(&world1);
+    int c1 = sys1.generateAnomalies("sys1", 12345, 0.5f);
+
+    ecs::World world2;
+    systems::AnomalySystem sys2(&world2);
+    int c2 = sys2.generateAnomalies("sys1", 12345, 0.5f);
+
+    assertTrue(c1 == c2, "Same seed produces same anomaly count");
+}
+
+void testAnomalyDifficultyFromSecurity() {
+    using D = components::Anomaly::Difficulty;
+    assertTrue(systems::AnomalySystem::difficultyFromSecurity(1.0f) == D::Trivial,
+               "Highsec = Trivial difficulty");
+    assertTrue(systems::AnomalySystem::difficultyFromSecurity(0.5f) == D::Medium,
+               "Midsec = Medium difficulty");
+    assertTrue(systems::AnomalySystem::difficultyFromSecurity(0.0f) == D::Deadly,
+               "Nullsec = Deadly difficulty");
+}
+
+void testAnomalyNpcCountScales() {
+    using D = components::Anomaly::Difficulty;
+    int trivial = systems::AnomalySystem::npcCountFromDifficulty(D::Trivial);
+    int deadly  = systems::AnomalySystem::npcCountFromDifficulty(D::Deadly);
+    assertTrue(deadly > trivial, "Deadly has more NPCs than Trivial");
+}
+
+void testAnomalyLootMultiplierScales() {
+    using D = components::Anomaly::Difficulty;
+    float trivial = systems::AnomalySystem::lootMultiplierFromDifficulty(D::Trivial);
+    float deadly  = systems::AnomalySystem::lootMultiplierFromDifficulty(D::Deadly);
+    assertTrue(deadly > trivial, "Deadly has higher loot multiplier");
+}
+
+void testAnomalyCompleteAnomaly() {
+    ecs::World world;
+    systems::AnomalySystem sys(&world);
+
+    sys.generateAnomalies("sys1", 42, 0.5f);
+    auto anomalies = sys.getAnomaliesInSystem("sys1");
+    assertTrue(!anomalies.empty(), "System has anomalies");
+
+    bool completed = sys.completeAnomaly(anomalies[0]);
+    assertTrue(completed, "completeAnomaly returns true");
+
+    int after = sys.getActiveAnomalyCount("sys1");
+    assertTrue(after == static_cast<int>(anomalies.size()) - 1,
+               "Active count decreased by 1");
+}
+
+void testAnomalyDespawnOnTimer() {
+    ecs::World world;
+    systems::AnomalySystem sys(&world);
+
+    sys.generateAnomalies("sys1", 42, 0.5f);
+    auto anomalies = sys.getAnomaliesInSystem("sys1");
+    int before = static_cast<int>(anomalies.size());
+    assertTrue(before > 0, "Has anomalies to despawn");
+
+    // Tick past the despawn timer (max is 7200s)
+    sys.update(8000.0f);
+
+    int after = sys.getActiveAnomalyCount("sys1");
+    assertTrue(after == 0, "All anomalies despawned after timer");
+}
+
+void testAnomalySignatureStrength() {
+    ecs::World world;
+    systems::AnomalySystem sys(&world);
+
+    sys.generateAnomalies("sys1", 42, 0.5f);
+    auto anomalies = sys.getAnomaliesInSystem("sys1");
+    for (const auto& id : anomalies) {
+        auto* entity = world.getEntity(id);
+        auto* anom = entity->getComponent<components::Anomaly>();
+        assertTrue(anom->signature_strength > 0.0f && anom->signature_strength <= 1.0f,
+                   "Signature strength in valid range");
+    }
+}
+
+// ==================== Scanner System Tests ====================
+
+void testScannerStartScan() {
+    ecs::World world;
+    systems::ScannerSystem sys(&world);
+
+    auto* scanner_entity = world.createEntity("scanner1");
+    auto sc = std::make_unique<components::Scanner>();
+    scanner_entity->addComponent(std::move(sc));
+
+    bool started = sys.startScan("scanner1", "sys1");
+    assertTrue(started, "startScan returns true");
+    assertTrue(sys.getActiveScannerCount() == 1, "One active scanner");
+}
+
+void testScannerStopScan() {
+    ecs::World world;
+    systems::ScannerSystem sys(&world);
+
+    auto* scanner_entity = world.createEntity("scanner1");
+    auto sc = std::make_unique<components::Scanner>();
+    scanner_entity->addComponent(std::move(sc));
+
+    sys.startScan("scanner1", "sys1");
+    bool stopped = sys.stopScan("scanner1");
+    assertTrue(stopped, "stopScan returns true");
+    assertTrue(sys.getActiveScannerCount() == 0, "No active scanners");
+}
+
+void testScannerDetectsAnomaly() {
+    ecs::World world;
+    systems::AnomalySystem anomSys(&world);
+    systems::ScannerSystem scanSys(&world);
+
+    anomSys.generateAnomalies("sys1", 42, 0.8f);  // easy to scan (highsec)
+
+    auto* scanner_entity = world.createEntity("scanner1");
+    auto sc = std::make_unique<components::Scanner>();
+    sc->scan_strength = 100.0f;  // strong scanner
+    sc->scan_duration = 1.0f;    // fast scans
+    scanner_entity->addComponent(std::move(sc));
+
+    scanSys.startScan("scanner1", "sys1");
+
+    // Run enough scan cycles to detect
+    for (int i = 0; i < 5; ++i) {
+        scanSys.update(1.1f);  // complete one cycle
+    }
+
+    auto results = scanSys.getScanResults("scanner1");
+    assertTrue(!results.empty(), "Scanner detected anomalies");
+    assertTrue(results[0].signal_strength > 0.0f, "Signal strength is positive");
+}
+
+void testScannerSignalAccumulates() {
+    ecs::World world;
+    systems::AnomalySystem anomSys(&world);
+    systems::ScannerSystem scanSys(&world);
+
+    anomSys.generateAnomalies("sys1", 42, 0.8f);
+
+    auto* scanner_entity = world.createEntity("scanner1");
+    auto sc = std::make_unique<components::Scanner>();
+    sc->scan_strength = 80.0f;
+    sc->scan_duration = 1.0f;
+    scanner_entity->addComponent(std::move(sc));
+
+    scanSys.startScan("scanner1", "sys1");
+    scanSys.update(1.1f);  // first cycle
+
+    auto results1 = scanSys.getScanResults("scanner1");
+    float sig1 = results1.empty() ? 0.0f : results1[0].signal_strength;
+
+    scanSys.update(1.1f);  // second cycle
+    auto results2 = scanSys.getScanResults("scanner1");
+    float sig2 = results2.empty() ? 0.0f : results2[0].signal_strength;
+
+    assertTrue(sig2 > sig1, "Signal strength increases with scans");
+}
+
+void testScannerEffectiveScanStrength() {
+    float s8 = systems::ScannerSystem::effectiveScanStrength(50.0f, 8);
+    float s4 = systems::ScannerSystem::effectiveScanStrength(50.0f, 4);
+    float s1 = systems::ScannerSystem::effectiveScanStrength(50.0f, 1);
+
+    assertTrue(s8 > s4, "8 probes stronger than 4");
+    assertTrue(s4 > s1, "4 probes stronger than 1");
+    assertTrue(approxEqual(s8, 50.0f, 0.1f), "8 probes at base 50 = 50 effective");
+}
+
+void testScannerSignalGainPerCycle() {
+    float gain_strong = systems::ScannerSystem::signalGainPerCycle(100.0f, 1.0f);
+    float gain_weak   = systems::ScannerSystem::signalGainPerCycle(20.0f, 0.2f);
+
+    assertTrue(gain_strong > gain_weak,
+               "Strong scanner + strong signal > weak scanner + weak signal");
+}
+
+void testScannerWarpableAtFullSignal() {
+    ecs::World world;
+    systems::AnomalySystem anomSys(&world);
+    systems::ScannerSystem scanSys(&world);
+
+    anomSys.generateAnomalies("sys1", 42, 0.9f);  // trivial difficulty = strong signal
+
+    auto* scanner_entity = world.createEntity("scanner1");
+    auto sc = std::make_unique<components::Scanner>();
+    sc->scan_strength = 200.0f;   // very strong
+    sc->scan_duration = 0.5f;
+    scanner_entity->addComponent(std::move(sc));
+
+    scanSys.startScan("scanner1", "sys1");
+
+    // Scan many times to get full signal
+    for (int i = 0; i < 20; ++i) {
+        scanSys.update(0.6f);
+    }
+
+    auto results = scanSys.getScanResults("scanner1");
+    bool any_warpable = false;
+    for (const auto& r : results) {
+        if (r.warpable) any_warpable = true;
+    }
+    assertTrue(any_warpable, "At least one anomaly is warpable after many scans");
+}
+
+void testScannerNoResultWithoutAnomalies() {
+    ecs::World world;
+    systems::ScannerSystem scanSys(&world);
+
+    auto* scanner_entity = world.createEntity("scanner1");
+    auto sc = std::make_unique<components::Scanner>();
+    sc->scan_duration = 1.0f;
+    scanner_entity->addComponent(std::move(sc));
+
+    scanSys.startScan("scanner1", "empty_sys");
+    scanSys.update(1.1f);
+
+    auto results = scanSys.getScanResults("scanner1");
+    assertTrue(results.empty(), "No results in system without anomalies");
+}
+
+// ==================== Difficulty Scaling System Tests ====================
+
+void testDifficultyInitializeZone() {
+    ecs::World world;
+    systems::DifficultyScalingSystem sys(&world);
+
+    auto* sys_entity = world.createEntity("sys1");
+    auto dz = std::make_unique<components::DifficultyZone>();
+    sys_entity->addComponent(std::move(dz));
+
+    bool ok = sys.initializeZone("sys1", 0.5f);
+    assertTrue(ok, "initializeZone returns true");
+
+    auto* zone = sys_entity->getComponent<components::DifficultyZone>();
+    assertTrue(approxEqual(zone->security_status, 0.5f, 0.01f),
+               "Security status set correctly");
+    assertTrue(zone->npc_hp_multiplier > 1.0f,
+               "HP multiplier > 1 for midsec");
+}
+
+void testDifficultyHighsecLowMultipliers() {
+    float hp = systems::DifficultyScalingSystem::hpMultiplierFromSecurity(1.0f);
+    float dmg = systems::DifficultyScalingSystem::damageMultiplierFromSecurity(1.0f);
+    assertTrue(approxEqual(hp, 1.0f, 0.01f), "Highsec HP multiplier = 1.0");
+    assertTrue(approxEqual(dmg, 1.0f, 0.01f), "Highsec damage multiplier = 1.0");
+}
+
+void testDifficultyNullsecHighMultipliers() {
+    float hp = systems::DifficultyScalingSystem::hpMultiplierFromSecurity(0.0f);
+    float dmg = systems::DifficultyScalingSystem::damageMultiplierFromSecurity(0.0f);
+    assertTrue(hp > 2.0f, "Nullsec HP multiplier > 2.0");
+    assertTrue(dmg > 1.5f, "Nullsec damage multiplier > 1.5");
+}
+
+void testDifficultyLootScaling() {
+    float highsec = systems::DifficultyScalingSystem::lootMultiplierFromSecurity(1.0f);
+    float nullsec = systems::DifficultyScalingSystem::lootMultiplierFromSecurity(0.0f);
+    assertTrue(nullsec > highsec, "Nullsec has better loot than highsec");
+}
+
+void testDifficultyOreScaling() {
+    float highsec = systems::DifficultyScalingSystem::oreMultiplierFromSecurity(1.0f);
+    float nullsec = systems::DifficultyScalingSystem::oreMultiplierFromSecurity(0.0f);
+    assertTrue(nullsec > highsec, "Nullsec has richer ore than highsec");
+}
+
+void testDifficultyMaxTierFromSecurity() {
+    int highsec = systems::DifficultyScalingSystem::maxTierFromSecurity(1.0f);
+    int nullsec = systems::DifficultyScalingSystem::maxTierFromSecurity(0.0f);
+    assertTrue(highsec == 1, "Highsec max tier = 1");
+    assertTrue(nullsec == 5, "Nullsec max tier = 5");
+}
+
+void testDifficultyApplyToNPC() {
+    ecs::World world;
+    systems::DifficultyScalingSystem sys(&world);
+
+    auto* sys_entity = world.createEntity("sys1");
+    auto dz = std::make_unique<components::DifficultyZone>();
+    sys_entity->addComponent(std::move(dz));
+    sys.initializeZone("sys1", 0.0f);  // nullsec
+
+    auto* npc = world.createEntity("npc1");
+    auto hp = std::make_unique<components::Health>();
+    hp->hull_hp = 100.0f;
+    hp->hull_max = 100.0f;
+    hp->armor_hp = 100.0f;
+    hp->armor_max = 100.0f;
+    hp->shield_hp = 100.0f;
+    hp->shield_max = 100.0f;
+    npc->addComponent(std::move(hp));
+
+    auto wpn = std::make_unique<components::Weapon>();
+    wpn->damage = 10.0f;
+    npc->addComponent(std::move(wpn));
+
+    bool applied = sys.applyToNPC("npc1", "sys1");
+    assertTrue(applied, "applyToNPC returns true");
+
+    auto* health = npc->getComponent<components::Health>();
+    assertTrue(health->hull_hp > 100.0f, "NPC hull HP scaled up in nullsec");
+    assertTrue(health->shield_hp > 100.0f, "NPC shield HP scaled up in nullsec");
+
+    auto* weapon = npc->getComponent<components::Weapon>();
+    assertTrue(weapon->damage > 10.0f, "NPC damage scaled up in nullsec");
+}
+
+void testDifficultySpawnRateScaling() {
+    float highsec = systems::DifficultyScalingSystem::spawnRateFromSecurity(1.0f);
+    float nullsec = systems::DifficultyScalingSystem::spawnRateFromSecurity(0.0f);
+    assertTrue(approxEqual(highsec, 1.0f, 0.01f), "Highsec spawn rate = 1.0");
+    assertTrue(nullsec > highsec, "Nullsec has higher spawn rate");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -9629,6 +9974,37 @@ int main() {
     testWarpCinematicNonePhaseZeroIntensity();
     testWarpCinematicAlignPhaseSubtle();
     testWarpCinematicExitPhaseFades();
+
+    // Anomaly system tests
+    testAnomalyGenerateCreatesEntities();
+    testAnomalyHighsecFewerThanNullsec();
+    testAnomalyDeterministicSeed();
+    testAnomalyDifficultyFromSecurity();
+    testAnomalyNpcCountScales();
+    testAnomalyLootMultiplierScales();
+    testAnomalyCompleteAnomaly();
+    testAnomalyDespawnOnTimer();
+    testAnomalySignatureStrength();
+
+    // Scanner system tests
+    testScannerStartScan();
+    testScannerStopScan();
+    testScannerDetectsAnomaly();
+    testScannerSignalAccumulates();
+    testScannerEffectiveScanStrength();
+    testScannerSignalGainPerCycle();
+    testScannerWarpableAtFullSignal();
+    testScannerNoResultWithoutAnomalies();
+
+    // Difficulty scaling system tests
+    testDifficultyInitializeZone();
+    testDifficultyHighsecLowMultipliers();
+    testDifficultyNullsecHighMultipliers();
+    testDifficultyLootScaling();
+    testDifficultyOreScaling();
+    testDifficultyMaxTierFromSecurity();
+    testDifficultyApplyToNPC();
+    testDifficultySpawnRateScaling();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
