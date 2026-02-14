@@ -177,7 +177,7 @@ void AtlasHUD::update(AtlasContext& ctx,
     // 12. Damage flashes (on top of everything)
     float winW = static_cast<float>(ctx.input().windowW);
     float winH = static_cast<float>(ctx.input().windowH);
-    Vec2 hudCentre = {winW * 0.5f, winH - 110.0f};
+    Vec2 hudCentre = {winW * 0.5f, winH - 80.0f};
     drawDamageFlashes(ctx, hudCentre, 80.0f);
 }
 
@@ -192,97 +192,18 @@ void AtlasHUD::drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship) {
     m_time += dt;
 
     // Centre of HUD circle (bottom-center of screen)
-    Vec2 hudCentre = {winW * 0.5f, winH - 110.0f};
+    Vec2 hudCentre = {winW * 0.5f, winH - 80.0f};
     float hudRadius = 70.0f;
 
-    // Status arcs (shield/armor/hull)
+    // Status arcs (shield/armor/hull) — primary combat readout
     shipStatusArcs(ctx, hudCentre, hudRadius,
                    ship.shieldPct, ship.armorPct, ship.hullPct);
 
-    // Capacitor ring with smooth easing
-    float capInner = hudRadius - 30.0f;
-    float capOuter = hudRadius - 22.0f;
-    capacitorRingAnimated(ctx, hudCentre, capInner, capOuter,
-                          ship.capacitorPct, m_displayCapFrac,
-                          dt, ship.capSegments);
-
-    // Capacitor percentage text in the centre of the HUD ring
-    {
-        const Theme& t = ctx.theme();
-        auto& rr = ctx.renderer();
-        char capBuf[16];
-        int capPctInt = static_cast<int>(m_displayCapFrac * 100.0f + 0.5f);
-        std::snprintf(capBuf, sizeof(capBuf), "%d%%", capPctInt);
-        float tw = rr.measureText(capBuf);
-        rr.drawText(capBuf, {hudCentre.x - tw * 0.5f, hudCentre.y - 7.0f},
-                    t.capacitor.withAlpha(0.8f));
-    }
-
-    // Ship name / type label above the HUD arcs
-    if (!ship.shipName.empty()) {
-        const Theme& t = ctx.theme();
-        auto& rr = ctx.renderer();
-        float tw = rr.measureText(ship.shipName);
-        rr.drawText(ship.shipName,
-                    {hudCentre.x - tw * 0.5f, hudCentre.y - hudRadius - 18.0f},
-                    t.textSecondary);
-    }
-
-    // Module rack (row of circles below the HUD circle)
-    float moduleY = winH - 30.0f;
-    float moduleR = 14.0f;
-    float moduleGap = 4.0f;
-
-    auto drawModuleRow = [&](const std::vector<ShipHUDData::ModuleInfo>& slots,
-                             float startX, int slotOffset) {
-        for (int i = 0; i < static_cast<int>(slots.size()); ++i) {
-            const auto& mod = slots[i];
-            if (!mod.fitted) continue;
-            float cx = startX + i * (moduleR * 2 + moduleGap);
-            bool clicked = moduleSlotEx(ctx, {cx, moduleY}, moduleR,
-                                        mod.active, mod.cooldown, mod.color,
-                                        mod.overheat, m_time);
-            if (clicked && m_moduleCallback) {
-                m_moduleCallback(slotOffset + i);
-            }
-        }
-    };
-
-    // Layout: high slots left of centre, mid centre, low right
-    int highCount = static_cast<int>(ship.highSlots.size());
-    int midCount  = static_cast<int>(ship.midSlots.size());
-    int totalModules = highCount + midCount + static_cast<int>(ship.lowSlots.size());
-    float totalWidth = totalModules * (moduleR * 2 + moduleGap) - moduleGap;
-    float startX = hudCentre.x - totalWidth * 0.5f + moduleR;
-
-    drawModuleRow(ship.highSlots, startX, 0);
-    drawModuleRow(ship.midSlots,  startX + highCount * (moduleR * 2 + moduleGap), highCount);
-    drawModuleRow(ship.lowSlots,  startX + (highCount + midCount) * (moduleR * 2 + moduleGap),
-                  highCount + midCount);
-
-    // Speed indicator (below module rack, moved up for better visibility)
-    int speedDir = speedIndicator(ctx, {hudCentre.x, winH - 42.0f},
+    // Speed indicator (below the status arcs)
+    int speedDir = speedIndicator(ctx, {hudCentre.x, winH - 20.0f},
                    ship.currentSpeed, ship.maxSpeed);
     if (speedDir != 0 && m_speedChangeCallback) {
         m_speedChangeCallback(speedDir);
-    }
-
-    // Warp progress indicator (above the HUD circle when warping)
-    if (ship.warpActive && ship.warpPhase > 0) {
-        float warpY = hudCentre.y - hudRadius - 50.0f;
-        warpProgressIndicator(ctx, {hudCentre.x, warpY},
-                              ship.warpPhase, ship.warpProgress,
-                              ship.warpSpeedAU);
-    }
-
-    // Keyboard shortcuts: F1–F8 activate high-slot modules
-    if (m_moduleCallback) {
-        const auto& input = ctx.input();
-        for (int k = 0; k < 8; ++k) {
-            if (input.keyPressed[Key::F1 + k]) {
-                m_moduleCallback(k);
-            }
-        }
     }
 }
 
