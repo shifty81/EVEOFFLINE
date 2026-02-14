@@ -89,7 +89,7 @@ float tunnelVignette(vec2 uv, float intensity) {
     return vignette * intensity * 0.2;
 }
 
-// Blue colour tint during warp — EVE Online uses cool blue, not purple
+// Blue color tint during warp — EVE Online uses cool blue, not purple
 vec3 warpColorShift(float intensity) {
     vec3 warpColor = vec3(0.2, 0.4, 0.8);
     return mix(vec3(0.0), warpColor, intensity * 0.12);
@@ -133,7 +133,7 @@ void main() {
     // ── Layer 4: Vignette ──
     float vignette = tunnelVignette(distortedUV, motionEff);
 
-    // Colour composition — bright white-blue for lines, subtle tint
+    // Color composition — bright white-blue for lines, subtle tint
     vec3 lineColor = vec3(0.6, 0.75, 1.0) * lines;
     vec3 skinColor = vec3(0.3, 0.5, 0.9) * skin;
     vec3 tint = warpColorShift(effectIntensity);
