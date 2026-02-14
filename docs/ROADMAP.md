@@ -203,7 +203,10 @@ Data-driven modding without code injection:
 | WreckSalvageSystem | ✅ Complete | 22 assertions |
 | MiningSystem | ✅ Complete | 7 assertions |
 | RefiningSystem | ✅ Complete | 9 assertions |
-| **Total** | **31 systems** | **935 assertions** |
+| MissionTemplateSystem | ✅ Complete | 6 assertions |
+| MissionGeneratorSystem | ✅ Complete | 4 assertions |
+| ReputationSystem | ✅ Complete | 6 assertions |
+| **Total** | **34 systems** | **966 assertions** |
 
 ### Data Loaders Status
 
@@ -1144,11 +1147,11 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - **Success Criteria**: Player scans, finds new content, it feels special
 
 #### Phase 4 (Weeks 10-12): Procedural Missions & Reputation
-- [ ] Mission templates implementation
-- [ ] Mission generation from world state
-- [ ] Faction reputation system
-- [ ] Hostile/friendly AI behavior based on rep
-- [ ] Mission-driven economy shifts
+- [x] Mission templates implementation — MissionTemplateSystem with 16 templates across 5 types and 5 levels (6 tests)
+- [x] Mission generation from world state — MissionGeneratorSystem generates context-appropriate missions from security, resources, anomalies (4 tests)
+- [x] Faction reputation system — ReputationSystem with derived standings, agent access gating, 9 faction relationships (6 tests)
+- [x] Hostile/friendly AI behavior based on rep — AISystem::selectTarget skips positive-standing entities (2 tests)
+- [x] Mission-driven economy shifts — MissionSystem reduces spawn rate (combat) and ore reserves (mining) on completion (3 tests)
 - **Success Criteria**: Missions change AI behavior, reputation alters encounters
 
 #### Phase 5 (Weeks 13-16): Persistence & Stress Testing
