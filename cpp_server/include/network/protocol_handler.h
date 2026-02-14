@@ -11,6 +11,14 @@ namespace network {
 /**
  * @brief Message types matching Python server protocol
  */
+// The Windows SDK defines ERROR as a macro; temporarily remove it so the
+// enum value compiles on MSVC.
+#ifdef ERROR
+#pragma push_macro("ERROR")
+#undef ERROR
+#define EVE_PROTOCOL_RESTORE_ERROR_MACRO
+#endif
+
 enum class MessageType {
     CONNECT,
     CONNECT_ACK,
@@ -49,6 +57,11 @@ enum class MessageType {
     MINING_RESULT,
     ERROR
 };
+
+#ifdef EVE_PROTOCOL_RESTORE_ERROR_MACRO
+#pragma pop_macro("ERROR")
+#undef EVE_PROTOCOL_RESTORE_ERROR_MACRO
+#endif
 
 /**
  * @brief Protocol handler for JSON-based messages

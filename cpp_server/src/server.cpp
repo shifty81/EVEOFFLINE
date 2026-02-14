@@ -13,6 +13,9 @@
 #include <thread>
 #include <chrono>
 #include <sys/stat.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 namespace atlas {
 

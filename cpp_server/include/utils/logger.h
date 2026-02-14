@@ -12,6 +12,14 @@ namespace utils {
 /**
  * @brief Log severity levels
  */
+// The Windows SDK defines ERROR as a macro; temporarily remove it so the
+// enum value compiles on MSVC.
+#ifdef ERROR
+#pragma push_macro("ERROR")
+#undef ERROR
+#define EVE_LOGGER_RESTORE_ERROR_MACRO
+#endif
+
 enum class LogLevel {
     DEBUG = 0,
     INFO = 1,
@@ -19,6 +27,11 @@ enum class LogLevel {
     ERROR = 3,
     FATAL = 4
 };
+
+#ifdef EVE_LOGGER_RESTORE_ERROR_MACRO
+#pragma pop_macro("ERROR")
+#undef EVE_LOGGER_RESTORE_ERROR_MACRO
+#endif
 
 /**
  * @brief Thread-safe structured logging system
