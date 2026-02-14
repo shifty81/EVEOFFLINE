@@ -286,6 +286,9 @@ set(CLIENT_SOURCES
     src/ui/atlas/atlas_context.cpp
     src/ui/atlas/atlas_widgets.cpp
     src/ui/atlas/atlas_hud.cpp
+    src/ui/atlas/atlas_console.cpp
+    src/ui/atlas/atlas_pause_menu.cpp
+    src/ui/atlas/atlas_title_screen.cpp
     src/core/solar_system_scene.cpp
     src/core/ship_physics.cpp
     ${GLAD_SOURCES}
@@ -336,6 +339,9 @@ set(CLIENT_HEADERS
     include/ui/atlas/atlas_context.h
     include/ui/atlas/atlas_widgets.h
     include/ui/atlas/atlas_hud.h
+    include/ui/atlas/atlas_console.h
+    include/ui/atlas/atlas_pause_menu.h
+    include/ui/atlas/atlas_title_screen.h
     include/core/solar_system_scene.h
     include/core/ship_physics.h
     ${AUDIO_HEADERS}

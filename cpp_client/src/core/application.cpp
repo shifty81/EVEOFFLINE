@@ -15,6 +15,9 @@
 #include <GLFW/glfw3.h>
 #include "ui/atlas/atlas_context.h"
 #include "ui/atlas/atlas_hud.h"
+#include "ui/atlas/atlas_console.h"
+#include "ui/atlas/atlas_pause_menu.h"
+#include "ui/atlas/atlas_title_screen.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -52,6 +55,9 @@ Application::Application(const std::string& title, int width, int height)
     m_shipPhysics = std::make_unique<ShipPhysics>();
     m_atlasCtx = std::make_unique<atlas::AtlasContext>();
     m_atlasHUD = std::make_unique<atlas::AtlasHUD>();
+    m_console = std::make_unique<atlas::AtlasConsole>();
+    m_pauseMenu = std::make_unique<atlas::AtlasPauseMenu>();
+    m_titleScreen = std::make_unique<atlas::AtlasTitleScreen>();
     m_contextMenu = std::make_unique<UI::ContextMenu>();
     m_radialMenu = std::make_unique<UI::RadialMenu>();
     
@@ -154,6 +160,28 @@ void Application::initialize() {
         }
     });
     
+    // Wire console callbacks
+    m_console->setQuitCallback([this]() { shutdown(); });
+    m_console->setSaveCallback([this]() {
+        std::cout << "[Console] Force save requested" << std::endl;
+        // TODO: Hook into world persistence when available
+    });
+
+    // Wire pause menu callbacks
+    m_pauseMenu->setResumeCallback([this]() {
+        std::cout << "[PauseMenu] Resumed" << std::endl;
+    });
+    m_pauseMenu->setSaveCallback([this]() {
+        std::cout << "[PauseMenu] Save requested" << std::endl;
+    });
+    m_pauseMenu->setQuitCallback([this]() { shutdown(); });
+
+    // Wire title screen callbacks
+    m_titleScreen->setPlayCallback([this]() {
+        std::cout << "[TitleScreen] Entering game..." << std::endl;
+    });
+    m_titleScreen->setQuitCallback([this]() { shutdown(); });
+    
     // Set up input callbacks — EVE Online style controls
     // Left-click: select/target, Double-click: approach
     // Right-click: context menu
@@ -161,15 +189,40 @@ void Application::initialize() {
     // Right-drag: orbit camera around ship
     // Scroll: zoom camera
     m_window->setKeyCallback([this](int key, int, int action, int mods) {
-        // Handle ESC key to exit
+        // Backtick (`) toggles developer console
+        if (key == GLFW_KEY_GRAVE_ACCENT && action == GLFW_PRESS) {
+            m_console->toggle();
+            return;
+        }
+
+        // Console eats all key input when open
+        if (m_console && m_console->isOpen()) {
+            m_console->handleKey(key, action);
+            return;
+        }
+
+        // ESC toggles pause menu (instead of quitting)
         if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-            shutdown();
+            // If title screen is active, ignore ESC
+            if (m_titleScreen && m_titleScreen->isActive()) return;
+            m_pauseMenu->toggle();
+            return;
+        }
+
+        // Don't forward keys when pause menu or title screen is active
+        if ((m_pauseMenu && m_pauseMenu->isOpen()) ||
+            (m_titleScreen && m_titleScreen->isActive())) {
+            return;
         }
 
         m_inputHandler->handleKey(key, action, mods);
     });
 
-    m_window->setCharCallback([this](unsigned int) {
+    m_window->setCharCallback([this](unsigned int codepoint) {
+        // Forward character input to console when open
+        if (m_console && m_console->isOpen()) {
+            m_console->handleChar(codepoint);
+        }
     });
     
     m_window->setMouseCallback([this](double xpos, double ypos) {
@@ -445,6 +498,21 @@ void Application::setupUICallbacks() {
 }
 
 void Application::update(float deltaTime) {
+    // Update FPS for console display
+    if (m_console) {
+        m_console->setFPS(deltaTime > 0.0f ? 1.0f / deltaTime : 0.0f);
+    }
+
+    // Skip game logic when title screen is active
+    if (m_titleScreen && m_titleScreen->isActive()) {
+        return;
+    }
+
+    // Skip game logic when paused (pause menu is open)
+    if (m_pauseMenu && m_pauseMenu->isOpen()) {
+        return;
+    }
+
     // Update embedded server if running
     if (m_embeddedServer) {
         m_embeddedServer->update(deltaTime);
@@ -542,6 +610,15 @@ void Application::render() {
         atlasInput.scrollY = m_inputHandler->getScrollDeltaY();
         
         m_atlasCtx->beginFrame(atlasInput);
+
+        // Title screen — replaces the entire HUD when active
+        if (m_titleScreen && m_titleScreen->isActive()) {
+            m_titleScreen->render(*m_atlasCtx);
+            m_atlasCtx->endFrame();
+            m_atlasConsumedMouse = m_atlasCtx->isMouseConsumed();
+            m_renderer->endFrame();
+            return;
+        }
         
         atlas::ShipHUDData shipData;
         // Connect to actual ship state from game client
@@ -660,6 +737,16 @@ void Application::render() {
         if (m_radialMenu && m_radialMenuOpen) {
             m_radialMenu->RenderAtlas(*m_atlasCtx);
         }
+
+        // Render Pause Menu overlay (on top of game HUD)
+        if (m_pauseMenu && m_pauseMenu->isOpen()) {
+            m_pauseMenu->render(*m_atlasCtx);
+        }
+
+        // Render Console overlay (topmost layer)
+        if (m_console && m_console->isOpen()) {
+            m_console->render(*m_atlasCtx);
+        }
         
         m_atlasCtx->endFrame();
 
@@ -775,6 +862,13 @@ bool Application::isHosting() const {
 void Application::handleKeyInput(int key, int action, int mods) {
     // Only handle PRESS events for most keys
     if (action != GLFW_PRESS) {
+        return;
+    }
+
+    // Don't process game keys when console, pause menu, or title screen is active
+    if ((m_console && m_console->wantsKeyboardInput()) ||
+        (m_pauseMenu && m_pauseMenu->wantsKeyboardInput()) ||
+        (m_titleScreen && m_titleScreen->wantsKeyboardInput())) {
         return;
     }
 

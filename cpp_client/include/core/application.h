@@ -29,6 +29,9 @@ namespace UI {
 namespace atlas {
     class AtlasHUD;
     class AtlasContext;
+    class AtlasConsole;
+    class AtlasPauseMenu;
+    class AtlasTitleScreen;
 }
 
 namespace atlas {
@@ -237,6 +240,9 @@ private:
     std::unique_ptr<ShipPhysics> m_shipPhysics;
     std::unique_ptr<atlas::AtlasContext> m_atlasCtx;
     std::unique_ptr<atlas::AtlasHUD> m_atlasHUD;
+    std::unique_ptr<atlas::AtlasConsole> m_console;
+    std::unique_ptr<atlas::AtlasPauseMenu> m_pauseMenu;
+    std::unique_ptr<atlas::AtlasTitleScreen> m_titleScreen;
     std::unique_ptr<UI::ContextMenu> m_contextMenu;
     std::unique_ptr<UI::RadialMenu> m_radialMenu;
 
