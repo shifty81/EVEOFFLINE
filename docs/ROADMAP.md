@@ -1155,9 +1155,9 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - **Success Criteria**: Missions change AI behavior, reputation alters encounters
 
 #### Phase 5 (Weeks 13-16): Persistence & Stress Testing
-- [ ] Save/load system state
-- [ ] Fleet state persistence
-- [ ] Economy persistence
+- [x] Save/load system state — WorldPersistence serializes 32 component types with file I/O (122 new test assertions)
+- [x] Fleet state persistence — CaptainPersonality, FleetMorale, CaptainRelationship, EmotionalState, CaptainMemory, FleetFormation, FleetCargoPool, RumorLog all serialized
+- [x] Economy persistence — Station, Docked, Wreck, MineralDeposit, SystemResources, MarketHub all serialized
 - [ ] LOD & impostors for large battles
 - [ ] 100+ ship fleet stress test
 - **Success Criteria**: Quit, reload, world remembers everything, stable performance
