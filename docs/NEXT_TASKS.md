@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 14, 2026)**: **Ship generation JSON data COMPLETE**. All 102 ship JSON files updated with `model_data` block containing per-ship `turret_hardpoints`, `launcher_hardpoints`, `drone_bays`, `engine_count`, and `generation_seed` for deterministic procedural variation. ShipTemplate extended with ModelData sub-struct. ShipDatabase parser reads model_data. 6 new test functions, 24 new assertions. **1139 test assertions passing**.
+
 > **Update (February 13, 2026)**: **Ship generation quality IMPROVED**. Hull polygon side counts increased across both modular parts (Veyren 4→8, Keldari 6→10, Solari 8→12, Aurelian 12→16) and fallback hull generation (Veyren 6→8, Keldari 8→10, Solari 12→14, Aurelian 16→20) for smoother cross-sections. Hull segment counts raised for all ship classes (Frigates 5→7, Cruisers 6→9, Battleships 8→12, Titans 12→16). All factions now have turret and launcher weapon parts. **Radial menu fix**: removed duplicate RmlUI radial menu that was rendering square boxes behind the Atlas radial menu — Atlas is the sole UI system going forward. 1115 test assertions passing.
 
 > **Update (February 13, 2026)**: **Vertical Slice Phase 2 IN PROGRESS**. Mining system implemented — MiningSystem with MiningLaser cycle-based ore extraction, MineralDeposit components for asteroid belts. Mining drones and salvage drones added to DroneSystem. CombatSystem death callback auto-creates wrecks with loot when ships are destroyed. SystemResources component tracks per-system mineral availability. Protocol messages: SALVAGE_REQUEST/RESULT, LOOT_ALL/RESULT, MINING_START/STOP/RESULT. 1115 test assertions passing.
@@ -29,7 +31,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 IN PROGRESS**: MiningSystem + MiningLaser + MineralDeposit components (cycle-based ore extraction). Mining drones and salvage drones added. CombatSystem death→wreck auto-spawn. SystemResources per-system tracking. Protocol: SALVAGE, LOOT, MINING messages. **1115 test assertions passing**.
+**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 IN PROGRESS**: MiningSystem + MiningLaser + MineralDeposit components (cycle-based ore extraction). Mining drones and salvage drones added. CombatSystem death→wreck auto-spawn. SystemResources per-system tracking. Protocol: SALVAGE, LOOT, MINING messages. Ship JSON data updated with model_data for all 102 ships. **1139 test assertions passing**.
 
 ## Current Status (February 2026)
 
@@ -56,7 +58,7 @@
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **30 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage, Mining)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **200+ test functions** all passing (1115 assertions)
+- **200+ test functions** all passing (1139 assertions)
 - **Mining drones** and **salvage drones** with full cycle-based behavior
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering

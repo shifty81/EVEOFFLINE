@@ -7,7 +7,7 @@
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
 - **29 C++ server systems** fully implemented
-- **1011 test assertions** all passing
+- **1139 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 

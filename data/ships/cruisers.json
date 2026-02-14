@@ -49,6 +49,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 3,
+      "drone_bays": 2,
+      "engine_count": 3,
+      "generation_seed": 77268
     }
   },
   "brynjar": {
@@ -101,6 +108,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 4,
+      "drone_bays": 2,
+      "engine_count": 4,
+      "generation_seed": 79761
     }
   },
   "chevalier": {
@@ -155,6 +169,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 3,
+      "drone_bays": 2,
+      "engine_count": 4,
+      "generation_seed": 58818
     }
   },
   "bastion": {
@@ -207,6 +228,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 4,
+      "drone_bays": 2,
+      "engine_count": 3,
+      "generation_seed": 60980
     }
   },
   "ravine": {
@@ -260,6 +288,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 4,
+      "drone_bays": 2,
+      "engine_count": 4,
+      "generation_seed": 13030
     }
   },
   "eidar": {
@@ -311,6 +346,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 3,
+      "drone_bays": 2,
+      "engine_count": 3,
+      "generation_seed": 82866
     }
   }
 }

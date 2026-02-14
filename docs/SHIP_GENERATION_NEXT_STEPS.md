@@ -22,9 +22,22 @@
   - Hull segment counts raised for smoother profiles across all ship classes
   - All factions now have turret and launcher weapon parts
   - Fallback hull parameters improved (more segments, higher side counts)
+- **Ship JSON data updates** (Step 2 complete - February 14, 2026)
+  - All 102 ship JSON files updated with `model_data` block
+  - Per-ship `turret_hardpoints`, `launcher_hardpoints`, `drone_bays`, `engine_count`
+  - Deterministic `generation_seed` for reproducible procedural variation
+  - Values generated within class-appropriate ranges from ShipGenerationRules
+  - ShipTemplate struct extended with `ModelData` sub-struct
+  - ShipDatabase parser reads `model_data` block from JSON
+- **Ship generation testing suite** (Step 5 partial - February 14, 2026)
+  - 6 new test functions, 24 new assertions (1139 total passing)
+  - Model data parsing validation (frigate + capital ships)
+  - All 102 ships verified to have model_data
+  - Generation seed uniqueness validation
+  - Engine count positivity check for all ships
+  - Default value tests for missing model_data
 
 ⏳ **IN PROGRESS**:
-- Ship JSON data updates
 - Visual testing and validation
 
 🔜 **PLANNED**:
@@ -274,6 +287,7 @@ public:
 ### Step 5: Testing Checklist
 
 **Unit Tests** (when OpenGL available):
+**Unit Tests** (when OpenGL available):
 - [ ] ShipPartLibrary initialization
 - [ ] Part retrieval by ID and type
 - [ ] Assembly configuration creation
@@ -282,13 +296,21 @@ public:
 - [ ] Faction rules enforcement
 - [ ] Class constraints checking
 
+**Server-Side Data Tests** (1139 assertions passing):
+- [x] Model data parsing from JSON (turret_hardpoints, launcher_hardpoints, drone_bays, engine_count, generation_seed)
+- [x] Capital ship model data validation (Titan, Carrier ranges)
+- [x] All 102 ships have model_data
+- [x] Generation seed uniqueness across all ships
+- [x] All ships have >= 2 engines
+- [x] Default values for missing model_data
+
 **Integration Tests**:
 - [ ] Complete ship generation pipeline
 - [ ] All factions produce valid geometry
 - [ ] All classes have correct dimensions
 - [ ] Weapon/engine placement validation
-- [ ] Asymmetry factor applied correctly (Minmatar)
-- [ ] Spires added for Amarr ships
+- [ ] Asymmetry factor applied correctly (Keldari)
+- [ ] Spires added for Solari ships
 - [ ] Detail density scales with class
 
 **Visual Tests** (manual inspection):

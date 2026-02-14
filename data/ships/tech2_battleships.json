@@ -54,6 +54,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 8,
+      "launcher_hardpoints": 5,
+      "drone_bays": 3,
+      "engine_count": 7,
+      "generation_seed": 40771
     }
   },
   "monolith": {
@@ -112,6 +119,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 4,
+      "drone_bays": 2,
+      "engine_count": 5,
+      "generation_seed": 98508
     }
   },
   "majeste": {
@@ -171,6 +185,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 5,
+      "drone_bays": 3,
+      "engine_count": 6,
+      "generation_seed": 35886
     }
   },
   "solarius_prime": {
@@ -228,6 +249,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 6,
+      "launcher_hardpoints": 3,
+      "drone_bays": 3,
+      "engine_count": 6,
+      "generation_seed": 3909
     }
   }
 }

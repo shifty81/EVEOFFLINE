@@ -50,6 +50,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 1,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 15344
     }
   },
   "nettvar": {
@@ -103,6 +110,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 87820
     }
   },
   "barricade": {
@@ -156,6 +170,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 1,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 77902
     }
   },
   "denouncer": {
@@ -209,6 +230,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 1,
+      "drone_bays": 0,
+      "engine_count": 3,
+      "generation_seed": 75967
     }
   }
 }

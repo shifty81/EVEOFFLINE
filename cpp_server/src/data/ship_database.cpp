@@ -198,6 +198,17 @@ bool ShipDatabase::parseShipEntry(const std::string& id, const std::string& json
         }
     }
 
+    // Model generation data
+    std::string model_block = extractBlock(json, "model_data");
+    if (!model_block.empty()) {
+        ship.model_data.turret_hardpoints  = extractInt(model_block, "turret_hardpoints", 0);
+        ship.model_data.launcher_hardpoints = extractInt(model_block, "launcher_hardpoints", 0);
+        ship.model_data.drone_bays         = extractInt(model_block, "drone_bays", 0);
+        ship.model_data.engine_count       = extractInt(model_block, "engine_count", 2);
+        ship.model_data.generation_seed    = extractInt(model_block, "generation_seed", 0);
+        ship.model_data.has_model_data     = true;
+    }
+
     ships_[id] = std::move(ship);
     return true;
 }

@@ -51,6 +51,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 0,
+      "drone_bays": 10,
+      "engine_count": 6,
+      "generation_seed": 34236
     }
   },
   "lumiere": {
@@ -107,6 +114,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 0,
+      "drone_bays": 9,
+      "engine_count": 4,
+      "generation_seed": 46939
     }
   },
   "draknar": {
@@ -161,6 +175,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 0,
+      "drone_bays": 9,
+      "engine_count": 5,
+      "generation_seed": 95002
     }
   },
   "ironprow": {
@@ -215,6 +236,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 0,
+      "drone_bays": 6,
+      "engine_count": 4,
+      "generation_seed": 3978
     }
   },
   "sanctum": {
@@ -270,6 +298,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 71516
     }
   },
   "bastion_royal": {
@@ -325,6 +360,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 5,
+      "generation_seed": 70866
     }
   },
   "valkyr": {
@@ -380,6 +422,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 6,
+      "generation_seed": 17970
     }
   },
   "thornwall": {
@@ -435,6 +484,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 25842
     }
   },
   "empyrean": {
@@ -493,6 +549,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 9,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 8,
+      "generation_seed": 80078
     }
   },
   "grandeur": {
@@ -551,6 +614,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 6,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 11,
+      "generation_seed": 59809
     }
   },
   "jormundur": {
@@ -609,6 +679,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 8,
+      "generation_seed": 19475
     }
   },
   "worldbreaker": {
@@ -667,6 +744,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 6,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 10,
+      "generation_seed": 97605
     }
   }
 }

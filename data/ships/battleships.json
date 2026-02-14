@@ -49,6 +49,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 8,
+      "launcher_hardpoints": 5,
+      "drone_bays": 2,
+      "engine_count": 8,
+      "generation_seed": 37526
     }
   },
   "strix": {
@@ -101,6 +108,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 8,
+      "launcher_hardpoints": 5,
+      "drone_bays": 2,
+      "engine_count": 6,
+      "generation_seed": 82991
     }
   },
   "sovereign": {
@@ -155,6 +169,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 5,
+      "drone_bays": 2,
+      "engine_count": 8,
+      "generation_seed": 77197
     }
   },
   "exarch": {
@@ -207,6 +228,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 6,
+      "drone_bays": 2,
+      "engine_count": 7,
+      "generation_seed": 82257
     }
   }
 }
