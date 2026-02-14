@@ -1527,6 +1527,34 @@ public:
     COMPONENT_TYPE(WarpAccessibility)
 };
 
+/**
+ * @brief Refining facility — converts raw ore into refined minerals
+ *
+ * Attached to station entities that offer refining services.
+ * Efficiency determines the yield: at 1.0 (100%) all ore converts
+ * to minerals; at 0.5 only half does.
+ *
+ * Each ore type maps to one or more mineral outputs via refine_ratios.
+ */
+class RefiningFacility : public ecs::Component {
+public:
+    struct RefineRecipe {
+        std::string ore_type;           // input ore name (e.g. "Veldspar")
+        int ore_units_required = 100;   // units consumed per batch
+        struct MineralOutput {
+            std::string mineral_type;   // output mineral name (e.g. "Tritanium")
+            int base_quantity = 333;    // base output per batch at 100% efficiency
+        };
+        std::vector<MineralOutput> outputs;
+    };
+
+    float efficiency = 0.5f;            // 0.0–1.0, refining yield multiplier
+    float tax_rate = 0.05f;             // fraction taken as tax
+    std::vector<RefineRecipe> recipes;
+
+    COMPONENT_TYPE(RefiningFacility)
+};
+
 } // namespace components
 } // namespace atlas
 

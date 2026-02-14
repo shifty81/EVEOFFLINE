@@ -55,6 +55,7 @@
 #include "systems/captain_memory_system.h"
 #include "systems/ship_fitting_system.h"
 #include "systems/warp_cinematic_system.h"
+#include "systems/refining_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -7698,6 +7699,530 @@ void testAIMiningState() {
     assertTrue(ai->state != components::AI::State::Attacking, "Mining != Attacking");
 }
 
+void testAIMiningBehaviorActivatesLaser() {
+    std::cout << "\n=== AI: Mining Behavior Activates Laser ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+    systems::MiningSystem miningSys(&world);
+
+    // Create a mineral deposit nearby
+    auto* deposit = world.createEntity("deposit1");
+    auto* dpos = addComp<components::Position>(deposit);
+    dpos->x = 100.0f; dpos->y = 0.0f; dpos->z = 0.0f;
+    auto* dep = addComp<components::MineralDeposit>(deposit);
+    dep->mineral_type = "Veldspar";
+    dep->quantity_remaining = 5000.0f;
+
+    // Create an AI miner with MiningLaser
+    auto* npc = world.createEntity("miner_npc");
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 50.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Passive;
+    ai->state = components::AI::State::Mining;
+    ai->target_entity_id = "deposit1";
+    auto* laser = addComp<components::MiningLaser>(npc);
+    laser->active = false;
+    auto* inv = addComp<components::Inventory>(npc);
+    inv->max_capacity = 1000.0f;
+
+    // Run AI update — mining behavior should activate the laser
+    aiSys.update(1.0f);
+
+    assertTrue(laser->active, "Mining behavior activates laser");
+    assertTrue(laser->target_deposit_id == "deposit1", "Laser targets the deposit");
+}
+
+void testAIMiningIdleFindsDeposit() {
+    std::cout << "\n=== AI: Idle Miner Finds Deposit ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    // Create a mineral deposit within awareness range
+    auto* deposit = world.createEntity("deposit_nearby");
+    auto* dpos = addComp<components::Position>(deposit);
+    dpos->x = 5000.0f; dpos->y = 0.0f; dpos->z = 0.0f;
+    auto* dep = addComp<components::MineralDeposit>(deposit);
+    dep->mineral_type = "Scordite";
+    dep->quantity_remaining = 3000.0f;
+
+    // Create a passive AI miner at origin, idle
+    auto* npc = world.createEntity("miner2");
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Passive;
+    ai->state = components::AI::State::Idle;
+    ai->awareness_range = 50000.0f;
+    auto* laser = addComp<components::MiningLaser>(npc);
+    laser->active = false;
+
+    // Idle behavior should find the deposit and start approaching
+    aiSys.update(1.0f);
+
+    assertTrue(ai->state == components::AI::State::Approaching, "Idle miner transitions to Approaching");
+    assertTrue(ai->target_entity_id == "deposit_nearby", "Miner targets the deposit");
+}
+
+void testAIMiningApproachTransitions() {
+    std::cout << "\n=== AI: Miner Approach Transitions to Mining ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    // Create deposit very close
+    auto* deposit = world.createEntity("dep_close");
+    auto* dpos = addComp<components::Position>(deposit);
+    dpos->x = 100.0f; dpos->y = 0.0f; dpos->z = 0.0f;
+    auto* dep = addComp<components::MineralDeposit>(deposit);
+    dep->mineral_type = "Veldspar";
+    dep->quantity_remaining = 1000.0f;
+
+    // Create NPC approaching the deposit (within mining range)
+    auto* npc = world.createEntity("miner3");
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 50.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Passive;
+    ai->state = components::AI::State::Approaching;
+    ai->target_entity_id = "dep_close";
+    auto* laser = addComp<components::MiningLaser>(npc);
+    laser->active = false;
+
+    // Approach should transition to Mining when within range
+    aiSys.update(1.0f);
+
+    assertTrue(ai->state == components::AI::State::Mining, "Approach transitions to Mining near deposit");
+}
+
+void testAIMiningStopsOnDepletedDeposit() {
+    std::cout << "\n=== AI: Mining Stops When Deposit Depleted ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    // Create an empty deposit
+    auto* deposit = world.createEntity("empty_dep");
+    auto* dpos = addComp<components::Position>(deposit);
+    dpos->x = 100.0f; dpos->y = 0.0f; dpos->z = 0.0f;
+    auto* dep = addComp<components::MineralDeposit>(deposit);
+    dep->mineral_type = "Veldspar";
+    dep->quantity_remaining = 0.0f;
+
+    auto* npc = world.createEntity("miner4");
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 100.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+    auto* ai = addComp<components::AI>(npc);
+    ai->state = components::AI::State::Mining;
+    ai->target_entity_id = "empty_dep";
+    auto* laser = addComp<components::MiningLaser>(npc);
+    laser->active = true;
+    laser->target_deposit_id = "empty_dep";
+
+    aiSys.update(1.0f);
+
+    assertTrue(ai->state == components::AI::State::Idle, "Mining stops on depleted deposit");
+    assertTrue(ai->target_entity_id.empty(), "Target cleared on depleted deposit");
+}
+
+void testAIMiningStopsOnCargoFull() {
+    std::cout << "\n=== AI: Mining Stops When Cargo Full ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    auto* deposit = world.createEntity("dep_full");
+    auto* dpos = addComp<components::Position>(deposit);
+    dpos->x = 100.0f; dpos->y = 0.0f; dpos->z = 0.0f;
+    auto* dep = addComp<components::MineralDeposit>(deposit);
+    dep->mineral_type = "Veldspar";
+    dep->quantity_remaining = 5000.0f;
+
+    auto* npc = world.createEntity("miner5");
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 100.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+    auto* ai = addComp<components::AI>(npc);
+    ai->state = components::AI::State::Mining;
+    ai->target_entity_id = "dep_full";
+    auto* laser = addComp<components::MiningLaser>(npc);
+    laser->active = true;
+    // Fill cargo completely
+    auto* inv = addComp<components::Inventory>(npc);
+    inv->max_capacity = 100.0f;
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.name = "Veldspar";
+    ore.type = "ore";
+    ore.quantity = 1000;
+    ore.volume = 0.1f;
+    inv->items.push_back(ore);
+
+    aiSys.update(1.0f);
+
+    assertTrue(ai->state == components::AI::State::Idle, "Mining stops on cargo full");
+}
+
+void testAIFindNearestDeposit() {
+    std::cout << "\n=== AI: Find Nearest Deposit ===" << std::endl;
+
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    // Create two deposits at different distances
+    auto* far_dep = world.createEntity("far_dep");
+    auto* fdpos = addComp<components::Position>(far_dep);
+    fdpos->x = 30000.0f; fdpos->y = 0.0f; fdpos->z = 0.0f;
+    auto* fd = addComp<components::MineralDeposit>(far_dep);
+    fd->mineral_type = "Scordite";
+    fd->quantity_remaining = 5000.0f;
+
+    auto* near_dep = world.createEntity("near_dep");
+    auto* ndpos = addComp<components::Position>(near_dep);
+    ndpos->x = 5000.0f; ndpos->y = 0.0f; ndpos->z = 0.0f;
+    auto* nd = addComp<components::MineralDeposit>(near_dep);
+    nd->mineral_type = "Veldspar";
+    nd->quantity_remaining = 5000.0f;
+
+    auto* npc = world.createEntity("searcher");
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+    auto* vel = addComp<components::Velocity>(npc);
+    vel->max_speed = 100.0f;
+    auto* ai = addComp<components::AI>(npc);
+    ai->awareness_range = 50000.0f;
+
+    auto* found = aiSys.findNearestDeposit(npc);
+    assertTrue(found != nullptr, "Found a deposit");
+    assertTrue(found->getId() == "near_dep", "Found nearest deposit");
+}
+
+// ==================== Refining System Tests ====================
+
+void testRefineOreBasic() {
+    std::cout << "\n=== Refining: Basic Ore Refining ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refiningSys(&world);
+
+    // Create a station with refining facility
+    auto* station = world.createEntity("station1");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->efficiency = 1.0f;  // 100% efficiency
+    facility->tax_rate = 0.0f;    // no tax
+
+    // Add a recipe: 100 Veldspar → 415 Tritanium
+    components::RefiningFacility::RefineRecipe recipe;
+    recipe.ore_type = "Veldspar";
+    recipe.ore_units_required = 100;
+    recipe.outputs.push_back({"Tritanium", 415});
+    facility->recipes.push_back(recipe);
+
+    // Create a player with ore
+    auto* player = world.createEntity("player1");
+    auto* inv = addComp<components::Inventory>(player);
+    inv->max_capacity = 10000.0f;
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.name = "Veldspar";
+    ore.type = "ore";
+    ore.quantity = 200;
+    ore.volume = 0.1f;
+    inv->items.push_back(ore);
+
+    int refined = refiningSys.refineOre("player1", "station1", "Veldspar", 2);
+
+    assertTrue(refined == 2, "Refined 2 batches");
+
+    // Check ore consumed (200 - 200 = 0, should be removed)
+    bool ore_found = false;
+    int mineral_qty = 0;
+    for (const auto& item : inv->items) {
+        if (item.item_id == "Veldspar") ore_found = true;
+        if (item.item_id == "Tritanium") mineral_qty = item.quantity;
+    }
+    assertTrue(!ore_found, "Ore consumed completely");
+    assertTrue(mineral_qty == 830, "Produced 830 Tritanium (415 * 2)");
+}
+
+void testRefineOreWithEfficiency() {
+    std::cout << "\n=== Refining: Efficiency Affects Yield ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refiningSys(&world);
+
+    auto* station = world.createEntity("station2");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->efficiency = 0.5f;
+    facility->tax_rate = 0.0f;
+
+    components::RefiningFacility::RefineRecipe recipe;
+    recipe.ore_type = "Veldspar";
+    recipe.ore_units_required = 100;
+    recipe.outputs.push_back({"Tritanium", 400});
+    facility->recipes.push_back(recipe);
+
+    auto* player = world.createEntity("player2");
+    auto* inv = addComp<components::Inventory>(player);
+    inv->max_capacity = 10000.0f;
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.name = "Veldspar";
+    ore.type = "ore";
+    ore.quantity = 100;
+    ore.volume = 0.1f;
+    inv->items.push_back(ore);
+
+    int refined = refiningSys.refineOre("player2", "station2", "Veldspar", 1);
+    assertTrue(refined == 1, "Refined 1 batch at 50% efficiency");
+
+    int mineral_qty = 0;
+    for (const auto& item : inv->items) {
+        if (item.item_id == "Tritanium") mineral_qty = item.quantity;
+    }
+    // 400 * 0.5 efficiency * (1 - 0.0 tax) = 200
+    assertTrue(mineral_qty == 200, "50% efficiency yields 200 Tritanium");
+}
+
+void testRefineOreWithTax() {
+    std::cout << "\n=== Refining: Tax Reduces Yield ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refiningSys(&world);
+
+    auto* station = world.createEntity("station3");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->efficiency = 1.0f;
+    facility->tax_rate = 0.1f;   // 10% tax
+
+    components::RefiningFacility::RefineRecipe recipe;
+    recipe.ore_type = "Veldspar";
+    recipe.ore_units_required = 100;
+    recipe.outputs.push_back({"Tritanium", 400});
+    facility->recipes.push_back(recipe);
+
+    auto* player = world.createEntity("player3");
+    auto* inv = addComp<components::Inventory>(player);
+    inv->max_capacity = 10000.0f;
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.name = "Veldspar";
+    ore.type = "ore";
+    ore.quantity = 100;
+    ore.volume = 0.1f;
+    inv->items.push_back(ore);
+
+    refiningSys.refineOre("player3", "station3", "Veldspar", 1);
+
+    int mineral_qty = 0;
+    for (const auto& item : inv->items) {
+        if (item.item_id == "Tritanium") mineral_qty = item.quantity;
+    }
+    // 400 * 1.0 * (1 - 0.1) = 360
+    assertTrue(mineral_qty == 360, "10% tax yields 360 Tritanium");
+}
+
+void testRefineOreInsufficientOre() {
+    std::cout << "\n=== Refining: Insufficient Ore ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refiningSys(&world);
+
+    auto* station = world.createEntity("station4");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->efficiency = 1.0f;
+    facility->tax_rate = 0.0f;
+
+    components::RefiningFacility::RefineRecipe recipe;
+    recipe.ore_type = "Veldspar";
+    recipe.ore_units_required = 100;
+    recipe.outputs.push_back({"Tritanium", 415});
+    facility->recipes.push_back(recipe);
+
+    auto* player = world.createEntity("player4");
+    auto* inv = addComp<components::Inventory>(player);
+    inv->max_capacity = 10000.0f;
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.name = "Veldspar";
+    ore.type = "ore";
+    ore.quantity = 50;  // not enough for 1 batch
+    ore.volume = 0.1f;
+    inv->items.push_back(ore);
+
+    int refined = refiningSys.refineOre("player4", "station4", "Veldspar", 1);
+    assertTrue(refined == 0, "Cannot refine with insufficient ore");
+    assertTrue(inv->items[0].quantity == 50, "Ore not consumed when refining fails");
+}
+
+void testRefineOreNoRecipe() {
+    std::cout << "\n=== Refining: No Recipe For Ore Type ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refiningSys(&world);
+
+    auto* station = world.createEntity("station5");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    // No recipes installed
+
+    auto* player = world.createEntity("player5");
+    auto* inv = addComp<components::Inventory>(player);
+    inv->max_capacity = 10000.0f;
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.name = "Veldspar";
+    ore.type = "ore";
+    ore.quantity = 200;
+    ore.volume = 0.1f;
+    inv->items.push_back(ore);
+
+    int refined = refiningSys.refineOre("player5", "station5", "Veldspar", 1);
+    assertTrue(refined == 0, "Cannot refine without recipe");
+}
+
+void testRefineOreMultipleOutputs() {
+    std::cout << "\n=== Refining: Multiple Mineral Outputs ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refiningSys(&world);
+
+    auto* station = world.createEntity("station6");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->efficiency = 1.0f;
+    facility->tax_rate = 0.0f;
+
+    // Scordite → Tritanium + Pyerite
+    components::RefiningFacility::RefineRecipe recipe;
+    recipe.ore_type = "Scordite";
+    recipe.ore_units_required = 100;
+    recipe.outputs.push_back({"Tritanium", 346});
+    recipe.outputs.push_back({"Pyerite", 173});
+    facility->recipes.push_back(recipe);
+
+    auto* player = world.createEntity("player6");
+    auto* inv = addComp<components::Inventory>(player);
+    inv->max_capacity = 10000.0f;
+    components::Inventory::Item ore;
+    ore.item_id = "Scordite";
+    ore.name = "Scordite";
+    ore.type = "ore";
+    ore.quantity = 100;
+    ore.volume = 0.15f;
+    inv->items.push_back(ore);
+
+    int refined = refiningSys.refineOre("player6", "station6", "Scordite", 1);
+    assertTrue(refined == 1, "Refined 1 batch of Scordite");
+
+    int tritanium = 0, pyerite = 0;
+    for (const auto& item : inv->items) {
+        if (item.item_id == "Tritanium") tritanium = item.quantity;
+        if (item.item_id == "Pyerite") pyerite = item.quantity;
+    }
+    assertTrue(tritanium == 346, "Produced 346 Tritanium from Scordite");
+    assertTrue(pyerite == 173, "Produced 173 Pyerite from Scordite");
+}
+
+void testRefineDefaultRecipes() {
+    std::cout << "\n=== Refining: Install Default Recipes ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refiningSys(&world);
+
+    auto* station = world.createEntity("station7");
+    addComp<components::RefiningFacility>(station);
+
+    bool installed = refiningSys.installDefaultRecipes("station7");
+    assertTrue(installed, "Default recipes installed");
+
+    auto* facility = station->getComponent<components::RefiningFacility>();
+    assertTrue(facility->recipes.size() == 4, "4 default recipes installed");
+}
+
+// ==================== Market Ore Pricing Tests ====================
+
+void testMarketOrePricing() {
+    std::cout << "\n=== Market: NPC Ore Pricing ===" << std::endl;
+
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    // Create a station with market hub
+    auto* station = world.createEntity("trade_hub");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "trade_hub";
+    hub->broker_fee_rate = 0.0;
+    hub->sales_tax_rate = 0.0;
+
+    // Create an NPC seller
+    auto* npc_seller = world.createEntity("npc_ore_seller");
+    auto* npc_player = addComp<components::Player>(npc_seller);
+    npc_player->isk = 1000000.0;
+
+    // NPC places sell orders for common ores
+    std::string o1 = marketSys.placeSellOrder("trade_hub", "npc_ore_seller",
+                                               "Veldspar", "Veldspar", 10000, 15.0);
+    std::string o2 = marketSys.placeSellOrder("trade_hub", "npc_ore_seller",
+                                               "Scordite", "Scordite", 5000, 38.0);
+    std::string o3 = marketSys.placeSellOrder("trade_hub", "npc_ore_seller",
+                                               "Pyroxeres", "Pyroxeres", 3000, 70.0);
+
+    assertTrue(!o1.empty(), "Veldspar sell order placed");
+    assertTrue(!o2.empty(), "Scordite sell order placed");
+    assertTrue(!o3.empty(), "Pyroxeres sell order placed");
+
+    double veldspar_price = marketSys.getLowestSellPrice("trade_hub", "Veldspar");
+    double scordite_price = marketSys.getLowestSellPrice("trade_hub", "Scordite");
+    double pyroxeres_price = marketSys.getLowestSellPrice("trade_hub", "Pyroxeres");
+
+    assertTrue(veldspar_price == 15.0, "Veldspar price is 15 ISK");
+    assertTrue(scordite_price == 38.0, "Scordite price is 38 ISK");
+    assertTrue(pyroxeres_price == 70.0, "Pyroxeres price is 70 ISK");
+    assertTrue(marketSys.getOrderCount("trade_hub") == 3, "3 orders on market");
+}
+
+void testMarketMineralPricing() {
+    std::cout << "\n=== Market: NPC Mineral Buy Orders ===" << std::endl;
+
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("mineral_hub");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "mineral_hub";
+    hub->broker_fee_rate = 0.0;
+    hub->sales_tax_rate = 0.0;
+
+    auto* npc_buyer = world.createEntity("npc_mineral_buyer");
+    auto* npc_player = addComp<components::Player>(npc_buyer);
+    npc_player->isk = 10000000.0;
+
+    // NPC places buy orders for refined minerals
+    std::string b1 = marketSys.placeBuyOrder("mineral_hub", "npc_mineral_buyer",
+                                              "Tritanium", "Tritanium", 50000, 6.0);
+    std::string b2 = marketSys.placeBuyOrder("mineral_hub", "npc_mineral_buyer",
+                                              "Pyerite", "Pyerite", 20000, 9.0);
+
+    assertTrue(!b1.empty(), "Tritanium buy order placed");
+    assertTrue(!b2.empty(), "Pyerite buy order placed");
+
+    double trit_price = marketSys.getHighestBuyPrice("mineral_hub", "Tritanium");
+    double pyer_price = marketSys.getHighestBuyPrice("mineral_hub", "Pyerite");
+
+    assertTrue(trit_price == 6.0, "Tritanium buy price is 6 ISK");
+    assertTrue(pyer_price == 9.0, "Pyerite buy price is 9 ISK");
+}
+
 // ==================== Ship Generation Model Data Tests ====================
 
 void testShipModelDataParsed() {
@@ -9018,6 +9543,27 @@ int main() {
 
     // AI mining state test
     testAIMiningState();
+
+    // AI mining behavior tests
+    testAIMiningBehaviorActivatesLaser();
+    testAIMiningIdleFindsDeposit();
+    testAIMiningApproachTransitions();
+    testAIMiningStopsOnDepletedDeposit();
+    testAIMiningStopsOnCargoFull();
+    testAIFindNearestDeposit();
+
+    // Refining system tests
+    testRefineOreBasic();
+    testRefineOreWithEfficiency();
+    testRefineOreWithTax();
+    testRefineOreInsufficientOre();
+    testRefineOreNoRecipe();
+    testRefineOreMultipleOutputs();
+    testRefineDefaultRecipes();
+
+    // Market ore pricing tests
+    testMarketOrePricing();
+    testMarketMineralPricing();
 
     // Ship generation model data tests
     testShipModelDataParsed();

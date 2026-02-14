@@ -56,6 +56,14 @@ public:
      */
     static float engagementRangeFromWeapon(ecs::Entity* entity);
     
+    /**
+     * Find the nearest MineralDeposit entity within awareness range.
+     * 
+     * @param entity The NPC entity searching for deposits
+     * @return The nearest non-depleted deposit entity, or nullptr
+     */
+    ecs::Entity* findNearestDeposit(ecs::Entity* entity);
+    
 private:
     /**
      * Idle behavior state
@@ -124,6 +132,18 @@ private:
      * @param entity The NPC entity to update
      */
     void fleeBehavior(ecs::Entity* entity);
+    
+    /**
+     * Mining behavior state
+     * 
+     * NPC mines a targeted mineral deposit. If the NPC has a MiningLaser
+     * component and a target deposit, continues mining until the deposit
+     * is depleted or cargo is full, then returns to Idle to find a new
+     * deposit.
+     * 
+     * @param entity The NPC entity to update
+     */
+    void miningBehavior(ecs::Entity* entity);
 };
 
 } // namespace systems
