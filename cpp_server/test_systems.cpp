@@ -7422,6 +7422,141 @@ void testCombatNoCallbackOnSurvival() {
     assertTrue(!callback_fired, "Death callback does NOT fire when entity survives");
 }
 
+// ==================== Combat Loop Integration Tests ====================
+
+void testCombatFireWeaponAppliesDamage() {
+    std::cout << "\n=== Combat Loop: Fire Weapon Applies Damage ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    // Create shooter with weapon
+    auto* shooter = world.createEntity("player_1");
+    auto* wep = addComp<components::Weapon>(shooter);
+    wep->damage = 50.0f;
+    wep->damage_type = "kinetic";
+    wep->optimal_range = 10000.0f;
+    wep->falloff_range = 5000.0f;
+    wep->rate_of_fire = 3.0f;
+    wep->cooldown = 0.0f;
+    wep->ammo_count = 100;
+    wep->capacitor_cost = 10.0f;
+    auto* spos = addComp<components::Position>(shooter);
+    spos->x = 0.0f; spos->y = 0.0f; spos->z = 0.0f;
+
+    // Create target with health
+    auto* target = world.createEntity("npc_target");
+    auto* hp = addComp<components::Health>(target);
+    hp->shield_hp = 100.0f; hp->shield_max = 100.0f;
+    hp->armor_hp = 100.0f; hp->armor_max = 100.0f;
+    hp->hull_hp = 100.0f; hp->hull_max = 100.0f;
+    auto* tpos = addComp<components::Position>(target);
+    tpos->x = 5000.0f; tpos->y = 0.0f; tpos->z = 0.0f;
+
+    float shield_before = hp->shield_hp;
+    bool fired = combatSys.fireWeapon("player_1", "npc_target");
+
+    assertTrue(fired, "Weapon fired successfully");
+    assertTrue(hp->shield_hp < shield_before, "Target shield took damage");
+    assertTrue(wep->cooldown > 0.0f, "Weapon now on cooldown");
+    assertTrue(wep->ammo_count == 99, "Ammo consumed");
+}
+
+void testCombatFireWeaponCooldownPrevents() {
+    std::cout << "\n=== Combat Loop: Cooldown Prevents Firing ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    auto* shooter = world.createEntity("player_cd");
+    auto* wep = addComp<components::Weapon>(shooter);
+    wep->damage = 50.0f;
+    wep->damage_type = "em";
+    wep->optimal_range = 10000.0f;
+    wep->falloff_range = 5000.0f;
+    wep->rate_of_fire = 3.0f;
+    wep->cooldown = 2.0f;  // On cooldown
+    wep->ammo_count = 100;
+    addComp<components::Position>(shooter);
+
+    auto* target = world.createEntity("npc_cd_target");
+    auto* hp = addComp<components::Health>(target);
+    hp->shield_hp = 100.0f; hp->shield_max = 100.0f;
+    hp->armor_hp = 100.0f; hp->armor_max = 100.0f;
+    hp->hull_hp = 100.0f; hp->hull_max = 100.0f;
+    addComp<components::Position>(target);
+
+    bool fired = combatSys.fireWeapon("player_cd", "npc_cd_target");
+
+    assertTrue(!fired, "Weapon blocked by cooldown");
+    assertTrue(hp->shield_hp == 100.0f, "Target took no damage");
+}
+
+void testCombatFireWeaponOutOfRange() {
+    std::cout << "\n=== Combat Loop: Out of Range Prevents Firing ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    auto* shooter = world.createEntity("player_range");
+    auto* wep = addComp<components::Weapon>(shooter);
+    wep->damage = 50.0f;
+    wep->damage_type = "thermal";
+    wep->optimal_range = 5000.0f;
+    wep->falloff_range = 2000.0f;
+    wep->rate_of_fire = 3.0f;
+    wep->cooldown = 0.0f;
+    wep->ammo_count = 100;
+    auto* spos = addComp<components::Position>(shooter);
+    spos->x = 0.0f; spos->y = 0.0f; spos->z = 0.0f;
+
+    auto* target = world.createEntity("npc_far");
+    auto* hp = addComp<components::Health>(target);
+    hp->shield_hp = 100.0f; hp->shield_max = 100.0f;
+    hp->armor_hp = 100.0f; hp->armor_max = 100.0f;
+    hp->hull_hp = 100.0f; hp->hull_max = 100.0f;
+    auto* tpos = addComp<components::Position>(target);
+    tpos->x = 50000.0f; tpos->y = 0.0f; tpos->z = 0.0f;  // Way beyond range
+
+    bool fired = combatSys.fireWeapon("player_range", "npc_far");
+
+    assertTrue(!fired, "Weapon blocked by range");
+    assertTrue(hp->shield_hp == 100.0f, "Target took no damage when out of range");
+}
+
+void testCombatFireWeaponDamageLayerCascade() {
+    std::cout << "\n=== Combat Loop: Damage Cascades Shield → Armor → Hull ===" << std::endl;
+
+    ecs::World world;
+    systems::CombatSystem combatSys(&world);
+
+    auto* shooter = world.createEntity("player_cascade");
+    auto* wep = addComp<components::Weapon>(shooter);
+    wep->damage = 200.0f;
+    wep->damage_type = "em";
+    wep->optimal_range = 20000.0f;
+    wep->falloff_range = 5000.0f;
+    wep->rate_of_fire = 5.0f;
+    wep->cooldown = 0.0f;
+    wep->ammo_count = 100;
+    auto* spos = addComp<components::Position>(shooter);
+    spos->x = 0.0f; spos->y = 0.0f; spos->z = 0.0f;
+
+    auto* target = world.createEntity("npc_cascade");
+    auto* hp = addComp<components::Health>(target);
+    hp->shield_hp = 50.0f; hp->shield_max = 100.0f;
+    hp->armor_hp = 50.0f; hp->armor_max = 100.0f;
+    hp->hull_hp = 100.0f; hp->hull_max = 100.0f;
+    auto* tpos = addComp<components::Position>(target);
+    tpos->x = 1000.0f; tpos->y = 0.0f; tpos->z = 0.0f;
+
+    combatSys.fireWeapon("player_cascade", "npc_cascade");
+
+    assertTrue(hp->shield_hp == 0.0f, "Shield depleted");
+    assertTrue(hp->armor_hp == 0.0f, "Armor depleted");
+    assertTrue(hp->hull_hp < 100.0f, "Hull took overflow damage");
+}
+
 // ==================== System Resources Component Tests ====================
 
 void testSystemResourcesTracking() {
@@ -8150,6 +8285,12 @@ int main() {
     testCombatDeathCallbackFires();
     testCombatDeathCallbackWithLoot();
     testCombatNoCallbackOnSurvival();
+
+    // Combat loop integration tests
+    testCombatFireWeaponAppliesDamage();
+    testCombatFireWeaponCooldownPrevents();
+    testCombatFireWeaponOutOfRange();
+    testCombatFireWeaponDamageLayerCascade();
 
     // System resources tests
     testSystemResourcesTracking();

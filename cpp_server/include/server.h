@@ -13,6 +13,7 @@
 #include "systems/targeting_system.h"
 #include "systems/station_system.h"
 #include "systems/movement_system.h"
+#include "systems/combat_system.h"
 #include "data/world_persistence.h"
 #include "utils/server_metrics.h"
 #include "ui/server_console.h"
@@ -66,6 +67,7 @@ private:
     systems::TargetingSystem* targeting_system_ = nullptr;
     systems::StationSystem* station_system_ = nullptr;
     systems::MovementSystem* movement_system_ = nullptr;
+    systems::CombatSystem* combat_system_ = nullptr;
     
     std::atomic<bool> running_;
     

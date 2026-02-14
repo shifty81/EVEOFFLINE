@@ -114,11 +114,17 @@ public:
     void sendInventoryJettison(const std::string& itemId, int quantity);
     
     /**
+     * Target lock/unlock
+     */
+    void sendTargetLock(const std::string& targetId);
+    void sendTargetUnlock(const std::string& targetId);
+
+    /**
      * Module fitting
      */
     void sendModuleFit(const std::string& moduleId, const std::string& slotType, int slotIndex);
     void sendModuleUnfit(const std::string& slotType, int slotIndex);
-    void sendModuleActivate(int slotIndex);
+    void sendModuleActivate(int slotIndex, const std::string& targetId = "");
     
     /**
      * Market operations

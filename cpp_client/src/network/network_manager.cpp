@@ -133,10 +133,25 @@ void NetworkManager::sendModuleUnfit(const std::string& slotType, int slotIndex)
     std::cout << "Sent module unfit request: " << slotType << "[" << slotIndex << "]" << std::endl;
 }
 
-void NetworkManager::sendModuleActivate(int slotIndex) {
+void NetworkManager::sendModuleActivate(int slotIndex, const std::string& targetId) {
     if (!isConnected()) return;
     
-    std::string msg = m_protocolHandler->createModuleActivateMessage(slotIndex);
+    std::string msg = m_protocolHandler->createModuleActivateMessage(slotIndex, targetId);
+    m_tcpClient->send(msg);
+}
+
+// Target lock/unlock
+void NetworkManager::sendTargetLock(const std::string& targetId) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createTargetLockMessage(targetId);
+    m_tcpClient->send(msg);
+}
+
+void NetworkManager::sendTargetUnlock(const std::string& targetId) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createTargetUnlockMessage(targetId);
     m_tcpClient->send(msg);
 }
 

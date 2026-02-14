@@ -42,11 +42,17 @@ public:
     std::string createInventoryJettisonMessage(const std::string& itemId, int quantity);
     
     /**
+     * Target lock/unlock messages
+     */
+    std::string createTargetLockMessage(const std::string& targetId);
+    std::string createTargetUnlockMessage(const std::string& targetId);
+
+    /**
      * Module fitting messages
      */
     std::string createModuleFitMessage(const std::string& moduleId, const std::string& slotType, int slotIndex);
     std::string createModuleUnfitMessage(const std::string& slotType, int slotIndex);
-    std::string createModuleActivateMessage(int slotIndex);
+    std::string createModuleActivateMessage(int slotIndex, const std::string& targetId = "");
     
     /**
      * Market messages

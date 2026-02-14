@@ -51,7 +51,9 @@ void Server::initializeGameWorld() {
     movement_system_ = movement.get();
     game_world_->addSystem(std::move(movement));
     game_world_->addSystem(std::make_unique<systems::WeaponSystem>(game_world_.get()));
-    game_world_->addSystem(std::make_unique<systems::CombatSystem>(game_world_.get()));
+    auto combat = std::make_unique<systems::CombatSystem>(game_world_.get());
+    combat_system_ = combat.get();
+    game_world_->addSystem(std::move(combat));
     
     auto& log = utils::Logger::instance();
     log.info("Game world initialized with " +
@@ -135,6 +137,7 @@ bool Server::initialize() {
     game_session_->setTargetingSystem(targeting_system_);
     game_session_->setStationSystem(station_system_);
     game_session_->setMovementSystem(movement_system_);
+    game_session_->setCombatSystem(combat_system_);
     game_session_->initialize();
     
     // Initialize server console

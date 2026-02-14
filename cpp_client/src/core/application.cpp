@@ -362,6 +362,11 @@ void Application::setupUICallbacks() {
         if (std::find(m_targetList.begin(), m_targetList.end(), entityId) == m_targetList.end()) {
             m_targetList.push_back(entityId);
             std::cout << "[Targeting] Locked target: " << entityId << std::endl;
+            // Send target lock to server
+            auto* networkMgr = m_gameClient->getNetworkManager();
+            if (networkMgr && networkMgr->isConnected()) {
+                networkMgr->sendTargetLock(entityId);
+            }
         }
     });
     
@@ -370,6 +375,11 @@ void Application::setupUICallbacks() {
         if (it != m_targetList.end()) {
             m_targetList.erase(it);
             std::cout << "[Targeting] Unlocked target: " << entityId << std::endl;
+            // Send target unlock to server
+            auto* networkMgr = m_gameClient->getNetworkManager();
+            if (networkMgr && networkMgr->isConnected()) {
+                networkMgr->sendTargetUnlock(entityId);
+            }
         }
     });
     
@@ -1161,6 +1171,11 @@ void Application::targetEntity(const std::string& entityId, bool addToTargets) {
         auto it = std::find(m_targetList.begin(), m_targetList.end(), entityId);
         if (it == m_targetList.end()) {
             m_targetList.push_back(entityId);
+            // Send target lock request to server
+            auto* networkMgr = m_gameClient->getNetworkManager();
+            if (networkMgr && networkMgr->isConnected()) {
+                networkMgr->sendTargetLock(entityId);
+            }
         }
     } else {
         // Replace current target
@@ -1168,12 +1183,25 @@ void Application::targetEntity(const std::string& entityId, bool addToTargets) {
         m_targetList.clear();
         m_targetList.push_back(entityId);
         m_currentTargetIndex = 0;
+        // Send target lock request to server
+        auto* networkMgr = m_gameClient->getNetworkManager();
+        if (networkMgr && networkMgr->isConnected()) {
+            networkMgr->sendTargetLock(entityId);
+        }
     }
 }
 
 void Application::clearTarget() {
     std::cout << "[Targeting] Clear target" << std::endl;
     
+    // Send target unlock requests to server
+    auto* networkMgr = m_gameClient->getNetworkManager();
+    if (networkMgr && networkMgr->isConnected()) {
+        for (const auto& targetId : m_targetList) {
+            networkMgr->sendTargetUnlock(targetId);
+        }
+    }
+
     m_currentTargetId.clear();
     m_targetList.clear();
     m_currentTargetIndex = -1;
@@ -1205,10 +1233,10 @@ void Application::activateModule(int slotNumber) {
     }
     std::cout << std::endl;
     
-    // Send module activation command to server
+    // Send module activation command to server with current target
     auto* networkMgr = m_gameClient->getNetworkManager();
     if (networkMgr && networkMgr->isConnected()) {
-        networkMgr->sendModuleActivate(slotNumber - 1);  // Convert to 0-based index
+        networkMgr->sendModuleActivate(slotNumber - 1, m_currentTargetId);  // Convert to 0-based index
     } else {
         std::cout << "[Modules] Not connected to server, activation not sent" << std::endl;
     }

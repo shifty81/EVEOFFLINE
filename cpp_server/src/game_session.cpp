@@ -3,6 +3,7 @@
 #include "systems/targeting_system.h"
 #include "systems/station_system.h"
 #include "systems/movement_system.h"
+#include "systems/combat_system.h"
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -729,13 +730,16 @@ void GameSession::handleModuleActivate(const network::ClientConnection& client,
     bool success = false;
 
     if (weapon && !target_id.empty()) {
-        // Delegate to WeaponSystem-style logic (inline check)
+        // Validate and fire the weapon through the CombatSystem
         if (weapon->cooldown <= 0.0f && weapon->ammo_count > 0) {
             auto* cap = entity->getComponent<components::Capacitor>();
             if (!cap || cap->capacitor >= weapon->capacitor_cost) {
-                success = true;
-                // The actual firing happens through the WeaponSystem on the next tick
-                // We just validate that the activation request is valid
+                if (combat_system_) {
+                    success = combat_system_->fireWeapon(entity_id, target_id);
+                    if (success && cap) {
+                        cap->capacitor -= weapon->capacitor_cost;
+                    }
+                }
             }
         }
     }

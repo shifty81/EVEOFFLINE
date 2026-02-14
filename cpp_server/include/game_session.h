@@ -17,6 +17,7 @@ namespace systems {
     class TargetingSystem;
     class StationSystem;
     class MovementSystem;
+    class CombatSystem;
 }
 
 /**
@@ -52,6 +53,9 @@ public:
 
     /// Set pointer to the MovementSystem for warp/approach/orbit/stop handling
     void setMovementSystem(systems::MovementSystem* ms) { movement_system_ = ms; }
+
+    /// Set pointer to the CombatSystem for weapon firing
+    void setCombatSystem(systems::CombatSystem* cs) { combat_system_ = cs; }
 
     /// Get the ship database (read-only)
     const data::ShipDatabase& getShipDatabase() const { return ship_db_; }
@@ -285,6 +289,7 @@ private:
     systems::TargetingSystem* targeting_system_ = nullptr;
     systems::StationSystem* station_system_ = nullptr;
     systems::MovementSystem* movement_system_ = nullptr;
+    systems::CombatSystem* combat_system_ = nullptr;
 
     // Map socket → entity_id for connected players
     struct PlayerInfo {
