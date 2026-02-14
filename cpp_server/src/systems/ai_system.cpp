@@ -37,6 +37,9 @@ void AISystem::update(float delta_time) {
             case components::AI::State::Fleeing:
                 fleeBehavior(entity);
                 break;
+            case components::AI::State::Mining:
+                miningBehavior(entity);
+                break;
         }
     }
 }
@@ -46,6 +49,19 @@ void AISystem::idleBehavior(ecs::Entity* entity) {
     auto* pos = entity->getComponent<components::Position>();
     
     if (!ai || !pos) return;
+    
+    // Mining NPCs (passive with a MiningLaser) look for deposits
+    if (ai->behavior == components::AI::Behavior::Passive) {
+        auto* laser = entity->getComponent<components::MiningLaser>();
+        if (laser) {
+            ecs::Entity* deposit = findNearestDeposit(entity);
+            if (deposit) {
+                ai->target_entity_id = deposit->getId();
+                ai->state = components::AI::State::Approaching;
+                return;
+            }
+        }
+    }
     
     // Only aggressive NPCs actively seek targets
     if (ai->behavior != components::AI::Behavior::Aggressive) {
@@ -113,7 +129,14 @@ void AISystem::approachBehavior(ecs::Entity* entity) {
     // Otherwise fall back to orbit_distance.
     float engage = (ai->engagement_range > 0.0f) ? ai->engagement_range : ai->orbit_distance;
     
-    if (distance < std::min(engage, ai->orbit_distance)) {
+    // Check if target is a mineral deposit — transition to Mining instead of Orbiting
+    if (target->hasComponent<components::MineralDeposit>()) {
+        float mining_range = 10000.0f;  // default mining range
+        if (distance < mining_range) {
+            ai->state = components::AI::State::Mining;
+            return;
+        }
+    } else if (distance < std::min(engage, ai->orbit_distance)) {
         ai->state = components::AI::State::Orbiting;
         return;
     }
@@ -322,6 +345,84 @@ float AISystem::engagementRangeFromWeapon(ecs::Entity* entity) {
     auto* weapon = entity->getComponent<components::Weapon>();
     if (!weapon) return 0.0f;
     return weapon->optimal_range + weapon->falloff_range;
+}
+
+void AISystem::miningBehavior(ecs::Entity* entity) {
+    auto* ai = entity->getComponent<components::AI>();
+    auto* pos = entity->getComponent<components::Position>();
+    
+    if (!ai || !pos) return;
+    
+    // Check if target deposit still exists and is minable
+    if (ai->target_entity_id.empty()) {
+        ai->state = components::AI::State::Idle;
+        return;
+    }
+    
+    auto* target = world_->getEntity(ai->target_entity_id);
+    if (!target) {
+        ai->state = components::AI::State::Idle;
+        ai->target_entity_id.clear();
+        return;
+    }
+    
+    auto* deposit = target->getComponent<components::MineralDeposit>();
+    if (!deposit || deposit->isDepleted()) {
+        // Deposit exhausted — return to idle to find a new one
+        ai->state = components::AI::State::Idle;
+        ai->target_entity_id.clear();
+        return;
+    }
+    
+    // Check cargo capacity
+    auto* inv = entity->getComponent<components::Inventory>();
+    if (inv && inv->freeCapacity() <= 0.0f) {
+        // Cargo full — stop mining
+        ai->state = components::AI::State::Idle;
+        ai->target_entity_id.clear();
+        return;
+    }
+    
+    // Activate mining laser if not already active
+    auto* laser = entity->getComponent<components::MiningLaser>();
+    if (laser && !laser->active) {
+        laser->active = true;
+        laser->cycle_progress = 0.0f;
+        laser->target_deposit_id = ai->target_entity_id;
+    }
+}
+
+ecs::Entity* AISystem::findNearestDeposit(ecs::Entity* entity) {
+    auto* ai = entity->getComponent<components::AI>();
+    auto* pos = entity->getComponent<components::Position>();
+    if (!ai || !pos) return nullptr;
+    
+    auto all_entities = world_->getEntities<components::Position, components::MineralDeposit>();
+    
+    ecs::Entity* nearest = nullptr;
+    float best_dist = std::numeric_limits<float>::max();
+    
+    for (auto* candidate : all_entities) {
+        auto* dep = candidate->getComponent<components::MineralDeposit>();
+        if (!dep || dep->isDepleted()) continue;
+        
+        auto* dep_pos = candidate->getComponent<components::Position>();
+        if (!dep_pos) continue;
+        
+        float dx = dep_pos->x - pos->x;
+        float dy = dep_pos->y - pos->y;
+        float dz = dep_pos->z - pos->z;
+        float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
+        
+        if (dist > ai->awareness_range) continue;
+        
+        if (dist < best_dist) {
+            best_dist = dist;
+            nearest = candidate;
+        }
+    }
+    
+    return nearest;
 }
 
 } // namespace systems

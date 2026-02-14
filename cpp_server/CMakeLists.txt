@@ -89,6 +89,7 @@ set(SERVER_SOURCES
     src/systems/captain_memory_system.cpp
     src/systems/ship_fitting_system.cpp
     src/systems/warp_cinematic_system.cpp
+    src/systems/refining_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -154,6 +155,7 @@ set(SERVER_HEADERS
     include/systems/captain_memory_system.h
     include/systems/ship_fitting_system.h
     include/systems/warp_cinematic_system.h
+    include/systems/refining_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -280,6 +282,7 @@ if(BUILD_TESTS)
         src/systems/captain_memory_system.cpp
         src/systems/ship_fitting_system.cpp
         src/systems/warp_cinematic_system.cpp
+        src/systems/refining_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp
