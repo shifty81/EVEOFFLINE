@@ -287,7 +287,6 @@ public:
 ### Step 5: Testing Checklist
 
 **Unit Tests** (when OpenGL available):
-**Unit Tests** (when OpenGL available):
 - [ ] ShipPartLibrary initialization
 - [ ] Part retrieval by ID and type
 - [ ] Assembly configuration creation
