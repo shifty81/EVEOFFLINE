@@ -1413,7 +1413,7 @@ class DysonRingModule : public ecs::Component {
 public:
     std::string module_id;
     std::string system_id;
-    int current_tier = 1;               // 1–16 (16 = complete sphere)
+    int current_tier = 1;               // 1–16 (16 = complete ring)
     static constexpr int MAX_TIER = 16;
 
     // Per-tier material costs (simplified: total units needed for next tier)
