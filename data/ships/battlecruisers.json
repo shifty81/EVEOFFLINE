@@ -49,6 +49,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 3,
+      "drone_bays": 1,
+      "engine_count": 6,
+      "generation_seed": 56960
     }
   },
   "fenvar": {
@@ -101,6 +108,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 3,
+      "drone_bays": 2,
+      "engine_count": 6,
+      "generation_seed": 19617
     }
   },
   "marquis": {
@@ -155,6 +169,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 2,
+      "drone_bays": 2,
+      "engine_count": 6,
+      "generation_seed": 10518
     }
   },
   "herald": {
@@ -207,6 +228,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 5,
+      "launcher_hardpoints": 4,
+      "drone_bays": 2,
+      "engine_count": 4,
+      "generation_seed": 18110
     }
   }
 }

@@ -51,6 +51,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 1,
+      "drone_bays": 0,
+      "engine_count": 3,
+      "generation_seed": 6571
     }
   },
   "gyrhawk": {
@@ -105,6 +112,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 2,
+      "drone_bays": 0,
+      "engine_count": 2,
+      "generation_seed": 84553
     }
   },
   "duelliste": {
@@ -159,6 +173,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 1,
+      "drone_bays": 0,
+      "engine_count": 2,
+      "generation_seed": 73976
     }
   },
   "justicar": {
@@ -214,6 +235,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 2,
+      "drone_bays": 0,
+      "engine_count": 2,
+      "generation_seed": 2795
     }
   },
   "direwolf": {
@@ -268,6 +296,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 1,
+      "drone_bays": 1,
+      "engine_count": 2,
+      "generation_seed": 56923
     }
   },
   "frostvane": {
@@ -322,6 +357,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 4,
+      "launcher_hardpoints": 1,
+      "drone_bays": 1,
+      "engine_count": 3,
+      "generation_seed": 94800
     }
   },
   "talon": {
@@ -375,6 +417,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 56185
     }
   },
   "jaktfalk": {
@@ -428,6 +477,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 78543
     }
   },
   "eclair": {
@@ -481,6 +537,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 6667
     }
   },
   "templar": {
@@ -534,6 +597,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 1,
+      "drone_bays": 0,
+      "engine_count": 3,
+      "generation_seed": 31977
     }
   },
   "needlepoint": {
@@ -588,6 +658,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 57635
     }
   },
   "svellgyrhawk": {
@@ -642,6 +719,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 97372
     }
   },
   "fleuret": {
@@ -696,6 +780,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 1,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 28814
     }
   },
   "anathemist": {
@@ -750,6 +841,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 1,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 91147
     }
   },
   "duskrunner": {
@@ -805,6 +903,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 1,
+      "drone_bays": 1,
+      "engine_count": 3,
+      "generation_seed": 29541
     }
   },
   "spektor": {
@@ -860,6 +965,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 1,
+      "launcher_hardpoints": 0,
+      "drone_bays": 1,
+      "engine_count": 2,
+      "generation_seed": 1043
     }
   },
   "luminos": {
@@ -915,6 +1027,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 2,
+      "generation_seed": 10736
     }
   },
   "veiled_eye": {
@@ -970,6 +1089,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 1,
+      "launcher_hardpoints": 1,
+      "drone_bays": 1,
+      "engine_count": 2,
+      "generation_seed": 65244
     }
   },
   "shadowfang": {
@@ -1024,6 +1150,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 4,
+      "drone_bays": 0,
+      "engine_count": 2,
+      "generation_seed": 62709
     }
   },
   "frostbane": {
@@ -1078,6 +1211,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 4,
+      "drone_bays": 0,
+      "engine_count": 2,
+      "generation_seed": 80323
     }
   },
   "vengeresse": {
@@ -1132,6 +1272,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 1,
+      "launcher_hardpoints": 3,
+      "drone_bays": 0,
+      "engine_count": 3,
+      "generation_seed": 546
     }
   },
   "sanctifier": {
@@ -1186,6 +1333,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 1,
+      "launcher_hardpoints": 3,
+      "drone_bays": 0,
+      "engine_count": 3,
+      "generation_seed": 29142
     }
   }
 }

@@ -48,6 +48,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 0,
+      "launcher_hardpoints": 0,
+      "drone_bays": 1,
+      "engine_count": 2,
+      "generation_seed": 97134
     }
   },
   "drifthauler": {
@@ -99,6 +106,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 1,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 2,
+      "generation_seed": 24832
     }
   },
   "marchand_v": {
@@ -150,6 +164,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 0,
+      "launcher_hardpoints": 0,
+      "drone_bays": 1,
+      "engine_count": 2,
+      "generation_seed": 39112
     }
   },
   "wayfarer_hauler": {
@@ -201,6 +222,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 0,
+      "launcher_hardpoints": 0,
+      "drone_bays": 1,
+      "engine_count": 3,
+      "generation_seed": 60647
     }
   }
 }

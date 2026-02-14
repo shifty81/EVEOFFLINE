@@ -48,6 +48,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 0,
+      "drone_bays": 1,
+      "engine_count": 3,
+      "generation_seed": 54771
     }
   },
   "falk": {
@@ -98,6 +105,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 1,
+      "drone_bays": 1,
+      "engine_count": 3,
+      "generation_seed": 46875
     }
   },
   "revel": {
@@ -150,6 +164,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 1,
+      "drone_bays": 1,
+      "engine_count": 3,
+      "generation_seed": 50019
     }
   },
   "sentinel": {
@@ -201,6 +222,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 3,
+      "generation_seed": 21161
     }
   }
 }

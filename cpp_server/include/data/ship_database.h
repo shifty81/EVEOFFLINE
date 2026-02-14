@@ -61,6 +61,17 @@ struct ShipTemplate {
     Resistances shield_resists;
     Resistances armor_resists;
     Resistances hull_resists;
+
+    // Model generation data (for procedural ship model creation)
+    struct ModelData {
+        int turret_hardpoints = 0;
+        int launcher_hardpoints = 0;
+        int drone_bays = 0;
+        int engine_count = 2;
+        int generation_seed = 0;
+        bool has_model_data = false;  // true when model_data block exists in JSON
+    };
+    ModelData model_data;
 };
 
 /**

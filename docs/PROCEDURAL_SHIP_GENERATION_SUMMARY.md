@@ -346,10 +346,11 @@ docs/
 | **ShipGenerationRules** | ✅ Complete | All factions and classes |
 | **CMake Integration** | ✅ Complete | Added to build system |
 | **Documentation** | ✅ Complete | Usage guide, naming guide |
-| **Model Integration** | 🔄 Partial | Detail functions exist, assembly pending |
-| **JSON Data Update** | ⏳ Pending | Ship names need update |
+| **Model Integration** | ✅ Complete | Modular assembly with addPartToMesh() |
+| **JSON Data Update** | ✅ Complete | 102 ships with model_data (turrets, launchers, drones, engines, seed) |
+| **Server-Side Testing** | ✅ Complete | 6 test functions, 24 assertions (1139 total) |
 | **Procedural Texturing** | ⏳ Pending | Phase 4 |
-| **Testing** | ⏳ Pending | Requires OpenGL environment |
+| **Client-Side Testing** | ⏳ Pending | Requires OpenGL environment |
 
 ## Usage Example
 

@@ -48,6 +48,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 6,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 3,
+      "generation_seed": 64619
     }
   },
   "skarn": {
@@ -99,6 +106,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 7,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 2,
+      "generation_seed": 53716
     }
   },
   "vaillant": {
@@ -149,6 +163,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 6,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 85521
     }
   },
   "adjudicator": {
@@ -200,6 +221,13 @@
         "kinetic": 33,
         "explosive": 33
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 8,
+      "launcher_hardpoints": 0,
+      "drone_bays": 0,
+      "engine_count": 4,
+      "generation_seed": 69621
     }
   }
 }

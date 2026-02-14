@@ -61,6 +61,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 3,
+      "launcher_hardpoints": 0,
+      "drone_bays": 3,
+      "engine_count": 3,
+      "generation_seed": 75817
     }
   },
   "vasthold": {
@@ -122,6 +129,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 0,
+      "drone_bays": 2,
+      "engine_count": 2,
+      "generation_seed": 45331
     }
   },
   "excavon": {
@@ -187,6 +201,13 @@
         "kinetic": 40,
         "explosive": 40
       }
+    },
+    "model_data": {
+      "turret_hardpoints": 2,
+      "launcher_hardpoints": 0,
+      "drone_bays": 3,
+      "engine_count": 3,
+      "generation_seed": 53470
     }
   }
 }
