@@ -51,6 +51,7 @@
 #include "systems/combat_system.h"
 #include "systems/ai_system.h"
 #include "systems/mining_system.h"
+#include "systems/refining_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -7559,6 +7560,407 @@ void testAIMiningState() {
     assertTrue(ai->state != components::AI::State::Attacking, "Mining != Attacking");
 }
 
+// ==================== Dyson Ring Module Tests ====================
+
+void testDysonRingModuleTierProgress() {
+    std::cout << "\n=== DysonRing: Tier Progress ===" << std::endl;
+
+    ecs::World world;
+    auto* dyson = world.createEntity("dyson_1");
+    auto* mod = addComp<components::DysonRingModule>(dyson);
+    mod->module_id = "dyson_1";
+    mod->system_id = "asakai";
+    mod->current_tier = 1;
+    mod->materials_required = 1000.0f;
+    mod->materials_delivered = 0.0f;
+
+    assertTrue(mod->current_tier == 1, "Starts at tier 1");
+    assertTrue(!mod->isComplete(), "Not complete at tier 1");
+    assertTrue(approxEqual(static_cast<float>(mod->powerOutputMW()), 500.0f), "Tier 1 power = 500 MW");
+    assertTrue(approxEqual(mod->tierProgress(), 0.0f), "0% progress at start");
+
+    // Deliver some materials
+    mod->materials_delivered = 500.0f;
+    assertTrue(approxEqual(mod->tierProgress(), 0.5f), "50% after half materials");
+
+    // Not enough to advance
+    assertTrue(!mod->advanceTier(), "Cannot advance without full materials");
+    assertTrue(mod->current_tier == 1, "Still tier 1");
+}
+
+void testDysonRingModuleAdvanceTier() {
+    std::cout << "\n=== DysonRing: Advance Tier ===" << std::endl;
+
+    ecs::World world;
+    auto* dyson = world.createEntity("dyson_2");
+    auto* mod = addComp<components::DysonRingModule>(dyson);
+    mod->materials_required = 1000.0f;
+    mod->materials_delivered = 1000.0f;
+
+    assertTrue(mod->advanceTier(), "Advance from tier 1 to 2");
+    assertTrue(mod->current_tier == 2, "Now tier 2");
+    assertTrue(approxEqual(static_cast<float>(mod->powerOutputMW()), 1000.0f), "Tier 2 power = 1000 MW");
+    // Next tier costs 20% more
+    assertTrue(mod->materials_required > 1000.0f, "Next tier costs more");
+}
+
+void testDysonRingModuleMaxTier() {
+    std::cout << "\n=== DysonRing: Max Tier ===" << std::endl;
+
+    ecs::World world;
+    auto* dyson = world.createEntity("dyson_3");
+    auto* mod = addComp<components::DysonRingModule>(dyson);
+    mod->current_tier = 16;
+
+    assertTrue(mod->isComplete(), "Complete at tier 16");
+    assertTrue(!mod->advanceTier(), "Cannot advance past max tier");
+    assertTrue(mod->current_tier == 16, "Still tier 16");
+    assertTrue(approxEqual(static_cast<float>(mod->powerOutputMW()), 8000.0f), "Tier 16 power = 8000 MW");
+}
+
+// ==================== Refining System Tests ====================
+
+void testRefiningStartJob() {
+    std::cout << "\n=== Refining: Start Job ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refineSys(&world);
+
+    // Create station with refining facility
+    auto* station = world.createEntity("station_1");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->station_id = "station_1";
+    facility->base_efficiency = 0.50f;
+    facility->recipes.push_back({"Veldspar", "Tritanium", 415.0f});
+
+    // Create player with ore in inventory
+    auto* player = world.createEntity("player_1");
+    auto* inv = addComp<components::Inventory>(player);
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.name = "Veldspar";
+    ore.type = "ore";
+    ore.quantity = 100;
+    ore.volume = 0.1f;
+    inv->items.push_back(ore);
+
+    std::string jobId = refineSys.startRefining("station_1", "player_1", "Veldspar", 100);
+    assertTrue(!jobId.empty(), "Refining job created");
+    assertTrue(refineSys.getActiveJobCount("station_1") == 1, "One active job");
+
+    // Ore removed from inventory
+    assertTrue(inv->items[0].quantity == 0, "Ore deducted from inventory");
+}
+
+void testRefiningCompletion() {
+    std::cout << "\n=== Refining: Job Completion ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refineSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->station_id = "station_1";
+    facility->base_efficiency = 0.50f;
+    facility->recipes.push_back({"Veldspar", "Tritanium", 415.0f});
+
+    auto* player = world.createEntity("player_1");
+    auto* inv = addComp<components::Inventory>(player);
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.name = "Veldspar";
+    ore.quantity = 100;
+    ore.volume = 0.1f;
+    inv->items.push_back(ore);
+
+    refineSys.startRefining("station_1", "player_1", "Veldspar", 100);
+
+    // Run long enough to complete (default 30s)
+    refineSys.update(31.0f);
+
+    // Minerals should be in player inventory
+    bool foundMineral = false;
+    for (const auto& item : inv->items) {
+        if (item.item_id == "Tritanium") {
+            foundMineral = true;
+            // 100 ore * 415 yield * 0.50 efficiency = 20750
+            assertTrue(item.quantity == 20750, "Correct mineral output (100 * 415 * 0.5)");
+        }
+    }
+    assertTrue(foundMineral, "Tritanium delivered to inventory");
+    assertTrue(refineSys.getActiveJobCount("station_1") == 0, "Job completed and removed");
+}
+
+void testRefiningNoRecipe() {
+    std::cout << "\n=== Refining: No Recipe ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refineSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->station_id = "station_1";
+    facility->recipes.push_back({"Veldspar", "Tritanium", 415.0f});
+
+    auto* player = world.createEntity("player_1");
+    auto* inv = addComp<components::Inventory>(player);
+    components::Inventory::Item ore;
+    ore.item_id = "UnknownOre";
+    ore.name = "UnknownOre";
+    ore.quantity = 100;
+    inv->items.push_back(ore);
+
+    std::string jobId = refineSys.startRefining("station_1", "player_1", "UnknownOre", 100);
+    assertTrue(jobId.empty(), "No job for unknown ore type");
+}
+
+void testRefiningSeedRecipes() {
+    std::cout << "\n=== Refining: Seed Standard Recipes ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refineSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    addComp<components::RefiningFacility>(station);
+
+    refineSys.seedStandardRecipes("station_1");
+
+    auto* facility = station->getComponent<components::RefiningFacility>();
+    assertTrue(facility->recipes.size() == 7, "7 standard ore recipes seeded");
+    assertTrue(facility->getOutputMineral("Veldspar") == "Tritanium", "Veldspar → Tritanium");
+    assertTrue(facility->getOutputMineral("Scordite") == "Pyerite", "Scordite → Pyerite");
+    assertTrue(facility->getOutputMineral("Arkonor") == "Megacyte", "Arkonor → Megacyte");
+}
+
+void testRefiningInsufficientOre() {
+    std::cout << "\n=== Refining: Insufficient Ore ===" << std::endl;
+
+    ecs::World world;
+    systems::RefiningSystem refineSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->recipes.push_back({"Veldspar", "Tritanium", 415.0f});
+
+    auto* player = world.createEntity("player_1");
+    auto* inv = addComp<components::Inventory>(player);
+    components::Inventory::Item ore;
+    ore.item_id = "Veldspar";
+    ore.quantity = 10;
+    inv->items.push_back(ore);
+
+    // Try to refine more than we have
+    std::string jobId = refineSys.startRefining("station_1", "player_1", "Veldspar", 50);
+    assertTrue(jobId.empty(), "Cannot refine more ore than in inventory");
+    assertTrue(inv->items[0].quantity == 10, "Ore not deducted on failure");
+}
+
+// ==================== Mining AI NPC Behavior Tests ====================
+
+void testAIMiningNPCTargetsDeposit() {
+    std::cout << "\n=== AI Mining NPC: Targets Deposit ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    // Create a deposit
+    std::string depId = mineSys.createDeposit("Veldspar", 5000.0f, 100.0f, 0.0f, 0.0f);
+
+    // Create an NPC miner with AI in Mining state
+    auto* npc = world.createEntity("npc_miner_1");
+    auto* ai = addComp<components::AI>(npc);
+    ai->state = components::AI::State::Mining;
+    ai->target_entity_id = depId;
+
+    auto* pos = addComp<components::Position>(npc);
+    pos->x = 100.0f; // near the deposit
+    auto* laser = addComp<components::MiningLaser>(npc);
+    laser->yield_per_cycle = 50.0f;
+    laser->cycle_time = 10.0f;
+    addComp<components::Inventory>(npc);
+
+    // NPC starts mining the deposit
+    bool started = mineSys.startMining("npc_miner_1", depId);
+    assertTrue(started, "NPC miner started mining");
+    assertTrue(laser->active, "NPC laser active");
+
+    // Run a cycle
+    mineSys.update(10.0f);
+    auto* inv = npc->getComponent<components::Inventory>();
+    assertTrue(inv->items.size() == 1, "NPC mined ore into inventory");
+    assertTrue(inv->items[0].item_id == "Veldspar", "NPC mined Veldspar");
+}
+
+void testAIMiningNPCStopsOnDepleted() {
+    std::cout << "\n=== AI Mining NPC: Stops On Depleted ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+
+    // Small deposit that will deplete
+    std::string depId = mineSys.createDeposit("Scordite", 30.0f, 0.0f, 0.0f, 0.0f);
+
+    auto* npc = world.createEntity("npc_miner_2");
+    auto* ai = addComp<components::AI>(npc);
+    ai->state = components::AI::State::Mining;
+    ai->target_entity_id = depId;
+
+    addComp<components::Position>(npc);
+    auto* laser = addComp<components::MiningLaser>(npc);
+    laser->yield_per_cycle = 50.0f;
+    laser->cycle_time = 10.0f;
+    auto* inv = addComp<components::Inventory>(npc);
+    inv->max_capacity = 500.0f;
+
+    mineSys.startMining("npc_miner_2", depId);
+    mineSys.update(10.0f); // mine 30 units (clamped to deposit remaining)
+
+    auto* dep = world.getEntity(depId)->getComponent<components::MineralDeposit>();
+    assertTrue(dep->isDepleted(), "Deposit depleted after mining");
+    assertTrue(!laser->active, "Laser stops when deposit depleted");
+}
+
+// ==================== Mineral Economy Tests ====================
+
+void testMineralMarketPricing() {
+    std::cout << "\n=== Economy: Mineral Market Pricing ===" << std::endl;
+
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    // Seed sell orders for common minerals (NPC market makers)
+    auto* npcSeller = world.createEntity("npc_market");
+    auto* npcPlayer = addComp<components::Player>(npcSeller);
+    npcPlayer->isk = 1e12; // market maker funds
+
+    // Base mineral prices (ISK per unit)
+    struct MineralPrice { const char* mineral; double price; int qty; };
+    MineralPrice prices[] = {
+        {"Tritanium",  5.0,  100000},
+        {"Pyerite",    10.0,  50000},
+        {"Mexallon",   40.0,  25000},
+        {"Isogen",     70.0,  10000},
+        {"Nocxium",   500.0,   5000},
+        {"Zydrine",  1000.0,   2000},
+        {"Megacyte", 2500.0,   1000},
+    };
+
+    for (const auto& mp : prices) {
+        marketSys.placeSellOrder("station_1", "npc_market",
+                                 mp.mineral, mp.mineral, mp.qty, mp.price);
+    }
+
+    assertTrue(marketSys.getOrderCount("station_1") == 7, "7 mineral sell orders seeded");
+
+    double tritPrice = marketSys.getLowestSellPrice("station_1", "Tritanium");
+    assertTrue(approxEqual(static_cast<float>(tritPrice), 5.0f), "Tritanium at 5 ISK");
+
+    double megaPrice = marketSys.getLowestSellPrice("station_1", "Megacyte");
+    assertTrue(approxEqual(static_cast<float>(megaPrice), 2500.0f), "Megacyte at 2500 ISK");
+}
+
+void testMineralMarketBuy() {
+    std::cout << "\n=== Economy: Buy Minerals from Market ===" << std::endl;
+
+    ecs::World world;
+    systems::MarketSystem marketSys(&world);
+
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+
+    auto* seller = world.createEntity("npc_seller");
+    auto* sellerPc = addComp<components::Player>(seller);
+    sellerPc->isk = 1e12;
+
+    marketSys.placeSellOrder("station_1", "npc_seller", "Tritanium", "Tritanium", 10000, 5.0);
+
+    auto* buyer = world.createEntity("buyer_1");
+    auto* buyerPc = addComp<components::Player>(buyer);
+    buyerPc->isk = 1000.0;
+
+    int bought = marketSys.buyFromMarket("station_1", "buyer_1", "Tritanium", 100);
+    assertTrue(bought == 100, "Bought 100 Tritanium");
+    assertTrue(buyerPc->isk < 1000.0, "ISK deducted from buyer");
+}
+
+void testFullEconomyLoop() {
+    std::cout << "\n=== Economy: Full Loop (Mine → Refine → Sell) ===" << std::endl;
+
+    ecs::World world;
+    systems::MiningSystem mineSys(&world);
+    systems::RefiningSystem refineSys(&world);
+    systems::MarketSystem marketSys(&world);
+
+    // Setup station
+    auto* station = world.createEntity("station_1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_1";
+    auto* facility = addComp<components::RefiningFacility>(station);
+    facility->station_id = "station_1";
+    facility->base_efficiency = 0.50f;
+    facility->recipes.push_back({"Veldspar", "Tritanium", 415.0f});
+
+    // NPC buy order for Tritanium
+    auto* npcBuyer = world.createEntity("npc_buyer");
+    auto* npcBuyerPc = addComp<components::Player>(npcBuyer);
+    npcBuyerPc->isk = 1e12;
+    marketSys.placeBuyOrder("station_1", "npc_buyer", "Tritanium", "Tritanium", 100000, 4.5);
+
+    // Create deposit
+    std::string depId = mineSys.createDeposit("Veldspar", 10000.0f, 0.0f, 0.0f, 0.0f);
+
+    // Create player miner
+    auto* player = world.createEntity("player_1");
+    auto* playerPc = addComp<components::Player>(player);
+    playerPc->isk = 10000.0;
+    addComp<components::Position>(player);
+    auto* laser = addComp<components::MiningLaser>(player);
+    laser->yield_per_cycle = 100.0f;
+    laser->cycle_time = 10.0f;
+    auto* inv = addComp<components::Inventory>(player);
+    inv->max_capacity = 5000.0f;
+
+    // Step 1: Mine
+    mineSys.startMining("player_1", depId);
+    mineSys.update(10.0f);
+
+    assertTrue(inv->items.size() == 1, "Mined ore in inventory");
+    int oreQty = inv->items[0].quantity;
+    assertTrue(oreQty == 100, "Mined 100 Veldspar");
+
+    // Step 2: Refine
+    std::string jobId = refineSys.startRefining("station_1", "player_1", "Veldspar", oreQty);
+    assertTrue(!jobId.empty(), "Refining job started");
+    refineSys.update(31.0f);
+
+    bool hasTrit = false;
+    int tritQty = 0;
+    for (const auto& item : inv->items) {
+        if (item.item_id == "Tritanium") {
+            hasTrit = true;
+            tritQty = item.quantity;
+        }
+    }
+    assertTrue(hasTrit, "Tritanium refined from Veldspar");
+    assertTrue(tritQty > 0, "Got some Tritanium");
+
+    // Step 3: Sell on market
+    double iskBefore = playerPc->isk;
+    std::string orderId = marketSys.placeSellOrder("station_1", "player_1",
+                                                    "Tritanium", "Tritanium",
+                                                    tritQty, 4.5);
+    assertTrue(!orderId.empty(), "Sell order placed for refined minerals");
+    assertTrue(playerPc->isk <= iskBefore, "Broker fee applied");
+
+    std::cout << "  Full loop: Mined " << oreQty << " Veldspar → Refined "
+              << tritQty << " Tritanium → Listed on market" << std::endl;
+}
+
 // ==================== Ship Generation Model Data Tests ====================
 
 void testShipModelDataParsed() {
@@ -8163,6 +8565,27 @@ int main() {
 
     // AI mining state test
     testAIMiningState();
+
+    // Dyson Ring module tests
+    testDysonRingModuleTierProgress();
+    testDysonRingModuleAdvanceTier();
+    testDysonRingModuleMaxTier();
+
+    // Refining system tests
+    testRefiningStartJob();
+    testRefiningCompletion();
+    testRefiningNoRecipe();
+    testRefiningSeedRecipes();
+    testRefiningInsufficientOre();
+
+    // Mining AI NPC behavior tests
+    testAIMiningNPCTargetsDeposit();
+    testAIMiningNPCStopsOnDepleted();
+
+    // Mineral economy tests
+    testMineralMarketPricing();
+    testMineralMarketBuy();
+    testFullEconomyLoop();
 
     // Ship generation model data tests
     testShipModelDataParsed();
