@@ -507,6 +507,214 @@ std::string WorldPersistence::serializeEntity(
         json << "]}";
     }
 
+    // Station
+    auto* sta = entity->getComponent<components::Station>();
+    if (sta) {
+        json << ",\"station\":{"
+             << "\"station_name\":\"" << escapeJson(sta->station_name) << "\""
+             << ",\"docking_range\":" << sta->docking_range
+             << ",\"repair_cost_per_hp\":" << sta->repair_cost_per_hp
+             << ",\"docked_count\":" << sta->docked_count
+             << "}";
+    }
+
+    // Docked
+    auto* dck = entity->getComponent<components::Docked>();
+    if (dck) {
+        json << ",\"docked\":{"
+             << "\"station_id\":\"" << escapeJson(dck->station_id) << "\""
+             << "}";
+    }
+
+    // Wreck
+    auto* wrk = entity->getComponent<components::Wreck>();
+    if (wrk) {
+        json << ",\"wreck\":{"
+             << "\"source_entity_id\":\"" << escapeJson(wrk->source_entity_id) << "\""
+             << ",\"lifetime_remaining\":" << wrk->lifetime_remaining
+             << ",\"salvaged\":" << (wrk->salvaged ? "true" : "false")
+             << "}";
+    }
+
+    // CaptainPersonality
+    auto* cp = entity->getComponent<components::CaptainPersonality>();
+    if (cp) {
+        json << ",\"captain_personality\":{"
+             << "\"aggression\":" << cp->aggression
+             << ",\"sociability\":" << cp->sociability
+             << ",\"optimism\":" << cp->optimism
+             << ",\"professionalism\":" << cp->professionalism
+             << ",\"loyalty\":" << cp->loyalty
+             << ",\"paranoia\":" << cp->paranoia
+             << ",\"ambition\":" << cp->ambition
+             << ",\"adaptability\":" << cp->adaptability
+             << ",\"captain_name\":\"" << escapeJson(cp->captain_name) << "\""
+             << ",\"faction\":\"" << escapeJson(cp->faction) << "\""
+             << "}";
+    }
+
+    // FleetMorale
+    auto* fmor = entity->getComponent<components::FleetMorale>();
+    if (fmor) {
+        json << ",\"fleet_morale\":{"
+             << "\"morale_score\":" << fmor->morale_score
+             << ",\"wins\":" << fmor->wins
+             << ",\"losses\":" << fmor->losses
+             << ",\"ships_lost\":" << fmor->ships_lost
+             << ",\"times_saved_by_player\":" << fmor->times_saved_by_player
+             << ",\"times_player_saved\":" << fmor->times_player_saved
+             << ",\"missions_together\":" << fmor->missions_together
+             << ",\"morale_state\":\"" << escapeJson(fmor->morale_state) << "\""
+             << "}";
+    }
+
+    // CaptainRelationship
+    auto* cr = entity->getComponent<components::CaptainRelationship>();
+    if (cr) {
+        json << ",\"captain_relationship\":{\"relationships\":[";
+        bool first_r = true;
+        for (const auto& r : cr->relationships) {
+            if (!first_r) json << ",";
+            first_r = false;
+            json << "{\"other_captain_id\":\"" << escapeJson(r.other_captain_id) << "\""
+                 << ",\"affinity\":" << r.affinity << "}";
+        }
+        json << "]}";
+    }
+
+    // EmotionalState
+    auto* es = entity->getComponent<components::EmotionalState>();
+    if (es) {
+        json << ",\"emotional_state\":{"
+             << "\"confidence\":" << es->confidence
+             << ",\"trust_in_player\":" << es->trust_in_player
+             << ",\"fatigue\":" << es->fatigue
+             << ",\"hope\":" << es->hope
+             << "}";
+    }
+
+    // CaptainMemory
+    auto* cm = entity->getComponent<components::CaptainMemory>();
+    if (cm) {
+        json << ",\"captain_memory\":{\"max_memories\":" << cm->max_memories
+             << ",\"memories\":[";
+        bool first_m = true;
+        for (const auto& m : cm->memories) {
+            if (!first_m) json << ",";
+            first_m = false;
+            json << "{\"event_type\":\"" << escapeJson(m.event_type) << "\""
+                 << ",\"context\":\"" << escapeJson(m.context) << "\""
+                 << ",\"timestamp\":" << m.timestamp
+                 << ",\"emotional_weight\":" << m.emotional_weight << "}";
+        }
+        json << "]}";
+    }
+
+    // FleetFormation
+    auto* ff = entity->getComponent<components::FleetFormation>();
+    if (ff) {
+        json << ",\"fleet_formation\":{"
+             << "\"formation\":" << static_cast<int>(ff->formation)
+             << ",\"slot_index\":" << ff->slot_index
+             << ",\"offset_x\":" << ff->offset_x
+             << ",\"offset_y\":" << ff->offset_y
+             << ",\"offset_z\":" << ff->offset_z
+             << "}";
+    }
+
+    // FleetCargoPool
+    auto* fcp = entity->getComponent<components::FleetCargoPool>();
+    if (fcp) {
+        json << ",\"fleet_cargo_pool\":{"
+             << "\"total_capacity\":" << fcp->total_capacity
+             << ",\"used_capacity\":" << fcp->used_capacity
+             << ",\"pooled_items\":{";
+        bool first_pi = true;
+        for (const auto& [item_type, qty] : fcp->pooled_items) {
+            if (!first_pi) json << ",";
+            first_pi = false;
+            json << "\"" << escapeJson(item_type) << "\":" << qty;
+        }
+        json << "},\"contributor_ship_ids\":[";
+        bool first_cs = true;
+        for (const auto& sid : fcp->contributor_ship_ids) {
+            if (!first_cs) json << ",";
+            first_cs = false;
+            json << "\"" << escapeJson(sid) << "\"";
+        }
+        json << "]}";
+    }
+
+    // RumorLog
+    auto* rl = entity->getComponent<components::RumorLog>();
+    if (rl) {
+        json << ",\"rumor_log\":{\"rumors\":[";
+        bool first_ru = true;
+        for (const auto& r : rl->rumors) {
+            if (!first_ru) json << ",";
+            first_ru = false;
+            json << "{\"rumor_id\":\"" << escapeJson(r.rumor_id) << "\""
+                 << ",\"text\":\"" << escapeJson(r.text) << "\""
+                 << ",\"belief_strength\":" << r.belief_strength
+                 << ",\"personally_witnessed\":" << (r.personally_witnessed ? "true" : "false")
+                 << ",\"times_heard\":" << r.times_heard << "}";
+        }
+        json << "]}";
+    }
+
+    // MineralDeposit
+    auto* md = entity->getComponent<components::MineralDeposit>();
+    if (md) {
+        json << ",\"mineral_deposit\":{"
+             << "\"mineral_type\":\"" << escapeJson(md->mineral_type) << "\""
+             << ",\"quantity_remaining\":" << md->quantity_remaining
+             << ",\"max_quantity\":" << md->max_quantity
+             << ",\"yield_rate\":" << md->yield_rate
+             << ",\"volume_per_unit\":" << md->volume_per_unit
+             << "}";
+    }
+
+    // SystemResources
+    auto* sr = entity->getComponent<components::SystemResources>();
+    if (sr) {
+        json << ",\"system_resources\":{\"resources\":[";
+        bool first_sr = true;
+        for (const auto& r : sr->resources) {
+            if (!first_sr) json << ",";
+            first_sr = false;
+            json << "{\"mineral_type\":\"" << escapeJson(r.mineral_type) << "\""
+                 << ",\"total_quantity\":" << r.total_quantity
+                 << ",\"remaining_quantity\":" << r.remaining_quantity << "}";
+        }
+        json << "]}";
+    }
+
+    // MarketHub
+    auto* mh = entity->getComponent<components::MarketHub>();
+    if (mh) {
+        json << ",\"market_hub\":{"
+             << "\"station_id\":\"" << escapeJson(mh->station_id) << "\""
+             << ",\"broker_fee_rate\":" << mh->broker_fee_rate
+             << ",\"sales_tax_rate\":" << mh->sales_tax_rate
+             << ",\"orders\":[";
+        bool first_o = true;
+        for (const auto& o : mh->orders) {
+            if (!first_o) json << ",";
+            first_o = false;
+            json << "{\"order_id\":\"" << escapeJson(o.order_id) << "\""
+                 << ",\"item_id\":\"" << escapeJson(o.item_id) << "\""
+                 << ",\"item_name\":\"" << escapeJson(o.item_name) << "\""
+                 << ",\"owner_id\":\"" << escapeJson(o.owner_id) << "\""
+                 << ",\"is_buy_order\":" << (o.is_buy_order ? "true" : "false")
+                 << ",\"price_per_unit\":" << o.price_per_unit
+                 << ",\"quantity\":" << o.quantity
+                 << ",\"quantity_remaining\":" << o.quantity_remaining
+                 << ",\"duration_remaining\":" << o.duration_remaining
+                 << ",\"fulfilled\":" << (o.fulfilled ? "true" : "false") << "}";
+        }
+        json << "]}";
+    }
+
     json << "}";
     return json.str();
 }
@@ -1106,6 +1314,385 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
         }
 
         entity->addComponent(std::move(cb));
+    }
+
+    // Station
+    std::string sta_json = extractObject(json, "station");
+    if (!sta_json.empty()) {
+        auto sta = std::make_unique<components::Station>();
+        sta->station_name      = extractString(sta_json, "station_name");
+        sta->docking_range     = extractFloat(sta_json, "\"docking_range\":", 2500.0f);
+        sta->repair_cost_per_hp = extractFloat(sta_json, "\"repair_cost_per_hp\":", 1.0f);
+        sta->docked_count      = extractInt(sta_json, "\"docked_count\":");
+        entity->addComponent(std::move(sta));
+    }
+
+    // Docked
+    std::string dck_json = extractObject(json, "docked");
+    if (!dck_json.empty()) {
+        auto dck = std::make_unique<components::Docked>();
+        dck->station_id = extractString(dck_json, "station_id");
+        entity->addComponent(std::move(dck));
+    }
+
+    // Wreck
+    std::string wrk_json = extractObject(json, "wreck");
+    if (!wrk_json.empty()) {
+        auto wrk = std::make_unique<components::Wreck>();
+        wrk->source_entity_id   = extractString(wrk_json, "source_entity_id");
+        wrk->lifetime_remaining = extractFloat(wrk_json, "\"lifetime_remaining\":", 1800.0f);
+        wrk->salvaged           = extractBool(wrk_json, "\"salvaged\":", false);
+        entity->addComponent(std::move(wrk));
+    }
+
+    // CaptainPersonality
+    std::string cp_json = extractObject(json, "captain_personality");
+    if (!cp_json.empty()) {
+        auto cp = std::make_unique<components::CaptainPersonality>();
+        cp->aggression       = extractFloat(cp_json, "\"aggression\":", 0.5f);
+        cp->sociability      = extractFloat(cp_json, "\"sociability\":", 0.5f);
+        cp->optimism         = extractFloat(cp_json, "\"optimism\":", 0.5f);
+        cp->professionalism  = extractFloat(cp_json, "\"professionalism\":", 0.5f);
+        cp->loyalty          = extractFloat(cp_json, "\"loyalty\":", 0.5f);
+        cp->paranoia         = extractFloat(cp_json, "\"paranoia\":", 0.5f);
+        cp->ambition         = extractFloat(cp_json, "\"ambition\":", 0.5f);
+        cp->adaptability     = extractFloat(cp_json, "\"adaptability\":", 0.5f);
+        cp->captain_name     = extractString(cp_json, "captain_name");
+        cp->faction          = extractString(cp_json, "faction");
+        entity->addComponent(std::move(cp));
+    }
+
+    // FleetMorale
+    std::string fmor_json = extractObject(json, "fleet_morale");
+    if (!fmor_json.empty()) {
+        auto fmor = std::make_unique<components::FleetMorale>();
+        fmor->morale_score          = extractFloat(fmor_json, "\"morale_score\":", 0.0f);
+        fmor->wins                  = extractInt(fmor_json, "\"wins\":");
+        fmor->losses                = extractInt(fmor_json, "\"losses\":");
+        fmor->ships_lost            = extractInt(fmor_json, "\"ships_lost\":");
+        fmor->times_saved_by_player = extractInt(fmor_json, "\"times_saved_by_player\":");
+        fmor->times_player_saved    = extractInt(fmor_json, "\"times_player_saved\":");
+        fmor->missions_together     = extractInt(fmor_json, "\"missions_together\":");
+        fmor->morale_state          = extractString(fmor_json, "morale_state");
+        if (fmor->morale_state.empty()) fmor->morale_state = "Steady";
+        entity->addComponent(std::move(fmor));
+    }
+
+    // CaptainRelationship
+    std::string cr_json = extractObject(json, "captain_relationship");
+    if (!cr_json.empty()) {
+        auto cr = std::make_unique<components::CaptainRelationship>();
+        std::string rel_key = "\"relationships\"";
+        size_t rel_pos = cr_json.find(rel_key);
+        if (rel_pos != std::string::npos) {
+            size_t arr_start = cr_json.find("[", rel_pos);
+            if (arr_start != std::string::npos) {
+                int bracket_depth = 1;
+                size_t arr_end = arr_start + 1;
+                while (arr_end < cr_json.size() && bracket_depth > 0) {
+                    if (cr_json[arr_end] == '[') ++bracket_depth;
+                    else if (cr_json[arr_end] == ']') --bracket_depth;
+                    if (bracket_depth > 0) ++arr_end;
+                }
+                if (bracket_depth == 0) {
+                    std::string content = cr_json.substr(arr_start + 1, arr_end - arr_start - 1);
+                    int depth = 0;
+                    size_t obj_start = std::string::npos;
+                    for (size_t i = 0; i < content.size(); ++i) {
+                        if (content[i] == '{') {
+                            if (depth == 0) obj_start = i;
+                            ++depth;
+                        } else if (content[i] == '}') {
+                            --depth;
+                            if (depth == 0 && obj_start != std::string::npos) {
+                                std::string rj = content.substr(obj_start, i - obj_start + 1);
+                                components::CaptainRelationship::Relationship rel;
+                                rel.other_captain_id = extractString(rj, "other_captain_id");
+                                rel.affinity         = extractFloat(rj, "\"affinity\":", 0.0f);
+                                cr->relationships.push_back(rel);
+                                obj_start = std::string::npos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        entity->addComponent(std::move(cr));
+    }
+
+    // EmotionalState
+    std::string es_json = extractObject(json, "emotional_state");
+    if (!es_json.empty()) {
+        auto es = std::make_unique<components::EmotionalState>();
+        es->confidence      = extractFloat(es_json, "\"confidence\":", 50.0f);
+        es->trust_in_player = extractFloat(es_json, "\"trust_in_player\":", 50.0f);
+        es->fatigue         = extractFloat(es_json, "\"fatigue\":", 0.0f);
+        es->hope            = extractFloat(es_json, "\"hope\":", 50.0f);
+        entity->addComponent(std::move(es));
+    }
+
+    // CaptainMemory
+    std::string cm_json = extractObject(json, "captain_memory");
+    if (!cm_json.empty()) {
+        auto cm = std::make_unique<components::CaptainMemory>();
+        cm->max_memories = extractInt(cm_json, "\"max_memories\":", 50);
+        std::string mem_key = "\"memories\"";
+        size_t mem_pos = cm_json.find(mem_key);
+        if (mem_pos != std::string::npos) {
+            size_t arr_start = cm_json.find("[", mem_pos);
+            if (arr_start != std::string::npos) {
+                int bracket_depth = 1;
+                size_t arr_end = arr_start + 1;
+                while (arr_end < cm_json.size() && bracket_depth > 0) {
+                    if (cm_json[arr_end] == '[') ++bracket_depth;
+                    else if (cm_json[arr_end] == ']') --bracket_depth;
+                    if (bracket_depth > 0) ++arr_end;
+                }
+                if (bracket_depth == 0) {
+                    std::string content = cm_json.substr(arr_start + 1, arr_end - arr_start - 1);
+                    int depth = 0;
+                    size_t obj_start = std::string::npos;
+                    for (size_t i = 0; i < content.size(); ++i) {
+                        if (content[i] == '{') {
+                            if (depth == 0) obj_start = i;
+                            ++depth;
+                        } else if (content[i] == '}') {
+                            --depth;
+                            if (depth == 0 && obj_start != std::string::npos) {
+                                std::string mj = content.substr(obj_start, i - obj_start + 1);
+                                components::CaptainMemory::MemoryEntry entry;
+                                entry.event_type       = extractString(mj, "event_type");
+                                entry.context          = extractString(mj, "context");
+                                entry.timestamp        = extractFloat(mj, "\"timestamp\":", 0.0f);
+                                entry.emotional_weight = extractFloat(mj, "\"emotional_weight\":", 0.0f);
+                                cm->memories.push_back(entry);
+                                obj_start = std::string::npos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        entity->addComponent(std::move(cm));
+    }
+
+    // FleetFormation
+    std::string ff_json = extractObject(json, "fleet_formation");
+    if (!ff_json.empty()) {
+        auto ff = std::make_unique<components::FleetFormation>();
+        int ft = extractInt(ff_json, "\"formation\":");
+        ff->formation  = static_cast<components::FleetFormation::FormationType>(ft);
+        ff->slot_index = extractInt(ff_json, "\"slot_index\":");
+        ff->offset_x   = extractFloat(ff_json, "\"offset_x\":", 0.0f);
+        ff->offset_y   = extractFloat(ff_json, "\"offset_y\":", 0.0f);
+        ff->offset_z   = extractFloat(ff_json, "\"offset_z\":", 0.0f);
+        entity->addComponent(std::move(ff));
+    }
+
+    // FleetCargoPool
+    std::string fcp_json = extractObject(json, "fleet_cargo_pool");
+    if (!fcp_json.empty()) {
+        auto fcp = std::make_unique<components::FleetCargoPool>();
+        fcp->total_capacity = static_cast<uint64_t>(extractDouble(fcp_json, "\"total_capacity\":", 0.0));
+        fcp->used_capacity  = static_cast<uint64_t>(extractDouble(fcp_json, "\"used_capacity\":", 0.0));
+
+        std::string pi_json = extractObject(fcp_json, "pooled_items");
+        if (!pi_json.empty()) {
+            size_t pos = 0;
+            while (pos < pi_json.size()) {
+                size_t q1 = pi_json.find('\"', pos);
+                if (q1 == std::string::npos) break;
+                size_t q2 = pi_json.find('\"', q1 + 1);
+                if (q2 == std::string::npos) break;
+                std::string key = pi_json.substr(q1 + 1, q2 - q1 - 1);
+                size_t colon = pi_json.find(':', q2 + 1);
+                if (colon == std::string::npos) break;
+                size_t vs = colon + 1;
+                while (vs < pi_json.size() && pi_json[vs] == ' ') ++vs;
+                size_t ve = vs;
+                while (ve < pi_json.size() && (std::isdigit(pi_json[ve]) || pi_json[ve] == '.' || pi_json[ve] == '-' || pi_json[ve] == 'e' || pi_json[ve] == 'E' || pi_json[ve] == '+')) ++ve;
+                if (ve > vs) {
+                    uint64_t val = static_cast<uint64_t>(std::stod(pi_json.substr(vs, ve - vs)));
+                    fcp->pooled_items[key] = val;
+                }
+                pos = ve;
+            }
+        }
+
+        std::string cs_key = "\"contributor_ship_ids\"";
+        size_t cs_pos = fcp_json.find(cs_key);
+        if (cs_pos != std::string::npos) {
+            size_t arr_start = fcp_json.find("[", cs_pos);
+            size_t arr_end = fcp_json.find("]", arr_start);
+            if (arr_start != std::string::npos && arr_end != std::string::npos) {
+                std::string arr_content = fcp_json.substr(arr_start + 1, arr_end - arr_start - 1);
+                size_t q1 = 0;
+                while ((q1 = arr_content.find("\"", q1)) != std::string::npos) {
+                    size_t q2 = arr_content.find("\"", q1 + 1);
+                    if (q2 == std::string::npos) break;
+                    fcp->contributor_ship_ids.push_back(arr_content.substr(q1 + 1, q2 - q1 - 1));
+                    q1 = q2 + 1;
+                }
+            }
+        }
+
+        entity->addComponent(std::move(fcp));
+    }
+
+    // RumorLog
+    std::string rl_json = extractObject(json, "rumor_log");
+    if (!rl_json.empty()) {
+        auto rl = std::make_unique<components::RumorLog>();
+        std::string ru_key = "\"rumors\"";
+        size_t ru_pos = rl_json.find(ru_key);
+        if (ru_pos != std::string::npos) {
+            size_t arr_start = rl_json.find("[", ru_pos);
+            if (arr_start != std::string::npos) {
+                int bracket_depth = 1;
+                size_t arr_end = arr_start + 1;
+                while (arr_end < rl_json.size() && bracket_depth > 0) {
+                    if (rl_json[arr_end] == '[') ++bracket_depth;
+                    else if (rl_json[arr_end] == ']') --bracket_depth;
+                    if (bracket_depth > 0) ++arr_end;
+                }
+                if (bracket_depth == 0) {
+                    std::string content = rl_json.substr(arr_start + 1, arr_end - arr_start - 1);
+                    int depth = 0;
+                    size_t obj_start = std::string::npos;
+                    for (size_t i = 0; i < content.size(); ++i) {
+                        if (content[i] == '{') {
+                            if (depth == 0) obj_start = i;
+                            ++depth;
+                        } else if (content[i] == '}') {
+                            --depth;
+                            if (depth == 0 && obj_start != std::string::npos) {
+                                std::string rj = content.substr(obj_start, i - obj_start + 1);
+                                components::RumorLog::Rumor rumor;
+                                rumor.rumor_id             = extractString(rj, "rumor_id");
+                                rumor.text                 = extractString(rj, "text");
+                                rumor.belief_strength      = extractFloat(rj, "\"belief_strength\":", 0.5f);
+                                rumor.personally_witnessed = extractBool(rj, "\"personally_witnessed\":", false);
+                                rumor.times_heard          = extractInt(rj, "\"times_heard\":");
+                                rl->rumors.push_back(rumor);
+                                obj_start = std::string::npos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        entity->addComponent(std::move(rl));
+    }
+
+    // MineralDeposit
+    std::string md_json = extractObject(json, "mineral_deposit");
+    if (!md_json.empty()) {
+        auto md = std::make_unique<components::MineralDeposit>();
+        md->mineral_type       = extractString(md_json, "mineral_type");
+        if (md->mineral_type.empty()) md->mineral_type = "Veldspar";
+        md->quantity_remaining = extractFloat(md_json, "\"quantity_remaining\":", 10000.0f);
+        md->max_quantity       = extractFloat(md_json, "\"max_quantity\":", 10000.0f);
+        md->yield_rate         = extractFloat(md_json, "\"yield_rate\":", 1.0f);
+        md->volume_per_unit    = extractFloat(md_json, "\"volume_per_unit\":", 0.1f);
+        entity->addComponent(std::move(md));
+    }
+
+    // SystemResources
+    std::string sr_json = extractObject(json, "system_resources");
+    if (!sr_json.empty()) {
+        auto sr = std::make_unique<components::SystemResources>();
+        std::string res_key = "\"resources\"";
+        size_t res_pos = sr_json.find(res_key);
+        if (res_pos != std::string::npos) {
+            size_t arr_start = sr_json.find("[", res_pos);
+            if (arr_start != std::string::npos) {
+                int bracket_depth = 1;
+                size_t arr_end = arr_start + 1;
+                while (arr_end < sr_json.size() && bracket_depth > 0) {
+                    if (sr_json[arr_end] == '[') ++bracket_depth;
+                    else if (sr_json[arr_end] == ']') --bracket_depth;
+                    if (bracket_depth > 0) ++arr_end;
+                }
+                if (bracket_depth == 0) {
+                    std::string content = sr_json.substr(arr_start + 1, arr_end - arr_start - 1);
+                    int depth = 0;
+                    size_t obj_start = std::string::npos;
+                    for (size_t i = 0; i < content.size(); ++i) {
+                        if (content[i] == '{') {
+                            if (depth == 0) obj_start = i;
+                            ++depth;
+                        } else if (content[i] == '}') {
+                            --depth;
+                            if (depth == 0 && obj_start != std::string::npos) {
+                                std::string rj = content.substr(obj_start, i - obj_start + 1);
+                                components::SystemResources::ResourceEntry entry;
+                                entry.mineral_type       = extractString(rj, "mineral_type");
+                                entry.total_quantity     = extractFloat(rj, "\"total_quantity\":", 0.0f);
+                                entry.remaining_quantity = extractFloat(rj, "\"remaining_quantity\":", 0.0f);
+                                sr->resources.push_back(entry);
+                                obj_start = std::string::npos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        entity->addComponent(std::move(sr));
+    }
+
+    // MarketHub
+    std::string mh_json = extractObject(json, "market_hub");
+    if (!mh_json.empty()) {
+        auto mh = std::make_unique<components::MarketHub>();
+        mh->station_id     = extractString(mh_json, "station_id");
+        mh->broker_fee_rate = extractDouble(mh_json, "\"broker_fee_rate\":", 0.02);
+        mh->sales_tax_rate  = extractDouble(mh_json, "\"sales_tax_rate\":", 0.04);
+
+        std::string ord_key = "\"orders\"";
+        size_t ord_pos = mh_json.find(ord_key);
+        if (ord_pos != std::string::npos) {
+            size_t arr_start = mh_json.find("[", ord_pos);
+            if (arr_start != std::string::npos) {
+                int bracket_depth = 1;
+                size_t arr_end = arr_start + 1;
+                while (arr_end < mh_json.size() && bracket_depth > 0) {
+                    if (mh_json[arr_end] == '[') ++bracket_depth;
+                    else if (mh_json[arr_end] == ']') --bracket_depth;
+                    if (bracket_depth > 0) ++arr_end;
+                }
+                if (bracket_depth == 0) {
+                    std::string content = mh_json.substr(arr_start + 1, arr_end - arr_start - 1);
+                    int depth = 0;
+                    size_t obj_start = std::string::npos;
+                    for (size_t i = 0; i < content.size(); ++i) {
+                        if (content[i] == '{') {
+                            if (depth == 0) obj_start = i;
+                            ++depth;
+                        } else if (content[i] == '}') {
+                            --depth;
+                            if (depth == 0 && obj_start != std::string::npos) {
+                                std::string oj = content.substr(obj_start, i - obj_start + 1);
+                                components::MarketHub::Order order;
+                                order.order_id           = extractString(oj, "order_id");
+                                order.item_id            = extractString(oj, "item_id");
+                                order.item_name          = extractString(oj, "item_name");
+                                order.owner_id           = extractString(oj, "owner_id");
+                                order.is_buy_order       = extractBool(oj, "\"is_buy_order\":", false);
+                                order.price_per_unit     = extractDouble(oj, "\"price_per_unit\":", 0.0);
+                                order.quantity           = extractInt(oj, "\"quantity\":", 1);
+                                order.quantity_remaining = extractInt(oj, "\"quantity_remaining\":", 1);
+                                order.duration_remaining = extractFloat(oj, "\"duration_remaining\":", -1.0f);
+                                order.fulfilled          = extractBool(oj, "\"fulfilled\":", false);
+                                mh->orders.push_back(order);
+                                obj_start = std::string::npos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        entity->addComponent(std::move(mh));
     }
 
     return true;
