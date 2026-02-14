@@ -51,6 +51,8 @@
 #include "systems/combat_system.h"
 #include "systems/ai_system.h"
 #include "systems/mining_system.h"
+#include "systems/fleet_formation_system.h"
+#include "systems/captain_memory_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -7839,6 +7841,322 @@ void testShipModelDataMissingReturnsDefaults() {
     assertTrue(empty.model_data.generation_seed == 0, "Default generation seed is 0");
 }
 
+// ==================== Fleet Formation System Tests ====================
+
+void testFleetFormationSetFormation() {
+    std::cout << "\n=== Fleet Formation: Set Formation ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem sys(&world);
+    world.createEntity("leader");
+    world.createEntity("wing1");
+
+    using FT = components::FleetFormation::FormationType;
+    sys.setFormation("leader", FT::Arrow, 0);
+    sys.setFormation("wing1", FT::Arrow, 1);
+
+    assertTrue(sys.getFormation("leader") == FT::Arrow, "Leader has Arrow formation");
+    assertTrue(sys.getFormation("wing1") == FT::Arrow, "Wing1 has Arrow formation");
+}
+
+void testFleetFormationLeaderAtOrigin() {
+    std::cout << "\n=== Fleet Formation: Leader At Origin ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem sys(&world);
+    world.createEntity("leader");
+
+    using FT = components::FleetFormation::FormationType;
+    sys.setFormation("leader", FT::Arrow, 0);
+    sys.computeOffsets();
+
+    float ox = 0, oy = 0, oz = 0;
+    assertTrue(sys.getOffset("leader", ox, oy, oz), "Leader has offset");
+    assertTrue(approxEqual(ox, 0.0f) && approxEqual(oy, 0.0f) && approxEqual(oz, 0.0f),
+               "Leader offset is (0,0,0)");
+}
+
+void testFleetFormationArrowOffsets() {
+    std::cout << "\n=== Fleet Formation: Arrow Offsets ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem sys(&world);
+    world.createEntity("s0");
+    world.createEntity("s1");
+    world.createEntity("s2");
+
+    using FT = components::FleetFormation::FormationType;
+    sys.setFormation("s0", FT::Arrow, 0);
+    sys.setFormation("s1", FT::Arrow, 1);
+    sys.setFormation("s2", FT::Arrow, 2);
+    sys.computeOffsets();
+
+    float ox1 = 0, oy1 = 0, oz1 = 0;
+    sys.getOffset("s1", ox1, oy1, oz1);
+    assertTrue(ox1 < 0.0f, "Slot 1 is to the left");
+    assertTrue(oz1 < 0.0f, "Slot 1 is behind");
+
+    float ox2 = 0, oy2 = 0, oz2 = 0;
+    sys.getOffset("s2", ox2, oy2, oz2);
+    assertTrue(ox2 > 0.0f, "Slot 2 is to the right");
+    assertTrue(oz2 < 0.0f, "Slot 2 is behind");
+}
+
+void testFleetFormationLineOffsets() {
+    std::cout << "\n=== Fleet Formation: Line Offsets ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem sys(&world);
+    world.createEntity("s0");
+    world.createEntity("s1");
+    world.createEntity("s2");
+
+    using FT = components::FleetFormation::FormationType;
+    sys.setFormation("s0", FT::Line, 0);
+    sys.setFormation("s1", FT::Line, 1);
+    sys.setFormation("s2", FT::Line, 2);
+    sys.computeOffsets();
+
+    float ox0 = 0, oy0 = 0, oz0 = 0;
+    sys.getOffset("s0", ox0, oy0, oz0);
+    assertTrue(approxEqual(ox0, 0.0f) && approxEqual(oz0, 0.0f), "Line slot 0 at origin");
+
+    float ox1 = 0, oy1 = 0, oz1 = 0;
+    sys.getOffset("s1", ox1, oy1, oz1);
+    assertTrue(approxEqual(ox1, 0.0f), "Line slot 1 aligned in X");
+    assertTrue(oz1 < 0.0f, "Line slot 1 behind leader");
+
+    float ox2 = 0, oy2 = 0, oz2 = 0;
+    sys.getOffset("s2", ox2, oy2, oz2);
+    assertTrue(oz2 < oz1, "Line slot 2 further behind than slot 1");
+}
+
+void testFleetFormationDiamondOffsets() {
+    std::cout << "\n=== Fleet Formation: Diamond Offsets ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem sys(&world);
+    for (int i = 0; i < 4; ++i)
+        world.createEntity("d" + std::to_string(i));
+
+    using FT = components::FleetFormation::FormationType;
+    for (int i = 0; i < 4; ++i)
+        sys.setFormation("d" + std::to_string(i), FT::Diamond, i);
+    sys.computeOffsets();
+
+    float ox0 = 0, oy0 = 0, oz0 = 0;
+    sys.getOffset("d0", ox0, oy0, oz0);
+    assertTrue(approxEqual(ox0, 0.0f) && approxEqual(oz0, 0.0f), "Diamond slot 0 at origin");
+
+    float ox1 = 0, oy1 = 0, oz1 = 0;
+    sys.getOffset("d1", ox1, oy1, oz1);
+    assertTrue(ox1 < 0.0f, "Diamond slot 1 to the left");
+
+    float ox2 = 0, oy2 = 0, oz2 = 0;
+    sys.getOffset("d2", ox2, oy2, oz2);
+    assertTrue(ox2 > 0.0f, "Diamond slot 2 to the right");
+
+    float ox3 = 0, oy3 = 0, oz3 = 0;
+    sys.getOffset("d3", ox3, oy3, oz3);
+    assertTrue(approxEqual(ox3, 0.0f), "Diamond slot 3 centered in X");
+    assertTrue(oz3 < oz1, "Diamond slot 3 behind slots 1 & 2");
+}
+
+void testFleetFormationNoneType() {
+    std::cout << "\n=== Fleet Formation: None Type ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem sys(&world);
+    world.createEntity("e1");
+
+    assertTrue(sys.getFormation("e1") == components::FleetFormation::FormationType::None,
+               "Entity without formation returns None");
+
+    float ox = 0, oy = 0, oz = 0;
+    assertTrue(!sys.getOffset("e1", ox, oy, oz), "No offset for entity without component");
+}
+
+// ==================== Extended Captain Personality Tests ====================
+
+void testCaptainPersonalityNewTraitsAssigned() {
+    std::cout << "\n=== Captain Personality: New Traits Assigned ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "TestCaptain", "Keldari");
+
+    float loyalty = sys.getPersonalityTrait("cap1", "loyalty");
+    float paranoia = sys.getPersonalityTrait("cap1", "paranoia");
+    float ambition = sys.getPersonalityTrait("cap1", "ambition");
+    float adaptability = sys.getPersonalityTrait("cap1", "adaptability");
+
+    assertTrue(loyalty >= 0.0f && loyalty <= 1.0f, "Loyalty in valid range");
+    assertTrue(paranoia >= 0.0f && paranoia <= 1.0f, "Paranoia in valid range");
+    assertTrue(ambition >= 0.0f && ambition <= 1.0f, "Ambition in valid range");
+    assertTrue(adaptability >= 0.0f && adaptability <= 1.0f, "Adaptability in valid range");
+}
+
+void testCaptainPersonalityKeldariHighParanoia() {
+    std::cout << "\n=== Captain Personality: Keldari High Paranoia ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "KeldariCaptain", "Keldari");
+    float paranoia = sys.getPersonalityTrait("cap1", "paranoia");
+    assertTrue(paranoia > 0.5f, "Keldari captain has high paranoia");
+}
+
+void testCaptainPersonalitySolariHighLoyalty() {
+    std::cout << "\n=== Captain Personality: Solari High Loyalty ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "SolariCaptain", "Solari");
+    float loyalty = sys.getPersonalityTrait("cap1", "loyalty");
+    assertTrue(loyalty > 0.5f, "Solari captain has high loyalty");
+}
+
+void testCaptainPersonalitySetNewTrait() {
+    std::cout << "\n=== Captain Personality: Set New Trait ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "Test", "Veyren");
+    sys.setPersonalityTrait("cap1", "loyalty", 0.95f);
+    assertTrue(approxEqual(sys.getPersonalityTrait("cap1", "loyalty"), 0.95f),
+               "Loyalty set correctly");
+    sys.setPersonalityTrait("cap1", "paranoia", 0.1f);
+    assertTrue(approxEqual(sys.getPersonalityTrait("cap1", "paranoia"), 0.1f),
+               "Paranoia set correctly");
+}
+
+void testCaptainPersonalityNewTraitsDeterministic() {
+    std::cout << "\n=== Captain Personality: New Traits Deterministic ===" << std::endl;
+    ecs::World world;
+    systems::CaptainPersonalitySystem sys(&world);
+    world.createEntity("cap1");
+    sys.assignPersonality("cap1", "Test", "Aurelian");
+    float loy1 = sys.getPersonalityTrait("cap1", "loyalty");
+    float par1 = sys.getPersonalityTrait("cap1", "paranoia");
+    sys.assignPersonality("cap1", "Test", "Aurelian");
+    float loy2 = sys.getPersonalityTrait("cap1", "loyalty");
+    float par2 = sys.getPersonalityTrait("cap1", "paranoia");
+    assertTrue(approxEqual(loy1, loy2), "Loyalty is deterministic");
+    assertTrue(approxEqual(par1, par2), "Paranoia is deterministic");
+}
+
+// ==================== Captain Memory System Tests ====================
+
+void testCaptainMemoryRecordEvent() {
+    std::cout << "\n=== Captain Memory: Record Event ===" << std::endl;
+    ecs::World world;
+    systems::CaptainMemorySystem sys(&world);
+    world.createEntity("cap1");
+
+    sys.recordMemory("cap1", "combat_win", "vs Pirates", 100.0f, 0.5f);
+    assertTrue(sys.totalMemories("cap1") == 1, "One memory recorded");
+    assertTrue(sys.countMemories("cap1", "combat_win") == 1, "One combat_win memory");
+}
+
+void testCaptainMemoryMultipleEvents() {
+    std::cout << "\n=== Captain Memory: Multiple Events ===" << std::endl;
+    ecs::World world;
+    systems::CaptainMemorySystem sys(&world);
+    world.createEntity("cap1");
+
+    sys.recordMemory("cap1", "combat_win", "vs Pirates", 100.0f, 0.5f);
+    sys.recordMemory("cap1", "combat_loss", "vs Boss", 200.0f, -0.8f);
+    sys.recordMemory("cap1", "saved_by_player", "close call", 300.0f, 0.9f);
+    assertTrue(sys.totalMemories("cap1") == 3, "Three memories recorded");
+    assertTrue(sys.countMemories("cap1", "combat_win") == 1, "One combat_win");
+    assertTrue(sys.countMemories("cap1", "combat_loss") == 1, "One combat_loss");
+}
+
+void testCaptainMemoryAverageWeight() {
+    std::cout << "\n=== Captain Memory: Average Weight ===" << std::endl;
+    ecs::World world;
+    systems::CaptainMemorySystem sys(&world);
+    world.createEntity("cap1");
+
+    sys.recordMemory("cap1", "combat_win", "", 100.0f, 1.0f);
+    sys.recordMemory("cap1", "combat_loss", "", 200.0f, -1.0f);
+    float avg = sys.averageEmotionalWeight("cap1");
+    assertTrue(approxEqual(avg, 0.0f), "Average weight is zero for balanced events");
+}
+
+void testCaptainMemoryMostRecent() {
+    std::cout << "\n=== Captain Memory: Most Recent ===" << std::endl;
+    ecs::World world;
+    systems::CaptainMemorySystem sys(&world);
+    world.createEntity("cap1");
+
+    sys.recordMemory("cap1", "combat_win", "", 100.0f, 0.5f);
+    sys.recordMemory("cap1", "warp_anomaly", "strange lights", 200.0f, 0.2f);
+    assertTrue(sys.mostRecentEvent("cap1") == "warp_anomaly", "Most recent is warp_anomaly");
+}
+
+void testCaptainMemoryCapacity() {
+    std::cout << "\n=== Captain Memory: Capacity Cap ===" << std::endl;
+    ecs::World world;
+    systems::CaptainMemorySystem sys(&world);
+    world.createEntity("cap1");
+
+    // Fill 55 memories — should cap at 50
+    for (int i = 0; i < 55; ++i) {
+        sys.recordMemory("cap1", "event" + std::to_string(i), "", static_cast<float>(i), 0.1f);
+    }
+    assertTrue(sys.totalMemories("cap1") == 50, "Memory capped at 50");
+}
+
+void testCaptainMemoryNoEntity() {
+    std::cout << "\n=== Captain Memory: No Entity ===" << std::endl;
+    ecs::World world;
+    systems::CaptainMemorySystem sys(&world);
+
+    assertTrue(sys.totalMemories("nonexistent") == 0, "No memories for nonexistent entity");
+    assertTrue(sys.mostRecentEvent("nonexistent").empty(), "No recent event for nonexistent entity");
+}
+
+// ==================== Contextual Chatter Tests ====================
+
+void testContextualChatterReturnsLine() {
+    std::cout << "\n=== Contextual Chatter: Returns Line ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem chatterSys(&world);
+    systems::CaptainPersonalitySystem personalitySys(&world);
+
+    auto* entity = world.createEntity("cap1");
+    personalitySys.assignPersonality("cap1", "TestCaptain", "Keldari");
+    addComp<components::FleetChatterState>(entity);
+    chatterSys.setActivity("cap1", "Combat");
+
+    std::string line = chatterSys.getContextualLine("cap1");
+    assertTrue(!line.empty(), "Contextual chatter returns a line");
+}
+
+void testContextualChatterRespectsCooldown() {
+    std::cout << "\n=== Contextual Chatter: Respects Cooldown ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem chatterSys(&world);
+    systems::CaptainPersonalitySystem personalitySys(&world);
+
+    auto* entity = world.createEntity("cap1");
+    personalitySys.assignPersonality("cap1", "TestCaptain", "Solari");
+    addComp<components::FleetChatterState>(entity);
+    chatterSys.setActivity("cap1", "Mining");
+
+    chatterSys.getContextualLine("cap1");
+    std::string second = chatterSys.getContextualLine("cap1");
+    assertTrue(second.empty(), "Contextual chatter on cooldown returns empty");
+}
+
+void testContextualChatterFallbackWithoutPersonality() {
+    std::cout << "\n=== Contextual Chatter: Fallback Without Personality ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem chatterSys(&world);
+
+    auto* entity = world.createEntity("cap1");
+    addComp<components::FleetChatterState>(entity);
+    chatterSys.setActivity("cap1", "Idle");
+
+    std::string line = chatterSys.getContextualLine("cap1");
+    assertTrue(!line.empty(), "Falls back to generic pool without personality");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -7860,7 +8178,9 @@ int main() {
     std::cout << "AIDynamicOrbit, AITargetSelection, Protocol," << std::endl;
     std::cout << "Mining, MiningDrones, SalvageDrones," << std::endl;
     std::cout << "CombatDeathWreck, SystemResources," << std::endl;
-    std::cout << "ShipModelData" << std::endl;
+    std::cout << "ShipModelData," << std::endl;
+    std::cout << "FleetFormation, CaptainMemory," << std::endl;
+    std::cout << "ExtendedPersonality, ContextualChatter" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -8312,6 +8632,34 @@ int main() {
     testShipModelDataSeedUniqueness();
     testShipModelDataEngineCountPositive();
     testShipModelDataMissingReturnsDefaults();
+
+    // Fleet formation tests
+    testFleetFormationSetFormation();
+    testFleetFormationLeaderAtOrigin();
+    testFleetFormationArrowOffsets();
+    testFleetFormationLineOffsets();
+    testFleetFormationDiamondOffsets();
+    testFleetFormationNoneType();
+
+    // Extended captain personality tests
+    testCaptainPersonalityNewTraitsAssigned();
+    testCaptainPersonalityKeldariHighParanoia();
+    testCaptainPersonalitySolariHighLoyalty();
+    testCaptainPersonalitySetNewTrait();
+    testCaptainPersonalityNewTraitsDeterministic();
+
+    // Captain memory tests
+    testCaptainMemoryRecordEvent();
+    testCaptainMemoryMultipleEvents();
+    testCaptainMemoryAverageWeight();
+    testCaptainMemoryMostRecent();
+    testCaptainMemoryCapacity();
+    testCaptainMemoryNoEntity();
+
+    // Contextual chatter tests
+    testContextualChatterReturnsLine();
+    testContextualChatterRespectsCooldown();
+    testContextualChatterFallbackWithoutPersonality();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
