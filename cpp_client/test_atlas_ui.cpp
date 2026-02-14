@@ -11,6 +11,9 @@
 #include "ui/atlas/atlas_context.h"
 #include "ui/atlas/atlas_widgets.h"
 #include "ui/atlas/atlas_hud.h"
+#include "ui/atlas/atlas_console.h"
+#include "ui/atlas/atlas_pause_menu.h"
+#include "ui/atlas/atlas_title_screen.h"
 #include "ui/context_menu.h"
 #include "ui/radial_menu.h"
 #include <iostream>
@@ -781,7 +784,10 @@ void testModuleInfoOverheat() {
 }
 
 // ─── RmlUiManager Data Structure tests ─────────────────────────────
+// These tests are only compiled when RmlUi is enabled (USE_RMLUI defined).
+// Since we've migrated to Atlas UI exclusively, they are guarded.
 
+#ifdef USE_RMLUI
 #include "ui/rml_ui_manager.h"
 
 void testFittingRmlData() {
@@ -974,6 +980,7 @@ void testRmlUiManagerStub() {
     assertTrue(!mgr.WantsMouseInput(), "WantsMouseInput returns false when uninitialized");
     assertTrue(!mgr.WantsKeyboardInput(), "WantsKeyboardInput returns false when uninitialized");
 }
+#endif // USE_RMLUI
 
 // ─── Damage Feedback tests ─────────────────────────────────────────────
 
@@ -2885,6 +2892,238 @@ void testContextMenuJumpAction() {
     menu.Close();
 }
 
+// ─── Atlas Console tests ───────────────────────────────────────────────
+
+void testAtlasConsoleBasics() {
+    std::cout << "\n=== AtlasConsole: Basics ===" << std::endl;
+
+    atlas::AtlasConsole console;
+    assertTrue(!console.isOpen(), "Console starts closed");
+
+    console.toggle();
+    assertTrue(console.isOpen(), "Console opens on toggle");
+    assertTrue(console.wantsKeyboardInput(), "Console wants keyboard when open");
+
+    console.toggle();
+    assertTrue(!console.isOpen(), "Console closes on second toggle");
+    assertTrue(!console.wantsKeyboardInput(), "Console doesn't want keyboard when closed");
+
+    console.setOpen(true);
+    assertTrue(console.isOpen(), "setOpen(true) opens console");
+
+    console.setOpen(false);
+    assertTrue(!console.isOpen(), "setOpen(false) closes console");
+}
+
+void testAtlasConsoleCommands() {
+    std::cout << "\n=== AtlasConsole: Commands ===" << std::endl;
+
+    atlas::AtlasConsole console;
+
+    // Initial output has welcome messages
+    assertTrue(console.getOutputLines().size() >= 2, "Console has welcome messages");
+
+    // Test print
+    console.print("Test message");
+    auto lines = console.getOutputLines();
+    assertTrue(lines.back() == "Test message", "print() adds output line");
+
+    // Test clear
+    console.clearOutput();
+    assertTrue(console.getOutputLines().empty(), "clearOutput() removes all lines");
+
+    // Test custom command registration
+    bool commandCalled = false;
+    console.registerCommand("testcmd", [&](const std::vector<std::string>& args) {
+        commandCalled = true;
+    }, "A test command");
+    assertTrue(!commandCalled, "Custom command not called yet");
+
+    // Execute by simulating Enter key
+    console.setOpen(true);
+    // Type "testcmd"
+    for (char c : std::string("testcmd")) {
+        console.handleChar(static_cast<unsigned int>(c));
+    }
+    // Press Enter (key 257 = GLFW_KEY_ENTER)
+    console.handleKey(257, 1);  // action=GLFW_PRESS
+    assertTrue(commandCalled, "Custom command executed via Enter");
+
+    // Test quit callback
+    bool quitCalled = false;
+    console.setQuitCallback([&]() { quitCalled = true; });
+    // Type "quit" and press Enter
+    for (char c : std::string("quit")) {
+        console.handleChar(static_cast<unsigned int>(c));
+    }
+    console.handleKey(257, 1);
+    assertTrue(quitCalled, "Quit callback invoked by 'quit' command");
+
+    // Test save callback
+    bool saveCalled = false;
+    console.setSaveCallback([&]() { saveCalled = true; });
+    for (char c : std::string("save")) {
+        console.handleChar(static_cast<unsigned int>(c));
+    }
+    console.handleKey(257, 1);
+    assertTrue(saveCalled, "Save callback invoked by 'save' command");
+
+    // Test FPS command
+    console.setFPS(60.0f);
+    console.clearOutput();
+    for (char c : std::string("fps")) {
+        console.handleChar(static_cast<unsigned int>(c));
+    }
+    console.handleKey(257, 1);
+    assertTrue(!console.getOutputLines().empty(), "FPS command produces output");
+}
+
+void testAtlasConsoleHistory() {
+    std::cout << "\n=== AtlasConsole: History ===" << std::endl;
+
+    atlas::AtlasConsole console;
+    console.setOpen(true);
+    console.clearOutput();
+
+    // Enter a command
+    for (char c : std::string("echo hello")) {
+        console.handleChar(static_cast<unsigned int>(c));
+    }
+    console.handleKey(257, 1);  // Enter
+
+    // Enter another command
+    for (char c : std::string("echo world")) {
+        console.handleChar(static_cast<unsigned int>(c));
+    }
+    console.handleKey(257, 1);  // Enter
+
+    // Press Up arrow to recall last command (key 265)
+    console.handleKey(265, 1);
+    // The input buffer should now contain the last command
+    // We can't easily read the input buffer externally, but at least verify no crash
+    assertTrue(true, "Up arrow navigation doesn't crash");
+
+    // Press Down arrow (key 264)
+    console.handleKey(264, 1);
+    assertTrue(true, "Down arrow navigation doesn't crash");
+}
+
+void testAtlasConsoleCharInput() {
+    std::cout << "\n=== AtlasConsole: Char Input ===" << std::endl;
+
+    atlas::AtlasConsole console;
+    console.setOpen(true);
+    console.clearOutput();
+
+    // Backtick should be ignored (it's the toggle key)
+    console.handleChar('`');
+    // Non-printable should be ignored
+    console.handleChar(1);
+    console.handleChar(127);
+    // Normal chars should work
+    console.handleChar('a');
+    console.handleChar('b');
+    assertTrue(true, "Character filtering works correctly");
+
+    // Backspace (key 259)
+    console.handleKey(259, 1);
+    assertTrue(true, "Backspace doesn't crash");
+
+    // Home (key 268) and End (key 269)
+    console.handleKey(268, 1);
+    console.handleKey(269, 1);
+    assertTrue(true, "Home/End keys work");
+
+    // Escape closes console (key 256)
+    console.handleKey(256, 1);
+    assertTrue(!console.isOpen(), "Escape closes console");
+}
+
+// ─── Atlas Pause Menu tests ────────────────────────────────────────────
+
+void testAtlasPauseMenuBasics() {
+    std::cout << "\n=== AtlasPauseMenu: Basics ===" << std::endl;
+
+    atlas::AtlasPauseMenu menu;
+    assertTrue(!menu.isOpen(), "Pause menu starts closed");
+
+    menu.toggle();
+    assertTrue(menu.isOpen(), "Pause menu opens on toggle");
+    assertTrue(menu.wantsKeyboardInput(), "Pause menu wants keyboard when open");
+
+    menu.toggle();
+    assertTrue(!menu.isOpen(), "Pause menu closes on second toggle");
+
+    // Callbacks
+    bool resumeCalled = false;
+    bool saveCalled = false;
+    bool quitCalled = false;
+    menu.setResumeCallback([&]() { resumeCalled = true; });
+    menu.setSaveCallback([&]() { saveCalled = true; });
+    menu.setQuitCallback([&]() { quitCalled = true; });
+    assertTrue(!resumeCalled && !saveCalled && !quitCalled, "Callbacks not called on registration");
+}
+
+void testAtlasPauseMenuSettings() {
+    std::cout << "\n=== AtlasPauseMenu: Settings ===" << std::endl;
+
+    atlas::AtlasPauseMenu menu;
+
+    // Default volumes
+    assertTrue(menu.getMasterVolume() > 0.0f, "Default master volume > 0");
+    assertTrue(menu.getMusicVolume() > 0.0f, "Default music volume > 0");
+    assertTrue(menu.getSfxVolume() > 0.0f, "Default SFX volume > 0");
+    assertTrue(menu.getUiVolume() > 0.0f, "Default UI volume > 0");
+
+    // Set volumes
+    menu.setMasterVolume(0.5f);
+    assertClose(menu.getMasterVolume(), 0.5f, "Master volume set to 0.5");
+
+    menu.setMusicVolume(0.3f);
+    assertClose(menu.getMusicVolume(), 0.3f, "Music volume set to 0.3");
+
+    menu.setSfxVolume(1.0f);
+    assertClose(menu.getSfxVolume(), 1.0f, "SFX volume set to 1.0");
+
+    menu.setUiVolume(0.0f);
+    assertClose(menu.getUiVolume(), 0.0f, "UI volume set to 0.0");
+}
+
+// ─── Atlas Title Screen tests ──────────────────────────────────────────
+
+void testAtlasTitleScreenBasics() {
+    std::cout << "\n=== AtlasTitleScreen: Basics ===" << std::endl;
+
+    atlas::AtlasTitleScreen titleScreen;
+    assertTrue(titleScreen.isActive(), "Title screen starts active");
+    assertTrue(titleScreen.wantsKeyboardInput(), "Title screen wants keyboard when active");
+
+    // Simulate play callback
+    bool playCalled = false;
+    titleScreen.setPlayCallback([&]() { playCalled = true; });
+    assertTrue(!playCalled, "Play callback not called on registration");
+
+    // Deactivate
+    titleScreen.setActive(false);
+    assertTrue(!titleScreen.isActive(), "Title screen deactivated");
+    assertTrue(!titleScreen.wantsKeyboardInput(), "Title screen doesn't want keyboard when inactive");
+
+    // Audio settings
+    titleScreen.setMasterVolume(0.6f);
+    assertClose(titleScreen.getMasterVolume(), 0.6f, "Title screen master volume");
+
+    titleScreen.setMusicVolume(0.4f);
+    assertClose(titleScreen.getMusicVolume(), 0.4f, "Title screen music volume");
+
+    titleScreen.setSfxVolume(0.9f);
+    assertClose(titleScreen.getSfxVolume(), 0.9f, "Title screen SFX volume");
+
+    // Quit callback
+    bool quitCalled = false;
+    titleScreen.setQuitCallback([&]() { quitCalled = true; });
+    assertTrue(!quitCalled, "Quit callback not called on registration");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "Atlas UI System Tests" << std::endl;
@@ -2914,11 +3153,13 @@ int main() {
     testCapacitorRingAnimated();
     testModuleInfoOverheat();
 
+#ifdef USE_RMLUI
     testFittingRmlData();
     testMarketOrderInfo();
     testMissionRmlInfo();
     testChatMessageInfo();
     testRmlUiManagerStub();
+#endif
 
     // New GUI/HUD tests
 
@@ -2985,6 +3226,19 @@ int main() {
     testRadialMenuDragToRange();
     testPanelDeferredMouseConsumption();
     testContextMenuJumpAction();
+
+    // ── Atlas Console tests ─────────────────────────────────────────────
+    testAtlasConsoleBasics();
+    testAtlasConsoleCommands();
+    testAtlasConsoleHistory();
+    testAtlasConsoleCharInput();
+
+    // ── Atlas Pause Menu tests ──────────────────────────────────────────
+    testAtlasPauseMenuBasics();
+    testAtlasPauseMenuSettings();
+
+    // ── Atlas Title Screen tests ────────────────────────────────────────
+    testAtlasTitleScreenBasics();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

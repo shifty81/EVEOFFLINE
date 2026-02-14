@@ -63,8 +63,8 @@ void AtlasPauseMenu::renderMainMenu(AtlasContext& ctx, const Rect& panel) {
     // Title
     const char* title = "PAUSED";
     float titleW = r.measureText(title);
-    r.drawText(Vec2(panel.x + (panel.w - titleW) * 0.5f, panel.y + 6.0f),
-               title, theme.accentSecondary);
+    r.drawText(title, Vec2(panel.x + (panel.w - titleW) * 0.5f, panel.y + 6.0f),
+               theme.accentSecondary);
 
     // Button area
     float contentY = panel.y + theme.headerHeight + 4.0f + PADDING;
@@ -111,8 +111,8 @@ void AtlasPauseMenu::renderSettings(AtlasContext& ctx, const Rect& panel) {
     // Title
     const char* title = "SETTINGS";
     float titleW = r.measureText(title);
-    r.drawText(Vec2(panel.x + (panel.w - titleW) * 0.5f, panel.y + 6.0f),
-               title, theme.accentSecondary);
+    r.drawText(title, Vec2(panel.x + (panel.w - titleW) * 0.5f, panel.y + 6.0f),
+               theme.accentSecondary);
 
     float contentY = panel.y + theme.headerHeight + 4.0f + PADDING;
     float sliderW = panel.w - PADDING * 2.0f;

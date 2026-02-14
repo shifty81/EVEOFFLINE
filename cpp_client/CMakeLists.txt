@@ -789,6 +789,9 @@ if(BUILD_TESTS)
         src/ui/atlas/atlas_context.cpp
         src/ui/atlas/atlas_widgets.cpp
         src/ui/atlas/atlas_hud.cpp
+        src/ui/atlas/atlas_console.cpp
+        src/ui/atlas/atlas_pause_menu.cpp
+        src/ui/atlas/atlas_title_screen.cpp
         src/ui/context_menu.cpp
         src/ui/radial_menu.cpp
     )

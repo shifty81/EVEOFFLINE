@@ -537,19 +537,6 @@ void Application::update(float deltaTime) {
     // Update ship status in the HUD
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
     if (playerEntity) {
-        UI::ShipStatusData status;
-        const auto& health = playerEntity->getHealth();
-        status.shield_pct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
-        status.armor_pct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
-        status.hull_pct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
-        
-        // Use real capacitor data from entity
-        const auto& capacitor = playerEntity->getCapacitor();
-        status.capacitor_pct = capacitor.max > 0.0f ? capacitor.current / capacitor.max : 0.0f;
-        
-        status.velocity = m_playerSpeed;
-        status.max_velocity = m_playerMaxSpeed;
-
         // Update player position for UI calculations (e.g., distance in overview/targets)
         const auto playerPosition = playerEntity->getPosition();
         updateTargetListUi(playerPosition);

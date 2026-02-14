@@ -27,7 +27,7 @@ void AtlasTitleScreen::render(AtlasContext& ctx) {
 
     // "A" logo in sidebar (Atlas Engine branding)
     float logoY = 16.0f;
-    r.drawText(Vec2(SIDEBAR_WIDTH * 0.5f - 4.0f, logoY), "A",
+    r.drawText("A", Vec2(SIDEBAR_WIDTH * 0.5f - 4.0f, logoY),
                theme.accentSecondary);
 
     // Consume mouse
@@ -62,10 +62,10 @@ void AtlasTitleScreen::renderMainMenu(AtlasContext& ctx) {
     float title2W = r.measureText(titleLine2);
 
     float titleY = windowH * 0.2f;
-    r.drawText(Vec2(contentX + (contentW - title1W) * 0.5f, titleY),
-               titleLine1, theme.accentSecondary);
-    r.drawText(Vec2(contentX + (contentW - title2W) * 0.5f, titleY + 24.0f),
-               titleLine2, theme.textSecondary);
+    r.drawText(titleLine1, Vec2(contentX + (contentW - title1W) * 0.5f, titleY),
+               theme.accentSecondary);
+    r.drawText(titleLine2, Vec2(contentX + (contentW - title2W) * 0.5f, titleY + 24.0f),
+               theme.textSecondary);
 
     // Menu buttons — centered vertically below title
     float menuX = contentX + (contentW - MENU_WIDTH) * 0.5f;
@@ -95,8 +95,8 @@ void AtlasTitleScreen::renderMainMenu(AtlasContext& ctx) {
     // Version info at bottom
     const char* version = "Atlas Engine v1.0.0";
     float verW = r.measureText(version);
-    r.drawText(Vec2(contentX + (contentW - verW) * 0.5f, windowH - 30.0f),
-               version, theme.textMuted);
+    r.drawText(version, Vec2(contentX + (contentW - verW) * 0.5f, windowH - 30.0f),
+               theme.textMuted);
 }
 
 void AtlasTitleScreen::renderSettings(AtlasContext& ctx) {
@@ -112,8 +112,8 @@ void AtlasTitleScreen::renderSettings(AtlasContext& ctx) {
     const char* title = "SETTINGS";
     float titleW = r.measureText(title);
     float titleY = windowH * 0.15f;
-    r.drawText(Vec2(contentX + (contentW - titleW) * 0.5f, titleY),
-               title, theme.accentSecondary);
+    r.drawText(title, Vec2(contentX + (contentW - titleW) * 0.5f, titleY),
+               theme.accentSecondary);
 
     // Settings panel centered
     float panelW = 400.0f;

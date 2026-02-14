@@ -154,7 +154,7 @@ void AtlasConsole::render(AtlasContext& ctx) {
 
     // Input prompt and text
     std::string prompt = "> " + m_inputBuffer;
-    r.drawText(Vec2(PADDING + 4.0f, inputY + 4.0f), prompt.c_str(), theme.textPrimary);
+    r.drawText(prompt, Vec2(PADDING + 4.0f, inputY + 4.0f), theme.textPrimary);
 
     // Cursor blink (simple steady cursor)
     float cursorX = PADDING + 4.0f + static_cast<float>(2 + m_cursorPos) * 8.0f;  // 8px per char (bitmap font)
@@ -175,7 +175,7 @@ void AtlasConsole::render(AtlasContext& ctx) {
 
     float y = logTop;
     for (int i = startLine; i < endLine; i++) {
-        r.drawText(Vec2(PADDING + 4.0f, y), m_outputLines[i].text.c_str(),
+        r.drawText(m_outputLines[i].text, Vec2(PADDING + 4.0f, y),
                    m_outputLines[i].color);
         y += LINE_HEIGHT;
     }
@@ -190,7 +190,7 @@ void AtlasConsole::render(AtlasContext& ctx) {
     }
 
     // Title bar
-    r.drawText(Vec2(PADDING, 2.0f), "ATLAS CONSOLE",
+    r.drawText("ATLAS CONSOLE", Vec2(PADDING, 2.0f),
                theme.accentSecondary.withAlpha(0.5f));
 
     // Consume mouse so game world doesn't respond to clicks on the console
