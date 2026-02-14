@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 14, 2026)**: **Vertical Slice Phase 3 IN PROGRESS**. ScannerSystem and AnomalySpawnerSystem implemented. Scanner component (scan_strength, deviation, probe tracking), AnomalySignature component (signal resolution, difficulty, loot/NPC data), SolarSystemSignatures component (per-system anomaly tracking). Seed-based deterministic anomaly generation with difficulty scaling by security level (high-sec 30% → null-sec 100%). 13 new test functions, 41 new assertions. **1226 test assertions passing**.
+
 > **Update (February 14, 2026)**: **Naming convention fully applied**. All EVE Online ore/mineral/faction/bloodline/ammo names renamed to project-original names across all active source code (cpp_server/, cpp_client/). Ores: Veldspar→Dustite, Scordite→Ferrite, etc. Minerals: Tritanium→Ferrium, Pyerite→Ignium, etc. Factions: Caldari→Veyren, Amarr→Solari, Gallente→Aurelian, Minmatar→Keldari. Bloodlines: Deteis→Thyren, Khanid→Zah-Khari, Intaki→Indari, Brutor→Tormund. Ammo: EMP→Pulse. NAMING_CONVENTION.md updated with complete mapping tables. **1185 test assertions passing**.
 
 > **Update (February 14, 2026)**: **Vertical Slice Phase 2 MAJOR PROGRESS**. Mineral Refining System added (RefiningFacility component + RefiningSystem with 7 standard ore recipes: Dustite→Ferrium through Cosmite→Megrium). Dyson Ring megastructure system added (DysonRingModule component with 16-tier construction, power scaling 500–8000 MW, material delivery tracking). Mining AI NPC behavior tested. Full economy loop verified (Mine→Refine→Sell). Client UI: Character Sheet panel (clickable sidebar portrait), on-screen celestial bracket navigation icons (color-coded by type, hover tooltips), ship HUD capacitor % readout + ship name display, overview hidden by default. Player spawns near Dyson Ring Core Module at 0.5 AU. **1185 test assertions passing**.
@@ -35,7 +37,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 MAJOR PROGRESS**: MiningSystem, RefiningSystem (ore→mineral), DysonRingModule (16-tier megastructure), mineral economy (7 ore types, base market prices), mining AI NPC behavior. Client: Character Sheet panel, celestial bracket navigation, ship HUD cap% + name. **1185 test assertions passing**.
+**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 MAJOR PROGRESS**: MiningSystem, RefiningSystem (ore→mineral), DysonRingModule (16-tier megastructure), mineral economy (7 ore types, base market prices), mining AI NPC behavior. **Phase 3 IN PROGRESS**: ScannerSystem + AnomalySpawnerSystem (seed-based anomaly generation, difficulty scaling). Client: Character Sheet panel, celestial bracket navigation, ship HUD cap% + name. **1226 test assertions passing**.
 
 ## Current Status (February 2026)
 
@@ -60,9 +62,9 @@
 - **10 mining missions** across levels 1-4
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
-- **30 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage, Mining)
+- **32 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage, Mining, Scanner, AnomalySpawner)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **200+ test functions** all passing (1139 assertions)
+- **200+ test functions** all passing (1226 assertions)
 - **Mining drones** and **salvage drones** with full cycle-based behavior
 - **Zero security vulnerabilities** (CodeQL verified)
 - **C++ OpenGL client** with full 3D rendering

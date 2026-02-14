@@ -1491,6 +1491,69 @@ public:
     COMPONENT_TYPE(RefiningFacility)
 };
 
+/**
+ * @brief Scanner component for probe-based exploration scanning
+ *
+ * Allows a ship to deploy scan probes and resolve cosmic signatures
+ * (anomalies, relic/data sites, wormholes, gas sites, etc.).
+ */
+class Scanner : public ecs::Component {
+public:
+    float scan_strength = 40.0f;        // base sensor strength (mAU)
+    float scan_deviation = 0.25f;       // positional deviation (0=perfect)
+    int max_probes = 8;                 // maximum simultaneous probes
+    int probes_deployed = 0;            // currently deployed probe count
+    float scan_duration = 10.0f;        // seconds per scan cycle
+    float scan_progress = 0.0f;         // seconds elapsed in current scan
+    bool scanning = false;              // scan is in progress
+    std::string scan_target_id;         // signature id being scanned
+
+    COMPONENT_TYPE(Scanner)
+};
+
+/**
+ * @brief An exploration signature in a solar system
+ *
+ * Represents a cosmic signature that players can scan down.
+ * Once fully resolved (signal_strength >= 1.0), the site can be warped to.
+ */
+class AnomalySignature : public ecs::Component {
+public:
+    std::string signature_id;           // e.g. "ABC-123"
+    std::string signature_type;         // "combat", "relic", "data", "gas", "wormhole"
+    std::string site_name;              // human-readable name
+    int difficulty = 1;                 // 1-5 difficulty rating
+    float signal_strength = 0.0f;       // 0.0=unresolved, 1.0=fully scanned
+    float base_scan_difficulty = 1.0f;  // multiplier for scan difficulty
+    float x = 0.0f;                     // site position
+    float y = 0.0f;
+    float z = 0.0f;
+    bool despawned = false;             // site has been completed/expired
+
+    // Loot and NPC data from the site template
+    std::vector<std::string> npc_spawns;
+    std::map<std::string, int> loot_table;
+    float isk_reward = 0.0f;
+
+    bool isResolved() const { return signal_strength >= 1.0f; }
+
+    COMPONENT_TYPE(AnomalySignature)
+};
+
+/**
+ * @brief Container tracking all anomaly signatures in a solar system
+ */
+class SolarSystemSignatures : public ecs::Component {
+public:
+    std::string system_id;
+    float security_level = 0.5f;            // 0.0=null, 1.0=highsec
+    uint32_t system_seed = 0;               // seed for deterministic generation
+    int max_signatures = 10;                // max active signatures
+    std::vector<std::string> signature_ids; // entity IDs of AnomalySignature entities
+
+    COMPONENT_TYPE(SolarSystemSignatures)
+};
+
 } // namespace components
 } // namespace atlas
 

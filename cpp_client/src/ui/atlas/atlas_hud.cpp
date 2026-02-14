@@ -1174,24 +1174,40 @@ void AtlasHUD::drawCelestialBrackets(AtlasContext& ctx) {
     float winW = static_cast<float>(ctx.input().windowW);
     float winH = static_cast<float>(ctx.input().windowH);
 
+    // Respect sidebar boundary — brackets must not overlap the Neocom bar
+    float leftEdge = ctx.sidebarWidth();
+
     float iconSz = 10.0f;  // half-size of the bracket diamond
 
     for (const auto& b : m_brackets) {
         float sx = b.screenX;
         float sy = b.screenY;
 
-        // Clamp off-screen brackets to screen edges with a margin
+        // Clamp off-screen brackets to screen edges with a margin,
+        // using the sidebar width as the left boundary
         float margin = 20.0f;
         bool clamped = false;
         if (!b.onScreen) {
             clamped = true;
         }
-        if (sx < margin)          { sx = margin;          clamped = true; }
-        if (sx > winW - margin)   { sx = winW - margin;   clamped = true; }
-        if (sy < margin)          { sy = margin;          clamped = true; }
-        if (sy > winH - margin)   { sy = winH - margin;   clamped = true; }
+        if (sx < leftEdge + margin) { sx = leftEdge + margin; clamped = true; }
+        if (sx > winW - margin)     { sx = winW - margin;     clamped = true; }
+        if (sy < margin)            { sy = margin;            clamped = true; }
+        if (sy > winH - margin)     { sy = winH - margin;     clamped = true; }
 
-        Color col = bracketColorForType(b.type);
+        // Hit-test area for hover/click (needed before drawing so we
+        // know whether to highlight)
+        Rect hitRect = {sx - iconSz - 2.0f, sy - iconSz - 2.0f,
+                        (iconSz + 2.0f) * 2.0f, (iconSz + 2.0f) * 2.0f};
+        WidgetID wid = hashID("bracket") ^ static_cast<uint32_t>(std::hash<std::string>{}(b.id));
+
+        bool hovered = ctx.isHovered(hitRect);
+        if (hovered) ctx.setHot(wid);
+
+        // Brackets are subtle by default — very faint until hovered.
+        // The player has to look for them; they don't clutter the screen.
+        float baseAlpha = hovered ? 0.85f : (b.selected ? 0.5f : 0.15f);
+        Color col = bracketColorForType(b.type).withAlpha(baseAlpha);
 
         // Draw a small diamond bracket icon
         // Diamond: four lines forming a rotated square
@@ -1207,27 +1223,20 @@ void AtlasHUD::drawCelestialBrackets(AtlasContext& ctx) {
 
         // If selected, fill the diamond
         if (b.selected) {
-            r.drawLine(top, bot, col.withAlpha(0.3f), s * 2.0f);
+            r.drawLine(top, bot, col.withAlpha(0.2f), s * 2.0f);
         }
-
-        // Hit-test area for hover/click
-        Rect hitRect = {sx - iconSz - 2.0f, sy - iconSz - 2.0f,
-                        (iconSz + 2.0f) * 2.0f, (iconSz + 2.0f) * 2.0f};
-        WidgetID wid = hashID("bracket") ^ static_cast<uint32_t>(std::hash<std::string>{}(b.id));
-
-        bool hovered = ctx.isHovered(hitRect);
-        if (hovered) ctx.setHot(wid);
 
         // On hover: show name, type, and distance tooltip
         if (hovered) {
-            // Highlight bracket on hover
+            // Highlight bracket on hover — full brightness outer ring
             float hs = s + 3.0f;
+            Color hlCol = bracketColorForType(b.type).withAlpha(0.7f);
             Vec2 ht = {sx, sy - hs}, hr = {sx + hs, sy};
             Vec2 hb = {sx, sy + hs}, hl = {sx - hs, sy};
-            r.drawLine(ht, hr, col.withAlpha(0.5f), 1.0f);
-            r.drawLine(hr, hb, col.withAlpha(0.5f), 1.0f);
-            r.drawLine(hb, hl, col.withAlpha(0.5f), 1.0f);
-            r.drawLine(hl, ht, col.withAlpha(0.5f), 1.0f);
+            r.drawLine(ht, hr, hlCol, 1.0f);
+            r.drawLine(hr, hb, hlCol, 1.0f);
+            r.drawLine(hb, hl, hlCol, 1.0f);
+            r.drawLine(hl, ht, hlCol, 1.0f);
 
             // Tooltip with name, type, distance
             float tooltipX = sx + iconSz + 8.0f;
@@ -1246,19 +1255,20 @@ void AtlasHUD::drawCelestialBrackets(AtlasContext& ctx) {
                 std::snprintf(distBuf, sizeof(distBuf), "%.0f m", b.distance);
             }
 
-            // Background box
+            // Background box — clamp to playable area (respect sidebar)
             float boxW = 180.0f;
             float boxH = 48.0f;
-            // Clamp tooltip to screen
             if (tooltipX + boxW > winW - 10.0f) tooltipX = sx - iconSz - boxW - 8.0f;
+            if (tooltipX < leftEdge + 4.0f) tooltipX = leftEdge + 4.0f;
             if (tooltipY + boxH > winH - 10.0f) tooltipY = winH - boxH - 10.0f;
             if (tooltipY < 10.0f) tooltipY = 10.0f;
 
             Rect tipBg = {tooltipX - 4.0f, tooltipY - 2.0f, boxW, boxH};
             r.drawRect(tipBg, t.bgPanel.withAlpha(0.9f));
-            r.drawRectOutline(tipBg, col.withAlpha(0.5f));
+            r.drawRectOutline(tipBg, bracketColorForType(b.type).withAlpha(0.5f));
 
-            r.drawText(b.name, {tooltipX, tooltipY}, col, 1.0f);
+            Color textCol = bracketColorForType(b.type);
+            r.drawText(b.name, {tooltipX, tooltipY}, textCol, 1.0f);
             r.drawText(b.type, {tooltipX, tooltipY + 14.0f}, t.textSecondary, 1.0f);
             r.drawText(distBuf, {tooltipX, tooltipY + 28.0f}, t.textMuted, 1.0f);
         }

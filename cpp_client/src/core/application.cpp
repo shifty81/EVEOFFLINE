@@ -1252,7 +1252,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
     // EVE-style camera: Right-click drag to orbit camera around ship
     if (m_rightMouseDown) {
         if (!m_atlasConsumedMouse) {
-            float sensitivity = 0.3f;
+            float sensitivity = 0.15f;
             m_camera->rotate(static_cast<float>(deltaX) * sensitivity,
                            static_cast<float>(-deltaY) * sensitivity);
         }

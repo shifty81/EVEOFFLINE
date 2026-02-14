@@ -52,6 +52,8 @@
 #include "systems/ai_system.h"
 #include "systems/mining_system.h"
 #include "systems/refining_system.h"
+#include "systems/scanner_system.h"
+#include "systems/anomaly_spawner_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -8106,6 +8108,304 @@ void testShipModelDataMissingReturnsDefaults() {
     assertTrue(empty.model_data.generation_seed == 0, "Default generation seed is 0");
 }
 
+// ==================== Scanner System Tests ====================
+
+void testScannerStartScan() {
+    std::cout << "\n=== Scanner: Start Scan ===" << std::endl;
+    ecs::World world;
+    systems::ScannerSystem scanSys(&world);
+
+    // Create scanner entity
+    auto* ship = world.createEntity("ship_1");
+    auto* scanner = addComp<components::Scanner>(ship);
+    scanner->scan_strength = 80.0f;
+    scanner->scan_deviation = 0.1f;
+    scanner->scan_duration = 10.0f;
+
+    // Create anomaly signature
+    auto* anomaly = world.createEntity("sig_a");
+    auto* sig = addComp<components::AnomalySignature>(anomaly);
+    sig->signature_id = "sig_a";
+    sig->signature_type = "combat";
+    sig->site_name = "Unknown Combat Site";
+    sig->difficulty = 1;
+    sig->signal_strength = 0.0f;
+    sig->base_scan_difficulty = 1.0f;
+
+    bool started = scanSys.startScan("ship_1", "sig_a");
+    assertTrue(started, "Scan started successfully");
+    assertTrue(scanner->scanning, "Scanner is active");
+    assertTrue(scanSys.getActiveScanCount() == 1, "One active scan");
+}
+
+void testScannerResolveSignal() {
+    std::cout << "\n=== Scanner: Resolve Signal ===" << std::endl;
+    ecs::World world;
+    systems::ScannerSystem scanSys(&world);
+
+    auto* ship = world.createEntity("ship_1");
+    auto* scanner = addComp<components::Scanner>(ship);
+    scanner->scan_strength = 100.0f;
+    scanner->scan_deviation = 0.0f;
+    scanner->scan_duration = 1.0f;  // fast cycle for testing
+
+    auto* anomaly = world.createEntity("sig_b");
+    auto* sig = addComp<components::AnomalySignature>(anomaly);
+    sig->signature_id = "sig_b";
+    sig->signature_type = "relic";
+    sig->site_name = "Ancient Ruins";
+    sig->difficulty = 1;
+    sig->signal_strength = 0.0f;
+    sig->base_scan_difficulty = 1.0f;
+
+    scanSys.startScan("ship_1", "sig_b");
+
+    // Run enough cycles to fully resolve (strength/difficulty = 100/(100*1*1) = 1.0 per cycle)
+    scanSys.update(1.0f);
+    assertTrue(sig->signal_strength > 0.0f, "Signal strength increased after scan cycle");
+    assertTrue(scanSys.isResolved("sig_b"), "Signature fully resolved after one easy cycle");
+    assertTrue(!scanner->scanning, "Scanner stops after resolution");
+}
+
+void testScannerDifficultySig() {
+    std::cout << "\n=== Scanner: Difficult Signature ===" << std::endl;
+    ecs::World world;
+    systems::ScannerSystem scanSys(&world);
+
+    auto* ship = world.createEntity("ship_1");
+    auto* scanner = addComp<components::Scanner>(ship);
+    scanner->scan_strength = 40.0f;
+    scanner->scan_deviation = 0.25f;
+    scanner->scan_duration = 1.0f;
+
+    auto* anomaly = world.createEntity("sig_c");
+    auto* sig = addComp<components::AnomalySignature>(anomaly);
+    sig->signature_id = "sig_c";
+    sig->signature_type = "wormhole";
+    sig->site_name = "Unknown Wormhole";
+    sig->difficulty = 3;
+    sig->signal_strength = 0.0f;
+    sig->base_scan_difficulty = 2.0f;
+
+    scanSys.startScan("ship_1", "sig_c");
+
+    // One cycle won't fully resolve: 40/(100*2.0*3) * (1-0.125) = ~0.058
+    scanSys.update(1.0f);
+    assertTrue(sig->signal_strength > 0.0f, "Signal improved after one cycle");
+    assertTrue(!sig->isResolved(), "Difficult sig not resolved in one cycle");
+    assertTrue(scanner->scanning, "Scanner still active");
+}
+
+void testScannerStopScan() {
+    std::cout << "\n=== Scanner: Stop Scan ===" << std::endl;
+    ecs::World world;
+    systems::ScannerSystem scanSys(&world);
+
+    auto* ship = world.createEntity("ship_1");
+    auto* scanner = addComp<components::Scanner>(ship);
+    scanner->scan_duration = 1.0f;
+
+    auto* anomaly = world.createEntity("sig_d");
+    auto* sig = addComp<components::AnomalySignature>(anomaly);
+    sig->signature_id = "sig_d";
+    sig->signature_type = "data";
+    sig->difficulty = 1;
+    sig->signal_strength = 0.0f;
+    sig->base_scan_difficulty = 1.0f;
+
+    scanSys.startScan("ship_1", "sig_d");
+    assertTrue(scanner->scanning, "Scan is active");
+
+    bool stopped = scanSys.stopScan("ship_1");
+    assertTrue(stopped, "Scan stopped");
+    assertTrue(!scanner->scanning, "Scanner no longer active");
+    assertTrue(scanSys.getActiveScanCount() == 0, "No active scans");
+}
+
+void testScannerInvalidTarget() {
+    std::cout << "\n=== Scanner: Invalid Target ===" << std::endl;
+    ecs::World world;
+    systems::ScannerSystem scanSys(&world);
+
+    auto* ship = world.createEntity("ship_1");
+    addComp<components::Scanner>(ship);
+
+    bool started = scanSys.startScan("ship_1", "nonexistent");
+    assertTrue(!started, "Cannot scan non-existent signature");
+
+    float strength = scanSys.getSignalStrength("nonexistent");
+    assertTrue(strength < 0.0f, "getSignalStrength returns -1 for missing entity");
+}
+
+void testScannerAlreadyResolved() {
+    std::cout << "\n=== Scanner: Already Resolved ===" << std::endl;
+    ecs::World world;
+    systems::ScannerSystem scanSys(&world);
+
+    auto* ship = world.createEntity("ship_1");
+    addComp<components::Scanner>(ship);
+
+    auto* anomaly = world.createEntity("sig_e");
+    auto* sig = addComp<components::AnomalySignature>(anomaly);
+    sig->signature_id = "sig_e";
+    sig->difficulty = 1;
+    sig->signal_strength = 1.0f;  // already resolved
+    sig->base_scan_difficulty = 1.0f;
+
+    bool started = scanSys.startScan("ship_1", "sig_e");
+    assertTrue(!started, "Cannot scan already-resolved signature");
+}
+
+// ==================== Anomaly Spawner System Tests ====================
+
+void testAnomalySpawnSingle() {
+    std::cout << "\n=== AnomalySpawner: Spawn Single ===" << std::endl;
+    ecs::World world;
+    systems::AnomalySpawnerSystem spawnerSys(&world);
+
+    auto* system = world.createEntity("system_1");
+    auto* sigs = addComp<components::SolarSystemSignatures>(system);
+    sigs->system_id = "system_1";
+    sigs->security_level = 0.5f;
+    sigs->system_seed = 42;
+    sigs->max_signatures = 10;
+
+    std::string id = spawnerSys.spawnAnomaly("system_1", "combat",
+        "Venom Syndicate Base", 3, 1000.0f, 0.0f, -500.0f);
+    assertTrue(!id.empty(), "Anomaly entity created");
+    assertTrue(sigs->signature_ids.size() == 1, "System has one signature");
+
+    auto* anomaly = world.getEntity(id);
+    assertTrue(anomaly != nullptr, "Anomaly entity exists");
+
+    auto* sig = anomaly->getComponent<components::AnomalySignature>();
+    assertTrue(sig != nullptr, "Has AnomalySignature component");
+    assertTrue(sig->signature_type == "combat", "Type is combat");
+    assertTrue(sig->difficulty == 3, "Difficulty is 3");
+    assertTrue(!sig->despawned, "Not despawned");
+    assertTrue(sig->signal_strength == 0.0f, "Starts at zero signal");
+}
+
+void testAnomalySpawnInitial() {
+    std::cout << "\n=== AnomalySpawner: Spawn Initial ===" << std::endl;
+    ecs::World world;
+    systems::AnomalySpawnerSystem spawnerSys(&world);
+
+    auto* system = world.createEntity("system_1");
+    auto* sigs = addComp<components::SolarSystemSignatures>(system);
+    sigs->system_id = "system_1";
+    sigs->security_level = 0.0f;  // null-sec: should get 100% of max
+    sigs->system_seed = 12345;
+    sigs->max_signatures = 10;
+
+    int spawned = spawnerSys.spawnInitialAnomalies("system_1");
+    assertTrue(spawned > 0, "Anomalies were spawned");
+    assertTrue(spawned == 10, "Null-sec gets full count (10)");
+    assertTrue(spawnerSys.getActiveAnomalyCount("system_1") == 10,
+               "Active anomaly count matches");
+}
+
+void testAnomalyDespawn() {
+    std::cout << "\n=== AnomalySpawner: Despawn ===" << std::endl;
+    ecs::World world;
+    systems::AnomalySpawnerSystem spawnerSys(&world);
+
+    auto* system = world.createEntity("system_1");
+    auto* sigs = addComp<components::SolarSystemSignatures>(system);
+    sigs->system_id = "system_1";
+    sigs->security_level = 0.5f;
+    sigs->system_seed = 99;
+    sigs->max_signatures = 10;
+
+    std::string id = spawnerSys.spawnAnomaly("system_1", "relic",
+        "Ancient Ruins", 2, 0.0f, 0.0f, 0.0f);
+    assertTrue(spawnerSys.getActiveAnomalyCount("system_1") == 1,
+               "One active anomaly");
+
+    bool despawned = spawnerSys.despawnAnomaly(id);
+    assertTrue(despawned, "Anomaly despawned");
+    assertTrue(spawnerSys.getActiveAnomalyCount("system_1") == 0,
+               "No active anomalies after despawn");
+}
+
+void testAnomalyDifficultyScale() {
+    std::cout << "\n=== AnomalySpawner: Difficulty Scale ===" << std::endl;
+
+    float highsec = systems::AnomalySpawnerSystem::difficultyScale(1.0f);
+    float lowsec = systems::AnomalySpawnerSystem::difficultyScale(0.3f);
+    float nullsec = systems::AnomalySpawnerSystem::difficultyScale(0.0f);
+
+    assertTrue(approxEqual(highsec, 0.0f), "High-sec difficulty scale is 0.0");
+    assertTrue(approxEqual(lowsec, 0.7f), "Low-sec (0.3) difficulty scale is 0.7");
+    assertTrue(approxEqual(nullsec, 1.0f), "Null-sec difficulty scale is 1.0");
+}
+
+void testAnomalyTargetCount() {
+    std::cout << "\n=== AnomalySpawner: Target Signature Count ===" << std::endl;
+
+    int highsec = systems::AnomalySpawnerSystem::targetSignatureCount(1.0f, 10);
+    int nullsec = systems::AnomalySpawnerSystem::targetSignatureCount(0.0f, 10);
+    int midsec = systems::AnomalySpawnerSystem::targetSignatureCount(0.5f, 10);
+
+    assertTrue(highsec == 3, "High-sec gets 3 of 10 signatures");
+    assertTrue(nullsec == 10, "Null-sec gets 10 of 10 signatures");
+    assertTrue(midsec >= 3 && midsec <= 10, "Mid-sec is between 3 and 10");
+}
+
+void testAnomalyHighsecSpawn() {
+    std::cout << "\n=== AnomalySpawner: High-Sec Spawn Count ===" << std::endl;
+    ecs::World world;
+    systems::AnomalySpawnerSystem spawnerSys(&world);
+
+    auto* system = world.createEntity("system_1");
+    auto* sigs = addComp<components::SolarSystemSignatures>(system);
+    sigs->system_id = "system_1";
+    sigs->security_level = 1.0f;  // high-sec
+    sigs->system_seed = 777;
+    sigs->max_signatures = 10;
+
+    int spawned = spawnerSys.spawnInitialAnomalies("system_1");
+    assertTrue(spawned == 3, "High-sec spawns 3 anomalies (30% of 10)");
+}
+
+void testScannerAndSpawnerIntegration() {
+    std::cout << "\n=== Integration: Scanner + AnomalySpawner ===" << std::endl;
+    ecs::World world;
+    systems::ScannerSystem scanSys(&world);
+    systems::AnomalySpawnerSystem spawnerSys(&world);
+
+    // Create solar system with anomalies
+    auto* system = world.createEntity("system_1");
+    auto* sigs = addComp<components::SolarSystemSignatures>(system);
+    sigs->system_id = "system_1";
+    sigs->security_level = 0.5f;
+    sigs->system_seed = 42;
+    sigs->max_signatures = 5;
+
+    std::string anomaly_id = spawnerSys.spawnAnomaly("system_1", "data",
+        "Abandoned Research Facility", 1, 100.0f, 0.0f, 0.0f);
+    assertTrue(!anomaly_id.empty(), "Anomaly spawned for integration test");
+
+    // Create a player ship with a scanner
+    auto* ship = world.createEntity("player_ship");
+    auto* scanner = addComp<components::Scanner>(ship);
+    scanner->scan_strength = 100.0f;
+    scanner->scan_deviation = 0.0f;
+    scanner->scan_duration = 1.0f;
+
+    // Scan the anomaly
+    bool started = scanSys.startScan("player_ship", anomaly_id);
+    assertTrue(started, "Integration scan started");
+
+    scanSys.update(1.0f);
+    assertTrue(scanSys.isResolved(anomaly_id), "Anomaly resolved through scanning");
+
+    // Despawn after completion
+    spawnerSys.despawnAnomaly(anomaly_id);
+    assertTrue(spawnerSys.getActiveAnomalyCount("system_1") == 0,
+               "Anomaly removed after completion");
+}
+
 // ==================== Main ====================
 
 int main() {
@@ -8127,7 +8427,8 @@ int main() {
     std::cout << "AIDynamicOrbit, AITargetSelection, Protocol," << std::endl;
     std::cout << "Mining, MiningDrones, SalvageDrones," << std::endl;
     std::cout << "CombatDeathWreck, SystemResources," << std::endl;
-    std::cout << "ShipModelData" << std::endl;
+    std::cout << "ShipModelData," << std::endl;
+    std::cout << "Scanner, AnomalySpawner" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -8594,6 +8895,25 @@ int main() {
     testShipModelDataSeedUniqueness();
     testShipModelDataEngineCountPositive();
     testShipModelDataMissingReturnsDefaults();
+
+    // Scanner system tests
+    testScannerStartScan();
+    testScannerResolveSignal();
+    testScannerDifficultySig();
+    testScannerStopScan();
+    testScannerInvalidTarget();
+    testScannerAlreadyResolved();
+
+    // Anomaly spawner system tests
+    testAnomalySpawnSingle();
+    testAnomalySpawnInitial();
+    testAnomalyDespawn();
+    testAnomalyDifficultyScale();
+    testAnomalyTargetCount();
+    testAnomalyHighsecSpawn();
+
+    // Integration test
+    testScannerAndSpawnerIntegration();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
