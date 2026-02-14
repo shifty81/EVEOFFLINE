@@ -191,6 +191,62 @@ See the [Modding Guide](docs/MODDING_GUIDE.md) for details.
 
 ---
 
+## 🗺️ Roadmap
+
+> **[Full Roadmap →](docs/ROADMAP.md)** — Detailed milestones, ECS specs, and implementation status
+
+<table>
+<tr>
+<td width="50%" valign="top">
+
+### ✅ Completed
+
+| Phase | Milestone | Status |
+|:-----:|-----------|:------:|
+| 1 | **Core Engine** — ECS, networking, tick-based sim | ✅ |
+| 2 | **Content** — 102 ships, 159 modules, 137 skills | ✅ |
+| 3 | **Economy** — Manufacturing, market, exploration, loot | ✅ |
+| 4 | **Social** — Corps, contracts, mail, chat | ✅ |
+| 5 | **3D Graphics** — OpenGL client, PBR, particles, audio | ✅ |
+| 6 | **Tech II** — HAC, Recon, Logistics, capitals, L5 missions | ✅ |
+| 7 | **Industry** — Mining, PI, invention, wormholes, fleet | ✅ |
+
+</td>
+<td width="50%" valign="top">
+
+### 🚧 Next Up
+
+| Phase | Milestone | Focus |
+|:-----:|-----------|:-----:|
+| 🎯 | **Vertical Slice** — One full star system, playable loop | 🔜 |
+| 8 | **Cinematic Warp** — Tunnel shaders, audio, anomalies | 📋 |
+| 9 | **Fleet AI** — Captain personalities, morale, chatter | 📋 |
+| 10 | **Tactical Overlay** — 2.5D strategy view, distance rings | 📋 |
+| 11 | **Fleet Civilization** — 25-ship fleets, station deployment | 📋 |
+| 12 | **Ship Gen v2** — Spine-based hulls, silhouette-first design | 📋 |
+
+</td>
+</tr>
+</table>
+
+<details>
+<summary><strong>🔭 Vision — Where This Is Going</strong></summary>
+<br>
+
+**Warp as ritual, not loading screen** — Long warps become meditative experiences with layered audio, visual anomalies, and fleet chatter. Ships warp in formation; captains talk about victories, losses, and rumors.
+
+**Fleet members are people** — AI captains have personality axes (aggression, optimism, humor), form friendships and grudges, track morale, and may leave if conditions worsen. Their chatter shifts across mining, combat, exploration, and idle states.
+
+**Tactical overlay for spatial mastery** — A passive 2.5D strategy view shows true distances, tool ranges, and entity positions without clutter or interaction. Information > spectacle.
+
+**Traveling civilizations** — At 25 ships with titans and capitals, your fleet becomes a moving polity with distributed economy, station deployment, and fleet-scale industry. Titan is a civilizational threshold, not just the next ship.
+
+**Ships that read in silhouette** — Procedural generation overhaul: spine-based hull grammar (Needle, Wedge, Hammer, Slab, Ring) with functional zones and faction shape language, replacing blob-assembly.
+
+</details>
+
+---
+
 ## 📚 Documentation
 
 | Category | Links |

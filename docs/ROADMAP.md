@@ -878,6 +878,191 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 ---
 
+### 📋 Phase 8: Cinematic Warp & Transitional States (Planned)
+**Timeline**: 2027  
+**Priority**: High  
+**Goal**: Transform warp travel from empty transit into an immersive, meditative gameplay state
+
+#### Warp Tunnel Visual System
+- [ ] **Layered shader stack** — 5-layer warp tunnel (radial distortion, starfield velocity bloom, procedural noise skin, ship silhouette anchor, vignette + peripheral falloff)
+- [ ] **Ship-mass-driven intensity** — Heavier ships bend space harder, deeper bass, slower tunnel oscillation
+- [ ] **Warp entry/exit choreography** — Alignment phase → FOV tighten → tunnel cruise → deceleration bloom → arrival
+- [ ] **Performance budget** — ≤1.2ms total GPU cost (single fullscreen pass, no dynamic branching)
+
+#### Warp Audio System
+- [ ] **Engine core sub-bass** (30–60 Hz sine, controller rumble sync)
+- [ ] **Warp field harmonics** (phase-shifted stereo, slow LFO evolution)
+- [ ] **Environmental Doppler shimmer** (distance-triggered one-shots, long tails)
+- [ ] **Optional meditation layer** (sustained pads, no melody, fade in after 15–20s of warp)
+- [ ] **Audio progression curve** — Tension → stabilize → bloom → full meditative state
+
+#### Warp Anomalies & Mid-Warp Events
+- [ ] **Visual-only phenomena** (~1 per 3–5 warps) — tunnel eddies, color shifts, phantom star clusters
+- [ ] **Sensory distortions** (~1 per 10–15 warps) — bass deepens, harmonics detune
+- [ ] **Spacetime shear events** (~1 per 50–100 warps) — fracturing tunnel, distant megastructures, lore log rewards
+- [ ] **Legendary events** (ultra-rare, opt-in) — collapsed gate scars, ancient battlefield echoes
+
+#### HUD Travel Mode
+- [ ] **Soft edge treatment** — Edges soften, bright colors desaturate, tactical warnings muted during warp
+- [ ] **Safe-area padding** — 32–48px bottom margin, HUD scaled inward to 95%
+- [ ] **Optional UI flair** (player toggle) — Animated brackets, UI glow synced to engine bass, subtle HUD parallax
+
+#### Accessibility & Comfort
+- [ ] **Motion intensity slider** (0%–100% distortion control)
+- [ ] **Bass intensity slider** (maps to engine core volume)
+- [ ] **Peripheral blur scalar**
+- [ ] **Tunnel geometry toggle** (off = star streaks only, on = full warp skin)
+- [ ] **Auto-comfort rules** — Reduce oscillation on FPS drop, clamp distortion on ultrawide
+
+#### Warp ECS Components
+- [ ] `WarpStateComponent` (phase, warpTime, distanceRemaining)
+- [ ] `WarpProfileComponent` (warpSpeed, massNorm, intensity, comfortScale)
+- [ ] `WarpVisualComponent` (distortionStrength, tunnelNoiseScale, vignetteAmount)
+- [ ] `WarpAudioComponent` (bassLevel, harmonicLevel, shimmerChance, meditationLayerActive)
+- [ ] `WarpEventComponent` (currentEvent, eventTimer, severity)
+
+---
+
+### 📋 Phase 9: Fleet AI Personality & Social Systems (Planned)
+**Timeline**: 2027  
+**Priority**: High  
+**Goal**: Make fleet members feel like living characters with memory, personality, and emotional depth
+
+#### Captain Personality System
+- [ ] **Personality axes** — Aggression, sociability, optimism, professionalism, loyalty, humor, risk tolerance
+- [ ] **Faction personality profiles** — Each of the 4 factions has distinct cultural modifiers affecting chatter tone and behavior
+- [ ] **Personality-driven behavior** — Affects chatter frequency, formation tightness, morale response, willingness to stay
+
+#### Fleet Radio Chatter
+- [ ] **Context-aware dialogue** — Chatter during warp, mining, combat, exploration, idle, and salvage operations
+- [ ] **Interruptible chatter** — Higher-priority events (combat alerts, anomalies) naturally cut off lower-priority small talk
+- [ ] **Timing rules** — One line every 20–45s max, no overlap, cooldowns between speakers
+- [ ] **Combat memory references** — Captains reference actual encounters (ships destroyed, close calls, who saved who)
+- [ ] **Positional audio** — Voices originate from ship position in formation, warp tunnel reverb effects
+
+#### Fleet Morale & Memory
+- [ ] **Persistent fleet memory** — Each captain tracks missions together, wins, losses, ships lost, saves
+- [ ] **Morale model** — Soft scoring: wins × 1.0 − losses × 1.5 − shipsLost × 2.0 + saves × 1.2
+- [ ] **Morale states** (Inspired → Steady → Doubtful → Disengaged) — Affects chatter tone, formation, willingness
+- [ ] **Emotional arcs** — Captains change over time (optimist → disillusioned, survivor → mentor)
+
+#### Captain Social Graph
+- [ ] **Relationship tracking** — Bidirectional affinity scores (-100 grudge → +100 bond)
+- [ ] **Relationship modifiers** — Saved in combat (+10), abandoned (-20), shared long warp (+passive), kill credit stolen (-8)
+- [ ] **Friendship effects** — Fly closer, back up faster, reference each other
+- [ ] **Grudge effects** — Fly wider, delay responses, sarcastic comms
+
+#### Fleet Dreams & Rumors
+- [ ] **Rumor system** — Non-authoritative truths from warp anomalies, rare visuals, near-miss events
+- [ ] **Rumor propagation** — Spread through chatter, reinforced if seen again, fade if unconfirmed
+- [ ] **Rumor-to-questline graduation** — Repeated rumors surface as optional investigations or encounter chains
+
+#### Fleet Departure & Transfers
+- [ ] **Disagreement model** — Based on risk × (1-aggression) + losses × (1-optimism) + task mismatch
+- [ ] **Organic departure** — Comes up in chatter first → formal request → peaceful departure or splinter fleet
+- [ ] **Transfer requests** — High morale captains request bigger ships; low morale request escort-only roles
+
+#### Player Silence Awareness
+- [ ] **Player presence tracking** — Time since last command, time since last speech
+- [ ] **Silence interpretation** — Fleet reacts to player silence ("Quiet today, boss", "You alright up there?")
+
+#### Fleet Chatter ECS Components
+- [ ] `CaptainPersonalityComponent` (aggression, sociability, optimism, professionalism)
+- [ ] `CaptainRelationshipComponent` (otherCaptain, affinity)
+- [ ] `EmotionalStateComponent` (confidence, trustInPlayer, fatigue, hope)
+- [ ] `RumorComponent` (type, beliefStrength, personallyWitnessed)
+- [ ] `PlayerPresenceComponent` (timeSinceLastCommand, timeSinceLastSpeech)
+- [ ] `FactionCultureComponent` (faction behavior modifiers)
+
+---
+
+### 📋 Phase 10: Tactical Overlay & Strategy View (Planned)
+**Timeline**: 2027  
+**Priority**: Medium  
+**Goal**: Passive, data-truth spatial overlay for precise distance judgment and positioning
+
+#### Core Overlay System
+- [ ] **Distance rings** — Concentric circles at fixed world-unit radii (5, 10, 20, 30, 50, 100 units/km)
+- [ ] **Tool range ring** — Dynamic ring for active tool (mining laser, weapon), color-coded by type
+- [ ] **Entity projection** — Flattened tactical plane with vertical encoding (ticks for above/below)
+- [ ] **Shared filters** — Overlay shares filter state with Overview and world brackets
+
+#### Interaction Rules
+- [ ] **Passive display only** — No clickable elements, no dragging, no entity selection
+- [ ] **Toggle hotkey** (V, configurable)
+- [ ] **Scales to large entity counts** — Muted asteroids, high-contrast hostiles, heavier structure silhouettes
+
+#### Staged Implementation
+- [ ] **Stage 1**: Toggle overlay + distance rings (no entities)
+- [ ] **Stage 2**: Entity projection with vertical ticks and shared filters
+- [ ] **Stage 3**: Tool awareness (active tool range, color coding)
+- [ ] **Stage 4**: Fleet extensions (anchor rings, wing bands)
+
+#### Tactical Overlay ECS Components
+- [ ] `TacticalOverlayState` (enabled, ringDistances[])
+- [ ] `TacticalProjection` (projectedPosition, verticalOffset)
+
+---
+
+### 📋 Phase 11: Fleet-as-Civilization & Endgame (Planned)
+**Timeline**: 2027–2028  
+**Priority**: Medium  
+**Goal**: Transform late-game fleets into traveling civilizations with distributed economy and station building
+
+#### Fleet Progression Stages
+- [ ] **Phase 1** (Early): Max 5 ships — Player + 4 captains, basic personalities + chatter
+- [ ] **Phase 2** (Mid): Up to 15 ships — 3 wings × 5, wing commanders, role specialization (mining/combat/logistics)
+- [ ] **Phase 3** (End): 25 ships — 5 wings × 5, full doctrine (mining, salvage, logistics, escort, construction)
+
+#### Fleet Cargo Pool
+- [ ] **Distributed inventory** — Fleet cargo pool backed by real ship inventories (not magic storage)
+- [ ] **Ship loss = cargo loss** — Fleet pool recalculates immediately on ship destruction
+- [ ] **Capacity scaling** — Σ(shipCargo × logisticsEfficiency × captainSkill × moraleModifier)
+- [ ] **Fleet inventory UI** — Scrollable categories (salvage, fleet supplies, artifacts, rumors)
+
+#### Station Deployment
+- [ ] **Station-deployment ship class** — Ships that deploy into permanent stations
+- [ ] **Attachable station modules** — Upgrade and add features to deployed stations
+- [ ] **Solar system upgrading** — Station presence upgrades stats of the settled system
+
+#### Fleet Warp Formation
+- [ ] **Fleet warp-in-formation** — All fleet members warp visibly alongside player (no teleport pop-ins)
+- [ ] **Formation types** — Fighters (loose diamond), frigates (tight echelon), capitals (wide, slow drift)
+- [ ] **Formation breathing** — Subtle 0.02–0.05 Hz oscillation for organic feel
+- [ ] **Visual interaction** — Warp distortion bends around large ships, smaller ships' wakes ripple
+
+#### Civilization-Scale Systems
+- [ ] **Titan as civilizational threshold** — Requires stable logistics, loyal captains, fleet history, fleet-scale industry
+- [ ] **Fleet as moving polity** — Distributed economy, not magic storage
+- [ ] **Save-file persistent fleet history** — Captain personalities, relationships, major events, rumors persist across sessions
+
+---
+
+### 📋 Phase 12: Procedural Ship Generation Overhaul (Planned)
+**Timeline**: 2027  
+**Priority**: High  
+**Goal**: Ships that read in silhouette — spine-based hull grammar replacing blob-assembly
+
+#### Hull Grammar System
+- [ ] **Spine selection** — Needle, Wedge, Hammer, Slab, Ring — defines ship purpose
+- [ ] **Functional zone ordering** — Command/bridge → mid-hull → engine block (always in order, parameterized)
+- [ ] **Greebles last** — Antennas, armor plates, cargo pods added only after silhouette is clean
+- [ ] **Bilateral symmetry enforcement**
+- [ ] **Aspect ratio clamping** and hull elongation (1.5×)
+- [ ] **Clear engine cluster** generation for every hull type
+
+#### Faction Shape Language
+- [ ] **Solari** — Golden, elegant spires, flowing curves
+- [ ] **Veyren** — Angular, utilitarian blocks, sharp edges
+- [ ] **Aurelian** — Sleek, organic forms, swept shapes
+- [ ] **Keldari** — Rugged, industrial bulk, visible internals
+
+#### Damage & Visual States
+- [ ] **Damage decals** — Missing modules, hull breaches visible on damaged ships
+- [ ] **Economy-driven generation** — NPC ships reflect economic state (resource-rich = mining hulls, war-torn = damaged patrols)
+
+---
+
 ## Future Considerations
 
 ### Long-term Goals (2027+)
@@ -1028,6 +1213,37 @@ Player undocks → Scans anomaly → Fights pirates → Ship explodes → Wreck 
   - Advanced gameplay systems
   - Mining, PI, invention
   - Wormhole space
+
+### 2027
+- **Q1–Q2 2027**: Phase 8 — Cinematic Warp & Transitional States
+  - Warp tunnel shader stack (5-layer visual system)
+  - Adaptive warp audio (sub-bass, harmonics, meditation layer)
+  - Warp anomalies & rare mid-warp events
+  - HUD travel mode & accessibility settings
+
+- **Q2–Q3 2027**: Phase 9 — Fleet AI Personality & Social Systems
+  - Captain personality axes & faction culture modifiers
+  - Context-aware fleet radio chatter (warp, mining, combat, idle)
+  - Fleet morale, memory, social graph (friendships & grudges)
+  - Emotional arcs, rumor system, fleet departure mechanics
+
+- **Q3 2027**: Phase 10 — Tactical Overlay & Strategy View
+  - Passive 2.5D spatial overlay with distance rings
+  - Entity projection, tool range rings, shared filters
+  - Staged rollout (skeleton → entities → tools → fleet extensions)
+
+- **Q3 2027**: Phase 12 — Procedural Ship Generation Overhaul
+  - Spine-based hull grammar (Needle, Wedge, Hammer, Slab, Ring)
+  - Functional zone ordering, greebles last
+  - Faction shape language enforcement
+  - Silhouette-first design replacing blob-assembly
+
+- **Q4 2027–2028**: Phase 11 — Fleet-as-Civilization & Endgame
+  - 25-ship fleet progression (5 wings × 5)
+  - Fleet cargo pool & distributed economy
+  - Station deployment & solar system upgrading
+  - Fleet warp formation with visual interaction
+  - Titan as civilizational threshold
 
 ---
 
