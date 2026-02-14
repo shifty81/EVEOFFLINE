@@ -270,8 +270,27 @@ ecs::Entity* AISystem::selectTarget(ecs::Entity* entity) {
     ecs::Entity* best_target = nullptr;
     float best_score = std::numeric_limits<float>::max();
     
+    // Get our faction for standing checks
+    auto* our_faction = entity->getComponent<components::Faction>();
+    
     for (auto* candidate : all_entities) {
         if (candidate == entity) continue;
+        
+        // Skip entities with positive faction standing (friendly)
+        if (our_faction) {
+            auto* their_standings = candidate->getComponent<components::Standings>();
+            auto* their_faction = candidate->getComponent<components::Faction>();
+            if (their_standings) {
+                float standing = their_standings->getStandingWith(
+                    entity->getId(), "",
+                    our_faction->faction_name);
+                if (standing > 0.0f) continue;  // friendly — do not target
+            } else if (their_faction) {
+                // Check faction-to-faction standing
+                auto it = our_faction->standings.find(their_faction->faction_name);
+                if (it != our_faction->standings.end() && it->second > 0.0f) continue;
+            }
+        }
         
         auto* target_pos = candidate->getComponent<components::Position>();
         if (!target_pos) continue;

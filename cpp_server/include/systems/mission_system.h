@@ -2,6 +2,7 @@
 #define EVE_SYSTEMS_MISSION_SYSTEM_H
 
 #include "ecs/system.h"
+#include "components/game_components.h"
 #include <string>
 
 namespace atlas {
@@ -40,6 +41,18 @@ public:
                        float time_limit = -1.0f);
 
     /**
+     * @brief Set the system entity for economy effects on mission completion
+     * Combat missions increase security (reduce pirate spawns),
+     * mining missions reduce local ore reserves.
+     */
+    void setEconomySystemId(const std::string& system_id);
+
+    /**
+     * @brief Get count of missions completed in a specific system
+     */
+    int getCompletedMissionCount() const;
+
+    /**
      * @brief Record objective progress (e.g. NPC destroyed, ore mined)
      * @param objective_type "destroy", "mine", "deliver", "reach"
      * @param target Name of target type/item
@@ -56,6 +69,17 @@ public:
      */
     void abandonMission(const std::string& entity_id,
                         const std::string& mission_id);
+
+private:
+    std::string economy_system_id_;
+    int completed_count_ = 0;
+
+    /**
+     * Apply economy effects when a mission completes.
+     * - Combat missions reduce spawn rate multiplier
+     * - Mining missions reduce ore reserves
+     */
+    void applyEconomyEffects(const components::MissionTracker::ActiveMission& mission);
 };
 
 } // namespace systems

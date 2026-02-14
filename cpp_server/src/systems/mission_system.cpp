@@ -49,6 +49,10 @@ void MissionSystem::update(float delta_time) {
                         mission.standing_reward);
                 }
 
+                // Apply economy effects
+                applyEconomyEffects(mission);
+                completed_count_++;
+
                 // Record completion
                 tracker->completed_mission_ids.push_back(mission.mission_id);
             }
@@ -135,6 +139,48 @@ void MissionSystem::abandonMission(const std::string& entity_id,
                            return m.mission_id == mission_id;
                        }),
         tracker->active_missions.end());
+}
+
+void MissionSystem::setEconomySystemId(const std::string& system_id) {
+    economy_system_id_ = system_id;
+}
+
+int MissionSystem::getCompletedMissionCount() const {
+    return completed_count_;
+}
+
+void MissionSystem::applyEconomyEffects(
+    const components::MissionTracker::ActiveMission& mission) {
+    if (economy_system_id_.empty()) return;
+
+    auto* sys_entity = world_->getEntity(economy_system_id_);
+    if (!sys_entity) return;
+
+    // Combat missions reduce pirate spawn rate in system
+    if (mission.type == "combat") {
+        auto* zone = sys_entity->getComponent<components::DifficultyZone>();
+        if (zone) {
+            // Each completed combat mission slightly reduces spawn rate
+            float reduction = 0.02f * static_cast<float>(mission.level);
+            zone->spawn_rate_multiplier = (std::max)(0.5f,
+                zone->spawn_rate_multiplier - reduction);
+        }
+    }
+
+    // Mining missions reduce local ore reserves
+    if (mission.type == "mining") {
+        auto* resources = sys_entity->getComponent<components::SystemResources>();
+        if (resources) {
+            // Deplete some ore reserves proportional to mission level
+            float depletion = 50.0f * static_cast<float>(mission.level);
+            for (auto& entry : resources->resources) {
+                if (entry.remaining_quantity > depletion) {
+                    entry.remaining_quantity -= depletion;
+                    break;  // only deplete one mineral type
+                }
+            }
+        }
+    }
 }
 
 } // namespace systems

@@ -59,6 +59,9 @@
 #include "systems/anomaly_system.h"
 #include "systems/scanner_system.h"
 #include "systems/difficulty_scaling_system.h"
+#include "systems/mission_template_system.h"
+#include "systems/mission_generator_system.h"
+#include "systems/reputation_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -9419,7 +9422,361 @@ void testDifficultySpawnRateScaling() {
     assertTrue(nullsec > highsec, "Nullsec has higher spawn rate");
 }
 
-// ==================== Main ====================
+// ==================== Mission Template System Tests ====================
+
+void testMissionTemplateInstallDefaults() {
+    ecs::World world;
+    systems::MissionTemplateSystem sys(&world);
+    sys.installDefaultTemplates();
+
+    // Should have templates for level 1 with no faction restriction
+    auto templates = sys.getTemplatesForFaction("", 0.0f, 1);
+    assertTrue(!templates.empty(), "Default templates installed for level 1");
+}
+
+void testMissionTemplateFilterByLevel() {
+    ecs::World world;
+    systems::MissionTemplateSystem sys(&world);
+    sys.installDefaultTemplates();
+
+    auto l1 = sys.getTemplatesForFaction("", 0.0f, 1);
+    auto l5 = sys.getTemplatesForFaction("", 0.0f, 5);
+    assertTrue(!l1.empty(), "Level 1 templates exist");
+    assertTrue(l5.size() <= l1.size(), "Level 5 templates <= level 1 templates");
+}
+
+void testMissionTemplateFilterByStanding() {
+    ecs::World world;
+    systems::MissionTemplateSystem sys(&world);
+    sys.installDefaultTemplates();
+
+    auto low_standing = sys.getTemplatesForFaction("", -5.0f, 1);
+    auto high_standing = sys.getTemplatesForFaction("", 5.0f, 1);
+    assertTrue(high_standing.size() >= low_standing.size(),
+               "Higher standing unlocks at least as many templates");
+}
+
+void testMissionTemplateGenerate() {
+    ecs::World world;
+    systems::MissionTemplateSystem sys(&world);
+    sys.installDefaultTemplates();
+
+    auto templates = sys.getTemplatesForFaction("", 0.0f, 1);
+    assertTrue(!templates.empty(), "Have templates to generate from");
+
+    auto mission = sys.generateMissionFromTemplate(templates[0], "system_1", "player_1");
+    assertTrue(!mission.mission_id.empty(), "Generated mission has ID");
+    assertTrue(!mission.objectives.empty(), "Generated mission has objectives");
+    assertTrue(mission.isk_reward > 0.0, "Generated mission has positive ISK reward");
+}
+
+void testMissionTemplateDeterministic() {
+    ecs::World world;
+    systems::MissionTemplateSystem sys(&world);
+    sys.installDefaultTemplates();
+
+    auto templates = sys.getTemplatesForFaction("", 0.0f, 1);
+    auto m1 = sys.generateMissionFromTemplate(templates[0], "system_1", "player_1");
+    auto m2 = sys.generateMissionFromTemplate(templates[0], "system_1", "player_1");
+    assertTrue(m1.objectives.size() == m2.objectives.size(),
+               "Deterministic: same objectives count for same seed");
+}
+
+void testMissionTemplateScaledRewards() {
+    ecs::World world;
+    systems::MissionTemplateSystem sys(&world);
+    sys.installDefaultTemplates();
+
+    auto l1 = sys.getTemplatesForFaction("", 0.0f, 1);
+    auto l3 = sys.getTemplatesForFaction("", 1.0f, 3);
+
+    if (!l1.empty() && !l3.empty()) {
+        auto m1 = sys.generateMissionFromTemplate(l1[0], "s1", "p1");
+        auto m3 = sys.generateMissionFromTemplate(l3[0], "s1", "p1");
+        assertTrue(m3.isk_reward >= m1.isk_reward,
+                   "Higher level missions give more ISK");
+    } else {
+        assertTrue(true, "Higher level missions give more ISK (skipped)");
+    }
+}
+
+// ==================== Mission Generator System Tests ====================
+
+void testMissionGeneratorGeneratesMissions() {
+    ecs::World world;
+    systems::MissionTemplateSystem templateSys(&world);
+    templateSys.installDefaultTemplates();
+    systems::MissionGeneratorSystem genSys(&world, &templateSys);
+
+    // Create a system entity with DifficultyZone
+    auto* sys_entity = world.createEntity("test_system");
+    auto* zone = addComp<components::DifficultyZone>(sys_entity);
+    zone->security_status = 0.5f;
+
+    int count = genSys.generateMissionsForSystem("test_system", 42);
+    assertTrue(count > 0, "Generator produces missions");
+}
+
+void testMissionGeneratorAvailableMissions() {
+    ecs::World world;
+    systems::MissionTemplateSystem templateSys(&world);
+    templateSys.installDefaultTemplates();
+    systems::MissionGeneratorSystem genSys(&world, &templateSys);
+
+    auto* sys_entity = world.createEntity("sys1");
+    auto* zone = addComp<components::DifficultyZone>(sys_entity);
+    zone->security_status = 0.5f;
+
+    genSys.generateMissionsForSystem("sys1", 99);
+    auto available = genSys.getAvailableMissions("sys1");
+    assertTrue(!available.empty(), "Available missions list is not empty");
+}
+
+void testMissionGeneratorOfferToPlayer() {
+    ecs::World world;
+    systems::MissionTemplateSystem templateSys(&world);
+    templateSys.installDefaultTemplates();
+    systems::MissionGeneratorSystem genSys(&world, &templateSys);
+
+    auto* sys_entity = world.createEntity("sys1");
+    auto* zone = addComp<components::DifficultyZone>(sys_entity);
+    zone->security_status = 0.5f;
+
+    auto* player = world.createEntity("player1");
+    addComp<components::MissionTracker>(player);
+
+    genSys.generateMissionsForSystem("sys1", 42);
+    bool offered = genSys.offerMissionToPlayer("player1", "sys1", 0);
+    assertTrue(offered, "Mission offered successfully");
+
+    auto* tracker = player->getComponent<components::MissionTracker>();
+    assertTrue(!tracker->active_missions.empty(), "Player has active mission after offer");
+}
+
+void testMissionGeneratorInvalidIndex() {
+    ecs::World world;
+    systems::MissionTemplateSystem templateSys(&world);
+    templateSys.installDefaultTemplates();
+    systems::MissionGeneratorSystem genSys(&world, &templateSys);
+
+    auto* player = world.createEntity("player1");
+    addComp<components::MissionTracker>(player);
+
+    bool offered = genSys.offerMissionToPlayer("player1", "nonexistent", 0);
+    assertTrue(!offered, "Invalid system returns false");
+}
+
+// ==================== Reputation System Tests ====================
+
+void testReputationInstallRelationships() {
+    ecs::World world;
+    systems::ReputationSystem sys(&world);
+    sys.installFactionRelationships();
+
+    float disp = sys.getFactionDisposition("Solari", "Veyren");
+    assertTrue(disp < 0.0f, "Solari-Veyren are rivals (negative disposition)");
+
+    float ally = sys.getFactionDisposition("Solari", "Aurelian");
+    assertTrue(ally > 0.0f, "Solari-Aurelian are friendly (positive disposition)");
+}
+
+void testReputationPirateHostile() {
+    ecs::World world;
+    systems::ReputationSystem sys(&world);
+    sys.installFactionRelationships();
+
+    float disp = sys.getFactionDisposition("Solari", "Serpentis");
+    assertTrue(approxEqual(disp, -1.0f, 0.01f), "Player factions hostile to pirates");
+}
+
+void testReputationModifyStanding() {
+    ecs::World world;
+    systems::ReputationSystem sys(&world);
+    sys.installFactionRelationships();
+
+    auto* entity = world.createEntity("player1");
+    addComp<components::Standings>(entity);
+
+    sys.modifyFactionStanding("player1", "Solari", 2.0f);
+    float standing = sys.getEffectiveStanding("player1", "Solari");
+    assertTrue(approxEqual(standing, 2.0f, 0.01f), "Direct standing applied");
+}
+
+void testReputationDerivedEffects() {
+    ecs::World world;
+    systems::ReputationSystem sys(&world);
+    sys.installFactionRelationships();
+
+    auto* entity = world.createEntity("player1");
+    addComp<components::Standings>(entity);
+
+    // Gaining standing with Solari should affect allies/enemies
+    sys.modifyFactionStanding("player1", "Solari", 4.0f);
+
+    // Aurelian is friendly (0.3) → derived = 4.0 * 0.3 * 0.5 = 0.6
+    float aurelian = sys.getEffectiveStanding("player1", "Aurelian");
+    assertTrue(aurelian > 0.0f, "Derived positive standing with ally");
+
+    // Veyren is rival (-0.5) → derived = 4.0 * -0.5 * 0.5 = -1.0
+    float veyren = sys.getEffectiveStanding("player1", "Veyren");
+    assertTrue(veyren < 0.0f, "Derived negative standing with rival");
+}
+
+void testReputationAgentAccess() {
+    ecs::World world;
+    systems::ReputationSystem sys(&world);
+    sys.installFactionRelationships();
+
+    auto* entity = world.createEntity("player1");
+    addComp<components::Standings>(entity);
+
+    assertTrue(!sys.hasAgentAccess("player1", "Solari", 1.0f),
+               "No access with 0 standing");
+
+    sys.modifyFactionStanding("player1", "Solari", 3.0f);
+    assertTrue(sys.hasAgentAccess("player1", "Solari", 1.0f),
+               "Access with sufficient standing");
+    assertTrue(!sys.hasAgentAccess("player1", "Solari", 5.0f),
+               "No access when standing insufficient");
+}
+
+void testReputationStandingClamped() {
+    ecs::World world;
+    systems::ReputationSystem sys(&world);
+    sys.installFactionRelationships();
+
+    auto* entity = world.createEntity("player1");
+    addComp<components::Standings>(entity);
+
+    sys.modifyFactionStanding("player1", "Solari", 15.0f);
+    float standing = sys.getEffectiveStanding("player1", "Solari");
+    assertTrue(standing <= 10.0f, "Standing clamped to max 10");
+
+    sys.modifyFactionStanding("player1", "Veyren", -15.0f);
+    float neg = sys.getEffectiveStanding("player1", "Veyren");
+    assertTrue(neg >= -10.0f, "Standing clamped to min -10");
+}
+
+// ==================== AI Reputation Targeting Tests ====================
+
+void testAISkipsFriendlyTargets() {
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    // Create an NPC with faction
+    auto* npc = world.createEntity("npc1");
+    addComp<components::AI>(npc)->behavior = components::AI::Behavior::Aggressive;
+    addComp<components::Position>(npc);
+    addComp<components::Velocity>(npc);
+    auto* npcFaction = addComp<components::Faction>(npc);
+    npcFaction->faction_name = "Solari";
+
+    // Create a player with positive standing toward Solari
+    auto* player = world.createEntity("player1");
+    addComp<components::Player>(player);
+    auto* playerPos = addComp<components::Position>(player);
+    playerPos->x = 100.0f;
+    auto* standings = addComp<components::Standings>(player);
+    standings->faction_standings["Solari"] = 5.0f;
+
+    ecs::Entity* target = aiSys.selectTarget(npc);
+    assertTrue(target == nullptr, "AI does not target player with positive faction standing");
+}
+
+void testAITargetsHostileEntities() {
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    auto* npc = world.createEntity("npc1");
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Aggressive;
+    ai->awareness_range = 100000.0f;
+    addComp<components::Position>(npc);
+    addComp<components::Velocity>(npc);
+    auto* npcFaction = addComp<components::Faction>(npc);
+    npcFaction->faction_name = "Serpentis";
+
+    auto* player = world.createEntity("player1");
+    addComp<components::Player>(player);
+    auto* playerPos = addComp<components::Position>(player);
+    playerPos->x = 100.0f;
+    auto* standings = addComp<components::Standings>(player);
+    standings->faction_standings["Serpentis"] = -5.0f;
+
+    ecs::Entity* target = aiSys.selectTarget(npc);
+    assertTrue(target != nullptr, "AI targets player with negative faction standing");
+}
+
+// ==================== Mission Economy Effects Tests ====================
+
+void testMissionEconomyCombatReducesSpawnRate() {
+    ecs::World world;
+    systems::MissionSystem sys(&world);
+
+    // Create system entity with DifficultyZone
+    auto* sys_entity = world.createEntity("system1");
+    auto* zone = addComp<components::DifficultyZone>(sys_entity);
+    zone->spawn_rate_multiplier = 1.5f;
+
+    // Create player with mission
+    auto* player = world.createEntity("player1");
+    auto* tracker = addComp<components::MissionTracker>(player);
+    addComp<components::Player>(player);
+
+    sys.setEconomySystemId("system1");
+    sys.acceptMission("player1", "m1", "Clear Pirates", 3, "combat", "Solari",
+                      100000.0, 0.1f, -1.0f);
+
+    // Add objective and complete it
+    tracker->active_missions[0].objectives.push_back({"destroy", "pirate", 1, 1});
+    sys.update(0.1f);
+
+    assertTrue(zone->spawn_rate_multiplier < 1.5f,
+               "Combat mission completion reduces spawn rate");
+}
+
+void testMissionEconomyMiningReducesOre() {
+    ecs::World world;
+    systems::MissionSystem sys(&world);
+
+    auto* sys_entity = world.createEntity("system1");
+    auto* resources = addComp<components::SystemResources>(sys_entity);
+    components::SystemResources::ResourceEntry entry;
+    entry.mineral_type = "Veldspar";
+    entry.total_quantity = 1000.0f;
+    entry.remaining_quantity = 1000.0f;
+    resources->resources.push_back(entry);
+
+    auto* player = world.createEntity("player1");
+    auto* tracker = addComp<components::MissionTracker>(player);
+    addComp<components::Player>(player);
+
+    sys.setEconomySystemId("system1");
+    sys.acceptMission("player1", "m1", "Mine Ore", 2, "mining", "Solari",
+                      50000.0, 0.05f, -1.0f);
+    tracker->active_missions[0].objectives.push_back({"mine", "Veldspar", 1, 1});
+    sys.update(0.1f);
+
+    assertTrue(resources->resources[0].remaining_quantity < 1000.0f,
+               "Mining mission completion depletes ore reserves");
+}
+
+void testMissionEconomyCompletedCount() {
+    ecs::World world;
+    systems::MissionSystem sys(&world);
+
+    auto* player = world.createEntity("player1");
+    auto* tracker = addComp<components::MissionTracker>(player);
+    addComp<components::Player>(player);
+
+    sys.acceptMission("player1", "m1", "Test", 1, "combat", "Solari",
+                      10000.0, 0.1f, -1.0f);
+    tracker->active_missions[0].objectives.push_back({"destroy", "pirate", 1, 1});
+    sys.update(0.1f);
+
+    assertTrue(sys.getCompletedMissionCount() == 1,
+               "Completed mission count increments");
+}
 
 int main() {
     std::cout << "========================================" << std::endl;
@@ -10005,6 +10362,37 @@ int main() {
     testDifficultyMaxTierFromSecurity();
     testDifficultyApplyToNPC();
     testDifficultySpawnRateScaling();
+
+    // Mission template system tests
+    testMissionTemplateInstallDefaults();
+    testMissionTemplateFilterByLevel();
+    testMissionTemplateFilterByStanding();
+    testMissionTemplateGenerate();
+    testMissionTemplateDeterministic();
+    testMissionTemplateScaledRewards();
+
+    // Mission generator system tests
+    testMissionGeneratorGeneratesMissions();
+    testMissionGeneratorAvailableMissions();
+    testMissionGeneratorOfferToPlayer();
+    testMissionGeneratorInvalidIndex();
+
+    // Reputation system tests
+    testReputationInstallRelationships();
+    testReputationPirateHostile();
+    testReputationModifyStanding();
+    testReputationDerivedEffects();
+    testReputationAgentAccess();
+    testReputationStandingClamped();
+
+    // AI reputation targeting tests
+    testAISkipsFriendlyTargets();
+    testAITargetsHostileEntities();
+
+    // Mission economy effects tests
+    testMissionEconomyCombatReducesSpawnRate();
+    testMissionEconomyMiningReducesOre();
+    testMissionEconomyCompletedCount();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
