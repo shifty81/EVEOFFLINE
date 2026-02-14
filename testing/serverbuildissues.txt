@@ -1,0 +1,274 @@
+Severity	Code	Description	Project	File	Line	Suppression State	Details
+Error	C2143	syntax error: missing ';' before '{'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\data\ship_database.h	8		
+Error	C2447	'{': missing function header (old-style formal list?)	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\data\ship_database.h	8		
+Error	C2143	syntax error: missing ';' before '{'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\data\ship_database.h	8		
+Error	C2447	'{': missing function header (old-style formal list?)	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\data\ship_database.h	8		
+Error	C2143	syntax error: missing ';' before '{'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\data\ship_database.h	8		
+Error	C2447	'{': missing function header (old-style formal list?)	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\data\ship_database.h	8		
+Error	C2143	syntax error: missing ';' before '{'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\data\ship_database.h	8		
+Error	C2447	'{': missing function header (old-style formal list?)	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\data\ship_database.h	8		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	13		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	13		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	13		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	13		
+Error	C2143	syntax error: missing ';' before '{'	atlas_dedicated_server	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\iostream	18		
+Error	C2447	'{': missing function header (old-style formal list?)	atlas_dedicated_server	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\iostream	18		
+Error	C2143	syntax error: missing ';' before '{'	atlas_dedicated_server	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\iostream	18		
+Error	C2447	'{': missing function header (old-style formal list?)	atlas_dedicated_server	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\iostream	18		
+Error	C2143	syntax error: missing ';' before '{'	atlas_dedicated_server	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\iostream	18		
+Error	C2447	'{': missing function header (old-style formal list?)	atlas_dedicated_server	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\iostream	18		
+Error	C2143	syntax error: missing '}' before 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	19		
+Error	C2059	syntax error: 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	19		
+Error	C2143	syntax error: missing '}' before 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	19		
+Error	C2059	syntax error: 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	19		
+Error	C2143	syntax error: missing '}' before 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	19		
+Error	C2059	syntax error: 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	19		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	21		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	21		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	21		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	24		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	24		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	24		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	24		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	36		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	36		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	36		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	36		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	43		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	43		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	43		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	43		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	47		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	47		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	47		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\main.cpp	47		
+Error	C2143	syntax error: missing '}' before 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	50		
+Error	C2059	syntax error: 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	50		
+Error	C2143	syntax error: missing '}' before 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	50		
+Error	C2059	syntax error: 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	50		
+Error	C2143	syntax error: missing '}' before 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	50		
+Error	C2059	syntax error: 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	50		
+Error	C2789	'atlas::GameSession::ShipDatabase': an object of const-qualified type must be initialized	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	50		
+Error	C2143	syntax error: missing '}' before 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	50		
+Error	C2059	syntax error: 'constant'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	50		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	51		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	51		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	51		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	51		
+Error	C2065	'ship_db_': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	52		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	54		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	54		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	54		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	56		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	56		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	56		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	56		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2143	syntax error: missing ';' before '&'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2334	unexpected token(s) preceding '{'; skipping apparent function body	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C3646	'getLevel': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2059	syntax error: '('	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2238	unexpected token(s) preceding ';'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2143	syntax error: missing ';' before '&'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2334	unexpected token(s) preceding '{'; skipping apparent function body	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C3646	'getLevel': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2059	syntax error: '('	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2238	unexpected token(s) preceding ';'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2143	syntax error: missing ';' before '&'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2334	unexpected token(s) preceding '{'; skipping apparent function body	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2143	syntax error: missing ';' before '&'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C2334	unexpected token(s) preceding '{'; skipping apparent function body	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	57		
+Error	C3646	'getLevel': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2059	syntax error: '('	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2238	unexpected token(s) preceding ';'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	57		
+Error	C2061	syntax error: identifier 'MessageType'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	63		
+Error	C2061	syntax error: identifier 'MessageType'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	63		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	63		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	63		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	63		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	63		
+Error	C2061	syntax error: identifier 'MessageType'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	63		
+Error	C2061	syntax error: identifier 'MessageType'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	63		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	67		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	67		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	67		
+Error	C2065	'ship_db_': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	68		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	84		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	84		
+Error	C2061	syntax error: identifier 'LogLevel'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	84		
+Error	C3646	'min_level_': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2059	syntax error: '='	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2653	'LogLevel': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2238	unexpected token(s) preceding ';'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C3646	'min_level_': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2059	syntax error: '='	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2653	'LogLevel': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2238	unexpected token(s) preceding ';'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C3646	'min_level_': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2059	syntax error: '='	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2653	'LogLevel': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2238	unexpected token(s) preceding ';'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	88		
+Error	C2059	syntax error: '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	95		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	95		
+Error	C2059	syntax error: '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	95		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	95		
+Error	C2059	syntax error: '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	95		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\utils\logger.h	95		
+Error	C2065	'MessageType': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2923	'std::map': 'MessageType' is not a valid template type argument for parameter '_Ty'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2976	'std::map': too few template arguments	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2955	'std::map': use of class template requires template argument list	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2065	'MessageType': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2923	'std::map': 'MessageType' is not a valid template type argument for parameter '_Ty'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2976	'std::map': too few template arguments	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2955	'std::map': use of class template requires template argument list	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2065	'MessageType': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2923	'std::map': 'MessageType' is not a valid template type argument for parameter '_Ty'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2976	'std::map': too few template arguments	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2955	'std::map': use of class template requires template argument list	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2660	'atlas::ProtocolHandler::parseMessage': function does not take 3 arguments	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	100		
+Error	C2065	'MessageType': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2923	'std::map': 'MessageType' is not a valid template type argument for parameter '_Ty'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2976	'std::map': too few template arguments	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2955	'std::map': use of class template requires template argument list	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	100		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	101		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	101		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	102		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	102		
+Error	C2061	syntax error: identifier 'MessageType'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	103		
+Error	C2061	syntax error: identifier 'MessageType'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	103		
+Error	C2061	syntax error: identifier 'MessageType'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	103		
+Error	C2061	syntax error: identifier 'MessageType'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	103		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	103		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	103		
+Error	C2059	syntax error: '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	107		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	107		
+Error	C2059	syntax error: '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	107		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	107		
+Error	C2059	syntax error: '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	107		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	107		
+Error	C2059	syntax error: '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	107		
+Error	C2143	syntax error: missing ';' before '}'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\network\protocol_handler.h	107		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	121		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	121		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	124		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	124		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	127		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	127		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	133		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	133		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	138		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	138		
+Error	C2039	'cout': is not a member of 'std'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	146		
+Error	C2065	'cout': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	146		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	149		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	149		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	149		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	149		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	156		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	156		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	156		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	156		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	157		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	157		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	157		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	157		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	165		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	165		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	165		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	165		
+Error	C3861	'_mkdir': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	266		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	271		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	271		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	271		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	271		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	272		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	272		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	272		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\ui\server_console.cpp	272		
+Error	C2039	'Logger': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	278		
+Error	C3083	'Logger': the symbol to the left of a '::' must be a type	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	278		
+Error	C2039	'instance': is not a member of 'atlas::utils'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	278		
+Error	C3861	'instance': identifier not found	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\server.cpp	278		
+Error	C2039	'ProtocolHandler': is not a member of 'atlas::network'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	283		
+Error	C2039	'ProtocolHandler': is not a member of 'atlas::network'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	283		
+Error	C2039	'ProtocolHandler': is not a member of 'atlas::network'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	283		
+Error	C2039	'ProtocolHandler': is not a member of 'atlas::network'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	283		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C3646	'ship_db_': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C3646	'ship_db_': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C3646	'ship_db_': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C3646	'ship_db_': unknown override specifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\game_session.h	284		
+Error	C2589	'(': illegal token on right side of '::'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\components\game_components.h	296		
+Error	C2062	type 'unknown-type' unexpected	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\components\game_components.h	296		
+Error	C2059	syntax error: ')'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\include\components\game_components.h	296		
+Error	C2653	'data': is not a class or namespace name	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	478		
+Error	C4430	missing type specifier - int assumed. Note: C++ does not support default-int	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	478		
+Error	C2143	syntax error: missing ';' before '*'	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	478		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	478		
+Error	C2065	'ship_db_': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	478		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	489		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	489		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	494		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	494		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	495		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	495		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	496		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	496		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	497		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	497		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	497		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	498		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	499		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	500		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	501		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	502		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	503		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	504		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	505		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	506		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	507		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	508		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	509		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	510		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	516		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	516		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	517		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	517		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	518		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	518		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	519		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	519		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	520		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	520		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	521		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	521		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	522		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	522		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	523		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	523		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	524		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	524		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	525		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	525		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	539		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	539		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	559		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	559		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	561		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	561		
+Error	C2065	'tmpl': undeclared identifier	atlas_dedicated_server	C:\GIT PROJECTS\EVEOFFLINE\cpp_server\src\game_session.cpp	561		
