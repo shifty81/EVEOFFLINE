@@ -89,7 +89,8 @@ Atlas/
 │   ├── atlas-ui/          #   ★ Atlas UI framework docs
 │   ├── guides/            #   Build & setup guides
 │   └── ...                #   Design, features, development notes
-├── tools/                 # Utilities (ship creator, JSON validator)
+├── tools/                 # Utilities (ship creator, JSON validator, Blender addon)
+│   └── BlenderSpaceshipGenerator/  # Blender addon for procedural ship/station generation
 ├── archive/               # Legacy code & deprecated files
 ├── CMakeLists.txt         # Root build configuration
 ├── build.sh / build.bat   # Build scripts
@@ -184,7 +185,7 @@ data/
 └── ...                 # Industry, exploration, corps, security
 ```
 
-**Tools**: `tools/validate_json.py` (validate data) · `tools/create_ship.py` (ship wizard)
+**Tools**: `tools/validate_json.py` (validate data) · `tools/create_ship.py` (ship wizard) · `tools/BlenderSpaceshipGenerator/` (procedural 3D ship generation)
 
 See the [Modding Guide](docs/MODDING_GUIDE.md) for details.
 

@@ -61,6 +61,39 @@ The tool will prompt you for ship details and generate a complete JSON definitio
 }
 ```
 
+### BlenderSpaceshipGenerator/
+
+Blender addon for procedurally generating spaceships, stations, and asteroid belts with full EVEOFFLINE integration.
+
+**Requirements:** [Blender](https://www.blender.org/) 3.0+
+
+**Installation:**
+1. Open Blender → Edit → Preferences → Add-ons → Install
+2. Navigate to `tools/BlenderSpaceshipGenerator/` and select `__init__.py`
+3. Enable the addon in the Add-ons list
+
+**Features:**
+- Procedural ship generation for 18 ship classes (Shuttle → Titan)
+- 4 faction styles matching EVEOFFLINE races (Solari, Veyren, Aurelian, Keldari)
+- Modular brick-based construction with 18 brick types
+- Interior generation with FPV-ready human-scale dimensions
+- Station and asteroid belt generation (16 ore types)
+- Import ships from EVEOFFLINE JSON data files
+- Export OBJ models with correct Atlas engine axis orientation
+- Ship DNA serialization for reproducible generation
+
+**Documentation:**
+- [README](BlenderSpaceshipGenerator/README.md) — Overview and quick start
+- [Usage Guide](BlenderSpaceshipGenerator/USAGE.md) — Detailed usage instructions
+- [EVEOFFLINE Guide](BlenderSpaceshipGenerator/EVEOFFLINE_GUIDE.md) — Integration with EVEOFFLINE
+- [Engine Integration](BlenderSpaceshipGenerator/ENGINE_INTEGRATION.md) — Technical reference for engine developers
+- [Examples](BlenderSpaceshipGenerator/EXAMPLES.md) — Usage examples
+
+**Validation (no Blender required):**
+```bash
+python tools/BlenderSpaceshipGenerator/test_validation.py
+```
+
 ## Future Tools
 
 The following tools are planned for future releases:
