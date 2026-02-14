@@ -37,6 +37,22 @@
 namespace atlas {
 
 /**
+ * Screen-projected celestial bracket for on-screen navigation icons.
+ * Each bracket represents a destination (station, gate, belt, planet)
+ * drawn as an icon + label at its projected screen position.
+ */
+struct CelestialBracket {
+    std::string id;
+    std::string name;
+    std::string type;           // "Station", "Stargate", "Asteroid Belt", "Planet"
+    float screenX = 0.0f;      // projected screen X
+    float screenY = 0.0f;      // projected screen Y
+    float distance = 0.0f;     // distance in meters from player
+    bool  onScreen = true;     // false if behind camera / clamped to edge
+    bool  selected = false;
+};
+
+/**
  * Ship status data fed into the HUD each frame.
  */
 struct ShipHUDData {
@@ -47,6 +63,7 @@ struct ShipHUDData {
     float currentSpeed = 0.0f;
     float maxSpeed     = 250.0f;
     int   capSegments  = 16;
+    std::string shipName;       // Ship type name displayed above HUD arcs
 
     // Warp state (fed from WarpVisualState each frame)
     bool  warpActive   = false;
@@ -108,6 +125,7 @@ public:
     void toggleChat()          { m_chatState.open = !m_chatState.open; }
     void toggleDronePanel()    { m_dronePanelState.open = !m_dronePanelState.open; }
     void toggleProbeScanner()  { m_probeScannerState.open = !m_probeScannerState.open; }
+    void toggleCharacter()     { m_characterState.open = !m_characterState.open; }
 
     bool isOverviewOpen()      const { return m_overviewState.open; }
     bool isSelectedItemOpen()  const { return m_selectedItemState.open; }
@@ -119,11 +137,23 @@ public:
     bool isChatOpen()          const { return m_chatState.open; }
     bool isDronePanelOpen()    const { return m_dronePanelState.open; }
     bool isProbeScannerOpen()  const { return m_probeScannerState.open; }
+    bool isCharacterOpen()     const { return m_characterState.open; }
 
     // ── Sidebar callback ──────────────────────────────────────────────
 
     /** Set callback for sidebar icon clicks. */
     void setSidebarCallback(const std::function<void(int)>& cb) { m_sidebarCallback = cb; }
+
+    // ── Celestial bracket system ────────────────────────────────────
+
+    /** Feed screen-projected celestial brackets each frame. */
+    void setCelestialBrackets(const std::vector<CelestialBracket>& brackets) { m_brackets = brackets; }
+
+    /** Set callback for bracket left-click (select celestial). */
+    void setBracketClickCb(const std::function<void(const std::string&)>& cb) { m_bracketClickCb = cb; }
+
+    /** Set callback for bracket right-click (open radial/context menu). */
+    void setBracketRightClickCb(const std::function<void(const std::string&, float, float)>& cb) { m_bracketRightClickCb = cb; }
 
     // ── Module click callback ───────────────────────────────────────
 
@@ -319,6 +349,28 @@ public:
     /** Get active fleet broadcasts (read-only). */
     const std::vector<FleetBroadcast>& getFleetBroadcasts() const { return m_broadcasts; }
 
+    // ── Character Sheet data ────────────────────────────────────────
+
+    struct CharacterSheetData {
+        std::string characterName = "Capsuleer";
+        std::string race          = "Veyren";
+        std::string bloodline;
+        std::string corporation   = "NPC Corp";
+        std::string cloneGrade    = "Alpha";
+        float securityStatus      = 0.0f;
+        double totalSP            = 0.0;
+        double walletISK          = 0.0;
+        int intelligence = 20;
+        int perception   = 20;
+        int charisma     = 19;
+        int willpower    = 20;
+        int memory       = 20;
+    };
+
+    /** Set character sheet data. */
+    void setCharacterSheet(const CharacterSheetData& data) { m_characterData = data; }
+    const CharacterSheetData& getCharacterSheet() const { return m_characterData; }
+
 private:
     // Panel states (persistent across frames)
     PanelState m_overviewState;
@@ -332,6 +384,7 @@ private:
     PanelState m_chatState;
     PanelState m_dronePanelState;
     PanelState m_probeScannerState;
+    PanelState m_characterState;
 
     // Sidebar config
     float m_sidebarWidth = 40.0f;
@@ -341,6 +394,8 @@ private:
     std::function<void(int)> m_sidebarCallback;
     std::function<void(int)> m_moduleCallback;
     std::function<void(int)> m_speedChangeCallback;
+    std::function<void(const std::string&)> m_bracketClickCb;
+    std::function<void(const std::string&, float, float)> m_bracketRightClickCb;
     std::function<void(const std::string&)> m_overviewSelectCb;
     std::function<void(const std::string&, float, float)> m_overviewRightClickCb;
     std::function<void(float, float)> m_overviewBgRightClickCb;
@@ -421,11 +476,18 @@ private:
     float m_probeRange = 8.0f;
     std::vector<ProbeScanEntry> m_probeScanResults;
 
+    // Character sheet data
+    CharacterSheetData m_characterData;
+
+    // Celestial brackets (screen-projected each frame)
+    std::vector<CelestialBracket> m_brackets;
+
     // Internal draw helpers for new features
     void drawCombatLog(AtlasContext& ctx);
     void drawDamageFlashes(AtlasContext& ctx, Vec2 hudCentre, float hudRadius);
     void drawDroneStatus(AtlasContext& ctx);
     void drawFleetBroadcasts(AtlasContext& ctx);
+    void drawCelestialBrackets(AtlasContext& ctx);
 };
 
 } // namespace atlas

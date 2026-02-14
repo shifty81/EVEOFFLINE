@@ -78,3 +78,93 @@ cpp_client/include/ui/
 ├── ui_manager.h         # Central UI coordinator
 └── ...                  # Other panel headers unchanged
 ```
+
+## Ore Naming
+
+All ore types have been renamed to project-original names with a
+consistent "-ite" suffix (common minerals have short, punchy names):
+
+| EVE Online | EVE OFFLINE | Tier |
+|-----------|-------------|------|
+| Veldspar | **Dustite** | Common |
+| Scordite | **Ferrite** | Common |
+| Pyroxeres | **Ignaite** | Uncommon |
+| Plagioclase | **Crystite** | Uncommon |
+| Omber | **Shadite** | Uncommon |
+| Kernite | **Corite** | Rare |
+| Jaspet | **Lumine** | Rare |
+| Hemorphite | **Sangite** | Rare |
+| Hedbergite | **Glacite** | Rare |
+| Gneiss | **Densite** | Rare |
+| Dark Ochre | **Voidite** | Rare |
+| Crokite | **Pyranite** | Very Rare |
+| Bistot | **Stellite** | Very Rare |
+| Arkonor | **Cosmite** | Very Rare |
+| Mercoxit | **Nexorite** | Exceptional |
+
+## Mineral Naming
+
+Refined minerals use a "-ium" or "-um" suffix:
+
+| EVE Online | EVE OFFLINE |
+|-----------|-------------|
+| Tritanium | **Ferrium** |
+| Pyerite | **Ignium** |
+| Mexallon | **Allonium** |
+| Isogen | **Isodium** |
+| Nocxium | **Noctium** |
+| Zydrine | **Zyrium** |
+| Megacyte | **Megrium** |
+| Morphite | **Morphium** |
+
+## Race/Faction Naming
+
+Each empire has been given a unique name and cultural flavour:
+
+| EVE Online | EVE OFFLINE | Theme |
+|-----------|-------------|-------|
+| Caldari | **Veyren** | Nordic/angular |
+| Amarr | **Solari** | Latin/celestial |
+| Gallente | **Aurelian** | French/elegant |
+| Minmatar | **Keldari** | Rugged/nature |
+
+### Bloodlines
+
+| EVE Online | EVE OFFLINE | Race |
+|-----------|-------------|------|
+| Deteis | **Thyren** | Veyren |
+| Civire | **Korvane** | Veyren |
+| Achura | **Ashiri** | Veyren |
+| Khanid | **Zah-Khari** | Solari |
+| Ni-Kunni | **Vorthane** | Solari |
+| True Amarr | **Solarian** | Solari |
+| Intaki | **Indari** | Aurelian |
+| Gallente | **Aurelian** | Aurelian |
+| Jin-Mei | **Jin-Sol** | Aurelian |
+| Brutor | **Tormund** | Keldari |
+| Sebiestor | **Kelvor** | Keldari |
+| Vherokior | **Varoshi** | Keldari |
+
+## Pirate Faction Naming
+
+| EVE Online | EVE OFFLINE |
+|-----------|-------------|
+| Serpentis | **Venom Syndicate** |
+| Guristas | **Iron Corsairs** |
+| Blood Raiders | **Crimson Order** |
+| Angel Cartel | **Shadow Cartel** |
+| Sansha's Nation | **Dominion Swarm** |
+
+## Ammo/Equipment
+
+| EVE Online | EVE OFFLINE |
+|-----------|-------------|
+| EMP (ammo) | **Pulse** |
+
+## System Names
+
+| EVE Online | EVE OFFLINE |
+|-----------|-------------|
+| Jita | **Thyrkstad** |
+| Perimeter | **Rimward** |
+| Hek | **Kelheim** |

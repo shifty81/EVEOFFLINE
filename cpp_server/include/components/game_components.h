@@ -144,7 +144,7 @@ public:
     float rate_of_fire = 3.0f;  // seconds between shots
     float cooldown = 0.0f;  // current cooldown timer
     float capacitor_cost = 5.0f;  // GJ per shot
-    std::string ammo_type = "EMP";
+    std::string ammo_type = "Pulse";
     int ammo_count = 100;
     
     COMPONENT_TYPE(Weapon)
@@ -905,7 +905,7 @@ class CharacterSheet : public ecs::Component {
 public:
     std::string character_id;
     std::string character_name;
-    std::string race = "Caldari";           // "Caldari", "Amarr", "Gallente", "Minmatar"
+    std::string race = "Veyren";           // "Veyren", "Solari", "Aurelian", "Keldari"
     std::string bloodline;                   // race-specific bloodline
     std::string ancestry;                    // background/origin
     std::string gender = "male";             // "male", "female"
@@ -1345,7 +1345,7 @@ public:
  */
 class MineralDeposit : public ecs::Component {
 public:
-    std::string mineral_type = "Veldspar";   // ore name
+    std::string mineral_type = "Dustite";   // ore name
     float quantity_remaining = 10000.0f;     // units of ore left
     float max_quantity = 10000.0f;           // original total
     float yield_rate = 1.0f;                 // multiplier on mining yield
@@ -1397,6 +1397,98 @@ public:
     }
 
     COMPONENT_TYPE(SystemResources)
+};
+
+/**
+ * @brief Dyson Ring construction module
+ *
+ * A megastructure that encircles the star over 16 construction tiers.
+ * Each tier adds a segment to the ring.  When complete (tier 16) the
+ * ring powers all structures and stations in the system.
+ *
+ * Construction ships park nearby and dispatch logistics drones to ferry
+ * materials and build onto the structure.
+ */
+class DysonRingModule : public ecs::Component {
+public:
+    std::string module_id;
+    std::string system_id;
+    int current_tier = 1;               // 1–16 (16 = complete ring)
+    static constexpr int MAX_TIER = 16;
+
+    // Per-tier material costs (simplified: total units needed for next tier)
+    float materials_delivered = 0.0f;    // units delivered toward next tier
+    float materials_required  = 100000.0f; // units required for next tier
+
+    // Power output scales with tier
+    float powerOutputMW() const { return current_tier * 500.0f; }
+
+    bool isComplete() const { return current_tier >= MAX_TIER; }
+
+    float tierProgress() const {
+        return materials_required > 0.0f
+            ? materials_delivered / materials_required
+            : 0.0f;
+    }
+
+    bool advanceTier() {
+        if (isComplete()) return false;
+        if (materials_delivered < materials_required) return false;
+        materials_delivered -= materials_required;
+        ++current_tier;
+        // Each successive tier costs 20% more
+        materials_required *= 1.2f;
+        return true;
+    }
+
+    COMPONENT_TYPE(DysonRingModule)
+};
+
+/**
+ * @brief Refining facility — converts raw ore into refined minerals
+ *
+ * Attached to stations or structures that offer refinery services.
+ * Each refining job takes an ore type and quantity, applies an
+ * efficiency factor, and produces output minerals.
+ */
+class RefiningFacility : public ecs::Component {
+public:
+    struct OreRecipe {
+        std::string ore_type;        // e.g. "Dustite"
+        std::string output_mineral;  // e.g. "Ferrium"
+        float yield_per_unit = 1.0f; // mineral units per ore unit at 100% efficiency
+    };
+
+    struct RefiningJob {
+        std::string job_id;
+        std::string owner_id;
+        std::string ore_type;
+        int ore_quantity = 0;
+        float progress = 0.0f;       // 0–1
+        float time_per_batch = 30.0f; // seconds
+        bool completed = false;
+    };
+
+    std::string station_id;
+    float base_efficiency = 0.50f;   // 50% base yield (skills improve this)
+    std::vector<OreRecipe> recipes;
+    std::vector<RefiningJob> jobs;
+
+    float getYieldForOre(const std::string& ore) const {
+        for (const auto& r : recipes) {
+            if (r.ore_type == ore) return r.yield_per_unit * base_efficiency;
+        }
+        return 0.0f;
+    }
+
+    std::string getOutputMineral(const std::string& ore) const {
+        for (const auto& r : recipes) {
+            if (r.ore_type == ore) return r.output_mineral;
+        }
+        return "";
+    }
+
+    COMPONENT_TYPE(RefiningFacility)
 };
 
 } // namespace components

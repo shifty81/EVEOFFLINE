@@ -1,5 +1,9 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 14, 2026)**: **Naming convention fully applied**. All EVE Online ore/mineral/faction/bloodline/ammo names renamed to project-original names across all active source code (cpp_server/, cpp_client/). Ores: Veldspar→Dustite, Scordite→Ferrite, etc. Minerals: Tritanium→Ferrium, Pyerite→Ignium, etc. Factions: Caldari→Veyren, Amarr→Solari, Gallente→Aurelian, Minmatar→Keldari. Bloodlines: Deteis→Thyren, Khanid→Zah-Khari, Intaki→Indari, Brutor→Tormund. Ammo: EMP→Pulse. NAMING_CONVENTION.md updated with complete mapping tables. **1185 test assertions passing**.
+
+> **Update (February 14, 2026)**: **Vertical Slice Phase 2 MAJOR PROGRESS**. Mineral Refining System added (RefiningFacility component + RefiningSystem with 7 standard ore recipes: Dustite→Ferrium through Cosmite→Megrium). Dyson Ring megastructure system added (DysonRingModule component with 16-tier construction, power scaling 500–8000 MW, material delivery tracking). Mining AI NPC behavior tested. Full economy loop verified (Mine→Refine→Sell). Client UI: Character Sheet panel (clickable sidebar portrait), on-screen celestial bracket navigation icons (color-coded by type, hover tooltips), ship HUD capacitor % readout + ship name display, overview hidden by default. Player spawns near Dyson Ring Core Module at 0.5 AU. **1185 test assertions passing**.
+
 > **Update (February 14, 2026)**: **Ship generation JSON data COMPLETE**. All 102 ship JSON files updated with `model_data` block containing per-ship `turret_hardpoints`, `launcher_hardpoints`, `drone_bays`, `engine_count`, and `generation_seed` for deterministic procedural variation. ShipTemplate extended with ModelData sub-struct. ShipDatabase parser reads model_data. 6 new test functions, 24 new assertions. **1139 test assertions passing**.
 
 > **Update (February 13, 2026)**: **Ship generation quality IMPROVED**. Hull polygon side counts increased across both modular parts (Veyren 4→8, Keldari 6→10, Solari 8→12, Aurelian 12→16) and fallback hull generation (Veyren 6→8, Keldari 8→10, Solari 12→14, Aurelian 16→20) for smoother cross-sections. Hull segment counts raised for all ship classes (Frigates 5→7, Cruisers 6→9, Battleships 8→12, Titans 12→16). All factions now have turret and launcher weapon parts. **Radial menu fix**: removed duplicate RmlUI radial menu that was rendering square boxes behind the Atlas radial menu — Atlas is the sole UI system going forward. 1115 test assertions passing.
@@ -31,7 +35,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 IN PROGRESS**: MiningSystem + MiningLaser + MineralDeposit components (cycle-based ore extraction). Mining drones and salvage drones added. CombatSystem death→wreck auto-spawn. SystemResources per-system tracking. Protocol: SALVAGE, LOOT, MINING messages. Ship JSON data updated with model_data for all 102 ships. **1139 test assertions passing**.
+**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 MAJOR PROGRESS**: MiningSystem, RefiningSystem (ore→mineral), DysonRingModule (16-tier megastructure), mineral economy (7 ore types, base market prices), mining AI NPC behavior. Client: Character Sheet panel, celestial bracket navigation, ship HUD cap% + name. **1185 test assertions passing**.
 
 ## Current Status (February 2026)
 

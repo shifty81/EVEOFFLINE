@@ -127,6 +127,10 @@ void Application::initialize() {
     m_atlasHUD->setSidebarCallback([this](int icon) {
         std::cout << "[Neocom] Sidebar icon " << icon << " clicked" << std::endl;
         switch (icon) {
+            case -1:
+                std::cout << "[Neocom] Toggle Character Sheet" << std::endl;
+                m_atlasHUD->toggleCharacter();
+                break;
             case 0:
                 std::cout << "[Neocom] Toggle Inventory" << std::endl;
                 m_atlasHUD->toggleInventory();
@@ -506,6 +510,27 @@ void Application::setupUICallbacks() {
     });
 
     std::cout << "  - Overview interaction callbacks wired" << std::endl;
+
+    // === Celestial bracket callbacks ===
+    m_atlasHUD->setBracketClickCb([this](const std::string& celestialId) {
+        std::cout << "[Bracket] Selected celestial: " << celestialId << std::endl;
+        // Select the celestial as current target for warp/approach
+        m_currentTargetId = celestialId;
+    });
+
+    m_atlasHUD->setBracketRightClickCb([this](const std::string& celestialId, float screenX, float screenY) {
+        bool isStargate = false;
+        if (m_solarSystem) {
+            const auto* cel = m_solarSystem->findCelestial(celestialId);
+            if (cel && cel->type == atlas::Celestial::Type::STARGATE)
+                isStargate = true;
+        }
+        m_contextMenu->ShowEntityMenu(celestialId, false, isStargate);
+        m_contextMenu->SetScreenPosition(screenX, screenY);
+        std::cout << "[Bracket] Right-click context menu for: " << celestialId << std::endl;
+    });
+
+    std::cout << "  - Celestial bracket callbacks wired" << std::endl;
     
     std::cout << "UI callbacks setup complete" << std::endl;
 }
@@ -650,6 +675,7 @@ void Application::render() {
             shipData.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
             const auto& capacitor = playerEntity->getCapacitor();
             shipData.capacitorPct = capacitor.max > 0.0f ? capacitor.current / capacitor.max : 0.0f;
+            shipData.shipName = playerEntity->getShipType();
         }
         shipData.currentSpeed = m_playerSpeed;
         shipData.maxSpeed = m_playerMaxSpeed;
@@ -712,6 +738,7 @@ void Application::render() {
                         case atlas::Celestial::Type::STARGATE:      entry.type = "Stargate";      break;
                         case atlas::Celestial::Type::ASTEROID_BELT: entry.type = "Asteroid Belt"; break;
                         case atlas::Celestial::Type::WORMHOLE:      entry.type = "Wormhole";      break;
+                        case atlas::Celestial::Type::DYSON_RING:    entry.type = "Dyson Ring";    break;
                         default:                                  entry.type = "Celestial";     break;
                     }
                     atlasOverview.push_back(entry);
@@ -738,6 +765,58 @@ void Application::render() {
         
         // Update mode indicator text on the HUD
         m_atlasHUD->setModeIndicator(m_activeModeText);
+        
+        // Project celestial positions to screen coordinates for bracket icons
+        if (m_solarSystem && m_camera && playerEntity) {
+            const auto playerPos = playerEntity->getPosition();
+            glm::mat4 viewMat = m_camera->getViewMatrix();
+            glm::mat4 projMat = m_camera->getProjectionMatrix();
+            glm::mat4 vp = projMat * viewMat;
+            float scrW = static_cast<float>(atlasInput.windowW);
+            float scrH = static_cast<float>(atlasInput.windowH);
+
+            std::vector<atlas::CelestialBracket> brackets;
+            for (const auto& c : m_solarSystem->getCelestials()) {
+                if (c.type == atlas::Celestial::Type::SUN) continue;
+
+                atlas::CelestialBracket br;
+                br.id   = c.id;
+                br.name = c.name;
+                br.distance = glm::distance(playerPos, c.position);
+
+                switch (c.type) {
+                    case atlas::Celestial::Type::PLANET:        br.type = "Planet";        break;
+                    case atlas::Celestial::Type::MOON:          br.type = "Moon";          break;
+                    case atlas::Celestial::Type::STATION:       br.type = "Station";       break;
+                    case atlas::Celestial::Type::STARGATE:      br.type = "Stargate";      break;
+                    case atlas::Celestial::Type::ASTEROID_BELT: br.type = "Asteroid Belt"; break;
+                    case atlas::Celestial::Type::WORMHOLE:      br.type = "Wormhole";      break;
+                    case atlas::Celestial::Type::DYSON_RING:    br.type = "Dyson Ring";    break;
+                    default:                                    br.type = "Celestial";     break;
+                }
+
+                // Project world position → screen
+                glm::vec4 clip = vp * glm::vec4(c.position, 1.0f);
+                if (clip.w > 0.0f) {
+                    glm::vec3 ndc = glm::vec3(clip) / clip.w;
+                    br.screenX = (ndc.x * 0.5f + 0.5f) * scrW;
+                    br.screenY = (1.0f - (ndc.y * 0.5f + 0.5f)) * scrH;
+                    br.onScreen = (ndc.x >= -1.0f && ndc.x <= 1.0f &&
+                                   ndc.y >= -1.0f && ndc.y <= 1.0f &&
+                                   ndc.z >= 0.0f  && ndc.z <= 1.0f);
+                } else {
+                    // Behind camera — mirror to opposite edge
+                    glm::vec3 ndc = glm::vec3(clip) / clip.w;
+                    br.screenX = (0.5f - ndc.x * 0.5f) * scrW;
+                    br.screenY = (0.5f + ndc.y * 0.5f) * scrH;
+                    br.onScreen = false;
+                }
+
+                br.selected = (c.id == m_currentTargetId);
+                brackets.push_back(br);
+            }
+            m_atlasHUD->setCelestialBrackets(brackets);
+        }
         
         // Reserve context menu / radial menu input areas BEFORE panels
         // so their clicks aren't stolen by panel body consumption.
@@ -1433,13 +1512,20 @@ void Application::spawnLocalPlayerEntity() {
     
     std::cout << "[PVE] Spawning local player ship..." << std::endl;
     
-    // Create player entity at origin with a Fang (Keldari frigate)
+    // Create player entity near the Dyson Ring Core Module so the sun
+    // is visible in the distance.  The core module orbits at 0.5 AU.
+    // Spawn 15 km away from it so the player can see and dock.
     Health playerHealth(1500, 800, 500);  // Shield, Armor, Hull
     Capacitor playerCapacitor(250.0f, 250.0f);  // Fang capacitor: 250 GJ
     
+    // Dyson Ring Core Module is at (0.5 AU, 0, 0).  Spawn offset 15 km.
+    glm::vec3 spawnPos(0.5f * 149597870700.0f + 15000.0f,
+                       0.0f,
+                       0.0f);
+    
     m_gameClient->getEntityManager().spawnEntity(
         m_localPlayerId,
-        glm::vec3(0.0f, 0.0f, 0.0f),
+        spawnPos,
         playerHealth,
         playerCapacitor,
         "Fang",

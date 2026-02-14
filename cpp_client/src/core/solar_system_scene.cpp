@@ -120,6 +120,20 @@ void SolarSystemScene::loadTestSystem() {
     gate.linkedSystem = "perimeter";
     addCelestial(gate);
 
+    // Dyson Ring — Core Module (Tier 1 of 16)
+    // Orbits the star at ~0.5 AU.  This is the first segment of a ring
+    // that will eventually encircle the star, powering all structures
+    // in the system.  Players spawn near this landmark.
+    Celestial dysonCore;
+    dysonCore.id = "dyson_core_1";
+    dysonCore.name = "Dyson Ring - Core Module Alpha";
+    dysonCore.type = Celestial::Type::DYSON_RING;
+    dysonCore.position = glm::vec3(0.5f * AU_IN_METERS, 0.0f, 0.0f);
+    dysonCore.radius = 20000.0f;   // 20 km structure radius
+    dysonCore.distanceFromSun_AU = 0.5f;
+    dysonCore.services = {"repair", "fitting", "market", "refinery"};
+    addCelestial(dysonCore);
+
     std::cout << "[SolarSystem] Test system loaded with " << m_celestials.size()
               << " celestials" << std::endl;
 }

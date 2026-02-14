@@ -39,7 +39,7 @@ bool CharacterCreationSystem::createCharacter(const std::string& entity_id,
     if (!sheet) return false;
 
     // Validate race
-    if (race != "Caldari" && race != "Amarr" && race != "Gallente" && race != "Minmatar") {
+    if (race != "Veyren" && race != "Solari" && race != "Aurelian" && race != "Keldari") {
         return false;
     }
 
@@ -50,25 +50,25 @@ bool CharacterCreationSystem::createCharacter(const std::string& entity_id,
     sheet->gender = gender;
 
     // Set race-specific starting attributes
-    if (race == "Caldari") {
+    if (race == "Veyren") {
         sheet->intelligence = 23;
         sheet->perception = 20;
         sheet->charisma = 19;
         sheet->willpower = 20;
         sheet->memory = 21;
-    } else if (race == "Amarr") {
+    } else if (race == "Solari") {
         sheet->intelligence = 22;
         sheet->perception = 20;
         sheet->charisma = 20;
         sheet->willpower = 22;
         sheet->memory = 20;
-    } else if (race == "Gallente") {
+    } else if (race == "Aurelian") {
         sheet->intelligence = 21;
         sheet->perception = 20;
         sheet->charisma = 22;
         sheet->willpower = 19;
         sheet->memory = 21;
-    } else if (race == "Minmatar") {
+    } else if (race == "Keldari") {
         sheet->intelligence = 20;
         sheet->perception = 22;
         sheet->charisma = 19;

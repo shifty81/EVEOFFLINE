@@ -2045,7 +2045,7 @@ void testDScanPanelRendering() {
     hud.setDScanAngle(180.0f);
     hud.setDScanRange(7.5f);
     std::vector<atlas::AtlasHUD::DScanEntry> results;
-    results.push_back({"Veldspar", "Asteroid", 0.5f});
+    results.push_back({"Dustite", "Asteroid", 0.5f});
     hud.setDScanResults(results);
     hud.toggleDScan();
 
