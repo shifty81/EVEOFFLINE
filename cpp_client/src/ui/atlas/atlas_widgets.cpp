@@ -982,18 +982,10 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
     {
         float portraitSz = slotSz;
         Rect portraitRect = {x + pad, iconY, portraitSz, portraitSz};
-        WidgetID portraitID = hashID("sidebar_portrait");
 
-        bool hovered = ctx.isHovered(portraitRect);
-        if (hovered) ctx.setHot(portraitID);
-        bool pressing = ctx.isActive(portraitID);
-
-        // Dark recessed area for portrait with hover/active feedback
-        Color portraitBg = pressing ? t.accentPrimary.withAlpha(0.3f) :
-                           hovered  ? t.accentPrimary.withAlpha(0.15f) :
-                                      t.bgSecondary.withAlpha(0.8f);
-        rr.drawRect(portraitRect, portraitBg);
-        rr.drawRectOutline(portraitRect, hovered ? t.accentPrimary.withAlpha(0.6f) : t.borderSubtle);
+        // Dark recessed area for portrait
+        rr.drawRect(portraitRect, t.bgSecondary.withAlpha(0.8f));
+        rr.drawRectOutline(portraitRect, t.borderSubtle);
 
         // Placeholder silhouette (draw a simple head/shoulders shape)
         Vec2 pCentre = portraitRect.center();
@@ -1006,12 +998,7 @@ void sidebarBar(AtlasContext& ctx, float x, float width, float height,
                     static_cast<float>(M_PI), 2.0f * static_cast<float>(M_PI),
                     t.textMuted.withAlpha(0.3f), 8);
 
-        // Click behavior: invoke sidebar callback with index -1 for character sheet
-        if (ctx.buttonBehavior(portraitRect, portraitID)) {
-            if (callback) callback(-1);
-        }
-
-        if (ctx.isHot(portraitID)) {
+        if (ctx.isHovered(portraitRect)) {
             tooltip(ctx, "Character Sheet");
         }
 

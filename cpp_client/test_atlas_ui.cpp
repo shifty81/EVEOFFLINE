@@ -2045,7 +2045,7 @@ void testDScanPanelRendering() {
     hud.setDScanAngle(180.0f);
     hud.setDScanRange(7.5f);
     std::vector<atlas::AtlasHUD::DScanEntry> results;
-    results.push_back({"Dustite", "Asteroid", 0.5f});
+    results.push_back({"Veldspar", "Asteroid", 0.5f});
     hud.setDScanResults(results);
     hud.toggleDScan();
 
@@ -2885,79 +2885,6 @@ void testContextMenuJumpAction() {
     menu.Close();
 }
 
-// ─── Context Menu Context-Aware Actions test ──────────────────────
-// Verifies that context menu items are disabled based on distance
-// (on-grid vs off-grid) for context-appropriate interactions.
-
-void testContextMenuContextAware() {
-    std::cout << "\n=== Context Menu Context-Aware Actions ===" << std::endl;
-
-    UI::ContextMenu menu;
-
-    // Off-grid target (> 150 km) — Warp To should be available, Approach disabled
-    menu.ShowEntityMenu("planet_far", false, false, 500000.0f);
-    assertTrue(menu.IsOpen(), "Off-grid menu opens");
-    menu.Close();
-
-    // On-grid target (< 150 km) — Approach should be available, Warp To disabled
-    menu.ShowEntityMenu("npc_close", false, false, 5000.0f);
-    assertTrue(menu.IsOpen(), "On-grid menu opens");
-    menu.Close();
-
-    // No distance info (0.0) — all items should be available (no disabling)
-    menu.ShowEntityMenu("unknown_entity", false, false, 0.0f);
-    assertTrue(menu.IsOpen(), "Unknown-distance menu opens");
-    menu.Close();
-
-    // Stargate on-grid — Jump should be available
-    menu.ShowEntityMenu("gate_jita", false, true, 2000.0f);
-    assertTrue(menu.IsOpen(), "On-grid stargate menu opens");
-    menu.Close();
-
-    // Stargate off-grid — Jump should be disabled
-    menu.ShowEntityMenu("gate_far", false, true, 500000.0f);
-    assertTrue(menu.IsOpen(), "Off-grid stargate menu opens");
-    menu.Close();
-}
-
-// ─── Radial Menu Warp Disabled for On-Grid test ──────────────────
-// Verifies that warp is disabled when the target is within minimum warp distance
-
-void testRadialMenuWarpDisabledOnGrid() {
-    std::cout << "\n=== Radial Menu Warp Disabled On-Grid ===" << std::endl;
-
-    UI::RadialMenu menu;
-
-    // Open with target that is on-grid (5 km, well below 150 km min warp distance)
-    menu.Open(400.0f, 300.0f, "npc_close", 5000.0f);
-    assertTrue(menu.IsOpen(), "Menu opened for on-grid entity");
-
-    // Move to the Warp To segment (right side of radial, index 2)
-    // Warp To is at segment index 2, angle around 0 degrees (right)
-    float warpAngle = 0.0f;
-    float dist = 70.0f;  // between inner (30) and outer (100) radius
-    float mx = 400.0f + std::cos(warpAngle) * dist;
-    float my = 300.0f + std::sin(warpAngle) * dist;
-    menu.UpdateMousePosition(mx, my);
-
-    // Warp should be disabled for on-grid target
-    assertTrue(menu.GetHighlightedAction() != UI::RadialMenu::Action::WARP_TO,
-               "Warp To action is NOT highlighted for on-grid entity (disabled)");
-
-    menu.Close();
-
-    // Open with target that is off-grid (500 km)
-    menu.Open(400.0f, 300.0f, "planet_far", 500000.0f);
-    assertTrue(menu.IsOpen(), "Menu opened for off-grid entity");
-
-    menu.UpdateMousePosition(mx, my);
-    // For off-grid entity, warp should be available (not disabled by distance)
-    assertTrue(menu.GetHighlightedAction() != UI::RadialMenu::Action::NONE,
-               "An action is available for off-grid entity");
-
-    menu.Close();
-}
-
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "Atlas UI System Tests" << std::endl;
@@ -3058,8 +2985,6 @@ int main() {
     testRadialMenuDragToRange();
     testPanelDeferredMouseConsumption();
     testContextMenuJumpAction();
-    testContextMenuContextAware();
-    testRadialMenuWarpDisabledOnGrid();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun

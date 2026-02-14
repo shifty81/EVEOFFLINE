@@ -85,8 +85,8 @@ void Camera::rotate(float deltaYaw, float deltaPitch) {
     // Feed angular velocity for inertia when mouse is released
     // The velocity is based on the most recent deltas (weighted toward
     // responsiveness rather than averaging).
-    m_yawVelocity   = deltaYaw   * 30.0f;  // gentle inertia carry
-    m_pitchVelocity = deltaPitch * 30.0f;
+    m_yawVelocity   = deltaYaw   * 60.0f;  // scale up since deltas are per-frame
+    m_pitchVelocity = deltaPitch * 60.0f;
     
     updateVectors();
 }

@@ -80,11 +80,8 @@ void Application::run() {
         m_lastFrameTime = currentTime;
         m_deltaTime = deltaTime;
 
-        // Reset per-frame input state before polling events.
-        // Clear previous frame's Atlas mouse consumption so stale state
-        // doesn't block camera rotation during this frame's input phase.
+        // Reset per-frame input state before polling events
         m_inputHandler->beginFrame();
-        m_atlasConsumedMouse = false;
 
         // Poll events so transient input flags (clicked, released) are
         // available during update and render within the same frame
@@ -116,7 +113,11 @@ void Application::initialize() {
         throw std::runtime_error("Failed to initialize renderer");
     }
     
-    // Atlas is the sole UI system — RmlUI is not used
+    // Initialize UI manager (non-fatal — Atlas HUD provides fallback UI)
+    if (!m_uiManager->Initialize(m_window->getHandle(), "ui_resources")) {
+        std::cerr << "Warning: RmlUi UI manager initialization failed. "
+                  << "Falling back to Atlas HUD-only mode. Some UI panels may be unavailable." << std::endl;
+    }
     
     // Initialize Atlas UI context
     m_atlasCtx->init();
@@ -126,10 +127,6 @@ void Application::initialize() {
     m_atlasHUD->setSidebarCallback([this](int icon) {
         std::cout << "[Neocom] Sidebar icon " << icon << " clicked" << std::endl;
         switch (icon) {
-            case -1:
-                std::cout << "[Neocom] Toggle Character Sheet" << std::endl;
-                m_atlasHUD->toggleCharacter();
-                break;
             case 0:
                 std::cout << "[Neocom] Toggle Inventory" << std::endl;
                 m_atlasHUD->toggleInventory();
@@ -177,18 +174,30 @@ void Application::initialize() {
             shutdown();
         }
 
+        if (m_uiManager) {
+            m_uiManager->HandleKey(key, action, mods);
+        }
+
         m_inputHandler->handleKey(key, action, mods);
     });
 
     m_window->setCharCallback([this](unsigned int codepoint) {
-        // Atlas handles text input through InputHandler
+        if (m_uiManager) {
+            m_uiManager->HandleChar(codepoint);
+        }
     });
     
     m_window->setMouseCallback([this](double xpos, double ypos) {
+        if (m_uiManager) {
+            m_uiManager->HandleCursorPos(xpos, ypos);
+        }
         m_inputHandler->handleMouse(xpos, ypos);
     });
     
     m_window->setMouseButtonCallback([this](int button, int action, int mods) {
+        if (m_uiManager) {
+            m_uiManager->HandleMouseButton(button, action, mods);
+        }
         double x = m_inputHandler->getMouseX();
         double y = m_inputHandler->getMouseY();
         m_inputHandler->handleMouseButton(button, action, mods, x, y);
@@ -196,12 +205,19 @@ void Application::initialize() {
     
     // Scroll callback — EVE uses mousewheel for camera zoom
     m_window->setScrollCallback([this](double xoffset, double yoffset) {
+        int mods = m_inputHandler->getModifierMask();
+        if (m_uiManager) {
+            m_uiManager->HandleScroll(yoffset, mods);
+        }
         m_inputHandler->handleScroll(xoffset, yoffset);
         handleScroll(xoffset, yoffset);
     });
     
     m_window->setResizeCallback([this](int width, int height) {
         m_renderer->setViewport(0, 0, width, height);
+        if (m_uiManager) {
+            m_uiManager->HandleFramebufferSize(width, height);
+        }
     });
     
     // Register input handler callbacks
@@ -351,6 +367,43 @@ void Application::setupUICallbacks() {
     
     std::cout << "  - Context menu callbacks wired" << std::endl;
     
+    // === Wire RmlUi context menu button events to the same callbacks ===
+    if (m_uiManager) {
+        m_uiManager->SetOnLockTarget([this](const std::string& entityId) {
+            if (std::find(m_targetList.begin(), m_targetList.end(), entityId) == m_targetList.end()) {
+                m_targetList.push_back(entityId);
+                std::cout << "[Targeting] Locked target: " << entityId << std::endl;
+            }
+        });
+        m_uiManager->SetOnApproach([this](const std::string& entityId) {
+            commandApproach(entityId);
+        });
+        m_uiManager->SetOnOrbit([this](const std::string& entityId, int dist) {
+            commandOrbit(entityId, static_cast<float>(dist));
+        });
+        m_uiManager->SetOnKeepAtRange([this](const std::string& entityId, int dist) {
+            commandKeepAtRange(entityId, static_cast<float>(dist));
+        });
+        m_uiManager->SetOnAlignTo([this](const std::string& entityId) {
+            commandAlignTo(entityId);
+        });
+        m_uiManager->SetOnWarpTo([this](const std::string& entityId, int dist) {
+            std::cout << "[Movement] Warp to " << entityId << " at " << dist << "m distance" << std::endl;
+            commandWarpTo(entityId);
+        });
+        m_uiManager->SetOnShowInfo([this](const std::string& entityId) {
+            std::cout << "[Info] Show info for: " << entityId << std::endl;
+            openInfoPanelForEntity(entityId);
+        });
+        m_uiManager->SetOnLookAt([this](const std::string& entityId) {
+            auto entity = m_gameClient->getEntityManager().getEntity(entityId);
+            if (entity) {
+                m_camera->setTarget(entity->getPosition());
+                std::cout << "[Camera] Looking at: " << entityId << std::endl;
+            }
+        });
+        std::cout << "  - RmlUi context menu events wired" << std::endl;
+    }
     
     // === Setup Radial Menu Callbacks ===
     m_radialMenu->SetActionCallback([this](UI::RadialMenu::Action action, const std::string& entityId) {
@@ -430,24 +483,12 @@ void Application::setupUICallbacks() {
     m_atlasHUD->setOverviewRightClickCb([this](const std::string& entityId, float screenX, float screenY) {
         bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), entityId) != m_targetList.end();
         bool isStargate = false;
-        float distToTarget = 0.0f;
         if (m_solarSystem) {
             const auto* cel = m_solarSystem->findCelestial(entityId);
             if (cel && cel->type == atlas::Celestial::Type::STARGATE)
                 isStargate = true;
-            if (cel) {
-                auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-                if (playerEntity)
-                    distToTarget = glm::distance(playerEntity->getPosition(), cel->position);
-            }
         }
-        if (distToTarget == 0.0f) {
-            auto targetEntity = m_gameClient->getEntityManager().getEntity(entityId);
-            auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-            if (targetEntity && playerEntity)
-                distToTarget = glm::distance(playerEntity->getPosition(), targetEntity->getPosition());
-        }
-        m_contextMenu->ShowEntityMenu(entityId, isLocked, isStargate, distToTarget);
+        m_contextMenu->ShowEntityMenu(entityId, isLocked, isStargate);
         m_contextMenu->SetScreenPosition(screenX, screenY);
         std::cout << "[Overview] Right-click context menu for: " << entityId << std::endl;
     });
@@ -506,24 +547,48 @@ void Application::update(float deltaTime) {
         
         status.velocity = m_playerSpeed;
         status.max_velocity = m_playerMaxSpeed;
+        m_uiManager->SetShipStatus(status);
 
         // Update player position for UI calculations (e.g., distance in overview/targets)
         const auto playerPosition = playerEntity->getPosition();
+        m_uiManager->UpdateOverviewData(m_gameClient->getEntityManager().getAllEntities(), playerPosition);
         updateTargetListUi(playerPosition);
 
         // Camera follows player ship
         m_camera->setTarget(playerPosition);
+    } else if (m_uiManager) {
+        m_uiManager->ClearTargets();
     }
 }
 
 void Application::updateTargetListUi(const glm::vec3& playerPosition) {
-    // Target data is fed to Atlas HUD via atlasTargets in the render loop.
-    // RmlUI target list removed — Atlas is the sole UI system.
+    if (!m_uiManager) return;
+
+    m_uiManager->ClearTargets();
+    if (m_targetList.empty()) {
+        return;
+    }
+
+    for (const auto& targetId : m_targetList) {
+        auto entity = m_gameClient->getEntityManager().getEntity(targetId);
+        if (!entity) continue;
+
+        const auto& health = entity->getHealth();
+        const auto& position = entity->getPosition();
+        float shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
+        float armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
+        float hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
+        float distance = glm::distance(playerPosition, position);
+
+        std::string displayName = entity->getShipName().empty() ? entity->getId() : entity->getShipName();
+        bool isActive = targetId == m_currentTargetId;
+        m_uiManager->SetTarget(targetId, displayName, shieldPct, armorPct, hullPct, distance, false, isActive);
+    }
 }
 
 void Application::render() {
     // Clear screen
-    m_renderer->clear(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    m_renderer->clear(glm::vec4(0.01f, 0.01f, 0.05f, 1.0f));
     
     // Begin rendering
     m_renderer->beginFrame();
@@ -539,19 +604,22 @@ void Application::render() {
     m_renderer->renderScene(*m_camera);
     
     // Render warp tunnel overlay (after 3D scene, before UI)
-    // Only update and render the warp tunnel when actively warping to avoid
-    // stale state and unnecessary full-screen draws.
     if (m_solarSystem) {
         const auto& ws = m_solarSystem->getWarpVisualState();
-        if (ws.active) {
-            m_renderer->updateWarpEffect(ws.phase, ws.progress, 1.0f,
-                                          ws.direction,
-                                          m_deltaTime);
-            m_renderer->renderWarpEffect();
-        }
+        float intensity = ws.active ? 1.0f : 0.0f;
+        m_renderer->updateWarpEffect(ws.phase, ws.progress, intensity,
+                                      ws.direction,
+                                      m_deltaTime);
+        m_renderer->renderWarpEffect();
     }
     
-    // Render Atlas HUD overlay (sole UI system — RmlUi removed)
+    // Render UI
+    m_uiManager->Update();
+    m_uiManager->BeginFrame();
+    m_uiManager->Render();
+    m_uiManager->EndFrame();
+    
+    // Render Atlas HUD overlay
     {
         atlas::InputState atlasInput;
         atlasInput.windowW = m_window->getWidth();
@@ -582,7 +650,6 @@ void Application::render() {
             shipData.hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
             const auto& capacitor = playerEntity->getCapacitor();
             shipData.capacitorPct = capacitor.max > 0.0f ? capacitor.current / capacitor.max : 0.0f;
-            shipData.shipName = playerEntity->getShipType();
         }
         shipData.currentSpeed = m_playerSpeed;
         shipData.maxSpeed = m_playerMaxSpeed;
@@ -645,7 +712,6 @@ void Application::render() {
                         case atlas::Celestial::Type::STARGATE:      entry.type = "Stargate";      break;
                         case atlas::Celestial::Type::ASTEROID_BELT: entry.type = "Asteroid Belt"; break;
                         case atlas::Celestial::Type::WORMHOLE:      entry.type = "Wormhole";      break;
-                        case atlas::Celestial::Type::DYSON_RING:    entry.type = "Dyson Ring";    break;
                         default:                                  entry.type = "Celestial";     break;
                     }
                     atlasOverview.push_back(entry);
@@ -818,6 +884,10 @@ void Application::handleKeyInput(int key, int action, int mods) {
         return;
     }
 
+    if (m_uiManager && m_uiManager->WantsKeyboardInput()) {
+        return;
+    }
+    
     // Module activation (F1-F8) — EVE standard
     if (key >= GLFW_KEY_F1 && key <= GLFW_KEY_F8) {
         int slot = key - GLFW_KEY_F1 + 1;  // F1 = slot 1
@@ -892,17 +962,18 @@ void Application::handleKeyInput(int key, int action, int mods) {
         // TODO: Send drone engage/recall command to server
     }
     
-    // Panel toggles (Atlas HUD handles all panels)
+    // Panel toggles
     if (key == GLFW_KEY_I && (mods & GLFW_MOD_ALT)) {
-        m_atlasHUD->toggleInventory();
+        if (m_uiManager) m_uiManager->ToggleDocument("inventory");
     } else if (key == GLFW_KEY_F && (mods & GLFW_MOD_ALT)) {
-        m_atlasHUD->toggleFitting();
+        if (m_uiManager) m_uiManager->ToggleDocument("fitting");
     } else if (key == GLFW_KEY_O && (mods & GLFW_MOD_ALT)) {
+        if (m_uiManager) m_uiManager->ToggleDocument("overview");
         m_atlasHUD->toggleOverview();
     } else if (key == GLFW_KEY_R && (mods & GLFW_MOD_ALT)) {
-        m_atlasHUD->toggleMarket();
+        if (m_uiManager) m_uiManager->ToggleDocument("market");
     } else if (key == GLFW_KEY_J && (mods & GLFW_MOD_ALT)) {
-        m_atlasHUD->toggleMission();
+        if (m_uiManager) m_uiManager->ToggleDocument("mission");
     }
 }
 
@@ -941,17 +1012,12 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                             // Show entity context menu (Atlas only — no RmlUi duplicate)
                             bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), pickedId) != m_targetList.end();
                             bool isStargate = false;
-                            float distToTarget = 0.0f;
                             if (m_solarSystem) {
                                 const auto* cel = m_solarSystem->findCelestial(pickedId);
                                 if (cel && cel->type == atlas::Celestial::Type::STARGATE)
                                     isStargate = true;
                             }
-                            auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
-                            auto targetEntity = m_gameClient->getEntityManager().getEntity(pickedId);
-                            if (playerEntity && targetEntity)
-                                distToTarget = glm::distance(playerEntity->getPosition(), targetEntity->getPosition());
-                            m_contextMenu->ShowEntityMenu(pickedId, isLocked, isStargate, distToTarget);
+                            m_contextMenu->ShowEntityMenu(pickedId, isLocked, isStargate);
                             m_contextMenu->SetScreenPosition(static_cast<float>(x), static_cast<float>(y));
                         } else {
                             // Show empty space context menu
@@ -975,6 +1041,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             // Close context menu when clicking elsewhere (EVE behaviour)
             if (m_contextMenu && m_contextMenu->IsOpen()) {
                 m_contextMenu->Close();
+                if (m_uiManager) m_uiManager->HideContextMenu();
             }
         } else if (action == GLFW_RELEASE) {
             // Check if radial menu is open
@@ -983,6 +1050,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                 auto confirmedAction = m_radialMenu->Confirm();
                 m_radialMenuOpen = false;
                 m_radialMenu->Close();
+                if (m_uiManager) m_uiManager->HideRadialMenu();
             }
             m_leftMouseDown = false;
         }
@@ -991,7 +1059,10 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
     // Left-click: select entity / apply movement command
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         // Don't process clicks that UI captured
+        // Atlas UI consumption is the primary gate; also respect RmlUI
+        // only when it has a focused interactive element (not just hover)
         if (m_atlasConsumedMouse) return;
+        if (m_uiManager && m_uiManager->WantsKeyboardInput()) return;
         
         // Pick entity at mouse position
         auto entities = m_gameClient->getEntityManager().getAllEntities();
@@ -1065,7 +1136,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
             
             // Only open if not dragging significantly
             if (dist < 10.0) {
-                // Pick entity at hold position (3D raycasting)
+                // Pick entity at hold position
                 auto entities = m_gameClient->getEntityManager().getAllEntities();
                 std::vector<std::shared_ptr<Entity>> entityList;
                 for (const auto& pair : entities) {
@@ -1102,7 +1173,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
     // EVE-style camera: Right-click drag to orbit camera around ship
     if (m_rightMouseDown) {
         if (!m_atlasConsumedMouse) {
-            float sensitivity = 0.15f;
+            float sensitivity = 0.3f;
             m_camera->rotate(static_cast<float>(deltaX) * sensitivity,
                            static_cast<float>(-deltaY) * sensitivity);
         }
@@ -1148,6 +1219,10 @@ void Application::clearTarget() {
     m_currentTargetId.clear();
     m_targetList.clear();
     m_currentTargetIndex = -1;
+
+    if (m_uiManager) {
+        m_uiManager->ClearTargets();
+    }
 }
 
 void Application::cycleTarget() {
@@ -1358,20 +1433,13 @@ void Application::spawnLocalPlayerEntity() {
     
     std::cout << "[PVE] Spawning local player ship..." << std::endl;
     
-    // Create player entity near the Dyson Ring Core Module so the sun
-    // is visible in the distance.  The core module orbits at 0.5 AU.
-    // Spawn 15 km away from it so the player can see and dock.
+    // Create player entity at origin with a Fang (Keldari frigate)
     Health playerHealth(1500, 800, 500);  // Shield, Armor, Hull
     Capacitor playerCapacitor(250.0f, 250.0f);  // Fang capacitor: 250 GJ
     
-    // Dyson Ring Core Module is at (0.5 AU, 0, 0).  Spawn offset 15 km.
-    glm::vec3 spawnPos(0.5f * 149597870700.0f + 15000.0f,
-                       0.0f,
-                       0.0f);
-    
     m_gameClient->getEntityManager().spawnEntity(
         m_localPlayerId,
-        spawnPos,
+        glm::vec3(0.0f, 0.0f, 0.0f),
         playerHealth,
         playerCapacitor,
         "Fang",

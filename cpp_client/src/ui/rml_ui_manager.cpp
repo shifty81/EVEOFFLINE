@@ -23,7 +23,6 @@
 
 #include <iostream>
 #include <sstream>
-#include <fstream>
 #include <cmath>
 #include <algorithm>
 #include <cstdio>
@@ -112,20 +111,9 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
     // Search order:
     //   1. Bundled fonts in ui_resources/fonts/ (portable, always available)
     //   2. System font paths (Linux, macOS, Windows)
-    //
-    // Each candidate path is checked for existence BEFORE calling
-    // Rml::LoadFontFace to prevent RmlUi from logging file-not-found
-    // errors for fonts that are simply on a different platform.
     struct FontCandidate {
         std::string path;
         bool fallback;
-    };
-
-    // Helper lambda: only attempt to load fonts that actually exist on disk
-    auto tryLoadFont = [](const std::string& path, bool fallback) -> bool {
-        std::ifstream f(path, std::ios::binary);
-        if (!f.good()) return false;
-        return Rml::LoadFontFace(path, fallback);
     };
 
     std::string fontsDir = resourcePath_ + "/fonts/";
@@ -144,7 +132,7 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
 
     bool fontLoaded = false;
     for (const auto& font : regularFonts) {
-        if (tryLoadFont(font.path, font.fallback)) {
+        if (Rml::LoadFontFace(font.path, font.fallback)) {
             std::cout << "[RmlUiManager] Loaded font: " << font.path << "\n";
             fontLoaded = true;
             break;
@@ -162,7 +150,7 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
         "C:\\Windows\\Fonts\\arialbd.ttf",
     };
     for (const auto& boldPath : boldFonts) {
-        if (tryLoadFont(boldPath, false)) {
+        if (Rml::LoadFontFace(boldPath, false)) {
             std::cout << "[RmlUiManager] Loaded bold font: " << boldPath << "\n";
             break;
         }
@@ -175,7 +163,7 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf",
     };
     for (const auto& italicPath : italicFonts) {
-        if (tryLoadFont(italicPath, false)) {
+        if (Rml::LoadFontFace(italicPath, false)) {
             std::cout << "[RmlUiManager] Loaded italic font: " << italicPath << "\n";
             break;
         }
@@ -188,7 +176,7 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
         "/usr/share/fonts/truetype/dejavu/DejaVuSans-BoldOblique.ttf",
     };
     for (const auto& biPath : boldItalicFonts) {
-        if (tryLoadFont(biPath, false)) {
+        if (Rml::LoadFontFace(biPath, false)) {
             std::cout << "[RmlUiManager] Loaded bold-italic font: " << biPath << "\n";
             break;
         }

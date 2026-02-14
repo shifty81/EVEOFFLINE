@@ -13,13 +13,11 @@ ContextMenu::ContextMenu()
 {
 }
 
-void ContextMenu::ShowEntityMenu(const std::string& entity_id, bool is_locked,
-                                  bool is_stargate, float distance_to_target) {
+void ContextMenu::ShowEntityMenu(const std::string& entity_id, bool is_locked, bool is_stargate) {
     m_menuType = ContextMenuType::ENTITY;
     m_targetEntityId = entity_id;
     m_targetIsLocked = is_locked;
     m_targetIsStargate = is_stargate;
-    m_distanceToTarget = distance_to_target;
     m_activeSubmenu = -1;
 }
 
@@ -52,35 +50,28 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
         const char* label;
         ContextMenuAction action;
         int submenuIdx;  // -1 = no submenu
-        bool disabled;   // greyed-out (context-inappropriate)
     };
-
-    // On-grid / off-grid context awareness:
-    // On-grid  (< 150 km): Approach, Orbit, Keep at Range are valid; Warp To is disabled
-    // Off-grid (≥ 150 km): Warp To, Align To are valid; Approach, Orbit, Keep at Range are disabled
-    bool onGrid = (m_distanceToTarget > 0.0f && m_distanceToTarget < MIN_WARP_DISTANCE);
-    bool offGrid = (m_distanceToTarget >= MIN_WARP_DISTANCE);
 
     std::vector<MenuItem> items;
     if (m_menuType == ContextMenuType::ENTITY) {
-        items.push_back({"Approach",       ContextMenuAction::APPROACH,       -1, offGrid});
-        items.push_back({"Orbit",          ContextMenuAction::ORBIT,           0, offGrid});
-        items.push_back({"Keep at Range",  ContextMenuAction::KEEP_AT_RANGE,   1, offGrid});
-        items.push_back({"Warp To",        ContextMenuAction::WARP_TO,         2, onGrid});
-        items.push_back({"Align To",       ContextMenuAction::NAVIGATE_TO,    -1, false});
+        items.push_back({"Approach",       ContextMenuAction::APPROACH,       -1});
+        items.push_back({"Orbit",          ContextMenuAction::ORBIT,           0});
+        items.push_back({"Keep at Range",  ContextMenuAction::KEEP_AT_RANGE,   1});
+        items.push_back({"Warp To",        ContextMenuAction::WARP_TO,         2});
+        items.push_back({"Align To",       ContextMenuAction::NAVIGATE_TO,    -1});
         if (m_targetIsStargate) {
-            items.push_back({"Jump",       ContextMenuAction::JUMP,           -1, offGrid});
+            items.push_back({"Jump",       ContextMenuAction::JUMP,           -1});
         }
         if (m_targetIsLocked) {
-            items.push_back({"Unlock Target", ContextMenuAction::UNLOCK_TARGET, -1, false});
+            items.push_back({"Unlock Target", ContextMenuAction::UNLOCK_TARGET, -1});
         } else {
-            items.push_back({"Lock Target",   ContextMenuAction::LOCK_TARGET,   -1, false});
+            items.push_back({"Lock Target",   ContextMenuAction::LOCK_TARGET,   -1});
         }
-        items.push_back({"Look At",        ContextMenuAction::LOOK_AT,        -1, false});
-        items.push_back({"Show Info",      ContextMenuAction::SHOW_INFO,      -1, false});
+        items.push_back({"Look At",        ContextMenuAction::LOOK_AT,        -1});
+        items.push_back({"Show Info",      ContextMenuAction::SHOW_INFO,      -1});
     } else {
-        items.push_back({"Align To",          ContextMenuAction::NAVIGATE_TO, -1, false});
-        items.push_back({"Bookmark Location", ContextMenuAction::BOOKMARK,    -1, false});
+        items.push_back({"Align To",          ContextMenuAction::NAVIGATE_TO, -1});
+        items.push_back({"Bookmark Location", ContextMenuAction::BOOKMARK,    -1});
     }
 
     // Layout constants
@@ -120,10 +111,9 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
     for (int i = 0; i < static_cast<int>(items.size()); ++i) {
         atlas::Rect itemRect(menuX, curY, menuW, itemH);
         atlas::WidgetID id = ctx.currentID(items[i].label);
-        bool itemDisabled = items[i].disabled;
 
         bool hovered = ctx.isHovered(itemRect);
-        if (hovered && !itemDisabled) {
+        if (hovered) {
             r.drawRect(itemRect, t.hover);
             ctx.setHot(id);
 
@@ -134,23 +124,19 @@ void ContextMenu::RenderAtlas(atlas::AtlasContext& ctx) {
                 // Hovering a non-submenu item closes any open submenu
                 m_activeSubmenu = -1;
             }
-        } else if (hovered && itemDisabled) {
-            // Close any open submenu when hovering disabled items
-            m_activeSubmenu = -1;
         }
 
-        atlas::Color labelColor = itemDisabled ? t.textDisabled
-                                  : (hovered ? t.accentSecondary : t.textPrimary);
-        r.drawText(items[i].label, {menuX + padX, curY + 5.0f}, labelColor);
+        r.drawText(items[i].label, {menuX + padX, curY + 5.0f},
+                   hovered ? t.accentSecondary : t.textPrimary);
 
         // Submenu arrow indicator
         if (items[i].submenuIdx >= 0) {
-            r.drawText(">", {menuX + menuW - 16.0f, curY + 5.0f},
-                       itemDisabled ? t.textDisabled : t.textSecondary);
+            r.drawText(">", {menuX + menuW - 16.0f, curY + 5.0f}, t.textSecondary);
         }
 
-        // Click handling — disabled items and submenu parents are non-interactive
-        if (!itemDisabled && items[i].submenuIdx < 0 && ctx.buttonBehavior(itemRect, id)) {
+        // Click handling — submenu items are opened by hover, so clicking
+        // a submenu parent is a no-op; only non-submenu items fire actions
+        if (items[i].submenuIdx < 0 && ctx.buttonBehavior(itemRect, id)) {
             switch (items[i].action) {
                     case ContextMenuAction::APPROACH:
                         if (m_onApproach) m_onApproach(m_targetEntityId);

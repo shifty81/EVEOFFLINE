@@ -107,7 +107,7 @@ private:
 
     // Smoothing parameters
     static constexpr float ZOOM_LERP_SPEED   = 8.0f;  // higher = snappier zoom
-    static constexpr float INERTIA_DAMPING    = 8.0f;  // angular velocity decay rate
+    static constexpr float INERTIA_DAMPING    = 5.0f;  // angular velocity decay rate
     static constexpr float INERTIA_THRESHOLD  = 0.05f; // stop when below this
 };
 
