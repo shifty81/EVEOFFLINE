@@ -1475,6 +1475,58 @@ public:
     COMPONENT_TYPE(CaptainMemory)
 };
 
+/**
+ * @brief Warp tunnel visual layer configuration (cinematic warp system)
+ *
+ * Stores per-entity shader layer intensities computed by WarpCinematicSystem.
+ * Client reads these to drive the multi-layer warp tunnel overlay.
+ */
+class WarpTunnelConfig : public ecs::Component {
+public:
+    // Shader layer intensities (0.0–1.0)
+    float radial_distortion = 0.0f;    // Radial distortion layer
+    float starfield_bloom   = 0.0f;    // Starfield velocity bloom
+    float tunnel_skin       = 0.0f;    // Tunnel skin/noise layer
+    float vignette          = 0.0f;    // Edge vignette darkening
+
+    // Composite intensity derived from ship mass + phase
+    float composite_intensity = 0.0f;
+
+    COMPONENT_TYPE(WarpTunnelConfig)
+};
+
+/**
+ * @brief Warp audio profile for adaptive warp sounds
+ *
+ * Drives three audio channels during warp: engine core (sub-bass),
+ * warp field harmonics, and environmental shimmer.
+ */
+class WarpAudioProfile : public ecs::Component {
+public:
+    float engine_core_volume  = 0.0f;   // Sub-bass engine drone (0.0–1.0)
+    float harmonics_volume    = 0.0f;   // Warp field harmonics (0.0–1.0)
+    float shimmer_volume      = 0.0f;   // Environmental shimmer (0.0–1.0)
+    float engine_core_pitch   = 1.0f;   // Pitch multiplier for engine core
+    float harmonics_pitch     = 1.0f;   // Pitch multiplier for harmonics
+
+    COMPONENT_TYPE(WarpAudioProfile)
+};
+
+/**
+ * @brief Accessibility settings for warp visual/audio effects
+ *
+ * Allows players to reduce motion, bass, and blur intensity
+ * to accommodate different sensitivities.
+ */
+class WarpAccessibility : public ecs::Component {
+public:
+    float motion_intensity = 1.0f;   // Motion effect scale (0.0–1.0, 0=off)
+    float bass_intensity   = 1.0f;   // Sub-bass volume scale (0.0–1.0)
+    float blur_intensity   = 1.0f;   // Blur/distortion scale (0.0–1.0)
+
+    COMPONENT_TYPE(WarpAccessibility)
+};
+
 } // namespace components
 } // namespace atlas
 

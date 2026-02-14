@@ -56,11 +56,14 @@ void WarpEffectRenderer::render() {
     glDisable(GL_DEPTH_TEST);
 
     m_shader->use();
-    m_shader->setFloat("uTime",      m_time);
-    m_shader->setFloat("uIntensity", m_intensity);
-    m_shader->setFloat("uPhase",     m_phase);
-    m_shader->setFloat("uProgress",  m_progress);
-    m_shader->setVec2("uDirection",  m_direction);
+    m_shader->setFloat("uTime",        m_time);
+    m_shader->setFloat("uIntensity",   m_intensity);
+    m_shader->setFloat("uPhase",       m_phase);
+    m_shader->setFloat("uProgress",    m_progress);
+    m_shader->setVec2("uDirection",    m_direction);
+    m_shader->setFloat("uMassNorm",    m_massNorm);
+    m_shader->setFloat("uMotionScale", m_motionScale);
+    m_shader->setFloat("uBlurScale",   m_blurScale);
 
     glBindVertexArray(m_quadVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
