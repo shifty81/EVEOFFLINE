@@ -80,8 +80,11 @@ void Application::run() {
         m_lastFrameTime = currentTime;
         m_deltaTime = deltaTime;
 
-        // Reset per-frame input state before polling events
+        // Reset per-frame input state before polling events.
+        // Clear previous frame's Atlas mouse consumption so stale state
+        // doesn't block camera rotation during this frame's input phase.
         m_inputHandler->beginFrame();
+        m_atlasConsumedMouse = false;
 
         // Poll events so transient input flags (clicked, released) are
         // available during update and render within the same frame
@@ -487,12 +490,24 @@ void Application::setupUICallbacks() {
     m_atlasHUD->setOverviewRightClickCb([this](const std::string& entityId, float screenX, float screenY) {
         bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), entityId) != m_targetList.end();
         bool isStargate = false;
+        float distToTarget = 0.0f;
         if (m_solarSystem) {
             const auto* cel = m_solarSystem->findCelestial(entityId);
             if (cel && cel->type == atlas::Celestial::Type::STARGATE)
                 isStargate = true;
+            if (cel) {
+                auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+                if (playerEntity)
+                    distToTarget = glm::distance(playerEntity->getPosition(), cel->position);
+            }
         }
-        m_contextMenu->ShowEntityMenu(entityId, isLocked, isStargate);
+        if (distToTarget == 0.0f) {
+            auto targetEntity = m_gameClient->getEntityManager().getEntity(entityId);
+            auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+            if (targetEntity && playerEntity)
+                distToTarget = glm::distance(playerEntity->getPosition(), targetEntity->getPosition());
+        }
+        m_contextMenu->ShowEntityMenu(entityId, isLocked, isStargate, distToTarget);
         m_contextMenu->SetScreenPosition(screenX, screenY);
         std::cout << "[Overview] Right-click context menu for: " << entityId << std::endl;
     });
@@ -520,12 +535,18 @@ void Application::setupUICallbacks() {
 
     m_atlasHUD->setBracketRightClickCb([this](const std::string& celestialId, float screenX, float screenY) {
         bool isStargate = false;
+        float distToTarget = 0.0f;
         if (m_solarSystem) {
             const auto* cel = m_solarSystem->findCelestial(celestialId);
-            if (cel && cel->type == atlas::Celestial::Type::STARGATE)
-                isStargate = true;
+            if (cel) {
+                if (cel->type == atlas::Celestial::Type::STARGATE)
+                    isStargate = true;
+                auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+                if (playerEntity)
+                    distToTarget = glm::distance(playerEntity->getPosition(), cel->position);
+            }
         }
-        m_contextMenu->ShowEntityMenu(celestialId, false, isStargate);
+        m_contextMenu->ShowEntityMenu(celestialId, false, isStargate, distToTarget);
         m_contextMenu->SetScreenPosition(screenX, screenY);
         std::cout << "[Bracket] Right-click context menu for: " << celestialId << std::endl;
     });
@@ -629,13 +650,16 @@ void Application::render() {
     m_renderer->renderScene(*m_camera);
     
     // Render warp tunnel overlay (after 3D scene, before UI)
+    // Only update and render the warp tunnel when actively warping to avoid
+    // stale state and unnecessary full-screen draws.
     if (m_solarSystem) {
         const auto& ws = m_solarSystem->getWarpVisualState();
-        float intensity = ws.active ? 1.0f : 0.0f;
-        m_renderer->updateWarpEffect(ws.phase, ws.progress, intensity,
-                                      ws.direction,
-                                      m_deltaTime);
-        m_renderer->renderWarpEffect();
+        if (ws.active) {
+            m_renderer->updateWarpEffect(ws.phase, ws.progress, 1.0f,
+                                          ws.direction,
+                                          m_deltaTime);
+            m_renderer->renderWarpEffect();
+        }
     }
     
     // Render UI
@@ -1091,12 +1115,17 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                             // Show entity context menu (Atlas only — no RmlUi duplicate)
                             bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), pickedId) != m_targetList.end();
                             bool isStargate = false;
+                            float distToTarget = 0.0f;
                             if (m_solarSystem) {
                                 const auto* cel = m_solarSystem->findCelestial(pickedId);
                                 if (cel && cel->type == atlas::Celestial::Type::STARGATE)
                                     isStargate = true;
                             }
-                            m_contextMenu->ShowEntityMenu(pickedId, isLocked, isStargate);
+                            auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+                            auto targetEntity = m_gameClient->getEntityManager().getEntity(pickedId);
+                            if (playerEntity && targetEntity)
+                                distToTarget = glm::distance(playerEntity->getPosition(), targetEntity->getPosition());
+                            m_contextMenu->ShowEntityMenu(pickedId, isLocked, isStargate, distToTarget);
                             m_contextMenu->SetScreenPosition(static_cast<float>(x), static_cast<float>(y));
                         } else {
                             // Show empty space context menu
@@ -1215,7 +1244,7 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
             
             // Only open if not dragging significantly
             if (dist < 10.0) {
-                // Pick entity at hold position
+                // Pick entity at hold position (3D raycasting)
                 auto entities = m_gameClient->getEntityManager().getAllEntities();
                 std::vector<std::shared_ptr<Entity>> entityList;
                 for (const auto& pair : entities) {
@@ -1229,10 +1258,40 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
                     m_window->getWidth(), m_window->getHeight(),
                     *m_camera, entityList);
                 
+                // If no 3D entity found, check celestial brackets (UI icons)
+                float distToTarget = 0.0f;
+                if (pickedId.empty() && m_solarSystem) {
+                    auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
+                    if (playerEntity) {
+                        const auto playerPos = playerEntity->getPosition();
+                        float hx = static_cast<float>(m_radialMenuStartX);
+                        float hy = static_cast<float>(m_radialMenuStartY);
+                        float hitRadius = 16.0f;
+                        float hitRadiusSq = hitRadius * hitRadius;
+                        glm::mat4 vp = m_camera->getProjectionMatrix() * m_camera->getViewMatrix();
+                        float scrW = static_cast<float>(m_window->getWidth());
+                        float scrH = static_cast<float>(m_window->getHeight());
+                        float bestDistSq = hitRadiusSq;
+                        for (const auto& c : m_solarSystem->getCelestials()) {
+                            if (c.type == atlas::Celestial::Type::SUN) continue;
+                            glm::vec4 clip = vp * glm::vec4(c.position, 1.0f);
+                            if (clip.w <= 0.0f) continue;
+                            glm::vec3 ndc = glm::vec3(clip) / clip.w;
+                            float sx = (ndc.x * 0.5f + 0.5f) * scrW;
+                            float sy = (1.0f - (ndc.y * 0.5f + 0.5f)) * scrH;
+                            float dSq = (sx - hx) * (sx - hx) + (sy - hy) * (sy - hy);
+                            if (dSq < bestDistSq) {
+                                bestDistSq = dSq;
+                                pickedId = c.id;
+                                distToTarget = glm::distance(playerPos, c.position);
+                            }
+                        }
+                    }
+                }
+
                 if (!pickedId.empty()) {
                     // Compute distance to target for warp eligibility check
-                    float distToTarget = 0.0f;
-                    if (m_shipPhysics) {
+                    if (distToTarget == 0.0f && m_shipPhysics) {
                         auto targetEntity = m_gameClient->getEntityManager().getEntity(pickedId);
                         if (targetEntity) {
                             distToTarget = glm::distance(m_shipPhysics->getPosition(), targetEntity->getPosition());

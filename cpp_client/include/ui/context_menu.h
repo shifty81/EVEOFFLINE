@@ -89,8 +89,11 @@ public:
      * @param entity_id ID of the clicked entity
      * @param is_locked Whether the entity is currently locked as a target
      * @param is_stargate Whether the entity is a stargate (adds Jump option)
+     * @param distance_to_target Distance in metres from the player to the target
+     *        (used for context-aware actions: on-grid vs off-grid)
      */
-    void ShowEntityMenu(const std::string& entity_id, bool is_locked = false, bool is_stargate = false);
+    void ShowEntityMenu(const std::string& entity_id, bool is_locked = false,
+                        bool is_stargate = false, float distance_to_target = 0.0f);
     
     /**
      * Show context menu for empty space
@@ -159,8 +162,12 @@ private:
     std::string m_targetEntityId;
     bool m_targetIsLocked;
     bool m_targetIsStargate = false;
+    float m_distanceToTarget = 0.0f;  // metres; used for on-grid / off-grid checks
     float m_worldX, m_worldY, m_worldZ;
     float m_screenX = 0.0f, m_screenY = 0.0f;
+
+    // Minimum warp distance in metres (matches ShipPhysics::MIN_WARP_DISTANCE)
+    static constexpr float MIN_WARP_DISTANCE = 150000.0f;
     
     // Submenu state
     int m_activeSubmenu = -1;  // -1 = none, 0 = orbit, 1 = keeprange, 2 = warpto
