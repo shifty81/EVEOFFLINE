@@ -201,7 +201,9 @@ Data-driven modding without code injection:
 | LeaderboardSystem | ✅ Complete | 23 assertions |
 | StationSystem | ✅ Complete | 29 assertions |
 | WreckSalvageSystem | ✅ Complete | 22 assertions |
-| **Total** | **29 systems** | **897 assertions** |
+| ScannerSystem | ✅ Complete | 17 assertions |
+| AnomalySpawnerSystem | ✅ Complete | 24 assertions |
+| **Total** | **31 systems** | **938 assertions** |
 
 ### Data Loaders Status
 
