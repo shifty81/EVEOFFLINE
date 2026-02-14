@@ -10456,6 +10456,229 @@ void testPersistenceLODPriority() {
     assertTrue(approxEqual(lod2->impostor_distance, 800.0f), "impostor_distance preserved");
 }
 
+// ==================== New Component Default Tests ====================
+
+void testWarpProfileDefaults() {
+    std::cout << "\n=== WarpProfile Defaults ===" << std::endl;
+    components::WarpProfile wp;
+    assertTrue(approxEqual(wp.warp_speed, 3.0f), "WarpProfile default warp_speed is 3.0");
+    assertTrue(approxEqual(wp.mass_norm, 0.0f), "WarpProfile default mass_norm is 0.0");
+    assertTrue(approxEqual(wp.intensity, 0.0f), "WarpProfile default intensity is 0.0");
+    assertTrue(approxEqual(wp.comfort_scale, 1.0f), "WarpProfile default comfort_scale is 1.0");
+}
+
+void testWarpVisualDefaults() {
+    std::cout << "\n=== WarpVisual Defaults ===" << std::endl;
+    components::WarpVisual wv;
+    assertTrue(approxEqual(wv.distortion_strength, 0.0f), "WarpVisual default distortion_strength is 0.0");
+    assertTrue(approxEqual(wv.tunnel_noise_scale, 1.0f), "WarpVisual default tunnel_noise_scale is 1.0");
+    assertTrue(approxEqual(wv.vignette_amount, 0.0f), "WarpVisual default vignette_amount is 0.0");
+    assertTrue(approxEqual(wv.bloom_strength, 0.0f), "WarpVisual default bloom_strength is 0.0");
+    assertTrue(approxEqual(wv.starfield_speed, 1.0f), "WarpVisual default starfield_speed is 1.0");
+}
+
+void testWarpEventDefaults() {
+    std::cout << "\n=== WarpEvent Defaults ===" << std::endl;
+    components::WarpEvent we;
+    assertTrue(we.current_event.empty(), "WarpEvent default current_event is empty");
+    assertTrue(approxEqual(we.event_timer, 0.0f), "WarpEvent default event_timer is 0.0");
+    assertTrue(we.severity == 0, "WarpEvent default severity is 0");
+}
+
+void testTacticalProjectionDefaults() {
+    std::cout << "\n=== TacticalProjection Defaults ===" << std::endl;
+    components::TacticalProjection tp;
+    assertTrue(approxEqual(tp.projected_x, 0.0f), "TacticalProjection default projected_x is 0.0");
+    assertTrue(approxEqual(tp.projected_y, 0.0f), "TacticalProjection default projected_y is 0.0");
+    assertTrue(approxEqual(tp.vertical_offset, 0.0f), "TacticalProjection default vertical_offset is 0.0");
+    assertTrue(tp.visible, "TacticalProjection default visible is true");
+}
+
+void testPlayerPresenceDefaults() {
+    std::cout << "\n=== PlayerPresence Defaults ===" << std::endl;
+    components::PlayerPresence pp;
+    assertTrue(approxEqual(pp.time_since_last_command, 0.0f), "PlayerPresence default time_since_last_command is 0.0");
+    assertTrue(approxEqual(pp.time_since_last_speech, 0.0f), "PlayerPresence default time_since_last_speech is 0.0");
+}
+
+void testFactionCultureDefaults() {
+    std::cout << "\n=== FactionCulture Defaults ===" << std::endl;
+    components::FactionCulture fc;
+    assertTrue(fc.faction.empty(), "FactionCulture default faction is empty");
+    assertTrue(approxEqual(fc.chatter_frequency_mod, 1.0f), "FactionCulture default chatter_frequency_mod is 1.0");
+    assertTrue(approxEqual(fc.formation_tightness_mod, 1.0f), "FactionCulture default formation_tightness_mod is 1.0");
+    assertTrue(approxEqual(fc.morale_sensitivity, 1.0f), "FactionCulture default morale_sensitivity is 1.0");
+    assertTrue(approxEqual(fc.risk_tolerance, 0.5f), "FactionCulture default risk_tolerance is 0.5");
+}
+
+// ==================== New Component Persistence Tests ====================
+
+void testPersistenceWarpProfile() {
+    std::cout << "\n=== Persistence: WarpProfile Round-Trip ===" << std::endl;
+    ecs::World world;
+
+    auto* e = world.createEntity("warp_prof1");
+    auto* wp = addComp<components::WarpProfile>(e);
+    wp->warp_speed = 5.5f;
+    wp->mass_norm = 0.8f;
+    wp->intensity = 0.6f;
+    wp->comfort_scale = 0.7f;
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    bool ok = persistence.deserializeWorld(&world2, json);
+    assertTrue(ok, "Deserialized world with WarpProfile");
+
+    auto* e2 = world2.getEntity("warp_prof1");
+    assertTrue(e2 != nullptr, "WarpProfile entity found");
+    auto* wp2 = e2->getComponent<components::WarpProfile>();
+    assertTrue(wp2 != nullptr, "WarpProfile component present");
+    assertTrue(approxEqual(wp2->warp_speed, 5.5f), "warp_speed preserved");
+    assertTrue(approxEqual(wp2->mass_norm, 0.8f), "mass_norm preserved");
+    assertTrue(approxEqual(wp2->intensity, 0.6f), "intensity preserved");
+    assertTrue(approxEqual(wp2->comfort_scale, 0.7f), "comfort_scale preserved");
+}
+
+void testPersistenceWarpVisual() {
+    std::cout << "\n=== Persistence: WarpVisual Round-Trip ===" << std::endl;
+    ecs::World world;
+
+    auto* e = world.createEntity("warp_vis1");
+    auto* wv = addComp<components::WarpVisual>(e);
+    wv->distortion_strength = 0.9f;
+    wv->tunnel_noise_scale = 2.0f;
+    wv->vignette_amount = 0.4f;
+    wv->bloom_strength = 0.5f;
+    wv->starfield_speed = 3.0f;
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    bool ok = persistence.deserializeWorld(&world2, json);
+    assertTrue(ok, "Deserialized world with WarpVisual");
+
+    auto* e2 = world2.getEntity("warp_vis1");
+    assertTrue(e2 != nullptr, "WarpVisual entity found");
+    auto* wv2 = e2->getComponent<components::WarpVisual>();
+    assertTrue(wv2 != nullptr, "WarpVisual component present");
+    assertTrue(approxEqual(wv2->distortion_strength, 0.9f), "distortion_strength preserved");
+    assertTrue(approxEqual(wv2->tunnel_noise_scale, 2.0f), "tunnel_noise_scale preserved");
+    assertTrue(approxEqual(wv2->vignette_amount, 0.4f), "vignette_amount preserved");
+    assertTrue(approxEqual(wv2->bloom_strength, 0.5f), "bloom_strength preserved");
+    assertTrue(approxEqual(wv2->starfield_speed, 3.0f), "starfield_speed preserved");
+}
+
+void testPersistenceWarpEvent() {
+    std::cout << "\n=== Persistence: WarpEvent Round-Trip ===" << std::endl;
+    ecs::World world;
+
+    auto* e = world.createEntity("warp_evt1");
+    auto* we = addComp<components::WarpEvent>(e);
+    we->current_event = "tunnel_eddy";
+    we->event_timer = 4.5f;
+    we->severity = 2;
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    bool ok = persistence.deserializeWorld(&world2, json);
+    assertTrue(ok, "Deserialized world with WarpEvent");
+
+    auto* e2 = world2.getEntity("warp_evt1");
+    assertTrue(e2 != nullptr, "WarpEvent entity found");
+    auto* we2 = e2->getComponent<components::WarpEvent>();
+    assertTrue(we2 != nullptr, "WarpEvent component present");
+    assertTrue(we2->current_event == "tunnel_eddy", "current_event preserved");
+    assertTrue(approxEqual(we2->event_timer, 4.5f), "event_timer preserved");
+    assertTrue(we2->severity == 2, "severity preserved");
+}
+
+void testPersistenceTacticalProjection() {
+    std::cout << "\n=== Persistence: TacticalProjection Round-Trip ===" << std::endl;
+    ecs::World world;
+
+    auto* e = world.createEntity("tact_proj1");
+    auto* tp = addComp<components::TacticalProjection>(e);
+    tp->projected_x = 150.0f;
+    tp->projected_y = 250.0f;
+    tp->vertical_offset = -10.5f;
+    tp->visible = false;
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    bool ok = persistence.deserializeWorld(&world2, json);
+    assertTrue(ok, "Deserialized world with TacticalProjection");
+
+    auto* e2 = world2.getEntity("tact_proj1");
+    assertTrue(e2 != nullptr, "TacticalProjection entity found");
+    auto* tp2 = e2->getComponent<components::TacticalProjection>();
+    assertTrue(tp2 != nullptr, "TacticalProjection component present");
+    assertTrue(approxEqual(tp2->projected_x, 150.0f), "projected_x preserved");
+    assertTrue(approxEqual(tp2->projected_y, 250.0f), "projected_y preserved");
+    assertTrue(approxEqual(tp2->vertical_offset, -10.5f), "vertical_offset preserved");
+    assertTrue(!tp2->visible, "visible preserved as false");
+}
+
+void testPersistencePlayerPresence() {
+    std::cout << "\n=== Persistence: PlayerPresence Round-Trip ===" << std::endl;
+    ecs::World world;
+
+    auto* e = world.createEntity("player_pres1");
+    auto* pp = addComp<components::PlayerPresence>(e);
+    pp->time_since_last_command = 45.0f;
+    pp->time_since_last_speech = 120.0f;
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    bool ok = persistence.deserializeWorld(&world2, json);
+    assertTrue(ok, "Deserialized world with PlayerPresence");
+
+    auto* e2 = world2.getEntity("player_pres1");
+    assertTrue(e2 != nullptr, "PlayerPresence entity found");
+    auto* pp2 = e2->getComponent<components::PlayerPresence>();
+    assertTrue(pp2 != nullptr, "PlayerPresence component present");
+    assertTrue(approxEqual(pp2->time_since_last_command, 45.0f), "time_since_last_command preserved");
+    assertTrue(approxEqual(pp2->time_since_last_speech, 120.0f), "time_since_last_speech preserved");
+}
+
+void testPersistenceFactionCulture() {
+    std::cout << "\n=== Persistence: FactionCulture Round-Trip ===" << std::endl;
+    ecs::World world;
+
+    auto* e = world.createEntity("fc_solari1");
+    auto* fc = addComp<components::FactionCulture>(e);
+    fc->faction = "Solari";
+    fc->chatter_frequency_mod = 1.2f;
+    fc->formation_tightness_mod = 0.9f;
+    fc->morale_sensitivity = 1.3f;
+    fc->risk_tolerance = 0.3f;
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    bool ok = persistence.deserializeWorld(&world2, json);
+    assertTrue(ok, "Deserialized world with FactionCulture");
+
+    auto* e2 = world2.getEntity("fc_solari1");
+    assertTrue(e2 != nullptr, "FactionCulture entity found");
+    auto* fc2 = e2->getComponent<components::FactionCulture>();
+    assertTrue(fc2 != nullptr, "FactionCulture component present");
+    assertTrue(fc2->faction == "Solari", "faction preserved");
+    assertTrue(approxEqual(fc2->chatter_frequency_mod, 1.2f), "chatter_frequency_mod preserved");
+    assertTrue(approxEqual(fc2->formation_tightness_mod, 0.9f), "formation_tightness_mod preserved");
+    assertTrue(approxEqual(fc2->morale_sensitivity, 1.3f), "morale_sensitivity preserved");
+    assertTrue(approxEqual(fc2->risk_tolerance, 0.3f), "risk_tolerance preserved");
+}
+
 // ==================== Mineral Economy Integration Test ====================
 
 void testMineralEconomyEndToEnd() {
@@ -11168,6 +11391,22 @@ int main() {
     // Persistence round-trip tests for new components
     testPersistenceAnomalyVisualCue();
     testPersistenceLODPriority();
+
+    // New component default tests
+    testWarpProfileDefaults();
+    testWarpVisualDefaults();
+    testWarpEventDefaults();
+    testTacticalProjectionDefaults();
+    testPlayerPresenceDefaults();
+    testFactionCultureDefaults();
+
+    // New component persistence tests
+    testPersistenceWarpProfile();
+    testPersistenceWarpVisual();
+    testPersistenceWarpEvent();
+    testPersistenceTacticalProjection();
+    testPersistencePlayerPresence();
+    testPersistenceFactionCulture();
 
     // Mineral economy integration test
     testMineralEconomyEndToEnd();

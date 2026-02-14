@@ -740,6 +740,65 @@ std::string WorldPersistence::serializeEntity(
              << ",\"impostor_distance\":" << lod->impostor_distance << "}";
     }
 
+    // WarpProfile
+    auto* wp = entity->getComponent<components::WarpProfile>();
+    if (wp) {
+        json << ",\"warp_profile\":{"
+             << "\"warp_speed\":" << wp->warp_speed
+             << ",\"mass_norm\":" << wp->mass_norm
+             << ",\"intensity\":" << wp->intensity
+             << ",\"comfort_scale\":" << wp->comfort_scale << "}";
+    }
+
+    // WarpVisual
+    auto* wv = entity->getComponent<components::WarpVisual>();
+    if (wv) {
+        json << ",\"warp_visual\":{"
+             << "\"distortion_strength\":" << wv->distortion_strength
+             << ",\"tunnel_noise_scale\":" << wv->tunnel_noise_scale
+             << ",\"vignette_amount\":" << wv->vignette_amount
+             << ",\"bloom_strength\":" << wv->bloom_strength
+             << ",\"starfield_speed\":" << wv->starfield_speed << "}";
+    }
+
+    // WarpEvent
+    auto* we = entity->getComponent<components::WarpEvent>();
+    if (we) {
+        json << ",\"warp_event\":{"
+             << "\"current_event\":\"" << we->current_event << "\""
+             << ",\"event_timer\":" << we->event_timer
+             << ",\"severity\":" << we->severity << "}";
+    }
+
+    // TacticalProjection
+    auto* tp = entity->getComponent<components::TacticalProjection>();
+    if (tp) {
+        json << ",\"tactical_projection\":{"
+             << "\"projected_x\":" << tp->projected_x
+             << ",\"projected_y\":" << tp->projected_y
+             << ",\"vertical_offset\":" << tp->vertical_offset
+             << ",\"visible\":" << (tp->visible ? "true" : "false") << "}";
+    }
+
+    // PlayerPresence
+    auto* pp = entity->getComponent<components::PlayerPresence>();
+    if (pp) {
+        json << ",\"player_presence\":{"
+             << "\"time_since_last_command\":" << pp->time_since_last_command
+             << ",\"time_since_last_speech\":" << pp->time_since_last_speech << "}";
+    }
+
+    // FactionCulture
+    auto* fc = entity->getComponent<components::FactionCulture>();
+    if (fc) {
+        json << ",\"faction_culture\":{"
+             << "\"faction\":\"" << fc->faction << "\""
+             << ",\"chatter_frequency_mod\":" << fc->chatter_frequency_mod
+             << ",\"formation_tightness_mod\":" << fc->formation_tightness_mod
+             << ",\"morale_sensitivity\":" << fc->morale_sensitivity
+             << ",\"risk_tolerance\":" << fc->risk_tolerance << "}";
+    }
+
     json << "}";
     return json.str();
 }
@@ -1746,6 +1805,71 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
         lod->force_visible = extractBool(lod_json, "\"force_visible\":", false);
         lod->impostor_distance = extractFloat(lod_json, "\"impostor_distance\":");
         entity->addComponent(std::move(lod));
+    }
+
+    // WarpProfile
+    std::string wp_json = extractObject(json, "warp_profile");
+    if (!wp_json.empty()) {
+        auto wp = std::make_unique<components::WarpProfile>();
+        wp->warp_speed = extractFloat(wp_json, "\"warp_speed\":");
+        wp->mass_norm = extractFloat(wp_json, "\"mass_norm\":");
+        wp->intensity = extractFloat(wp_json, "\"intensity\":");
+        wp->comfort_scale = extractFloat(wp_json, "\"comfort_scale\":");
+        entity->addComponent(std::move(wp));
+    }
+
+    // WarpVisual
+    std::string wv_json = extractObject(json, "warp_visual");
+    if (!wv_json.empty()) {
+        auto wv = std::make_unique<components::WarpVisual>();
+        wv->distortion_strength = extractFloat(wv_json, "\"distortion_strength\":");
+        wv->tunnel_noise_scale = extractFloat(wv_json, "\"tunnel_noise_scale\":");
+        wv->vignette_amount = extractFloat(wv_json, "\"vignette_amount\":");
+        wv->bloom_strength = extractFloat(wv_json, "\"bloom_strength\":");
+        wv->starfield_speed = extractFloat(wv_json, "\"starfield_speed\":");
+        entity->addComponent(std::move(wv));
+    }
+
+    // WarpEvent
+    std::string we_json = extractObject(json, "warp_event");
+    if (!we_json.empty()) {
+        auto we = std::make_unique<components::WarpEvent>();
+        we->current_event = extractString(we_json, "current_event");
+        we->event_timer = extractFloat(we_json, "\"event_timer\":");
+        we->severity = extractInt(we_json, "\"severity\":", 0);
+        entity->addComponent(std::move(we));
+    }
+
+    // TacticalProjection
+    std::string tp_json = extractObject(json, "tactical_projection");
+    if (!tp_json.empty()) {
+        auto tp = std::make_unique<components::TacticalProjection>();
+        tp->projected_x = extractFloat(tp_json, "\"projected_x\":");
+        tp->projected_y = extractFloat(tp_json, "\"projected_y\":");
+        tp->vertical_offset = extractFloat(tp_json, "\"vertical_offset\":");
+        tp->visible = extractBool(tp_json, "\"visible\":", true);
+        entity->addComponent(std::move(tp));
+    }
+
+    // PlayerPresence
+    std::string pp_json = extractObject(json, "player_presence");
+    if (!pp_json.empty()) {
+        auto pp = std::make_unique<components::PlayerPresence>();
+        pp->time_since_last_command = extractFloat(pp_json, "\"time_since_last_command\":");
+        pp->time_since_last_speech = extractFloat(pp_json, "\"time_since_last_speech\":");
+        entity->addComponent(std::move(pp));
+    }
+
+    // FactionCulture
+    std::string fc_json = extractObject(json, "faction_culture");
+    if (!fc_json.empty()) {
+        auto fc = std::make_unique<components::FactionCulture>();
+        fc->faction = extractString(fc_json, "faction");
+        fc->chatter_frequency_mod = extractFloat(fc_json, "\"chatter_frequency_mod\":");
+        fc->formation_tightness_mod = extractFloat(fc_json, "\"formation_tightness_mod\":");
+        fc->morale_sensitivity = extractFloat(fc_json, "\"morale_sensitivity\":");
+        fc->risk_tolerance = extractFloat(fc_json, "\"risk_tolerance\":");
+        entity->addComponent(std::move(fc));
     }
 
     return true;

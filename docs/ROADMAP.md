@@ -883,29 +883,29 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 ---
 
-### 📋 Phase 8: Cinematic Warp & Transitional States (Planned)
+### 📋 Phase 8: Cinematic Warp & Transitional States (In Progress)
 **Timeline**: 2027  
 **Priority**: High  
 **Goal**: Transform warp travel from empty transit into an immersive, meditative gameplay state
 
 #### Warp Tunnel Visual System
-- [ ] **Layered shader stack** — 5-layer warp tunnel (radial distortion, starfield velocity bloom, procedural noise skin, ship silhouette anchor, vignette + peripheral falloff)
-- [ ] **Ship-mass-driven intensity** — Heavier ships bend space harder, deeper bass, slower tunnel oscillation
-- [ ] **Warp entry/exit choreography** — Alignment phase → FOV tighten → tunnel cruise → deceleration bloom → arrival
+- [x] **Layered shader stack** — 5-layer warp tunnel (radial distortion, starfield velocity bloom, procedural noise skin, ship silhouette anchor, vignette + peripheral falloff) — WarpCinematicSystem computes 4 visual layers via computeLayers()
+- [x] **Ship-mass-driven intensity** — Heavier ships bend space harder, deeper bass, slower tunnel oscillation — computeCompositeIntensity() uses mass_norm
+- [x] **Warp entry/exit choreography** — Alignment phase → FOV tighten → tunnel cruise → deceleration bloom → arrival — WarpState::WarpPhase enum (None, Align, Entry, Cruise, Event, Exit)
 - [ ] **Performance budget** — ≤1.2ms total GPU cost (single fullscreen pass, no dynamic branching)
 
 #### Warp Audio System
-- [ ] **Engine core sub-bass** (30–60 Hz sine, controller rumble sync)
-- [ ] **Warp field harmonics** (phase-shifted stereo, slow LFO evolution)
-- [ ] **Environmental Doppler shimmer** (distance-triggered one-shots, long tails)
+- [x] **Engine core sub-bass** (30–60 Hz sine, controller rumble sync) — WarpAudioProfile engine_core_volume/pitch
+- [x] **Warp field harmonics** (phase-shifted stereo, slow LFO evolution) — WarpAudioProfile harmonics_volume/pitch
+- [x] **Environmental Doppler shimmer** (distance-triggered one-shots, long tails) — WarpAudioProfile shimmer_volume
 - [ ] **Optional meditation layer** (sustained pads, no melody, fade in after 15–20s of warp)
 - [ ] **Audio progression curve** — Tension → stabilize → bloom → full meditative state
 
 #### Warp Anomalies & Mid-Warp Events
-- [ ] **Visual-only phenomena** (~1 per 3–5 warps) — tunnel eddies, color shifts, phantom star clusters
-- [ ] **Sensory distortions** (~1 per 10–15 warps) — bass deepens, harmonics detune
-- [ ] **Spacetime shear events** (~1 per 50–100 warps) — fracturing tunnel, distant megastructures, lore log rewards
-- [ ] **Legendary events** (ultra-rare, opt-in) — collapsed gate scars, ancient battlefield echoes
+- [x] **Visual-only phenomena** (~1 per 3–5 warps) — tunnel eddies, color shifts, phantom star clusters — WarpAnomalySystem with 4 visual templates
+- [x] **Sensory distortions** (~1 per 10–15 warps) — bass deepens, harmonics detune — WarpAnomalySystem with 3 sensory templates
+- [x] **Spacetime shear events** (~1 per 50–100 warps) — fracturing tunnel, distant megastructures, lore log rewards — WarpAnomalySystem with 2 shear templates
+- [x] **Legendary events** (ultra-rare, opt-in) — collapsed gate scars, ancient battlefield echoes — WarpAnomalySystem with 1 legendary template (1/200 chance)
 
 #### HUD Travel Mode
 - [ ] **Soft edge treatment** — Edges soften, bright colors desaturate, tactical warnings muted during warp
@@ -913,52 +913,52 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] **Optional UI flair** (player toggle) — Animated brackets, UI glow synced to engine bass, subtle HUD parallax
 
 #### Accessibility & Comfort
-- [ ] **Motion intensity slider** (0%–100% distortion control)
+- [x] **Motion intensity slider** (0%–100% distortion control) — WarpProfile comfort_scale, accessibility scaling in WarpCinematicSystem
 - [ ] **Bass intensity slider** (maps to engine core volume)
 - [ ] **Peripheral blur scalar**
 - [ ] **Tunnel geometry toggle** (off = star streaks only, on = full warp skin)
 - [ ] **Auto-comfort rules** — Reduce oscillation on FPS drop, clamp distortion on ultrawide
 
 #### Warp ECS Components
-- [ ] `WarpStateComponent` (phase, warpTime, distanceRemaining)
-- [ ] `WarpProfileComponent` (warpSpeed, massNorm, intensity, comfortScale)
-- [ ] `WarpVisualComponent` (distortionStrength, tunnelNoiseScale, vignetteAmount)
-- [ ] `WarpAudioComponent` (bassLevel, harmonicLevel, shimmerChance, meditationLayerActive)
-- [ ] `WarpEventComponent` (currentEvent, eventTimer, severity)
+- [x] `WarpStateComponent` (phase, warpTime, distanceRemaining) — WarpState component with WarpPhase enum
+- [x] `WarpProfileComponent` (warpSpeed, massNorm, intensity, comfortScale) — WarpProfile component with serialization
+- [x] `WarpVisualComponent` (distortionStrength, tunnelNoiseScale, vignetteAmount) — WarpVisual component with serialization
+- [x] `WarpAudioComponent` (bassLevel, harmonicLevel, shimmerChance, meditationLayerActive) — WarpAudioProfile component with serialization
+- [x] `WarpEventComponent` (currentEvent, eventTimer, severity) — WarpEvent component with serialization
 
 ---
 
-### 📋 Phase 9: Fleet AI Personality & Social Systems (Planned)
+### 📋 Phase 9: Fleet AI Personality & Social Systems (In Progress)
 **Timeline**: 2027  
 **Priority**: High  
 **Goal**: Make fleet members feel like living characters with memory, personality, and emotional depth
 
 #### Captain Personality System
-- [ ] **Personality axes** — Aggression, sociability, optimism, professionalism, loyalty, humor, risk tolerance
-- [ ] **Faction personality profiles** — Each of the 4 factions has distinct cultural modifiers affecting chatter tone and behavior
-- [ ] **Personality-driven behavior** — Affects chatter frequency, formation tightness, morale response, willingness to stay
+- [x] **Personality axes** — Aggression, sociability, optimism, professionalism, loyalty, humor, risk tolerance — CaptainPersonality component with 8 personality axes + CaptainPersonalitySystem
+- [x] **Faction personality profiles** — Each of the 4 factions has distinct cultural modifiers affecting chatter tone and behavior — FactionCulture component with per-faction modifiers
+- [x] **Personality-driven behavior** — Affects chatter frequency, formation tightness, morale response, willingness to stay — FleetChatterSystem + FleetFormationSystem integration
 
 #### Fleet Radio Chatter
-- [ ] **Context-aware dialogue** — Chatter during warp, mining, combat, exploration, idle, and salvage operations
+- [x] **Context-aware dialogue** — Chatter during warp, mining, combat, exploration, idle, and salvage operations — FleetChatterSystem with context-based line selection
 - [ ] **Interruptible chatter** — Higher-priority events (combat alerts, anomalies) naturally cut off lower-priority small talk
 - [ ] **Timing rules** — One line every 20–45s max, no overlap, cooldowns between speakers
-- [ ] **Combat memory references** — Captains reference actual encounters (ships destroyed, close calls, who saved who)
+- [x] **Combat memory references** — Captains reference actual encounters (ships destroyed, close calls, who saved who) — CaptainMemory component with MemoryEntry records
 - [ ] **Positional audio** — Voices originate from ship position in formation, warp tunnel reverb effects
 
 #### Fleet Morale & Memory
-- [ ] **Persistent fleet memory** — Each captain tracks missions together, wins, losses, ships lost, saves
-- [ ] **Morale model** — Soft scoring: wins × 1.0 − losses × 1.5 − shipsLost × 2.0 + saves × 1.2
-- [ ] **Morale states** (Inspired → Steady → Doubtful → Disengaged) — Affects chatter tone, formation, willingness
-- [ ] **Emotional arcs** — Captains change over time (optimist → disillusioned, survivor → mentor)
+- [x] **Persistent fleet memory** — Each captain tracks missions together, wins, losses, ships lost, saves — FleetMorale component + CaptainMemory component
+- [x] **Morale model** — Soft scoring: wins × 1.0 − losses × 1.5 − shipsLost × 2.0 + saves × 1.2 — FleetMoraleSystem with configurable weights
+- [x] **Morale states** (Inspired → Steady → Doubtful → Disengaged) — Affects chatter tone, formation, willingness — FleetMorale::morale_state with 4 states
+- [x] **Emotional arcs** — Captains change over time (optimist → disillusioned, survivor → mentor) — EmotionalArcSystem with EmotionalState component
 
 #### Captain Social Graph
-- [ ] **Relationship tracking** — Bidirectional affinity scores (-100 grudge → +100 bond)
-- [ ] **Relationship modifiers** — Saved in combat (+10), abandoned (-20), shared long warp (+passive), kill credit stolen (-8)
+- [x] **Relationship tracking** — Bidirectional affinity scores (-100 grudge → +100 bond) — CaptainRelationship component with affinity per pair
+- [x] **Relationship modifiers** — Saved in combat (+10), abandoned (-20), shared long warp (+passive), kill credit stolen (-8) — CaptainRelationshipSystem::modifyRelationship()
 - [ ] **Friendship effects** — Fly closer, back up faster, reference each other
 - [ ] **Grudge effects** — Fly wider, delay responses, sarcastic comms
 
 #### Fleet Dreams & Rumors
-- [ ] **Rumor system** — Non-authoritative truths from warp anomalies, rare visuals, near-miss events
+- [x] **Rumor system** — Non-authoritative truths from warp anomalies, rare visuals, near-miss events — RumorLog component with belief_strength tracking
 - [ ] **Rumor propagation** — Spread through chatter, reinforced if seen again, fade if unconfirmed
 - [ ] **Rumor-to-questline graduation** — Repeated rumors surface as optional investigations or encounter chains
 
@@ -968,44 +968,44 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] **Transfer requests** — High morale captains request bigger ships; low morale request escort-only roles
 
 #### Player Silence Awareness
-- [ ] **Player presence tracking** — Time since last command, time since last speech
+- [x] **Player presence tracking** — Time since last command, time since last speech — PlayerPresence component with serialization
 - [ ] **Silence interpretation** — Fleet reacts to player silence ("Quiet today, boss", "You alright up there?")
 
 #### Fleet Chatter ECS Components
-- [ ] `CaptainPersonalityComponent` (aggression, sociability, optimism, professionalism)
-- [ ] `CaptainRelationshipComponent` (otherCaptain, affinity)
-- [ ] `EmotionalStateComponent` (confidence, trustInPlayer, fatigue, hope)
-- [ ] `RumorComponent` (type, beliefStrength, personallyWitnessed)
-- [ ] `PlayerPresenceComponent` (timeSinceLastCommand, timeSinceLastSpeech)
-- [ ] `FactionCultureComponent` (faction behavior modifiers)
+- [x] `CaptainPersonalityComponent` (aggression, sociability, optimism, professionalism) — CaptainPersonality with 8 axes + serialization
+- [x] `CaptainRelationshipComponent` (otherCaptain, affinity) — CaptainRelationship with relationships vector + serialization
+- [x] `EmotionalStateComponent` (confidence, trustInPlayer, fatigue, hope) — EmotionalState component + serialization
+- [x] `RumorComponent` (type, beliefStrength, personallyWitnessed) — RumorLog component + serialization
+- [x] `PlayerPresenceComponent` (timeSinceLastCommand, timeSinceLastSpeech) — PlayerPresence component + serialization
+- [x] `FactionCultureComponent` (faction behavior modifiers) — FactionCulture component + serialization
 
 ---
 
-### 📋 Phase 10: Tactical Overlay & Strategy View (Planned)
+### 📋 Phase 10: Tactical Overlay & Strategy View (In Progress)
 **Timeline**: 2027  
 **Priority**: Medium  
 **Goal**: Passive, data-truth spatial overlay for precise distance judgment and positioning
 
 #### Core Overlay System
-- [ ] **Distance rings** — Concentric circles at fixed world-unit radii (5, 10, 20, 30, 50, 100 units/km)
-- [ ] **Tool range ring** — Dynamic ring for active tool (mining laser, weapon), color-coded by type
-- [ ] **Entity projection** — Flattened tactical plane with vertical encoding (ticks for above/below)
+- [x] **Distance rings** — Concentric circles at fixed world-unit radii (5, 10, 20, 30, 50, 100 units/km) — TacticalOverlayState::ring_distances with configurable distances
+- [x] **Tool range ring** — Dynamic ring for active tool (mining laser, weapon), color-coded by type — TacticalOverlaySystem::setToolRange()
+- [x] **Entity projection** — Flattened tactical plane with vertical encoding (ticks for above/below) — TacticalProjection component with projected_x/y + vertical_offset
 - [ ] **Shared filters** — Overlay shares filter state with Overview and world brackets
 
 #### Interaction Rules
 - [ ] **Passive display only** — No clickable elements, no dragging, no entity selection
-- [ ] **Toggle hotkey** (V, configurable)
+- [x] **Toggle hotkey** (V, configurable) — TacticalOverlaySystem::toggleOverlay()
 - [ ] **Scales to large entity counts** — Muted asteroids, high-contrast hostiles, heavier structure silhouettes
 
 #### Staged Implementation
-- [ ] **Stage 1**: Toggle overlay + distance rings (no entities)
-- [ ] **Stage 2**: Entity projection with vertical ticks and shared filters
-- [ ] **Stage 3**: Tool awareness (active tool range, color coding)
+- [x] **Stage 1**: Toggle overlay + distance rings (no entities) — TacticalOverlaySystem with toggle + configurable ring distances
+- [x] **Stage 2**: Entity projection with vertical ticks and shared filters — TacticalProjection component with serialization
+- [x] **Stage 3**: Tool awareness (active tool range, color coding) — TacticalOverlaySystem::setToolRange() with tool_type
 - [ ] **Stage 4**: Fleet extensions (anchor rings, wing bands)
 
 #### Tactical Overlay ECS Components
-- [ ] `TacticalOverlayState` (enabled, ringDistances[])
-- [ ] `TacticalProjection` (projectedPosition, verticalOffset)
+- [x] `TacticalOverlayState` (enabled, ringDistances[]) — implemented with serialization
+- [x] `TacticalProjection` (projectedPosition, verticalOffset) — implemented with serialization
 
 ---
 
