@@ -90,7 +90,7 @@ int AnomalySystem::generateAnomalies(const std::string& system_id,
         anom->loot_multiplier = lootMultiplierFromDifficulty(diff);
         anom->discovered = false;
         anom->completed = false;
-        anom->despawn_timer = 3600.0f + static_cast<float>(sub_seed % 3600);  // 1-2 hours
+        anom->despawn_timer = 3600.0f + static_cast<float>(sub_seed % 3600);  // ~1-2 hours
     }
 
     return count;
