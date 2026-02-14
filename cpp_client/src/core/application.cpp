@@ -9,13 +9,15 @@
 #include "core/solar_system_scene.h"
 #include "core/ship_physics.h"
 #include "ui/input_handler.h"
-#include "ui/rml_ui_manager.h"
 #include "ui/entity_picker.h"
 #include "ui/context_menu.h"
 #include "ui/radial_menu.h"
 #include <GLFW/glfw3.h>
 #include "ui/atlas/atlas_context.h"
 #include "ui/atlas/atlas_hud.h"
+#include "ui/atlas/atlas_console.h"
+#include "ui/atlas/atlas_pause_menu.h"
+#include "ui/atlas/atlas_title_screen.h"
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -48,12 +50,14 @@ Application::Application(const std::string& title, int width, int height)
     m_camera = std::make_unique<Camera>(45.0f, static_cast<float>(width) / height, 0.1f, 10000.0f);
     m_embeddedServer = std::make_unique<EmbeddedServer>();
     m_sessionManager = std::make_unique<SessionManager>();
-    m_uiManager = std::make_unique<UI::RmlUiManager>();
     m_entityPicker = std::make_unique<UI::EntityPicker>();
     m_solarSystem = std::make_unique<SolarSystemScene>();
     m_shipPhysics = std::make_unique<ShipPhysics>();
     m_atlasCtx = std::make_unique<atlas::AtlasContext>();
     m_atlasHUD = std::make_unique<atlas::AtlasHUD>();
+    m_console = std::make_unique<atlas::AtlasConsole>();
+    m_pauseMenu = std::make_unique<atlas::AtlasPauseMenu>();
+    m_titleScreen = std::make_unique<atlas::AtlasTitleScreen>();
     m_contextMenu = std::make_unique<UI::ContextMenu>();
     m_radialMenu = std::make_unique<UI::RadialMenu>();
     
@@ -113,12 +117,6 @@ void Application::initialize() {
         throw std::runtime_error("Failed to initialize renderer");
     }
     
-    // Initialize UI manager (non-fatal — Atlas HUD provides fallback UI)
-    if (!m_uiManager->Initialize(m_window->getHandle(), "ui_resources")) {
-        std::cerr << "Warning: RmlUi UI manager initialization failed. "
-                  << "Falling back to Atlas HUD-only mode. Some UI panels may be unavailable." << std::endl;
-    }
-    
     // Initialize Atlas UI context
     m_atlasCtx->init();
     m_atlasHUD->init(m_window->getWidth(), m_window->getHeight());
@@ -162,6 +160,28 @@ void Application::initialize() {
         }
     });
     
+    // Wire console callbacks
+    m_console->setQuitCallback([this]() { shutdown(); });
+    m_console->setSaveCallback([this]() {
+        std::cout << "[Console] Force save requested" << std::endl;
+        // TODO: Hook into world persistence when available
+    });
+
+    // Wire pause menu callbacks
+    m_pauseMenu->setResumeCallback([this]() {
+        std::cout << "[PauseMenu] Resumed" << std::endl;
+    });
+    m_pauseMenu->setSaveCallback([this]() {
+        std::cout << "[PauseMenu] Save requested" << std::endl;
+    });
+    m_pauseMenu->setQuitCallback([this]() { shutdown(); });
+
+    // Wire title screen callbacks
+    m_titleScreen->setPlayCallback([this]() {
+        std::cout << "[TitleScreen] Entering game..." << std::endl;
+    });
+    m_titleScreen->setQuitCallback([this]() { shutdown(); });
+    
     // Set up input callbacks — EVE Online style controls
     // Left-click: select/target, Double-click: approach
     // Right-click: context menu
@@ -169,35 +189,47 @@ void Application::initialize() {
     // Right-drag: orbit camera around ship
     // Scroll: zoom camera
     m_window->setKeyCallback([this](int key, int, int action, int mods) {
-        // Handle ESC key to exit
-        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-            shutdown();
+        // Backtick (`) toggles developer console
+        if (key == GLFW_KEY_GRAVE_ACCENT && action == GLFW_PRESS) {
+            m_console->toggle();
+            return;
         }
 
-        if (m_uiManager) {
-            m_uiManager->HandleKey(key, action, mods);
+        // Console eats all key input when open
+        if (m_console && m_console->isOpen()) {
+            m_console->handleKey(key, action);
+            return;
+        }
+
+        // ESC toggles pause menu (instead of quitting)
+        if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
+            // If title screen is active, ignore ESC
+            if (m_titleScreen && m_titleScreen->isActive()) return;
+            m_pauseMenu->toggle();
+            return;
+        }
+
+        // Don't forward keys when pause menu or title screen is active
+        if ((m_pauseMenu && m_pauseMenu->isOpen()) ||
+            (m_titleScreen && m_titleScreen->isActive())) {
+            return;
         }
 
         m_inputHandler->handleKey(key, action, mods);
     });
 
     m_window->setCharCallback([this](unsigned int codepoint) {
-        if (m_uiManager) {
-            m_uiManager->HandleChar(codepoint);
+        // Forward character input to console when open
+        if (m_console && m_console->isOpen()) {
+            m_console->handleChar(codepoint);
         }
     });
     
     m_window->setMouseCallback([this](double xpos, double ypos) {
-        if (m_uiManager) {
-            m_uiManager->HandleCursorPos(xpos, ypos);
-        }
         m_inputHandler->handleMouse(xpos, ypos);
     });
     
     m_window->setMouseButtonCallback([this](int button, int action, int mods) {
-        if (m_uiManager) {
-            m_uiManager->HandleMouseButton(button, action, mods);
-        }
         double x = m_inputHandler->getMouseX();
         double y = m_inputHandler->getMouseY();
         m_inputHandler->handleMouseButton(button, action, mods, x, y);
@@ -205,19 +237,12 @@ void Application::initialize() {
     
     // Scroll callback — EVE uses mousewheel for camera zoom
     m_window->setScrollCallback([this](double xoffset, double yoffset) {
-        int mods = m_inputHandler->getModifierMask();
-        if (m_uiManager) {
-            m_uiManager->HandleScroll(yoffset, mods);
-        }
         m_inputHandler->handleScroll(xoffset, yoffset);
         handleScroll(xoffset, yoffset);
     });
     
     m_window->setResizeCallback([this](int width, int height) {
         m_renderer->setViewport(0, 0, width, height);
-        if (m_uiManager) {
-            m_uiManager->HandleFramebufferSize(width, height);
-        }
     });
     
     // Register input handler callbacks
@@ -367,44 +392,6 @@ void Application::setupUICallbacks() {
     
     std::cout << "  - Context menu callbacks wired" << std::endl;
     
-    // === Wire RmlUi context menu button events to the same callbacks ===
-    if (m_uiManager) {
-        m_uiManager->SetOnLockTarget([this](const std::string& entityId) {
-            if (std::find(m_targetList.begin(), m_targetList.end(), entityId) == m_targetList.end()) {
-                m_targetList.push_back(entityId);
-                std::cout << "[Targeting] Locked target: " << entityId << std::endl;
-            }
-        });
-        m_uiManager->SetOnApproach([this](const std::string& entityId) {
-            commandApproach(entityId);
-        });
-        m_uiManager->SetOnOrbit([this](const std::string& entityId, int dist) {
-            commandOrbit(entityId, static_cast<float>(dist));
-        });
-        m_uiManager->SetOnKeepAtRange([this](const std::string& entityId, int dist) {
-            commandKeepAtRange(entityId, static_cast<float>(dist));
-        });
-        m_uiManager->SetOnAlignTo([this](const std::string& entityId) {
-            commandAlignTo(entityId);
-        });
-        m_uiManager->SetOnWarpTo([this](const std::string& entityId, int dist) {
-            std::cout << "[Movement] Warp to " << entityId << " at " << dist << "m distance" << std::endl;
-            commandWarpTo(entityId);
-        });
-        m_uiManager->SetOnShowInfo([this](const std::string& entityId) {
-            std::cout << "[Info] Show info for: " << entityId << std::endl;
-            openInfoPanelForEntity(entityId);
-        });
-        m_uiManager->SetOnLookAt([this](const std::string& entityId) {
-            auto entity = m_gameClient->getEntityManager().getEntity(entityId);
-            if (entity) {
-                m_camera->setTarget(entity->getPosition());
-                std::cout << "[Camera] Looking at: " << entityId << std::endl;
-            }
-        });
-        std::cout << "  - RmlUi context menu events wired" << std::endl;
-    }
-    
     // === Setup Radial Menu Callbacks ===
     m_radialMenu->SetActionCallback([this](UI::RadialMenu::Action action, const std::string& entityId) {
         switch (action) {
@@ -511,6 +498,21 @@ void Application::setupUICallbacks() {
 }
 
 void Application::update(float deltaTime) {
+    // Update FPS for console display
+    if (m_console) {
+        m_console->setFPS(deltaTime > 0.0f ? 1.0f / deltaTime : 0.0f);
+    }
+
+    // Skip game logic when title screen is active
+    if (m_titleScreen && m_titleScreen->isActive()) {
+        return;
+    }
+
+    // Skip game logic when paused (pause menu is open)
+    if (m_pauseMenu && m_pauseMenu->isOpen()) {
+        return;
+    }
+
     // Update embedded server if running
     if (m_embeddedServer) {
         m_embeddedServer->update(deltaTime);
@@ -535,55 +537,17 @@ void Application::update(float deltaTime) {
     // Update ship status in the HUD
     auto playerEntity = m_gameClient->getEntityManager().getEntity(m_localPlayerId);
     if (playerEntity) {
-        UI::ShipStatusData status;
-        const auto& health = playerEntity->getHealth();
-        status.shield_pct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
-        status.armor_pct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
-        status.hull_pct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
-        
-        // Use real capacitor data from entity
-        const auto& capacitor = playerEntity->getCapacitor();
-        status.capacitor_pct = capacitor.max > 0.0f ? capacitor.current / capacitor.max : 0.0f;
-        
-        status.velocity = m_playerSpeed;
-        status.max_velocity = m_playerMaxSpeed;
-        m_uiManager->SetShipStatus(status);
-
         // Update player position for UI calculations (e.g., distance in overview/targets)
         const auto playerPosition = playerEntity->getPosition();
-        m_uiManager->UpdateOverviewData(m_gameClient->getEntityManager().getAllEntities(), playerPosition);
         updateTargetListUi(playerPosition);
 
         // Camera follows player ship
         m_camera->setTarget(playerPosition);
-    } else if (m_uiManager) {
-        m_uiManager->ClearTargets();
     }
 }
 
-void Application::updateTargetListUi(const glm::vec3& playerPosition) {
-    if (!m_uiManager) return;
-
-    m_uiManager->ClearTargets();
-    if (m_targetList.empty()) {
-        return;
-    }
-
-    for (const auto& targetId : m_targetList) {
-        auto entity = m_gameClient->getEntityManager().getEntity(targetId);
-        if (!entity) continue;
-
-        const auto& health = entity->getHealth();
-        const auto& position = entity->getPosition();
-        float shieldPct = health.maxShield > 0 ? health.currentShield / static_cast<float>(health.maxShield) : 0.0f;
-        float armorPct = health.maxArmor > 0 ? health.currentArmor / static_cast<float>(health.maxArmor) : 0.0f;
-        float hullPct = health.maxHull > 0 ? health.currentHull / static_cast<float>(health.maxHull) : 0.0f;
-        float distance = glm::distance(playerPosition, position);
-
-        std::string displayName = entity->getShipName().empty() ? entity->getId() : entity->getShipName();
-        bool isActive = targetId == m_currentTargetId;
-        m_uiManager->SetTarget(targetId, displayName, shieldPct, armorPct, hullPct, distance, false, isActive);
-    }
+void Application::updateTargetListUi(const glm::vec3& /*playerPosition*/) {
+    // Atlas HUD target cards are built in render(); nothing to do here.
 }
 
 void Application::render() {
@@ -613,12 +577,6 @@ void Application::render() {
         m_renderer->renderWarpEffect();
     }
     
-    // Render UI
-    m_uiManager->Update();
-    m_uiManager->BeginFrame();
-    m_uiManager->Render();
-    m_uiManager->EndFrame();
-    
     // Render Atlas HUD overlay
     {
         atlas::InputState atlasInput;
@@ -639,6 +597,15 @@ void Application::render() {
         atlasInput.scrollY = m_inputHandler->getScrollDeltaY();
         
         m_atlasCtx->beginFrame(atlasInput);
+
+        // Title screen — replaces the entire HUD when active
+        if (m_titleScreen && m_titleScreen->isActive()) {
+            m_titleScreen->render(*m_atlasCtx);
+            m_atlasCtx->endFrame();
+            m_atlasConsumedMouse = m_atlasCtx->isMouseConsumed();
+            m_renderer->endFrame();
+            return;
+        }
         
         atlas::ShipHUDData shipData;
         // Connect to actual ship state from game client
@@ -757,21 +724,22 @@ void Application::render() {
         if (m_radialMenu && m_radialMenuOpen) {
             m_radialMenu->RenderAtlas(*m_atlasCtx);
         }
+
+        // Render Pause Menu overlay (on top of game HUD)
+        if (m_pauseMenu && m_pauseMenu->isOpen()) {
+            m_pauseMenu->render(*m_atlasCtx);
+        }
+
+        // Render Console overlay (topmost layer)
+        if (m_console && m_console->isOpen()) {
+            m_console->render(*m_atlasCtx);
+        }
         
         m_atlasCtx->endFrame();
 
         // Record whether Atlas UI consumed the mouse this frame so that
         // game-world interaction handlers can avoid click-through
         m_atlasConsumedMouse = m_atlasCtx->isMouseConsumed();
-    }
-    
-    // Legacy context/radial menu render stubs (retained for RmlUi fallback)
-    if (m_contextMenu) {
-        m_contextMenu->Render();
-    }
-    
-    if (m_radialMenu && m_radialMenuOpen) {
-        m_radialMenu->Render();
     }
     
     // End rendering
@@ -884,10 +852,13 @@ void Application::handleKeyInput(int key, int action, int mods) {
         return;
     }
 
-    if (m_uiManager && m_uiManager->WantsKeyboardInput()) {
+    // Don't process game keys when console, pause menu, or title screen is active
+    if ((m_console && m_console->wantsKeyboardInput()) ||
+        (m_pauseMenu && m_pauseMenu->wantsKeyboardInput()) ||
+        (m_titleScreen && m_titleScreen->wantsKeyboardInput())) {
         return;
     }
-    
+
     // Module activation (F1-F8) — EVE standard
     if (key >= GLFW_KEY_F1 && key <= GLFW_KEY_F8) {
         int slot = key - GLFW_KEY_F1 + 1;  // F1 = slot 1
@@ -962,18 +933,9 @@ void Application::handleKeyInput(int key, int action, int mods) {
         // TODO: Send drone engage/recall command to server
     }
     
-    // Panel toggles
-    if (key == GLFW_KEY_I && (mods & GLFW_MOD_ALT)) {
-        if (m_uiManager) m_uiManager->ToggleDocument("inventory");
-    } else if (key == GLFW_KEY_F && (mods & GLFW_MOD_ALT)) {
-        if (m_uiManager) m_uiManager->ToggleDocument("fitting");
-    } else if (key == GLFW_KEY_O && (mods & GLFW_MOD_ALT)) {
-        if (m_uiManager) m_uiManager->ToggleDocument("overview");
+    // Panel toggles (Atlas HUD)
+    if (key == GLFW_KEY_O && (mods & GLFW_MOD_ALT)) {
         m_atlasHUD->toggleOverview();
-    } else if (key == GLFW_KEY_R && (mods & GLFW_MOD_ALT)) {
-        if (m_uiManager) m_uiManager->ToggleDocument("market");
-    } else if (key == GLFW_KEY_J && (mods & GLFW_MOD_ALT)) {
-        if (m_uiManager) m_uiManager->ToggleDocument("mission");
     }
 }
 
@@ -1009,7 +971,7 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                             *m_camera, entityList);
                         
                         if (!pickedId.empty()) {
-                            // Show entity context menu (Atlas only — no RmlUi duplicate)
+                            // Show entity context menu
                             bool isLocked = std::find(m_targetList.begin(), m_targetList.end(), pickedId) != m_targetList.end();
                             bool isStargate = false;
                             if (m_solarSystem) {
@@ -1041,7 +1003,6 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
             // Close context menu when clicking elsewhere (EVE behaviour)
             if (m_contextMenu && m_contextMenu->IsOpen()) {
                 m_contextMenu->Close();
-                if (m_uiManager) m_uiManager->HideContextMenu();
             }
         } else if (action == GLFW_RELEASE) {
             // Check if radial menu is open
@@ -1050,7 +1011,6 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
                 auto confirmedAction = m_radialMenu->Confirm();
                 m_radialMenuOpen = false;
                 m_radialMenu->Close();
-                if (m_uiManager) m_uiManager->HideRadialMenu();
             }
             m_leftMouseDown = false;
         }
@@ -1059,10 +1019,8 @@ void Application::handleMouseButton(int button, int action, int mods, double x, 
     // Left-click: select entity / apply movement command
     if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
         // Don't process clicks that UI captured
-        // Atlas UI consumption is the primary gate; also respect RmlUI
-        // only when it has a focused interactive element (not just hover)
+        // Atlas UI consumption is the primary gate
         if (m_atlasConsumedMouse) return;
-        if (m_uiManager && m_uiManager->WantsKeyboardInput()) return;
         
         // Pick entity at mouse position
         auto entities = m_gameClient->getEntityManager().getAllEntities();
@@ -1220,9 +1178,6 @@ void Application::clearTarget() {
     m_targetList.clear();
     m_currentTargetIndex = -1;
 
-    if (m_uiManager) {
-        m_uiManager->ClearTargets();
-    }
 }
 
 void Application::cycleTarget() {
