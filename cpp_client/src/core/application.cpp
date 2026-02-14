@@ -116,7 +116,7 @@ void Application::initialize() {
         throw std::runtime_error("Failed to initialize renderer");
     }
     
-    // Atlas is the sole UI system — RmlUi is not used
+    // Atlas is the sole UI system — RmlUI is not used
     
     // Initialize Atlas UI context
     m_atlasCtx->init();

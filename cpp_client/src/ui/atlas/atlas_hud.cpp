@@ -5,6 +5,10 @@
 
 namespace atlas {
 
+// Ship HUD layout constants
+static constexpr float HUD_BOTTOM_OFFSET = 80.0f;  // Distance from bottom of screen to HUD centre
+static constexpr float HUD_ARC_RADIUS    = 70.0f;  // Radius of shield/armor/hull arcs
+
 AtlasHUD::AtlasHUD() = default;
 AtlasHUD::~AtlasHUD() = default;
 
@@ -177,8 +181,8 @@ void AtlasHUD::update(AtlasContext& ctx,
     // 12. Damage flashes (on top of everything)
     float winW = static_cast<float>(ctx.input().windowW);
     float winH = static_cast<float>(ctx.input().windowH);
-    Vec2 hudCentre = {winW * 0.5f, winH - 80.0f};
-    drawDamageFlashes(ctx, hudCentre, 80.0f);
+    Vec2 hudCentre = {winW * 0.5f, winH - HUD_BOTTOM_OFFSET};
+    drawDamageFlashes(ctx, hudCentre, HUD_ARC_RADIUS + 10.0f);
 }
 
 // ── Ship HUD ────────────────────────────────────────────────────────
@@ -192,8 +196,8 @@ void AtlasHUD::drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship) {
     m_time += dt;
 
     // Centre of HUD circle (bottom-center of screen)
-    Vec2 hudCentre = {winW * 0.5f, winH - 80.0f};
-    float hudRadius = 70.0f;
+    Vec2 hudCentre = {winW * 0.5f, winH - HUD_BOTTOM_OFFSET};
+    float hudRadius = HUD_ARC_RADIUS;
 
     // Status arcs (shield/armor/hull) — primary combat readout
     shipStatusArcs(ctx, hudCentre, hudRadius,

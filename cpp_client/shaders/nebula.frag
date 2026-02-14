@@ -50,11 +50,12 @@ void main()
     float n1 = fbm(nebulaCoord1);
     float n2 = fbm(nebulaCoord2);
 
-    // Deep space dark nebula (near-black, subtle cloud structure)
+    // Deep space dark nebula — near-black values to eliminate blue tint
+    // while maintaining subtle cloud structure visible against pure black
     vec3 nebulaColor1 = vec3(0.04, 0.03, 0.06) * smoothstep(0.35, 0.75, n1);
-    // Warm reddish secondary nebula (very faint)
+    // Warm reddish secondary nebula — very faint accent
     vec3 nebulaColor2 = vec3(0.05, 0.02, 0.03) * smoothstep(0.4, 0.8, n2);
-    // Subtle teal accent
+    // Subtle teal accent — balanced to avoid any single-color dominance
     vec3 nebulaColor3 = vec3(0.02, 0.04, 0.04) * smoothstep(0.45, 0.85, n1 * n2 * 2.0);
 
     vec3 color = nebulaColor1 + nebulaColor2 + nebulaColor3;
