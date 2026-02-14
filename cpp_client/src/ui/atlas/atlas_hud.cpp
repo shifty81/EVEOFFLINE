@@ -25,7 +25,8 @@ bool AtlasHUD::matchesOverviewTab(const std::string& tab, const std::string& ent
             || entityType == "Wormhole"
             || entityType == "Celestial"
             || entityType == "Beacon"
-            || entityType == "Citadel";
+            || entityType == "Citadel"
+            || entityType == "Dyson Ring";
     }
     if (tab == "Combat") {
         return entityType == "Frigate"
@@ -58,8 +59,10 @@ void AtlasHUD::init(int windowW, int windowH) {
     float h = static_cast<float>(windowH);
 
     // Overview panel: right side, ~300px wide, below selected-item panel
+    // Hidden by default — the player navigates via on-screen celestial brackets
+    // and the radial menu instead.  Can still be toggled from the sidebar.
     m_overviewState.bounds = {w - 310.0f, 180.0f, 300.0f, h - 280.0f};
-    m_overviewState.open = true;
+    m_overviewState.open = false;
     m_overviewState.minimized = false;
 
     // Selected item panel: top-right, ~300×120
@@ -160,6 +163,9 @@ void AtlasHUD::update(AtlasContext& ctx,
     // 10. Info panel (if open)
     drawInfoPanel(ctx);
 
+    // 10.5. Celestial brackets (on-screen navigation icons)
+    drawCelestialBrackets(ctx);
+
     // 11. Dockable panels (opened via Neocom sidebar)
     drawDockablePanel(ctx, "Inventory", m_inventoryState);
     drawDockablePanel(ctx, "Ship Fitting", m_fittingState);
@@ -202,6 +208,28 @@ void AtlasHUD::drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship) {
     capacitorRingAnimated(ctx, hudCentre, capInner, capOuter,
                           ship.capacitorPct, m_displayCapFrac,
                           dt, ship.capSegments);
+
+    // Capacitor percentage text in the centre of the HUD ring
+    {
+        const Theme& t = ctx.theme();
+        auto& rr = ctx.renderer();
+        char capBuf[16];
+        int capPctInt = static_cast<int>(m_displayCapFrac * 100.0f + 0.5f);
+        std::snprintf(capBuf, sizeof(capBuf), "%d%%", capPctInt);
+        float tw = rr.measureText(capBuf);
+        rr.drawText(capBuf, {hudCentre.x - tw * 0.5f, hudCentre.y - 7.0f},
+                    t.capacitor.withAlpha(0.8f));
+    }
+
+    // Ship name / type label above the HUD arcs
+    if (!ship.shipName.empty()) {
+        const Theme& t = ctx.theme();
+        auto& rr = ctx.renderer();
+        float tw = rr.measureText(ship.shipName);
+        rr.drawText(ship.shipName,
+                    {hudCentre.x - tw * 0.5f, hudCentre.y - hudRadius - 18.0f},
+                    t.textSecondary);
+    }
 
     // Module rack (row of circles below the HUD circle)
     float moduleY = winH - 30.0f;
@@ -1120,6 +1148,134 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
     }
 
     panelEnd(ctx);
+}
+
+// ── Celestial Brackets ──────────────────────────────────────────────
+
+/// Return a colour unique to each celestial type so the player can
+/// quickly distinguish stations from stargates, belts, planets, etc.
+static Color bracketColorForType(const std::string& type) {
+    if (type == "Station")       return Color(0.30f, 0.80f, 0.30f, 1.0f);  // green
+    if (type == "Stargate")      return Color(0.90f, 0.75f, 0.20f, 1.0f);  // gold
+    if (type == "Asteroid Belt") return Color(0.75f, 0.55f, 0.30f, 1.0f);  // amber
+    if (type == "Planet")        return Color(0.45f, 0.65f, 0.90f, 1.0f);  // blue
+    if (type == "Moon")          return Color(0.70f, 0.70f, 0.75f, 1.0f);  // silver
+    if (type == "Wormhole")      return Color(0.80f, 0.40f, 0.90f, 1.0f);  // purple
+    if (type == "Dyson Ring")    return Color(0.95f, 0.85f, 0.30f, 1.0f);  // bright gold
+    return Color(0.6f, 0.6f, 0.6f, 1.0f);  // default grey
+}
+
+void AtlasHUD::drawCelestialBrackets(AtlasContext& ctx) {
+    if (m_brackets.empty()) return;
+
+    const Theme& t = ctx.theme();
+    auto& r = ctx.renderer();
+
+    float winW = static_cast<float>(ctx.input().windowW);
+    float winH = static_cast<float>(ctx.input().windowH);
+
+    float iconSz = 10.0f;  // half-size of the bracket diamond
+
+    for (const auto& b : m_brackets) {
+        float sx = b.screenX;
+        float sy = b.screenY;
+
+        // Clamp off-screen brackets to screen edges with a margin
+        float margin = 20.0f;
+        bool clamped = false;
+        if (!b.onScreen) {
+            clamped = true;
+        }
+        if (sx < margin)          { sx = margin;          clamped = true; }
+        if (sx > winW - margin)   { sx = winW - margin;   clamped = true; }
+        if (sy < margin)          { sy = margin;          clamped = true; }
+        if (sy > winH - margin)   { sy = winH - margin;   clamped = true; }
+
+        Color col = bracketColorForType(b.type);
+
+        // Draw a small diamond bracket icon
+        // Diamond: four lines forming a rotated square
+        float s = clamped ? iconSz * 0.7f : iconSz;
+        Vec2 top   = {sx,     sy - s};
+        Vec2 right = {sx + s, sy};
+        Vec2 bot   = {sx,     sy + s};
+        Vec2 left  = {sx - s, sy};
+        r.drawLine(top, right, col, 1.5f);
+        r.drawLine(right, bot, col, 1.5f);
+        r.drawLine(bot, left, col, 1.5f);
+        r.drawLine(left, top, col, 1.5f);
+
+        // If selected, fill the diamond
+        if (b.selected) {
+            r.drawLine(top, bot, col.withAlpha(0.3f), s * 2.0f);
+        }
+
+        // Hit-test area for hover/click
+        Rect hitRect = {sx - iconSz - 2.0f, sy - iconSz - 2.0f,
+                        (iconSz + 2.0f) * 2.0f, (iconSz + 2.0f) * 2.0f};
+        WidgetID wid = hashID("bracket") ^ static_cast<uint32_t>(std::hash<std::string>{}(b.id));
+
+        bool hovered = ctx.isHovered(hitRect);
+        if (hovered) ctx.setHot(wid);
+
+        // On hover: show name, type, and distance tooltip
+        if (hovered) {
+            // Highlight bracket on hover
+            float hs = s + 3.0f;
+            Vec2 ht = {sx, sy - hs}, hr = {sx + hs, sy};
+            Vec2 hb = {sx, sy + hs}, hl = {sx - hs, sy};
+            r.drawLine(ht, hr, col.withAlpha(0.5f), 1.0f);
+            r.drawLine(hr, hb, col.withAlpha(0.5f), 1.0f);
+            r.drawLine(hb, hl, col.withAlpha(0.5f), 1.0f);
+            r.drawLine(hl, ht, col.withAlpha(0.5f), 1.0f);
+
+            // Tooltip with name, type, distance
+            float tooltipX = sx + iconSz + 8.0f;
+            float tooltipY = sy - 20.0f;
+
+            // Format distance
+            char distBuf[64];
+            if (b.distance >= 149597870700.0f * 0.01f) {
+                // Show in AU
+                std::snprintf(distBuf, sizeof(distBuf), "%.2f AU",
+                              b.distance / 149597870700.0f);
+            } else if (b.distance >= 1000.0f) {
+                std::snprintf(distBuf, sizeof(distBuf), "%.1f km",
+                              b.distance / 1000.0f);
+            } else {
+                std::snprintf(distBuf, sizeof(distBuf), "%.0f m", b.distance);
+            }
+
+            // Background box
+            float boxW = 180.0f;
+            float boxH = 48.0f;
+            // Clamp tooltip to screen
+            if (tooltipX + boxW > winW - 10.0f) tooltipX = sx - iconSz - boxW - 8.0f;
+            if (tooltipY + boxH > winH - 10.0f) tooltipY = winH - boxH - 10.0f;
+            if (tooltipY < 10.0f) tooltipY = 10.0f;
+
+            Rect tipBg = {tooltipX - 4.0f, tooltipY - 2.0f, boxW, boxH};
+            r.drawRect(tipBg, t.bgPanel.withAlpha(0.9f));
+            r.drawRectOutline(tipBg, col.withAlpha(0.5f));
+
+            r.drawText(b.name, {tooltipX, tooltipY}, col, 1.0f);
+            r.drawText(b.type, {tooltipX, tooltipY + 14.0f}, t.textSecondary, 1.0f);
+            r.drawText(distBuf, {tooltipX, tooltipY + 28.0f}, t.textMuted, 1.0f);
+        }
+
+        // Click: select this celestial
+        if (ctx.buttonBehavior(hitRect, wid)) {
+            if (m_bracketClickCb) m_bracketClickCb(b.id);
+        }
+
+        // Right-click: open context/radial menu for this celestial
+        if (!ctx.isMouseConsumed() && hovered && ctx.isRightMouseClicked()) {
+            if (m_bracketRightClickCb) {
+                m_bracketRightClickCb(b.id, sx, sy);
+                ctx.consumeMouse();
+            }
+        }
+    }
 }
 
 } // namespace atlas
