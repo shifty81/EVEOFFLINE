@@ -293,7 +293,7 @@ public:
         
         // Apply change and clamp to -10 to +10
         float new_standing = current + change;
-        new_standing = std::max(-10.0f, std::min(10.0f, new_standing));
+        new_standing = (std::max)(-10.0f, (std::min)(10.0f, new_standing));
         standing_map[key] = new_standing;
     }
     
