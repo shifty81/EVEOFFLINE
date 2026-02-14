@@ -1631,6 +1631,41 @@ public:
     COMPONENT_TYPE(DifficultyZone)
 };
 
+/**
+ * @brief A template for procedurally generating missions
+ *
+ * Stored as entities in a template library.  MissionTemplateSystem uses
+ * these to produce concrete ActiveMission instances with deterministic
+ * objective counts and scaled rewards.
+ */
+class MissionTemplate : public ecs::Component {
+public:
+    struct ObjectiveTemplate {
+        std::string type;          // "destroy", "mine", "deliver", "reach"
+        std::string target;        // target type (e.g., "pirate_frigate", "Veldspar", "Trade Goods")
+        int count_min = 1;
+        int count_max = 5;
+    };
+
+    std::string template_id;
+    std::string name_pattern;      // e.g., "Pirate Clearance: {system}"
+    std::string type;              // "combat", "mining", "courier", "trade", "exploration"
+    int level = 1;                 // 1-5
+    std::string required_faction;  // faction that offers this mission ("" = any)
+    float min_standing = 0.0f;     // minimum faction standing required
+
+    std::vector<ObjectiveTemplate> objective_templates;
+
+    // Reward scaling
+    double base_isk = 100000.0;
+    double isk_per_level = 50000.0;
+    float base_standing_reward = 0.1f;
+    float standing_per_level = 0.05f;
+    float base_time_limit = 3600.0f; // seconds, -1 = no limit
+
+    COMPONENT_TYPE(MissionTemplate)
+};
+
 } // namespace components
 } // namespace atlas
 
