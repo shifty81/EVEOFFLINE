@@ -1704,6 +1704,71 @@ public:
     COMPONENT_TYPE(MissionTemplate)
 };
 
+// ==================== Phase 8: Warp Cinematic Components ====================
+
+class WarpProfile : public ecs::Component {
+public:
+    float warp_speed = 3.0f;        // AU/s
+    float mass_norm = 0.0f;         // 0=frigate, 1=capital
+    float intensity = 0.0f;         // composite visual/audio intensity
+    float comfort_scale = 1.0f;     // accessibility scaling (0-1)
+
+    COMPONENT_TYPE(WarpProfile)
+};
+
+class WarpVisual : public ecs::Component {
+public:
+    float distortion_strength = 0.0f;   // radial distortion amount
+    float tunnel_noise_scale = 1.0f;    // procedural noise skin scale
+    float vignette_amount = 0.0f;       // peripheral darkening
+    float bloom_strength = 0.0f;        // velocity bloom intensity
+    float starfield_speed = 1.0f;       // starfield streak multiplier
+
+    COMPONENT_TYPE(WarpVisual)
+};
+
+class WarpEvent : public ecs::Component {
+public:
+    std::string current_event;          // active anomaly event id (empty = none)
+    float event_timer = 0.0f;           // remaining duration of event
+    int severity = 0;                   // 0=none, 1=visual, 2=sensory, 3=shear, 4=legendary
+
+    COMPONENT_TYPE(WarpEvent)
+};
+
+// ==================== Phase 10: Tactical Overlay Components ====================
+
+class TacticalProjection : public ecs::Component {
+public:
+    float projected_x = 0.0f;          // 2D projected position X
+    float projected_y = 0.0f;          // 2D projected position Y
+    float vertical_offset = 0.0f;      // height above/below tactical plane
+    bool visible = true;                // whether entity appears on overlay
+
+    COMPONENT_TYPE(TacticalProjection)
+};
+
+// ==================== Phase 9: Fleet AI Components ====================
+
+class PlayerPresence : public ecs::Component {
+public:
+    float time_since_last_command = 0.0f;   // seconds since last player command
+    float time_since_last_speech = 0.0f;    // seconds since last player chat
+
+    COMPONENT_TYPE(PlayerPresence)
+};
+
+class FactionCulture : public ecs::Component {
+public:
+    std::string faction;
+    float chatter_frequency_mod = 1.0f;     // multiplier on base chatter rate
+    float formation_tightness_mod = 1.0f;   // how tight formations are kept
+    float morale_sensitivity = 1.0f;        // how much events affect morale
+    float risk_tolerance = 0.5f;            // willingness to stay in danger
+
+    COMPONENT_TYPE(FactionCulture)
+};
+
 } // namespace components
 } // namespace atlas
 
