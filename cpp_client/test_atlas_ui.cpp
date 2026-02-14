@@ -2951,10 +2951,8 @@ void testRadialMenuWarpDisabledOnGrid() {
     assertTrue(menu.IsOpen(), "Menu opened for off-grid entity");
 
     menu.UpdateMousePosition(mx, my);
-    // For off-grid entity, warp should be available
-    // (The highlighted action depends on exact segment angles, but it should not be NONE)
-    assertTrue(menu.GetHighlightedAction() == UI::RadialMenu::Action::WARP_TO ||
-               menu.GetHighlightedAction() != UI::RadialMenu::Action::NONE,
+    // For off-grid entity, warp should be available (not disabled by distance)
+    assertTrue(menu.GetHighlightedAction() != UI::RadialMenu::Action::NONE,
                "An action is available for off-grid entity");
 
     menu.Close();

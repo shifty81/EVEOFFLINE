@@ -125,7 +125,6 @@ bool RmlUiManager::Initialize(GLFWwindow* window, const std::string& resourcePat
     auto tryLoadFont = [](const std::string& path, bool fallback) -> bool {
         std::ifstream f(path, std::ios::binary);
         if (!f.good()) return false;
-        f.close();
         return Rml::LoadFontFace(path, fallback);
     };
 

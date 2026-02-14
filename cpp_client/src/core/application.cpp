@@ -1267,10 +1267,11 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
                         float hx = static_cast<float>(m_radialMenuStartX);
                         float hy = static_cast<float>(m_radialMenuStartY);
                         float hitRadius = 16.0f;
+                        float hitRadiusSq = hitRadius * hitRadius;
                         glm::mat4 vp = m_camera->getProjectionMatrix() * m_camera->getViewMatrix();
                         float scrW = static_cast<float>(m_window->getWidth());
                         float scrH = static_cast<float>(m_window->getHeight());
-                        float bestDist = hitRadius;
+                        float bestDistSq = hitRadiusSq;
                         for (const auto& c : m_solarSystem->getCelestials()) {
                             if (c.type == atlas::Celestial::Type::SUN) continue;
                             glm::vec4 clip = vp * glm::vec4(c.position, 1.0f);
@@ -1278,9 +1279,9 @@ void Application::handleMouseMove(double x, double y, double deltaX, double delt
                             glm::vec3 ndc = glm::vec3(clip) / clip.w;
                             float sx = (ndc.x * 0.5f + 0.5f) * scrW;
                             float sy = (1.0f - (ndc.y * 0.5f + 0.5f)) * scrH;
-                            float d = std::sqrt((sx - hx) * (sx - hx) + (sy - hy) * (sy - hy));
-                            if (d < bestDist) {
-                                bestDist = d;
+                            float dSq = (sx - hx) * (sx - hx) + (sy - hy) * (sy - hy);
+                            if (dSq < bestDistSq) {
+                                bestDistSq = dSq;
                                 pickedId = c.id;
                                 distToTarget = glm::distance(playerPos, c.position);
                             }
