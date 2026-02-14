@@ -78,15 +78,15 @@ If it fails any one → it doesn't ship.
 ### Phase 1: Core Fleet (v0.1–v0.2)
 > Player + small fleet, captain personalities, basic flight & combat.
 
-- [ ] Fleet system: player + up to 4 captains (max 5 ships)
+- [x] Fleet system: player + up to 4 captains (max 5 ships)
 - [x] `SimCaptainPsychologyComponent` (loyalty, aggression, paranoia, ambition)
 - [x] `AtlasCaptainChatterSystem` — contextual fleet dialogue
 - [x] Captain morale & memory persistence
 - [x] Basic formation in warp
-- [ ] Ship fitting system (high/mid/low slots)
-- [ ] Skill system fundamentals
-- [ ] Mining mechanics (asteroid fields, ore extraction)
-- [ ] Station docking and services
+- [x] Ship fitting system (high/mid/low slots)
+- [x] Skill system fundamentals
+- [x] Mining mechanics (asteroid fields, ore extraction)
+- [x] Station docking and services
 - [ ] Warp system with cinematic tunnel
   - Shader layers: radial distortion, starfield velocity bloom, tunnel skin, vignette
   - Adaptive audio: engine core (sub-bass), warp field harmonics, environmental shimmer
