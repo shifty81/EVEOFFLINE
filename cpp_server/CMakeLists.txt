@@ -91,6 +91,7 @@ set(SERVER_SOURCES
     src/systems/warp_cinematic_system.cpp
     src/systems/refining_system.cpp
     src/systems/anomaly_system.cpp
+    src/systems/reputation_system.cpp
     src/systems/scanner_system.cpp
     src/systems/difficulty_scaling_system.cpp
     src/systems/mission_template_system.cpp
@@ -162,6 +163,7 @@ set(SERVER_HEADERS
     include/systems/warp_cinematic_system.h
     include/systems/refining_system.h
     include/systems/anomaly_system.h
+    include/systems/reputation_system.h
     include/systems/scanner_system.h
     include/systems/difficulty_scaling_system.h
     include/systems/mission_template_system.h
@@ -294,6 +296,7 @@ if(BUILD_TESTS)
         src/systems/warp_cinematic_system.cpp
         src/systems/refining_system.cpp
         src/systems/anomaly_system.cpp
+        src/systems/reputation_system.cpp
         src/systems/scanner_system.cpp
         src/systems/difficulty_scaling_system.cpp
         src/systems/mission_template_system.cpp
