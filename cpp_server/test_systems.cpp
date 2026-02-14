@@ -10164,6 +10164,364 @@ void testMissionEconomyCompletedCount() {
                "Completed mission count increments");
 }
 
+// ==================== NPC Market Seeding Tests ====================
+
+void testNPCMarketSeedCreatesOrders() {
+    std::cout << "\n=== NPC Market Seed Creates Orders ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem market(&world);
+
+    auto* station = world.createEntity("station_seed1");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_seed1";
+
+    int created = market.seedNPCOrders("station_seed1");
+    assertTrue(created == 4, "seedNPCOrders creates 4 NPC sell orders");
+    assertTrue(hub->orders.size() == 4, "MarketHub has 4 orders after seeding");
+}
+
+void testNPCMarketSeedPricesCorrect() {
+    std::cout << "\n=== NPC Market Seed Prices Correct ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem market(&world);
+
+    auto* station = world.createEntity("station_seed2");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_seed2";
+
+    market.seedNPCOrders("station_seed2");
+
+    assertTrue(hub->orders[0].item_name == "Tritanium", "First order is Tritanium");
+    assertTrue(approxEqual(hub->orders[0].price_per_unit, 6.0), "Tritanium price is 6.0 ISK");
+    assertTrue(hub->orders[1].item_name == "Pyerite", "Second order is Pyerite");
+    assertTrue(approxEqual(hub->orders[1].price_per_unit, 10.0), "Pyerite price is 10.0 ISK");
+    assertTrue(hub->orders[2].item_name == "Mexallon", "Third order is Mexallon");
+    assertTrue(approxEqual(hub->orders[2].price_per_unit, 40.0), "Mexallon price is 40.0 ISK");
+    assertTrue(hub->orders[3].item_name == "Nocxidium", "Fourth order is Nocxidium");
+    assertTrue(approxEqual(hub->orders[3].price_per_unit, 800.0, 1.0), "Nocxidium price is 800.0 ISK");
+}
+
+void testNPCMarketSeedOrdersPermanent() {
+    std::cout << "\n=== NPC Market Seed Orders Permanent ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem market(&world);
+
+    auto* station = world.createEntity("station_seed3");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_seed3";
+
+    market.seedNPCOrders("station_seed3");
+
+    for (const auto& order : hub->orders) {
+        assertTrue(order.duration_remaining < 0.0f, "NPC order is permanent (duration_remaining < 0)");
+        assertTrue(order.owner_id == "npc_market", "NPC order owned by npc_market");
+        assertTrue(!order.is_buy_order, "NPC seed orders are sell orders");
+    }
+}
+
+void testNPCMarketSeedBuyableByPlayer() {
+    std::cout << "\n=== NPC Market Seed Buyable By Player ===" << std::endl;
+    ecs::World world;
+    systems::MarketSystem market(&world);
+
+    auto* station = world.createEntity("station_seed4");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "station_seed4";
+
+    auto* buyer = world.createEntity("player_buyer");
+    auto* player = addComp<components::Player>(buyer);
+    player->isk = 10000.0;
+    addComp<components::Inventory>(buyer);
+
+    market.seedNPCOrders("station_seed4");
+
+    double tritPrice = market.getLowestSellPrice("station_seed4", "mineral_tritanium");
+    assertTrue(tritPrice > 0.0, "Tritanium sell price exists after seeding");
+    assertTrue(approxEqual(tritPrice, 6.0), "Tritanium sell price is 6.0 ISK");
+}
+
+// ==================== Anomaly Visual Cue Tests ====================
+
+void testAnomalyVisualCueDefaults() {
+    std::cout << "\n=== Anomaly Visual Cue Defaults ===" << std::endl;
+    components::AnomalyVisualCue cue;
+    assertTrue(cue.cue_type == components::AnomalyVisualCue::CueType::None, "Default cue type is None");
+    assertTrue(approxEqual(cue.intensity, 1.0f), "Default intensity is 1.0");
+    assertTrue(approxEqual(cue.radius, 500.0f), "Default radius is 500.0");
+    assertTrue(cue.active, "Default active is true");
+    assertTrue(approxEqual(cue.distortion_strength, 0.0f), "Default distortion is 0.0");
+}
+
+void testAnomalyVisualCueTypeMapping() {
+    std::cout << "\n=== Anomaly Visual Cue Type Mapping ===" << std::endl;
+    using AT = components::Anomaly::Type;
+    using CT = components::AnomalyVisualCue::CueType;
+
+    assertTrue(systems::AnomalySystem::cueTypeFromAnomalyType(AT::Wormhole) == CT::GravityLens,
+               "Wormhole maps to GravityLens");
+    assertTrue(systems::AnomalySystem::cueTypeFromAnomalyType(AT::Gas) == CT::ParticleCloud,
+               "Gas maps to ParticleCloud");
+    assertTrue(systems::AnomalySystem::cueTypeFromAnomalyType(AT::Combat) == CT::EnergyPulse,
+               "Combat maps to EnergyPulse");
+    assertTrue(systems::AnomalySystem::cueTypeFromAnomalyType(AT::Mining) == CT::Shimmer,
+               "Mining maps to Shimmer");
+    assertTrue(systems::AnomalySystem::cueTypeFromAnomalyType(AT::Data) == CT::ElectricArc,
+               "Data maps to ElectricArc");
+    assertTrue(systems::AnomalySystem::cueTypeFromAnomalyType(AT::Relic) == CT::Shimmer,
+               "Relic maps to Shimmer");
+}
+
+// ==================== LOD Priority Component Tests ====================
+
+void testLODPriorityDefaults() {
+    std::cout << "\n=== LOD Priority Defaults ===" << std::endl;
+    components::LODPriority lod;
+    assertTrue(approxEqual(lod.priority, 1.0f), "Default priority is 1.0");
+    assertTrue(!lod.force_visible, "Default force_visible is false");
+    assertTrue(approxEqual(lod.impostor_distance, 500.0f), "Default impostor_distance is 500.0");
+}
+
+void testLODPriorityPlayerShip() {
+    std::cout << "\n=== LOD Priority Player Ship ===" << std::endl;
+    ecs::World world;
+    auto* ship = world.createEntity("player_ship_lod");
+    auto* lod = addComp<components::LODPriority>(ship);
+    lod->priority = 2.0f;
+    lod->force_visible = true;
+
+    auto* retrieved = ship->getComponent<components::LODPriority>();
+    assertTrue(retrieved != nullptr, "LODPriority component retrievable");
+    assertTrue(approxEqual(retrieved->priority, 2.0f), "Priority set to 2.0 for player ship");
+    assertTrue(retrieved->force_visible, "Player ship forced visible");
+}
+
+// ==================== 100+ Ship Fleet Stress Test ====================
+
+void testFleetStress150Ships() {
+    std::cout << "\n=== Fleet Stress Test: 150 Ships ===" << std::endl;
+    ecs::World world;
+
+    // Create 150 ship entities with Position, Health, Ship, and AI components
+    std::vector<ecs::Entity*> ships;
+    for (int i = 0; i < 150; ++i) {
+        std::string id = "stress_ship_" + std::to_string(i);
+        auto* e = world.createEntity(id);
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>(i * 100);
+        pos->y = 0.0f;
+        pos->z = static_cast<float>((i % 10) * 50);
+
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 500.0f;
+        hp->shield_max = 500.0f;
+        hp->armor_hp = 300.0f;
+        hp->armor_max = 300.0f;
+        hp->hull_hp = 200.0f;
+        hp->hull_max = 200.0f;
+
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = "Frigate";
+
+        auto* ai = addComp<components::AI>(e);
+        ai->state = components::AI::State::Idle;
+
+        auto* lod = addComp<components::LODPriority>(e);
+        lod->priority = (i < 10) ? 2.0f : 0.5f;  // first 10 ships high priority
+
+        ships.push_back(e);
+    }
+
+    assertTrue(ships.size() == 150, "Created 150 ship entities");
+
+    // Verify all entities were created and have components
+    int valid = 0;
+    for (auto* e : ships) {
+        if (e->getComponent<components::Position>() &&
+            e->getComponent<components::Health>() &&
+            e->getComponent<components::Ship>() &&
+            e->getComponent<components::AI>() &&
+            e->getComponent<components::LODPriority>()) {
+            ++valid;
+        }
+    }
+    assertTrue(valid == 150, "All 150 ships have all required components");
+
+    // Count high-priority vs low-priority
+    int highPriority = 0;
+    int lowPriority = 0;
+    for (auto* e : ships) {
+        auto* lod = e->getComponent<components::LODPriority>();
+        if (lod->priority >= 1.5f) ++highPriority;
+        else ++lowPriority;
+    }
+    assertTrue(highPriority == 10, "10 ships are high priority");
+    assertTrue(lowPriority == 140, "140 ships are low priority");
+}
+
+void testFleetStressSystemUpdates() {
+    std::cout << "\n=== Fleet Stress Test: System Updates ===" << std::endl;
+    ecs::World world;
+    systems::ShieldRechargeSystem shieldSys(&world);
+
+    // Create 100 ships with Health components for shield recharge
+    for (int i = 0; i < 100; ++i) {
+        std::string id = "stress_shield_" + std::to_string(i);
+        auto* e = world.createEntity(id);
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 250.0f;
+        hp->shield_max = 500.0f;
+        hp->shield_recharge_rate = 10.0f;
+    }
+
+    // Run 10 update ticks
+    for (int tick = 0; tick < 10; ++tick) {
+        shieldSys.update(1.0f);
+    }
+
+    // Verify shields recharged across all entities
+    int recharged = 0;
+    auto entities = world.getEntities();
+    for (auto* e : entities) {
+        auto* hp = e->getComponent<components::Health>();
+        if (hp && hp->shield_hp > 250.0f) {
+            ++recharged;
+        }
+    }
+    assertTrue(recharged == 100, "All 100 ships recharged shields");
+}
+
+// ==================== Persistence Round-Trip for New Components ====================
+
+void testPersistenceAnomalyVisualCue() {
+    std::cout << "\n=== Persistence: AnomalyVisualCue Round-Trip ===" << std::endl;
+    ecs::World world;
+
+    auto* e = world.createEntity("anom_vis1");
+    auto* cue = addComp<components::AnomalyVisualCue>(e);
+    cue->anomaly_id = "anom_42";
+    cue->cue_type = components::AnomalyVisualCue::CueType::GravityLens;
+    cue->intensity = 0.8f;
+    cue->radius = 750.0f;
+    cue->pulse_frequency = 1.5f;
+    cue->r = 0.2f; cue->g = 0.5f; cue->b = 0.9f;
+    cue->distortion_strength = 0.7f;
+    cue->active = true;
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    bool ok = persistence.deserializeWorld(&world2, json);
+    assertTrue(ok, "Deserialized world with AnomalyVisualCue");
+
+    auto* e2 = world2.getEntity("anom_vis1");
+    assertTrue(e2 != nullptr, "Entity found after deserialization");
+    auto* cue2 = e2->getComponent<components::AnomalyVisualCue>();
+    assertTrue(cue2 != nullptr, "AnomalyVisualCue component present");
+    assertTrue(cue2->anomaly_id == "anom_42", "anomaly_id preserved");
+    assertTrue(cue2->cue_type == components::AnomalyVisualCue::CueType::GravityLens, "cue_type preserved");
+    assertTrue(approxEqual(cue2->intensity, 0.8f), "intensity preserved");
+    assertTrue(approxEqual(cue2->radius, 750.0f), "radius preserved");
+    assertTrue(approxEqual(cue2->pulse_frequency, 1.5f), "pulse_frequency preserved");
+    assertTrue(approxEqual(cue2->r, 0.2f), "r preserved");
+    assertTrue(approxEqual(cue2->g, 0.5f), "g preserved");
+    assertTrue(approxEqual(cue2->b, 0.9f), "b preserved");
+    assertTrue(approxEqual(cue2->distortion_strength, 0.7f), "distortion_strength preserved");
+    assertTrue(cue2->active, "active preserved");
+}
+
+void testPersistenceLODPriority() {
+    std::cout << "\n=== Persistence: LODPriority Round-Trip ===" << std::endl;
+    ecs::World world;
+
+    auto* e = world.createEntity("lod_ent1");
+    auto* lod = addComp<components::LODPriority>(e);
+    lod->priority = 2.5f;
+    lod->force_visible = true;
+    lod->impostor_distance = 800.0f;
+
+    data::WorldPersistence persistence;
+    std::string json = persistence.serializeWorld(&world);
+
+    ecs::World world2;
+    bool ok = persistence.deserializeWorld(&world2, json);
+    assertTrue(ok, "Deserialized world with LODPriority");
+
+    auto* e2 = world2.getEntity("lod_ent1");
+    assertTrue(e2 != nullptr, "Entity found after deserialization");
+    auto* lod2 = e2->getComponent<components::LODPriority>();
+    assertTrue(lod2 != nullptr, "LODPriority component present");
+    assertTrue(approxEqual(lod2->priority, 2.5f), "priority preserved");
+    assertTrue(lod2->force_visible, "force_visible preserved");
+    assertTrue(approxEqual(lod2->impostor_distance, 800.0f), "impostor_distance preserved");
+}
+
+// ==================== Mineral Economy Integration Test ====================
+
+void testMineralEconomyEndToEnd() {
+    std::cout << "\n=== Mineral Economy End-to-End ===" << std::endl;
+    ecs::World world;
+    systems::MiningSystem mining(&world);
+    systems::RefiningSystem refining(&world);
+    systems::MarketSystem market(&world);
+
+    // Create station with refining and market
+    auto* station = world.createEntity("econ_station");
+    auto* hub = addComp<components::MarketHub>(station);
+    hub->station_id = "econ_station";
+    addComp<components::RefiningFacility>(station);
+    refining.installDefaultRecipes("econ_station");
+
+    // Seed NPC market
+    int seeded = market.seedNPCOrders("econ_station");
+    assertTrue(seeded == 4, "NPC orders seeded");
+
+    // Create miner with laser and inventory
+    auto* miner = world.createEntity("econ_miner");
+    auto* minerPos = addComp<components::Position>(miner);
+    minerPos->x = 0; minerPos->y = 0; minerPos->z = 0;
+    auto* laser = addComp<components::MiningLaser>(miner);
+    laser->yield_per_cycle = 100.0f;
+    laser->cycle_time = 1.0f;
+    auto* inv = addComp<components::Inventory>(miner);
+    inv->max_capacity = 10000.0f;
+
+    // Create deposit
+    std::string depositId = mining.createDeposit("Veldspar", 5000.0f, 10.0f, 0.0f, 0.0f);
+    assertTrue(!depositId.empty(), "Deposit created");
+
+    // Mine ore
+    bool started = mining.startMining("econ_miner", depositId);
+    assertTrue(started, "Mining started");
+
+    // Run several cycles
+    for (int i = 0; i < 5; ++i) {
+        mining.update(1.0f);
+    }
+
+    // Check miner has ore
+    bool hasOre = false;
+    for (const auto& item : inv->items) {
+        if (item.name == "Veldspar" && item.quantity > 0) hasOre = true;
+    }
+    assertTrue(hasOre, "Miner has Veldspar ore after mining");
+
+    // Refine the ore at the station
+    int refined = refining.refineOre("econ_miner", "econ_station", "Veldspar", 1);
+    assertTrue(refined > 0, "Ore refined successfully");
+
+    // Check that Tritanium was produced (Veldspar → Tritanium)
+    bool hasTritanium = false;
+    for (const auto& item : inv->items) {
+        if (item.name == "Tritanium" && item.quantity > 0) hasTritanium = true;
+    }
+    assertTrue(hasTritanium, "Miner has Tritanium after refining Veldspar");
+
+    // Verify market still has mineral prices
+    double tritPrice = market.getLowestSellPrice("econ_station", "mineral_tritanium");
+    assertTrue(tritPrice > 0.0, "Tritanium still available on market");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -10788,6 +11146,31 @@ int main() {
     testMissionEconomyCombatReducesSpawnRate();
     testMissionEconomyMiningReducesOre();
     testMissionEconomyCompletedCount();
+
+    // NPC market seeding tests
+    testNPCMarketSeedCreatesOrders();
+    testNPCMarketSeedPricesCorrect();
+    testNPCMarketSeedOrdersPermanent();
+    testNPCMarketSeedBuyableByPlayer();
+
+    // Anomaly visual cue tests
+    testAnomalyVisualCueDefaults();
+    testAnomalyVisualCueTypeMapping();
+
+    // LOD priority tests
+    testLODPriorityDefaults();
+    testLODPriorityPlayerShip();
+
+    // Fleet stress tests
+    testFleetStress150Ships();
+    testFleetStressSystemUpdates();
+
+    // Persistence round-trip tests for new components
+    testPersistenceAnomalyVisualCue();
+    testPersistenceLODPriority();
+
+    // Mineral economy integration test
+    testMineralEconomyEndToEnd();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

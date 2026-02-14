@@ -1124,16 +1124,16 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - Player Spawn Point
 
 #### Phase 1 (Weeks 1-3): Foundational Gameplay Loop
-- [ ] Procedural ship hull + weapons generation
-- [ ] Shield/armor/hull damage with visual feedback
-- [ ] Basic AI combat (engage, orbit, retreat)
+- [x] Procedural ship hull + weapons generation — Modular hull assembly with per-faction parts and weapon turrets (Phase 1.1 complete)
+- [x] Shield/armor/hull damage with visual feedback — DamageEvent component with DamageEffectHelper for shield/armor/hull visuals
+- [x] Basic AI combat (engage, orbit, retreat) — Dynamic orbit by ship class, engagement range, target selection strategies
 - [x] Station docking and repair service — StationSystem with dock/undock/repair (29 tests)
 - **Success Criteria**: Player can undock, fight NPCs, take damage, dock and repair
 
 #### Phase 2 (Weeks 4-6): Wrecks, Salvage & Economy
 - [x] Ship destruction → wreck spawning — WreckSalvageSystem with lifetime decay (22 tests)
 - [x] Salvage gameplay mechanics — salvageWreck with range check and item transfer
-- [ ] Basic mineral economy
+- [x] Basic mineral economy — MiningSystem + RefiningSystem + MarketSystem with NPC market seeding
 - [x] Mining AI ships active — AISystem mining behavior with deposit discovery (6 tests)
 - [x] Resource tracking per system — SystemResources component with per-mineral tracking
 - **Success Criteria**: NPCs mine, pirates attack, wrecks remain, salvage yields resources, economy changes
@@ -1143,7 +1143,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Anomaly generation from system seed — AnomalySystem with deterministic seed-based generation (9 tests)
 - [x] Combat & mining anomalies — 6 anomaly types (Combat, Mining, Data, Relic, Gas, Wormhole)
 - [x] Difficulty scaling by location — DifficultyScalingSystem with security-based multipliers (8 tests)
-- [ ] Visual distortion cues for anomalies
+- [x] Visual distortion cues for anomalies — AnomalyVisualCue component with per-type distortion profiles
 - **Success Criteria**: Player scans, finds new content, it feels special
 
 #### Phase 4 (Weeks 10-12): Procedural Missions & Reputation
@@ -1158,8 +1158,8 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Save/load system state — WorldPersistence serializes 32 component types with file I/O (122 new test assertions)
 - [x] Fleet state persistence — CaptainPersonality, FleetMorale, CaptainRelationship, EmotionalState, CaptainMemory, FleetFormation, FleetCargoPool, RumorLog all serialized
 - [x] Economy persistence — Station, Docked, Wreck, MineralDeposit, SystemResources, MarketHub all serialized
-- [ ] LOD & impostors for large battles
-- [ ] 100+ ship fleet stress test
+- [x] LOD & impostors for large battles — LODPriority server component with impostor distance, client LODManager integration
+- [x] 100+ ship fleet stress test — 150-ship stress test with LOD priority verification (5 assertions)
 - **Success Criteria**: Quit, reload, world remembers everything, stable performance
 
 #### Complete Loop Validation
