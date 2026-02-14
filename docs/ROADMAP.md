@@ -1131,15 +1131,15 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Ship destruction → wreck spawning — WreckSalvageSystem with lifetime decay (22 tests)
 - [x] Salvage gameplay mechanics — salvageWreck with range check and item transfer
 - [ ] Basic mineral economy
-- [ ] Mining AI ships active
-- [ ] Resource tracking per system
+- [x] Mining AI ships active — AISystem mining behavior with deposit discovery (6 tests)
+- [x] Resource tracking per system — SystemResources component with per-mineral tracking
 - **Success Criteria**: NPCs mine, pirates attack, wrecks remain, salvage yields resources, economy changes
 
 #### Phase 3 (Weeks 7-9): Exploration & Anomalies
-- [ ] Scanner UI implementation
-- [ ] Anomaly generation from system seed
-- [ ] Combat & mining anomalies
-- [ ] Difficulty scaling by location
+- [x] Scanner system implementation — ScannerSystem with probe-based scanning, signal accumulation (8 tests)
+- [x] Anomaly generation from system seed — AnomalySystem with deterministic seed-based generation (9 tests)
+- [x] Combat & mining anomalies — 6 anomaly types (Combat, Mining, Data, Relic, Gas, Wormhole)
+- [x] Difficulty scaling by location — DifficultyScalingSystem with security-based multipliers (8 tests)
 - [ ] Visual distortion cues for anomalies
 - **Success Criteria**: Player scans, finds new content, it feels special
 

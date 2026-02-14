@@ -74,7 +74,9 @@ int AnomalySystem::generateAnomalies(const std::string& system_id,
         auto* entity = world_->createEntity(anom_id);
         if (!entity) continue;
 
-        auto* anom = entity->addComponent<components::Anomaly>();
+        auto anom_comp = std::make_unique<components::Anomaly>();
+        auto* anom = anom_comp.get();
+        entity->addComponent(std::move(anom_comp));
         anom->anomaly_id = anom_id;
         anom->anomaly_name = generateName(type, i);
         anom->system_id = system_id;

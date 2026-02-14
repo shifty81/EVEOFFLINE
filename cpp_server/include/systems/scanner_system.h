@@ -2,6 +2,7 @@
 #define EVE_SYSTEMS_SCANNER_SYSTEM_H
 
 #include "ecs/system.h"
+#include "ecs/entity.h"
 #include "components/game_components.h"
 #include <string>
 #include <vector>
