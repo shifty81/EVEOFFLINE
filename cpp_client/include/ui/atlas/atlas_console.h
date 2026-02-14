@@ -134,6 +134,7 @@ private:
     static constexpr float INPUT_HEIGHT = 24.0f;
     static constexpr float LINE_HEIGHT = 16.0f;
     static constexpr float PADDING = 8.0f;
+    static constexpr float CHAR_WIDTH = 8.0f;  // bitmap font character width
 };
 
 } // namespace atlas

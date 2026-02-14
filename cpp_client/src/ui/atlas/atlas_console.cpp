@@ -157,7 +157,7 @@ void AtlasConsole::render(AtlasContext& ctx) {
     r.drawText(prompt, Vec2(PADDING + 4.0f, inputY + 4.0f), theme.textPrimary);
 
     // Cursor blink (simple steady cursor)
-    float cursorX = PADDING + 4.0f + static_cast<float>(2 + m_cursorPos) * 8.0f;  // 8px per char (bitmap font)
+    float cursorX = PADDING + 4.0f + static_cast<float>(2 + m_cursorPos) * CHAR_WIDTH;
     r.drawRect(Rect(cursorX, inputY + 3.0f, 1.0f, INPUT_HEIGHT - 6.0f),
                theme.accentSecondary);
 
