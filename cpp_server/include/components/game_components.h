@@ -1555,6 +1555,35 @@ public:
     COMPONENT_TYPE(RefiningFacility)
 };
 
+/**
+ * @brief An in-space anomaly (combat site, mining site, data site, etc.)
+ *
+ * Generated procedurally from a solar system seed.  Players discover
+ * anomalies via the ScannerSystem and warp to them for content.
+ */
+class Anomaly : public ecs::Component {
+public:
+    enum class Type { Combat, Mining, Data, Relic, Gas, Wormhole };
+    enum class Difficulty { Trivial, Easy, Medium, Hard, Deadly };
+
+    std::string anomaly_id;
+    std::string anomaly_name;
+    std::string system_id;                  // owning solar system entity
+    Type type = Type::Combat;
+    Difficulty difficulty = Difficulty::Medium;
+    float signature_strength = 0.5f;        // 0.0–1.0, affects scan difficulty
+    float x = 0.0f;                         // position in system
+    float y = 0.0f;
+    float z = 0.0f;
+    bool discovered = false;                // has anyone scanned this down?
+    bool completed = false;                 // has content been cleared?
+    float despawn_timer = 3600.0f;          // seconds until natural despawn
+    int npc_count = 0;                      // NPCs to spawn on warp-in
+    float loot_multiplier = 1.0f;           // scales drop quality
+
+    COMPONENT_TYPE(Anomaly)
+};
+
 } // namespace components
 } // namespace atlas
 
