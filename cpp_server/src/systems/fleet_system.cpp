@@ -456,5 +456,88 @@ void FleetSystem::removeFleetBonuses(const std::string& entity_id) {
     fm->active_bonuses.clear();
 }
 
+// ---- Player Fleet (player + up to 4 captains) ----
+
+std::string FleetSystem::createPlayerFleet(const std::string& player_entity_id,
+                                            const std::string& fleet_name) {
+    auto* entity = world_->getEntity(player_entity_id);
+    if (!entity) return "";
+
+    // Entity must not already be in a fleet
+    if (entity_fleet_.find(player_entity_id) != entity_fleet_.end()) return "";
+
+    std::string fleet_id = "fleet_" + std::to_string(next_fleet_id_++);
+
+    Fleet fleet;
+    fleet.fleet_id = fleet_id;
+    fleet.fleet_name = fleet_name;
+    fleet.commander_entity_id = player_entity_id;
+    fleet.player_fleet = true;
+    fleet.max_members = PLAYER_FLEET_MAX;
+
+    std::string char_name = fleet_name + " FC";
+    auto* player = entity->getComponent<components::Player>();
+    if (player) {
+        char_name = player->character_name;
+    }
+
+    FleetMemberInfo info;
+    info.entity_id = player_entity_id;
+    info.character_name = char_name;
+    info.role = "FleetCommander";
+    fleet.members[player_entity_id] = info;
+
+    fleets_[fleet_id] = std::move(fleet);
+    entity_fleet_[player_entity_id] = fleet_id;
+
+    auto membership = std::make_unique<components::FleetMembership>();
+    membership->fleet_id = fleet_id;
+    membership->role = "FleetCommander";
+    entity->addComponent(std::move(membership));
+
+    return fleet_id;
+}
+
+bool FleetSystem::assignCaptain(const std::string& fleet_id,
+                                 const std::string& captain_entity_id,
+                                 const std::string& captain_name) {
+    auto it = fleets_.find(fleet_id);
+    if (it == fleets_.end()) return false;
+
+    // Must be a player fleet
+    if (!it->second.player_fleet) return false;
+
+    // Check capacity (max 5 total = 1 player + 4 captains)
+    if (it->second.members.size() >= PLAYER_FLEET_MAX) return false;
+
+    // Entity must exist
+    auto* entity = world_->getEntity(captain_entity_id);
+    if (!entity) return false;
+
+    // Must not already be in a fleet
+    if (entity_fleet_.find(captain_entity_id) != entity_fleet_.end()) return false;
+
+    FleetMemberInfo info;
+    info.entity_id = captain_entity_id;
+    info.character_name = captain_name;
+    info.role = "Member";
+
+    it->second.members[captain_entity_id] = info;
+    entity_fleet_[captain_entity_id] = fleet_id;
+
+    auto membership = std::make_unique<components::FleetMembership>();
+    membership->fleet_id = fleet_id;
+    membership->role = "Member";
+    entity->addComponent(std::move(membership));
+
+    return true;
+}
+
+bool FleetSystem::isPlayerFleet(const std::string& fleet_id) const {
+    auto it = fleets_.find(fleet_id);
+    if (it == fleets_.end()) return false;
+    return it->second.player_fleet;
+}
+
 } // namespace systems
 } // namespace atlas

@@ -42,6 +42,7 @@ struct Fleet {
     std::map<std::string, std::vector<std::string>> wings;   // wing_id -> [squad_ids]
     std::map<std::string, std::string> active_boosters;  // booster_type -> entity_id
     size_t max_members = 256;
+    bool player_fleet = false;  // true = capped at 5 members (player + 4 captains)
 };
 
 /**
@@ -171,6 +172,35 @@ public:
      * @brief Get member count for a fleet
      */
     size_t getMemberCount(const std::string& fleet_id) const;
+
+    // --- Player Fleet (player + up to 4 AI captains) ---
+
+    /**
+     * @brief Create a player fleet capped at 5 ships (1 player + 4 captains)
+     * @param player_entity_id The player's ship entity
+     * @param fleet_name Display name
+     * @return fleet_id on success, empty string on failure
+     */
+    std::string createPlayerFleet(const std::string& player_entity_id,
+                                  const std::string& fleet_name = "Player Fleet");
+
+    /**
+     * @brief Assign an AI captain to the player fleet
+     * @param fleet_id Player fleet ID
+     * @param captain_entity_id AI captain ship entity
+     * @param captain_name Display name
+     * @return true if captain was added (fleet must have room, max 4 captains)
+     */
+    bool assignCaptain(const std::string& fleet_id,
+                       const std::string& captain_entity_id,
+                       const std::string& captain_name = "Captain");
+
+    /**
+     * @brief Check whether a fleet is a player fleet (5-ship cap)
+     */
+    bool isPlayerFleet(const std::string& fleet_id) const;
+
+    static constexpr size_t PLAYER_FLEET_MAX = 5;
 
 private:
     std::map<std::string, Fleet> fleets_;       // fleet_id -> Fleet
