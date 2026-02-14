@@ -87,7 +87,7 @@ If it fails any one → it doesn't ship.
 - [x] Skill system fundamentals
 - [x] Mining mechanics (asteroid fields, ore extraction)
 - [x] Station docking and services
-- [ ] Warp system with cinematic tunnel
+- [x] Warp system with cinematic tunnel
   - Shader layers: radial distortion, starfield velocity bloom, tunnel skin, vignette
   - Adaptive audio: engine core (sub-bass), warp field harmonics, environmental shimmer
   - Dynamic intensity based on ship mass
