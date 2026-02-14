@@ -64,6 +64,12 @@ public:
      */
     static float lootMultiplierFromDifficulty(components::Anomaly::Difficulty diff);
 
+    /**
+     * @brief Determine the visual cue type for a given anomaly type
+     */
+    static components::AnomalyVisualCue::CueType cueTypeFromAnomalyType(
+        components::Anomaly::Type type);
+
 private:
     int anomaly_counter_ = 0;
 

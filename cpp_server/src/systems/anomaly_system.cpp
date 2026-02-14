@@ -91,6 +91,14 @@ int AnomalySystem::generateAnomalies(const std::string& system_id,
         anom->discovered = false;
         anom->completed = false;
         anom->despawn_timer = 3600.0f + static_cast<float>(sub_seed % 3600);  // ~1-2 hours
+
+        // Attach visual cue for client-side rendering
+        auto cue_comp = std::make_unique<components::AnomalyVisualCue>();
+        cue_comp->anomaly_id = anom_id;
+        cue_comp->cue_type = cueTypeFromAnomalyType(type);
+        cue_comp->intensity = sig;
+        cue_comp->radius = 500.0f + anom->loot_multiplier * 200.0f;
+        entity->addComponent(std::move(cue_comp));
     }
 
     return count;
@@ -188,6 +196,26 @@ std::string AnomalySystem::generateName(components::Anomaly::Type type, int inde
     static const char* suffixes[] = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII"};
     int si = index % 8;
     return prefix + " " + suffixes[si];
+}
+
+components::AnomalyVisualCue::CueType AnomalySystem::cueTypeFromAnomalyType(
+    components::Anomaly::Type type) {
+    switch (type) {
+        case components::Anomaly::Type::Wormhole:
+            return components::AnomalyVisualCue::CueType::GravityLens;
+        case components::Anomaly::Type::Gas:
+            return components::AnomalyVisualCue::CueType::ParticleCloud;
+        case components::Anomaly::Type::Combat:
+            return components::AnomalyVisualCue::CueType::EnergyPulse;
+        case components::Anomaly::Type::Mining:
+            return components::AnomalyVisualCue::CueType::Shimmer;
+        case components::Anomaly::Type::Data:
+            return components::AnomalyVisualCue::CueType::ElectricArc;
+        case components::Anomaly::Type::Relic:
+            return components::AnomalyVisualCue::CueType::Shimmer;
+        default:
+            return components::AnomalyVisualCue::CueType::None;
+    }
 }
 
 } // namespace systems

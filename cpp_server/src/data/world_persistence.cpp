@@ -715,6 +715,31 @@ std::string WorldPersistence::serializeEntity(
         json << "]}";
     }
 
+    // AnomalyVisualCue
+    auto* avc = entity->getComponent<components::AnomalyVisualCue>();
+    if (avc) {
+        json << ",\"anomaly_visual_cue\":{"
+             << "\"anomaly_id\":\"" << escapeJson(avc->anomaly_id) << "\""
+             << ",\"cue_type\":" << static_cast<int>(avc->cue_type)
+             << ",\"intensity\":" << avc->intensity
+             << ",\"radius\":" << avc->radius
+             << ",\"pulse_frequency\":" << avc->pulse_frequency
+             << ",\"r\":" << avc->r
+             << ",\"g\":" << avc->g
+             << ",\"b\":" << avc->b
+             << ",\"distortion_strength\":" << avc->distortion_strength
+             << ",\"active\":" << (avc->active ? "true" : "false") << "}";
+    }
+
+    // LODPriority
+    auto* lod = entity->getComponent<components::LODPriority>();
+    if (lod) {
+        json << ",\"lod_priority\":{"
+             << "\"priority\":" << lod->priority
+             << ",\"force_visible\":" << (lod->force_visible ? "true" : "false")
+             << ",\"impostor_distance\":" << lod->impostor_distance << "}";
+    }
+
     json << "}";
     return json.str();
 }
@@ -1693,6 +1718,34 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
         }
 
         entity->addComponent(std::move(mh));
+    }
+
+    // AnomalyVisualCue
+    std::string avc_json = extractObject(json, "anomaly_visual_cue");
+    if (!avc_json.empty()) {
+        auto avc = std::make_unique<components::AnomalyVisualCue>();
+        avc->anomaly_id = extractString(avc_json, "anomaly_id");
+        avc->cue_type = static_cast<components::AnomalyVisualCue::CueType>(
+            extractInt(avc_json, "\"cue_type\":", 5));
+        avc->intensity = extractFloat(avc_json, "\"intensity\":");
+        avc->radius = extractFloat(avc_json, "\"radius\":");
+        avc->pulse_frequency = extractFloat(avc_json, "\"pulse_frequency\":");
+        avc->r = extractFloat(avc_json, "\"r\":");
+        avc->g = extractFloat(avc_json, "\"g\":");
+        avc->b = extractFloat(avc_json, "\"b\":");
+        avc->distortion_strength = extractFloat(avc_json, "\"distortion_strength\":");
+        avc->active = extractBool(avc_json, "\"active\":", true);
+        entity->addComponent(std::move(avc));
+    }
+
+    // LODPriority
+    std::string lod_json = extractObject(json, "lod_priority");
+    if (!lod_json.empty()) {
+        auto lod = std::make_unique<components::LODPriority>();
+        lod->priority = extractFloat(lod_json, "\"priority\":");
+        lod->force_visible = extractBool(lod_json, "\"force_visible\":", false);
+        lod->impostor_distance = extractFloat(lod_json, "\"impostor_distance\":");
+        entity->addComponent(std::move(lod));
     }
 
     return true;

@@ -1585,6 +1585,44 @@ public:
 };
 
 /**
+ * @brief Visual distortion cue rendered near an anomaly
+ *
+ * Provides client-side rendering hints so anomalies have visible
+ * spatial distortion effects — shimmering for wormholes, particle
+ * clouds for gas sites, etc.  Intensity fades with distance.
+ */
+class AnomalyVisualCue : public ecs::Component {
+public:
+    enum class CueType { Shimmer, ParticleCloud, EnergyPulse, GravityLens, ElectricArc, None };
+
+    std::string anomaly_id;                // linked anomaly entity
+    CueType cue_type = CueType::None;
+    float intensity = 1.0f;               // 0.0–1.0 base intensity
+    float radius = 500.0f;                // metres — visible range
+    float pulse_frequency = 0.5f;         // Hz — animation speed
+    float r = 1.0f, g = 1.0f, b = 1.0f;  // tint colour
+    float distortion_strength = 0.0f;     // 0.0–1.0 spatial warp amount
+    bool active = true;
+
+    COMPONENT_TYPE(AnomalyVisualCue)
+};
+
+/**
+ * @brief Server-side LOD priority hint for large battle optimisation
+ *
+ * Attached to entities in crowded scenes so the client can allocate
+ * rendering budget wisely.  Higher priority values get higher LOD.
+ */
+class LODPriority : public ecs::Component {
+public:
+    float priority = 1.0f;        // 0.0 = lowest, 1.0 = normal, 2.0+ = critical
+    bool force_visible = false;   // override culling (e.g. player's own ship)
+    float impostor_distance = 500.0f; // distance at which to switch to impostor/billboard
+
+    COMPONENT_TYPE(LODPriority)
+};
+
+/**
  * @brief Probe scanner — attached to ships that can scan for anomalies
  *
  * Players deploy probes to discover hidden anomalies in a solar system.

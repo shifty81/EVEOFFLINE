@@ -66,6 +66,17 @@ public:
      */
     int getOrderCount(const std::string& station_id);
 
+    /**
+     * @brief Seed a station's market with NPC sell orders for common minerals
+     *
+     * Creates permanent sell orders for Tritanium, Pyerite, Mexallon, and
+     * Nocxidium at baseline prices so players can always buy basic materials.
+     *
+     * @param station_id Entity id of the station with a MarketHub component
+     * @return number of NPC orders created
+     */
+    int seedNPCOrders(const std::string& station_id);
+
 private:
     int order_counter_ = 0;
 };

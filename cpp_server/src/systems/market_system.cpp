@@ -231,5 +231,38 @@ int MarketSystem::getOrderCount(const std::string& station_id) {
     return count;
 }
 
+int MarketSystem::seedNPCOrders(const std::string& station_id) {
+    auto* entity = world_->getEntity(station_id);
+    if (!entity) return 0;
+    auto* hub = entity->getComponent<components::MarketHub>();
+    if (!hub) return 0;
+
+    struct Seed { std::string id; std::string name; double price; int qty; };
+    std::vector<Seed> seeds = {
+        {"mineral_tritanium",  "Tritanium",  6.0,   100000},
+        {"mineral_pyerite",    "Pyerite",    10.0,  50000},
+        {"mineral_mexallon",   "Mexallon",   40.0,  20000},
+        {"mineral_nocxidium",  "Nocxidium",  800.0, 5000}
+    };
+
+    int created = 0;
+    for (const auto& s : seeds) {
+        components::MarketHub::Order order;
+        order.order_id = "npc_seed_" + std::to_string(++order_counter_);
+        order.item_id = s.id;
+        order.item_name = s.name;
+        order.owner_id = "npc_market";
+        order.is_buy_order = false;
+        order.price_per_unit = s.price;
+        order.quantity = s.qty;
+        order.quantity_remaining = s.qty;
+        order.duration_remaining = -1.0f;  // permanent
+        order.fulfilled = false;
+        hub->orders.push_back(order);
+        ++created;
+    }
+    return created;
+}
+
 } // namespace systems
 } // namespace atlas
