@@ -41,7 +41,8 @@ public:
 
     /**
      * @brief Set an individual personality trait by name
-     * @param trait One of "aggression", "sociability", "optimism", "professionalism"
+     * @param trait One of "aggression", "sociability", "optimism", "professionalism",
+     *              "loyalty", "paranoia", "ambition", "adaptability"
      * @param value Trait value clamped to [0, 1]
      */
     void setPersonalityTrait(const std::string& entity_id,

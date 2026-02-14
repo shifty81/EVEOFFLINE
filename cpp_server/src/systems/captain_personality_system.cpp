@@ -82,6 +82,39 @@ void CaptainPersonalitySystem::assignPersonality(const std::string& entity_id,
     personality->sociability     = clamp01(base_sociability     + kVariation * deterministicVariation(entity_id, "sociability"));
     personality->optimism        = clamp01(base_optimism        + kVariation * deterministicVariation(entity_id, "optimism"));
     personality->professionalism = clamp01(base_professionalism + kVariation * deterministicVariation(entity_id, "professionalism"));
+
+    // Psychological axes — faction baselines with same variation
+    float base_loyalty      = 0.5f;
+    float base_paranoia     = 0.5f;
+    float base_ambition     = 0.5f;
+    float base_adaptability = 0.5f;
+
+    if (faction == "Solari") {
+        base_loyalty      = 0.7f;
+        base_paranoia     = 0.35f;
+        base_ambition     = 0.6f;
+        base_adaptability = 0.4f;
+    } else if (faction == "Veyren") {
+        base_loyalty      = 0.55f;
+        base_paranoia     = 0.5f;
+        base_ambition     = 0.45f;
+        base_adaptability = 0.65f;
+    } else if (faction == "Aurelian") {
+        base_loyalty      = 0.45f;
+        base_paranoia     = 0.3f;
+        base_ambition     = 0.55f;
+        base_adaptability = 0.75f;
+    } else if (faction == "Keldari") {
+        base_loyalty      = 0.6f;
+        base_paranoia     = 0.7f;
+        base_ambition     = 0.7f;
+        base_adaptability = 0.35f;
+    }
+
+    personality->loyalty      = clamp01(base_loyalty      + kVariation * deterministicVariation(entity_id, "loyalty"));
+    personality->paranoia     = clamp01(base_paranoia     + kVariation * deterministicVariation(entity_id, "paranoia"));
+    personality->ambition     = clamp01(base_ambition     + kVariation * deterministicVariation(entity_id, "ambition"));
+    personality->adaptability = clamp01(base_adaptability + kVariation * deterministicVariation(entity_id, "adaptability"));
 }
 
 void CaptainPersonalitySystem::setPersonalityTrait(const std::string& entity_id,
@@ -103,6 +136,14 @@ void CaptainPersonalitySystem::setPersonalityTrait(const std::string& entity_id,
         personality->optimism = clamped;
     } else if (trait == "professionalism") {
         personality->professionalism = clamped;
+    } else if (trait == "loyalty") {
+        personality->loyalty = clamped;
+    } else if (trait == "paranoia") {
+        personality->paranoia = clamped;
+    } else if (trait == "ambition") {
+        personality->ambition = clamped;
+    } else if (trait == "adaptability") {
+        personality->adaptability = clamped;
     }
 }
 
@@ -118,6 +159,10 @@ float CaptainPersonalitySystem::getPersonalityTrait(const std::string& entity_id
     if (trait == "sociability")     return personality->sociability;
     if (trait == "optimism")        return personality->optimism;
     if (trait == "professionalism") return personality->professionalism;
+    if (trait == "loyalty")         return personality->loyalty;
+    if (trait == "paranoia")        return personality->paranoia;
+    if (trait == "ambition")        return personality->ambition;
+    if (trait == "adaptability")    return personality->adaptability;
 
     return 0.0f;
 }

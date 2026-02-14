@@ -79,10 +79,10 @@ If it fails any one → it doesn't ship.
 > Player + small fleet, captain personalities, basic flight & combat.
 
 - [ ] Fleet system: player + up to 4 captains (max 5 ships)
-- [ ] `SimCaptainPsychologyComponent` (loyalty, aggression, paranoia, ambition)
-- [ ] `AtlasCaptainChatterSystem` — contextual fleet dialogue
-- [ ] Captain morale & memory persistence
-- [ ] Basic formation in warp
+- [x] `SimCaptainPsychologyComponent` (loyalty, aggression, paranoia, ambition)
+- [x] `AtlasCaptainChatterSystem` — contextual fleet dialogue
+- [x] Captain morale & memory persistence
+- [x] Basic formation in warp
 - [ ] Ship fitting system (high/mid/low slots)
 - [ ] Skill system fundamentals
 - [ ] Mining mechanics (asteroid fields, ore extraction)

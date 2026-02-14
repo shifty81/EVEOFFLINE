@@ -150,5 +150,124 @@ int FleetChatterSystem::getTotalLinesSpoken(const std::string& entity_id) const 
     return chatter->lines_spoken_total;
 }
 
+// ---------------------------------------------------------------------------
+// Personality-contextual line pools
+// ---------------------------------------------------------------------------
+
+// Dominant-trait categories: aggressive, cautious, optimistic, professional
+static const std::vector<std::string>& getAggressivePool(const std::string& activity) {
+    static const std::vector<std::string> combat = {
+        "Let me at them!", "More targets — good.", "Weapons hot, always.",
+        "They won't know what hit them.", "I live for this."
+    };
+    static const std::vector<std::string> other = {
+        "When's the next fight?", "This peace won't last.",
+        "I'd rather be shooting.", "Staying sharp, boss.", "Ready for anything."
+    };
+    if (activity == "Combat") return combat;
+    return other;
+}
+
+static const std::vector<std::string>& getCautiousPool(const std::string& activity) {
+    static const std::vector<std::string> combat = {
+        "Careful now.", "Watch the flanks.", "Don't overcommit.",
+        "We should pull back if this gets worse.", "Shields first."
+    };
+    static const std::vector<std::string> other = {
+        "I don't like the look of this sector.", "Stay alert.",
+        "Something feels off.", "Let's not linger.", "Running diagnostics."
+    };
+    if (activity == "Combat") return combat;
+    return other;
+}
+
+static const std::vector<std::string>& getOptimisticPool(const std::string& activity) {
+    static const std::vector<std::string> combat = {
+        "We've got this!", "Almost there!", "Together we're unstoppable!",
+        "Just a scratch!", "Victory's close, I can feel it."
+    };
+    static const std::vector<std::string> other = {
+        "Beautiful day for flying.", "Things are looking up.",
+        "Glad to be out here with you.", "Could be worse, right?", "Onward and upward."
+    };
+    if (activity == "Combat") return combat;
+    return other;
+}
+
+static const std::vector<std::string>& getProfessionalPool(const std::string& activity) {
+    static const std::vector<std::string> combat = {
+        "Engaging hostiles, standing by.", "Target acquired.",
+        "Damage report coming.", "Maintaining formation.", "Copy that, commander."
+    };
+    static const std::vector<std::string> other = {
+        "All systems nominal.", "Awaiting orders.",
+        "Course steady.", "Proceeding as planned.", "Status green."
+    };
+    if (activity == "Combat") return combat;
+    return other;
+}
+
+static const std::vector<std::string>& getPersonalityPool(
+    const components::CaptainPersonality& p, const std::string& activity) {
+
+    // Pick the dominant trait
+    float maxTrait = p.aggression;
+    int dominant = 0; // 0=aggressive, 1=cautious(paranoia), 2=optimistic, 3=professional
+    if (p.paranoia > maxTrait) { maxTrait = p.paranoia; dominant = 1; }
+    if (p.optimism > maxTrait) { maxTrait = p.optimism; dominant = 2; }
+    if (p.professionalism > maxTrait) { maxTrait = p.professionalism; dominant = 3; }
+
+    switch (dominant) {
+        case 0: return getAggressivePool(activity);
+        case 1: return getCautiousPool(activity);
+        case 2: return getOptimisticPool(activity);
+        case 3: return getProfessionalPool(activity);
+        default: return getAggressivePool(activity);
+    }
+}
+
+std::string FleetChatterSystem::getContextualLine(const std::string& entity_id) {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return "";
+
+    auto* chatter = entity->getComponent<components::FleetChatterState>();
+    if (!chatter) {
+        entity->addComponent(std::make_unique<components::FleetChatterState>());
+        chatter = entity->getComponent<components::FleetChatterState>();
+    }
+
+    if (chatter->chatter_cooldown > 0.0f) {
+        return "";
+    }
+
+    auto* personality = entity->getComponent<components::CaptainPersonality>();
+    if (!personality) {
+        // Fall back to generic pool
+        return getNextChatterLine(entity_id);
+    }
+
+    const auto& pool = getPersonalityPool(*personality, chatter->current_activity);
+    if (pool.empty()) return "";
+
+    std::hash<std::string> hasher;
+    size_t hash_val = hasher(entity_id) + static_cast<size_t>(chatter->lines_spoken_total);
+    size_t index = hash_val % pool.size();
+
+    // Personality-based cooldown (same formula as generic path)
+    float base_cooldown = 25.0f;
+    if (personality->sociability < 0.3f) {
+        base_cooldown *= 2.0f;
+    }
+    float range_offset = (1.0f - personality->optimism) * 20.0f;
+    base_cooldown += range_offset;
+
+    chatter->chatter_cooldown = base_cooldown;
+    chatter->lines_spoken_total++;
+    chatter->last_line_spoken = pool[index];
+    chatter->is_speaking = true;
+
+    return pool[index];
+}
+
 } // namespace systems
 } // namespace atlas

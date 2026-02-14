@@ -1086,13 +1086,26 @@ public:
 
 /**
  * @brief Personality axes for AI fleet captains
+ *
+ * Eight axes capturing both behavioural style and deeper psychology.
+ * The original four (aggression, sociability, optimism, professionalism)
+ * describe observable behaviour; the new four (loyalty, paranoia, ambition,
+ * adaptability) drive long-term decision making and relationship dynamics.
  */
 class CaptainPersonality : public ecs::Component {
 public:
+    // Behavioural axes
     float aggression = 0.5f;        // 0=cautious, 1=bold
     float sociability = 0.5f;       // 0=quiet, 1=talkative
     float optimism = 0.5f;          // 0=grim, 1=hopeful
     float professionalism = 0.5f;   // 0=casual, 1=formal
+
+    // Psychological axes (Phase 1)
+    float loyalty = 0.5f;           // 0=self-serving, 1=devoted to fleet
+    float paranoia = 0.5f;          // 0=trusting, 1=suspicious/cautious
+    float ambition = 0.5f;          // 0=content, 1=driven/power-seeking
+    float adaptability = 0.5f;      // 0=rigid, 1=flexible
+
     std::string captain_name;
     std::string faction;            // Solari, Veyren, Aurelian, Keldari
 
@@ -1397,6 +1410,69 @@ public:
     }
 
     COMPONENT_TYPE(SystemResources)
+};
+
+/**
+ * @brief Fleet formation assignment for an entity
+ *
+ * Stores the formation type the fleet is using and this member's
+ * computed offset relative to the fleet commander.
+ */
+class FleetFormation : public ecs::Component {
+public:
+    enum class FormationType { None, Arrow, Line, Wedge, Spread, Diamond };
+
+    FormationType formation = FormationType::Arrow;
+    int slot_index = 0;           // position within the formation (0 = leader)
+    float offset_x = 0.0f;       // metres relative to commander
+    float offset_y = 0.0f;
+    float offset_z = 0.0f;
+
+    COMPONENT_TYPE(FleetFormation)
+};
+
+/**
+ * @brief Persistent memory for an AI fleet captain
+ *
+ * Records significant events so the captain can reference them in chatter
+ * and factor them into personality-driven decisions.
+ */
+class CaptainMemory : public ecs::Component {
+public:
+    struct MemoryEntry {
+        std::string event_type;     // "combat_win", "combat_loss", "ship_lost", "saved_by_player", "warp_anomaly"
+        std::string context;        // free-form detail (e.g. enemy name)
+        float timestamp = 0.0f;     // in-game seconds since session start
+        float emotional_weight = 0.0f; // -1=traumatic, +1=uplifting
+    };
+
+    std::vector<MemoryEntry> memories;
+    int max_memories = 50;          // cap to prevent unbounded growth
+
+    void addMemory(const std::string& event, const std::string& ctx,
+                   float time, float weight) {
+        if (static_cast<int>(memories.size()) >= max_memories) {
+            memories.erase(memories.begin()); // drop oldest
+        }
+        memories.push_back({event, ctx, time, weight});
+    }
+
+    int countByType(const std::string& event_type) const {
+        int n = 0;
+        for (const auto& m : memories) {
+            if (m.event_type == event_type) ++n;
+        }
+        return n;
+    }
+
+    float averageWeight() const {
+        if (memories.empty()) return 0.0f;
+        float sum = 0.0f;
+        for (const auto& m : memories) sum += m.emotional_weight;
+        return sum / static_cast<float>(memories.size());
+    }
+
+    COMPONENT_TYPE(CaptainMemory)
 };
 
 } // namespace components

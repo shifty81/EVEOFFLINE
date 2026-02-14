@@ -19,6 +19,15 @@ public:
     std::string getNextChatterLine(const std::string& entity_id);
     bool isOnCooldown(const std::string& entity_id) const;
     int getTotalLinesSpoken(const std::string& entity_id) const;
+
+    /**
+     * @brief Get a personality-contextual chatter line
+     *
+     * Picks from a richer line pool filtered by the captain's dominant
+     * personality trait, falling back to the generic activity pool when
+     * no personality component is present.
+     */
+    std::string getContextualLine(const std::string& entity_id);
 };
 
 } // namespace systems
