@@ -71,7 +71,7 @@ If it fails any one → it doesn't ship.
 - [x] Deferred rendering pipeline
 - [x] Shadow mapping
 - [x] Post-processing effects
-- [ ] **Fix: Title screen buttons clickable** (consumeMouse ordering)
+- [x] **Fix: Title screen buttons clickable** (consumeMouse ordering)
 - [ ] Warp visual effects (tunnel shader stack)
 - [ ] Basic combat loop (lock, fire, damage)
 
