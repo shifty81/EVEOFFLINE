@@ -1612,6 +1612,25 @@ public:
     COMPONENT_TYPE(Scanner)
 };
 
+/**
+ * @brief Per-system difficulty modifier based on security status
+ *
+ * Attached to solar system entities.  Scales NPC stats, spawn rates,
+ * and loot quality based on the zone's security level.
+ */
+class DifficultyZone : public ecs::Component {
+public:
+    float security_status = 0.5f;        // 1.0 highsec → 0.0 nullsec
+    float npc_hp_multiplier = 1.0f;      // applied to NPC health pools
+    float npc_damage_multiplier = 1.0f;  // applied to NPC weapon damage
+    float spawn_rate_multiplier = 1.0f;  // controls how often NPCs respawn
+    float loot_quality_multiplier = 1.0f; // scales loot drop quality
+    float ore_richness_multiplier = 1.0f; // scales mining yield
+    int max_npc_tier = 1;                // highest NPC tier that can spawn (1-5)
+
+    COMPONENT_TYPE(DifficultyZone)
+};
+
 } // namespace components
 } // namespace atlas
 
