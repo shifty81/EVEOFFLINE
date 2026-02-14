@@ -72,8 +72,8 @@ If it fails any one → it doesn't ship.
 - [x] Shadow mapping
 - [x] Post-processing effects
 - [x] **Fix: Title screen buttons clickable** (consumeMouse ordering)
-- [ ] Warp visual effects (tunnel shader stack)
-- [ ] Basic combat loop (lock, fire, damage)
+- [x] Warp visual effects (tunnel shader stack)
+- [x] Basic combat loop (lock, fire, damage)
 
 ### Phase 1: Core Fleet (v0.1–v0.2)
 > Player + small fleet, captain personalities, basic flight & combat.

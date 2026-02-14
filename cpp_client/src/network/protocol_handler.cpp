@@ -105,6 +105,19 @@ std::string ProtocolHandler::createInventoryJettisonMessage(const std::string& i
     return createMessage("inventory_jettison", data.dump());
 }
 
+// Target lock/unlock messages
+std::string ProtocolHandler::createTargetLockMessage(const std::string& targetId) {
+    json data;
+    data["target_id"] = targetId;
+    return createMessage("target_lock", data.dump());
+}
+
+std::string ProtocolHandler::createTargetUnlockMessage(const std::string& targetId) {
+    json data;
+    data["target_id"] = targetId;
+    return createMessage("target_unlock", data.dump());
+}
+
 // Module fitting messages
 std::string ProtocolHandler::createModuleFitMessage(const std::string& moduleId, 
                                                    const std::string& slotType, int slotIndex) {
@@ -122,9 +135,12 @@ std::string ProtocolHandler::createModuleUnfitMessage(const std::string& slotTyp
     return createMessage("module_unfit", data.dump());
 }
 
-std::string ProtocolHandler::createModuleActivateMessage(int slotIndex) {
+std::string ProtocolHandler::createModuleActivateMessage(int slotIndex, const std::string& targetId) {
     json data;
     data["slot_index"] = slotIndex;
+    if (!targetId.empty()) {
+        data["target_id"] = targetId;
+    }
     return createMessage("module_activate", data.dump());
 }
 
