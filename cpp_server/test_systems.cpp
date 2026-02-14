@@ -8343,7 +8343,7 @@ void testPlayerFleetMaxCap() {
         fleetSys.assignCaptain(fid, cid, "Captain " + std::to_string(i));
     }
 
-    // 5th captain should fail
+    // Adding another captain should fail when fleet is at capacity (1 player + 4 captains = 5)
     auto* extra = world.createEntity("captain5");
     addComp<components::Position>(extra);
     bool ok = fleetSys.assignCaptain(fid, "captain5", "Extra Captain");
