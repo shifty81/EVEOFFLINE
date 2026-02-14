@@ -3124,6 +3124,60 @@ void testAtlasTitleScreenBasics() {
     assertTrue(!quitCalled, "Quit callback not called on registration");
 }
 
+void testAtlasTitleScreenButtonsClickable() {
+    std::cout << "\n=== AtlasTitleScreen: Buttons Clickable ===" << std::endl;
+
+    // Verify that title screen buttons receive clicks even though
+    // the full-screen background is drawn first.  The mouse should
+    // only be consumed AFTER widgets process input.
+
+    atlas::AtlasContext ctx;
+    ctx.init();
+
+    atlas::AtlasTitleScreen titleScreen;
+    bool playCalled = false;
+    titleScreen.setPlayCallback([&]() { playCalled = true; });
+
+    // Compute the center of the "Undock" button for a 1920×1080 window.
+    // Layout: sidebar=56, menuWidth=320, buttonHeight=40
+    // contentX = 56, contentW = 1920-56 = 1864
+    // menuX = 56 + (1864-320)*0.5 = 828
+    // menuY = 1080 * 0.4 = 432
+    // Button center: (828+160, 432+20) = (988, 452)
+    float btnCenterX = 988.0f;
+    float btnCenterY = 452.0f;
+
+    // Frame 1: click (press) on the Undock button
+    {
+        atlas::InputState input{};
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {btnCenterX, btnCenterY};
+        input.mouseClicked[0] = true;
+        input.mouseDown[0] = true;
+        ctx.beginFrame(input);
+        titleScreen.render(ctx);
+        ctx.endFrame();
+    }
+
+    // Frame 2: release on the Undock button (click completes)
+    {
+        atlas::InputState input{};
+        input.windowW = 1920;
+        input.windowH = 1080;
+        input.mousePos = {btnCenterX, btnCenterY};
+        input.mouseReleased[0] = true;
+        ctx.beginFrame(input);
+        titleScreen.render(ctx);
+        ctx.endFrame();
+    }
+
+    assertTrue(playCalled, "Title screen Undock button is clickable");
+    assertTrue(!titleScreen.isActive(), "Title screen deactivated after Undock click");
+
+    ctx.shutdown();
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "Atlas UI System Tests" << std::endl;
@@ -3239,6 +3293,7 @@ int main() {
 
     // ── Atlas Title Screen tests ────────────────────────────────────────
     testAtlasTitleScreenBasics();
+    testAtlasTitleScreenButtonsClickable();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun
