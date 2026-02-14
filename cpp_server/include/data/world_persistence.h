@@ -11,7 +11,10 @@ namespace data {
  * @brief Serializes and deserializes world state for persistent worlds
  *
  * Saves all entity data (position, velocity, health, capacitor, ship,
- * faction, AI, weapon, target, wormhole, fleet membership) to a JSON
+ * faction, AI, weapon, target, wormhole, fleet membership, station,
+ * docked, wreck, captain personality, fleet morale, captain relationship,
+ * emotional state, captain memory, fleet formation, fleet cargo pool,
+ * rumor log, mineral deposit, system resources, market hub) to a JSON
  * file and restores it on load.
  */
 class WorldPersistence {
