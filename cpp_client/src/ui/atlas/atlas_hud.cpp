@@ -96,6 +96,9 @@ void AtlasHUD::init(int windowW, int windowH) {
 
     m_probeScannerState.bounds = {420.0f, 300.0f, 380.0f, 420.0f};
     m_probeScannerState.open = false;
+
+    m_characterState.bounds = {50.0f, 50.0f, 340.0f, 480.0f};
+    m_characterState.open = false;
 }
 
 void AtlasHUD::update(AtlasContext& ctx,
@@ -166,6 +169,7 @@ void AtlasHUD::update(AtlasContext& ctx,
     drawDockablePanel(ctx, "Chat", m_chatState);
     drawDockablePanel(ctx, "Drones", m_dronePanelState);
     drawDockablePanel(ctx, "Probe Scanner", m_probeScannerState);
+    drawDockablePanel(ctx, "Character Sheet", m_characterState);
 
     // 12. Damage flashes (on top of everything)
     float winW = static_cast<float>(ctx.input().windowW);
@@ -1025,6 +1029,87 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
 
                 y += 16.0f;
             }
+        }
+
+    } else if (titleStr == "Character Sheet") {
+        // Character name header
+        r.drawText(m_characterData.characterName, Vec2(x, y), t.accentPrimary, 1.0f);
+        y += 18.0f;
+
+        // Race / Bloodline
+        char raceBuf[128];
+        if (!m_characterData.bloodline.empty()) {
+            std::snprintf(raceBuf, sizeof(raceBuf), "%s - %s",
+                          m_characterData.race.c_str(), m_characterData.bloodline.c_str());
+        } else {
+            std::snprintf(raceBuf, sizeof(raceBuf), "%s", m_characterData.race.c_str());
+        }
+        r.drawText(raceBuf, Vec2(x, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+
+        // Corporation
+        char corpBuf[128];
+        std::snprintf(corpBuf, sizeof(corpBuf), "Corp: %s", m_characterData.corporation.c_str());
+        r.drawText(corpBuf, Vec2(x, y), t.textSecondary, 1.0f);
+        y += 20.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Wallet
+        char iskBuf[64];
+        std::snprintf(iskBuf, sizeof(iskBuf), "Wallet: %.2f ISK", m_characterData.walletISK);
+        r.drawText(iskBuf, Vec2(x, y), t.warning, 1.0f);
+        y += 18.0f;
+
+        // Total SP
+        char spBuf[64];
+        std::snprintf(spBuf, sizeof(spBuf), "Skill Points: %.0f", m_characterData.totalSP);
+        r.drawText(spBuf, Vec2(x, y), t.accentSecondary, 1.0f);
+        y += 18.0f;
+
+        // Security status
+        char secBuf[64];
+        std::snprintf(secBuf, sizeof(secBuf), "Security Status: %.2f", m_characterData.securityStatus);
+        Color secColor = m_characterData.securityStatus >= 0.0f ? t.success : t.danger;
+        r.drawText(secBuf, Vec2(x, y), secColor, 1.0f);
+        y += 18.0f;
+
+        // Clone grade
+        char cloneBuf[64];
+        std::snprintf(cloneBuf, sizeof(cloneBuf), "Clone: %s", m_characterData.cloneGrade.c_str());
+        r.drawText(cloneBuf, Vec2(x, y), t.textSecondary, 1.0f);
+        y += 20.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Attributes section
+        r.drawText("Attributes", Vec2(x, y), t.textPrimary, 1.0f);
+        y += 18.0f;
+
+        struct AttrDef { const char* name; int value; };
+        AttrDef attrs[] = {
+            {"Intelligence", m_characterData.intelligence},
+            {"Perception",   m_characterData.perception},
+            {"Charisma",     m_characterData.charisma},
+            {"Willpower",    m_characterData.willpower},
+            {"Memory",       m_characterData.memory},
+        };
+
+        for (const auto& attr : attrs) {
+            if (y > maxY - 16.0f) break;
+            char attrBuf[64];
+            std::snprintf(attrBuf, sizeof(attrBuf), "%-14s %d", attr.name, attr.value);
+            r.drawText(attrBuf, Vec2(x + 8.0f, y), t.textSecondary, 1.0f);
+
+            // Attribute bar
+            float barX2 = x + contentW * 0.65f;
+            float barW2 = contentW * 0.3f;
+            float attrFrac = static_cast<float>(attr.value) / 30.0f;
+            Rect attrBar(barX2, y + 2.0f, barW2, 10.0f);
+            r.drawProgressBar(attrBar, attrFrac, t.accentPrimary, t.bgHeader);
+            y += 16.0f;
         }
 
     } else {

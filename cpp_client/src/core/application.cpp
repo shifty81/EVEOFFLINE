@@ -127,6 +127,10 @@ void Application::initialize() {
     m_atlasHUD->setSidebarCallback([this](int icon) {
         std::cout << "[Neocom] Sidebar icon " << icon << " clicked" << std::endl;
         switch (icon) {
+            case -1:
+                std::cout << "[Neocom] Toggle Character Sheet" << std::endl;
+                m_atlasHUD->toggleCharacter();
+                break;
             case 0:
                 std::cout << "[Neocom] Toggle Inventory" << std::endl;
                 m_atlasHUD->toggleInventory();

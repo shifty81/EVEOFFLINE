@@ -108,6 +108,7 @@ public:
     void toggleChat()          { m_chatState.open = !m_chatState.open; }
     void toggleDronePanel()    { m_dronePanelState.open = !m_dronePanelState.open; }
     void toggleProbeScanner()  { m_probeScannerState.open = !m_probeScannerState.open; }
+    void toggleCharacter()     { m_characterState.open = !m_characterState.open; }
 
     bool isOverviewOpen()      const { return m_overviewState.open; }
     bool isSelectedItemOpen()  const { return m_selectedItemState.open; }
@@ -119,6 +120,7 @@ public:
     bool isChatOpen()          const { return m_chatState.open; }
     bool isDronePanelOpen()    const { return m_dronePanelState.open; }
     bool isProbeScannerOpen()  const { return m_probeScannerState.open; }
+    bool isCharacterOpen()     const { return m_characterState.open; }
 
     // ── Sidebar callback ──────────────────────────────────────────────
 
@@ -319,6 +321,28 @@ public:
     /** Get active fleet broadcasts (read-only). */
     const std::vector<FleetBroadcast>& getFleetBroadcasts() const { return m_broadcasts; }
 
+    // ── Character Sheet data ────────────────────────────────────────
+
+    struct CharacterSheetData {
+        std::string characterName = "Capsuleer";
+        std::string race          = "Caldari";
+        std::string bloodline;
+        std::string corporation   = "NPC Corp";
+        std::string cloneGrade    = "Alpha";
+        float securityStatus      = 0.0f;
+        double totalSP            = 0.0;
+        double walletISK          = 0.0;
+        int intelligence = 20;
+        int perception   = 20;
+        int charisma     = 19;
+        int willpower    = 20;
+        int memory       = 20;
+    };
+
+    /** Set character sheet data. */
+    void setCharacterSheet(const CharacterSheetData& data) { m_characterData = data; }
+    const CharacterSheetData& getCharacterSheet() const { return m_characterData; }
+
 private:
     // Panel states (persistent across frames)
     PanelState m_overviewState;
@@ -332,6 +356,7 @@ private:
     PanelState m_chatState;
     PanelState m_dronePanelState;
     PanelState m_probeScannerState;
+    PanelState m_characterState;
 
     // Sidebar config
     float m_sidebarWidth = 40.0f;
@@ -420,6 +445,9 @@ private:
     int m_probeCount = 8;
     float m_probeRange = 8.0f;
     std::vector<ProbeScanEntry> m_probeScanResults;
+
+    // Character sheet data
+    CharacterSheetData m_characterData;
 
     // Internal draw helpers for new features
     void drawCombatLog(AtlasContext& ctx);
