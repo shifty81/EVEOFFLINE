@@ -70,6 +70,20 @@ cmake --build . --config Release
 
 ```
 Atlas/
+├── engine/                # ★ Atlas Engine — generic, game-agnostic core
+│   ├── core/              #   Engine bootstrap, logging, config
+│   ├── ecs/               #   Entity/Component/System framework
+│   ├── graphvm/           #   Deterministic Graph VM + compiler
+│   ├── assets/            #   Asset registry, binary format, hot reload
+│   ├── net/               #   Networking (CS + P2P + lockstep/rollback)
+│   ├── sim/               #   Tick scheduler, deterministic simulation
+│   └── world/             #   World layouts (cube-sphere, voxel grid)
+├── editor/                # ★ Atlas Editor — authoring tool
+│   ├── ui/                #   Docking, layout, panel system
+│   ├── panels/            #   ECS Inspector, Net Inspector, Console
+│   ├── tools/             #   Game Packager, Asset Cooker
+│   └── ai/                #   AI Aggregator for asset generation
+├── atlas_tests/           # Atlas Engine unit tests
 ├── cpp_client/            # C++ OpenGL game client
 │   ├── src/               #   Source (core, rendering, network, ui, audio)
 │   ├── include/           #   Headers
@@ -92,6 +106,7 @@ Atlas/
 ├── tools/                 # Utilities (ship creator, JSON validator, Blender addon)
 │   └── BlenderSpaceshipGenerator/  # Blender addon for procedural ship/station generation
 ├── archive/               # Legacy code & deprecated files
+├── ATLAS_INTEGRATION.md   # ★ Atlas Engine integration guide
 ├── CMakeLists.txt         # Root build configuration
 ├── build.sh / build.bat   # Build scripts
 └── Makefile               # Development task shortcuts
@@ -138,6 +153,37 @@ if (atlas::panelBegin(ctx, "My Panel", panelBounds)) {
 atlas::panelEnd(ctx);
 
 ctx.endFrame();
+```
+
+---
+
+## 🔩 Atlas Engine
+
+This project includes the **Atlas Engine** — a modular, data-driven game engine core that powers both the client and server. The engine is designed to be game-agnostic and will eventually become its own standalone repository at [github.com/shifty81/Atlas](https://github.com/shifty81/Atlas).
+
+**→ [Atlas Integration Guide](ATLAS_INTEGRATION.md)**
+
+### Engine Components
+
+| Module | Description |
+|--------|-------------|
+| **ECS** | Entity/Component/System framework with type-safe component management |
+| **Graph VM** | Deterministic bytecode virtual machine for gameplay logic |
+| **Asset System** | Binary asset format, registry, hot reload |
+| **Networking** | Client-Server + P2P, lockstep/rollback, peer management |
+| **Simulation** | Fixed-rate tick scheduler, deterministic time |
+| **World Gen** | Cube-sphere (planetary) and voxel grid layouts with LOD |
+| **Editor** | Panel docking, ECS inspector, console, game packager |
+
+### Build Atlas Engine Tests
+
+```bash
+make test-engine
+# or
+mkdir build && cd build
+cmake .. -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF
+cmake --build .
+./atlas_tests/AtlasTests
 ```
 
 ---
@@ -252,6 +298,7 @@ See the [Modding Guide](docs/MODDING_GUIDE.md) for details.
 | Category | Links |
 |----------|-------|
 | **Get Started** | [Tutorial](docs/TUTORIAL.md) · [Build Guides](docs/guides/) |
+| **Atlas Engine** | [Integration Guide](ATLAS_INTEGRATION.md) · [Atlas Repo](https://github.com/shifty81/Atlas) |
 | **Atlas UI** | [Atlas UI Docs](docs/atlas-ui/README.md) · [Widget Reference](docs/atlas-ui/WIDGETS.md) |
 | **Development** | [Roadmap](docs/ROADMAP.md) · [Contributing](docs/CONTRIBUTING.md) |
 | **Design** | [Game Design](docs/design/DESIGN.md) · [Ship Modeling](docs/SHIP_MODELING.md) |

@@ -68,8 +68,19 @@ docs: ## Show documentation location
 	@echo ""
 	@ls -1 docs/*.md 2>/dev/null || true
 
+.PHONY: build-engine
+build-engine: ## Build Atlas Engine library only
+	@mkdir -p build
+	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF -DBUILD_ATLAS_TESTS=OFF && cmake --build . --config Release --target AtlasEngine -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+
 .PHONY: test
-test: test-server ## Run all tests
+test: test-server test-engine ## Run all tests
+
+.PHONY: test-engine
+test-engine: ## Build and run Atlas Engine tests
+	@mkdir -p build
+	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF && cmake --build . --config Release --target AtlasTests -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
+	cd build && ./atlas_tests/AtlasTests
 
 .PHONY: test-server
 test-server: ## Build and run C++ server tests
