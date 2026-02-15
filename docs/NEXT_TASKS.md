@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 15, 2026)**: **Vertical Slice Phase 5 IN PROGRESS**. Server persistence lifecycle complete — `loadWorld()` on startup and `saveWorld()` on shutdown. 100-ship persistence stress test, fleet state file round-trip test, and economy state file round-trip test all passing. FleetFormation `spacing_modifier` serialization bug fixed. Atlas Engine future plans referenced from commit [`033f2f8`](https://github.com/shifty81/EVEOFFLINE/commit/033f2f8e222e7bfa0f853123ed902c23d98c307a). 65 new test assertions. **1802 test assertions passing**.
+
 > **Update (February 15, 2026)**: **Vertical Slice Phase 4 COMPLETE**. Mission protocol messages added (MISSION_LIST, ACCEPT_MISSION, ABANDON_MISSION, MISSION_PROGRESS, MISSION_RESULT). GameSession handlers wired to MissionSystem and MissionGeneratorSystem for mission listing, acceptance, abandonment, and progress tracking. Client-side ProtocolHandler and NetworkManager updated with mission operations and MissionResponse callback. AI defensive behavior implemented — patrol NPCs with Defensive behavior protect friendly entities under attack based on faction reputation. 25 new test assertions. **1737 test assertions passing**.
 
 > **Update (February 15, 2026)**: **Vertical Slice Phase 3 COMPLETE**. Scanner UI panel (scanner.rml) created with probe status, scan progress bar, start/stop controls, and anomaly results table. ANOMALY type added to client Celestial enum with VisualCue support (Shimmer, ParticleCloud, EnergyPulse, GravityLens, ElectricArc). SolarSystemScene extended with addAnomaly/removeAnomaly/getAnomalies/updateAnomalySignal methods. End-to-end scan → discover → warp integration tests added. 22 new test assertions. **1711 test assertions passing**.
@@ -39,7 +41,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 NEARLY COMPLETE**. **Phase 3 ✅ COMPLETE**. **Phase 4 ✅ COMPLETE**: Mission protocol, GameSession mission wiring, AI defensive behavior. **1737 test assertions passing**.
+**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 NEARLY COMPLETE**. **Phase 3 ✅ COMPLETE**. **Phase 4 ✅ COMPLETE**. **Phase 5 🚧 IN PROGRESS**: Server persistence lifecycle, stress tests, FleetFormation fix. **1802 test assertions passing**.
 
 ## Current Status (February 2026)
 
@@ -66,7 +68,7 @@
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **31 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage, Mining, Refining)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **200+ test functions** all passing (1737 assertions)
+- **200+ test functions** all passing (1802 assertions)
 - **Mining drones** and **salvage drones** with full cycle-based behavior
 - **AI mining NPCs** with deposit discovery, approach, and mining lifecycle
 - **Zero security vulnerabilities** (CodeQL verified)

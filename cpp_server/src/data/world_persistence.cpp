@@ -619,6 +619,7 @@ std::string WorldPersistence::serializeEntity(
              << ",\"offset_x\":" << ff->offset_x
              << ",\"offset_y\":" << ff->offset_y
              << ",\"offset_z\":" << ff->offset_z
+             << ",\"spacing_modifier\":" << ff->spacing_modifier
              << "}";
     }
 
@@ -1570,6 +1571,7 @@ bool WorldPersistence::deserializeEntity(ecs::World* world,
         ff->offset_x   = extractFloat(ff_json, "\"offset_x\":", 0.0f);
         ff->offset_y   = extractFloat(ff_json, "\"offset_y\":", 0.0f);
         ff->offset_z   = extractFloat(ff_json, "\"offset_z\":", 0.0f);
+        ff->spacing_modifier = extractFloat(ff_json, "\"spacing_modifier\":", 1.0f);
         entity->addComponent(std::move(ff));
     }
 

@@ -7,7 +7,7 @@
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
 - **31 C++ server systems** fully implemented
-- **1737 test assertions** all passing
+- **1802 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 
@@ -294,14 +294,21 @@ This is the most important next step for the project. All foundational systems a
 
 ### Vertical Slice Phase 5 (Weeks 13-16): Persistence & Stress Testing
 
-**Status**: NOT STARTED
+**Status**: 🚧 IN PROGRESS
 
-**Tasks**:
-- Save/load system state (use existing WorldPersistence)
-- Fleet state persistence
-- Economy persistence
-- LOD & impostors for large battles
-- 100+ ship fleet stress test
+**Completed (February 15, 2026)**:
+- ✅ Server load-on-startup: `loadWorld()` called during `Server::initialize()` when `persistent_world` is enabled
+- ✅ Server save-on-shutdown: `saveWorld()` called during `Server::stop()` for graceful shutdown
+- ✅ 100+ entity persistence stress test: 100 ships with Position, Health, Ship, AI, LODPriority save/load/verify (14 assertions)
+- ✅ Fleet state file persistence test: FleetMembership, FleetFormation, FleetMorale, FleetCargoPool round-trip via file I/O (25 assertions)
+- ✅ Economy state file persistence test: MarketHub orders, MineralDeposit, SystemResources round-trip via file I/O (21 assertions)
+- ✅ Bug fix: FleetFormation `spacing_modifier` field was not serialized — added to WorldPersistence serialize/deserialize
+- ✅ **1802 test assertions passing**
+
+**Remaining**:
+- LOD & impostors for large battles (server-side culling)
+- 100+ ship fleet stress test with full tick simulation
+- Save file compression (JSON → binary/compressed format)
 
 **Dependencies**: Phase 4 complete
 
@@ -398,7 +405,7 @@ If the vertical slice is not the immediate priority, here are other valuable tas
 - `docs/guides/` - Build and setup guides
 
 **Testing**:
-- Server tests: `cd cpp_server/build && ctest` (1737 assertions)
+- Server tests: `cd cpp_server/build && ctest` (1802 assertions)
 - Client tests: Manual testing required (OpenGL dependency)
 
 **CI/CD**:
@@ -408,5 +415,38 @@ If the vertical slice is not the immediate priority, here are other valuable tas
 
 ---
 
-*Last Updated: February 11, 2026*  
-*Next Review: After Task 1.1 completion*
+## Atlas Engine Future Plans
+
+> **Reference**: Commit [`033f2f8`](https://github.com/shifty81/EVEOFFLINE/commit/033f2f8e222e7bfa0f853123ed902c23d98c307a) — "atlas plans for future" — captures the full Atlas Engine roadmap and design discussion.
+
+The Atlas Engine (in `engine/` and `editor/`) has its own development roadmap tracked at the [Atlas repository](https://github.com/shifty81/Atlas). The engine's future phases directly impact EVEOFFLINE's capabilities:
+
+### Atlas Engine Phases (from [Atlas Roadmap](https://github.com/shifty81/Atlas/blob/main/docs/09_DEVELOPMENT_ROADMAP.md))
+
+| Phase | Status | Impact on EVEOFFLINE |
+|-------|--------|---------------------|
+| **Phase 1 — Core Engine** | ✅ Done | ECS, Graph VM, Asset system — all operational |
+| **Phase 2 — Editor** | ✅ Done | Panel docking, ECS inspector, console |
+| **Phase 3 — Networking** | ✅ Done | NetContext, lockstep/rollback, replication |
+| **Phase 4 — World Gen** | 🔧 Active | Terrain mesh, noise nodes, world streaming, galaxy gen |
+| **Phase 5 — Gameplay** | 📋 Planned | Mechanic assets, camera, input mapping, physics, audio |
+| **Phase 6 — Production** | 🔧 Active | Game packager, asset cooker, mod loader, platform targeting |
+| **Phase 7 — Polish** | 📋 Planned | Undo/redo, profiler panels, replay recorder |
+
+### Atlas Development Tracks
+
+Four parallel tracks have been defined for Atlas engine work:
+
+1. **World Generation Graph APIs** — WorldGraph, WorldNode, WorldGenContext interfaces for deterministic, chunk-based procedural generation with typed ports and graph compilation
+2. **API Cleanup & Hardening** — Explicit public/internal headers, context-based architecture replacing singletons, clear system responsibilities
+3. **Documentation Expansion** — Architecture docs, living specs, API references, editor walkthroughs
+4. **Editor Tool Improvements** — World graph editor UI, live preview per node, ECS inspector with live values, chunk heatmaps
+
+### Sync Strategy
+
+The `engine/` and `editor/` directories in this repo mirror the Atlas repo. Changes flow both ways during co-development. Once the Atlas repo matures, these will be consumed via git submodule or CMake `FetchContent`. See [ATLAS_INTEGRATION.md](../ATLAS_INTEGRATION.md) for details.
+
+---
+
+*Last Updated: February 15, 2026*  
+*Next Review: After Phase 5 completion*
