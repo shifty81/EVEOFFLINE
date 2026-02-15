@@ -10,6 +10,15 @@
 namespace atlas {
 namespace systems {
 
+// Timing and scoring constants
+static constexpr float kMinCooldown = 20.0f;
+static constexpr float kMaxCooldown = 45.0f;
+static constexpr float kSilenceCooldown = 45.0f;
+static constexpr float kSilenceThreshold = 120.0f;
+static constexpr float kTaskMismatchPenalty = 10.0f;
+static constexpr float kRumorReinforcementDelta = 0.1f;
+static constexpr float kSecondHandBeliefMultiplier = 0.5f;
+
 // Chatter line pools per activity
 static const std::vector<std::string>& getPool(const std::string& activity) {
     static const std::vector<std::string> warp_lines = {
@@ -130,7 +139,7 @@ std::string FleetChatterSystem::getNextChatterLine(const std::string& entity_id)
     }
 
     // Clamp cooldown to 20-45s timing rule
-    base_cooldown = std::clamp(base_cooldown, 20.0f, 45.0f);
+    base_cooldown = std::clamp(base_cooldown, kMinCooldown, kMaxCooldown);
 
     chatter->chatter_cooldown = base_cooldown;
     chatter->lines_spoken_total++;
@@ -278,7 +287,7 @@ std::string FleetChatterSystem::getContextualLine(const std::string& entity_id) 
     base_cooldown += range_offset;
 
     // Clamp cooldown to 20-45s timing rule
-    base_cooldown = std::clamp(base_cooldown, 20.0f, 45.0f);
+    base_cooldown = std::clamp(base_cooldown, kMinCooldown, kMaxCooldown);
 
     chatter->chatter_cooldown = base_cooldown;
     chatter->lines_spoken_total++;
@@ -346,7 +355,7 @@ std::string FleetChatterSystem::getSilenceAwareLine(
     auto* player_entity = world_->getEntity(player_entity_id);
     if (player_entity) {
         auto* presence = player_entity->getComponent<components::PlayerPresence>();
-        if (presence && presence->time_since_last_command >= 120.0f) {
+        if (presence && presence->time_since_last_command >= kSilenceThreshold) {
             auto* entity = world_->getEntity(entity_id);
             if (!entity) return "";
 
@@ -365,7 +374,7 @@ std::string FleetChatterSystem::getSilenceAwareLine(
             size_t hash_val = hasher(entity_id) + static_cast<size_t>(chatter->lines_spoken_total);
             size_t index = hash_val % pool.size();
 
-            chatter->chatter_cooldown = 45.0f;  // longer cooldown for silence comments
+            chatter->chatter_cooldown = kSilenceCooldown;
             chatter->lines_spoken_total++;
             chatter->last_line_spoken = pool[index];
             chatter->is_speaking = true;
@@ -411,7 +420,7 @@ void FleetChatterSystem::propagateRumor(const std::string& speaker_id,
     for (auto& r : listener_log->rumors) {
         if (r.rumor_id == best->rumor_id) {
             r.times_heard++;
-            r.belief_strength = std::min(r.belief_strength + 0.1f, 1.0f);
+            r.belief_strength = std::min(r.belief_strength + kRumorReinforcementDelta, 1.0f);
             return;
         }
     }
@@ -420,7 +429,7 @@ void FleetChatterSystem::propagateRumor(const std::string& speaker_id,
     listener_log->addRumor(best->rumor_id, best->text, false);
     for (auto& r : listener_log->rumors) {
         if (r.rumor_id == best->rumor_id) {
-            r.belief_strength = best->belief_strength * 0.5f;
+            r.belief_strength = best->belief_strength * kSecondHandBeliefMultiplier;
             break;
         }
     }
@@ -450,7 +459,7 @@ float FleetChatterSystem::computeDisagreement(const std::string& entity_id,
                 + losses * (1.0f - personality->optimism);
 
     if (task_mismatch) {
-        score += 10.0f;
+        score += kTaskMismatchPenalty;
     }
 
     return std::max(score, 0.0f);
