@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 15, 2026)**: **Vertical Slice Phase 3 STARTED**. Scanner/Anomaly protocol messages added (SCAN_START, SCAN_STOP, SCAN_RESULT, ANOMALY_LIST). GameSession handlers wired to ScannerSystem and AnomalySystem. Client-side ProtocolHandler and NetworkManager updated with scanner operations and ScannerResponse callback. 19 new test assertions. **1689 test assertions passing**.
+
 > **Update (February 14, 2026)**: **Vertical Slice Phase 2 NEARLY COMPLETE**. AI Mining behavior implemented — AISystem now handles Mining state with full deposit discovery, approach, and mining lifecycle. RefiningSystem added to convert ore into refined minerals (Veldspar→Tritanium, Scordite→Tritanium+Pyerite, etc.) with efficiency and tax support. Market ore/mineral pricing validated. 35 new test assertions. **1287 test assertions passing**.
 
 > **Update (February 14, 2026)**: **Ship generation JSON data COMPLETE**. All 102 ship JSON files updated with `model_data` block containing per-ship `turret_hardpoints`, `launcher_hardpoints`, `drone_bays`, `engine_count`, and `generation_seed` for deterministic procedural variation. ShipTemplate extended with ModelData sub-struct. ShipDatabase parser reads model_data. 6 new test functions, 24 new assertions. **1139 test assertions passing**.
@@ -33,7 +35,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 NEARLY COMPLETE**: AI Mining behavior implemented — miners discover deposits, approach, mine, and stop on depletion/cargo full. RefiningSystem converts ore→minerals with efficiency and tax. Market ore/mineral pricing validated. Ship JSON data updated with model_data for all 102 ships. **1287 test assertions passing**.
+**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 NEARLY COMPLETE**. **Phase 3 IN PROGRESS**: Scanner/Anomaly protocol messages wired — ScannerSystem and AnomalySystem connected to GameSession and client NetworkManager. **1689 test assertions passing**.
 
 ## Current Status (February 2026)
 
@@ -60,7 +62,7 @@
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **31 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage, Mining, Refining)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **200+ test functions** all passing (1287 assertions)
+- **200+ test functions** all passing (1689 assertions)
 - **Mining drones** and **salvage drones** with full cycle-based behavior
 - **AI mining NPCs** with deposit discovery, approach, and mining lifecycle
 - **Zero security vulnerabilities** (CodeQL verified)

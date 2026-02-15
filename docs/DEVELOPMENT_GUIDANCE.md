@@ -6,8 +6,8 @@
 - **102 ships** across all classes (Frigates to Titans)
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
-- **29 C++ server systems** fully implemented
-- **1139 test assertions** all passing
+- **31 C++ server systems** fully implemented
+- **1689 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 
@@ -253,13 +253,22 @@ This is the most important next step for the project. All foundational systems a
 
 ### Vertical Slice Phase 3 (Weeks 7-9): Exploration & Anomalies
 
-**Status**: NOT STARTED
+**Status**: 🚧 IN PROGRESS
 
-**Tasks**:
-- Scanner UI implementation
-- Anomaly generation from system seed
-- Combat & mining anomalies
-- Difficulty scaling by location
+**Completed (February 15, 2026)**:
+- ✅ Scanner/Anomaly protocol messages added (SCAN_START, SCAN_STOP, SCAN_RESULT, ANOMALY_LIST)
+- ✅ GameSession handlers for scan start, scan stop, and anomaly list queries
+- ✅ Client ProtocolHandler: createScanStartMessage, createScanStopMessage, createAnomalyListMessage
+- ✅ Client NetworkManager: sendScanStart, sendScanStop, sendAnomalyListRequest with ScannerResponse callback
+- ✅ Server-side ScannerSystem and AnomalySystem fully wired to network layer
+- ✅ 19 new test assertions (1689/1689 total passing)
+
+**Remaining**:
+- Scanner UI panel implementation (client-side)
+- Anomaly visual rendering in solar system viewport
+- Probe deployment UI controls
+- Scan progress visualization
+- End-to-end testing: scan → discover → warp flow
 
 **Dependencies**: Phase 2 complete
 
@@ -385,7 +394,7 @@ If the vertical slice is not the immediate priority, here are other valuable tas
 - `docs/guides/` - Build and setup guides
 
 **Testing**:
-- Server tests: `cd cpp_server/build && ctest` (832 assertions)
+- Server tests: `cd cpp_server/build && ctest` (1689 assertions)
 - Client tests: Manual testing required (OpenGL dependency)
 
 **CI/CD**:
