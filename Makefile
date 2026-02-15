@@ -80,7 +80,7 @@ test: test-server test-engine ## Run all tests
 test-engine: ## Build and run Atlas Engine tests
 	@mkdir -p build
 	cd build && cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ATLAS_ENGINE=ON -DBUILD_ATLAS_TESTS=ON -DBUILD_CLIENT=OFF -DBUILD_SERVER=OFF && cmake --build . --config Release --target AtlasTests -j$$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 4)
-	cd build && ./AtlasTests
+	cd build && ./atlas_tests/AtlasTests
 
 .PHONY: test-server
 test-server: ## Build and run C++ server tests
