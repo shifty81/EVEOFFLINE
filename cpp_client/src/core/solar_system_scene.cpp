@@ -562,7 +562,7 @@ void SolarSystemScene::addAnomaly(const std::string& id, const std::string& name
     anomaly.name = name;
     anomaly.type = Celestial::Type::ANOMALY;
     anomaly.position = position;
-    anomaly.radius = 500.0f;  // Visual cue radius
+    anomaly.radius = ANOMALY_VISUAL_RADIUS;
     anomaly.anomalyType = anomalyType;
     anomaly.visualCue = cue;
     anomaly.signalStrength = signalStrength;

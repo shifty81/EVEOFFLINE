@@ -192,6 +192,11 @@ public:
      */
     static constexpr float WARP_LANDING_MARGIN = 2500.0f;
 
+    /**
+     * Default visual radius for anomaly celestials (meters).
+     */
+    static constexpr float ANOMALY_VISUAL_RADIUS = 500.0f;
+
     // Engine trail state for rendering
     struct EngineTrailState {
         bool emitting;
