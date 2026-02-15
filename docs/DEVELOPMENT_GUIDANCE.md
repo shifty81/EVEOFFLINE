@@ -7,7 +7,7 @@
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
 - **31 C++ server systems** fully implemented
-- **1711 test assertions** all passing
+- **1737 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 
@@ -267,7 +267,7 @@ This is the most important next step for the project. All foundational systems a
 - ✅ SolarSystemScene anomaly management: addAnomaly, removeAnomaly, getAnomalies, updateAnomalySignal
 - ✅ Anomaly-specific fields on Celestial: anomalyType, visualCue, signalStrength, warpable
 - ✅ End-to-end scan → discover → warp integration tests (4 new test functions, 22 new assertions)
-- ✅ **1711 test assertions passing**
+- ✅ **1737 test assertions passing**
 
 **Dependencies**: Phase 2 complete
 
@@ -275,13 +275,18 @@ This is the most important next step for the project. All foundational systems a
 
 ### Vertical Slice Phase 4 (Weeks 10-12): Procedural Missions & Reputation
 
-**Status**: NOT STARTED
+**Status**: ✅ COMPLETE
 
-**Tasks**:
-- Mission templates implementation (use existing mission data)
-- Mission generation from world state
-- Faction reputation system (partially implemented in StandingsSystem)
-- Hostile/friendly AI behavior based on reputation
+**Completed (February 15, 2026)**:
+- ✅ Mission protocol messages: MISSION_LIST, ACCEPT_MISSION, ABANDON_MISSION, MISSION_PROGRESS, MISSION_RESULT
+- ✅ GameSession handlers for mission listing, acceptance, abandonment, and progress tracking
+- ✅ MissionSystem and MissionGeneratorSystem wired to network layer
+- ✅ Client-side ProtocolHandler: createMissionListMessage, createAcceptMissionMessage, createAbandonMissionMessage, createMissionProgressMessage
+- ✅ Client-side NetworkManager: sendMissionListRequest, sendAcceptMission, sendAbandonMission, sendMissionProgress with MissionResponse callback
+- ✅ AI defensive behavior: patrol NPCs with Defensive behavior protect friendly entities under attack using findAttackerOfFriendly()
+- ✅ Faction reputation drives AI behavior — friendly NPCs skip targeting, defensive NPCs aid allies
+- ✅ 6 new test functions, 25 new assertions
+- ✅ **1737 test assertions passing**
 
 **Dependencies**: Phase 3 complete
 
@@ -393,7 +398,7 @@ If the vertical slice is not the immediate priority, here are other valuable tas
 - `docs/guides/` - Build and setup guides
 
 **Testing**:
-- Server tests: `cd cpp_server/build && ctest` (1711 assertions)
+- Server tests: `cd cpp_server/build && ctest` (1737 assertions)
 - Client tests: Manual testing required (OpenGL dependency)
 
 **CI/CD**:
