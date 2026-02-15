@@ -25,7 +25,18 @@ struct Celestial {
         STATION,
         STARGATE,
         ASTEROID_BELT,
-        WORMHOLE
+        WORMHOLE,
+        ANOMALY
+    };
+
+    /** Visual cue types for anomalies (matches server AnomalyVisualCue::CueType). */
+    enum class VisualCue {
+        None,
+        Shimmer,
+        ParticleCloud,
+        EnergyPulse,
+        GravityLens,
+        ElectricArc
     };
 
     std::string id;
@@ -38,6 +49,12 @@ struct Celestial {
     float lightIntensity;        // For sun: light intensity
     std::string linkedSystem;    // For stargates: destination system ID
     std::vector<std::string> services;  // For stations: available services
+
+    // Anomaly-specific fields
+    std::string anomalyType;     // "Combat", "Mining", "Data", "Relic", "Gas", "Wormhole"
+    VisualCue visualCue = VisualCue::None;
+    float signalStrength = 0.0f; // 0.0–1.0 scan progress
+    bool warpable = false;       // true when signal >= 1.0
 
     Celestial()
         : type(Type::PLANET)
@@ -175,6 +192,11 @@ public:
      */
     static constexpr float WARP_LANDING_MARGIN = 2500.0f;
 
+    /**
+     * Default visual radius for anomaly celestials (meters).
+     */
+    static constexpr float ANOMALY_VISUAL_RADIUS = 500.0f;
+
     // Engine trail state for rendering
     struct EngineTrailState {
         bool emitting;
@@ -205,6 +227,29 @@ public:
      */
     void warpTo(const std::string& celestialId, ShipPhysics* shipPhysics,
                 float warpDistance = 0.0f);
+
+    /**
+     * Add a discovered anomaly to the system as a warpable celestial.
+     * Called when the scanner discovers a new anomaly with enough signal.
+     */
+    void addAnomaly(const std::string& id, const std::string& name,
+                    const glm::vec3& position, const std::string& anomalyType,
+                    Celestial::VisualCue cue, float signalStrength);
+
+    /**
+     * Remove an anomaly (e.g. when despawned or completed).
+     */
+    bool removeAnomaly(const std::string& anomalyId);
+
+    /**
+     * Get all current anomalies in the system.
+     */
+    std::vector<const Celestial*> getAnomalies() const;
+
+    /**
+     * Update signal strength for a discovered anomaly.
+     */
+    bool updateAnomalySignal(const std::string& anomalyId, float signal, bool warpable);
 
 private:
     std::string m_systemId;

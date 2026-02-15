@@ -1144,7 +1144,11 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Combat & mining anomalies — 6 anomaly types (Combat, Mining, Data, Relic, Gas, Wormhole)
 - [x] Difficulty scaling by location — DifficultyScalingSystem with security-based multipliers (8 tests)
 - [x] Visual distortion cues for anomalies — AnomalyVisualCue component with per-type distortion profiles
-- **Success Criteria**: Player scans, finds new content, it feels special
+- [x] Scanner/Anomaly protocol messages — SCAN_START, SCAN_STOP, SCAN_RESULT, ANOMALY_LIST (19 tests)
+- [x] Scanner UI panel — scanner.rml with probe status, scan progress bar, start/stop controls, results table
+- [x] Anomaly rendering support — ANOMALY type in Celestial enum, VisualCue enum, SolarSystemScene management methods
+- [x] End-to-end scan → discover → warp integration tests (22 tests)
+- **Success Criteria**: Player scans, finds new content, it feels special ✅
 
 #### Phase 4 (Weeks 10-12): Procedural Missions & Reputation
 - [x] Mission templates implementation — MissionTemplateSystem with 16 templates across 5 types and 5 levels (6 tests)

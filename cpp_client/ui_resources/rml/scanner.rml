@@ -1,0 +1,326 @@
+<!-- EVE OFFLINE — Probe Scanner Panel (RML)
+     Exploration probe scanner with scan controls, progress bar, and results table.
+     Players deploy probes and scan for anomalies in the current solar system. -->
+<rml>
+<head>
+    <title>Probe Scanner</title>
+    <link type="text/rcss" href="../rcss/atlas_ui.rcss"/>
+    <style>
+        body {
+            font-family: Lato;
+            color: #E6EDF3;
+        }
+
+        #scanner {
+            position: fixed;
+            top: 120dp;
+            right: 10dp;
+            width: 360dp;
+            height: 460dp;
+            background-color: #0D1117EB;
+            border: 1dp #28384899;
+            border-radius: 2dp;
+        }
+
+        .panel-header {
+            background-color: #0A0E14;
+            height: 28dp;
+            padding: 4dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .panel-header .title {
+            font-size: 12dp;
+            font-weight: bold;
+            color: #45D0E8;
+        }
+
+        .panel-header .window-btn {
+            display: inline-block;
+            width: 20dp;
+            height: 20dp;
+            float: right;
+            margin-left: 2dp;
+            background-color: transparent;
+            border-width: 0dp;
+            color: #8B949E;
+            text-align: center;
+            font-size: 14dp;
+        }
+
+        .panel-header .window-btn:hover {
+            color: #45D0E8;
+        }
+
+        /* Probe status section */
+        .probe-status {
+            padding: 6dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .status-row {
+            margin-bottom: 3dp;
+        }
+
+        .status-label {
+            display: inline-block;
+            width: 90dp;
+            font-size: 10dp;
+            color: #8B949E;
+        }
+
+        .status-value {
+            font-size: 10dp;
+            color: #E6EDF3;
+            float: right;
+        }
+
+        .status-value.active {
+            color: #3FB950;
+        }
+
+        .status-value.inactive {
+            color: #8B949E;
+        }
+
+        /* Scan progress section */
+        .scan-progress {
+            padding: 6dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .progress-label {
+            font-size: 10dp;
+            color: #8B949E;
+            margin-bottom: 3dp;
+        }
+
+        .progress-track {
+            height: 6dp;
+            background-color: #161B22;
+            border-radius: 3dp;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3dp;
+            background-color: #45D0E8;
+            transition: width 0.3s;
+        }
+
+        .progress-text {
+            font-size: 10dp;
+            color: #E6EDF3;
+            text-align: right;
+            margin-top: 2dp;
+        }
+
+        /* Scan controls */
+        .scan-controls {
+            padding: 6dp 8dp;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .btn-row {
+            margin-bottom: 4dp;
+        }
+
+        .scan-btn {
+            height: 26dp;
+            font-size: 11dp;
+            background-color: #2A5A6A90;
+            border: 1dp #45D0E866;
+            border-radius: 2dp;
+            color: #E6EDF3;
+        }
+
+        .scan-btn:hover {
+            background-color: #2A5A6AE6;
+            border-color: #45D0E8CC;
+        }
+
+        .scan-btn:active {
+            background-color: #45D0E8CC;
+        }
+
+        .scan-btn.start {
+            width: 48%;
+        }
+
+        .scan-btn.stop {
+            width: 48%;
+            float: right;
+            background-color: #5A2A2A90;
+            border-color: #E84545;
+        }
+
+        .scan-btn.stop:hover {
+            background-color: #5A2A2AE6;
+        }
+
+        .scan-btn.anomaly-list {
+            width: 100%;
+            margin-top: 4dp;
+            background-color: #2A4A5A90;
+            border-color: #4580E866;
+        }
+
+        .scan-btn.anomaly-list:hover {
+            background-color: #2A4A5AE6;
+        }
+
+        /* Results section */
+        .results-header {
+            padding: 4dp 8dp;
+            font-size: 10dp;
+            color: #8B949E;
+            background-color: #0A0E1480;
+            border-bottom: 1dp #1E2A36;
+        }
+
+        .results-count {
+            color: #E6EDF3;
+        }
+
+        .results-content {
+            height: 200dp;
+            overflow: auto;
+            padding: 4dp;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        thead {
+            background-color: #0A0E14;
+        }
+
+        thead td {
+            padding: 3dp 6dp;
+            font-size: 10dp;
+            font-weight: bold;
+            color: #8B949E;
+            border-bottom: 1dp #283848;
+        }
+
+        tbody tr {
+            height: 24dp;
+        }
+
+        tbody tr:hover {
+            background-color: #1A3A4A40;
+        }
+
+        tbody td {
+            padding: 2dp 6dp;
+            font-size: 11dp;
+        }
+
+        .result-type {
+            font-size: 10dp;
+        }
+
+        .result-type.combat { color: #E84545; }
+        .result-type.mining { color: #F0C040; }
+        .result-type.data { color: #45D0E8; }
+        .result-type.relic { color: #C080E0; }
+        .result-type.gas { color: #60E080; }
+        .result-type.wormhole { color: #FF8040; }
+
+        .result-name {
+            color: #E6EDF3;
+        }
+
+        .result-signal {
+            font-size: 10dp;
+            text-align: right;
+        }
+
+        .signal-low { color: #E84545; }
+        .signal-mid { color: #F0C040; }
+        .signal-high { color: #3FB950; }
+
+        .result-warp {
+            font-size: 10dp;
+            text-align: center;
+            width: 40dp;
+        }
+
+        .warp-ready { color: #3FB950; }
+        .warp-notready { color: #8B949E; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40dp;
+            color: #8B949E;
+            font-size: 11dp;
+        }
+    </style>
+</head>
+<body>
+    <div id="scanner">
+        <div class="panel-header">
+            <span class="title">PROBE SCANNER</span>
+            <span class="window-btn" id="btn-close">x</span>
+        </div>
+
+        <!-- Probe status -->
+        <div class="probe-status">
+            <div class="status-row">
+                <span class="status-label">System</span>
+                <span class="status-value" id="system-name">Unknown</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Probes</span>
+                <span class="status-value" id="probe-count">8 / 8</span>
+            </div>
+            <div class="status-row">
+                <span class="status-label">Status</span>
+                <span class="status-value inactive" id="scan-status">Idle</span>
+            </div>
+        </div>
+
+        <!-- Scan progress bar -->
+        <div class="scan-progress">
+            <div class="progress-label">Scan Progress</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progress-fill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text" id="progress-text">0%</div>
+        </div>
+
+        <!-- Scan controls -->
+        <div class="scan-controls">
+            <div class="btn-row">
+                <button class="scan-btn start" id="btn-scan-start">Analyze (F9)</button>
+                <button class="scan-btn stop" id="btn-scan-stop">Stop</button>
+            </div>
+            <button class="scan-btn anomaly-list" id="btn-anomaly-list">Refresh Anomaly List</button>
+        </div>
+
+        <!-- Results header -->
+        <div class="results-header">
+            Anomalies: <span class="results-count" id="results-count">0</span>
+        </div>
+
+        <!-- Results table -->
+        <div class="results-content">
+            <table>
+                <thead>
+                    <tr>
+                        <td>Type</td>
+                        <td>Name</td>
+                        <td style="text-align: right;">Signal</td>
+                        <td style="text-align: center;">Warp</td>
+                    </tr>
+                </thead>
+                <tbody id="scanner-body">
+                    <!-- Results populated from C++ via ScannerCallback -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</rml>
