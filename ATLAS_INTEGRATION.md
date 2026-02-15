@@ -187,6 +187,9 @@ Once the split is complete, this will be replaced with a git submodule or CMake 
 ## Related Documentation
 
 - [Atlas Engine README](https://github.com/shifty81/Atlas/blob/main/README.md)
+- [Atlas Development Roadmap](https://github.com/shifty81/Atlas/blob/main/docs/09_DEVELOPMENT_ROADMAP.md)
+- [Atlas Future Plans](https://github.com/shifty81/EVEOFFLINE/commit/033f2f8e222e7bfa0f853123ed902c23d98c307a) — Detailed design discussion covering WorldGraph APIs, API cleanup, editor tools, and documentation tracks
 - [Atlas Contributing Guide](https://github.com/shifty81/Atlas/blob/main/CONTRIBUTING.md)
 - [EVEOFFLINE Roadmap](docs/ROADMAP.md)
 - [EVEOFFLINE Modding Guide](docs/MODDING_GUIDE.md)
+- [EVEOFFLINE Development Guidance](docs/DEVELOPMENT_GUIDANCE.md)
