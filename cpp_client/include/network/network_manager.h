@@ -50,6 +50,15 @@ struct ScannerResponse {
     std::string resultsJson;  // Raw JSON array of scan results
 };
 
+struct MissionResponse {
+    bool success;
+    std::string missionId;
+    std::string action;    // "list", "accept", "abandon", "progress"
+    std::string message;
+    int missionCount;
+    std::string missionsJson;  // Raw JSON array of missions (for list)
+};
+
 /**
  * High-level network manager
  * Combines TCP client and protocol handler for easy game integration
@@ -65,6 +74,7 @@ public:
     using MarketCallback = std::function<void(const MarketResponse&)>;
     using StationCallback = std::function<void(const StationResponse&)>;
     using ScannerCallback = std::function<void(const ScannerResponse&)>;
+    using MissionCallback = std::function<void(const MissionResponse&)>;
     using ErrorCallback = std::function<void(const std::string& message)>;
 
     NetworkManager();
@@ -153,6 +163,15 @@ public:
     void sendScanStart(const std::string& systemId);
     void sendScanStop();
     void sendAnomalyListRequest(const std::string& systemId);
+
+    /**
+     * Mission operations
+     */
+    void sendMissionListRequest(const std::string& systemId);
+    void sendAcceptMission(const std::string& systemId, int missionIndex);
+    void sendAbandonMission(const std::string& missionId);
+    void sendMissionProgress(const std::string& missionId, const std::string& objectiveType,
+                             const std::string& target, int count = 1);
     
     /**
      * Set response callbacks for gameplay operations
@@ -163,6 +182,7 @@ public:
     void setMarketCallback(MarketCallback callback) { m_marketCallback = callback; }
     void setStationCallback(StationCallback callback) { m_stationCallback = callback; }
     void setScannerCallback(ScannerCallback callback) { m_scannerCallback = callback; }
+    void setMissionCallback(MissionCallback callback) { m_missionCallback = callback; }
     void setErrorCallback(ErrorCallback callback) { m_errorCallback = callback; }
 
     /**
@@ -180,6 +200,7 @@ private:
     void handleMarketResponse(const std::string& type, const std::string& dataJson);
     void handleStationResponse(const std::string& type, const std::string& dataJson);
     void handleScannerResponse(const std::string& type, const std::string& dataJson);
+    void handleMissionResponse(const std::string& type, const std::string& dataJson);
     void handleErrorResponse(const std::string& dataJson);
 
     std::unique_ptr<TCPClient> m_tcpClient;
@@ -194,6 +215,7 @@ private:
     MarketCallback m_marketCallback;
     StationCallback m_stationCallback;
     ScannerCallback m_scannerCallback;
+    MissionCallback m_missionCallback;
     ErrorCallback m_errorCallback;
     
     // Connection info

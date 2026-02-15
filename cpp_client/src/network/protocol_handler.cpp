@@ -204,6 +204,37 @@ std::string ProtocolHandler::createAnomalyListMessage(const std::string& systemI
     return createMessage("anomaly_list", data.dump());
 }
 
+// Mission messages
+std::string ProtocolHandler::createMissionListMessage(const std::string& systemId) {
+    json data;
+    data["system_id"] = systemId;
+    return createMessage("mission_list", data.dump());
+}
+
+std::string ProtocolHandler::createAcceptMissionMessage(const std::string& systemId, int missionIndex) {
+    json data;
+    data["system_id"] = systemId;
+    data["mission_index"] = missionIndex;
+    return createMessage("accept_mission", data.dump());
+}
+
+std::string ProtocolHandler::createAbandonMissionMessage(const std::string& missionId) {
+    json data;
+    data["mission_id"] = missionId;
+    return createMessage("abandon_mission", data.dump());
+}
+
+std::string ProtocolHandler::createMissionProgressMessage(const std::string& missionId,
+                                                           const std::string& objectiveType,
+                                                           const std::string& target, int count) {
+    json data;
+    data["mission_id"] = missionId;
+    data["objective_type"] = objectiveType;
+    data["target"] = target;
+    data["count"] = count;
+    return createMessage("mission_progress", data.dump());
+}
+
 // Response message type helpers
 bool ProtocolHandler::isSuccessResponse(const std::string& type) {
     return type.find("_success") != std::string::npos ||
@@ -242,6 +273,10 @@ bool ProtocolHandler::isStationResponse(const std::string& type) {
 
 bool ProtocolHandler::isScannerResponse(const std::string& type) {
     return type == "scan_result" || type == "anomaly_list";
+}
+
+bool ProtocolHandler::isMissionResponse(const std::string& type) {
+    return type == "mission_list" || type == "mission_result";
 }
 
 } // namespace atlas

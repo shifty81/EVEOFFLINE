@@ -20,6 +20,8 @@ namespace systems {
     class CombatSystem;
     class ScannerSystem;
     class AnomalySystem;
+    class MissionSystem;
+    class MissionGeneratorSystem;
 }
 
 /**
@@ -64,6 +66,12 @@ public:
 
     /// Set pointer to the AnomalySystem for anomaly queries
     void setAnomalySystem(systems::AnomalySystem* as) { anomaly_system_ = as; }
+
+    /// Set pointer to the MissionSystem for mission tracking
+    void setMissionSystem(systems::MissionSystem* ms) { mission_system_ = ms; }
+
+    /// Set pointer to the MissionGeneratorSystem for mission offers
+    void setMissionGeneratorSystem(systems::MissionGeneratorSystem* mg) { mission_generator_ = mg; }
 
     /// Get the ship database (read-only)
     const data::ShipDatabase& getShipDatabase() const { return ship_db_; }
@@ -252,6 +260,38 @@ private:
      */
     void handleAnomalyList(const network::ClientConnection& client, const std::string& data);
 
+    /**
+     * Handle mission list request
+     *
+     * Returns available missions for the current system.
+     * Expected format: {"type":"mission_list","system_id":"system_01"}
+     */
+    void handleMissionList(const network::ClientConnection& client, const std::string& data);
+
+    /**
+     * Handle accept mission request
+     *
+     * Accepts an offered mission by index.
+     * Expected format: {"type":"accept_mission","system_id":"system_01","mission_index":0}
+     */
+    void handleAcceptMission(const network::ClientConnection& client, const std::string& data);
+
+    /**
+     * Handle abandon mission request
+     *
+     * Abandons an active mission.
+     * Expected format: {"type":"abandon_mission","mission_id":"mission_001"}
+     */
+    void handleAbandonMission(const network::ClientConnection& client, const std::string& data);
+
+    /**
+     * Handle mission progress report
+     *
+     * Records objective progress for an active mission.
+     * Expected format: {"type":"mission_progress","mission_id":"mission_001","objective_type":"destroy","target":"pirate","count":1}
+     */
+    void handleMissionProgress(const network::ClientConnection& client, const std::string& data);
+
     // --- State broadcast ---
     /**
      * Build full state update message
@@ -324,6 +364,8 @@ private:
     systems::CombatSystem* combat_system_ = nullptr;
     systems::ScannerSystem* scanner_system_ = nullptr;
     systems::AnomalySystem* anomaly_system_ = nullptr;
+    systems::MissionSystem* mission_system_ = nullptr;
+    systems::MissionGeneratorSystem* mission_generator_ = nullptr;
 
     // Map socket → entity_id for connected players
     struct PlayerInfo {

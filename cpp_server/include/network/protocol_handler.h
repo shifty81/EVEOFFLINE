@@ -59,6 +59,11 @@ enum class MessageType {
     SCAN_STOP,
     SCAN_RESULT,
     ANOMALY_LIST,
+    MISSION_LIST,
+    ACCEPT_MISSION,
+    ABANDON_MISSION,
+    MISSION_PROGRESS,
+    MISSION_RESULT,
     ERROR
 };
 
@@ -115,6 +120,12 @@ public:
                                  const std::string& results_json);
     std::string createAnomalyList(const std::string& system_id, int count,
                                   const std::string& anomalies_json);
+
+    // Mission messages
+    std::string createMissionList(const std::string& system_id, int count,
+                                  const std::string& missions_json);
+    std::string createMissionResult(bool success, const std::string& mission_id,
+                                    const std::string& action, const std::string& message = "");
     
     // Message validation
     bool validateMessage(const std::string& json);

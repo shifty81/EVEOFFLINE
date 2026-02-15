@@ -63,6 +63,16 @@ void AISystem::idleBehavior(ecs::Entity* entity) {
         }
     }
     
+    // Defensive NPCs protect nearby friendly entities under attack
+    if (ai->behavior == components::AI::Behavior::Defensive) {
+        ecs::Entity* attacker = findAttackerOfFriendly(entity);
+        if (attacker) {
+            ai->target_entity_id = attacker->getId();
+            ai->state = components::AI::State::Approaching;
+            return;
+        }
+    }
+    
     // Only aggressive NPCs actively seek targets
     if (ai->behavior != components::AI::Behavior::Aggressive) {
         return;
@@ -444,6 +454,71 @@ ecs::Entity* AISystem::findNearestDeposit(ecs::Entity* entity) {
     }
     
     return nearest;
+}
+
+ecs::Entity* AISystem::findAttackerOfFriendly(ecs::Entity* entity) {
+    auto* ai = entity->getComponent<components::AI>();
+    auto* pos = entity->getComponent<components::Position>();
+    auto* our_faction = entity->getComponent<components::Faction>();
+    if (!ai || !pos || !our_faction) return nullptr;
+
+    auto candidates = world_->getEntities<components::Position, components::DamageEvent>();
+
+    for (auto* friendly : candidates) {
+        if (friendly == entity) continue;
+
+        auto* f_pos = friendly->getComponent<components::Position>();
+        if (!f_pos) continue;
+
+        float dx = f_pos->x - pos->x;
+        float dy = f_pos->y - pos->y;
+        float dz = f_pos->z - pos->z;
+        float dist = std::sqrt(dx * dx + dy * dy + dz * dz);
+        if (dist > ai->awareness_range) continue;
+
+        // Check if this entity is friendly to us
+        auto* their_standings = friendly->getComponent<components::Standings>();
+        auto* their_faction = friendly->getComponent<components::Faction>();
+        bool is_friendly = false;
+        if (their_standings) {
+            float standing = their_standings->getStandingWith(
+                entity->getId(), "", our_faction->faction_name);
+            is_friendly = (standing > 0.0f);
+        } else if (their_faction) {
+            auto it = our_faction->standings.find(their_faction->faction_name);
+            if (it != our_faction->standings.end()) {
+                is_friendly = (it->second > 0.0f);
+            }
+        }
+
+        if (!is_friendly) continue;
+
+        // This entity is friendly and has damage events — find who is attacking them
+        auto* dmg = friendly->getComponent<components::DamageEvent>();
+        if (!dmg || dmg->recent_hits.empty()) continue;
+
+        // The most recent hit's source is the attacker
+        // DamageEvent doesn't store attacker id, so look for nearby hostiles
+        // targeting this friendly entity
+        auto all_ai = world_->getEntities<components::AI, components::Position>();
+        for (auto* potential_attacker : all_ai) {
+            if (potential_attacker == entity) continue;
+            auto* atk_ai = potential_attacker->getComponent<components::AI>();
+            if (!atk_ai) continue;
+            if (atk_ai->target_entity_id != friendly->getId()) continue;
+
+            // Confirm the attacker is hostile to us
+            auto* atk_faction = potential_attacker->getComponent<components::Faction>();
+            if (atk_faction) {
+                auto it = our_faction->standings.find(atk_faction->faction_name);
+                if (it != our_faction->standings.end() && it->second > 0.0f) continue;
+            }
+
+            return potential_attacker;
+        }
+    }
+
+    return nullptr;
 }
 
 } // namespace systems
