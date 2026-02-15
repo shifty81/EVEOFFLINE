@@ -10305,6 +10305,31 @@ void testAITargetsHostileEntities() {
     assertTrue(target != nullptr, "AI targets player with negative faction standing");
 }
 
+void testAITargetsHostileNPCFaction() {
+    ecs::World world;
+    systems::AISystem aiSys(&world);
+
+    auto* npc = world.createEntity("npc1");
+    auto* ai = addComp<components::AI>(npc);
+    ai->behavior = components::AI::Behavior::Aggressive;
+    ai->awareness_range = 100000.0f;
+    addComp<components::Position>(npc);
+    addComp<components::Velocity>(npc);
+    auto* npcFaction = addComp<components::Faction>(npc);
+    npcFaction->faction_name = "Solari";
+    npcFaction->standings["Veyren"] = -5.0f;
+
+    auto* hostileNpc = world.createEntity("npc2");
+    addComp<components::AI>(hostileNpc);
+    auto* hostilePos = addComp<components::Position>(hostileNpc);
+    hostilePos->x = 100.0f;
+    auto* hostileFaction = addComp<components::Faction>(hostileNpc);
+    hostileFaction->faction_name = "Veyren";
+
+    ecs::Entity* target = aiSys.selectTarget(npc);
+    assertTrue(target == hostileNpc, "AI targets hostile NPC faction when no player target exists");
+}
+
 // ==================== Mission Economy Effects Tests ====================
 
 void testMissionEconomyCombatReducesSpawnRate() {
@@ -12036,6 +12061,7 @@ int main() {
     // AI reputation targeting tests
     testAISkipsFriendlyTargets();
     testAITargetsHostileEntities();
+    testAITargetsHostileNPCFaction();
 
     // Mission economy effects tests
     testMissionEconomyCombatReducesSpawnRate();
