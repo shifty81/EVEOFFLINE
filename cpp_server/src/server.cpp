@@ -10,6 +10,7 @@
 #include "systems/station_system.h"
 #include "utils/logger.h"
 #include <iostream>
+#include <fstream>
 #include <thread>
 #include <chrono>
 #include <sys/stat.h>
@@ -143,6 +144,24 @@ bool Server::initialize() {
     game_session_->setCombatSystem(combat_system_);
     game_session_->initialize();
     
+    // Load persisted world state if enabled
+    if (config_->persistent_world) {
+        std::string filepath = config_->save_path + "/world_state.json";
+        std::ifstream check(filepath);
+        if (check.good()) {
+            check.close();
+            log.info("Loading persistent world from " + filepath + "...");
+            if (loadWorld()) {
+                log.info("Persistent world loaded successfully (" +
+                         std::to_string(game_world_->getEntityCount()) + " entities)");
+            } else {
+                log.warn("Failed to load persistent world, starting fresh");
+            }
+        } else {
+            log.info("No saved world found, starting fresh");
+        }
+    }
+
     // Initialize server console
     console_.setInteractive(true);  // Enable interactive mode by default
     console_.init(*this, *config_);
@@ -172,6 +191,16 @@ void Server::stop() {
     log.info("Stopping server...");
     log.info(metrics_.summary());
     running_ = false;
+    
+    // Save world state on shutdown if persistent world is enabled
+    if (config_->persistent_world) {
+        log.info("Saving world state before shutdown...");
+        if (saveWorld()) {
+            log.info("World state saved successfully");
+        } else {
+            log.error("Failed to save world state on shutdown");
+        }
+    }
     
     console_.shutdown();
     
