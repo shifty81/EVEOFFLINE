@@ -67,6 +67,13 @@ public:
     std::string createDockRequestMessage(const std::string& stationId);
     std::string createUndockRequestMessage();
     std::string createRepairRequestMessage();
+
+    /**
+     * Scanner / Exploration messages
+     */
+    std::string createScanStartMessage(const std::string& systemId);
+    std::string createScanStopMessage();
+    std::string createAnomalyListMessage(const std::string& systemId);
     
     /**
      * Response message type helpers
@@ -78,6 +85,7 @@ public:
     static bool isFittingResponse(const std::string& type);
     static bool isMarketResponse(const std::string& type);
     static bool isStationResponse(const std::string& type);
+    static bool isScannerResponse(const std::string& type);
 
     /**
      * Set message handler

@@ -8049,6 +8049,70 @@ void testProtocolMiningMessages() {
     assertTrue(result.find("100") != std::string::npos, "Result contains quantity_mined");
 }
 
+void testProtocolScannerMessages() {
+    std::cout << "\n=== Protocol: Scanner Messages ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    // Parse scan start
+    std::string msg = "{\"message_type\":\"scan_start\",\"data\":{\"system_id\":\"sys_01\"}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Scan start parses successfully");
+    assertTrue(type == atlas::network::MessageType::SCAN_START, "Type is SCAN_START");
+
+    // Parse scan stop
+    msg = "{\"message_type\":\"scan_stop\",\"data\":{}}";
+    ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Scan stop parses successfully");
+    assertTrue(type == atlas::network::MessageType::SCAN_STOP, "Type is SCAN_STOP");
+
+    // Create scan result
+    std::string result = proto.createScanResult("scanner_1", 2, "[{\"anomaly_id\":\"a1\"},{\"anomaly_id\":\"a2\"}]");
+    assertTrue(result.find("scan_result") != std::string::npos, "Scan result has correct type");
+    assertTrue(result.find("scanner_1") != std::string::npos, "Scan result contains scanner_id");
+    assertTrue(result.find("\"anomalies_found\":2") != std::string::npos, "Scan result contains anomalies_found");
+    assertTrue(result.find("a1") != std::string::npos, "Scan result contains first anomaly");
+    assertTrue(result.find("a2") != std::string::npos, "Scan result contains second anomaly");
+}
+
+void testProtocolAnomalyListMessages() {
+    std::cout << "\n=== Protocol: Anomaly List Messages ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    // Parse anomaly list request
+    std::string msg = "{\"message_type\":\"anomaly_list\",\"data\":{\"system_id\":\"sys_02\"}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Anomaly list request parses successfully");
+    assertTrue(type == atlas::network::MessageType::ANOMALY_LIST, "Type is ANOMALY_LIST");
+
+    // Create anomaly list response
+    std::string result = proto.createAnomalyList("sys_02", 3, "[\"anom_1\",\"anom_2\",\"anom_3\"]");
+    assertTrue(result.find("anomaly_list") != std::string::npos, "Anomaly list has correct type");
+    assertTrue(result.find("sys_02") != std::string::npos, "Anomaly list contains system_id");
+    assertTrue(result.find("\"count\":3") != std::string::npos, "Anomaly list contains count");
+    assertTrue(result.find("anom_1") != std::string::npos, "Anomaly list contains first anomaly");
+    assertTrue(result.find("anom_3") != std::string::npos, "Anomaly list contains third anomaly");
+}
+
+void testProtocolScanResultParse() {
+    std::cout << "\n=== Protocol: Scan Result Parse ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    std::string msg = "{\"message_type\":\"scan_result\",\"data\":{\"scanner_id\":\"sc1\",\"anomalies_found\":1,\"results\":[{\"anomaly_id\":\"a1\",\"signal_strength\":0.75}]}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(msg, type, data);
+    assertTrue(ok, "Scan result parses successfully");
+    assertTrue(type == atlas::network::MessageType::SCAN_RESULT, "Parsed type is SCAN_RESULT");
+    assertTrue(data.find("sc1") != std::string::npos, "Data contains scanner_id");
+}
+
 void testProtocolLootResultParse() {
     std::cout << "\n=== Protocol: Loot Result Parse ===" << std::endl;
 
@@ -11667,6 +11731,9 @@ int main() {
     testProtocolSalvageMessages();
     testProtocolLootMessages();
     testProtocolMiningMessages();
+    testProtocolScannerMessages();
+    testProtocolAnomalyListMessages();
+    testProtocolScanResultParse();
     testProtocolLootResultParse();
     testProtocolMiningResultParse();
 

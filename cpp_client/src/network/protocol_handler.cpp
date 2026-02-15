@@ -186,6 +186,24 @@ std::string ProtocolHandler::createRepairRequestMessage() {
     return createMessage("repair_request", data.dump());
 }
 
+// Scanner / Exploration messages
+std::string ProtocolHandler::createScanStartMessage(const std::string& systemId) {
+    json data;
+    data["system_id"] = systemId;
+    return createMessage("scan_start", data.dump());
+}
+
+std::string ProtocolHandler::createScanStopMessage() {
+    json data;
+    return createMessage("scan_stop", data.dump());
+}
+
+std::string ProtocolHandler::createAnomalyListMessage(const std::string& systemId) {
+    json data;
+    data["system_id"] = systemId;
+    return createMessage("anomaly_list", data.dump());
+}
+
 // Response message type helpers
 bool ProtocolHandler::isSuccessResponse(const std::string& type) {
     return type.find("_success") != std::string::npos ||
@@ -220,6 +238,10 @@ bool ProtocolHandler::isStationResponse(const std::string& type) {
            (type.find("dock_") == 0 && (isSuccessResponse(type) || isErrorResponse(type))) ||
            (type.find("repair_") == 0 && (isSuccessResponse(type) || isErrorResponse(type))) ||
            (type.find("undock_") == 0 && (isSuccessResponse(type) || isErrorResponse(type)));
+}
+
+bool ProtocolHandler::isScannerResponse(const std::string& type) {
+    return type == "scan_result" || type == "anomaly_list";
 }
 
 } // namespace atlas

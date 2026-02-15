@@ -18,6 +18,8 @@ namespace systems {
     class StationSystem;
     class MovementSystem;
     class CombatSystem;
+    class ScannerSystem;
+    class AnomalySystem;
 }
 
 /**
@@ -56,6 +58,12 @@ public:
 
     /// Set pointer to the CombatSystem for weapon firing
     void setCombatSystem(systems::CombatSystem* cs) { combat_system_ = cs; }
+
+    /// Set pointer to the ScannerSystem for probe scanning
+    void setScannerSystem(systems::ScannerSystem* ss) { scanner_system_ = ss; }
+
+    /// Set pointer to the AnomalySystem for anomaly queries
+    void setAnomalySystem(systems::AnomalySystem* as) { anomaly_system_ = as; }
 
     /// Get the ship database (read-only)
     const data::ShipDatabase& getShipDatabase() const { return ship_db_; }
@@ -220,6 +228,30 @@ private:
      */
     void handleStop(const network::ClientConnection& client, const std::string& data);
 
+    /**
+     * Handle scan start request
+     *
+     * Begins scanning the current solar system for anomalies.
+     * Expected format: {"type":"scan_start","system_id":"system_01"}
+     */
+    void handleScanStart(const network::ClientConnection& client, const std::string& data);
+
+    /**
+     * Handle scan stop request
+     *
+     * Stops an active scan.
+     * Expected format: {"type":"scan_stop"}
+     */
+    void handleScanStop(const network::ClientConnection& client, const std::string& data);
+
+    /**
+     * Handle anomaly list request
+     *
+     * Returns a list of anomalies in the current system.
+     * Expected format: {"type":"anomaly_list","system_id":"system_01"}
+     */
+    void handleAnomalyList(const network::ClientConnection& client, const std::string& data);
+
     // --- State broadcast ---
     /**
      * Build full state update message
@@ -290,6 +322,8 @@ private:
     systems::StationSystem* station_system_ = nullptr;
     systems::MovementSystem* movement_system_ = nullptr;
     systems::CombatSystem* combat_system_ = nullptr;
+    systems::ScannerSystem* scanner_system_ = nullptr;
+    systems::AnomalySystem* anomaly_system_ = nullptr;
 
     // Map socket → entity_id for connected players
     struct PlayerInfo {
