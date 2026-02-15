@@ -940,8 +940,8 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 #### Fleet Radio Chatter
 - [x] **Context-aware dialogue** — Chatter during warp, mining, combat, exploration, idle, and salvage operations — FleetChatterSystem with context-based line selection
-- [ ] **Interruptible chatter** — Higher-priority events (combat alerts, anomalies) naturally cut off lower-priority small talk
-- [ ] **Timing rules** — One line every 20–45s max, no overlap, cooldowns between speakers
+- [x] **Interruptible chatter** — Higher-priority events (combat alerts, anomalies) naturally cut off lower-priority small talk — FleetChatterSystem::interruptChatter() with priority comparison
+- [x] **Timing rules** — One line every 20–45s max, no overlap, cooldowns between speakers — isAnyoneSpeaking() overlap prevention + std::clamp(cooldown, 20, 45)
 - [x] **Combat memory references** — Captains reference actual encounters (ships destroyed, close calls, who saved who) — CaptainMemory component with MemoryEntry records
 - [ ] **Positional audio** — Voices originate from ship position in formation, warp tunnel reverb effects
 
@@ -954,22 +954,22 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 #### Captain Social Graph
 - [x] **Relationship tracking** — Bidirectional affinity scores (-100 grudge → +100 bond) — CaptainRelationship component with affinity per pair
 - [x] **Relationship modifiers** — Saved in combat (+10), abandoned (-20), shared long warp (+passive), kill credit stolen (-8) — CaptainRelationshipSystem::modifyRelationship()
-- [ ] **Friendship effects** — Fly closer, back up faster, reference each other
-- [ ] **Grudge effects** — Fly wider, delay responses, sarcastic comms
+- [x] **Friendship effects** — Fly closer, back up faster, reference each other — FleetFormationSystem::applyRelationshipSpacing() sets spacing_modifier 0.7 for friends
+- [x] **Grudge effects** — Fly wider, delay responses, sarcastic comms — spacing_modifier 1.5 for grudges via CaptainRelationship affinity
 
 #### Fleet Dreams & Rumors
 - [x] **Rumor system** — Non-authoritative truths from warp anomalies, rare visuals, near-miss events — RumorLog component with belief_strength tracking
-- [ ] **Rumor propagation** — Spread through chatter, reinforced if seen again, fade if unconfirmed
+- [x] **Rumor propagation** — Spread through chatter, reinforced if seen again, fade if unconfirmed — FleetChatterSystem::propagateRumor() with belief halving for second-hand, reinforcement on re-hearing
 - [ ] **Rumor-to-questline graduation** — Repeated rumors surface as optional investigations or encounter chains
 
 #### Fleet Departure & Transfers
-- [ ] **Disagreement model** — Based on risk × (1-aggression) + losses × (1-optimism) + task mismatch
+- [x] **Disagreement model** — Based on risk × (1-aggression) + losses × (1-optimism) + task mismatch — FleetChatterSystem::computeDisagreement()
 - [ ] **Organic departure** — Comes up in chatter first → formal request → peaceful departure or splinter fleet
 - [ ] **Transfer requests** — High morale captains request bigger ships; low morale request escort-only roles
 
 #### Player Silence Awareness
 - [x] **Player presence tracking** — Time since last command, time since last speech — PlayerPresence component with serialization
-- [ ] **Silence interpretation** — Fleet reacts to player silence ("Quiet today, boss", "You alright up there?")
+- [x] **Silence interpretation** — Fleet reacts to player silence ("Quiet today, boss", "You alright up there?") — FleetChatterSystem::getSilenceAwareLine() triggers after 120s of PlayerPresence silence
 
 #### Fleet Chatter ECS Components
 - [x] `CaptainPersonalityComponent` (aggression, sociability, optimism, professionalism) — CaptainPersonality with 8 axes + serialization
@@ -990,12 +990,12 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Distance rings** — Concentric circles at fixed world-unit radii (5, 10, 20, 30, 50, 100 units/km) — TacticalOverlayState::ring_distances with configurable distances
 - [x] **Tool range ring** — Dynamic ring for active tool (mining laser, weapon), color-coded by type — TacticalOverlaySystem::setToolRange()
 - [x] **Entity projection** — Flattened tactical plane with vertical encoding (ticks for above/below) — TacticalProjection component with projected_x/y + vertical_offset
-- [ ] **Shared filters** — Overlay shares filter state with Overview and world brackets
+- [x] **Shared filters** — Overlay shares filter state with Overview and world brackets — TacticalOverlayState::filter_categories + setFilterCategories()/getFilterCategories()
 
 #### Interaction Rules
-- [ ] **Passive display only** — No clickable elements, no dragging, no entity selection
+- [x] **Passive display only** — No clickable elements, no dragging, no entity selection — TacticalOverlayState::passive_display_only flag (true by default)
 - [x] **Toggle hotkey** (V, configurable) — TacticalOverlaySystem::toggleOverlay()
-- [ ] **Scales to large entity counts** — Muted asteroids, high-contrast hostiles, heavier structure silhouettes
+- [x] **Scales to large entity counts** — Muted asteroids, high-contrast hostiles, heavier structure silhouettes — TacticalOverlayState::entity_display_priority + setEntityDisplayPriority()
 
 #### Staged Implementation
 - [x] **Stage 1**: Toggle overlay + distance rings (no entities) — TacticalOverlaySystem with toggle + configurable ring distances

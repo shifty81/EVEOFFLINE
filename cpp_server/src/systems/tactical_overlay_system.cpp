@@ -74,5 +74,70 @@ void TacticalOverlaySystem::setRingDistances(const std::string& entity_id, const
     overlay->ring_distances = distances;
 }
 
+// ---------------------------------------------------------------------------
+// Phase 10: Shared filters
+// ---------------------------------------------------------------------------
+
+void TacticalOverlaySystem::setFilterCategories(const std::string& entity_id,
+                                                 const std::vector<std::string>& categories) {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return;
+
+    auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) {
+        entity->addComponent(std::make_unique<components::TacticalOverlayState>());
+        overlay = entity->getComponent<components::TacticalOverlayState>();
+    }
+
+    overlay->filter_categories = categories;
+}
+
+std::vector<std::string> TacticalOverlaySystem::getFilterCategories(const std::string& entity_id) const {
+    const auto* entity = world_->getEntity(entity_id);
+    if (!entity) return {};
+
+    const auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) return {};
+
+    return overlay->filter_categories;
+}
+
+bool TacticalOverlaySystem::isPassiveDisplayOnly(const std::string& entity_id) const {
+    const auto* entity = world_->getEntity(entity_id);
+    if (!entity) return true;
+
+    const auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) return true;
+
+    return overlay->passive_display_only;
+}
+
+// ---------------------------------------------------------------------------
+// Phase 10: Entity display priority scaling
+// ---------------------------------------------------------------------------
+
+void TacticalOverlaySystem::setEntityDisplayPriority(const std::string& entity_id, float priority) {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return;
+
+    auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) {
+        entity->addComponent(std::make_unique<components::TacticalOverlayState>());
+        overlay = entity->getComponent<components::TacticalOverlayState>();
+    }
+
+    overlay->entity_display_priority = priority;
+}
+
+float TacticalOverlaySystem::getEntityDisplayPriority(const std::string& entity_id) const {
+    const auto* entity = world_->getEntity(entity_id);
+    if (!entity) return 1.0f;
+
+    const auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) return 1.0f;
+
+    return overlay->entity_display_priority;
+}
+
 } // namespace systems
 } // namespace atlas

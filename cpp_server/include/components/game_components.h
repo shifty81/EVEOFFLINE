@@ -1226,6 +1226,10 @@ public:
     std::string last_line_spoken;
     int lines_spoken_total = 0;
 
+    // Interruptible chatter support (Phase 9)
+    float speaking_priority = 0.0f;   // priority of the line currently being spoken
+    bool was_interrupted = false;     // true if last speech was cut off
+
     COMPONENT_TYPE(FleetChatterState)
 };
 
@@ -1294,6 +1298,13 @@ public:
     std::vector<float> ring_distances = {5.0f, 10.0f, 20.0f, 30.0f, 50.0f, 100.0f};
     float tool_range = 0.0f;
     std::string tool_type;
+
+    // Shared filter support (Phase 10)
+    std::vector<std::string> filter_categories = {"hostile", "friendly", "asteroid", "structure"};
+    bool passive_display_only = true;   // no clickable elements, no dragging
+
+    // Entity priority scaling (Phase 10)
+    float entity_display_priority = 1.0f;  // higher = more visible at distance
 
     COMPONENT_TYPE(TacticalOverlayState)
 };
@@ -1427,6 +1438,10 @@ public:
     float offset_x = 0.0f;       // metres relative to commander
     float offset_y = 0.0f;
     float offset_z = 0.0f;
+
+    // Relationship-driven spacing modifier (Phase 9)
+    // 1.0 = normal spacing, <1.0 = closer (friends), >1.0 = wider (grudges)
+    float spacing_modifier = 1.0f;
 
     COMPONENT_TYPE(FleetFormation)
 };
