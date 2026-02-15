@@ -3,10 +3,8 @@
 namespace atlas::editor {
 
 void ECSInspectorPanel::Draw() {
-    // Stub: In a real implementation, this would render via Atlas UI
-    // For now, it demonstrates the panel structure
+    // TODO: Render entity list with component details via Atlas UI
     auto entities = m_world.GetEntities();
-    // Draw entity list, component details, etc.
     (void)entities;
 }
 
