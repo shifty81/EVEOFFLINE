@@ -55,6 +55,10 @@ enum class MessageType {
     MINING_START,
     MINING_STOP,
     MINING_RESULT,
+    SCAN_START,
+    SCAN_STOP,
+    SCAN_RESULT,
+    ANOMALY_LIST,
     ERROR
 };
 
@@ -105,6 +109,12 @@ public:
     // Mining messages
     std::string createMiningResult(bool success, const std::string& deposit_id,
                                    const std::string& mineral_type, int quantity_mined);
+
+    // Scanner / Anomaly messages
+    std::string createScanResult(const std::string& scanner_id, int anomalies_found,
+                                 const std::string& results_json);
+    std::string createAnomalyList(const std::string& system_id, int count,
+                                  const std::string& anomalies_json);
     
     // Message validation
     bool validateMessage(const std::string& json);

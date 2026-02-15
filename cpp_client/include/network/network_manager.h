@@ -44,6 +44,12 @@ struct StationResponse {
     float hullHp;
 };
 
+struct ScannerResponse {
+    std::string scannerId;
+    int anomaliesFound;
+    std::string resultsJson;  // Raw JSON array of scan results
+};
+
 /**
  * High-level network manager
  * Combines TCP client and protocol handler for easy game integration
@@ -58,6 +64,7 @@ public:
     using FittingCallback = std::function<void(const FittingResponse&)>;
     using MarketCallback = std::function<void(const MarketResponse&)>;
     using StationCallback = std::function<void(const StationResponse&)>;
+    using ScannerCallback = std::function<void(const ScannerResponse&)>;
     using ErrorCallback = std::function<void(const std::string& message)>;
 
     NetworkManager();
@@ -139,6 +146,13 @@ public:
     void sendDockRequest(const std::string& stationId);
     void sendUndockRequest();
     void sendRepairRequest();
+
+    /**
+     * Scanner / Exploration operations
+     */
+    void sendScanStart(const std::string& systemId);
+    void sendScanStop();
+    void sendAnomalyListRequest(const std::string& systemId);
     
     /**
      * Set response callbacks for gameplay operations
@@ -148,6 +162,7 @@ public:
     void setFittingCallback(FittingCallback callback) { m_fittingCallback = callback; }
     void setMarketCallback(MarketCallback callback) { m_marketCallback = callback; }
     void setStationCallback(StationCallback callback) { m_stationCallback = callback; }
+    void setScannerCallback(ScannerCallback callback) { m_scannerCallback = callback; }
     void setErrorCallback(ErrorCallback callback) { m_errorCallback = callback; }
 
     /**
@@ -164,6 +179,7 @@ private:
     void handleFittingResponse(const std::string& type, const std::string& dataJson);
     void handleMarketResponse(const std::string& type, const std::string& dataJson);
     void handleStationResponse(const std::string& type, const std::string& dataJson);
+    void handleScannerResponse(const std::string& type, const std::string& dataJson);
     void handleErrorResponse(const std::string& dataJson);
 
     std::unique_ptr<TCPClient> m_tcpClient;
@@ -177,6 +193,7 @@ private:
     FittingCallback m_fittingCallback;
     MarketCallback m_marketCallback;
     StationCallback m_stationCallback;
+    ScannerCallback m_scannerCallback;
     ErrorCallback m_errorCallback;
     
     // Connection info

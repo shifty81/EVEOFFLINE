@@ -44,6 +44,10 @@ void ProtocolHandler::initializeMessageTypes() {
     message_type_map_["mining_start"] = MessageType::MINING_START;
     message_type_map_["mining_stop"] = MessageType::MINING_STOP;
     message_type_map_["mining_result"] = MessageType::MINING_RESULT;
+    message_type_map_["scan_start"] = MessageType::SCAN_START;
+    message_type_map_["scan_stop"] = MessageType::SCAN_STOP;
+    message_type_map_["scan_result"] = MessageType::SCAN_RESULT;
+    message_type_map_["anomaly_list"] = MessageType::ANOMALY_LIST;
     message_type_map_["error"] = MessageType::ERROR;
 }
 
@@ -84,6 +88,10 @@ std::string ProtocolHandler::messageTypeToString(MessageType type) {
         case MessageType::MINING_START: return "mining_start";
         case MessageType::MINING_STOP: return "mining_stop";
         case MessageType::MINING_RESULT: return "mining_result";
+        case MessageType::SCAN_START: return "scan_start";
+        case MessageType::SCAN_STOP: return "scan_stop";
+        case MessageType::SCAN_RESULT: return "scan_result";
+        case MessageType::ANOMALY_LIST: return "anomaly_list";
         case MessageType::ERROR: return "error";
         default: return "unknown";
     }
@@ -298,6 +306,28 @@ std::string ProtocolHandler::createMiningResult(bool success, const std::string&
     json << "\"deposit_id\":\"" << deposit_id << "\",";
     json << "\"mineral_type\":\"" << mineral_type << "\",";
     json << "\"quantity_mined\":" << quantity_mined;
+    json << "}}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createScanResult(const std::string& scanner_id, int anomalies_found,
+                                               const std::string& results_json) {
+    std::ostringstream json;
+    json << "{\"message_type\":\"scan_result\",\"data\":{";
+    json << "\"scanner_id\":\"" << scanner_id << "\",";
+    json << "\"anomalies_found\":" << anomalies_found << ",";
+    json << "\"results\":" << results_json;
+    json << "}}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createAnomalyList(const std::string& system_id, int count,
+                                                const std::string& anomalies_json) {
+    std::ostringstream json;
+    json << "{\"message_type\":\"anomaly_list\",\"data\":{";
+    json << "\"system_id\":\"" << system_id << "\",";
+    json << "\"count\":" << count << ",";
+    json << "\"anomalies\":" << anomalies_json;
     json << "}}";
     return json.str();
 }

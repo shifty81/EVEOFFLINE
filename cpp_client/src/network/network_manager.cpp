@@ -206,6 +206,31 @@ void NetworkManager::sendRepairRequest() {
     std::cout << "Sent repair request" << std::endl;
 }
 
+// Scanner / Exploration operations
+void NetworkManager::sendScanStart(const std::string& systemId) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createScanStartMessage(systemId);
+    m_tcpClient->send(msg);
+    std::cout << "Sent scan start for system: " << systemId << std::endl;
+}
+
+void NetworkManager::sendScanStop() {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createScanStopMessage();
+    m_tcpClient->send(msg);
+    std::cout << "Sent scan stop" << std::endl;
+}
+
+void NetworkManager::sendAnomalyListRequest(const std::string& systemId) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createAnomalyListMessage(systemId);
+    m_tcpClient->send(msg);
+    std::cout << "Sent anomaly list request for system: " << systemId << std::endl;
+}
+
 std::string NetworkManager::getConnectionState() const {
     switch (m_state) {
         case State::DISCONNECTED: return "Disconnected";
@@ -239,6 +264,8 @@ void NetworkManager::onProtocolMessage(const std::string& type, const std::strin
         handleMarketResponse(type, dataJson);
     } else if (ProtocolHandler::isStationResponse(type)) {
         handleStationResponse(type, dataJson);
+    } else if (ProtocolHandler::isScannerResponse(type)) {
+        handleScannerResponse(type, dataJson);
     }
 
     // Dispatch to registered handlers
@@ -341,6 +368,31 @@ void NetworkManager::handleStationResponse(const std::string& type, const std::s
         
     } catch (const nlohmann::json::exception& e) {
         std::cerr << "Failed to parse station response: " << e.what() << std::endl;
+    }
+}
+
+void NetworkManager::handleScannerResponse(const std::string& type, const std::string& dataJson) {
+    if (!m_scannerCallback) return;
+    
+    try {
+        auto j = nlohmann::json::parse(dataJson);
+        
+        ScannerResponse response;
+        response.scannerId = j.value("scanner_id", "");
+        response.anomaliesFound = j.value("anomalies_found", j.value("count", 0));
+        
+        if (j.contains("results")) {
+            response.resultsJson = j["results"].dump();
+        } else if (j.contains("anomalies")) {
+            response.resultsJson = j["anomalies"].dump();
+        } else {
+            response.resultsJson = "[]";
+        }
+        
+        m_scannerCallback(response);
+        
+    } catch (const nlohmann::json::exception& e) {
+        std::cerr << "Failed to parse scanner response: " << e.what() << std::endl;
     }
 }
 
