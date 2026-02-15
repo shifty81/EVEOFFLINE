@@ -63,6 +63,18 @@ public:
      * @return The nearest non-depleted deposit entity, or nullptr
      */
     ecs::Entity* findNearestDeposit(ecs::Entity* entity);
+
+    /**
+     * Find an attacker of a friendly entity within awareness range.
+     *
+     * Scans for entities with positive faction standing (friendlies)
+     * that have recent DamageEvent records, then identifies their attacker.
+     * Used by Defensive NPCs to protect allies.
+     *
+     * @param entity The NPC entity looking to defend allies
+     * @return The attacking entity, or nullptr if no friendly is under attack
+     */
+    ecs::Entity* findAttackerOfFriendly(ecs::Entity* entity);
     
 private:
     /**

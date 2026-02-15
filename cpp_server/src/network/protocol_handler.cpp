@@ -48,6 +48,11 @@ void ProtocolHandler::initializeMessageTypes() {
     message_type_map_["scan_stop"] = MessageType::SCAN_STOP;
     message_type_map_["scan_result"] = MessageType::SCAN_RESULT;
     message_type_map_["anomaly_list"] = MessageType::ANOMALY_LIST;
+    message_type_map_["mission_list"] = MessageType::MISSION_LIST;
+    message_type_map_["accept_mission"] = MessageType::ACCEPT_MISSION;
+    message_type_map_["abandon_mission"] = MessageType::ABANDON_MISSION;
+    message_type_map_["mission_progress"] = MessageType::MISSION_PROGRESS;
+    message_type_map_["mission_result"] = MessageType::MISSION_RESULT;
     message_type_map_["error"] = MessageType::ERROR;
 }
 
@@ -92,6 +97,11 @@ std::string ProtocolHandler::messageTypeToString(MessageType type) {
         case MessageType::SCAN_STOP: return "scan_stop";
         case MessageType::SCAN_RESULT: return "scan_result";
         case MessageType::ANOMALY_LIST: return "anomaly_list";
+        case MessageType::MISSION_LIST: return "mission_list";
+        case MessageType::ACCEPT_MISSION: return "accept_mission";
+        case MessageType::ABANDON_MISSION: return "abandon_mission";
+        case MessageType::MISSION_PROGRESS: return "mission_progress";
+        case MessageType::MISSION_RESULT: return "mission_result";
         case MessageType::ERROR: return "error";
         default: return "unknown";
     }
@@ -328,6 +338,32 @@ std::string ProtocolHandler::createAnomalyList(const std::string& system_id, int
     json << "\"system_id\":\"" << system_id << "\",";
     json << "\"count\":" << count << ",";
     json << "\"anomalies\":" << anomalies_json;
+    json << "}}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createMissionList(const std::string& system_id, int count,
+                                                const std::string& missions_json) {
+    std::ostringstream json;
+    json << "{\"message_type\":\"mission_list\",\"data\":{";
+    json << "\"system_id\":\"" << system_id << "\",";
+    json << "\"count\":" << count << ",";
+    json << "\"missions\":" << missions_json;
+    json << "}}";
+    return json.str();
+}
+
+std::string ProtocolHandler::createMissionResult(bool success, const std::string& mission_id,
+                                                  const std::string& action,
+                                                  const std::string& message) {
+    std::ostringstream json;
+    json << "{\"message_type\":\"mission_result\",\"data\":{";
+    json << "\"success\":" << (success ? "true" : "false") << ",";
+    json << "\"mission_id\":\"" << mission_id << "\",";
+    json << "\"action\":\"" << action << "\"";
+    if (!message.empty()) {
+        json << ",\"message\":\"" << message << "\"";
+    }
     json << "}}";
     return json.str();
 }

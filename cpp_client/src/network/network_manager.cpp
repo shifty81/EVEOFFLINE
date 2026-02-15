@@ -231,6 +231,39 @@ void NetworkManager::sendAnomalyListRequest(const std::string& systemId) {
     std::cout << "Sent anomaly list request for system: " << systemId << std::endl;
 }
 
+// Mission operations
+void NetworkManager::sendMissionListRequest(const std::string& systemId) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createMissionListMessage(systemId);
+    m_tcpClient->send(msg);
+    std::cout << "Sent mission list request for system: " << systemId << std::endl;
+}
+
+void NetworkManager::sendAcceptMission(const std::string& systemId, int missionIndex) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createAcceptMissionMessage(systemId, missionIndex);
+    m_tcpClient->send(msg);
+    std::cout << "Sent accept mission request: system=" << systemId << " index=" << missionIndex << std::endl;
+}
+
+void NetworkManager::sendAbandonMission(const std::string& missionId) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createAbandonMissionMessage(missionId);
+    m_tcpClient->send(msg);
+    std::cout << "Sent abandon mission request: " << missionId << std::endl;
+}
+
+void NetworkManager::sendMissionProgress(const std::string& missionId, const std::string& objectiveType,
+                                          const std::string& target, int count) {
+    if (!isConnected()) return;
+    
+    std::string msg = m_protocolHandler->createMissionProgressMessage(missionId, objectiveType, target, count);
+    m_tcpClient->send(msg);
+}
+
 std::string NetworkManager::getConnectionState() const {
     switch (m_state) {
         case State::DISCONNECTED: return "Disconnected";
@@ -266,6 +299,8 @@ void NetworkManager::onProtocolMessage(const std::string& type, const std::strin
         handleStationResponse(type, dataJson);
     } else if (ProtocolHandler::isScannerResponse(type)) {
         handleScannerResponse(type, dataJson);
+    } else if (ProtocolHandler::isMissionResponse(type)) {
+        handleMissionResponse(type, dataJson);
     }
 
     // Dispatch to registered handlers
@@ -393,6 +428,32 @@ void NetworkManager::handleScannerResponse(const std::string& type, const std::s
         
     } catch (const nlohmann::json::exception& e) {
         std::cerr << "Failed to parse scanner response: " << e.what() << std::endl;
+    }
+}
+
+void NetworkManager::handleMissionResponse(const std::string& type, const std::string& dataJson) {
+    if (!m_missionCallback) return;
+    
+    try {
+        auto j = nlohmann::json::parse(dataJson);
+        
+        MissionResponse response;
+        response.success = j.value("success", true);
+        response.missionId = j.value("mission_id", "");
+        response.action = j.value("action", type == "mission_list" ? "list" : "");
+        response.message = j.value("message", "");
+        response.missionCount = j.value("count", 0);
+        
+        if (j.contains("missions")) {
+            response.missionsJson = j["missions"].dump();
+        } else {
+            response.missionsJson = "[]";
+        }
+        
+        m_missionCallback(response);
+        
+    } catch (const nlohmann::json::exception& e) {
+        std::cerr << "Failed to parse mission response: " << e.what() << std::endl;
     }
 }
 

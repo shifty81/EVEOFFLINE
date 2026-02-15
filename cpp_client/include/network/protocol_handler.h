@@ -74,6 +74,16 @@ public:
     std::string createScanStartMessage(const std::string& systemId);
     std::string createScanStopMessage();
     std::string createAnomalyListMessage(const std::string& systemId);
+
+    /**
+     * Mission messages
+     */
+    std::string createMissionListMessage(const std::string& systemId);
+    std::string createAcceptMissionMessage(const std::string& systemId, int missionIndex);
+    std::string createAbandonMissionMessage(const std::string& missionId);
+    std::string createMissionProgressMessage(const std::string& missionId,
+                                              const std::string& objectiveType,
+                                              const std::string& target, int count = 1);
     
     /**
      * Response message type helpers
@@ -86,6 +96,7 @@ public:
     static bool isMarketResponse(const std::string& type);
     static bool isStationResponse(const std::string& type);
     static bool isScannerResponse(const std::string& type);
+    static bool isMissionResponse(const std::string& type);
 
     /**
      * Set message handler
