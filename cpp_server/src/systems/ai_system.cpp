@@ -265,7 +265,7 @@ ecs::Entity* AISystem::selectTarget(ecs::Entity* entity) {
     auto* pos = entity->getComponent<components::Position>();
     if (!ai || !pos) return nullptr;
     
-    auto all_entities = world_->getEntities<components::Position, components::Player>();
+    auto all_entities = world_->getEntities<components::Position>();
     
     ecs::Entity* best_target = nullptr;
     float best_score = std::numeric_limits<float>::max();
@@ -275,6 +275,8 @@ ecs::Entity* AISystem::selectTarget(ecs::Entity* entity) {
     
     for (auto* candidate : all_entities) {
         if (candidate == entity) continue;
+        if (!candidate->hasComponent<components::Player>() &&
+            !candidate->hasComponent<components::AI>()) continue;
         
         // Skip entities with positive faction standing (friendly)
         if (our_faction) {
