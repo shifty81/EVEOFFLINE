@@ -115,6 +115,11 @@ compile_commands.json
 *.idb
 _codeql_build_dir/
 
+# Atlas Engine build artifacts
+engine/build/
+editor/build/
+atlas_tests/build/
+
 # Extracted OBJ ship models (large files, extract locally from data/ships/obj_models/obj_models.7z)
 cpp_client/models/ships/*.obj
 
