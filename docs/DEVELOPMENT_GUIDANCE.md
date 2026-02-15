@@ -7,7 +7,7 @@
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
 - **31 C++ server systems** fully implemented
-- **1689 test assertions** all passing
+- **1711 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 
@@ -253,7 +253,7 @@ This is the most important next step for the project. All foundational systems a
 
 ### Vertical Slice Phase 3 (Weeks 7-9): Exploration & Anomalies
 
-**Status**: 🚧 IN PROGRESS
+**Status**: ✅ COMPLETE
 
 **Completed (February 15, 2026)**:
 - ✅ Scanner/Anomaly protocol messages added (SCAN_START, SCAN_STOP, SCAN_RESULT, ANOMALY_LIST)
@@ -261,14 +261,13 @@ This is the most important next step for the project. All foundational systems a
 - ✅ Client ProtocolHandler: createScanStartMessage, createScanStopMessage, createAnomalyListMessage
 - ✅ Client NetworkManager: sendScanStart, sendScanStop, sendAnomalyListRequest with ScannerResponse callback
 - ✅ Server-side ScannerSystem and AnomalySystem fully wired to network layer
-- ✅ 19 new test assertions (1689/1689 total passing)
-
-**Remaining**:
-- Scanner UI panel implementation (client-side)
-- Anomaly visual rendering in solar system viewport
-- Probe deployment UI controls
-- Scan progress visualization
-- End-to-end testing: scan → discover → warp flow
+- ✅ Scanner UI panel (scanner.rml) with probe status, scan progress bar, start/stop controls, and anomaly results table
+- ✅ ANOMALY type added to client-side Celestial::Type enum for anomaly rendering in solar system viewport
+- ✅ VisualCue enum on Celestial (Shimmer, ParticleCloud, EnergyPulse, GravityLens, ElectricArc) matching server AnomalyVisualCue
+- ✅ SolarSystemScene anomaly management: addAnomaly, removeAnomaly, getAnomalies, updateAnomalySignal
+- ✅ Anomaly-specific fields on Celestial: anomalyType, visualCue, signalStrength, warpable
+- ✅ End-to-end scan → discover → warp integration tests (4 new test functions, 22 new assertions)
+- ✅ **1711 test assertions passing**
 
 **Dependencies**: Phase 2 complete
 
@@ -394,7 +393,7 @@ If the vertical slice is not the immediate priority, here are other valuable tas
 - `docs/guides/` - Build and setup guides
 
 **Testing**:
-- Server tests: `cd cpp_server/build && ctest` (1689 assertions)
+- Server tests: `cd cpp_server/build && ctest` (1711 assertions)
 - Client tests: Manual testing required (OpenGL dependency)
 
 **CI/CD**:

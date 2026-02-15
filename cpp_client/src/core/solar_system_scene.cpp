@@ -554,4 +554,56 @@ void SolarSystemScene::generateSystem(uint32_t seed, const std::string& systemNa
               << std::endl;
 }
 
+void SolarSystemScene::addAnomaly(const std::string& id, const std::string& name,
+                                   const glm::vec3& position, const std::string& anomalyType,
+                                   Celestial::VisualCue cue, float signalStrength) {
+    Celestial anomaly;
+    anomaly.id = id;
+    anomaly.name = name;
+    anomaly.type = Celestial::Type::ANOMALY;
+    anomaly.position = position;
+    anomaly.radius = 500.0f;  // Visual cue radius
+    anomaly.anomalyType = anomalyType;
+    anomaly.visualCue = cue;
+    anomaly.signalStrength = signalStrength;
+    anomaly.warpable = (signalStrength >= 1.0f);
+    addCelestial(anomaly);
+    std::cout << "[SolarSystem] Anomaly added: " << name
+              << " (" << anomalyType << ") signal=" << signalStrength << std::endl;
+}
+
+bool SolarSystemScene::removeAnomaly(const std::string& anomalyId) {
+    auto it = std::remove_if(m_celestials.begin(), m_celestials.end(),
+        [&](const Celestial& c) {
+            return c.type == Celestial::Type::ANOMALY && c.id == anomalyId;
+        });
+    if (it != m_celestials.end()) {
+        m_celestials.erase(it, m_celestials.end());
+        return true;
+    }
+    return false;
+}
+
+std::vector<const Celestial*> SolarSystemScene::getAnomalies() const {
+    std::vector<const Celestial*> anomalies;
+    for (const auto& c : m_celestials) {
+        if (c.type == Celestial::Type::ANOMALY) {
+            anomalies.push_back(&c);
+        }
+    }
+    return anomalies;
+}
+
+bool SolarSystemScene::updateAnomalySignal(const std::string& anomalyId,
+                                            float signal, bool warpable) {
+    for (auto& c : m_celestials) {
+        if (c.type == Celestial::Type::ANOMALY && c.id == anomalyId) {
+            c.signalStrength = signal;
+            c.warpable = warpable;
+            return true;
+        }
+    }
+    return false;
+}
+
 } // namespace atlas

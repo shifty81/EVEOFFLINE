@@ -9778,6 +9778,154 @@ void testScannerNoResultWithoutAnomalies() {
     assertTrue(results.empty(), "No results in system without anomalies");
 }
 
+// ==================== Scan → Discover → Warp Integration Tests ====================
+
+void testScanDiscoverWarpFlow() {
+    std::cout << "\n=== Scan Discover Warp Flow ===" << std::endl;
+    ecs::World world;
+    systems::AnomalySystem anomSys(&world);
+    systems::ScannerSystem scanSys(&world);
+
+    // 1. Generate anomalies in a system
+    int created = anomSys.generateAnomalies("sys_flow", 777, 0.3f);  // low-sec = more anomalies
+    assertTrue(created > 0, "Anomalies generated for flow test");
+
+    // 2. Create a scanner entity
+    auto* scanner = world.createEntity("player_scanner");
+    auto sc = std::make_unique<components::Scanner>();
+    sc->scan_strength = 150.0f;
+    sc->scan_duration = 0.5f;
+    sc->probe_count = 8;
+    scanner->addComponent(std::move(sc));
+
+    // 3. Start scanning
+    bool started = scanSys.startScan("player_scanner", "sys_flow");
+    assertTrue(started, "Scan started successfully");
+
+    // 4. Verify scanner is active
+    assertTrue(scanSys.getActiveScannerCount() == 1, "One active scanner");
+
+    // 5. Run enough scan cycles to discover anomalies
+    for (int i = 0; i < 30; ++i) {
+        scanSys.update(0.6f);
+    }
+
+    // 6. Check results - should have discovered at least one anomaly
+    auto results = scanSys.getScanResults("player_scanner");
+    assertTrue(!results.empty(), "Scanner discovered anomalies");
+
+    // 7. Verify at least one anomaly has signal strength > 0
+    bool has_signal = false;
+    for (const auto& r : results) {
+        if (r.signal_strength > 0.0f) has_signal = true;
+    }
+    assertTrue(has_signal, "At least one anomaly has signal strength");
+
+    // 8. Check warpable status - strong scanner should get full signal
+    bool any_warpable = false;
+    for (const auto& r : results) {
+        if (r.warpable) any_warpable = true;
+    }
+    assertTrue(any_warpable, "At least one anomaly is warpable");
+
+    // 9. Get anomaly IDs from results
+    std::string warpable_id;
+    for (const auto& r : results) {
+        if (r.warpable) {
+            warpable_id = r.anomaly_id;
+            break;
+        }
+    }
+    assertTrue(!warpable_id.empty(), "Warpable anomaly has a valid ID");
+
+    // 10. Verify anomaly still exists in the system
+    auto system_anomalies = anomSys.getAnomaliesInSystem("sys_flow");
+    bool found = false;
+    for (const auto& id : system_anomalies) {
+        if (id == warpable_id) found = true;
+    }
+    assertTrue(found, "Warpable anomaly exists in system anomaly list");
+}
+
+void testScanStopPreservesResults() {
+    std::cout << "\n=== Scan Stop Preserves Results ===" << std::endl;
+    ecs::World world;
+    systems::AnomalySystem anomSys(&world);
+    systems::ScannerSystem scanSys(&world);
+
+    anomSys.generateAnomalies("sys_stop", 888, 0.5f);
+
+    auto* scanner = world.createEntity("scanner_stop");
+    auto sc = std::make_unique<components::Scanner>();
+    sc->scan_strength = 100.0f;
+    sc->scan_duration = 0.5f;
+    scanner->addComponent(std::move(sc));
+
+    scanSys.startScan("scanner_stop", "sys_stop");
+    // Run a few cycles
+    for (int i = 0; i < 5; ++i) {
+        scanSys.update(0.6f);
+    }
+
+    auto results_before = scanSys.getScanResults("scanner_stop");
+    scanSys.stopScan("scanner_stop");
+    auto results_after = scanSys.getScanResults("scanner_stop");
+
+    assertTrue(results_before.size() == results_after.size(),
+               "Results preserved after stopping scan");
+}
+
+void testScanAnomalyComplete() {
+    std::cout << "\n=== Scan Anomaly Complete ===" << std::endl;
+    ecs::World world;
+    systems::AnomalySystem anomSys(&world);
+    systems::ScannerSystem scanSys(&world);
+
+    anomSys.generateAnomalies("sys_complete", 999, 0.8f);
+
+    // Get anomaly count before completion
+    int before = anomSys.getActiveAnomalyCount("sys_complete");
+    assertTrue(before > 0, "System has active anomalies");
+
+    // Complete the first anomaly
+    auto ids = anomSys.getAnomaliesInSystem("sys_complete");
+    assertTrue(!ids.empty(), "Anomaly IDs available");
+    bool completed = anomSys.completeAnomaly(ids[0]);
+    assertTrue(completed, "Anomaly marked as completed");
+
+    // Active count should decrease
+    int after = anomSys.getActiveAnomalyCount("sys_complete");
+    assertTrue(after < before, "Active anomaly count decreased after completion");
+}
+
+void testScanProtocolRoundTrip() {
+    std::cout << "\n=== Scan Protocol Round Trip ===" << std::endl;
+
+    atlas::network::ProtocolHandler proto;
+
+    // Create scan start message and verify it round-trips
+    std::string scan_msg = "{\"message_type\":\"scan_start\",\"data\":{\"system_id\":\"sys_rt\"}}";
+    atlas::network::MessageType type;
+    std::string data;
+    bool ok = proto.parseMessage(scan_msg, type, data);
+    assertTrue(ok, "Scan start message parses");
+    assertTrue(type == atlas::network::MessageType::SCAN_START, "Type is SCAN_START");
+    assertTrue(data.find("sys_rt") != std::string::npos, "Data contains system_id");
+
+    // Create scan result and verify it contains all expected fields
+    std::string result = proto.createScanResult("sc_rt", 1,
+        "[{\"anomaly_id\":\"a_rt\",\"signal_strength\":1.0,\"warpable\":true}]");
+    assertTrue(result.find("scan_result") != std::string::npos, "Result type is scan_result");
+    assertTrue(result.find("sc_rt") != std::string::npos, "Result contains scanner_id");
+    assertTrue(result.find("a_rt") != std::string::npos, "Result contains anomaly_id");
+    assertTrue(result.find("warpable") != std::string::npos, "Result contains warpable field");
+
+    // Create anomaly list and verify it round-trips
+    std::string anom_list = proto.createAnomalyList("sys_rt", 2, "[\"a1\",\"a2\"]");
+    assertTrue(anom_list.find("anomaly_list") != std::string::npos, "List type is anomaly_list");
+    assertTrue(anom_list.find("sys_rt") != std::string::npos, "List contains system_id");
+}
+
 // ==================== Difficulty Scaling System Tests ====================
 
 void testDifficultyInitializeZone() {
@@ -11846,6 +11994,12 @@ int main() {
     testScannerSignalGainPerCycle();
     testScannerWarpableAtFullSignal();
     testScannerNoResultWithoutAnomalies();
+
+    // Scan → Discover → Warp integration tests
+    testScanDiscoverWarpFlow();
+    testScanStopPreservesResults();
+    testScanAnomalyComplete();
+    testScanProtocolRoundTrip();
 
     // Difficulty scaling system tests
     testDifficultyInitializeZone();
