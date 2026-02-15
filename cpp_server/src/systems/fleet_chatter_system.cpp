@@ -5,9 +5,19 @@
 #include <functional>
 #include <vector>
 #include <array>
+#include <algorithm>
 
 namespace atlas {
 namespace systems {
+
+// Timing and scoring constants
+static constexpr float kMinCooldown = 20.0f;
+static constexpr float kMaxCooldown = 45.0f;
+static constexpr float kSilenceCooldown = 45.0f;
+static constexpr float kSilenceThreshold = 120.0f;
+static constexpr float kTaskMismatchPenalty = 10.0f;
+static constexpr float kRumorReinforcementDelta = 0.1f;
+static constexpr float kSecondHandBeliefMultiplier = 0.5f;
 
 // Chatter line pools per activity
 static const std::vector<std::string>& getPool(const std::string& activity) {
@@ -64,8 +74,9 @@ void FleetChatterSystem::update(float delta_time) {
         auto* chatter = entity->getComponent<components::FleetChatterState>();
         if (chatter && chatter->chatter_cooldown > 0.0f) {
             chatter->chatter_cooldown -= delta_time;
-            if (chatter->chatter_cooldown < 0.0f) {
+            if (chatter->chatter_cooldown <= 0.0f) {
                 chatter->chatter_cooldown = 0.0f;
+                chatter->is_speaking = false;  // speech finished
             }
         }
     }
@@ -98,6 +109,11 @@ std::string FleetChatterSystem::getNextChatterLine(const std::string& entity_id)
         return "";
     }
 
+    // Timing rule: no overlap — only one speaker at a time in the fleet
+    if (isAnyoneSpeaking()) {
+        return "";
+    }
+
     const auto& pool = getPool(chatter->current_activity);
     if (pool.empty()) return "";
 
@@ -122,10 +138,14 @@ std::string FleetChatterSystem::getNextChatterLine(const std::string& entity_id)
         base_cooldown = 35.0f;  // default mid-range
     }
 
+    // Clamp cooldown to 20-45s timing rule
+    base_cooldown = std::clamp(base_cooldown, kMinCooldown, kMaxCooldown);
+
     chatter->chatter_cooldown = base_cooldown;
     chatter->lines_spoken_total++;
     chatter->last_line_spoken = pool[index];
     chatter->is_speaking = true;
+    chatter->speaking_priority = 1.0f;  // normal priority
 
     return pool[index];
 }
@@ -240,6 +260,11 @@ std::string FleetChatterSystem::getContextualLine(const std::string& entity_id) 
         return "";
     }
 
+    // Timing rule: no overlap — only one speaker at a time
+    if (isAnyoneSpeaking()) {
+        return "";
+    }
+
     auto* personality = entity->getComponent<components::CaptainPersonality>();
     if (!personality) {
         // Fall back to generic pool
@@ -261,12 +286,183 @@ std::string FleetChatterSystem::getContextualLine(const std::string& entity_id) 
     float range_offset = (1.0f - personality->optimism) * 20.0f;
     base_cooldown += range_offset;
 
+    // Clamp cooldown to 20-45s timing rule
+    base_cooldown = std::clamp(base_cooldown, kMinCooldown, kMaxCooldown);
+
     chatter->chatter_cooldown = base_cooldown;
     chatter->lines_spoken_total++;
     chatter->last_line_spoken = pool[index];
     chatter->is_speaking = true;
+    chatter->speaking_priority = 1.0f;  // normal priority
 
     return pool[index];
+}
+
+// ---------------------------------------------------------------------------
+// Phase 9: Interruptible chatter
+// ---------------------------------------------------------------------------
+
+bool FleetChatterSystem::interruptChatter(const std::string& entity_id, float new_priority) {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return false;
+
+    auto* chatter = entity->getComponent<components::FleetChatterState>();
+    if (!chatter) return false;
+
+    if (!chatter->is_speaking) return false;
+
+    // Interrupt only if new event has strictly higher priority
+    if (new_priority > chatter->speaking_priority) {
+        chatter->is_speaking = false;
+        chatter->was_interrupted = true;
+        chatter->chatter_cooldown = 0.0f;  // allow immediate re-speak
+        return true;
+    }
+    return false;
+}
+
+bool FleetChatterSystem::isAnyoneSpeaking() const {
+    auto entities = world_->getEntities<components::FleetChatterState>();
+    for (const auto* entity : entities) {
+        const auto* chatter = entity->getComponent<components::FleetChatterState>();
+        if (chatter && chatter->is_speaking) {
+            return true;
+        }
+    }
+    return false;
+}
+
+// ---------------------------------------------------------------------------
+// Phase 9: Silence interpretation
+// ---------------------------------------------------------------------------
+
+static const std::vector<std::string>& getSilenceLines() {
+    static const std::vector<std::string> lines = {
+        "Quiet today, boss.",
+        "You alright up there?",
+        "Haven't heard from you in a while.",
+        "Everything okay, commander?",
+        "Just checking in.",
+    };
+    return lines;
+}
+
+std::string FleetChatterSystem::getSilenceAwareLine(
+    const std::string& entity_id,
+    const std::string& player_entity_id) {
+
+    // Check player silence threshold (120 seconds)
+    auto* player_entity = world_->getEntity(player_entity_id);
+    if (player_entity) {
+        auto* presence = player_entity->getComponent<components::PlayerPresence>();
+        if (presence && presence->time_since_last_command >= kSilenceThreshold) {
+            auto* entity = world_->getEntity(entity_id);
+            if (!entity) return "";
+
+            auto* chatter = entity->getComponent<components::FleetChatterState>();
+            if (!chatter) {
+                entity->addComponent(std::make_unique<components::FleetChatterState>());
+                chatter = entity->getComponent<components::FleetChatterState>();
+            }
+
+            if (chatter->chatter_cooldown > 0.0f) {
+                return "";
+            }
+
+            const auto& pool = getSilenceLines();
+            std::hash<std::string> hasher;
+            size_t hash_val = hasher(entity_id) + static_cast<size_t>(chatter->lines_spoken_total);
+            size_t index = hash_val % pool.size();
+
+            chatter->chatter_cooldown = kSilenceCooldown;
+            chatter->lines_spoken_total++;
+            chatter->last_line_spoken = pool[index];
+            chatter->is_speaking = true;
+            chatter->speaking_priority = 0.5f;   // low priority, can be interrupted
+
+            return pool[index];
+        }
+    }
+
+    // Fall back to personality-contextual line
+    return getContextualLine(entity_id);
+}
+
+// ---------------------------------------------------------------------------
+// Phase 9: Rumor propagation
+// ---------------------------------------------------------------------------
+
+void FleetChatterSystem::propagateRumor(const std::string& speaker_id,
+                                         const std::string& listener_id) {
+    auto* speaker = world_->getEntity(speaker_id);
+    auto* listener = world_->getEntity(listener_id);
+    if (!speaker || !listener) return;
+
+    auto* speaker_log = speaker->getComponent<components::RumorLog>();
+    if (!speaker_log || speaker_log->rumors.empty()) return;
+
+    auto* listener_log = listener->getComponent<components::RumorLog>();
+    if (!listener_log) {
+        listener->addComponent(std::make_unique<components::RumorLog>());
+        listener_log = listener->getComponent<components::RumorLog>();
+    }
+
+    // Pick the rumor with highest belief from the speaker
+    const components::RumorLog::Rumor* best = nullptr;
+    for (const auto& r : speaker_log->rumors) {
+        if (!best || r.belief_strength > best->belief_strength) {
+            best = &r;
+        }
+    }
+    if (!best) return;
+
+    // If listener already has this rumor, reinforce it
+    for (auto& r : listener_log->rumors) {
+        if (r.rumor_id == best->rumor_id) {
+            r.times_heard++;
+            r.belief_strength = std::min(r.belief_strength + kRumorReinforcementDelta, 1.0f);
+            return;
+        }
+    }
+
+    // Otherwise copy it with halved belief (second-hand)
+    listener_log->addRumor(best->rumor_id, best->text, false);
+    for (auto& r : listener_log->rumors) {
+        if (r.rumor_id == best->rumor_id) {
+            r.belief_strength = best->belief_strength * kSecondHandBeliefMultiplier;
+            break;
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Phase 9: Disagreement model
+// ---------------------------------------------------------------------------
+
+float FleetChatterSystem::computeDisagreement(const std::string& entity_id,
+                                               float current_risk,
+                                               bool task_mismatch) const {
+    const auto* entity = world_->getEntity(entity_id);
+    if (!entity) return 0.0f;
+
+    const auto* personality = entity->getComponent<components::CaptainPersonality>();
+    const auto* morale = entity->getComponent<components::FleetMorale>();
+    if (!personality) return 0.0f;
+
+    float losses = 0.0f;
+    if (morale) {
+        losses = static_cast<float>(morale->losses);
+    }
+
+    // disagreement = risk × (1 - aggression) + losses × (1 - optimism) + mismatch
+    float score = current_risk * (1.0f - personality->aggression)
+                + losses * (1.0f - personality->optimism);
+
+    if (task_mismatch) {
+        score += kTaskMismatchPenalty;
+    }
+
+    return std::max(score, 0.0f);
 }
 
 } // namespace systems

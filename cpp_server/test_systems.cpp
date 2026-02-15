@@ -10745,6 +10745,457 @@ void testMineralEconomyEndToEnd() {
     assertTrue(tritPrice > 0.0, "Tritanium still available on market");
 }
 
+// ==================== Phase 9: Interruptible Chatter Tests ====================
+
+void testChatterInterruptHighPriority() {
+    std::cout << "\n=== Chatter Interrupt High Priority ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(entity);
+    addComp<components::FleetChatterState>(entity);
+    sys.setActivity("cap1", "Idle");
+    std::string line = sys.getNextChatterLine("cap1");
+    assertTrue(!line.empty(), "Captain speaks initially");
+    auto* chatter = entity->getComponent<components::FleetChatterState>();
+    assertTrue(chatter->is_speaking, "Captain is_speaking after getNextChatterLine");
+    assertTrue(chatter->speaking_priority == 1.0f, "Speaking priority is 1.0 (normal)");
+    bool interrupted = sys.interruptChatter("cap1", 5.0f);
+    assertTrue(interrupted, "Interrupt succeeds with higher priority");
+    assertTrue(!chatter->is_speaking, "Captain no longer speaking after interrupt");
+    assertTrue(chatter->was_interrupted, "was_interrupted flag set");
+}
+
+void testChatterInterruptLowPriorityFails() {
+    std::cout << "\n=== Chatter Interrupt Low Priority Fails ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(entity);
+    addComp<components::FleetChatterState>(entity);
+    sys.setActivity("cap1", "Combat");
+    sys.getNextChatterLine("cap1");
+    auto* chatter = entity->getComponent<components::FleetChatterState>();
+    assertTrue(chatter->is_speaking, "Captain is speaking");
+    bool interrupted = sys.interruptChatter("cap1", 0.5f);
+    assertTrue(!interrupted, "Interrupt fails with lower priority");
+    assertTrue(chatter->is_speaking, "Captain still speaking");
+}
+
+void testChatterInterruptNotSpeaking() {
+    std::cout << "\n=== Chatter Interrupt Not Speaking ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::FleetChatterState>(entity);
+    bool interrupted = sys.interruptChatter("cap1", 10.0f);
+    assertTrue(!interrupted, "Cannot interrupt non-speaking captain");
+}
+
+// ==================== Phase 9: Timing Rules Tests ====================
+
+void testChatterTimingNoOverlap() {
+    std::cout << "\n=== Chatter Timing No Overlap ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* e1 = world.createEntity("cap1");
+    auto* e2 = world.createEntity("cap2");
+    addComp<components::CaptainPersonality>(e1);
+    addComp<components::FleetChatterState>(e1);
+    addComp<components::CaptainPersonality>(e2);
+    addComp<components::FleetChatterState>(e2);
+    sys.setActivity("cap1", "Idle");
+    sys.setActivity("cap2", "Idle");
+
+    std::string line1 = sys.getNextChatterLine("cap1");
+    assertTrue(!line1.empty(), "First captain speaks");
+    assertTrue(sys.isAnyoneSpeaking(), "Someone is speaking");
+
+    std::string line2 = sys.getNextChatterLine("cap2");
+    assertTrue(line2.empty(), "Second captain blocked (overlap prevention)");
+}
+
+void testChatterTimingCooldownRange() {
+    std::cout << "\n=== Chatter Timing Cooldown Range ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    auto* pers = addComp<components::CaptainPersonality>(entity);
+    pers->sociability = 0.1f;  // very low → would try to double cooldown
+    pers->optimism = 0.0f;     // low → would push to 45+
+    auto* chatter = addComp<components::FleetChatterState>(entity);
+    sys.setActivity("cap1", "Idle");
+    sys.getNextChatterLine("cap1");
+    // With clamp, cooldown should be at most 45.0
+    assertTrue(chatter->chatter_cooldown >= 20.0f, "Cooldown at least 20s");
+    assertTrue(chatter->chatter_cooldown <= 45.0f, "Cooldown at most 45s");
+}
+
+void testChatterSpeakingClearedAfterCooldown() {
+    std::cout << "\n=== Chatter Speaking Cleared After Cooldown ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(entity);
+    addComp<components::FleetChatterState>(entity);
+    sys.setActivity("cap1", "Idle");
+    sys.getNextChatterLine("cap1");
+    auto* chatter = entity->getComponent<components::FleetChatterState>();
+    assertTrue(chatter->is_speaking, "Captain is speaking");
+    sys.update(60.0f);  // expire cooldown
+    assertTrue(!chatter->is_speaking, "is_speaking cleared after cooldown");
+    assertTrue(!sys.isAnyoneSpeaking(), "No one speaking after cooldown");
+}
+
+// ==================== Phase 9: Friendship/Grudge Formation Effects Tests ====================
+
+void testFormationFriendCloser() {
+    std::cout << "\n=== Formation Friend Closer ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem formSys(&world);
+    auto* leader = world.createEntity("leader");
+    addComp<components::FleetFormation>(leader);
+    formSys.setFormation("leader", components::FleetFormation::FormationType::Arrow, 0);
+
+    auto* wingman = world.createEntity("wingman");
+    addComp<components::FleetFormation>(wingman);
+    formSys.setFormation("wingman", components::FleetFormation::FormationType::Arrow, 1);
+
+    auto* rel = addComp<components::CaptainRelationship>(wingman);
+    rel->modifyAffinity("leader", 60.0f);  // Friend (>50)
+
+    formSys.applyRelationshipSpacing("wingman", "leader");
+    formSys.computeOffsets();
+
+    float ox, oy, oz;
+    formSys.getOffset("wingman", ox, oy, oz);
+    // Friend spacing: 0.7 × 500 = 350m
+    assertTrue(approxEqual(std::fabs(ox), 350.0f, 1.0f), "Friend flies closer (x offset ~350)");
+    assertTrue(approxEqual(std::fabs(oz), 350.0f, 1.0f), "Friend flies closer (z offset ~350)");
+}
+
+void testFormationGrudgeWider() {
+    std::cout << "\n=== Formation Grudge Wider ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem formSys(&world);
+    auto* leader = world.createEntity("leader");
+    addComp<components::FleetFormation>(leader);
+    formSys.setFormation("leader", components::FleetFormation::FormationType::Arrow, 0);
+
+    auto* wingman = world.createEntity("wingman");
+    addComp<components::FleetFormation>(wingman);
+    formSys.setFormation("wingman", components::FleetFormation::FormationType::Arrow, 1);
+
+    auto* rel = addComp<components::CaptainRelationship>(wingman);
+    rel->modifyAffinity("leader", -60.0f);  // Grudge (<-50)
+
+    formSys.applyRelationshipSpacing("wingman", "leader");
+    formSys.computeOffsets();
+
+    float ox, oy, oz;
+    formSys.getOffset("wingman", ox, oy, oz);
+    // Grudge spacing: 1.5 × 500 = 750m
+    assertTrue(approxEqual(std::fabs(ox), 750.0f, 1.0f), "Grudge flies wider (x offset ~750)");
+    assertTrue(approxEqual(std::fabs(oz), 750.0f, 1.0f), "Grudge flies wider (z offset ~750)");
+}
+
+void testFormationNeutralDefault() {
+    std::cout << "\n=== Formation Neutral Default ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem formSys(&world);
+    auto* leader = world.createEntity("leader");
+    addComp<components::FleetFormation>(leader);
+    formSys.setFormation("leader", components::FleetFormation::FormationType::Arrow, 0);
+
+    auto* wingman = world.createEntity("wingman");
+    addComp<components::FleetFormation>(wingman);
+    formSys.setFormation("wingman", components::FleetFormation::FormationType::Arrow, 1);
+
+    auto* rel = addComp<components::CaptainRelationship>(wingman);
+    rel->modifyAffinity("leader", 5.0f);  // Neutral
+
+    formSys.applyRelationshipSpacing("wingman", "leader");
+    formSys.computeOffsets();
+
+    float ox, oy, oz;
+    formSys.getOffset("wingman", ox, oy, oz);
+    // Neutral spacing: 1.0 × 500 = 500m
+    assertTrue(approxEqual(std::fabs(ox), 500.0f, 1.0f), "Neutral uses default spacing (x)");
+    assertTrue(approxEqual(std::fabs(oz), 500.0f, 1.0f), "Neutral uses default spacing (z)");
+}
+
+void testFormationAllySpacing() {
+    std::cout << "\n=== Formation Ally Spacing ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem formSys(&world);
+    auto* leader = world.createEntity("leader");
+    addComp<components::FleetFormation>(leader);
+    formSys.setFormation("leader", components::FleetFormation::FormationType::Line, 0);
+
+    auto* wingman = world.createEntity("wingman");
+    addComp<components::FleetFormation>(wingman);
+    formSys.setFormation("wingman", components::FleetFormation::FormationType::Line, 1);
+
+    auto* rel = addComp<components::CaptainRelationship>(wingman);
+    rel->modifyAffinity("leader", 30.0f);  // Ally (>20)
+
+    formSys.applyRelationshipSpacing("wingman", "leader");
+    formSys.computeOffsets();
+
+    float ox, oy, oz;
+    formSys.getOffset("wingman", ox, oy, oz);
+    // Ally spacing: 0.85 × 500 = 425m
+    assertTrue(approxEqual(std::fabs(oz), 425.0f, 1.0f), "Ally spacing ~425m in line formation");
+}
+
+void testFormationRivalSpacing() {
+    std::cout << "\n=== Formation Rival Spacing ===" << std::endl;
+    ecs::World world;
+    systems::FleetFormationSystem formSys(&world);
+    auto* leader = world.createEntity("leader");
+    addComp<components::FleetFormation>(leader);
+    formSys.setFormation("leader", components::FleetFormation::FormationType::Line, 0);
+
+    auto* wingman = world.createEntity("wingman");
+    addComp<components::FleetFormation>(wingman);
+    formSys.setFormation("wingman", components::FleetFormation::FormationType::Line, 1);
+
+    auto* rel = addComp<components::CaptainRelationship>(wingman);
+    rel->modifyAffinity("leader", -30.0f);  // Rival (<-20)
+
+    formSys.applyRelationshipSpacing("wingman", "leader");
+    formSys.computeOffsets();
+
+    float ox, oy, oz;
+    formSys.getOffset("wingman", ox, oy, oz);
+    // Rival spacing: 1.25 × 500 = 625m
+    assertTrue(approxEqual(std::fabs(oz), 625.0f, 1.0f), "Rival spacing ~625m in line formation");
+}
+
+// ==================== Phase 9: Rumor Propagation Tests ====================
+
+void testRumorPropagationNewRumor() {
+    std::cout << "\n=== Rumor Propagation New Rumor ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* speaker = world.createEntity("speaker");
+    auto* speakerLog = addComp<components::RumorLog>(speaker);
+    speakerLog->addRumor("ancient_gate", "There's an old gate near Sigma-7", true);
+
+    auto* listener = world.createEntity("listener");
+    // No RumorLog yet
+
+    sys.propagateRumor("speaker", "listener");
+
+    auto* listenerLog = listener->getComponent<components::RumorLog>();
+    assertTrue(listenerLog != nullptr, "Listener gained RumorLog");
+    assertTrue(listenerLog->hasRumor("ancient_gate"), "Rumor propagated to listener");
+    // Second-hand: belief should be halved
+    float belief = 0.0f;
+    for (const auto& r : listenerLog->rumors) {
+        if (r.rumor_id == "ancient_gate") belief = r.belief_strength;
+    }
+    assertTrue(approxEqual(belief, 0.25f, 0.01f), "Second-hand belief is halved (0.25)");
+}
+
+void testRumorPropagationReinforces() {
+    std::cout << "\n=== Rumor Propagation Reinforces ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* speaker = world.createEntity("speaker");
+    auto* speakerLog = addComp<components::RumorLog>(speaker);
+    speakerLog->addRumor("derelict_ship", "Derelict spotted in belt", true);
+
+    auto* listener = world.createEntity("listener");
+    auto* listenerLog = addComp<components::RumorLog>(listener);
+    listenerLog->addRumor("derelict_ship", "Derelict spotted in belt", false);
+
+    float initialBelief = 0.0f;
+    for (const auto& r : listenerLog->rumors) {
+        if (r.rumor_id == "derelict_ship") initialBelief = r.belief_strength;
+    }
+
+    sys.propagateRumor("speaker", "listener");
+
+    float newBelief = 0.0f;
+    int timesHeard = 0;
+    for (const auto& r : listenerLog->rumors) {
+        if (r.rumor_id == "derelict_ship") {
+            newBelief = r.belief_strength;
+            timesHeard = r.times_heard;
+        }
+    }
+    assertTrue(newBelief > initialBelief, "Belief reinforced after hearing again");
+    assertTrue(timesHeard == 2, "Times heard incremented");
+}
+
+void testRumorPropagationNoRumors() {
+    std::cout << "\n=== Rumor Propagation No Rumors ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* speaker = world.createEntity("speaker");
+    addComp<components::RumorLog>(speaker);  // empty rumor log
+
+    auto* listener = world.createEntity("listener");
+
+    sys.propagateRumor("speaker", "listener");
+
+    auto* listenerLog = listener->getComponent<components::RumorLog>();
+    assertTrue(listenerLog == nullptr, "No propagation when speaker has no rumors");
+}
+
+// ==================== Phase 9: Disagreement Model Tests ====================
+
+void testDisagreementBasicScore() {
+    std::cout << "\n=== Disagreement Basic Score ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    auto* pers = addComp<components::CaptainPersonality>(entity);
+    pers->aggression = 0.2f;   // cautious
+    pers->optimism = 0.3f;     // somewhat grim
+    auto* morale = addComp<components::FleetMorale>(entity);
+    morale->losses = 5;
+
+    // risk=0.8, no task mismatch
+    float score = sys.computeDisagreement("cap1", 0.8f, false);
+    // expected: 0.8*(1-0.2) + 5*(1-0.3) = 0.64 + 3.5 = 4.14
+    assertTrue(approxEqual(score, 4.14f, 0.1f), "Disagreement score ~4.14");
+}
+
+void testDisagreementTaskMismatch() {
+    std::cout << "\n=== Disagreement Task Mismatch ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    auto* pers = addComp<components::CaptainPersonality>(entity);
+    pers->aggression = 0.5f;
+    pers->optimism = 0.5f;
+
+    float noMismatch = sys.computeDisagreement("cap1", 0.5f, false);
+    float withMismatch = sys.computeDisagreement("cap1", 0.5f, true);
+    assertTrue(withMismatch - noMismatch >= 9.9f, "Task mismatch adds +10 to score");
+}
+
+void testDisagreementAggressiveLow() {
+    std::cout << "\n=== Disagreement Aggressive Captain Low Score ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* entity = world.createEntity("cap1");
+    auto* pers = addComp<components::CaptainPersonality>(entity);
+    pers->aggression = 0.9f;  // very aggressive → tolerates risk
+    pers->optimism = 0.9f;    // very optimistic → shrugs off losses
+
+    float score = sys.computeDisagreement("cap1", 1.0f, false);
+    // expected: 1.0*(1-0.9) + 0*(1-0.9) = 0.1
+    assertTrue(score < 1.0f, "Aggressive+optimistic captain has low disagreement");
+}
+
+// ==================== Phase 9: Silence Interpretation Tests ====================
+
+void testSilenceInterpretationTriggered() {
+    std::cout << "\n=== Silence Interpretation Triggered ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* player = world.createEntity("player");
+    auto* presence = addComp<components::PlayerPresence>(player);
+    presence->time_since_last_command = 150.0f;  // >120s threshold
+
+    auto* cap = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(cap);
+    addComp<components::FleetChatterState>(cap);
+
+    std::string line = sys.getSilenceAwareLine("cap1", "player");
+    assertTrue(!line.empty(), "Captain speaks about silence");
+
+    // Should be one of the silence lines
+    bool isSilenceLine = (line.find("Quiet") != std::string::npos ||
+                          line.find("alright") != std::string::npos ||
+                          line.find("heard from you") != std::string::npos ||
+                          line.find("okay") != std::string::npos ||
+                          line.find("checking in") != std::string::npos);
+    assertTrue(isSilenceLine, "Line is a silence interpretation");
+}
+
+void testSilenceInterpretationNotTriggered() {
+    std::cout << "\n=== Silence Interpretation Not Triggered ===" << std::endl;
+    ecs::World world;
+    systems::FleetChatterSystem sys(&world);
+    auto* player = world.createEntity("player");
+    auto* presence = addComp<components::PlayerPresence>(player);
+    presence->time_since_last_command = 30.0f;  // <120s, no silence
+
+    auto* cap = world.createEntity("cap1");
+    addComp<components::CaptainPersonality>(cap);
+    addComp<components::FleetChatterState>(cap);
+    sys.setActivity("cap1", "Idle");
+
+    std::string line = sys.getSilenceAwareLine("cap1", "player");
+    // Should fall back to contextual line (not silence-specific)
+    assertTrue(!line.empty(), "Captain speaks (contextual fallback)");
+}
+
+// ==================== Phase 10: Tactical Overlay Shared Filters Tests ====================
+
+void testOverlaySharedFilters() {
+    std::cout << "\n=== Overlay Shared Filters ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* entity = world.createEntity("player1");
+    addComp<components::TacticalOverlayState>(entity);
+
+    auto defaults = sys.getFilterCategories("player1");
+    assertTrue(defaults.size() == 4, "Default has 4 filter categories");
+
+    std::vector<std::string> custom = {"hostile", "structure"};
+    sys.setFilterCategories("player1", custom);
+    auto updated = sys.getFilterCategories("player1");
+    assertTrue(updated.size() == 2, "Updated to 2 filter categories");
+    assertTrue(updated[0] == "hostile", "First filter is hostile");
+    assertTrue(updated[1] == "structure", "Second filter is structure");
+}
+
+void testOverlayPassiveDisplayOnly() {
+    std::cout << "\n=== Overlay Passive Display Only ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* entity = world.createEntity("player1");
+    addComp<components::TacticalOverlayState>(entity);
+
+    assertTrue(sys.isPassiveDisplayOnly("player1"), "Overlay is passive by default");
+}
+
+void testOverlayEntityPriority() {
+    std::cout << "\n=== Overlay Entity Priority ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* entity = world.createEntity("player1");
+    addComp<components::TacticalOverlayState>(entity);
+
+    assertTrue(approxEqual(sys.getEntityDisplayPriority("player1"), 1.0f),
+               "Default entity priority is 1.0");
+
+    sys.setEntityDisplayPriority("player1", 5.0f);
+    assertTrue(approxEqual(sys.getEntityDisplayPriority("player1"), 5.0f),
+               "Entity priority updated to 5.0");
+}
+
+void testOverlayEntityPriorityHostileHighAsteroidLow() {
+    std::cout << "\n=== Overlay Hostile High / Asteroid Low Priority ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem sys(&world);
+    auto* hostile = world.createEntity("hostile1");
+    addComp<components::TacticalOverlayState>(hostile);
+    sys.setEntityDisplayPriority("hostile1", 10.0f);
+
+    auto* asteroid = world.createEntity("asteroid1");
+    addComp<components::TacticalOverlayState>(asteroid);
+    sys.setEntityDisplayPriority("asteroid1", 0.5f);
+
+    assertTrue(sys.getEntityDisplayPriority("hostile1") > sys.getEntityDisplayPriority("asteroid1"),
+               "Hostile higher priority than asteroid");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -11410,6 +11861,43 @@ int main() {
 
     // Mineral economy integration test
     testMineralEconomyEndToEnd();
+
+    // Phase 9: Interruptible chatter tests
+    testChatterInterruptHighPriority();
+    testChatterInterruptLowPriorityFails();
+    testChatterInterruptNotSpeaking();
+
+    // Phase 9: Timing rules tests
+    testChatterTimingNoOverlap();
+    testChatterTimingCooldownRange();
+    testChatterSpeakingClearedAfterCooldown();
+
+    // Phase 9: Friendship/grudge formation effects
+    testFormationFriendCloser();
+    testFormationGrudgeWider();
+    testFormationNeutralDefault();
+    testFormationAllySpacing();
+    testFormationRivalSpacing();
+
+    // Phase 9: Rumor propagation tests
+    testRumorPropagationNewRumor();
+    testRumorPropagationReinforces();
+    testRumorPropagationNoRumors();
+
+    // Phase 9: Disagreement model tests
+    testDisagreementBasicScore();
+    testDisagreementTaskMismatch();
+    testDisagreementAggressiveLow();
+
+    // Phase 9: Silence interpretation tests
+    testSilenceInterpretationTriggered();
+    testSilenceInterpretationNotTriggered();
+
+    // Phase 10: Tactical overlay shared filters & entity priority
+    testOverlaySharedFilters();
+    testOverlayPassiveDisplayOnly();
+    testOverlayEntityPriority();
+    testOverlayEntityPriorityHostileHighAsteroidLow();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

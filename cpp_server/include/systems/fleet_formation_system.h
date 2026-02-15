@@ -55,6 +55,21 @@ public:
                    float& ox, float& oy, float& oz) const;
 
     /**
+     * @brief Apply relationship-based spacing modifiers (Phase 9).
+     *
+     * Reads CaptainRelationship affinity between entity and fleet
+     * leader to adjust spacing_modifier on the FleetFormation
+     * component:
+     *   Friend (>50) → 0.7  (fly closer)
+     *   Ally   (>20) → 0.85
+     *   Grudge (<-50) → 1.5  (fly wider)
+     *   Rival  (<-20) → 1.25
+     *   Neutral → 1.0
+     */
+    void applyRelationshipSpacing(const std::string& entity_id,
+                                   const std::string& leader_id);
+
+    /**
      * @brief Spacing between formation slots in metres
      */
     static constexpr float kDefaultSpacing = 500.0f;
