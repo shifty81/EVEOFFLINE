@@ -2,6 +2,7 @@
 #include "rendering/shader.h"
 #include <GL/glew.h>
 #include <iostream>
+#include <cmath>
 
 namespace atlas {
 
@@ -46,6 +47,35 @@ void WarpEffectRenderer::update(float deltaTime, int phase, float progress,
     if (glm::length(glm::vec2(direction.x, direction.z)) > 0.001f) {
         m_direction = glm::normalize(glm::vec2(direction.x, direction.z));
     }
+
+    // Fire audio events on phase transitions
+    if (phase != m_lastPhase) {
+        // Exiting previous phase
+        if (m_lastPhase == 3) {
+            // Was in cruise, now leaving
+            fireAudioEvent(WarpAudioEvent::CRUISE_STOP);
+        }
+
+        // Entering new phase
+        switch (phase) {
+            case 2:  // Accelerating
+                fireAudioEvent(WarpAudioEvent::ENTRY_START);
+                break;
+            case 3:  // Cruising
+                fireAudioEvent(WarpAudioEvent::CRUISE_START);
+                break;
+            case 4:  // Decelerating
+                fireAudioEvent(WarpAudioEvent::EXIT_START);
+                break;
+            case 0:  // None (warp complete)
+                if (m_lastPhase == 4) {
+                    fireAudioEvent(WarpAudioEvent::EXIT_COMPLETE);
+                }
+                break;
+        }
+
+        m_lastPhase = phase;
+    }
 }
 
 void WarpEffectRenderer::render() {
@@ -71,6 +101,24 @@ void WarpEffectRenderer::render() {
 
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+float WarpEffectRenderer::getBreathingIntensity() const {
+    // Return breathing intensity synced with shader calculation
+    // Only active during cruise phase (3)
+    if (static_cast<int>(m_phase) != 3) {
+        return 0.0f;
+    }
+    
+    // Match shader breathing calculation
+    float breathRate = 0.08f - 0.03f * m_massNorm;
+    return 0.5f + 0.5f * std::sin(m_time * 6.28318f * breathRate);
+}
+
+void WarpEffectRenderer::fireAudioEvent(WarpAudioEvent event) {
+    if (m_audioCallback) {
+        m_audioCallback(event, m_massNorm);
+    }
 }
 
 void WarpEffectRenderer::createFullscreenQuad() {

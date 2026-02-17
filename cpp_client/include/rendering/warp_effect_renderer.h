@@ -1,11 +1,30 @@
 #pragma once
 
 #include <memory>
+#include <functional>
 #include <glm/glm.hpp>
 
 namespace atlas {
 
 class Shader;
+
+/**
+ * Warp audio event types for audio system integration.
+ */
+enum class WarpAudioEvent {
+    ENTRY_START,    // Warp acceleration begins (play entry sound)
+    CRUISE_START,   // Entered cruise phase (start looping drone)
+    CRUISE_STOP,    // Exiting cruise phase (stop looping drone)
+    EXIT_START,     // Deceleration begins (play exit sound)
+    EXIT_COMPLETE   // Warp finished (cleanup)
+};
+
+/**
+ * Callback signature for warp audio events.
+ * @param event The audio event type
+ * @param massNorm Normalized ship mass (0=frigate, 1=capital) for pitch adjustment
+ */
+using WarpAudioCallback = std::function<void(WarpAudioEvent event, float massNorm)>;
 
 /**
  * WarpEffectRenderer — renders the full-screen warp tunnel overlay.
@@ -15,12 +34,19 @@ class Shader;
  *   Layer 2: Starfield velocity bloom (speed lines)
  *   Layer 3: Tunnel skin (procedural noise band)
  *   Layer 4: Vignette (edge darkening)
+ *   Layer 5: Breathing effect (subtle pulsing during cruise for meditative feel)
  *
  * Layer intensities are driven by the server-computed WarpTunnelConfig
  * and modulated per-frame from ship mass, warp phase, and accessibility settings.
  *
+ * Audio Integration:
+ *   Set a WarpAudioCallback to receive phase transition events for audio cues.
+ *   The callback is invoked when entering/exiting warp phases, allowing the
+ *   audio system to play entry sounds, looping drones, and exit sounds.
+ *
  * Usage:
  *   renderer.initialize();
+ *   renderer.setAudioCallback([](WarpAudioEvent e, float m) { ... });
  *   // each frame, after scene rendering:
  *   renderer.update(deltaTime, phase, progress, intensity, direction);
  *   renderer.setMassNorm(mass);
@@ -70,8 +96,28 @@ public:
         m_blurScale   = blur;
     }
 
+    /**
+     * Set callback for warp audio events.
+     * Called when warp phases transition, allowing audio system integration.
+     */
+    void setAudioCallback(WarpAudioCallback callback) {
+        m_audioCallback = std::move(callback);
+    }
+
+    /**
+     * Get current warp phase (0=none, 1=align, 2=accel, 3=cruise, 4=decel).
+     */
+    int getCurrentPhase() const { return static_cast<int>(m_phase); }
+
+    /**
+     * Get breathing intensity for external audio modulation (0.0-1.0).
+     * Synced with visual breathing during cruise phase.
+     */
+    float getBreathingIntensity() const;
+
 private:
     void createFullscreenQuad();
+    void fireAudioEvent(WarpAudioEvent event);
 
     std::unique_ptr<Shader> m_shader;
     unsigned int m_quadVAO = 0;
@@ -85,6 +131,12 @@ private:
     float m_motionScale = 1.0f;
     float m_blurScale   = 1.0f;
     glm::vec2 m_direction{0.0f, 1.0f};
+
+    // Phase tracking for audio event firing
+    int m_lastPhase = 0;
+
+    // Audio callback
+    WarpAudioCallback m_audioCallback;
 };
 
 } // namespace atlas

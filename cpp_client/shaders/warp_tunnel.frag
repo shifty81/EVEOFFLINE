@@ -117,12 +117,27 @@ void main() {
     effectIntensity *= massFactor;
     effectIntensity = min(effectIntensity, 1.0);
 
+    // ── Cruise Phase Breathing Effect (meditative long warps) ──
+    // Slow, subtle pulsing that makes long warps feel contemplative
+    float breathIntensity = 0.0;
+    float breathColor = 0.0;
+    if (uPhase == 3.0) {
+        // Very slow breathing (0.08 Hz = ~12.5 second cycle for frigates)
+        // Heavier ships breathe slower (0.05 Hz = ~20 second cycle for capitals)
+        float breathRate = 0.08 - 0.03 * uMassNorm;
+        breathIntensity = 0.08 * (0.5 + 0.5 * sin(uTime * 6.28318 * breathRate));
+        
+        // Subtle color temperature shift (warmer on inhale, cooler on exhale)
+        breathColor = 0.05 * sin(uTime * 6.28318 * breathRate * 0.5);
+    }
+
     // Apply accessibility scaling
     float motionEff = effectIntensity * uMotionScale;
     float blurEff   = effectIntensity * uBlurScale;
 
     // ── Layer 1: Radial distortion (applied to UV coordinates) ──
-    vec2 distortedUV = radialDistortion(uv, blurEff, uMassNorm);
+    // Add subtle breathing to distortion during cruise
+    vec2 distortedUV = radialDistortion(uv, blurEff + breathIntensity * 0.3, uMassNorm);
 
     // ── Layer 2: Starfield velocity bloom (speed lines) ──
     float lines = speedLines(distortedUV, uTime, motionEff);
@@ -137,10 +152,17 @@ void main() {
     vec3 lineColor = vec3(0.6, 0.75, 1.0) * lines;
     vec3 skinColor = vec3(0.3, 0.5, 0.9) * skin;
     vec3 tint = warpColorShift(effectIntensity);
+    
+    // Apply breathing color shift during cruise (subtle warmth)
+    tint.r += breathColor;
+    tint.b -= breathColor * 0.5;
 
     // Combine: additive speed lines + skin + subtle tint
     vec3 color = lineColor + skinColor + tint;
     float alpha = (lines * 0.5 + skin * 0.3) * effectIntensity;
+    
+    // Add breathing to alpha for subtle overall pulsing
+    alpha += breathIntensity * 0.15;
 
     // Add vignette darkening at edges
     alpha = max(alpha, vignette * 0.3);

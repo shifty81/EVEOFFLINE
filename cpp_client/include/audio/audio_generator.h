@@ -47,6 +47,41 @@ public:
                                float duration_sec,
                                int sample_rate = 44100);
 
+    /**
+     * Generate warp tunnel ambient sound (cinematic warp hum/drone).
+     * Creates a deep, meditative drone with subtle modulation for long warps.
+     * Features:
+     *   - Low-frequency bass foundation (40-80 Hz)
+     *   - Harmonic overtones for richness
+     *   - Slow amplitude modulation (breathing effect)
+     *   - Optional shimmer layer for high frequencies
+     * @param filepath Output WAV file path
+     * @param duration_sec Duration (typically 30-60 seconds for looping)
+     * @param mass_factor 0.0 = frigate (higher pitch), 1.0 = capital (deeper bass)
+     * @param sample_rate Audio sample rate
+     * @return true if generation succeeded
+     */
+    static bool generate_warp_drone(const std::string& filepath,
+                                    float duration_sec,
+                                    float mass_factor = 0.5f,
+                                    int sample_rate = 44100);
+
+    /**
+     * Generate warp entry sound (acceleration into warp).
+     * Rising pitch with energy buildup.
+     */
+    static bool generate_warp_entry(const std::string& filepath,
+                                    float duration_sec = 2.0f,
+                                    int sample_rate = 44100);
+
+    /**
+     * Generate warp exit sound (deceleration from warp).
+     * Falling pitch with energy dissipation.
+     */
+    static bool generate_warp_exit(const std::string& filepath,
+                                   float duration_sec = 1.5f,
+                                   int sample_rate = 44100);
+
 private:
     // Write WAV file header
     static bool write_wav_header(std::ofstream& file,

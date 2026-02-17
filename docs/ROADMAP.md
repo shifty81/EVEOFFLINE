@@ -892,12 +892,16 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Layered shader stack** — 5-layer warp tunnel (radial distortion, starfield velocity bloom, procedural noise skin, ship silhouette anchor, vignette + peripheral falloff) — WarpCinematicSystem computes 4 visual layers via computeLayers()
 - [x] **Ship-mass-driven intensity** — Heavier ships bend space harder, deeper bass, slower tunnel oscillation — computeCompositeIntensity() uses mass_norm
 - [x] **Warp entry/exit choreography** — Alignment phase → FOV tighten → tunnel cruise → deceleration bloom → arrival — WarpState::WarpPhase enum (None, Align, Entry, Cruise, Event, Exit)
+- [x] **Meditative breathing effect** — Slow pulsing during cruise phase (~12.5s cycle for frigates, ~20s for capitals), subtle color temperature shift, syncs with audio system via getBreathingIntensity()
 - [ ] **Performance budget** — ≤1.2ms total GPU cost (single fullscreen pass, no dynamic branching)
 
 #### Warp Audio System
 - [x] **Engine core sub-bass** (30–60 Hz sine, controller rumble sync) — WarpAudioProfile engine_core_volume/pitch
 - [x] **Warp field harmonics** (phase-shifted stereo, slow LFO evolution) — WarpAudioProfile harmonics_volume/pitch
 - [x] **Environmental Doppler shimmer** (distance-triggered one-shots, long tails) — WarpAudioProfile shimmer_volume
+- [x] **Audio generation** — AudioGenerator::generate_warp_drone (meditative drone with mass-based pitch), generate_warp_entry (rising acceleration), generate_warp_exit (falling deceleration)
+- [x] **Audio event system** — WarpEffectRenderer fires WarpAudioEvent (ENTRY_START, CRUISE_START/STOP, EXIT_START/COMPLETE) on phase transitions
+- [x] **Breathing sync** — getBreathingIntensity() provides visual-to-audio modulation sync
 - [ ] **Optional meditation layer** (sustained pads, no melody, fade in after 15–20s of warp)
 - [ ] **Audio progression curve** — Tension → stabilize → bloom → full meditative state
 
