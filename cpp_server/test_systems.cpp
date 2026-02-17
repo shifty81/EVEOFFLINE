@@ -62,6 +62,8 @@
 #include "systems/mission_template_system.h"
 #include "systems/mission_generator_system.h"
 #include "systems/reputation_system.h"
+#include "systems/lod_system.h"
+#include "systems/spatial_hash_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -73,6 +75,7 @@
 #include <memory>
 #include <fstream>
 #include <thread>
+#include <sys/stat.h>
 
 using namespace atlas;
 
@@ -11966,6 +11969,446 @@ void testPersistenceEconomyFile() {
     std::remove(filepath.c_str());
 }
 
+// ==================== Phase 5 Continued: LOD System Tests ====================
+
+void testLODSystemDefaults() {
+    std::cout << "\n=== LOD System: Default Thresholds ===" << std::endl;
+    ecs::World world;
+    systems::LODSystem lodSys(&world);
+
+    assertTrue(approxEqual(lodSys.getNearThreshold(), 5000.0f), "Default near threshold is 5000");
+    assertTrue(approxEqual(lodSys.getMidThreshold(), 20000.0f), "Default mid threshold is 20000");
+    assertTrue(approxEqual(lodSys.getFarThreshold(), 80000.0f), "Default far threshold is 80000");
+}
+
+void testLODSystemPriorityComputation() {
+    std::cout << "\n=== LOD System: Priority Computation ===" << std::endl;
+    ecs::World world;
+    systems::LODSystem lodSys(&world);
+    lodSys.setReferencePoint(0.0f, 0.0f, 0.0f);
+
+    // Entity within near threshold (1000m)
+    auto* eNear = world.createEntity("lod_near");
+    auto* pNear = addComp<components::Position>(eNear);
+    pNear->x = 1000.0f; pNear->y = 0.0f; pNear->z = 0.0f;
+    addComp<components::LODPriority>(eNear);
+
+    // Entity at mid range (10000m)
+    auto* eMid = world.createEntity("lod_mid");
+    auto* pMid = addComp<components::Position>(eMid);
+    pMid->x = 10000.0f; pMid->y = 0.0f; pMid->z = 0.0f;
+    addComp<components::LODPriority>(eMid);
+
+    // Entity at far range (50000m)
+    auto* eFar = world.createEntity("lod_far");
+    auto* pFar = addComp<components::Position>(eFar);
+    pFar->x = 50000.0f; pFar->y = 0.0f; pFar->z = 0.0f;
+    addComp<components::LODPriority>(eFar);
+
+    // Entity beyond far (100000m)
+    auto* eImp = world.createEntity("lod_impostor");
+    auto* pImp = addComp<components::Position>(eImp);
+    pImp->x = 100000.0f; pImp->y = 0.0f; pImp->z = 0.0f;
+    addComp<components::LODPriority>(eImp);
+
+    lodSys.update(1.0f);
+
+    assertTrue(approxEqual(eNear->getComponent<components::LODPriority>()->priority, 2.0f),
+               "Near entity gets full detail priority");
+    assertTrue(approxEqual(eMid->getComponent<components::LODPriority>()->priority, 1.0f),
+               "Mid entity gets reduced priority");
+    assertTrue(approxEqual(eFar->getComponent<components::LODPriority>()->priority, 0.5f),
+               "Far entity gets merged priority");
+    assertTrue(approxEqual(eImp->getComponent<components::LODPriority>()->priority, 0.1f),
+               "Impostor entity gets lowest priority");
+
+    assertTrue(lodSys.getFullDetailCount() == 1, "1 entity at full detail");
+    assertTrue(lodSys.getReducedCount() == 1, "1 entity at reduced");
+    assertTrue(lodSys.getMergedCount() == 1, "1 entity at merged");
+    assertTrue(lodSys.getImpostorCount() == 1, "1 entity at impostor");
+}
+
+void testLODSystemForceVisible() {
+    std::cout << "\n=== LOD System: Force Visible Override ===" << std::endl;
+    ecs::World world;
+    systems::LODSystem lodSys(&world);
+    lodSys.setReferencePoint(0.0f, 0.0f, 0.0f);
+
+    // Very far entity but force_visible
+    auto* e = world.createEntity("lod_forced");
+    auto* p = addComp<components::Position>(e);
+    p->x = 200000.0f; p->y = 0.0f; p->z = 0.0f;
+    auto* lod = addComp<components::LODPriority>(e);
+    lod->force_visible = true;
+
+    lodSys.update(1.0f);
+
+    assertTrue(approxEqual(lod->priority, 2.0f),
+               "Force-visible entity keeps full detail even at extreme range");
+    assertTrue(lodSys.getFullDetailCount() == 1, "Force-visible counted as full detail");
+}
+
+void testLODSystemDistanceQuery() {
+    std::cout << "\n=== LOD System: Distance Query ===" << std::endl;
+    ecs::World world;
+    systems::LODSystem lodSys(&world);
+    lodSys.setReferencePoint(0.0f, 0.0f, 0.0f);
+
+    auto* e = world.createEntity("lod_dist");
+    auto* p = addComp<components::Position>(e);
+    p->x = 3000.0f; p->y = 4000.0f; p->z = 0.0f;
+
+    float distSq = lodSys.distanceSqToEntity("lod_dist");
+    assertTrue(approxEqual(distSq, 25000000.0f), "Distance squared correct (3-4-5 triangle)");
+
+    float noEntity = lodSys.distanceSqToEntity("nonexistent");
+    assertTrue(noEntity < 0.0f, "Non-existent entity returns negative");
+}
+
+// ==================== Phase 5 Continued: Spatial Hash System Tests ====================
+
+void testSpatialHashBasicIndex() {
+    std::cout << "\n=== Spatial Hash: Basic Indexing ===" << std::endl;
+    ecs::World world;
+    systems::SpatialHashSystem spatial(&world);
+    spatial.setCellSize(1000.0f);
+
+    auto* e1 = world.createEntity("sh_e1");
+    auto* p1 = addComp<components::Position>(e1);
+    p1->x = 500.0f; p1->y = 0.0f; p1->z = 0.0f;
+
+    auto* e2 = world.createEntity("sh_e2");
+    auto* p2 = addComp<components::Position>(e2);
+    p2->x = 600.0f; p2->y = 0.0f; p2->z = 0.0f;
+
+    auto* e3 = world.createEntity("sh_e3");
+    auto* p3 = addComp<components::Position>(e3);
+    p3->x = 5000.0f; p3->y = 5000.0f; p3->z = 5000.0f;
+
+    spatial.update(0.0f);
+
+    assertTrue(spatial.getIndexedEntityCount() == 3, "3 entities indexed");
+    assertTrue(spatial.getOccupiedCellCount() >= 1, "At least 1 cell occupied");
+}
+
+void testSpatialHashQueryNear() {
+    std::cout << "\n=== Spatial Hash: Query Near ===" << std::endl;
+    ecs::World world;
+    systems::SpatialHashSystem spatial(&world);
+    spatial.setCellSize(1000.0f);
+
+    // Two close entities, one far away
+    auto* e1 = world.createEntity("near_a");
+    auto* p1 = addComp<components::Position>(e1);
+    p1->x = 100.0f; p1->y = 0.0f; p1->z = 0.0f;
+
+    auto* e2 = world.createEntity("near_b");
+    auto* p2 = addComp<components::Position>(e2);
+    p2->x = 200.0f; p2->y = 0.0f; p2->z = 0.0f;
+
+    auto* e3 = world.createEntity("far_c");
+    auto* p3 = addComp<components::Position>(e3);
+    p3->x = 50000.0f; p3->y = 0.0f; p3->z = 0.0f;
+
+    spatial.update(0.0f);
+
+    auto nearby = spatial.queryNear(150.0f, 0.0f, 0.0f, 500.0f);
+    assertTrue(nearby.size() == 2, "Two entities within 500m of query point");
+
+    auto farNearby = spatial.queryNear(90.0f, 0.0f, 0.0f, 30.0f);
+    assertTrue(farNearby.size() == 1, "One entity within 30m of offset query point");
+}
+
+void testSpatialHashQueryNeighbours() {
+    std::cout << "\n=== Spatial Hash: Query Neighbours ===" << std::endl;
+    ecs::World world;
+    systems::SpatialHashSystem spatial(&world);
+    spatial.setCellSize(1000.0f);
+
+    // Two entities in same cell
+    auto* e1 = world.createEntity("nb_a");
+    auto* p1 = addComp<components::Position>(e1);
+    p1->x = 100.0f; p1->y = 100.0f; p1->z = 100.0f;
+
+    auto* e2 = world.createEntity("nb_b");
+    auto* p2 = addComp<components::Position>(e2);
+    p2->x = 200.0f; p2->y = 200.0f; p2->z = 200.0f;
+
+    // Entity far away (different cell neighbourhood)
+    auto* e3 = world.createEntity("nb_far");
+    auto* p3 = addComp<components::Position>(e3);
+    p3->x = 50000.0f; p3->y = 50000.0f; p3->z = 50000.0f;
+
+    spatial.update(0.0f);
+
+    auto neighbours = spatial.queryNeighbours("nb_a");
+    bool foundB = false;
+    bool foundFar = false;
+    for (const auto& id : neighbours) {
+        if (id == "nb_b") foundB = true;
+        if (id == "nb_far") foundFar = true;
+    }
+    assertTrue(foundB, "Same-cell neighbour found");
+    assertTrue(!foundFar, "Far entity not in neighbour set");
+}
+
+void testSpatialHashEmptyWorld() {
+    std::cout << "\n=== Spatial Hash: Empty World ===" << std::endl;
+    ecs::World world;
+    systems::SpatialHashSystem spatial(&world);
+
+    spatial.update(0.0f);
+
+    assertTrue(spatial.getIndexedEntityCount() == 0, "Empty world has 0 indexed entities");
+    assertTrue(spatial.getOccupiedCellCount() == 0, "Empty world has 0 occupied cells");
+
+    auto nearby = spatial.queryNear(0.0f, 0.0f, 0.0f, 1000.0f);
+    assertTrue(nearby.empty(), "No results from empty world");
+}
+
+void testSpatialHashCellSizeConfig() {
+    std::cout << "\n=== Spatial Hash: Cell Size Configuration ===" << std::endl;
+    ecs::World world;
+    systems::SpatialHashSystem spatial(&world);
+
+    spatial.setCellSize(500.0f);
+    assertTrue(approxEqual(spatial.getCellSize(), 500.0f), "Cell size set to 500");
+
+    // Negative size should be rejected
+    spatial.setCellSize(-100.0f);
+    assertTrue(approxEqual(spatial.getCellSize(), 500.0f), "Negative cell size rejected");
+}
+
+// ==================== Phase 5 Continued: Compressed Persistence Tests ====================
+
+void testPersistenceCompressedSaveLoad() {
+    std::cout << "\n=== Persistence: Compressed Save/Load ===" << std::endl;
+    ecs::World world;
+
+    // Create entities with various components
+    for (int i = 0; i < 50; ++i) {
+        std::string id = "compress_ship_" + std::to_string(i);
+        auto* e = world.createEntity(id);
+
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>(i * 500);
+        pos->y = static_cast<float>(i * 100);
+        pos->z = 0.0f;
+
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 300.0f + static_cast<float>(i);
+        hp->shield_max = 500.0f;
+        hp->armor_hp = 200.0f;
+        hp->armor_max = 300.0f;
+        hp->hull_hp = 100.0f;
+        hp->hull_max = 200.0f;
+
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = "Frigate";
+    }
+
+    assertTrue(world.getEntityCount() == 50, "Created 50 entities for compressed test");
+
+    data::WorldPersistence persistence;
+    std::string filepath = "/tmp/eve_compressed_test.json.gz";
+
+    bool saved = persistence.saveWorldCompressed(&world, filepath);
+    assertTrue(saved, "Compressed save succeeded");
+
+    // Load into fresh world
+    ecs::World world2;
+    bool loaded = persistence.loadWorldCompressed(&world2, filepath);
+    assertTrue(loaded, "Compressed load succeeded");
+    assertTrue(world2.getEntityCount() == 50, "Loaded world has 50 entities");
+
+    // Verify a sample
+    auto* e10 = world2.getEntity("compress_ship_10");
+    assertTrue(e10 != nullptr, "Ship 10 exists after compressed load");
+    auto* pos10 = e10->getComponent<components::Position>();
+    assertTrue(pos10 != nullptr, "Position component preserved");
+    assertTrue(approxEqual(pos10->x, 5000.0f), "Position x preserved through compression");
+
+    auto* hp10 = e10->getComponent<components::Health>();
+    assertTrue(hp10 != nullptr, "Health component preserved");
+    assertTrue(approxEqual(hp10->shield_hp, 310.0f), "Health preserved through compression");
+
+    // Clean up
+    std::remove(filepath.c_str());
+}
+
+void testPersistenceCompressedSmaller() {
+    std::cout << "\n=== Persistence: Compressed File Is Smaller ===" << std::endl;
+    ecs::World world;
+
+    for (int i = 0; i < 100; ++i) {
+        std::string id = "size_ship_" + std::to_string(i);
+        auto* e = world.createEntity(id);
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>(i * 1000);
+        pos->y = static_cast<float>(i * 200);
+        pos->z = static_cast<float>(i * 50);
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 500.0f;
+        hp->shield_max = 500.0f;
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = "Cruiser";
+    }
+
+    data::WorldPersistence persistence;
+    std::string jsonPath = "/tmp/eve_size_test.json";
+    std::string gzPath   = "/tmp/eve_size_test.json.gz";
+
+    persistence.saveWorld(&world, jsonPath);
+    persistence.saveWorldCompressed(&world, gzPath);
+
+    // Compare file sizes
+    struct stat jsonStat, gzStat;
+    stat(jsonPath.c_str(), &jsonStat);
+    stat(gzPath.c_str(), &gzStat);
+
+    assertTrue(gzStat.st_size < jsonStat.st_size,
+               "Compressed file is smaller than JSON");
+    assertTrue(gzStat.st_size > 0, "Compressed file is not empty");
+
+    std::remove(jsonPath.c_str());
+    std::remove(gzPath.c_str());
+}
+
+// ==================== Phase 5 Continued: 200-Ship Multi-System Stress Test ====================
+
+void testStress200ShipMultiSystem() {
+    std::cout << "\n=== Stress Test: 200 Ships Multi-System Tick ===" << std::endl;
+    ecs::World world;
+    systems::ShieldRechargeSystem shieldSys(&world);
+    systems::MovementSystem moveSys(&world);
+    systems::LODSystem lodSys(&world);
+    systems::SpatialHashSystem spatialSys(&world);
+    spatialSys.setCellSize(5000.0f);
+    lodSys.setReferencePoint(0.0f, 0.0f, 0.0f);
+
+    // Create 200 ships spread across space
+    for (int i = 0; i < 200; ++i) {
+        std::string id = "multi_ship_" + std::to_string(i);
+        auto* e = world.createEntity(id);
+
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>((i % 20) * 3000);
+        pos->y = static_cast<float>((i / 20) * 3000);
+        pos->z = 0.0f;
+
+        auto* vel = addComp<components::Velocity>(e);
+        vel->vx = 10.0f;
+        vel->vy = 0.0f;
+        vel->vz = 0.0f;
+
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 250.0f;
+        hp->shield_max = 500.0f;
+        hp->shield_recharge_rate = 5.0f;
+
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = (i % 3 == 0) ? "Frigate" : ((i % 3 == 1) ? "Cruiser" : "Battleship");
+        vel->max_speed = 300.0f;
+
+        auto* lod = addComp<components::LODPriority>(e);
+        lod->priority = 1.0f;
+        lod->force_visible = (i == 0);  // only player ship forced
+    }
+
+    assertTrue(world.getEntityCount() == 200, "Created 200 ship entities");
+
+    // Run 10 simulation ticks with all systems
+    for (int tick = 0; tick < 10; ++tick) {
+        float dt = 0.1f;  // 100ms tick (10 Hz)
+        moveSys.update(dt);
+        shieldSys.update(dt);
+        lodSys.update(dt);
+        spatialSys.update(dt);
+    }
+
+    // Verify shields recharged
+    int recharged = 0;
+    auto entities = world.getEntities();
+    for (auto* e : entities) {
+        auto* hp = e->getComponent<components::Health>();
+        if (hp && hp->shield_hp > 250.0f) ++recharged;
+    }
+    assertTrue(recharged == 200, "All 200 ships recharged shields across 10 ticks");
+
+    // Verify LOD computed (player ship should be full detail)
+    auto* playerLod = world.getEntity("multi_ship_0")->getComponent<components::LODPriority>();
+    assertTrue(approxEqual(playerLod->priority, 2.0f), "Player ship at full detail (force_visible)");
+
+    // Verify LOD counts sum to 200
+    int lodTotal = lodSys.getFullDetailCount() + lodSys.getReducedCount() +
+                   lodSys.getMergedCount() + lodSys.getImpostorCount();
+    assertTrue(lodTotal == 200, "LOD tier counts sum to 200");
+
+    // Verify spatial hash indexed all 200 entities
+    assertTrue(spatialSys.getIndexedEntityCount() == 200, "Spatial hash indexed 200 entities");
+
+    // Verify spatial query returns reasonable neighbourhood
+    auto nearby = spatialSys.queryNear(0.0f, 0.0f, 0.0f, 5000.0f);
+    assertTrue(!nearby.empty(), "Spatial query finds nearby ships");
+    assertTrue(nearby.size() <= 200, "Spatial query doesn't exceed total entities");
+
+    // Verify entities moved (velocity applied over 10 ticks)
+    auto* ship50 = world.getEntity("multi_ship_50");
+    auto* pos50 = ship50->getComponent<components::Position>();
+    // Original x was (50%20)*3000 = 30000.0, moved +10.0 * 10 ticks * 0.1s = +10.0m
+    assertTrue(pos50->x > 30000.0f, "Ship 50 moved forward from velocity");
+}
+
+void testStress200ShipPersistence() {
+    std::cout << "\n=== Stress Test: 200 Ships Save/Load ===" << std::endl;
+    ecs::World world;
+
+    for (int i = 0; i < 200; ++i) {
+        std::string id = "persist200_ship_" + std::to_string(i);
+        auto* e = world.createEntity(id);
+
+        auto* pos = addComp<components::Position>(e);
+        pos->x = static_cast<float>(i * 500);
+        pos->y = static_cast<float>((i % 20) * 100);
+        pos->z = 0.0f;
+
+        auto* hp = addComp<components::Health>(e);
+        hp->shield_hp = 400.0f + static_cast<float>(i % 100);
+        hp->shield_max = 500.0f;
+
+        auto* ship = addComp<components::Ship>(e);
+        ship->ship_type = "Frigate";
+
+        auto* lod = addComp<components::LODPriority>(e);
+        lod->priority = (i < 10) ? 2.0f : 0.5f;
+    }
+
+    assertTrue(world.getEntityCount() == 200, "Created 200 entities");
+
+    data::WorldPersistence persistence;
+    std::string filepath = "/tmp/eve_stress_200ships.json.gz";
+
+    bool saved = persistence.saveWorldCompressed(&world, filepath);
+    assertTrue(saved, "200-ship compressed save succeeded");
+
+    ecs::World world2;
+    bool loaded = persistence.loadWorldCompressed(&world2, filepath);
+    assertTrue(loaded, "200-ship compressed load succeeded");
+    assertTrue(world2.getEntityCount() == 200, "Loaded world has 200 entities");
+
+    // Verify sample entities
+    auto* first = world2.getEntity("persist200_ship_0");
+    assertTrue(first != nullptr, "First ship exists after load");
+    auto* last = world2.getEntity("persist200_ship_199");
+    assertTrue(last != nullptr, "Last ship exists after load");
+
+    auto* hp199 = last->getComponent<components::Health>();
+    assertTrue(hp199 != nullptr, "Health preserved on last ship");
+    assertTrue(approxEqual(hp199->shield_hp, 499.0f), "Shield HP preserved (400 + 199%100 = 499)");
+
+    std::remove(filepath.c_str());
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -11991,7 +12434,8 @@ int main() {
     std::cout << "ShipFitting, PlayerFleet," << std::endl;
     std::cout << "WarpCinematic," << std::endl;
     std::cout << "MissionProtocol, AIDefensive," << std::endl;
-    std::cout << "PersistenceStress, FleetPersistence, EconomyPersistence" << std::endl;
+    std::cout << "PersistenceStress, FleetPersistence, EconomyPersistence," << std::endl;
+    std::cout << "LODSystem, SpatialHash, CompressedPersistence, 200ShipStress" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -12695,6 +13139,27 @@ int main() {
     testPersistenceStress100Ships();
     testPersistenceFleetStateFile();
     testPersistenceEconomyFile();
+
+    // Phase 5 Continued: LOD System tests
+    testLODSystemDefaults();
+    testLODSystemPriorityComputation();
+    testLODSystemForceVisible();
+    testLODSystemDistanceQuery();
+
+    // Phase 5 Continued: Spatial Hash System tests
+    testSpatialHashBasicIndex();
+    testSpatialHashQueryNear();
+    testSpatialHashQueryNeighbours();
+    testSpatialHashEmptyWorld();
+    testSpatialHashCellSizeConfig();
+
+    // Phase 5 Continued: Compressed Persistence tests
+    testPersistenceCompressedSaveLoad();
+    testPersistenceCompressedSmaller();
+
+    // Phase 5 Continued: 200-Ship Multi-System Stress tests
+    testStress200ShipMultiSystem();
+    testStress200ShipPersistence();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

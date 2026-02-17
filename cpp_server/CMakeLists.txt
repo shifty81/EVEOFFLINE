@@ -24,6 +24,7 @@ endif()
 
 # Find required packages
 find_package(Threads REQUIRED)
+find_package(ZLIB REQUIRED)
 
 # Include directories
 include_directories(
@@ -96,6 +97,8 @@ set(SERVER_SOURCES
     src/systems/difficulty_scaling_system.cpp
     src/systems/mission_template_system.cpp
     src/systems/mission_generator_system.cpp
+    src/systems/lod_system.cpp
+    src/systems/spatial_hash_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -168,6 +171,8 @@ set(SERVER_HEADERS
     include/systems/difficulty_scaling_system.h
     include/systems/mission_template_system.h
     include/systems/mission_generator_system.h
+    include/systems/lod_system.h
+    include/systems/spatial_hash_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -209,6 +214,7 @@ add_executable(atlas_dedicated_server ${SERVER_SOURCES} ${SERVER_HEADERS})
 # Link libraries
 target_link_libraries(atlas_dedicated_server 
     Threads::Threads
+    ZLIB::ZLIB
 )
 
 if(USE_STEAM_SDK AND STEAM_LIBRARIES)
@@ -301,6 +307,8 @@ if(BUILD_TESTS)
         src/systems/difficulty_scaling_system.cpp
         src/systems/mission_template_system.cpp
         src/systems/mission_generator_system.cpp
+        src/systems/lod_system.cpp
+        src/systems/spatial_hash_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp
@@ -320,7 +328,7 @@ if(BUILD_TESTS)
         test_systems.cpp
         ${TEST_SUPPORT_SOURCES}
     )
-    target_link_libraries(test_systems Threads::Threads)
+    target_link_libraries(test_systems Threads::Threads ZLIB::ZLIB)
     if(WIN32)
         target_link_libraries(test_systems ws2_32)
     endif()
