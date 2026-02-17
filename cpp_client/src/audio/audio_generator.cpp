@@ -201,6 +201,173 @@ bool AudioGenerator::generate_engine(const std::string& filepath,
     return true;
 }
 
+bool AudioGenerator::generate_warp_drone(const std::string& filepath,
+                                         float duration_sec,
+                                         float mass_factor,
+                                         int sample_rate) {
+    int num_samples = static_cast<int>(sample_rate * duration_sec);
+    std::vector<int16_t> samples(num_samples);
+    
+    const float two_pi = 2.0f * 3.14159265359f;
+    
+    // Mass factor affects base frequency: frigates higher pitch, capitals deeper
+    // Frigate (mass=0): base ~60Hz, Capital (mass=1): base ~35Hz
+    float base_freq = 60.0f - 25.0f * mass_factor;
+    
+    // Breathing modulation rate (slower for heavier ships = more meditative)
+    float breath_rate = 0.08f - 0.03f * mass_factor;  // 0.08 Hz (frigate) to 0.05 Hz (capital)
+    
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> shimmer_dis(-0.02f, 0.02f);
+    
+    for (int i = 0; i < num_samples; ++i) {
+        float t = static_cast<float>(i) / sample_rate;
+        
+        // Slow breathing amplitude envelope (subtle pulsing)
+        float breath = 0.85f + 0.15f * std::sin(two_pi * breath_rate * t);
+        
+        // Base drone with harmonics
+        float drone = 0.35f * std::sin(two_pi * base_freq * t);           // Fundamental
+        drone += 0.25f * std::sin(two_pi * base_freq * 2.0f * t);         // 1st harmonic
+        drone += 0.15f * std::sin(two_pi * base_freq * 3.0f * t);         // 2nd harmonic
+        drone += 0.10f * std::sin(two_pi * base_freq * 5.0f * t);         // 4th harmonic (skip 4th for organ-like)
+        
+        // Sub-bass rumble (very low, felt more than heard)
+        float sub_bass = 0.20f * std::sin(two_pi * (base_freq * 0.5f) * t);
+        
+        // High-frequency shimmer (subtle sparkle, like distant stars)
+        float shimmer = 0.03f * std::sin(two_pi * 440.0f * t) * 
+                        (0.5f + 0.5f * std::sin(two_pi * 0.2f * t));
+        shimmer += shimmer_dis(gen);  // Tiny random variation
+        
+        // Combine all layers
+        float value = breath * (drone + sub_bass) + shimmer;
+        
+        // Apply soft limiter
+        value = std::tanh(value * 1.2f) * 0.8f;
+        
+        samples[i] = float_to_int16(value * 0.6f);  // Master volume
+    }
+    
+    std::ofstream file(filepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "[AudioGenerator] Failed to create file: " << filepath << std::endl;
+        return false;
+    }
+    
+    write_wav_header(file, sample_rate, num_samples);
+    file.write(reinterpret_cast<const char*>(samples.data()), samples.size() * sizeof(int16_t));
+    file.close();
+    
+    std::cout << "[AudioGenerator] Generated warp drone: " << filepath << std::endl;
+    return true;
+}
+
+bool AudioGenerator::generate_warp_entry(const std::string& filepath,
+                                         float duration_sec,
+                                         int sample_rate) {
+    int num_samples = static_cast<int>(sample_rate * duration_sec);
+    std::vector<int16_t> samples(num_samples);
+    
+    const float two_pi = 2.0f * 3.14159265359f;
+    
+    for (int i = 0; i < num_samples; ++i) {
+        float t = static_cast<float>(i) / num_samples;  // Normalized 0-1
+        float time_sec = static_cast<float>(i) / sample_rate;
+        
+        // Rising amplitude envelope (builds energy)
+        float envelope = std::pow(t, 0.7f);
+        
+        // Rising frequency sweep (40Hz -> 200Hz)
+        float freq = 40.0f + 160.0f * t * t;  // Quadratic rise
+        
+        // Main tone with harmonics
+        float tone = 0.5f * std::sin(two_pi * freq * time_sec);
+        tone += 0.3f * std::sin(two_pi * freq * 2.0f * time_sec);
+        tone += 0.15f * std::sin(two_pi * freq * 3.0f * time_sec);
+        
+        // High-frequency shimmer that increases
+        float shimmer = 0.1f * t * std::sin(two_pi * 800.0f * time_sec) *
+                        std::sin(two_pi * 4.0f * time_sec);
+        
+        // Woosh/rush sound (filtered noise rising)
+        float woosh = 0.15f * t * std::sin(two_pi * 150.0f * time_sec * (1.0f + t));
+        
+        float value = envelope * (tone + shimmer + woosh);
+        
+        // Soft clip
+        value = std::tanh(value * 1.5f) * 0.85f;
+        
+        samples[i] = float_to_int16(value);
+    }
+    
+    std::ofstream file(filepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "[AudioGenerator] Failed to create file: " << filepath << std::endl;
+        return false;
+    }
+    
+    write_wav_header(file, sample_rate, num_samples);
+    file.write(reinterpret_cast<const char*>(samples.data()), samples.size() * sizeof(int16_t));
+    file.close();
+    
+    std::cout << "[AudioGenerator] Generated warp entry: " << filepath << std::endl;
+    return true;
+}
+
+bool AudioGenerator::generate_warp_exit(const std::string& filepath,
+                                        float duration_sec,
+                                        int sample_rate) {
+    int num_samples = static_cast<int>(sample_rate * duration_sec);
+    std::vector<int16_t> samples(num_samples);
+    
+    const float two_pi = 2.0f * 3.14159265359f;
+    
+    for (int i = 0; i < num_samples; ++i) {
+        float t = static_cast<float>(i) / num_samples;  // Normalized 0-1
+        float time_sec = static_cast<float>(i) / sample_rate;
+        
+        // Falling amplitude envelope (energy dissipating)
+        float envelope = 1.0f - std::pow(t, 0.5f);
+        
+        // Falling frequency sweep (200Hz -> 40Hz)
+        float freq = 200.0f - 160.0f * t;
+        
+        // Main tone with harmonics (fading)
+        float tone = 0.5f * std::sin(two_pi * freq * time_sec);
+        tone += 0.3f * (1.0f - t) * std::sin(two_pi * freq * 2.0f * time_sec);
+        tone += 0.15f * (1.0f - t) * std::sin(two_pi * freq * 3.0f * time_sec);
+        
+        // Arrival "bloom" (brief brightness at start)
+        float bloom = 0.3f * std::exp(-10.0f * t) * std::sin(two_pi * 300.0f * time_sec);
+        
+        // Spatial reverb tail (subtle echo decay)
+        float reverb = 0.1f * std::exp(-5.0f * t) * 
+                       std::sin(two_pi * 80.0f * time_sec * (1.0f + 0.5f * t));
+        
+        float value = envelope * (tone + reverb) + bloom;
+        
+        // Soft clip
+        value = std::tanh(value * 1.3f) * 0.8f;
+        
+        samples[i] = float_to_int16(value);
+    }
+    
+    std::ofstream file(filepath, std::ios::binary);
+    if (!file.is_open()) {
+        std::cerr << "[AudioGenerator] Failed to create file: " << filepath << std::endl;
+        return false;
+    }
+    
+    write_wav_header(file, sample_rate, num_samples);
+    file.write(reinterpret_cast<const char*>(samples.data()), samples.size() * sizeof(int16_t));
+    file.close();
+    
+    std::cout << "[AudioGenerator] Generated warp exit: " << filepath << std::endl;
+    return true;
+}
+
 bool AudioGenerator::write_wav_header(std::ofstream& file,
                                      int sample_rate,
                                      int num_samples,
