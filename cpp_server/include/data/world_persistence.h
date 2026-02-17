@@ -32,6 +32,15 @@ public:
     /// @return true on success, false on file-not-found or parse error
     bool loadWorld(ecs::World* world, const std::string& filepath);
 
+    /// Save the world state as gzip-compressed JSON.
+    /// The resulting file is typically 5-10× smaller than plain JSON.
+    /// @return true on success
+    bool saveWorldCompressed(const ecs::World* world, const std::string& filepath);
+
+    /// Load world state from a gzip-compressed JSON file.
+    /// @return true on success
+    bool loadWorldCompressed(ecs::World* world, const std::string& filepath);
+
     /// Serialize world state to a JSON string (useful for tests and network).
     std::string serializeWorld(const ecs::World* world) const;
 
