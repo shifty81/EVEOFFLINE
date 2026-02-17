@@ -1077,10 +1077,10 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [ ] Performance profiling and optimization
 - [ ] Interest management for large player counts
 - [ ] Client-side prediction for responsive movement
-- [ ] Spatial partitioning for efficient entity queries
+- [x] Spatial partitioning for efficient entity queries — SpatialHashSystem with O(1) queryNear() and queryNeighbours()
 - [ ] Multi-threaded server processing
-- [ ] Large-scale fleet battle stress testing (150-300 ships)
-- [ ] LOD system with impostor billboards for distant ships
+- [x] Large-scale fleet battle stress testing (150-300 ships) — 200-ship multi-system tick stress test (LOD + spatial hash + shield + movement)
+- [x] LOD system with impostor billboards for distant ships — LODSystem with 4 distance tiers and force_visible override
 - [ ] Group AI abstraction (FleetController with squad leaders)
 
 #### DevOps & Deployment
@@ -1162,8 +1162,10 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] Save/load system state — WorldPersistence serializes 32 component types with file I/O (122 new test assertions)
 - [x] Fleet state persistence — CaptainPersonality, FleetMorale, CaptainRelationship, EmotionalState, CaptainMemory, FleetFormation, FleetCargoPool, RumorLog all serialized
 - [x] Economy persistence — Station, Docked, Wreck, MineralDeposit, SystemResources, MarketHub all serialized
-- [x] LOD & impostors for large battles — LODPriority server component with impostor distance, client LODManager integration
-- [x] 100+ ship fleet stress test — 150-ship stress test with LOD priority verification (5 assertions)
+- [x] LOD & impostors for large battles — LODPriority server component with impostor distance, client LODManager integration, LODSystem server-side priority computation with 4 distance tiers
+- [x] 100+ ship fleet stress test — 150-ship stress test with LOD priority verification (5 assertions), 200-ship multi-system tick stress test (8 assertions)
+- [x] Spatial partitioning — SpatialHashSystem for O(1) queryNear() and queryNeighbours() proximity queries
+- [x] Compressed save format — WorldPersistence gzip compression (5-10× smaller files)
 - **Success Criteria**: Quit, reload, world remembers everything, stable performance
 
 #### Complete Loop Validation

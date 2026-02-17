@@ -1,5 +1,7 @@
 # Atlas — Next Tasks Recommendations
 
+> **Update (February 17, 2026)**: **Vertical Slice Phase 5 COMPLETE**. Server-side LODSystem for distance-based LOD priority computation (4 tiers: full/reduced/merged/impostor). SpatialHashSystem for O(1) proximity queries with configurable cell size. Compressed save/load via gzip in WorldPersistence (5-10× smaller files). 200-ship multi-system tick stress test (movement + shield + LOD + spatial hash). 200-ship compressed persistence stress test. 53 new test assertions. **1855 test assertions passing**.
+
 > **Update (February 15, 2026)**: **Vertical Slice Phase 5 IN PROGRESS**. Server persistence lifecycle complete — `loadWorld()` on startup and `saveWorld()` on shutdown. 100-ship persistence stress test, fleet state file round-trip test, and economy state file round-trip test all passing. FleetFormation `spacing_modifier` serialization bug fixed. Atlas Engine future plans referenced from commit [`033f2f8`](https://github.com/shifty81/EVEOFFLINE/commit/033f2f8e222e7bfa0f853123ed902c23d98c307a). 65 new test assertions. **1802 test assertions passing**.
 
 > **Update (February 15, 2026)**: **Vertical Slice Phase 4 COMPLETE**. Mission protocol messages added (MISSION_LIST, ACCEPT_MISSION, ABANDON_MISSION, MISSION_PROGRESS, MISSION_RESULT). GameSession handlers wired to MissionSystem and MissionGeneratorSystem for mission listing, acceptance, abandonment, and progress tracking. Client-side ProtocolHandler and NetworkManager updated with mission operations and MissionResponse callback. AI defensive behavior implemented — patrol NPCs with Defensive behavior protect friendly entities under attack based on faction reputation. 25 new test assertions. **1737 test assertions passing**.
@@ -41,7 +43,7 @@
 - Alternative priorities if vertical slice isn't the goal
 - Development process and testing requirements
 
-**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 NEARLY COMPLETE**. **Phase 3 ✅ COMPLETE**. **Phase 4 ✅ COMPLETE**. **Phase 5 🚧 IN PROGRESS**: Server persistence lifecycle, stress tests, FleetFormation fix. **1802 test assertions passing**.
+**TL;DR**: Phase 1 (Tasks 1.1–1.4) ✅ **ALL COMPLETE**. **Phase 2 NEARLY COMPLETE**. **Phase 3 ✅ COMPLETE**. **Phase 4 ✅ COMPLETE**. **Phase 5 ✅ COMPLETE**: LODSystem, SpatialHashSystem, compressed persistence, 200-ship stress tests. **1855 test assertions passing**.
 
 ## Current Status (February 2026)
 
@@ -67,8 +69,11 @@
 - **18 exploration site templates** (combat, relic, data, gas, wormhole)
 - **32 NPC types** across 8 factions (including Mordu's Legion, Sisters of EVE)
 - **31 C++ server systems** fully implemented (including Drones, Insurance, Bounty, Market, Corporation, Contracts, Tournament, Leaderboard, Station, WreckSalvage, Mining, Refining)
+- **Server-side LOD system** with 4 distance-based priority tiers and force_visible override
+- **Spatial hash partitioning** for O(1) proximity queries (queryNear, queryNeighbours)
+- **Compressed world persistence** via gzip (5-10× smaller save files)
 - **3 industry systems** (PI, Manufacturing, Research) with full job lifecycle
-- **200+ test functions** all passing (1802 assertions)
+- **200+ test functions** all passing (1855 assertions)
 - **Mining drones** and **salvage drones** with full cycle-based behavior
 - **AI mining NPCs** with deposit discovery, approach, and mining lifecycle
 - **Zero security vulnerabilities** (CodeQL verified)

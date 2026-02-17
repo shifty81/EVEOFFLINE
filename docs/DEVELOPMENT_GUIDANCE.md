@@ -7,7 +7,7 @@
 - **159+ modules** (Tech I, Tech II, Faction, Officer, Capital)
 - **137 skills** with complete skill tree
 - **31 C++ server systems** fully implemented
-- **1802 test assertions** all passing
+- **1855 test assertions** all passing
 - **Zero security vulnerabilities** (CodeQL verified)
 - **CI/CD pipelines** for both client and server
 
@@ -294,7 +294,7 @@ This is the most important next step for the project. All foundational systems a
 
 ### Vertical Slice Phase 5 (Weeks 13-16): Persistence & Stress Testing
 
-**Status**: 🚧 IN PROGRESS
+**Status**: ✅ COMPLETE
 
 **Completed (February 15, 2026)**:
 - ✅ Server load-on-startup: `loadWorld()` called during `Server::initialize()` when `persistent_world` is enabled
@@ -305,10 +305,14 @@ This is the most important next step for the project. All foundational systems a
 - ✅ Bug fix: FleetFormation `spacing_modifier` field was not serialized — added to WorldPersistence serialize/deserialize
 - ✅ **1802 test assertions passing**
 
-**Remaining**:
-- LOD & impostors for large battles (server-side culling)
-- 100+ ship fleet stress test with full tick simulation
-- Save file compression (JSON → binary/compressed format)
+**Completed (February 17, 2026)**:
+- ✅ Server-side LODSystem: distance-based LOD priority computation with 4 tiers (full detail, reduced, merged mesh, impostor), force_visible override, configurable thresholds
+- ✅ SpatialHashSystem: O(1) spatial partitioning with queryNear() radius search and queryNeighbours() cell-based lookup, configurable cell size
+- ✅ Compressed save/load: WorldPersistence saveWorldCompressed/loadWorldCompressed using gzip (5-10× smaller files)
+- ✅ 200-ship multi-system tick stress test: MovementSystem + ShieldRechargeSystem + LODSystem + SpatialHashSystem running 10 ticks on 200 entities
+- ✅ 200-ship compressed persistence stress test: save/load 200 ships via gzip, verify data integrity
+- ✅ 53 new test assertions
+- ✅ **1855 test assertions passing**
 
 **Dependencies**: Phase 4 complete
 
@@ -405,7 +409,7 @@ If the vertical slice is not the immediate priority, here are other valuable tas
 - `docs/guides/` - Build and setup guides
 
 **Testing**:
-- Server tests: `cd cpp_server/build && ctest` (1802 assertions)
+- Server tests: `cd cpp_server/build && ctest` (1855 assertions)
 - Client tests: Manual testing required (OpenGL dependency)
 
 **CI/CD**:
@@ -448,5 +452,5 @@ The `engine/` and `editor/` directories in this repo mirror the Atlas repo. Chan
 
 ---
 
-*Last Updated: February 15, 2026*  
-*Next Review: After Phase 5 completion*
+*Last Updated: February 17, 2026*  
+*Next Review: After Phase 8 progress*
