@@ -122,8 +122,8 @@ void main() {
     float breathIntensity = 0.0;
     float breathColor = 0.0;
     if (uPhase == 3.0) {
-        // Very slow breathing (0.08 Hz = ~12 second cycle)
-        // Heavier ships breathe slower (0.05 Hz for capitals)
+        // Very slow breathing (0.08 Hz = ~12.5 second cycle for frigates)
+        // Heavier ships breathe slower (0.05 Hz = ~20 second cycle for capitals)
         float breathRate = 0.08 - 0.03 * uMassNorm;
         breathIntensity = 0.08 * (0.5 + 0.5 * sin(uTime * 6.28318 * breathRate));
         

@@ -229,9 +229,9 @@ bool AudioGenerator::generate_warp_drone(const std::string& filepath,
         
         // Base drone with harmonics
         float drone = 0.35f * std::sin(two_pi * base_freq * t);           // Fundamental
-        drone += 0.25f * std::sin(two_pi * base_freq * 2.0f * t);         // 1st harmonic
-        drone += 0.15f * std::sin(two_pi * base_freq * 3.0f * t);         // 2nd harmonic
-        drone += 0.10f * std::sin(two_pi * base_freq * 5.0f * t);         // 4th harmonic (skip 4th for organ-like)
+        drone += 0.25f * std::sin(two_pi * base_freq * 2.0f * t);         // 2nd harmonic (octave)
+        drone += 0.15f * std::sin(two_pi * base_freq * 3.0f * t);         // 3rd harmonic
+        drone += 0.10f * std::sin(two_pi * base_freq * 5.0f * t);         // 5th harmonic (skip 4th for organ-like)
         
         // Sub-bass rumble (very low, felt more than heard)
         float sub_bass = 0.20f * std::sin(two_pi * (base_freq * 0.5f) * t);
