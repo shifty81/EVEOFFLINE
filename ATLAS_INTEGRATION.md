@@ -58,13 +58,15 @@ When the split happens:
 2. This repo pulls Atlas as a submodule or external dependency
 3. Game-specific code (`cpp_client/`, `cpp_server/`, `data/`) stays here
 
-## Keeping EVEOFFLINE "Pure" While Atlas Evolves
+## Keeping EVEOFFLINE Standalone While Atlas Evolves
 
 If you want day-to-day EVEOFFLINE work to stay focused on the game project while Atlas evolves separately, use this workflow:
 
 1. Treat `cpp_client/`, `cpp_server/`, `data/`, `docs/`, and `tools/` as EVEOFFLINE-owned scope
-2. Make Atlas engine/framework changes in the Atlas repo first, then sync intentionally
-3. Build EVEOFFLINE-only targets when you do not need Atlas engine/editor work:
+2. Develop and validate gameplay features in EVEOFFLINE first
+3. Move only stable, game-agnostic parts into Atlas for further engine/framework development
+4. Keep Atlas sync intentional rather than automatic
+5. Build EVEOFFLINE-only targets when you do not need Atlas engine/editor work:
 
 ```bash
 mkdir -p build && cd build
@@ -73,7 +75,7 @@ cmake .. -DBUILD_CLIENT=ON -DBUILD_SERVER=ON \
 cmake --build . --config Release
 ```
 
-This keeps EVEOFFLINE gameplay progress moving without coupling every change to Atlas development.
+This keeps EVEOFFLINE as a standalone game project while still allowing proven features to be implemented in Atlas when appropriate.
 
 ## Directory Structure
 

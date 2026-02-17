@@ -159,7 +159,7 @@ ctx.endFrame();
 
 ## 🔩 Atlas Engine
 
-This project includes the **Atlas Engine** — a modular, data-driven game engine core that powers both the client and server. The engine is designed to be game-agnostic and will eventually become its own standalone repository at [github.com/shifty81/Atlas](https://github.com/shifty81/Atlas).
+This project includes the **Atlas Engine** — a modular, data-driven game engine core that powers both the client and server. **EVEOFFLINE remains a standalone game project where gameplay features are developed and tested first**; stable, game-agnostic pieces can then be implemented in [Atlas](https://github.com/shifty81/Atlas) for further engine-level development.
 
 **→ [Atlas Integration Guide](ATLAS_INTEGRATION.md)**
 
