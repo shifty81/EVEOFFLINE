@@ -96,6 +96,9 @@ void AtlasHUD::init(int windowW, int windowH) {
 
     m_probeScannerState.bounds = {420.0f, 300.0f, 380.0f, 420.0f};
     m_probeScannerState.open = false;
+
+    m_stationState.bounds = {420.0f, 100.0f, 340.0f, 420.0f};
+    m_stationState.open = false;
 }
 
 void AtlasHUD::update(AtlasContext& ctx,
@@ -166,6 +169,7 @@ void AtlasHUD::update(AtlasContext& ctx,
     drawDockablePanel(ctx, "Chat", m_chatState);
     drawDockablePanel(ctx, "Drones", m_dronePanelState);
     drawDockablePanel(ctx, "Probe Scanner", m_probeScannerState);
+    drawDockablePanel(ctx, "Station Services", m_stationState);
 
     // 12. Damage flashes (on top of everything)
     float winW = static_cast<float>(ctx.input().windowW);
@@ -1024,6 +1028,114 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
                 r.drawProgressBar(sigBar, res.signalStrength / 100.0f, sigColor, t.bgHeader);
 
                 y += 16.0f;
+            }
+        }
+
+    } else if (titleStr == "Station Services") {
+        // Station name
+        r.drawText(m_stationData.stationName.empty() ? "Unknown Station" : m_stationData.stationName,
+                   Vec2(x, y), t.accentPrimary, 1.0f);
+        y += 18.0f;
+
+        // Distance
+        char distBuf[64];
+        std::snprintf(distBuf, sizeof(distBuf), "Distance: %.0f m", m_stationData.distance);
+        r.drawText(distBuf, Vec2(x, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+
+        // Docking range
+        char rangeBuf[64];
+        std::snprintf(rangeBuf, sizeof(rangeBuf), "Docking Range: %.0f m", m_stationData.dockingRange);
+        r.drawText(rangeBuf, Vec2(x, y), t.textSecondary, 1.0f);
+        y += 20.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Docking status
+        if (m_stationData.isDocked) {
+            r.drawText("Status: DOCKED", Vec2(x, y), t.success, 1.0f);
+        } else {
+            r.drawText("Status: In Space", Vec2(x, y), t.textSecondary, 1.0f);
+        }
+        y += 20.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Ship HP bars (shown when docked for repair assessment)
+        r.drawText("Ship Status", Vec2(x, y), t.textPrimary, 1.0f);
+        y += 18.0f;
+
+        // Shield bar
+        r.drawText("Shield", Vec2(x, y + 1), t.textSecondary, 1.0f);
+        Rect shieldBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
+        Color shieldColor = {0.2f, 0.6f, 1.0f, 1.0f};
+        r.drawProgressBar(shieldBar, m_stationData.shieldPct, shieldColor, t.bgHeader);
+        char shieldBuf[32];
+        std::snprintf(shieldBuf, sizeof(shieldBuf), "%.0f%%", m_stationData.shieldPct * 100.0f);
+        r.drawText(shieldBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
+        y += 20.0f;
+
+        // Armor bar
+        r.drawText("Armor", Vec2(x, y + 1), t.textSecondary, 1.0f);
+        Rect armorBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
+        Color armorColor = {0.9f, 0.7f, 0.1f, 1.0f};
+        r.drawProgressBar(armorBar, m_stationData.armorPct, armorColor, t.bgHeader);
+        char armorBuf[32];
+        std::snprintf(armorBuf, sizeof(armorBuf), "%.0f%%", m_stationData.armorPct * 100.0f);
+        r.drawText(armorBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
+        y += 20.0f;
+
+        // Hull bar
+        r.drawText("Hull", Vec2(x, y + 1), t.textSecondary, 1.0f);
+        Rect hullBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
+        Color hullColor = {0.9f, 0.2f, 0.2f, 1.0f};
+        r.drawProgressBar(hullBar, m_stationData.hullPct, hullColor, t.bgHeader);
+        char hullBuf[32];
+        std::snprintf(hullBuf, sizeof(hullBuf), "%.0f%%", m_stationData.hullPct * 100.0f);
+        r.drawText(hullBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
+        y += 24.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Repair cost
+        if (m_stationData.repairCostIsk > 0.0f) {
+            char costBuf[64];
+            std::snprintf(costBuf, sizeof(costBuf), "Repair Cost: %.0f ISK", m_stationData.repairCostIsk);
+            r.drawText(costBuf, Vec2(x, y), t.warning, 1.0f);
+            y += 20.0f;
+        }
+
+        // Action buttons
+        if (y < maxY - 30.0f) {
+            if (m_stationData.isDocked) {
+                // Undock button
+                Rect undockBtn(x, y, 100.0f, 24.0f);
+                if (button(ctx, "UNDOCK", undockBtn)) {
+                    if (m_stationUndockCb) m_stationUndockCb();
+                }
+                // Repair button (only if damage exists)
+                if (m_stationData.shieldPct < 1.0f || m_stationData.armorPct < 1.0f || m_stationData.hullPct < 1.0f) {
+                    Rect repairBtn(x + 110.0f, y, 100.0f, 24.0f);
+                    if (button(ctx, "REPAIR", repairBtn)) {
+                        if (m_stationRepairCb) m_stationRepairCb();
+                    }
+                }
+            } else {
+                // Dock button (only if in range)
+                bool inRange = m_stationData.distance <= m_stationData.dockingRange;
+                Rect dockBtn(x, y, 100.0f, 24.0f);
+                if (inRange) {
+                    if (button(ctx, "DOCK", dockBtn)) {
+                        if (m_stationDockCb) m_stationDockCb();
+                    }
+                } else {
+                    r.drawRect(dockBtn, t.bgHeader);
+                    r.drawText("DOCK", Vec2(x + 28.0f, y + 4.0f), t.textMuted, 1.0f);
+                    r.drawText("(out of range)", Vec2(x + 110.0f, y + 4.0f), t.textMuted, 1.0f);
+                }
             }
         }
 

@@ -309,6 +309,29 @@ public:
     void toggleDroneStatus() { m_showDroneStatus = !m_showDroneStatus; }
     bool isDroneStatusVisible() const { return m_showDroneStatus; }
 
+    // ── Station services ────────────────────────────────────────────
+
+    struct StationPanelData {
+        std::string stationName;
+        float distance = 0.0f;
+        float dockingRange = 2500.0f;
+        bool isDocked = false;
+        float shieldPct = 1.0f;
+        float armorPct = 1.0f;
+        float hullPct = 1.0f;
+        float repairCostIsk = 0.0f;
+    };
+
+    void toggleStation() { m_stationState.open = !m_stationState.open; }
+    bool isStationOpen() const { return m_stationState.open; }
+    void setStationData(const StationPanelData& data) { m_stationData = data; }
+    const StationPanelData& getStationData() const { return m_stationData; }
+
+    /** Station action callbacks. */
+    void setStationDockCb(const std::function<void()>& cb) { m_stationDockCb = cb; }
+    void setStationUndockCb(const std::function<void()>& cb) { m_stationUndockCb = cb; }
+    void setStationRepairCb(const std::function<void()>& cb) { m_stationRepairCb = cb; }
+
     // ── Fleet broadcasts ────────────────────────────────────────────
 
     /** Add a fleet broadcast to the HUD. */
@@ -332,6 +355,7 @@ private:
     PanelState m_chatState;
     PanelState m_dronePanelState;
     PanelState m_probeScannerState;
+    PanelState m_stationState;
 
     // Sidebar config
     float m_sidebarWidth = 40.0f;
@@ -351,6 +375,9 @@ private:
     std::function<void()>    m_selInfoCb;
     std::function<void()>    m_dscanCallback;
     std::function<void()>    m_probeScanCallback;
+    std::function<void()>    m_stationDockCb;
+    std::function<void()>    m_stationUndockCb;
+    std::function<void()>    m_stationRepairCb;
 
     // Internal layout helpers
     void drawShipHUD(AtlasContext& ctx, const ShipHUDData& ship);
@@ -420,6 +447,9 @@ private:
     int m_probeCount = 8;
     float m_probeRange = 8.0f;
     std::vector<ProbeScanEntry> m_probeScanResults;
+
+    // Station data
+    StationPanelData m_stationData;
 
     // Internal draw helpers for new features
     void drawCombatLog(AtlasContext& ctx);
