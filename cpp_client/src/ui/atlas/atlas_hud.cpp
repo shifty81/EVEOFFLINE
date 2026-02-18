@@ -96,6 +96,12 @@ void AtlasHUD::init(int windowW, int windowH) {
 
     m_probeScannerState.bounds = {420.0f, 300.0f, 380.0f, 420.0f};
     m_probeScannerState.open = false;
+
+    m_stationState.bounds = {420.0f, 100.0f, 340.0f, 420.0f};
+    m_stationState.open = false;
+
+    m_fleetState.bounds = {60.0f, 100.0f, 320.0f, 380.0f};
+    m_fleetState.open = false;
 }
 
 void AtlasHUD::update(AtlasContext& ctx,
@@ -166,6 +172,8 @@ void AtlasHUD::update(AtlasContext& ctx,
     drawDockablePanel(ctx, "Chat", m_chatState);
     drawDockablePanel(ctx, "Drones", m_dronePanelState);
     drawDockablePanel(ctx, "Probe Scanner", m_probeScannerState);
+    drawDockablePanel(ctx, "Station Services", m_stationState);
+    drawDockablePanel(ctx, "Fleet", m_fleetState);
 
     // 12. Damage flashes (on top of everything)
     float winW = static_cast<float>(ctx.input().windowW);
@@ -685,61 +693,190 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
     std::string titleStr(title);
 
     if (titleStr == "Inventory") {
+        // Tab header
+        const char* invTabs[] = {"Cargo Hold", "Station Hangar"};
+        for (int ti = 0; ti < 2; ++ti) {
+            float tabW = contentW * 0.5f;
+            Rect tabRect(x + ti * tabW, y, tabW, 20.0f);
+            bool isActive = (m_inventoryData.activeTab == ti);
+            r.drawRect(tabRect, isActive ? t.bgHeader : t.bgPanel);
+            r.drawText(invTabs[ti], Vec2(x + ti * tabW + 4.0f, y + 3.0f),
+                       isActive ? t.accentPrimary : t.textSecondary, 1.0f);
+            WidgetID tabID = hashID("invtab") ^ static_cast<uint32_t>(ti);
+            if (ctx.buttonBehavior(tabRect, tabID)) {
+                m_inventoryData.activeTab = ti;
+            }
+        }
+        y += 24.0f;
+
         // Cargo capacity bar
-        label(ctx, Vec2(x, y), "Cargo Hold", t.textPrimary);
-        y += 18.0f;
+        float capFrac = m_inventoryData.maxCapacity > 0.0f
+            ? m_inventoryData.usedCapacity / m_inventoryData.maxCapacity : 0.0f;
         Rect capBar(x, y, contentW, 14.0f);
-        r.drawProgressBar(capBar, 0.0f, t.accentPrimary, t.bgHeader);
-        r.drawText("0 / 100 m3", Vec2(x + 4, y + 1), t.textPrimary, 1.0f);
+        Color capColor = capFrac > 0.9f ? t.danger : (capFrac > 0.7f ? t.warning : t.accentPrimary);
+        r.drawProgressBar(capBar, capFrac, capColor, t.bgHeader);
+        char capBuf[64];
+        std::snprintf(capBuf, sizeof(capBuf), "%.0f / %.0f m3",
+                      m_inventoryData.usedCapacity, m_inventoryData.maxCapacity);
+        r.drawText(capBuf, Vec2(x + 4, y + 1), t.textPrimary, 1.0f);
         y += 22.0f;
+
         separator(ctx, Vec2(x, y), contentW);
         y += 8.0f;
+
         // Column headers
         r.drawText("Item", Vec2(x, y), t.textSecondary, 1.0f);
         r.drawText("Qty", Vec2(x + contentW * 0.6f, y), t.textSecondary, 1.0f);
         r.drawText("Vol", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
         y += 16.0f;
         separator(ctx, Vec2(x, y), contentW);
-        y += 8.0f;
-        label(ctx, Vec2(x, y), "Cargo hold is empty", t.textSecondary);
+        y += 4.0f;
+
+        if (m_inventoryData.items.empty()) {
+            label(ctx, Vec2(x, y), "Cargo hold is empty", t.textSecondary);
+        } else {
+            for (size_t i = 0; i < m_inventoryData.items.size() && y < maxY - 16.0f; ++i) {
+                const auto& item = m_inventoryData.items[i];
+                if (i % 2 == 1) {
+                    r.drawRect(Rect(x, y, contentW, 16.0f), t.bgHeader.withAlpha(0.3f));
+                }
+                r.drawText(item.name, Vec2(x + 2, y + 1), t.textPrimary, 1.0f);
+                char qtyBuf[16];
+                std::snprintf(qtyBuf, sizeof(qtyBuf), "%d", item.quantity);
+                r.drawText(qtyBuf, Vec2(x + contentW * 0.6f, y + 1), t.textSecondary, 1.0f);
+                char volBuf[16];
+                std::snprintf(volBuf, sizeof(volBuf), "%.1f", item.volume * item.quantity);
+                r.drawText(volBuf, Vec2(x + contentW * 0.8f, y + 1), t.textSecondary, 1.0f);
+                y += 16.0f;
+            }
+        }
 
     } else if (titleStr == "Ship Fitting") {
-        // Ship name and resource bars
-        r.drawText("Current Ship", Vec2(x, y), t.accentPrimary, 1.0f);
+        // Ship name
+        r.drawText(m_fittingData.shipName, Vec2(x, y), t.accentPrimary, 1.0f);
         y += 18.0f;
         separator(ctx, Vec2(x, y), contentW);
         y += 8.0f;
 
         // CPU bar
+        float cpuFrac = m_fittingData.cpuMax > 0.0f ? m_fittingData.cpuUsed / m_fittingData.cpuMax : 0.0f;
         r.drawText("CPU", Vec2(x, y), t.textSecondary, 1.0f);
         Rect cpuBar(x + 40.0f, y, contentW - 40.0f, 12.0f);
-        r.drawProgressBar(cpuBar, 0.0f, t.accentPrimary, t.bgHeader);
-        r.drawText("0 / 0 tf", Vec2(x + 44.0f, y), t.textPrimary, 1.0f);
+        Color cpuColor = cpuFrac > 0.95f ? t.danger : t.accentPrimary;
+        r.drawProgressBar(cpuBar, cpuFrac, cpuColor, t.bgHeader);
+        char cpuBuf[32];
+        std::snprintf(cpuBuf, sizeof(cpuBuf), "%.0f / %.0f tf", m_fittingData.cpuUsed, m_fittingData.cpuMax);
+        r.drawText(cpuBuf, Vec2(x + 44.0f, y), t.textPrimary, 1.0f);
         y += 20.0f;
 
         // PG bar
+        float pgFrac = m_fittingData.pgMax > 0.0f ? m_fittingData.pgUsed / m_fittingData.pgMax : 0.0f;
         r.drawText("PG", Vec2(x, y), t.textSecondary, 1.0f);
         Rect pgBar(x + 40.0f, y, contentW - 40.0f, 12.0f);
-        r.drawProgressBar(pgBar, 0.0f, t.success, t.bgHeader);
-        r.drawText("0 / 0 MW", Vec2(x + 44.0f, y), t.textPrimary, 1.0f);
+        Color pgColor = pgFrac > 0.95f ? t.danger : t.success;
+        r.drawProgressBar(pgBar, pgFrac, pgColor, t.bgHeader);
+        char pgBuf[32];
+        std::snprintf(pgBuf, sizeof(pgBuf), "%.0f / %.0f MW", m_fittingData.pgUsed, m_fittingData.pgMax);
+        r.drawText(pgBuf, Vec2(x + 44.0f, y), t.textPrimary, 1.0f);
+        y += 20.0f;
+
+        // Calibration bar
+        float calFrac = m_fittingData.calibrationMax > 0.0f
+            ? m_fittingData.calibrationUsed / m_fittingData.calibrationMax : 0.0f;
+        r.drawText("Cal", Vec2(x, y), t.textSecondary, 1.0f);
+        Rect calBar(x + 40.0f, y, contentW - 40.0f, 12.0f);
+        Color calColor = t.accentSecondary;  // calibration uses info/scanning accent
+        r.drawProgressBar(calBar, calFrac, calColor, t.bgHeader);
+        char calBuf[32];
+        std::snprintf(calBuf, sizeof(calBuf), "%.0f / %.0f", m_fittingData.calibrationUsed, m_fittingData.calibrationMax);
+        r.drawText(calBuf, Vec2(x + 44.0f, y), t.textPrimary, 1.0f);
         y += 24.0f;
 
         separator(ctx, Vec2(x, y), contentW);
         y += 8.0f;
 
         // Slot sections
-        const char* sections[] = {"High Slots", "Mid Slots", "Low Slots"};
+        struct SlotSection {
+            const char* label;
+            const std::vector<FittingSlot>* slots;
+        };
+        SlotSection sections[] = {
+            {"High Slots", &m_fittingData.highSlots},
+            {"Mid Slots", &m_fittingData.midSlots},
+            {"Low Slots", &m_fittingData.lowSlots},
+        };
         for (int s = 0; s < 3 && y < maxY - 30.0f; ++s) {
-            r.drawText(sections[s], Vec2(x, y), t.textSecondary, 1.0f);
+            r.drawText(sections[s].label, Vec2(x, y), t.textSecondary, 1.0f);
             y += 16.0f;
-            for (int i = 0; i < 3 && y < maxY - 14.0f; ++i) {
-                r.drawText("[empty]", Vec2(x + 10.0f, y), t.bgHeader, 1.0f);
+            if (sections[s].slots->empty()) {
+                r.drawText("[no slots]", Vec2(x + 10.0f, y), t.bgHeader, 1.0f);
                 y += 14.0f;
+            } else {
+                for (size_t i = 0; i < sections[s].slots->size() && y < maxY - 14.0f; ++i) {
+                    const auto& slot = (*sections[s].slots)[i];
+                    if (slot.fitted) {
+                        Color slotColor = slot.online ? t.textPrimary : t.textMuted;
+                        r.drawText(slot.moduleName, Vec2(x + 10.0f, y), slotColor, 1.0f);
+                    } else {
+                        r.drawText("[empty]", Vec2(x + 10.0f, y), t.bgHeader, 1.0f);
+                    }
+                    y += 14.0f;
+                }
             }
             y += 4.0f;
         }
 
+        // Stats section
+        if (y < maxY - 60.0f) {
+            separator(ctx, Vec2(x, y), contentW);
+            y += 8.0f;
+            r.drawText("Stats", Vec2(x, y), t.textPrimary, 1.0f);
+            y += 16.0f;
+
+            char ehpBuf[32];
+            std::snprintf(ehpBuf, sizeof(ehpBuf), "EHP: %.0f", m_fittingData.effectiveHP);
+            r.drawText(ehpBuf, Vec2(x + 8.0f, y), t.textSecondary, 1.0f);
+            y += 14.0f;
+
+            char dpsBuf[32];
+            std::snprintf(dpsBuf, sizeof(dpsBuf), "DPS: %.1f", m_fittingData.dps);
+            r.drawText(dpsBuf, Vec2(x + 8.0f, y), t.textSecondary, 1.0f);
+            y += 14.0f;
+
+            char velBuf[32];
+            std::snprintf(velBuf, sizeof(velBuf), "Max Vel: %.0f m/s", m_fittingData.maxVelocity);
+            r.drawText(velBuf, Vec2(x + 8.0f, y), t.textSecondary, 1.0f);
+            y += 14.0f;
+
+            if (m_fittingData.capStable) {
+                r.drawText("Cap: Stable", Vec2(x + 8.0f, y), t.success, 1.0f);
+            } else {
+                char capBuf2[48];
+                std::snprintf(capBuf2, sizeof(capBuf2), "Cap: %.0fs", m_fittingData.capTime);
+                r.drawText(capBuf2, Vec2(x + 8.0f, y), t.warning, 1.0f);
+            }
+        }
+
     } else if (titleStr == "Market") {
+        // Tab bar
+        const char* mktTabs[] = {"Browse", "My Orders", "History"};
+        for (int ti = 0; ti < 3; ++ti) {
+            float tabW = contentW / 3.0f;
+            Rect tabRect(x + ti * tabW, y, tabW, 20.0f);
+            bool isActive = (m_marketData.activeTab == ti);
+            r.drawRect(tabRect, isActive ? t.bgHeader : t.bgPanel);
+            r.drawText(mktTabs[ti], Vec2(x + ti * tabW + 4.0f, y + 3.0f),
+                       isActive ? t.accentPrimary : t.textSecondary, 1.0f);
+            WidgetID tabID = hashID("mkttab") ^ static_cast<uint32_t>(ti);
+            if (ctx.buttonBehavior(tabRect, tabID)) {
+                m_marketData.activeTab = ti;
+            }
+        }
+        y += 24.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
         // Sell orders section
         r.drawText("Sell Orders", Vec2(x, y), t.danger, 1.0f);
         y += 18.0f;
@@ -748,10 +885,30 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
         r.drawText("Qty", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
         y += 16.0f;
         separator(ctx, Vec2(x, y), contentW);
-        y += 8.0f;
-        label(ctx, Vec2(x + 8, y), "No sell orders", t.textSecondary);
-        y += 24.0f;
+        y += 4.0f;
 
+        if (m_marketData.sellOrders.empty()) {
+            label(ctx, Vec2(x + 8, y), "No sell orders", t.textSecondary);
+            y += 18.0f;
+        } else {
+            // Limit sell orders to top half so buy orders remain visible below
+            for (size_t i = 0; i < m_marketData.sellOrders.size() && y < maxY * 0.5f; ++i) {
+                const auto& order = m_marketData.sellOrders[i];
+                if (i % 2 == 1) {
+                    r.drawRect(Rect(x, y, contentW, 16.0f), t.bgHeader.withAlpha(0.3f));
+                }
+                r.drawText(order.itemName, Vec2(x + 2, y + 1), t.textPrimary, 1.0f);
+                char priceBuf[32];
+                std::snprintf(priceBuf, sizeof(priceBuf), "%.0f", order.price);
+                r.drawText(priceBuf, Vec2(x + contentW * 0.5f, y + 1), t.textSecondary, 1.0f);
+                char qtyBuf[16];
+                std::snprintf(qtyBuf, sizeof(qtyBuf), "%d", order.quantity);
+                r.drawText(qtyBuf, Vec2(x + contentW * 0.8f, y + 1), t.textSecondary, 1.0f);
+                y += 16.0f;
+            }
+        }
+
+        y += 4.0f;
         separator(ctx, Vec2(x, y), contentW);
         y += 8.0f;
 
@@ -763,8 +920,26 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
         r.drawText("Qty", Vec2(x + contentW * 0.8f, y), t.textSecondary, 1.0f);
         y += 16.0f;
         separator(ctx, Vec2(x, y), contentW);
-        y += 8.0f;
-        label(ctx, Vec2(x + 8, y), "No buy orders", t.textSecondary);
+        y += 4.0f;
+
+        if (m_marketData.buyOrders.empty()) {
+            label(ctx, Vec2(x + 8, y), "No buy orders", t.textSecondary);
+        } else {
+            for (size_t i = 0; i < m_marketData.buyOrders.size() && y < maxY - 16.0f; ++i) {
+                const auto& order = m_marketData.buyOrders[i];
+                if (i % 2 == 1) {
+                    r.drawRect(Rect(x, y, contentW, 16.0f), t.bgHeader.withAlpha(0.3f));
+                }
+                r.drawText(order.itemName, Vec2(x + 2, y + 1), t.textPrimary, 1.0f);
+                char priceBuf[32];
+                std::snprintf(priceBuf, sizeof(priceBuf), "%.0f", order.price);
+                r.drawText(priceBuf, Vec2(x + contentW * 0.5f, y + 1), t.textSecondary, 1.0f);
+                char qtyBuf[16];
+                std::snprintf(qtyBuf, sizeof(qtyBuf), "%d", order.quantity);
+                r.drawText(qtyBuf, Vec2(x + contentW * 0.8f, y + 1), t.textSecondary, 1.0f);
+                y += 16.0f;
+            }
+        }
 
     } else if (titleStr == "Missions") {
         if (!m_missionInfo.active) {
@@ -1022,6 +1197,171 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
                 float barW = contentW * 0.12f - 2.0f;
                 Rect sigBar(barX, y + 3.0f, barW, 10.0f);
                 r.drawProgressBar(sigBar, res.signalStrength / 100.0f, sigColor, t.bgHeader);
+
+                y += 16.0f;
+            }
+        }
+
+    } else if (titleStr == "Station Services") {
+        // Station name
+        r.drawText(m_stationData.stationName.empty() ? "Unknown Station" : m_stationData.stationName,
+                   Vec2(x, y), t.accentPrimary, 1.0f);
+        y += 18.0f;
+
+        // Distance
+        char distBuf[64];
+        std::snprintf(distBuf, sizeof(distBuf), "Distance: %.0f m", m_stationData.distance);
+        r.drawText(distBuf, Vec2(x, y), t.textSecondary, 1.0f);
+        y += 16.0f;
+
+        // Docking range
+        char rangeBuf[64];
+        std::snprintf(rangeBuf, sizeof(rangeBuf), "Docking Range: %.0f m", m_stationData.dockingRange);
+        r.drawText(rangeBuf, Vec2(x, y), t.textSecondary, 1.0f);
+        y += 20.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Docking status
+        if (m_stationData.isDocked) {
+            r.drawText("Status: DOCKED", Vec2(x, y), t.success, 1.0f);
+        } else {
+            r.drawText("Status: In Space", Vec2(x, y), t.textSecondary, 1.0f);
+        }
+        y += 20.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Ship HP bars (shown when docked for repair assessment)
+        r.drawText("Ship Status", Vec2(x, y), t.textPrimary, 1.0f);
+        y += 18.0f;
+
+        // Shield bar
+        r.drawText("Shield", Vec2(x, y + 1), t.textSecondary, 1.0f);
+        Rect shieldBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
+        r.drawProgressBar(shieldBar, m_stationData.shieldPct, t.shield, t.bgHeader);
+        char shieldBuf[32];
+        std::snprintf(shieldBuf, sizeof(shieldBuf), "%.0f%%", m_stationData.shieldPct * 100.0f);
+        r.drawText(shieldBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
+        y += 20.0f;
+
+        // Armor bar
+        r.drawText("Armor", Vec2(x, y + 1), t.textSecondary, 1.0f);
+        Rect armorBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
+        r.drawProgressBar(armorBar, m_stationData.armorPct, t.armor, t.bgHeader);
+        char armorBuf[32];
+        std::snprintf(armorBuf, sizeof(armorBuf), "%.0f%%", m_stationData.armorPct * 100.0f);
+        r.drawText(armorBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
+        y += 20.0f;
+
+        // Hull bar
+        r.drawText("Hull", Vec2(x, y + 1), t.textSecondary, 1.0f);
+        Rect hullBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
+        r.drawProgressBar(hullBar, m_stationData.hullPct, t.hull, t.bgHeader);
+        char hullBuf[32];
+        std::snprintf(hullBuf, sizeof(hullBuf), "%.0f%%", m_stationData.hullPct * 100.0f);
+        r.drawText(hullBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
+        y += 24.0f;
+
+        separator(ctx, Vec2(x, y), contentW);
+        y += 8.0f;
+
+        // Repair cost
+        if (m_stationData.repairCostIsk > 0.0f) {
+            char costBuf[64];
+            std::snprintf(costBuf, sizeof(costBuf), "Repair Cost: %.0f ISK", m_stationData.repairCostIsk);
+            r.drawText(costBuf, Vec2(x, y), t.warning, 1.0f);
+            y += 20.0f;
+        }
+
+        // Action buttons
+        if (y < maxY - 30.0f) {
+            if (m_stationData.isDocked) {
+                // Undock button
+                Rect undockBtn(x, y, 100.0f, 24.0f);
+                if (button(ctx, "UNDOCK", undockBtn)) {
+                    if (m_stationUndockCb) m_stationUndockCb();
+                }
+                // Repair button (only if damage exists)
+                if (m_stationData.shieldPct < 1.0f || m_stationData.armorPct < 1.0f || m_stationData.hullPct < 1.0f) {
+                    Rect repairBtn(x + 110.0f, y, 100.0f, 24.0f);
+                    if (button(ctx, "REPAIR", repairBtn)) {
+                        if (m_stationRepairCb) m_stationRepairCb();
+                    }
+                }
+            } else {
+                // Dock button (only if in range)
+                bool inRange = m_stationData.distance <= m_stationData.dockingRange;
+                Rect dockBtn(x, y, 100.0f, 24.0f);
+                if (inRange) {
+                    if (button(ctx, "DOCK", dockBtn)) {
+                        if (m_stationDockCb) m_stationDockCb();
+                    }
+                } else {
+                    r.drawRect(dockBtn, t.bgHeader);
+                    r.drawText("DOCK", Vec2(x + 28.0f, y + 4.0f), t.textMuted, 1.0f);
+                    r.drawText("(out of range)", Vec2(x + 110.0f, y + 4.0f), t.textMuted, 1.0f);
+                }
+            }
+        }
+
+    } else if (titleStr == "Fleet") {
+        if (!m_fleetData.inFleet) {
+            label(ctx, Vec2(x, y), "Not in a fleet", t.textSecondary);
+            y += 20.0f;
+            label(ctx, Vec2(x, y), "Form or join a fleet to see members", t.textSecondary);
+        } else {
+            // Fleet name
+            r.drawText(m_fleetData.fleetName.empty() ? "My Fleet" : m_fleetData.fleetName,
+                       Vec2(x, y), t.accentPrimary, 1.0f);
+            y += 18.0f;
+
+            // Member count
+            char memberBuf[32];
+            std::snprintf(memberBuf, sizeof(memberBuf), "Members: %d", m_fleetData.memberCount);
+            r.drawText(memberBuf, Vec2(x, y), t.textSecondary, 1.0f);
+            y += 20.0f;
+
+            separator(ctx, Vec2(x, y), contentW);
+            y += 8.0f;
+
+            // Column headers
+            r.drawText("Name", Vec2(x, y), t.textSecondary, 1.0f);
+            r.drawText("Ship", Vec2(x + contentW * 0.4f, y), t.textSecondary, 1.0f);
+            r.drawText("HP", Vec2(x + contentW * 0.75f, y), t.textSecondary, 1.0f);
+            y += 16.0f;
+            separator(ctx, Vec2(x, y), contentW);
+            y += 4.0f;
+
+            for (size_t i = 0; i < m_fleetData.members.size() && y < maxY - 16.0f; ++i) {
+                const auto& member = m_fleetData.members[i];
+                if (i % 2 == 1) {
+                    r.drawRect(Rect(x, y, contentW, 16.0f), t.bgHeader.withAlpha(0.3f));
+                }
+
+                // Name (commander gets star prefix)
+                std::string displayName = member.isCommander ? "* " + member.name : member.name;
+                Color nameColor = member.isCommander ? t.accentPrimary : t.textPrimary;
+                r.drawText(displayName, Vec2(x + 2, y + 1), nameColor, 1.0f);
+
+                // Ship type
+                r.drawText(member.shipType, Vec2(x + contentW * 0.4f, y + 1), t.textSecondary, 1.0f);
+
+                // Mini HP bar (shield + armor as stacked thin bar)
+                float barX = x + contentW * 0.75f;
+                float barW = contentW * 0.25f - 4.0f;
+                float barH = 4.0f;
+                float barY = y + 6.0f;
+
+                // Shield
+                Rect sBar(barX, barY, barW, barH);
+                r.drawProgressBar(sBar, member.shieldPct, t.shield, t.bgHeader);
+
+                // Armor (below shield)
+                Rect aBar(barX, barY + barH + 1, barW, barH);
+                r.drawProgressBar(aBar, member.armorPct, t.armor, t.bgHeader);
 
                 y += 16.0f;
             }
