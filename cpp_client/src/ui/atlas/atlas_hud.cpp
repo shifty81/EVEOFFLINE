@@ -785,7 +785,7 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
             ? m_fittingData.calibrationUsed / m_fittingData.calibrationMax : 0.0f;
         r.drawText("Cal", Vec2(x, y), t.textSecondary, 1.0f);
         Rect calBar(x + 40.0f, y, contentW - 40.0f, 12.0f);
-        Color calColor = {0.6f, 0.3f, 0.9f, 1.0f};  // purple
+        Color calColor = t.accentSecondary;  // calibration uses info/scanning accent
         r.drawProgressBar(calBar, calFrac, calColor, t.bgHeader);
         char calBuf[32];
         std::snprintf(calBuf, sizeof(calBuf), "%.0f / %.0f", m_fittingData.calibrationUsed, m_fittingData.calibrationMax);
@@ -891,6 +891,7 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
             label(ctx, Vec2(x + 8, y), "No sell orders", t.textSecondary);
             y += 18.0f;
         } else {
+            // Limit sell orders to top half so buy orders remain visible below
             for (size_t i = 0; i < m_marketData.sellOrders.size() && y < maxY * 0.5f; ++i) {
                 const auto& order = m_marketData.sellOrders[i];
                 if (i % 2 == 1) {
@@ -1240,8 +1241,7 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
         // Shield bar
         r.drawText("Shield", Vec2(x, y + 1), t.textSecondary, 1.0f);
         Rect shieldBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
-        Color shieldColor = {0.2f, 0.6f, 1.0f, 1.0f};
-        r.drawProgressBar(shieldBar, m_stationData.shieldPct, shieldColor, t.bgHeader);
+        r.drawProgressBar(shieldBar, m_stationData.shieldPct, t.shield, t.bgHeader);
         char shieldBuf[32];
         std::snprintf(shieldBuf, sizeof(shieldBuf), "%.0f%%", m_stationData.shieldPct * 100.0f);
         r.drawText(shieldBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
@@ -1250,8 +1250,7 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
         // Armor bar
         r.drawText("Armor", Vec2(x, y + 1), t.textSecondary, 1.0f);
         Rect armorBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
-        Color armorColor = {0.9f, 0.7f, 0.1f, 1.0f};
-        r.drawProgressBar(armorBar, m_stationData.armorPct, armorColor, t.bgHeader);
+        r.drawProgressBar(armorBar, m_stationData.armorPct, t.armor, t.bgHeader);
         char armorBuf[32];
         std::snprintf(armorBuf, sizeof(armorBuf), "%.0f%%", m_stationData.armorPct * 100.0f);
         r.drawText(armorBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
@@ -1260,8 +1259,7 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
         // Hull bar
         r.drawText("Hull", Vec2(x, y + 1), t.textSecondary, 1.0f);
         Rect hullBar(x + 60.0f, y, contentW - 60.0f, 14.0f);
-        Color hullColor = {0.9f, 0.2f, 0.2f, 1.0f};
-        r.drawProgressBar(hullBar, m_stationData.hullPct, hullColor, t.bgHeader);
+        r.drawProgressBar(hullBar, m_stationData.hullPct, t.hull, t.bgHeader);
         char hullBuf[32];
         std::snprintf(hullBuf, sizeof(hullBuf), "%.0f%%", m_stationData.hullPct * 100.0f);
         r.drawText(hullBuf, Vec2(x + 64.0f, y + 1), t.textPrimary, 1.0f);
@@ -1359,13 +1357,11 @@ void AtlasHUD::drawDockablePanel(AtlasContext& ctx, const char* title,
 
                 // Shield
                 Rect sBar(barX, barY, barW, barH);
-                Color shieldC = {0.2f, 0.6f, 1.0f, 1.0f};
-                r.drawProgressBar(sBar, member.shieldPct, shieldC, t.bgHeader);
+                r.drawProgressBar(sBar, member.shieldPct, t.shield, t.bgHeader);
 
                 // Armor (below shield)
                 Rect aBar(barX, barY + barH + 1, barW, barH);
-                Color armorC = {0.9f, 0.7f, 0.1f, 1.0f};
-                r.drawProgressBar(aBar, member.armorPct, armorC, t.bgHeader);
+                r.drawProgressBar(aBar, member.armorPct, t.armor, t.bgHeader);
 
                 y += 16.0f;
             }

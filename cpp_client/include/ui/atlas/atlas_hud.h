@@ -362,7 +362,7 @@ public:
         float dps = 0.0f;
         float maxVelocity = 0.0f;
         bool capStable = false;
-        float capTime = 0.0f;   // seconds until cap empties (if not stable)
+        float capTime = 0.0f;   // seconds until cap empties (only meaningful when capStable is false)
     };
 
     // ── Market data ─────────────────────────────────────────────────
