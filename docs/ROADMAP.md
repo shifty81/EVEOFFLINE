@@ -985,6 +985,51 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 
 ---
 
+### 📋 Living Universe: Background Simulation & NPC Intents (In Progress)
+**Timeline**: 2026  
+**Priority**: High  
+**Goal**: A universe that reacts over time and remembers player impact. NPCs as real actors.
+
+#### Core Background Simulation
+- [x] **SimStarSystemState component** — Per-system state vector (traffic, economy, security, threat, faction influence, pirate activity, resource availability, price modifier)
+- [x] **BackgroundSimulationSystem** — Continuous background simulation tick updating state vectors
+- [x] **Threat decay** — Threat naturally decays toward 0 over time
+- [x] **Economic recovery** — Economy recovers toward 0.5 baseline
+- [x] **Resource regeneration** — Resources slowly regenerate toward 1.0
+- [x] **Traffic drift** — Traffic level drifts toward baseline
+- [x] **Pirate activity growth** — Pirate activity increases in low-security systems
+- [x] **Dynamic price modifier** — Prices respond to supply/demand (0.5–2.0 range)
+- [x] **Threshold-based events** — Pirate surge, resource shortage, lockdown triggered by conditions
+- [x] **Event timer system** — Events have configurable duration, cleared when conditions subside
+- [x] **Query API** — getSystemState(), isEventActive(), getSystemsWithEvent()
+
+#### Intent-Driven NPC AI
+- [x] **SimNPCIntent component** — Intent enum (Idle, Trade, Patrol, Hunt, Explore, Flee, Escort, Salvage, Mine, Haul, Dock)
+- [x] **NPC archetypes** — Trader, Pirate, Patrol, Miner, Hauler, Industrialist with personality-driven weights
+- [x] **NPCIntentSystem** — Evaluates intents based on archetype weights, system state, and personal state
+- [x] **Intent scoring** — Combines personality weight, star system state, health, and cargo level
+- [x] **Flee override** — NPCs automatically flee when hull below 25%
+- [x] **Archetype weight profiles** — applyArchetypeWeights() for each archetype
+- [x] **Intent cooldown** — Prevents rapid intent switching (configurable interval)
+- [x] **Force intent API** — forceIntent() for scripted/event-driven behavior
+- [x] **Query API** — getIntent(), getNPCsWithIntent(), getNPCsByArchetype(), scoreIntents()
+
+#### Remaining Work
+- [ ] NPC behavior trees (per archetype)
+- [ ] NPC rerouting based on system danger
+- [ ] Ambient traffic spawns driven by system state
+- [ ] AI as real economic actors (wallets, ship ownership, permanent death)
+- [ ] Local reputation per system
+- [ ] Wreck persistence and salvage NPCs
+- [ ] Security response delay
+- [ ] System threat adjustment from combat
+- [ ] Station news feed
+- [ ] Rumors about player actions (`AtlasInformationPropagationSystem`)
+- [ ] Visual cues (lockdowns, traffic density)
+- [ ] Economy engine: supply/demand curves driven by NPC activity
+
+---
+
 ### 📋 Phase 10: Tactical Overlay & Strategy View (In Progress)
 **Timeline**: 2027  
 **Priority**: Medium  
