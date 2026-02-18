@@ -322,6 +322,84 @@ public:
         float repairCostIsk = 0.0f;
     };
 
+    // ── Inventory data ──────────────────────────────────────────────
+
+    struct InventoryItem {
+        std::string name;
+        std::string type;      // "Module", "Ammo", "Ore", "Mineral", etc.
+        int quantity = 1;
+        float volume = 0.0f;   // m³ per unit
+    };
+
+    struct InventoryData {
+        float usedCapacity = 0.0f;     // m³ used
+        float maxCapacity = 100.0f;    // m³ total
+        int activeTab = 0;             // 0 = Cargo Hold, 1 = Station Hangar
+        std::vector<InventoryItem> items;
+    };
+
+    // ── Fitting data ────────────────────────────────────────────────
+
+    struct FittingSlot {
+        bool fitted = false;
+        std::string moduleName;
+        bool online = true;
+    };
+
+    struct FittingData {
+        std::string shipName = "Current Ship";
+        float cpuUsed = 0.0f;
+        float cpuMax = 0.0f;
+        float pgUsed = 0.0f;
+        float pgMax = 0.0f;
+        float calibrationUsed = 0.0f;
+        float calibrationMax = 400.0f;
+        std::vector<FittingSlot> highSlots;
+        std::vector<FittingSlot> midSlots;
+        std::vector<FittingSlot> lowSlots;
+        // Stats
+        float effectiveHP = 0.0f;
+        float dps = 0.0f;
+        float maxVelocity = 0.0f;
+        bool capStable = false;
+        float capTime = 0.0f;   // seconds until cap empties (if not stable)
+    };
+
+    // ── Market data ─────────────────────────────────────────────────
+
+    struct MarketOrder {
+        std::string itemName;
+        float price = 0.0f;
+        int quantity = 0;
+        std::string location;
+    };
+
+    struct MarketData {
+        int activeTab = 0;   // 0 = Browse, 1 = My Orders, 2 = History
+        std::string searchText;
+        std::vector<MarketOrder> sellOrders;
+        std::vector<MarketOrder> buyOrders;
+    };
+
+    // ── Fleet data ──────────────────────────────────────────────────
+
+    struct FleetMember {
+        std::string name;
+        std::string shipType;     // e.g. "Caracal", "Vexor"
+        float shieldPct = 1.0f;
+        float armorPct = 1.0f;
+        float hullPct = 1.0f;
+        bool isCommander = false;
+        bool inRange = true;
+    };
+
+    struct FleetData {
+        bool inFleet = false;
+        std::string fleetName;
+        int memberCount = 0;
+        std::vector<FleetMember> members;
+    };
+
     void toggleStation() { m_stationState.open = !m_stationState.open; }
     bool isStationOpen() const { return m_stationState.open; }
     void setStationData(const StationPanelData& data) { m_stationData = data; }
@@ -331,6 +409,34 @@ public:
     void setStationDockCb(const std::function<void()>& cb) { m_stationDockCb = cb; }
     void setStationUndockCb(const std::function<void()>& cb) { m_stationUndockCb = cb; }
     void setStationRepairCb(const std::function<void()>& cb) { m_stationRepairCb = cb; }
+
+    // ── Inventory data ──────────────────────────────────────────────
+
+    void setInventoryData(const InventoryData& data) { m_inventoryData = data; }
+    const InventoryData& getInventoryData() const { return m_inventoryData; }
+
+    void setInventoryTransferCb(const std::function<void(int)>& cb) { m_inventoryTransferCb = cb; }
+    void setInventoryJettisonCb(const std::function<void(int)>& cb) { m_inventoryJettisonCb = cb; }
+
+    // ── Fitting data ────────────────────────────────────────────────
+
+    void setFittingData(const FittingData& data) { m_fittingData = data; }
+    const FittingData& getFittingData() const { return m_fittingData; }
+
+    // ── Market data ─────────────────────────────────────────────────
+
+    void setMarketData(const MarketData& data) { m_marketData = data; }
+    const MarketData& getMarketData() const { return m_marketData; }
+
+    void setMarketBuyCb(const std::function<void(int)>& cb) { m_marketBuyCb = cb; }
+    void setMarketSellCb(const std::function<void(int)>& cb) { m_marketSellCb = cb; }
+
+    // ── Fleet data ──────────────────────────────────────────────────
+
+    void toggleFleet() { m_fleetState.open = !m_fleetState.open; }
+    bool isFleetOpen() const { return m_fleetState.open; }
+    void setFleetData(const FleetData& data) { m_fleetData = data; }
+    const FleetData& getFleetData() const { return m_fleetData; }
 
     // ── Fleet broadcasts ────────────────────────────────────────────
 
@@ -450,6 +556,23 @@ private:
 
     // Station data
     StationPanelData m_stationData;
+
+    // Inventory data
+    InventoryData m_inventoryData;
+    std::function<void(int)> m_inventoryTransferCb;
+    std::function<void(int)> m_inventoryJettisonCb;
+
+    // Fitting data
+    FittingData m_fittingData;
+
+    // Market data
+    MarketData m_marketData;
+    std::function<void(int)> m_marketBuyCb;
+    std::function<void(int)> m_marketSellCb;
+
+    // Fleet data
+    PanelState m_fleetState;
+    FleetData m_fleetData;
 
     // Internal draw helpers for new features
     void drawCombatLog(AtlasContext& ctx);
