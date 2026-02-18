@@ -66,6 +66,23 @@ void test_console_net_mode();
 void test_console_help();
 void test_console_unknown_command();
 
+// HUD Panel tests
+void test_station_panel_defaults();
+void test_station_panel_toggle();
+void test_station_panel_set_data();
+void test_station_panel_callbacks();
+void test_inventory_panel_defaults();
+void test_inventory_panel_set_data();
+void test_fitting_panel_defaults();
+void test_fitting_panel_set_data();
+void test_market_panel_defaults();
+void test_market_panel_set_data();
+void test_fleet_panel_defaults();
+void test_fleet_panel_toggle();
+void test_fleet_panel_set_data();
+void test_existing_panel_toggles();
+void test_overview_tab_filter();
+
 int main() {
     std::cout << "=== Atlas Engine Tests ===" << std::endl;
 
@@ -144,6 +161,24 @@ int main() {
     test_console_net_mode();
     test_console_help();
     test_console_unknown_command();
+
+    // HUD Panels
+    std::cout << "\n--- HUD Panels ---" << std::endl;
+    test_station_panel_defaults();
+    test_station_panel_toggle();
+    test_station_panel_set_data();
+    test_station_panel_callbacks();
+    test_inventory_panel_defaults();
+    test_inventory_panel_set_data();
+    test_fitting_panel_defaults();
+    test_fitting_panel_set_data();
+    test_market_panel_defaults();
+    test_market_panel_set_data();
+    test_fleet_panel_defaults();
+    test_fleet_panel_toggle();
+    test_fleet_panel_set_data();
+    test_existing_panel_toggles();
+    test_overview_tab_filter();
 
     std::cout << "\n=== All tests passed! ===" << std::endl;
     return 0;
