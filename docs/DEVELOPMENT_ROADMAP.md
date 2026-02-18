@@ -99,16 +99,16 @@ If it fails any one → it doesn't ship.
 **Goal:** A universe that reacts over time and remembers player impact.
 
 #### Core Systems
-- [ ] `SimStarSystemStateComponent` — per-system state vector (traffic, economy, security, threat, faction influence)
-- [ ] `AtlasBackgroundSimulationSystem` — continuous background simulation tick
-- [ ] Threshold-based system events (pirate surge, shortages, lockdowns)
+- [x] `SimStarSystemStateComponent` — per-system state vector (traffic, economy, security, threat, faction influence)
+- [x] `AtlasBackgroundSimulationSystem` — continuous background simulation tick
+- [x] Threshold-based system events (pirate surge, shortages, lockdowns)
 - [ ] Local reputation per system
 
 #### NPC Life
-- [ ] Intent-driven NPC AI (`SimNPCIntentComponent`)
+- [x] Intent-driven NPC AI (`SimNPCIntentComponent`)
   - Intents: Trade, Patrol, Hunt, Explore, Flee, Escort, Salvage
   - Intent scoring: `NPCIntent ChooseIntent(NPC& npc, StarSystemState& sys)`
-- [ ] NPC archetypes: Trader, Pirate, Patrol, Miner, Hauler, Industrialist
+- [x] NPC archetypes: Trader, Pirate, Patrol, Miner, Hauler, Industrialist
 - [ ] NPC behavior trees (per archetype)
 - [ ] NPC rerouting based on system danger
 - [ ] Ambient traffic spawns driven by system state

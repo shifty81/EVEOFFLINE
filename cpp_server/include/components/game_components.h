@@ -1784,6 +1784,104 @@ public:
     COMPONENT_TYPE(FactionCulture)
 };
 
+// ==================== Phase 2: Living Universe Components ====================
+
+/**
+ * @brief Per-system state vector for background simulation
+ *
+ * Tracks economic, security, and faction state of a star system.
+ * Updated by AtlasBackgroundSimulationSystem each tick.
+ */
+class SimStarSystemState : public ecs::Component {
+public:
+    // Traffic & activity
+    float traffic_level = 0.5f;         // 0.0 = empty, 1.0 = busy
+    float mining_activity = 0.0f;       // 0.0-1.0 active mining rate
+    float trade_volume = 0.0f;          // 0.0-1.0 trade activity
+
+    // Economy
+    float economic_index = 0.5f;        // 0.0 = depressed, 1.0 = booming
+    float resource_availability = 1.0f; // 0.0 = depleted, 1.0 = abundant
+    float price_modifier = 1.0f;        // multiplier on base prices
+
+    // Security
+    float security_level = 0.5f;        // 0.0 = lawless, 1.0 = secure
+    float threat_level = 0.0f;          // 0.0 = safe, 1.0 = dangerous
+    float pirate_activity = 0.0f;       // 0.0-1.0 pirate presence
+
+    // Faction influence
+    std::map<std::string, float> faction_influence;  // faction -> 0.0-1.0
+
+    // Event flags
+    bool pirate_surge = false;
+    bool resource_shortage = false;
+    bool lockdown = false;
+    float event_timer = 0.0f;           // countdown for active events
+
+    COMPONENT_TYPE(SimStarSystemState)
+};
+
+/**
+ * @brief Intent-driven NPC AI component
+ *
+ * NPCs choose intents based on system state, personality, and needs.
+ * The intent drives behavior tree execution each tick.
+ */
+class SimNPCIntent : public ecs::Component {
+public:
+    enum class Intent {
+        Idle,
+        Trade,
+        Patrol,
+        Hunt,
+        Explore,
+        Flee,
+        Escort,
+        Salvage,
+        Mine,
+        Haul,
+        Dock
+    };
+
+    enum class Archetype {
+        Trader,
+        Pirate,
+        Patrol,
+        Miner,
+        Hauler,
+        Industrialist
+    };
+
+    Intent current_intent = Intent::Idle;
+    Intent previous_intent = Intent::Idle;
+    Archetype archetype = Archetype::Trader;
+
+    // Intent scoring weights (personality-driven)
+    float trade_weight = 0.5f;
+    float patrol_weight = 0.5f;
+    float hunt_weight = 0.5f;
+    float explore_weight = 0.5f;
+    float flee_weight = 0.5f;
+    float escort_weight = 0.5f;
+    float salvage_weight = 0.5f;
+    float mine_weight = 0.5f;
+    float haul_weight = 0.5f;
+
+    // State tracking
+    std::string target_system_id;       // destination system
+    std::string target_entity_id;       // target entity (trade partner, escort target, etc.)
+    float intent_duration = 0.0f;       // how long on current intent
+    float intent_cooldown = 0.0f;       // cooldown before re-evaluation
+    bool intent_complete = false;       // current intent fulfilled
+
+    // Economic state
+    double wallet = 10000.0;            // ISK balance
+    float cargo_fill = 0.0f;           // 0.0-1.0 cargo space used
+    float profit_target = 0.0f;         // target profit before docking
+
+    COMPONENT_TYPE(SimNPCIntent)
+};
+
 } // namespace components
 } // namespace atlas
 

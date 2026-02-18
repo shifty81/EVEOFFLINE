@@ -64,6 +64,8 @@
 #include "systems/reputation_system.h"
 #include "systems/lod_system.h"
 #include "systems/spatial_hash_system.h"
+#include "systems/background_simulation_system.h"
+#include "systems/npc_intent_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -12409,6 +12411,464 @@ void testStress200ShipPersistence() {
     std::remove(filepath.c_str());
 }
 
+// ==================== Phase 2: Background Simulation System Tests ====================
+
+void testSimStarSystemStateDefaults() {
+    std::cout << "\n=== SimStarSystemState Defaults ===" << std::endl;
+    ecs::World world;
+    auto* sys = world.createEntity("system_alpha");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+
+    assertTrue(approxEqual(state->traffic_level, 0.5f), "Default traffic 0.5");
+    assertTrue(approxEqual(state->economic_index, 0.5f), "Default economy 0.5");
+    assertTrue(approxEqual(state->security_level, 0.5f), "Default security 0.5");
+    assertTrue(approxEqual(state->threat_level, 0.0f), "Default threat 0.0");
+    assertTrue(approxEqual(state->pirate_activity, 0.0f), "Default pirate activity 0.0");
+    assertTrue(approxEqual(state->resource_availability, 1.0f), "Default resources 1.0");
+    assertTrue(!state->pirate_surge, "No pirate surge by default");
+    assertTrue(!state->resource_shortage, "No shortage by default");
+    assertTrue(!state->lockdown, "No lockdown by default");
+}
+
+void testBackgroundSimThreatDecay() {
+    std::cout << "\n=== Background Sim: Threat Decay ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys = world.createEntity("system_beta");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->threat_level = 0.5f;
+
+    bgSim.update(10.0f);  // 10 seconds
+
+    assertTrue(state->threat_level < 0.5f, "Threat decayed after tick");
+    assertTrue(state->threat_level > 0.0f, "Threat not fully gone after short tick");
+}
+
+void testBackgroundSimEconomyRecovery() {
+    std::cout << "\n=== Background Sim: Economy Recovery ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys = world.createEntity("system_gamma");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->economic_index = 0.2f;
+
+    bgSim.update(10.0f);
+
+    assertTrue(state->economic_index > 0.2f, "Economy recovered from low");
+    assertTrue(state->economic_index <= 0.5f, "Economy doesn't exceed baseline");
+}
+
+void testBackgroundSimResourceRegen() {
+    std::cout << "\n=== Background Sim: Resource Regen ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys = world.createEntity("system_delta");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->resource_availability = 0.3f;
+
+    bgSim.update(10.0f);
+
+    assertTrue(state->resource_availability > 0.3f, "Resources regenerated");
+    assertTrue(state->resource_availability <= 1.0f, "Resources don't exceed max");
+}
+
+void testBackgroundSimPirateSurge() {
+    std::cout << "\n=== Background Sim: Pirate Surge Event ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys = world.createEntity("system_epsilon");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->pirate_activity = 0.8f;  // above threshold (0.7)
+
+    bgSim.update(1.0f);
+
+    assertTrue(state->pirate_surge, "Pirate surge triggered at high activity");
+    assertTrue(state->event_timer > 0.0f, "Event timer set");
+    assertTrue(bgSim.isEventActive("system_epsilon", "pirate_surge"),
+               "isEventActive returns true for pirate_surge");
+}
+
+void testBackgroundSimResourceShortage() {
+    std::cout << "\n=== Background Sim: Resource Shortage Event ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys = world.createEntity("system_zeta");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->resource_availability = 0.1f;  // below threshold (0.2)
+
+    bgSim.update(1.0f);
+
+    assertTrue(state->resource_shortage, "Resource shortage triggered");
+    assertTrue(bgSim.isEventActive("system_zeta", "resource_shortage"),
+               "isEventActive returns true for shortage");
+}
+
+void testBackgroundSimLockdown() {
+    std::cout << "\n=== Background Sim: Lockdown Event ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys = world.createEntity("system_eta");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->threat_level = 0.9f;  // above threshold (0.8)
+
+    bgSim.update(1.0f);
+
+    assertTrue(state->lockdown, "Lockdown triggered at extreme threat");
+    assertTrue(bgSim.isEventActive("system_eta", "lockdown"),
+               "isEventActive returns true for lockdown");
+}
+
+void testBackgroundSimEventTimerExpiry() {
+    std::cout << "\n=== Background Sim: Event Timer Expiry ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+    bgSim.event_duration = 10.0f;  // short duration for test
+
+    auto* sys = world.createEntity("system_theta");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->pirate_activity = 0.8f;
+
+    bgSim.update(1.0f);
+    assertTrue(state->pirate_surge, "Surge active initially");
+
+    // Lower activity and wait for timer to expire
+    state->pirate_activity = 0.1f;
+    bgSim.update(15.0f);  // exceeds event_duration
+
+    assertTrue(!state->pirate_surge, "Surge cleared after timer + conditions subsided");
+}
+
+void testBackgroundSimQuerySystems() {
+    std::cout << "\n=== Background Sim: Query Systems with Event ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys1 = world.createEntity("system_1");
+    auto* state1 = addComp<components::SimStarSystemState>(sys1);
+    state1->pirate_activity = 0.9f;
+
+    auto* sys2 = world.createEntity("system_2");
+    auto* state2 = addComp<components::SimStarSystemState>(sys2);
+    state2->pirate_activity = 0.1f;
+
+    bgSim.update(1.0f);
+
+    auto surged = bgSim.getSystemsWithEvent("pirate_surge");
+    assertTrue(surged.size() == 1, "Only one system has pirate surge");
+    assertTrue(surged[0] == "system_1", "Correct system has surge");
+}
+
+void testBackgroundSimPirateGrowth() {
+    std::cout << "\n=== Background Sim: Pirate Growth in Low-Sec ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys = world.createEntity("system_lowsec");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->security_level = 0.1f;  // low security
+    state->pirate_activity = 0.3f;
+
+    bgSim.update(10.0f);
+
+    assertTrue(state->pirate_activity > 0.3f, "Pirate activity grew in low-sec");
+}
+
+void testBackgroundSimPriceModifier() {
+    std::cout << "\n=== Background Sim: Price Modifier ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    auto* sys = world.createEntity("system_market");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->resource_availability = 0.3f;  // scarce
+    state->trade_volume = 0.2f;           // low trade
+
+    bgSim.update(1.0f);
+
+    assertTrue(state->price_modifier > 1.0f, "Prices increase when resources scarce");
+    assertTrue(state->price_modifier <= 2.0f, "Price modifier capped at 2.0");
+}
+
+void testBackgroundSimNoEventOnNonEntity() {
+    std::cout << "\n=== Background Sim: No Event on Missing Entity ===" << std::endl;
+    ecs::World world;
+    systems::BackgroundSimulationSystem bgSim(&world);
+
+    assertTrue(!bgSim.isEventActive("nonexistent", "pirate_surge"),
+               "No event on missing entity");
+    assertTrue(bgSim.getSystemState("nonexistent") == nullptr,
+               "Null state for missing entity");
+}
+
+// ==================== Phase 2: NPC Intent System Tests ====================
+
+void testSimNPCIntentDefaults() {
+    std::cout << "\n=== SimNPCIntent Defaults ===" << std::endl;
+    ecs::World world;
+    auto* npc = world.createEntity("npc_trader_1");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+
+    assertTrue(intent->current_intent == components::SimNPCIntent::Intent::Idle,
+               "Default intent is Idle");
+    assertTrue(intent->archetype == components::SimNPCIntent::Archetype::Trader,
+               "Default archetype is Trader");
+    assertTrue(approxEqual(intent->wallet, 10000.0f, 1.0f), "Default wallet 10000");
+    assertTrue(approxEqual(intent->cargo_fill, 0.0f), "Default cargo empty");
+    assertTrue(!intent->intent_complete, "Intent not complete by default");
+}
+
+void testNPCIntentArchetypeWeights() {
+    std::cout << "\n=== NPC Intent: Archetype Weights ===" << std::endl;
+
+    // Test Trader archetype
+    components::SimNPCIntent trader_intent;
+    trader_intent.archetype = components::SimNPCIntent::Archetype::Trader;
+    systems::NPCIntentSystem::applyArchetypeWeights(&trader_intent);
+    assertTrue(trader_intent.trade_weight > 0.8f, "Trader has high trade weight");
+    assertTrue(trader_intent.haul_weight > 0.5f, "Trader has decent haul weight");
+
+    // Test Pirate archetype
+    components::SimNPCIntent pirate_intent;
+    pirate_intent.archetype = components::SimNPCIntent::Archetype::Pirate;
+    systems::NPCIntentSystem::applyArchetypeWeights(&pirate_intent);
+    assertTrue(pirate_intent.hunt_weight > 0.8f, "Pirate has high hunt weight");
+    assertTrue(pirate_intent.salvage_weight > 0.4f, "Pirate has decent salvage weight");
+
+    // Test Miner archetype
+    components::SimNPCIntent miner_intent;
+    miner_intent.archetype = components::SimNPCIntent::Archetype::Miner;
+    systems::NPCIntentSystem::applyArchetypeWeights(&miner_intent);
+    assertTrue(miner_intent.mine_weight > 0.8f, "Miner has high mine weight");
+    assertTrue(miner_intent.flee_weight > 0.6f, "Miner has high flee weight (cautious)");
+
+    // Test Patrol archetype
+    components::SimNPCIntent patrol_intent;
+    patrol_intent.archetype = components::SimNPCIntent::Archetype::Patrol;
+    systems::NPCIntentSystem::applyArchetypeWeights(&patrol_intent);
+    assertTrue(patrol_intent.patrol_weight > 0.8f, "Patrol has high patrol weight");
+    assertTrue(patrol_intent.escort_weight > 0.6f, "Patrol has decent escort weight");
+
+    // Test Hauler archetype
+    components::SimNPCIntent hauler_intent;
+    hauler_intent.archetype = components::SimNPCIntent::Archetype::Hauler;
+    systems::NPCIntentSystem::applyArchetypeWeights(&hauler_intent);
+    assertTrue(hauler_intent.haul_weight > 0.8f, "Hauler has high haul weight");
+
+    // Test Industrialist archetype
+    components::SimNPCIntent ind_intent;
+    ind_intent.archetype = components::SimNPCIntent::Archetype::Industrialist;
+    systems::NPCIntentSystem::applyArchetypeWeights(&ind_intent);
+    assertTrue(ind_intent.trade_weight > 0.6f, "Industrialist has decent trade weight");
+    assertTrue(ind_intent.mine_weight > 0.5f, "Industrialist has decent mine weight");
+}
+
+void testNPCIntentFleeOnLowHealth() {
+    std::cout << "\n=== NPC Intent: Flee on Low Health ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+    intentSys.re_eval_interval = 0.0f;  // instant re-eval for testing
+
+    auto* npc = world.createEntity("npc_hurt");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->current_intent = components::SimNPCIntent::Intent::Patrol;
+    intent->archetype = components::SimNPCIntent::Archetype::Patrol;
+    systems::NPCIntentSystem::applyArchetypeWeights(intent);
+
+    auto* health = addComp<components::Health>(npc);
+    health->hull_hp = 10.0f;
+    health->hull_max = 100.0f;  // 10% hull
+
+    intentSys.update(1.0f);
+
+    assertTrue(intent->current_intent == components::SimNPCIntent::Intent::Flee,
+               "NPC flees when hull below 25%");
+}
+
+void testNPCIntentTraderInGoodEconomy() {
+    std::cout << "\n=== NPC Intent: Trader Favors Trade in Good Economy ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+    intentSys.re_eval_interval = 0.0f;
+
+    // Create system with good economy
+    auto* sys = world.createEntity("system_rich");
+    auto* sysState = addComp<components::SimStarSystemState>(sys);
+    sysState->economic_index = 0.9f;
+    sysState->security_level = 0.8f;
+    sysState->resource_availability = 0.8f;
+    sysState->trade_volume = 0.7f;
+
+    auto* npc = world.createEntity("npc_trader");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->archetype = components::SimNPCIntent::Archetype::Trader;
+    systems::NPCIntentSystem::applyArchetypeWeights(intent);
+    intent->target_system_id = "system_rich";
+    intent->cargo_fill = 0.6f;  // has cargo to sell
+    addComp<components::Health>(npc);
+
+    intentSys.update(1.0f);
+
+    // Trader should choose Trade (high econ + cargo)
+    auto scores = intentSys.scoreIntents("npc_trader");
+    assertTrue(!scores.empty(), "Score intents returns results");
+    assertTrue(scores[0].first == components::SimNPCIntent::Intent::Trade,
+               "Trade scores highest for trader in good economy with cargo");
+}
+
+void testNPCIntentMinerInResourceSystem() {
+    std::cout << "\n=== NPC Intent: Miner Prefers Mining in Rich System ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+    intentSys.re_eval_interval = 0.0f;
+
+    auto* sys = world.createEntity("system_ore");
+    auto* sysState = addComp<components::SimStarSystemState>(sys);
+    sysState->resource_availability = 0.9f;
+    sysState->security_level = 0.8f;
+
+    auto* npc = world.createEntity("npc_miner");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->archetype = components::SimNPCIntent::Archetype::Miner;
+    systems::NPCIntentSystem::applyArchetypeWeights(intent);
+    intent->target_system_id = "system_ore";
+    addComp<components::Health>(npc);
+
+    auto scores = intentSys.scoreIntents("npc_miner");
+    assertTrue(!scores.empty(), "Miner score intents not empty");
+
+    // Find mine score
+    float mine_score = 0.0f;
+    for (auto& [i, s] : scores) {
+        if (i == components::SimNPCIntent::Intent::Mine) mine_score = s;
+    }
+    assertTrue(mine_score > 0.5f, "Mining scores high in resource-rich system");
+}
+
+void testNPCIntentForceIntent() {
+    std::cout << "\n=== NPC Intent: Force Intent ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+
+    auto* npc = world.createEntity("npc_forced");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->current_intent = components::SimNPCIntent::Intent::Idle;
+
+    intentSys.forceIntent("npc_forced", components::SimNPCIntent::Intent::Dock);
+
+    assertTrue(intent->current_intent == components::SimNPCIntent::Intent::Dock,
+               "Intent forced to Dock");
+    assertTrue(intent->previous_intent == components::SimNPCIntent::Intent::Idle,
+               "Previous intent recorded");
+    assertTrue(intent->intent_duration == 0.0f, "Intent duration reset");
+}
+
+void testNPCIntentQueryByIntent() {
+    std::cout << "\n=== NPC Intent: Query NPCs by Intent ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+
+    auto* npc1 = world.createEntity("npc_patrol_1");
+    auto* i1 = addComp<components::SimNPCIntent>(npc1);
+    i1->current_intent = components::SimNPCIntent::Intent::Patrol;
+
+    auto* npc2 = world.createEntity("npc_patrol_2");
+    auto* i2 = addComp<components::SimNPCIntent>(npc2);
+    i2->current_intent = components::SimNPCIntent::Intent::Patrol;
+
+    auto* npc3 = world.createEntity("npc_trade_1");
+    auto* i3 = addComp<components::SimNPCIntent>(npc3);
+    i3->current_intent = components::SimNPCIntent::Intent::Trade;
+
+    auto patrollers = intentSys.getNPCsWithIntent(components::SimNPCIntent::Intent::Patrol);
+    assertTrue(patrollers.size() == 2, "Two patrolling NPCs found");
+
+    auto traders = intentSys.getNPCsWithIntent(components::SimNPCIntent::Intent::Trade);
+    assertTrue(traders.size() == 1, "One trading NPC found");
+}
+
+void testNPCIntentQueryByArchetype() {
+    std::cout << "\n=== NPC Intent: Query NPCs by Archetype ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+
+    auto* npc1 = world.createEntity("npc_m1");
+    auto* i1 = addComp<components::SimNPCIntent>(npc1);
+    i1->archetype = components::SimNPCIntent::Archetype::Miner;
+
+    auto* npc2 = world.createEntity("npc_m2");
+    auto* i2 = addComp<components::SimNPCIntent>(npc2);
+    i2->archetype = components::SimNPCIntent::Archetype::Miner;
+
+    auto* npc3 = world.createEntity("npc_p1");
+    auto* i3 = addComp<components::SimNPCIntent>(npc3);
+    i3->archetype = components::SimNPCIntent::Archetype::Pirate;
+
+    auto miners = intentSys.getNPCsByArchetype(components::SimNPCIntent::Archetype::Miner);
+    assertTrue(miners.size() == 2, "Two miners found");
+
+    auto pirates = intentSys.getNPCsByArchetype(components::SimNPCIntent::Archetype::Pirate);
+    assertTrue(pirates.size() == 1, "One pirate found");
+}
+
+void testNPCIntentCooldownPreventsReeval() {
+    std::cout << "\n=== NPC Intent: Cooldown Prevents Re-evaluation ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+    intentSys.re_eval_interval = 30.0f;  // 30 second cooldown
+
+    auto* npc = world.createEntity("npc_cooldown");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->archetype = components::SimNPCIntent::Archetype::Patrol;
+    systems::NPCIntentSystem::applyArchetypeWeights(intent);
+    addComp<components::Health>(npc);
+
+    // First update sets cooldown
+    intentSys.update(1.0f);
+    auto first_intent = intent->current_intent;
+
+    // Second update within cooldown — intent should not change
+    intentSys.update(1.0f);
+    assertTrue(intent->current_intent == first_intent,
+               "Intent unchanged during cooldown");
+}
+
+void testNPCIntentDockOnFullCargo() {
+    std::cout << "\n=== NPC Intent: Dock on Full Cargo ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+    intentSys.re_eval_interval = 0.0f;
+
+    auto* npc = world.createEntity("npc_full_cargo");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->archetype = components::SimNPCIntent::Archetype::Hauler;
+    systems::NPCIntentSystem::applyArchetypeWeights(intent);
+    intent->cargo_fill = 0.95f;  // nearly full
+    addComp<components::Health>(npc);
+
+    auto scores = intentSys.scoreIntents("npc_full_cargo");
+    float dock_score = 0.0f;
+    for (auto& [i, s] : scores) {
+        if (i == components::SimNPCIntent::Intent::Dock) dock_score = s;
+    }
+    assertTrue(dock_score > 0.5f, "Dock scores high when cargo full");
+}
+
+void testNPCIntentGetIntentMissing() {
+    std::cout << "\n=== NPC Intent: Get Intent on Missing Entity ===" << std::endl;
+    ecs::World world;
+    systems::NPCIntentSystem intentSys(&world);
+
+    auto result = intentSys.getIntent("nonexistent");
+    assertTrue(result == components::SimNPCIntent::Intent::Idle,
+               "Missing entity returns Idle");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -12435,7 +12895,8 @@ int main() {
     std::cout << "WarpCinematic," << std::endl;
     std::cout << "MissionProtocol, AIDefensive," << std::endl;
     std::cout << "PersistenceStress, FleetPersistence, EconomyPersistence," << std::endl;
-    std::cout << "LODSystem, SpatialHash, CompressedPersistence, 200ShipStress" << std::endl;
+    std::cout << "LODSystem, SpatialHash, CompressedPersistence, 200ShipStress," << std::endl;
+    std::cout << "BackgroundSimulation, NPCIntent" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -13160,6 +13621,33 @@ int main() {
     // Phase 5 Continued: 200-Ship Multi-System Stress tests
     testStress200ShipMultiSystem();
     testStress200ShipPersistence();
+
+    // Phase 2: Background Simulation System tests
+    testSimStarSystemStateDefaults();
+    testBackgroundSimThreatDecay();
+    testBackgroundSimEconomyRecovery();
+    testBackgroundSimResourceRegen();
+    testBackgroundSimPirateSurge();
+    testBackgroundSimResourceShortage();
+    testBackgroundSimLockdown();
+    testBackgroundSimEventTimerExpiry();
+    testBackgroundSimQuerySystems();
+    testBackgroundSimPirateGrowth();
+    testBackgroundSimPriceModifier();
+    testBackgroundSimNoEventOnNonEntity();
+
+    // Phase 2: NPC Intent System tests
+    testSimNPCIntentDefaults();
+    testNPCIntentArchetypeWeights();
+    testNPCIntentFleeOnLowHealth();
+    testNPCIntentTraderInGoodEconomy();
+    testNPCIntentMinerInResourceSystem();
+    testNPCIntentForceIntent();
+    testNPCIntentQueryByIntent();
+    testNPCIntentQueryByArchetype();
+    testNPCIntentCooldownPreventsReeval();
+    testNPCIntentDockOnFullCargo();
+    testNPCIntentGetIntentMissing();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;
