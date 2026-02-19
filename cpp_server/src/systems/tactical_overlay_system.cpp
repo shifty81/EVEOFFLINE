@@ -139,5 +139,71 @@ float TacticalOverlaySystem::getEntityDisplayPriority(const std::string& entity_
     return overlay->entity_display_priority;
 }
 
+// ---------------------------------------------------------------------------
+// Stage 4: Fleet extensions — anchor rings and wing bands
+// ---------------------------------------------------------------------------
+
+void TacticalOverlaySystem::setAnchorRing(const std::string& entity_id,
+                                           const std::string& anchor_id,
+                                           float radius) {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return;
+
+    auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) {
+        entity->addComponent(std::make_unique<components::TacticalOverlayState>());
+        overlay = entity->getComponent<components::TacticalOverlayState>();
+    }
+
+    overlay->anchor_entity_id = anchor_id;
+    overlay->anchor_ring_radius = radius;
+}
+
+float TacticalOverlaySystem::getAnchorRingRadius(const std::string& entity_id) const {
+    const auto* entity = world_->getEntity(entity_id);
+    if (!entity) return 0.0f;
+
+    const auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) return 0.0f;
+
+    return overlay->anchor_ring_radius;
+}
+
+void TacticalOverlaySystem::setWingBands(const std::string& entity_id,
+                                          bool enabled,
+                                          const std::vector<float>& offsets) {
+    auto* entity = world_->getEntity(entity_id);
+    if (!entity) return;
+
+    auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) {
+        entity->addComponent(std::make_unique<components::TacticalOverlayState>());
+        overlay = entity->getComponent<components::TacticalOverlayState>();
+    }
+
+    overlay->wing_bands_enabled = enabled;
+    overlay->wing_band_offsets = offsets;
+}
+
+bool TacticalOverlaySystem::areWingBandsEnabled(const std::string& entity_id) const {
+    const auto* entity = world_->getEntity(entity_id);
+    if (!entity) return false;
+
+    const auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) return false;
+
+    return overlay->wing_bands_enabled;
+}
+
+std::vector<float> TacticalOverlaySystem::getWingBandOffsets(const std::string& entity_id) const {
+    const auto* entity = world_->getEntity(entity_id);
+    if (!entity) return {};
+
+    const auto* overlay = entity->getComponent<components::TacticalOverlayState>();
+    if (!overlay) return {};
+
+    return overlay->wing_band_offsets;
+}
+
 } // namespace systems
 } // namespace atlas

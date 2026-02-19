@@ -101,6 +101,10 @@ set(SERVER_SOURCES
     src/systems/spatial_hash_system.cpp
     src/systems/background_simulation_system.cpp
     src/systems/npc_intent_system.cpp
+    src/systems/npc_behavior_tree_system.cpp
+    src/systems/combat_threat_system.cpp
+    src/systems/security_response_system.cpp
+    src/systems/ambient_traffic_system.cpp
     src/data/ship_database.cpp
     src/data/npc_database.cpp
     src/data/wormhole_database.cpp
@@ -177,6 +181,10 @@ set(SERVER_HEADERS
     include/systems/spatial_hash_system.h
     include/systems/background_simulation_system.h
     include/systems/npc_intent_system.h
+    include/systems/npc_behavior_tree_system.h
+    include/systems/combat_threat_system.h
+    include/systems/security_response_system.h
+    include/systems/ambient_traffic_system.h
     include/data/ship_database.h
     include/data/npc_database.h
     include/data/wormhole_database.h
@@ -315,6 +323,10 @@ if(BUILD_TESTS)
         src/systems/spatial_hash_system.cpp
         src/systems/background_simulation_system.cpp
         src/systems/npc_intent_system.cpp
+        src/systems/npc_behavior_tree_system.cpp
+        src/systems/combat_threat_system.cpp
+        src/systems/security_response_system.cpp
+        src/systems/ambient_traffic_system.cpp
         src/data/world_persistence.cpp
         src/utils/logger.cpp
         src/utils/server_metrics.cpp

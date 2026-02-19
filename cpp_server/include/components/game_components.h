@@ -1306,6 +1306,12 @@ public:
     // Entity priority scaling (Phase 10)
     float entity_display_priority = 1.0f;  // higher = more visible at distance
 
+    // Fleet extensions (Stage 4)
+    float anchor_ring_radius = 0.0f;       // anchor ring distance (0 = disabled)
+    std::string anchor_entity_id;          // entity at ring center
+    bool  wing_bands_enabled = false;      // show wing-level band arcs
+    std::vector<float> wing_band_offsets;  // per-wing radial offset from anchor
+
     COMPONENT_TYPE(TacticalOverlayState)
 };
 
@@ -1880,6 +1886,61 @@ public:
     float profit_target = 0.0f;         // target profit before docking
 
     COMPONENT_TYPE(SimNPCIntent)
+};
+
+// ==================== Living Universe: NPC Behavior Trees ====================
+
+/**
+ * @brief Per-NPC behavior tree state
+ *
+ * Tracks which phase of the archetype behavior tree the NPC is
+ * currently executing, how long it has been in that phase, and
+ * the full phase list derived from the current intent.
+ */
+class NPCBehaviorState : public ecs::Component {
+public:
+    std::vector<std::string> phases;           // ordered phase names
+    int current_phase_index = 0;               // index into phases[]
+    float phase_elapsed = 0.0f;                // seconds in current phase
+    float phase_duration = 10.0f;              // default time per phase
+    bool tree_complete = false;                // all phases finished
+    SimNPCIntent::Intent bound_intent = SimNPCIntent::Intent::Idle; // intent this tree was built for
+
+    COMPONENT_TYPE(NPCBehaviorState)
+};
+
+// ==================== Living Universe: Security Response ====================
+
+/**
+ * @brief Per-system security response timer (CONCORD-style)
+ *
+ * Tracks whether a delayed security response is pending or active
+ * for a star system.
+ */
+class SecurityResponseState : public ecs::Component {
+public:
+    float response_timer = 0.0f;        // countdown (or remaining duration)
+    bool  responding = false;            // true when response is active
+    float response_strength = 0.0f;     // proportional to security_level
+
+    COMPONENT_TYPE(SecurityResponseState)
+};
+
+// ==================== Living Universe: Ambient Traffic ====================
+
+/**
+ * @brief Per-system ambient NPC traffic state
+ *
+ * Manages the spawn timer and pending spawn list for background
+ * NPC traffic driven by the system's SimStarSystemState.
+ */
+class AmbientTrafficState : public ecs::Component {
+public:
+    float spawn_timer = 60.0f;          // countdown to next spawn evaluation
+    int   active_traffic_count = 0;     // current NPC traffic count
+    std::vector<std::string> pending_spawns;  // types awaiting spawn ("trader", "miner", …)
+
+    COMPONENT_TYPE(AmbientTrafficState)
 };
 
 } // namespace components
