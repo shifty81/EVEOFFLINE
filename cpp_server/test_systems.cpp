@@ -66,6 +66,10 @@
 #include "systems/spatial_hash_system.h"
 #include "systems/background_simulation_system.h"
 #include "systems/npc_intent_system.h"
+#include "systems/npc_behavior_tree_system.h"
+#include "systems/combat_threat_system.h"
+#include "systems/security_response_system.h"
+#include "systems/ambient_traffic_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -12869,6 +12873,586 @@ void testNPCIntentGetIntentMissing() {
                "Missing entity returns Idle");
 }
 
+// ==================== NPC Behavior Tree System Tests ====================
+
+void testNPCBehaviorTreeDefaults() {
+    std::cout << "\n=== NPC Behavior Tree: Defaults ===" << std::endl;
+    ecs::World world;
+
+    auto* npc = world.createEntity("bt_npc");
+    auto* behavior = addComp<components::NPCBehaviorState>(npc);
+
+    assertTrue(behavior->phases.empty(), "Phases initially empty");
+    assertTrue(behavior->current_phase_index == 0, "Phase index starts at 0");
+    assertTrue(behavior->tree_complete == false, "Tree not complete initially");
+    assertTrue(behavior->phase_duration == 10.0f, "Default phase duration 10s");
+}
+
+void testNPCBehaviorTreeTraderPhases() {
+    std::cout << "\n=== NPC Behavior Tree: Trader Trade Phases ===" << std::endl;
+    using A = components::SimNPCIntent::Archetype;
+    using I = components::SimNPCIntent::Intent;
+
+    auto phases = systems::NPCBehaviorTreeSystem::getPhasesForIntent(A::Trader, I::Trade);
+    assertTrue(phases.size() == 5, "Trader trade has 5 phases");
+    assertTrue(phases[0] == "CheckMarketPrices", "First phase is CheckMarketPrices");
+    assertTrue(phases[4] == "EvaluateProfit", "Last phase is EvaluateProfit");
+}
+
+void testNPCBehaviorTreeMinerPhases() {
+    std::cout << "\n=== NPC Behavior Tree: Miner Mine Phases ===" << std::endl;
+    using A = components::SimNPCIntent::Archetype;
+    using I = components::SimNPCIntent::Intent;
+
+    auto phases = systems::NPCBehaviorTreeSystem::getPhasesForIntent(A::Miner, I::Mine);
+    assertTrue(phases.size() == 5, "Miner mine has 5 phases");
+    assertTrue(phases[0] == "FindDeposit", "First phase is FindDeposit");
+    assertTrue(phases[2] == "ActivateLasers", "Third phase is ActivateLasers");
+}
+
+void testNPCBehaviorTreePiratePhases() {
+    std::cout << "\n=== NPC Behavior Tree: Pirate Hunt Phases ===" << std::endl;
+    using A = components::SimNPCIntent::Archetype;
+    using I = components::SimNPCIntent::Intent;
+
+    auto phases = systems::NPCBehaviorTreeSystem::getPhasesForIntent(A::Pirate, I::Hunt);
+    assertTrue(phases.size() == 5, "Pirate hunt has 5 phases");
+    assertTrue(phases[0] == "ScanForPrey", "First phase is ScanForPrey");
+    assertTrue(phases[3] == "Engage", "Fourth phase is Engage");
+}
+
+void testNPCBehaviorTreePhaseAdvancement() {
+    std::cout << "\n=== NPC Behavior Tree: Phase Advancement ===" << std::endl;
+    ecs::World world;
+    systems::NPCBehaviorTreeSystem btSys(&world);
+
+    auto* npc = world.createEntity("bt_advance");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->current_intent = components::SimNPCIntent::Intent::Trade;
+    intent->archetype = components::SimNPCIntent::Archetype::Trader;
+
+    auto* behavior = addComp<components::NPCBehaviorState>(npc);
+    behavior->phase_duration = 5.0f;
+
+    // First tick builds the tree
+    btSys.update(0.0f);
+    assertTrue(behavior->phases.size() == 5, "Phases populated from intent");
+    assertTrue(btSys.getCurrentPhase("bt_advance") == "CheckMarketPrices",
+               "Starts at first phase");
+
+    // Advance time past phase_duration
+    btSys.update(6.0f);
+    assertTrue(behavior->current_phase_index == 1, "Advanced to phase 1");
+    assertTrue(btSys.getCurrentPhase("bt_advance") == "BuyGoods",
+               "Now in BuyGoods phase");
+}
+
+void testNPCBehaviorTreeCompletion() {
+    std::cout << "\n=== NPC Behavior Tree: Completion ===" << std::endl;
+    ecs::World world;
+    systems::NPCBehaviorTreeSystem btSys(&world);
+
+    auto* npc = world.createEntity("bt_complete");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->current_intent = components::SimNPCIntent::Intent::Dock;
+    intent->archetype = components::SimNPCIntent::Archetype::Trader;
+
+    auto* behavior = addComp<components::NPCBehaviorState>(npc);
+    behavior->phase_duration = 1.0f;
+
+    // Build tree
+    btSys.update(0.0f);
+    int numPhases = static_cast<int>(behavior->phases.size());
+    assertTrue(numPhases == 3, "Dock has 3 phases");
+
+    // Advance through all phases
+    for (int i = 0; i < numPhases; i++) {
+        btSys.update(2.0f);
+    }
+
+    assertTrue(behavior->tree_complete, "Tree marked complete");
+    assertTrue(intent->intent_complete, "Intent marked complete");
+    assertTrue(btSys.isTreeComplete("bt_complete"), "Query confirms complete");
+}
+
+void testNPCBehaviorTreeIntentChange() {
+    std::cout << "\n=== NPC Behavior Tree: Intent Change Rebuilds Tree ===" << std::endl;
+    ecs::World world;
+    systems::NPCBehaviorTreeSystem btSys(&world);
+
+    auto* npc = world.createEntity("bt_change");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->current_intent = components::SimNPCIntent::Intent::Trade;
+    intent->archetype = components::SimNPCIntent::Archetype::Trader;
+
+    auto* behavior = addComp<components::NPCBehaviorState>(npc);
+    behavior->phase_duration = 1.0f;
+
+    btSys.update(0.0f);
+    assertTrue(behavior->phases.size() == 5, "Trade has 5 phases");
+
+    // Change intent
+    intent->current_intent = components::SimNPCIntent::Intent::Flee;
+    btSys.update(0.0f);
+    assertTrue(behavior->current_phase_index == 0, "Phase reset to 0");
+    assertTrue(behavior->phases[0] == "SelectSafespot", "Flee starts at SelectSafespot");
+    assertTrue(!behavior->tree_complete, "Tree no longer complete");
+}
+
+void testNPCBehaviorTreeReset() {
+    std::cout << "\n=== NPC Behavior Tree: Reset ===" << std::endl;
+    ecs::World world;
+    systems::NPCBehaviorTreeSystem btSys(&world);
+
+    auto* npc = world.createEntity("bt_reset");
+    auto* intent = addComp<components::SimNPCIntent>(npc);
+    intent->current_intent = components::SimNPCIntent::Intent::Patrol;
+    intent->archetype = components::SimNPCIntent::Archetype::Patrol;
+
+    auto* behavior = addComp<components::NPCBehaviorState>(npc);
+    behavior->phase_duration = 1.0f;
+
+    btSys.update(0.0f);
+    btSys.update(2.0f);
+    assertTrue(behavior->current_phase_index > 0, "Advanced past phase 0");
+
+    btSys.resetTree("bt_reset");
+    assertTrue(behavior->current_phase_index == 0, "Reset to phase 0");
+    assertTrue(behavior->phase_elapsed == 0.0f, "Elapsed reset to 0");
+    assertTrue(!behavior->tree_complete, "Tree not complete after reset");
+}
+
+void testNPCBehaviorTreeGenericPhases() {
+    std::cout << "\n=== NPC Behavior Tree: Generic Phase Fallback ===" << std::endl;
+    using A = components::SimNPCIntent::Archetype;
+    using I = components::SimNPCIntent::Intent;
+
+    // Trader exploring uses generic explore phases
+    auto phases = systems::NPCBehaviorTreeSystem::getPhasesForIntent(A::Trader, I::Explore);
+    assertTrue(phases.size() == 3, "Generic explore has 3 phases");
+    assertTrue(phases[0] == "SelectDestination", "Generic explore starts with SelectDestination");
+}
+
+void testNPCBehaviorTreeMissingEntity() {
+    std::cout << "\n=== NPC Behavior Tree: Missing Entity Queries ===" << std::endl;
+    ecs::World world;
+    systems::NPCBehaviorTreeSystem btSys(&world);
+
+    assertTrue(btSys.getCurrentPhase("nobody") == "", "Missing entity returns empty phase");
+    assertTrue(btSys.isTreeComplete("nobody"), "Missing entity returns true for complete");
+    assertTrue(btSys.getPhaseElapsed("nobody") == 0.0f, "Missing entity returns 0 elapsed");
+}
+
+// ==================== Combat Threat System Tests ====================
+
+void testCombatThreatDamage() {
+    std::cout << "\n=== Combat Threat: Damage Increases Threat ===" << std::endl;
+    ecs::World world;
+    systems::CombatThreatSystem ctSys(&world);
+
+    auto* sys = world.createEntity("system_1");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->threat_level = 0.0f;
+
+    ctSys.recordCombatDamage("system_1", 500.0f);
+    assertTrue(ctSys.getPendingDamage("system_1") == 500.0f, "Pending damage recorded");
+
+    ctSys.update(1.0f);
+    assertTrue(state->threat_level > 0.0f, "Threat increased after damage");
+    float expected = 500.0f * ctSys.damage_threat_factor;
+    assertTrue(approxEqual(state->threat_level, expected), "Threat matches expected value");
+}
+
+void testCombatThreatDestruction() {
+    std::cout << "\n=== Combat Threat: Destruction Spikes Threat ===" << std::endl;
+    ecs::World world;
+    systems::CombatThreatSystem ctSys(&world);
+
+    auto* sys = world.createEntity("system_2");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->threat_level = 0.1f;
+
+    ctSys.recordShipDestruction("system_2");
+    ctSys.recordShipDestruction("system_2");
+    assertTrue(ctSys.getPendingDestructions("system_2") == 2, "Two destructions pending");
+
+    ctSys.update(1.0f);
+    float expected = 0.1f + 2 * ctSys.destruction_threat_spike;
+    assertTrue(approxEqual(state->threat_level, expected), "Threat spiked by 2 destructions");
+}
+
+void testCombatThreatClamped() {
+    std::cout << "\n=== Combat Threat: Threat Clamped at Max ===" << std::endl;
+    ecs::World world;
+    systems::CombatThreatSystem ctSys(&world);
+
+    auto* sys = world.createEntity("system_3");
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->threat_level = 0.95f;
+
+    ctSys.recordShipDestruction("system_3");
+    ctSys.recordShipDestruction("system_3");
+    ctSys.recordShipDestruction("system_3");
+    ctSys.update(1.0f);
+    assertTrue(state->threat_level <= ctSys.max_threat, "Threat clamped at max");
+}
+
+void testCombatThreatClearedAfterUpdate() {
+    std::cout << "\n=== Combat Threat: Pending Cleared After Update ===" << std::endl;
+    ecs::World world;
+    systems::CombatThreatSystem ctSys(&world);
+
+    auto* sys = world.createEntity("system_4");
+    addComp<components::SimStarSystemState>(sys);
+
+    ctSys.recordCombatDamage("system_4", 100.0f);
+    ctSys.update(1.0f);
+    assertTrue(ctSys.getPendingDamage("system_4") == 0.0f, "Pending damage cleared");
+    assertTrue(ctSys.getPendingDestructions("system_4") == 0, "Pending destructions cleared");
+}
+
+void testCombatThreatNoPendingForUnknown() {
+    std::cout << "\n=== Combat Threat: No Pending for Unknown System ===" << std::endl;
+    ecs::World world;
+    systems::CombatThreatSystem ctSys(&world);
+
+    assertTrue(ctSys.getPendingDamage("unknown") == 0.0f, "No pending damage for unknown");
+    assertTrue(ctSys.getPendingDestructions("unknown") == 0, "No pending destructions for unknown");
+}
+
+// ==================== Security Response System Tests ====================
+
+void testSecurityResponseDefaults() {
+    std::cout << "\n=== Security Response: Defaults ===" << std::endl;
+    ecs::World world;
+
+    auto* sys = world.createEntity("sec_sys");
+    auto* resp = addComp<components::SecurityResponseState>(sys);
+
+    assertTrue(!resp->responding, "Not responding by default");
+    assertTrue(resp->response_timer == 0.0f, "Timer starts at 0");
+    assertTrue(resp->response_strength == 0.0f, "Strength starts at 0");
+}
+
+void testSecurityResponseTriggered() {
+    std::cout << "\n=== Security Response: Triggered in High-Sec ===" << std::endl;
+    ecs::World world;
+    systems::SecurityResponseSystem secSys(&world);
+
+    auto* sys = world.createEntity("sec_highsec");
+    auto* resp  = addComp<components::SecurityResponseState>(sys);
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->security_level = 0.9f;
+    state->threat_level = 0.5f;  // above threshold
+
+    // Run enough ticks to pass the delay
+    for (int i = 0; i < 100; i++) {
+        secSys.update(1.0f);
+    }
+
+    assertTrue(resp->responding, "Security response active in high-sec with threat");
+    assertTrue(secSys.isResponding("sec_highsec"), "Query confirms responding");
+}
+
+void testSecurityResponseNoTriggerLowSec() {
+    std::cout << "\n=== Security Response: No Response in Low-Sec ===" << std::endl;
+    ecs::World world;
+    systems::SecurityResponseSystem secSys(&world);
+
+    auto* sys = world.createEntity("sec_lowsec");
+    auto* resp  = addComp<components::SecurityResponseState>(sys);
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->security_level = 0.2f;  // below min level
+    state->threat_level = 0.9f;    // high threat
+
+    for (int i = 0; i < 100; i++) {
+        secSys.update(1.0f);
+    }
+
+    assertTrue(!resp->responding, "No response in low-sec");
+}
+
+void testSecurityResponseNoTriggerLowThreat() {
+    std::cout << "\n=== Security Response: No Response on Low Threat ===" << std::endl;
+    ecs::World world;
+    systems::SecurityResponseSystem secSys(&world);
+
+    auto* sys = world.createEntity("sec_calm");
+    auto* resp  = addComp<components::SecurityResponseState>(sys);
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->security_level = 0.8f;
+    state->threat_level = 0.1f;  // below threshold
+
+    secSys.update(10.0f);
+    assertTrue(!resp->responding, "No response on low threat");
+}
+
+void testSecurityResponseDelayScaling() {
+    std::cout << "\n=== Security Response: Faster in Higher Sec ===" << std::endl;
+    ecs::World world;
+    systems::SecurityResponseSystem secSys(&world);
+
+    // High-sec system — should respond faster
+    auto* sys1 = world.createEntity("sec_fast");
+    auto* resp1 = addComp<components::SecurityResponseState>(sys1);
+    auto* st1   = addComp<components::SimStarSystemState>(sys1);
+    st1->security_level = 1.0f;
+    st1->threat_level = 0.5f;
+
+    secSys.update(0.1f);  // start timer
+    float timer_high = resp1->response_timer;
+
+    ecs::World world2;
+    systems::SecurityResponseSystem secSys2(&world2);
+    auto* sys2 = world2.createEntity("sec_slow");
+    auto* resp2 = addComp<components::SecurityResponseState>(sys2);
+    auto* st2   = addComp<components::SimStarSystemState>(sys2);
+    st2->security_level = 0.5f;
+    st2->threat_level = 0.5f;
+
+    secSys2.update(0.1f);
+    float timer_mid = resp2->response_timer;
+
+    assertTrue(timer_high < timer_mid, "High-sec response delay shorter than mid-sec");
+}
+
+void testSecurityResponseDuration() {
+    std::cout << "\n=== Security Response: Response Expires ===" << std::endl;
+    ecs::World world;
+    systems::SecurityResponseSystem secSys(&world);
+    secSys.response_duration = 10.0f;
+
+    auto* sys = world.createEntity("sec_expire");
+    auto* resp  = addComp<components::SecurityResponseState>(sys);
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->security_level = 0.9f;
+    state->threat_level = 0.0f;  // no threat initially
+
+    // Manually activate the response to test duration expiry
+    resp->responding = true;
+    resp->response_timer = 10.0f;
+    assertTrue(resp->responding, "Response is active");
+
+    // Tick past the response duration
+    for (int i = 0; i < 15; i++) secSys.update(1.0f);
+    assertTrue(!resp->responding, "Response expired after duration");
+}
+
+void testSecurityResponseRespondingSystems() {
+    std::cout << "\n=== Security Response: List Responding Systems ===" << std::endl;
+    ecs::World world;
+    systems::SecurityResponseSystem secSys(&world);
+
+    auto* sys1 = world.createEntity("sec_a");
+    auto* resp1 = addComp<components::SecurityResponseState>(sys1);
+    addComp<components::SimStarSystemState>(sys1);
+    resp1->responding = true;  // manually set for query test
+
+    auto* sys2 = world.createEntity("sec_b");
+    auto* resp2 = addComp<components::SecurityResponseState>(sys2);
+    addComp<components::SimStarSystemState>(sys2);
+    resp2->responding = false;
+
+    auto list = secSys.getRespondingSystems();
+    assertTrue(list.size() == 1, "One responding system");
+    assertTrue(list[0] == "sec_a", "Correct responding system");
+}
+
+// ==================== Ambient Traffic System Tests ====================
+
+void testAmbientTrafficDefaults() {
+    std::cout << "\n=== Ambient Traffic: Defaults ===" << std::endl;
+    ecs::World world;
+
+    auto* sys = world.createEntity("traffic_sys");
+    auto* traffic = addComp<components::AmbientTrafficState>(sys);
+
+    assertTrue(traffic->spawn_timer == 60.0f, "Default spawn timer is 60s");
+    assertTrue(traffic->active_traffic_count == 0, "No active traffic initially");
+    assertTrue(traffic->pending_spawns.empty(), "No pending spawns initially");
+}
+
+void testAmbientTrafficSpawnOnTimer() {
+    std::cout << "\n=== Ambient Traffic: Spawns On Timer ===" << std::endl;
+    ecs::World world;
+    systems::AmbientTrafficSystem atSys(&world);
+    atSys.spawn_interval = 5.0f;  // fast for testing
+
+    auto* sys = world.createEntity("traffic_eco");
+    auto* traffic = addComp<components::AmbientTrafficState>(sys);
+    traffic->spawn_timer = 1.0f;  // about to fire
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->economic_index = 0.8f;
+    state->resource_availability = 0.7f;
+    state->pirate_activity = 0.5f;
+    state->security_level = 0.6f;
+    state->trade_volume = 0.6f;
+
+    atSys.update(2.0f);  // timer fires
+    auto spawns = atSys.getPendingSpawns("traffic_eco");
+    assertTrue(!spawns.empty(), "Spawns generated after timer fires");
+    assertTrue(traffic->active_traffic_count > 0, "Active traffic count increased");
+}
+
+void testAmbientTrafficTraderSpawn() {
+    std::cout << "\n=== Ambient Traffic: Trader Spawn on Good Economy ===" << std::endl;
+    ecs::World world;
+    systems::AmbientTrafficSystem atSys(&world);
+    atSys.spawn_interval = 1.0f;
+
+    auto* sys = world.createEntity("traffic_trader");
+    auto* traffic = addComp<components::AmbientTrafficState>(sys);
+    traffic->spawn_timer = 0.5f;
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->economic_index = 0.8f;
+    state->resource_availability = 0.0f;
+    state->pirate_activity = 0.0f;
+    state->security_level = 0.0f;
+    state->trade_volume = 0.0f;
+
+    atSys.update(1.0f);
+    auto spawns = atSys.getPendingSpawns("traffic_trader");
+    bool has_trader = false;
+    for (auto& s : spawns) if (s == "trader") has_trader = true;
+    assertTrue(has_trader, "Trader spawned in good economy");
+}
+
+void testAmbientTrafficMinerSpawn() {
+    std::cout << "\n=== Ambient Traffic: Miner Spawn on Rich Resources ===" << std::endl;
+    ecs::World world;
+    systems::AmbientTrafficSystem atSys(&world);
+    atSys.spawn_interval = 1.0f;
+
+    auto* sys = world.createEntity("traffic_miner");
+    auto* traffic = addComp<components::AmbientTrafficState>(sys);
+    traffic->spawn_timer = 0.5f;
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->economic_index = 0.0f;
+    state->resource_availability = 0.9f;
+    state->pirate_activity = 0.0f;
+    state->security_level = 0.0f;
+    state->trade_volume = 0.0f;
+
+    atSys.update(1.0f);
+    auto spawns = atSys.getPendingSpawns("traffic_miner");
+    bool has_miner = false;
+    for (auto& s : spawns) if (s == "miner") has_miner = true;
+    assertTrue(has_miner, "Miner spawned in resource-rich system");
+}
+
+void testAmbientTrafficCapReached() {
+    std::cout << "\n=== Ambient Traffic: No Spawn When Cap Reached ===" << std::endl;
+    ecs::World world;
+    systems::AmbientTrafficSystem atSys(&world);
+    atSys.spawn_interval = 1.0f;
+    atSys.max_traffic_per_system = 5;
+
+    auto* sys = world.createEntity("traffic_full");
+    auto* traffic = addComp<components::AmbientTrafficState>(sys);
+    traffic->spawn_timer = 0.5f;
+    traffic->active_traffic_count = 5;  // already at cap
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->economic_index = 1.0f;
+
+    atSys.update(1.0f);
+    auto spawns = atSys.getPendingSpawns("traffic_full");
+    assertTrue(spawns.empty(), "No spawns when at traffic cap");
+}
+
+void testAmbientTrafficClearPending() {
+    std::cout << "\n=== Ambient Traffic: Clear Pending Spawns ===" << std::endl;
+    ecs::World world;
+    systems::AmbientTrafficSystem atSys(&world);
+    atSys.spawn_interval = 1.0f;
+
+    auto* sys = world.createEntity("traffic_clear");
+    auto* traffic = addComp<components::AmbientTrafficState>(sys);
+    traffic->spawn_timer = 0.5f;
+    auto* state = addComp<components::SimStarSystemState>(sys);
+    state->economic_index = 0.8f;
+
+    atSys.update(1.0f);
+    assertTrue(!traffic->pending_spawns.empty(), "Pending spawns exist");
+
+    atSys.clearPendingSpawns("traffic_clear");
+    assertTrue(traffic->pending_spawns.empty(), "Pending spawns cleared");
+}
+
+void testAmbientTrafficMissingEntity() {
+    std::cout << "\n=== Ambient Traffic: Missing Entity Queries ===" << std::endl;
+    ecs::World world;
+    systems::AmbientTrafficSystem atSys(&world);
+
+    auto spawns = atSys.getPendingSpawns("nobody");
+    assertTrue(spawns.empty(), "No spawns for missing entity");
+    assertTrue(atSys.getActiveTrafficCount("nobody") == 0, "Zero traffic for missing entity");
+}
+
+// ==================== Tactical Overlay Stage 4 Tests ====================
+
+void testOverlayAnchorRing() {
+    std::cout << "\n=== Tactical Overlay: Anchor Ring ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem toSys(&world);
+
+    auto* player = world.createEntity("overlay_anchor");
+
+    toSys.setAnchorRing("overlay_anchor", "fc_ship", 25.0f);
+    assertTrue(approxEqual(toSys.getAnchorRingRadius("overlay_anchor"), 25.0f),
+               "Anchor ring radius set to 25");
+}
+
+void testOverlayAnchorRingDisabled() {
+    std::cout << "\n=== Tactical Overlay: Anchor Ring Disabled ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem toSys(&world);
+
+    auto* player = world.createEntity("overlay_noanchor");
+    addComp<components::TacticalOverlayState>(player);
+
+    assertTrue(toSys.getAnchorRingRadius("overlay_noanchor") == 0.0f,
+               "Anchor ring disabled by default");
+}
+
+void testOverlayWingBands() {
+    std::cout << "\n=== Tactical Overlay: Wing Bands ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem toSys(&world);
+
+    auto* player = world.createEntity("overlay_wings");
+
+    std::vector<float> offsets = {10.0f, 20.0f, 30.0f};
+    toSys.setWingBands("overlay_wings", true, offsets);
+    assertTrue(toSys.areWingBandsEnabled("overlay_wings"), "Wing bands enabled");
+
+    auto result = toSys.getWingBandOffsets("overlay_wings");
+    assertTrue(result.size() == 3, "Three wing band offsets");
+    assertTrue(approxEqual(result[0], 10.0f), "First offset correct");
+    assertTrue(approxEqual(result[2], 30.0f), "Third offset correct");
+}
+
+void testOverlayWingBandsDisabledByDefault() {
+    std::cout << "\n=== Tactical Overlay: Wing Bands Disabled Default ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem toSys(&world);
+
+    auto* player = world.createEntity("overlay_nowings");
+    addComp<components::TacticalOverlayState>(player);
+
+    assertTrue(!toSys.areWingBandsEnabled("overlay_nowings"), "Wing bands disabled by default");
+    assertTrue(toSys.getWingBandOffsets("overlay_nowings").empty(), "No offsets by default");
+}
+
+void testOverlayFleetExtensionsMissing() {
+    std::cout << "\n=== Tactical Overlay: Fleet Extensions Missing Entity ===" << std::endl;
+    ecs::World world;
+    systems::TacticalOverlaySystem toSys(&world);
+
+    assertTrue(toSys.getAnchorRingRadius("nobody") == 0.0f, "Missing entity anchor ring is 0");
+    assertTrue(!toSys.areWingBandsEnabled("nobody"), "Missing entity wing bands disabled");
+    assertTrue(toSys.getWingBandOffsets("nobody").empty(), "Missing entity no offsets");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -12896,7 +13480,9 @@ int main() {
     std::cout << "MissionProtocol, AIDefensive," << std::endl;
     std::cout << "PersistenceStress, FleetPersistence, EconomyPersistence," << std::endl;
     std::cout << "LODSystem, SpatialHash, CompressedPersistence, 200ShipStress," << std::endl;
-    std::cout << "BackgroundSimulation, NPCIntent" << std::endl;
+    std::cout << "BackgroundSimulation, NPCIntent," << std::endl;
+    std::cout << "NPCBehaviorTree, CombatThreat, SecurityResponse," << std::endl;
+    std::cout << "AmbientTraffic, TacticalOverlayFleetExt" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -13648,6 +14234,50 @@ int main() {
     testNPCIntentCooldownPreventsReeval();
     testNPCIntentDockOnFullCargo();
     testNPCIntentGetIntentMissing();
+
+    // NPC Behavior Tree System tests
+    testNPCBehaviorTreeDefaults();
+    testNPCBehaviorTreeTraderPhases();
+    testNPCBehaviorTreeMinerPhases();
+    testNPCBehaviorTreePiratePhases();
+    testNPCBehaviorTreePhaseAdvancement();
+    testNPCBehaviorTreeCompletion();
+    testNPCBehaviorTreeIntentChange();
+    testNPCBehaviorTreeReset();
+    testNPCBehaviorTreeGenericPhases();
+    testNPCBehaviorTreeMissingEntity();
+
+    // Combat Threat System tests
+    testCombatThreatDamage();
+    testCombatThreatDestruction();
+    testCombatThreatClamped();
+    testCombatThreatClearedAfterUpdate();
+    testCombatThreatNoPendingForUnknown();
+
+    // Security Response System tests
+    testSecurityResponseDefaults();
+    testSecurityResponseTriggered();
+    testSecurityResponseNoTriggerLowSec();
+    testSecurityResponseNoTriggerLowThreat();
+    testSecurityResponseDelayScaling();
+    testSecurityResponseDuration();
+    testSecurityResponseRespondingSystems();
+
+    // Ambient Traffic System tests
+    testAmbientTrafficDefaults();
+    testAmbientTrafficSpawnOnTimer();
+    testAmbientTrafficTraderSpawn();
+    testAmbientTrafficMinerSpawn();
+    testAmbientTrafficCapReached();
+    testAmbientTrafficClearPending();
+    testAmbientTrafficMissingEntity();
+
+    // Tactical Overlay Stage 4: Fleet extensions
+    testOverlayAnchorRing();
+    testOverlayAnchorRingDisabled();
+    testOverlayWingBands();
+    testOverlayWingBandsDisabledByDefault();
+    testOverlayFleetExtensionsMissing();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

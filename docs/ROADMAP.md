@@ -206,7 +206,7 @@ Data-driven modding without code injection:
 | MissionTemplateSystem | ✅ Complete | 6 assertions |
 | MissionGeneratorSystem | ✅ Complete | 4 assertions |
 | ReputationSystem | ✅ Complete | 6 assertions |
-| **Total** | **34 systems** | **966 assertions** |
+| **Total** | **38 systems** | **1996 assertions** |
 
 ### Data Loaders Status
 
@@ -1015,14 +1015,14 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Query API** — getIntent(), getNPCsWithIntent(), getNPCsByArchetype(), scoreIntents()
 
 #### Remaining Work
-- [ ] NPC behavior trees (per archetype)
+- [x] NPC behavior trees (per archetype) — NPCBehaviorTreeSystem with per-archetype phase tables (10 tests)
 - [ ] NPC rerouting based on system danger
-- [ ] Ambient traffic spawns driven by system state
+- [x] Ambient traffic spawns driven by system state — AmbientTrafficSystem with AmbientTrafficState component (7 tests)
 - [ ] AI as real economic actors (wallets, ship ownership, permanent death)
 - [ ] Local reputation per system
 - [ ] Wreck persistence and salvage NPCs
-- [ ] Security response delay
-- [ ] System threat adjustment from combat
+- [x] Security response delay — SecurityResponseSystem with CONCORD-style delayed response (7 tests)
+- [x] System threat adjustment from combat — CombatThreatSystem with damage/destruction tracking (5 tests)
 - [ ] Station news feed
 - [ ] Rumors about player actions (`AtlasInformationPropagationSystem`)
 - [ ] Visual cues (lockdowns, traffic density)
@@ -1050,7 +1050,7 @@ Phase 5 core features (Panda3D client, ship models, performance optimization, pa
 - [x] **Stage 1**: Toggle overlay + distance rings (no entities) — TacticalOverlaySystem with toggle + configurable ring distances
 - [x] **Stage 2**: Entity projection with vertical ticks and shared filters — TacticalProjection component with serialization
 - [x] **Stage 3**: Tool awareness (active tool range, color coding) — TacticalOverlaySystem::setToolRange() with tool_type
-- [ ] **Stage 4**: Fleet extensions (anchor rings, wing bands)
+- [x] **Stage 4**: Fleet extensions (anchor rings, wing bands) — TacticalOverlaySystem anchor ring + wing band APIs (5 tests)
 
 #### Tactical Overlay ECS Components
 - [x] `TacticalOverlayState` (enabled, ringDistances[]) — implemented with serialization

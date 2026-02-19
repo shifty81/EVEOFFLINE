@@ -44,6 +44,28 @@ public:
      */
     void setEntityDisplayPriority(const std::string& entity_id, float priority);
     float getEntityDisplayPriority(const std::string& entity_id) const;
+
+    // Stage 4: Fleet extensions
+
+    /**
+     * @brief Set an anchor ring centered on anchor_entity_id.
+     * @param entity_id   Entity owning the overlay
+     * @param anchor_id   Entity at the centre of the ring
+     * @param radius      Ring radius in world units (0 = disabled)
+     */
+    void setAnchorRing(const std::string& entity_id,
+                       const std::string& anchor_id,
+                       float radius);
+    float getAnchorRingRadius(const std::string& entity_id) const;
+
+    /**
+     * @brief Enable / configure wing-band arcs on the overlay.
+     */
+    void setWingBands(const std::string& entity_id,
+                      bool enabled,
+                      const std::vector<float>& offsets);
+    bool  areWingBandsEnabled(const std::string& entity_id) const;
+    std::vector<float> getWingBandOffsets(const std::string& entity_id) const;
 };
 
 } // namespace systems
