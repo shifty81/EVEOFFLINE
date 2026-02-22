@@ -70,6 +70,8 @@
 #include "systems/combat_threat_system.h"
 #include "systems/security_response_system.h"
 #include "systems/ambient_traffic_system.h"
+#include "systems/snapshot_replication_system.h"
+#include "systems/interest_management_system.h"
 #include "network/protocol_handler.h"
 #include "ui/server_console.h"
 #include "utils/logger.h"
@@ -13453,6 +13455,366 @@ void testOverlayFleetExtensionsMissing() {
     assertTrue(toSys.getWingBandOffsets("nobody").empty(), "Missing entity no offsets");
 }
 
+// ==================== SnapshotReplicationSystem Tests ====================
+
+void testSnapshotDeltaFirstSendFull() {
+    std::cout << "\n=== Snapshot Delta: First Send is Full ===" << std::endl;
+
+    ecs::World world;
+    systems::SnapshotReplicationSystem srs(&world);
+
+    auto* e = world.createEntity("ship_1");
+    auto* pos = addComp<components::Position>(e);
+    pos->x = 100.0f; pos->y = 200.0f; pos->z = 300.0f; pos->rotation = 1.0f;
+    auto* vel = addComp<components::Velocity>(e);
+    vel->vx = 10.0f; vel->vy = 0.0f; vel->vz = -5.0f;
+
+    std::string msg = srs.buildDeltaUpdate(1, 1);
+
+    // First send must include position data
+    assertTrue(msg.find("\"ship_1\"") != std::string::npos,
+               "First delta includes entity id");
+    assertTrue(msg.find("\"pos\"") != std::string::npos,
+               "First delta includes position");
+    assertTrue(msg.find("\"vel\"") != std::string::npos,
+               "First delta includes velocity");
+    assertTrue(msg.find("\"delta\":true") != std::string::npos,
+               "Message marked as delta");
+}
+
+void testSnapshotDeltaNoChangeEmpty() {
+    std::cout << "\n=== Snapshot Delta: No Change Yields Empty Entities ===" << std::endl;
+
+    ecs::World world;
+    systems::SnapshotReplicationSystem srs(&world);
+
+    auto* e = world.createEntity("ship_1");
+    auto* pos = addComp<components::Position>(e);
+    pos->x = 100.0f; pos->y = 200.0f; pos->z = 300.0f;
+
+    // First call — full
+    srs.buildDeltaUpdate(1, 1);
+
+    // Second call — nothing changed
+    std::string msg = srs.buildDeltaUpdate(1, 2);
+
+    // Should have empty entities array since nothing changed
+    assertTrue(msg.find("\"entities\":[]") != std::string::npos,
+               "No-change delta has empty entities");
+}
+
+void testSnapshotDeltaPositionChange() {
+    std::cout << "\n=== Snapshot Delta: Position Change Detected ===" << std::endl;
+
+    ecs::World world;
+    systems::SnapshotReplicationSystem srs(&world);
+
+    auto* e = world.createEntity("ship_1");
+    auto* pos = addComp<components::Position>(e);
+    pos->x = 100.0f; pos->y = 200.0f; pos->z = 300.0f;
+    auto* hp = addComp<components::Health>(e);
+    hp->shield_hp = 100.0f; hp->shield_max = 100.0f;
+
+    srs.buildDeltaUpdate(1, 1);
+
+    // Change only position
+    pos->x = 150.0f;
+
+    std::string msg = srs.buildDeltaUpdate(1, 2);
+
+    assertTrue(msg.find("\"pos\"") != std::string::npos,
+               "Delta includes changed position");
+    // Health didn't change, should be omitted
+    assertTrue(msg.find("\"health\"") == std::string::npos,
+               "Delta omits unchanged health");
+}
+
+void testSnapshotDeltaHealthChange() {
+    std::cout << "\n=== Snapshot Delta: Health Change Only ===" << std::endl;
+
+    ecs::World world;
+    systems::SnapshotReplicationSystem srs(&world);
+
+    auto* e = world.createEntity("ship_1");
+    auto* pos = addComp<components::Position>(e);
+    pos->x = 100.0f;
+    auto* hp = addComp<components::Health>(e);
+    hp->shield_hp = 100.0f; hp->shield_max = 100.0f;
+    hp->armor_hp = 50.0f; hp->armor_max = 50.0f;
+    hp->hull_hp = 200.0f; hp->hull_max = 200.0f;
+
+    srs.buildDeltaUpdate(1, 1);
+
+    // Only change health
+    hp->shield_hp = 80.0f;
+
+    std::string msg = srs.buildDeltaUpdate(1, 2);
+
+    assertTrue(msg.find("\"health\"") != std::string::npos,
+               "Delta includes changed health");
+    assertTrue(msg.find("\"pos\"") == std::string::npos,
+               "Delta omits unchanged position");
+}
+
+void testSnapshotFullUpdateResets() {
+    std::cout << "\n=== Snapshot: Full Update Resets Tracking ===" << std::endl;
+
+    ecs::World world;
+    systems::SnapshotReplicationSystem srs(&world);
+
+    auto* e = world.createEntity("ship_1");
+    auto* pos = addComp<components::Position>(e);
+    pos->x = 100.0f;
+
+    srs.buildDeltaUpdate(1, 1);
+
+    // Full update should resend everything
+    std::string msg = srs.buildFullUpdate(1, 2);
+
+    assertTrue(msg.find("\"pos\"") != std::string::npos,
+               "Full update includes position even if unchanged");
+}
+
+void testSnapshotClearClient() {
+    std::cout << "\n=== Snapshot: Clear Client ===" << std::endl;
+
+    ecs::World world;
+    systems::SnapshotReplicationSystem srs(&world);
+
+    auto* e = world.createEntity("ship_1");
+    addComp<components::Position>(e);
+
+    srs.buildDeltaUpdate(1, 1);
+    assertTrue(srs.getTrackedClientCount() == 1, "One client tracked");
+    assertTrue(srs.getTrackedEntityCount(1) == 1, "One entity tracked for client");
+
+    srs.clearClient(1);
+    assertTrue(srs.getTrackedClientCount() == 0, "Client cleared");
+    assertTrue(srs.getTrackedEntityCount(1) == 0, "No entities after clear");
+}
+
+void testSnapshotEpsilonFiltering() {
+    std::cout << "\n=== Snapshot: Epsilon Filtering ===" << std::endl;
+
+    ecs::World world;
+    systems::SnapshotReplicationSystem srs(&world);
+    srs.setPositionEpsilon(1.0f);
+
+    auto* e = world.createEntity("ship_1");
+    auto* pos = addComp<components::Position>(e);
+    pos->x = 100.0f; pos->y = 200.0f; pos->z = 300.0f;
+
+    srs.buildDeltaUpdate(1, 1);
+
+    // Move by less than epsilon
+    pos->x = 100.5f;
+    std::string msg = srs.buildDeltaUpdate(1, 2);
+    assertTrue(msg.find("\"entities\":[]") != std::string::npos,
+               "Sub-epsilon change filtered out");
+
+    // Move beyond epsilon
+    pos->x = 102.0f;
+    msg = srs.buildDeltaUpdate(1, 3);
+    assertTrue(msg.find("\"pos\"") != std::string::npos,
+               "Super-epsilon change included");
+}
+
+void testSnapshotMultipleClients() {
+    std::cout << "\n=== Snapshot: Multiple Clients Independent ===" << std::endl;
+
+    ecs::World world;
+    systems::SnapshotReplicationSystem srs(&world);
+
+    auto* e = world.createEntity("ship_1");
+    auto* pos = addComp<components::Position>(e);
+    pos->x = 100.0f;
+
+    // Client 1 gets first update
+    srs.buildDeltaUpdate(1, 1);
+
+    // Client 2 has never seen the entity → should get full
+    std::string msg2 = srs.buildDeltaUpdate(2, 1);
+    assertTrue(msg2.find("\"pos\"") != std::string::npos,
+               "Client 2 gets full state for unseen entity");
+
+    // Client 1 gets no change
+    std::string msg1 = srs.buildDeltaUpdate(1, 2);
+    assertTrue(msg1.find("\"entities\":[]") != std::string::npos,
+               "Client 1 gets empty delta (no change)");
+
+    assertTrue(srs.getTrackedClientCount() == 2, "Two clients tracked");
+}
+
+// ==================== InterestManagementSystem Tests ====================
+
+void testInterestRegisterClient() {
+    std::cout << "\n=== Interest: Register Client ===" << std::endl;
+
+    ecs::World world;
+    systems::InterestManagementSystem ims(&world);
+
+    auto* player = world.createEntity("player_1");
+    auto* pos = addComp<components::Position>(player);
+    pos->x = 0.0f; pos->y = 0.0f; pos->z = 0.0f;
+
+    ims.registerClient(1, "player_1");
+    assertTrue(ims.getClientCount() == 1, "One client registered");
+}
+
+void testInterestNearEntityIncluded() {
+    std::cout << "\n=== Interest: Near Entity Included ===" << std::endl;
+
+    ecs::World world;
+    systems::InterestManagementSystem ims(&world);
+    ims.setFarRange(100.0f);
+
+    auto* player = world.createEntity("player_1");
+    auto* ppos = addComp<components::Position>(player);
+    ppos->x = 0.0f; ppos->y = 0.0f; ppos->z = 0.0f;
+
+    auto* npc = world.createEntity("npc_1");
+    auto* npos = addComp<components::Position>(npc);
+    npos->x = 50.0f; npos->y = 0.0f; npos->z = 0.0f;
+
+    ims.registerClient(1, "player_1");
+    ims.update(0.0f);
+
+    assertTrue(ims.isRelevant(1, "npc_1"), "Near entity is relevant");
+    assertTrue(ims.isRelevant(1, "player_1"), "Own entity is always relevant");
+}
+
+void testInterestFarEntityExcluded() {
+    std::cout << "\n=== Interest: Far Entity Excluded ===" << std::endl;
+
+    ecs::World world;
+    systems::InterestManagementSystem ims(&world);
+    ims.setFarRange(100.0f);
+
+    auto* player = world.createEntity("player_1");
+    auto* ppos = addComp<components::Position>(player);
+    ppos->x = 0.0f; ppos->y = 0.0f; ppos->z = 0.0f;
+
+    auto* npc = world.createEntity("npc_far");
+    auto* npos = addComp<components::Position>(npc);
+    npos->x = 200.0f; npos->y = 0.0f; npos->z = 0.0f;
+
+    ims.registerClient(1, "player_1");
+    ims.update(0.0f);
+
+    assertTrue(!ims.isRelevant(1, "npc_far"), "Far entity excluded");
+}
+
+void testInterestForceVisible() {
+    std::cout << "\n=== Interest: Force Visible ===" << std::endl;
+
+    ecs::World world;
+    systems::InterestManagementSystem ims(&world);
+    ims.setFarRange(100.0f);
+
+    auto* player = world.createEntity("player_1");
+    auto* ppos = addComp<components::Position>(player);
+    ppos->x = 0.0f; ppos->y = 0.0f; ppos->z = 0.0f;
+
+    auto* npc = world.createEntity("fleet_member");
+    auto* npos = addComp<components::Position>(npc);
+    npos->x = 500.0f; npos->y = 0.0f; npos->z = 0.0f;  // beyond range
+
+    ims.registerClient(1, "player_1");
+    ims.addForceVisible(1, "fleet_member");
+    ims.update(0.0f);
+
+    assertTrue(ims.isRelevant(1, "fleet_member"),
+               "Force-visible entity included despite distance");
+}
+
+void testInterestForceVisibleRemove() {
+    std::cout << "\n=== Interest: Remove Force Visible ===" << std::endl;
+
+    ecs::World world;
+    systems::InterestManagementSystem ims(&world);
+    ims.setFarRange(100.0f);
+
+    auto* player = world.createEntity("player_1");
+    auto* ppos = addComp<components::Position>(player);
+    ppos->x = 0.0f; ppos->y = 0.0f; ppos->z = 0.0f;
+
+    auto* npc = world.createEntity("fleet_member");
+    auto* npos = addComp<components::Position>(npc);
+    npos->x = 500.0f; npos->y = 0.0f; npos->z = 0.0f;
+
+    ims.registerClient(1, "player_1");
+    ims.addForceVisible(1, "fleet_member");
+    ims.update(0.0f);
+    assertTrue(ims.isRelevant(1, "fleet_member"), "Force visible before remove");
+
+    ims.removeForceVisible(1, "fleet_member");
+    ims.update(0.0f);
+    assertTrue(!ims.isRelevant(1, "fleet_member"), "Not relevant after removing force visible");
+}
+
+void testInterestUnregisterClient() {
+    std::cout << "\n=== Interest: Unregister Client ===" << std::endl;
+
+    ecs::World world;
+    systems::InterestManagementSystem ims(&world);
+
+    auto* player = world.createEntity("player_1");
+    addComp<components::Position>(player);
+
+    ims.registerClient(1, "player_1");
+    assertTrue(ims.getClientCount() == 1, "Client registered");
+
+    ims.unregisterClient(1);
+    assertTrue(ims.getClientCount() == 0, "Client unregistered");
+    assertTrue(ims.getRelevantCount(1) == 0, "No relevant entities for unregistered client");
+}
+
+void testInterestMultipleClients() {
+    std::cout << "\n=== Interest: Multiple Clients ===" << std::endl;
+
+    ecs::World world;
+    systems::InterestManagementSystem ims(&world);
+    ims.setFarRange(100.0f);
+
+    auto* p1 = world.createEntity("player_1");
+    auto* p1pos = addComp<components::Position>(p1);
+    p1pos->x = 0.0f; p1pos->y = 0.0f; p1pos->z = 0.0f;
+
+    auto* p2 = world.createEntity("player_2");
+    auto* p2pos = addComp<components::Position>(p2);
+    p2pos->x = 200.0f; p2pos->y = 0.0f; p2pos->z = 0.0f;
+
+    auto* npc = world.createEntity("npc_1");
+    auto* npos = addComp<components::Position>(npc);
+    npos->x = 50.0f; npos->y = 0.0f; npos->z = 0.0f;
+
+    ims.registerClient(1, "player_1");
+    ims.registerClient(2, "player_2");
+    ims.update(0.0f);
+
+    assertTrue(ims.isRelevant(1, "npc_1"), "NPC near player 1 is relevant to client 1");
+    assertTrue(!ims.isRelevant(2, "npc_1"), "NPC far from player 2 is not relevant to client 2");
+}
+
+void testInterestEntityNoPosition() {
+    std::cout << "\n=== Interest: Entity Without Position Included ===" << std::endl;
+
+    ecs::World world;
+    systems::InterestManagementSystem ims(&world);
+
+    auto* player = world.createEntity("player_1");
+    addComp<components::Position>(player);
+
+    // System entity without position
+    world.createEntity("system_entity");
+
+    ims.registerClient(1, "player_1");
+    ims.update(0.0f);
+
+    assertTrue(ims.isRelevant(1, "system_entity"),
+               "Entity without position is always relevant");
+}
+
 int main() {
     std::cout << "========================================" << std::endl;
     std::cout << "EVE OFFLINE C++ Server System Tests" << std::endl;
@@ -13482,7 +13844,8 @@ int main() {
     std::cout << "LODSystem, SpatialHash, CompressedPersistence, 200ShipStress," << std::endl;
     std::cout << "BackgroundSimulation, NPCIntent," << std::endl;
     std::cout << "NPCBehaviorTree, CombatThreat, SecurityResponse," << std::endl;
-    std::cout << "AmbientTraffic, TacticalOverlayFleetExt" << std::endl;
+    std::cout << "AmbientTraffic, TacticalOverlayFleetExt," << std::endl;
+    std::cout << "SnapshotReplication, InterestManagement" << std::endl;
     std::cout << "========================================" << std::endl;
     
     // Capacitor tests
@@ -14278,6 +14641,26 @@ int main() {
     testOverlayWingBands();
     testOverlayWingBandsDisabledByDefault();
     testOverlayFleetExtensionsMissing();
+
+    // Snapshot Replication System tests
+    testSnapshotDeltaFirstSendFull();
+    testSnapshotDeltaNoChangeEmpty();
+    testSnapshotDeltaPositionChange();
+    testSnapshotDeltaHealthChange();
+    testSnapshotFullUpdateResets();
+    testSnapshotClearClient();
+    testSnapshotEpsilonFiltering();
+    testSnapshotMultipleClients();
+
+    // Interest Management System tests
+    testInterestRegisterClient();
+    testInterestNearEntityIncluded();
+    testInterestFarEntityExcluded();
+    testInterestForceVisible();
+    testInterestForceVisibleRemove();
+    testInterestUnregisterClient();
+    testInterestMultipleClients();
+    testInterestEntityNoPosition();
 
     std::cout << "\n========================================" << std::endl;
     std::cout << "Results: " << testsPassed << "/" << testsRun << " tests passed" << std::endl;

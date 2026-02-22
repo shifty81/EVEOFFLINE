@@ -22,6 +22,8 @@ namespace systems {
     class AnomalySystem;
     class MissionSystem;
     class MissionGeneratorSystem;
+    class SnapshotReplicationSystem;
+    class InterestManagementSystem;
 }
 
 /**
@@ -72,6 +74,12 @@ public:
 
     /// Set pointer to the MissionGeneratorSystem for mission offers
     void setMissionGeneratorSystem(systems::MissionGeneratorSystem* mg) { mission_generator_ = mg; }
+
+    /// Set pointer to the SnapshotReplicationSystem for delta state updates
+    void setSnapshotReplicationSystem(systems::SnapshotReplicationSystem* srs) { snapshot_replication_ = srs; }
+
+    /// Set pointer to the InterestManagementSystem for per-client entity filtering
+    void setInterestManagementSystem(systems::InterestManagementSystem* ims) { interest_management_ = ims; }
 
     /// Get the ship database (read-only)
     const data::ShipDatabase& getShipDatabase() const { return ship_db_; }
@@ -366,6 +374,8 @@ private:
     systems::AnomalySystem* anomaly_system_ = nullptr;
     systems::MissionSystem* mission_system_ = nullptr;
     systems::MissionGeneratorSystem* mission_generator_ = nullptr;
+    systems::SnapshotReplicationSystem* snapshot_replication_ = nullptr;
+    systems::InterestManagementSystem* interest_management_ = nullptr;
 
     // Map socket → entity_id for connected players
     struct PlayerInfo {
