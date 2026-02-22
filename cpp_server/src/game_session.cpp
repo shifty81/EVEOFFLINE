@@ -8,6 +8,8 @@
 #include "systems/anomaly_system.h"
 #include "systems/mission_system.h"
 #include "systems/mission_generator_system.h"
+#include "systems/snapshot_replication_system.h"
+#include "systems/interest_management_system.h"
 #include <iostream>
 #include <sstream>
 #include <cmath>
@@ -79,12 +81,23 @@ void GameSession::initialize() {
 // ---------------------------------------------------------------------------
 
 void GameSession::update(float /*delta_time*/) {
-    // Build a single state-update message and broadcast it to every client
-    std::string state_msg = buildStateUpdate();
-
     std::lock_guard<std::mutex> lock(players_mutex_);
-    for (const auto& kv : players_) {
-        tcp_server_->sendToClient(kv.second.connection, state_msg);
+
+    if (snapshot_replication_) {
+        // Use delta-compressed, per-client state updates
+        for (const auto& kv : players_) {
+            int client_fd = kv.first;
+            uint64_t seq = snapshot_sequence_++;
+            std::string state_msg =
+                snapshot_replication_->buildDeltaUpdate(client_fd, seq);
+            tcp_server_->sendToClient(kv.second.connection, state_msg);
+        }
+    } else {
+        // Fallback: broadcast full state to every client
+        std::string state_msg = buildStateUpdate();
+        for (const auto& kv : players_) {
+            tcp_server_->sendToClient(kv.second.connection, state_msg);
+        }
     }
 }
 
@@ -258,6 +271,12 @@ void GameSession::handleConnect(const network::ClientConnection& client,
     for (const auto& other : others) {
         tcp_server_->sendToClient(other.connection, new_spawn);
     }
+
+    // Register with interest management / snapshot replication
+    int fd = static_cast<int>(client.socket);
+    if (interest_management_) {
+        interest_management_->registerClient(fd, entity_id);
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -265,16 +284,25 @@ void GameSession::handleConnect(const network::ClientConnection& client,
 // ---------------------------------------------------------------------------
 
 void GameSession::handleDisconnect(const network::ClientConnection& client) {
+    int fd = static_cast<int>(client.socket);
     std::string entity_id;
     {
         std::lock_guard<std::mutex> lock(players_mutex_);
-        auto it = players_.find(static_cast<int>(client.socket));
+        auto it = players_.find(fd);
         if (it != players_.end()) {
             entity_id = it->second.entity_id;
             std::cout << "[GameSession] Player disconnected: "
                       << it->second.character_name << std::endl;
             players_.erase(it);
         }
+    }
+
+    // Clean up replication / interest state for this client
+    if (snapshot_replication_) {
+        snapshot_replication_->clearClient(fd);
+    }
+    if (interest_management_) {
+        interest_management_->unregisterClient(fd);
     }
 
     if (!entity_id.empty()) {
