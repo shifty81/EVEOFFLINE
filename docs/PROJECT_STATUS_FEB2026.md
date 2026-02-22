@@ -154,9 +154,9 @@ Based on the Master Implementation Plan in ROADMAP.md:
 **Status**: 🔄 Partial implementation
 
 Current state snapshot broadcasting exists, but needs enhancement:
-- Client-side interpolation for smooth movement
-- Delta compression for bandwidth optimization
-- Interest management for large player counts
+- Client-side interpolation for smooth movement ✅ (cubic ease-out implemented)
+- Delta compression for bandwidth optimization ✅ (SnapshotReplicationSystem — per-client per-field delta tracking with epsilon filtering)
+- Interest management for large player counts ✅ (InterestManagementSystem — distance-based per-client entity filtering with force-visible support)
 - Client-side prediction for responsive input
 
 **Estimated Effort**: 3-4 weeks
@@ -243,7 +243,7 @@ Current missions are static, needs:
 
 ## Areas for Improvement
 
-1. **Client Interpolation**: Network smoothness needs enhancement
+1. **Client Prediction**: Client-side prediction for responsive input not yet implemented
 2. **Custom UI**: Game UI still uses ImGui (should use custom retained-mode system)
 3. **AI Economy**: Not yet implemented (critical for PvE experience)
 4. **Performance**: No profiling or optimization done yet
@@ -257,8 +257,9 @@ Current missions are static, needs:
 ### Immediate Next Steps (1-2 weeks)
 
 1. **Complete Snapshot Replication**
-   - Implement client-side interpolation
-   - Add delta compression
+   - ~~Implement client-side interpolation~~ ✅ Done
+   - ~~Add delta compression~~ ✅ Done (SnapshotReplicationSystem)
+   - ~~Interest management~~ ✅ Done (InterestManagementSystem)
    - Test with multiple clients
 
 2. **Start Custom UI Development**
